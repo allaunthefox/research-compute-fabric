@@ -1,0 +1,721 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\title{Revised Kernel Equation Sheet}
+\author{Sovereign Stack}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\appendix
+\section{Revised Kernel Equation Sheet}
+
+\subsection{Symbols}
+
+Let the global system state at time $t$ be
+\begin{equation}
+\mathcal{K}_t = \bigl(G_t,\mathcal{L}_t,\mathcal{T}_t,\mathcal{I}_t,\mathcal{R}_t,\mathcal{A}_t,\mathcal{S}_t\bigr)
+\label{eq:global_state}
+\end{equation}
+where $G_t$ is the weighted N-DAG, $\mathcal{L}_t$ the set of explicit lanes, $\mathcal{T}_t$ the set of throats, $\mathcal{I}_t$ the set of throat islands, $\mathcal{R}_t$ the hierarchical routing objects, $\mathcal{A}_t$ the AVMR summaries/log, and $\mathcal{S}_t$ the canal sections.
+
+\subsection{DIAT integer geometry}
+
+For $n\in\mathbb{N}$ define
+\begin{equation}
+k = \lfloor \sqrt{n} \rfloor
+\label{eq:k_floor}
+\end{equation}
+\begin{equation}
+\underline{s} = k^2,
+\qquad
+\overline{s} = (k+1)^2
+\label{eq:squares}
+\end{equation}
+\begin{equation}
+a(n)=n-\underline{s},
+\qquad
+b(n)=\overline{s}-n
+\label{eq:a_b}
+\end{equation}
+so that
+\begin{equation}
+a(n)+b(n)=2k+1.
+\label{eq:a_plus_b}
+\end{equation}
+
+The DIAT encoding is
+\begin{equation}
+\mathrm{DIAT}(n)=\bigl(a,b,ab,a-b\bigr)
+\label{eq:diat}
+\end{equation}
+with shell index
+\begin{equation}
+\sigma(n)=k
+\label{eq:shell_index}
+\end{equation}
+and shell partition
+\begin{equation}
+\mathcal{S}_k=\{n\mid k^2\le n<(k+1)^2\}.
+\label{eq:shell_partition}
+\end{equation}
+
+Optional normalized form:
+\begin{equation}
+\widehat{\mathrm{DIAT}}(n)=
+\left(
+\frac{a}{2k+1},
+\frac{b}{2k+1},
+\frac{ab}{(2k+1)^2},
+\frac{a-b}{2k+1}
+\right).
+\label{eq:diat_normalized}
+\end{equation}
+
+\subsection{Event lifting and lane state}
+
+Each encoded event is lifted to
+\begin{equation}
+z_i=
+\bigl(
+d_i,\phi_i,\tau_i,\iota_i,\chi_i,\omega_i,m_i,e_i,r_i,u_i
+\bigr)
+\label{eq:event_lift}
+\end{equation}
+where $d_i=\mathrm{DIAT}(n_i)$.
+
+A lane state is
+\begin{equation}
+\ell=
+\bigl(
+vtx,p,q,\phi,s,P,\lambda_{\mathrm{eff}},K,E,m,r,\eta
+\bigr).
+\label{eq:lane_state}
+\end{equation}
+
+\subsection{AVMR aggregation}
+
+Given leaves $z_1,\dots,z_q$, define the AVMR merge
+\begin{equation}
+R=\bigoplus_{\mathrm{avmr}}(z_1,\dots,z_q).
+\label{eq:avmr_merge}
+\end{equation}
+
+Aggregate fields:
+\begin{equation}
+c_R=\sum_{i=1}^{q}1,
+\qquad
+m_R=\sum_{i=1}^{q}m_i,
+\qquad
+E_R=\sum_{i=1}^{q}e_i,
+\qquad
+\iota_R=\sum_{i=1}^{q}\iota_i
+\label{eq:avmr_basic_aggregates}
+\end{equation}
+\begin{equation}
+\omega_R=\min_i \omega_i,
+\qquad
+m_{R,\max}=\max_i \|m_i\|.
+\label{eq:avmr_extrema}
+\end{equation}
+
+Phase is merged by phasor accumulation:
+\begin{equation}
+z_{\phi}=\sum_{i=1}^{q}w_i
+\begin{pmatrix}
+\cos\phi_i\\
+\sin\phi_i
+\end{pmatrix}
+\label{eq:phasor_sum}
+\end{equation}
+\begin{equation}
+\phi_R=\operatorname{atan2}(z_{\phi,y},z_{\phi,x}),
+\qquad
+\kappa_R=\|z_\phi\|.
+\label{eq:phase_merge}
+\end{equation}
+
+Associativity requirement:
+\begin{equation}
+(A\oplus B)\oplus C=A\oplus(B\oplus C).
+\label{eq:avmr_assoc}
+\end{equation}
+
+\subsection{Dynamic Canal law}
+
+Pressure evolves as
+\begin{equation}
+P_{t+1}=\gamma P_t+\mathrm{stress}_t
+\label{eq:pressure_update}
+\end{equation}
+with optional external coupling
+\begin{equation}
+P_{t+1}^{\mathrm{cal}}=P_{t+1}+w_{\mathrm{bio}}\Pi_{\mathrm{bio},t}.
+\label{eq:pressure_cal}
+\end{equation}
+
+Effective canal resistance:
+\begin{equation}
+\lambda_{\mathrm{eff}}(P)=
+\lambda_0\left[\sigma+(1-\sigma)e^{-\xi P}\right].
+\label{eq:lambda_eff}
+\end{equation}
+Bounds:
+\begin{equation}
+\lambda_0\sigma\le\lambda_{\mathrm{eff}}(P)\le\lambda_0
+\label{eq:lambda_bounds}
+\end{equation}
+Derivative:
+\begin{equation}
+\frac{d\lambda_{\mathrm{eff}}}{dP}
+=
+-\lambda_0(1-\sigma)\xi e^{-\xi P}<0.
+\label{eq:lambda_derivative}
+\end{equation}
+
+Compliance:
+\begin{equation}
+K(P)=\frac{1}{\lambda_{\mathrm{eff}}(P)+\varepsilon}
+\label{eq:compliance}
+\end{equation}
+and canal width:
+\begin{equation}
+W_c(P)=W_{c,0}\frac{\lambda_0}{\lambda_{\mathrm{eff}}(P)}.
+\label{eq:canal_width}
+\end{equation}
+
+\subsection{Stress law}
+
+\begin{equation}
+\mathrm{stress}_t=
+\alpha\,\mathrm{surprise}_t+\beta\,\mathrm{regret}_t
+\label{eq:stress}
+\end{equation}
+with
+\begin{equation}
+\mathrm{surprise}_t=-\log p_{\mathrm{actual},t}
+\label{eq:surprise}
+\end{equation}
+\begin{equation}
+\mathrm{regret}_t=
+\max\bigl(0,\log p_{\mathrm{best},t}-\log p_{\mathrm{actual},t}\bigr).
+\label{eq:regret}
+\end{equation}
+
+For graph-based continuation:
+\begin{equation}
+p_e=
+\frac{\exp(\kappa\,\mathrm{score}_e)}
+{\sum_{e'\in\mathrm{Out}(v)}\exp(\kappa\,\mathrm{score}_{e'})}
+\label{eq:softmax_edge}
+\end{equation}
+and
+\begin{equation}
+p_{\mathrm{actual}}=p_{e^\star},
+\qquad
+p_{\mathrm{best}}=\max_e p_e.
+\label{eq:p_actual_best}
+\end{equation}
+
+\subsection{N-DAG and Laplacian}
+
+\begin{equation}
+G_t=(V,E,W_t)
+\label{eq:graph}
+\end{equation}
+\begin{equation}
+W_{ij}(t)=\sum_{e:i\to j}w_e(t)
+\label{eq:adjacency}
+\end{equation}
+\begin{equation}
+D_{ii}(t)=\sum_j W_{ij}(t)
+\label{eq:degree}
+\end{equation}
+\begin{equation}
+L(t)=D(t)-W(t).
+\label{eq:laplacian}
+\end{equation}
+
+Symmetrized form:
+\begin{equation}
+W^{(s)}(t)=\frac{W(t)+W(t)^\top}{2},
+\qquad
+L^{(s)}(t)=D^{(s)}(t)-W^{(s)}(t).
+\label{eq:sym_laplacian}
+\end{equation}
+
+\subsection{Edge scoring}
+
+\begin{equation}
+\mathrm{score}_e(\ell,t)=
+\alpha_w w_e(t)
+-\alpha_d d_e(p)
+-\alpha_\phi |\operatorname{wrap}(\phi-\phi_e^\star)|
+-\lambda_{\mathrm{eff}}(P_\ell)\,\mathrm{stressProxy}_e
+-\alpha_m m_\ell
++\alpha_E \Delta E_e
+\label{eq:edge_score}
+\end{equation}
+with
+\begin{equation}
+\mathrm{stressProxy}_e=
+c_\tau\tau_e+c_\delta\|\delta_e(t)\|+c_q\|q_\perp\|.
+\label{eq:stress_proxy}
+\end{equation}
+The selected edge is
+\begin{equation}
+e^\star=\arg\max_{e\in\mathrm{Out}(vtx)}\mathrm{score}_e(\ell,t).
+\label{eq:edge_choice}
+\end{equation}
+
+\subsection{Regime law}
+
+\begin{equation}
+r_{t+1}=
+\begin{cases}
+C, & m_{t+1}\le\theta_C \land s_{t+1}\le s_C\\
+S, & \theta_C<m_{t+1}<\theta_T \text{ or } s_{t+1}>s_C\\
+T, & m_{t+1}\ge\theta_T \land \text{throat admissible}\\
+S, & m_{t+1}\ge\theta_T \land \text{no throat admissible}
+\end{cases}
+\label{eq:regime_update}
+\end{equation}
+
+\subsection{Lane dynamics}
+
+\paragraph{Coherent regime}
+\begin{align}
+p_{t+1}&=p_t+q_t+\Pi_e+F_{\mathrm{island}}(p_t)
+\label{eq:coh_pos}\\
+q_{t+1}&=q_t+\beta_x\Delta x_e-\beta_f\nabla U(v)+F_{\mathrm{island}}(p_t)
+\label{eq:coh_vel}\\
+\phi_{t+1}&=\phi_t+\Delta\phi_e
+\label{eq:coh_phase}\\
+s_{t+1}&=\max\bigl(0,s_t+\beta_\tau\tau_e-\beta_r K(P_t)\bigr)
+\label{eq:coh_stress}\\
+E_{t+1}&=E_t+\Delta E_e-\beta_\gamma\gamma_e
+\label{eq:coh_energy}\\
+m_{t+1}&=\max\bigl(0,m_t+\beta_\mu\|\delta_e\|-\beta_h h_t\bigr).
+\label{eq:coh_mismatch}
+\end{align}
+
+\paragraph{Stressed regime}
+\begin{align}
+p_{t+1}&=p_t+q_t+\Pi_e+\Xi_t+F_{\mathrm{island}}(p_t)
+\label{eq:str_pos}\\
+q_{t+1}&=\rho_q q_t+\beta_x\Delta x_e-\beta_f\nabla U(v)-\beta_\tau T_e(q_t)+F_{\mathrm{island}}(p_t)
+\label{eq:str_vel}\\
+\phi_{t+1}&=\phi_t+\Delta\phi_e+\epsilon_\phi
+\label{eq:str_phase}\\
+s_{t+1}&=s_t+\beta_\tau\tau_e+\beta_m m_t-\beta_r K(P_t)
+\label{eq:str_stress}\\
+E_{t+1}&=E_t+\Delta E_e-\beta_\gamma\gamma_e-\beta_s s_t
+\label{eq:str_energy}\\
+m_{t+1}&=m_t+\beta_\mu\|\delta_e\|+\beta_x\|\Xi_t\|-\beta_h h_t.
+\label{eq:str_mismatch}
+\end{align}
+
+\paragraph{Throat regime}
+\begin{equation}
+\widetilde{x}=A_e(x_t),\qquad \widehat{x}=B_e(t)\widetilde{x},\qquad x_{t+1}=H_e(\widehat{x})
+\label{eq:throat_transfer}
+\end{equation}
+\begin{align}
+p_{t+1}&=H_p(B_p(A_p(p_t)))
+\label{eq:thr_pos}\\
+q_{t+1}&=\rho_T q_t+\xi_q
+\label{eq:thr_vel}\\
+\phi_{t+1}&=\phi_t+\Delta\phi_e+\epsilon_T
+\label{eq:thr_phase}\\
+s_{t+1}&=s_t+\beta_{T,s}\|\delta_t\|
+\label{eq:thr_stress}\\
+E_{t+1}&=\rho_E E_t-\Lambda_T(\delta_t)-\Lambda_P(P_t)
+\label{eq:thr_energy}\\
+m_{t+1}&=\rho_m m_t+\beta_{T,m}\|\delta_t\|-\beta_h h_t
+\label{eq:thr_mismatch}
+\end{align}
+with
+\begin{equation}
+\Lambda_P(P_t)=c_P\bigl(K(P_t)-K(0)\bigr).
+\label{eq:pressure_penalty}
+\end{equation}
+
+\subsection{Dual geometry and throat generation}
+
+Intrinsic merge:
+\begin{equation}
+R_{ij}^{\mathrm{geom}}=R_i\oplus R_j
+\label{eq:intrinsic_merge}
+\end{equation}
+Projection embedding:
+\begin{equation}
+h_i=H(R_i)
+\label{eq:hash_embed}
+\end{equation}
+Projection composition:
+\begin{equation}
+v_{ij}^{\mathrm{proj}}=\Psi(h_i,h_j),
+\qquad
+\Psi(h_i,h_j)=H(h_i\|h_j)
+\label{eq:projection_comp}
+\end{equation}
+Projection decode:
+\begin{equation}
+\widetilde{R}_{ij}^{\mathrm{proj}}=D(v_{ij}^{\mathrm{proj}})
+\label{eq:projection_decode}
+\end{equation}
+Mismatch:
+\begin{equation}
+\delta_{ij}=
+\mathrm{Dist}\bigl(R_{ij}^{\mathrm{geom}},\widetilde{R}_{ij}^{\mathrm{proj}}\bigr).
+\label{eq:projection_mismatch}
+\end{equation}
+
+A throat is generated if
+\begin{equation}
+\delta_{ij}\ge \theta_{\mathrm{throat-gen}}.
+\label{eq:throat_gen}
+\end{equation}
+
+Dynamic throat weight:
+\begin{equation}
+w_{ij}(t)=
+\max\Bigl(
+0,\,
+w_{0,ij}
+-\lambda_\delta \delta_{ij}(t)
++\lambda_P(K(P_t)-K(0))
+-\lambda_s s_t
+\Bigr).
+\label{eq:throat_weight}
+\end{equation}
+
+\subsection{Throat superposition}
+
+\begin{equation}
+\mathrm{Interf}(T_1,T_2)=\mathrm{Dist}_{hash}(v_1,v_2)
+\label{eq:interference}
+\end{equation}
+\begin{equation}
+v_\oplus=\mathrm{Fuse}(v_1,v_2)
+\label{eq:fused_vec}
+\end{equation}
+\begin{equation}
+\delta_\oplus=\delta_1+\delta_2+\eta\,\mathrm{Interf}(T_1,T_2)
+\label{eq:superposed_mismatch}
+\end{equation}
+\begin{equation}
+w_\oplus=\max(0,w_1+w_2-\lambda_\delta\delta_\oplus)
+\label{eq:superposed_weight}
+\end{equation}
+\begin{equation}
+\kappa_\oplus=\delta_\oplus.
+\label{eq:superposed_curvature}
+\end{equation}
+
+\subsection{Throat islands}
+
+For a cluster $\mathcal{T}=\{T_1,\dots,T_k\}$,
+\begin{equation}
+I(T_i,T_j)=\mathrm{Dist}_{hash}(v_i,v_j)
+\label{eq:pairwise_interference}
+\end{equation}
+\begin{equation}
+\mathrm{Coh}(\mathcal{T})=
+\frac{1}{k^2}\sum_{i,j}\exp\bigl(-\alpha I(T_i,T_j)\bigr)
+\label{eq:island_coherence}
+\end{equation}
+\begin{equation}
+W_{\mathcal{T}}=
+\sum_i w_i-\lambda_{\mathrm{int}}\sum_{i<j}I(T_i,T_j)
+\label{eq:island_weight}
+\end{equation}
+Island criterion:
+\begin{equation}
+\mathbf{1}_{\mathrm{island}}(\mathcal{T})=
+\mathbf{1}\left[
+\mathrm{Coh}(\mathcal{T})>\theta_{\mathrm{coh}}
+\land
+W_{\mathcal{T}}>\theta_{\mathrm{stable}}
+\right].
+\label{eq:island_indicator}
+\end{equation}
+
+\subsection{Island potential}
+
+\begin{equation}
+U_{\mathcal{I}}(x)=
+-\beta_{\mathcal{I}}W_{\mathcal{I}}
+\exp\bigl(-\gamma_{\mathcal{I}}\mathrm{dist}(x,c_{\mathcal{I}})\bigr)
+\label{eq:island_potential}
+\end{equation}
+\begin{equation}
+F_{\mathcal{I}}(x)=-\nabla U_{\mathcal{I}}(x)
+\label{eq:island_force}
+\end{equation}
+\begin{equation}
+F_{\mathrm{island}}(x)=\sum_{\mathcal{I}}F_{\mathcal{I}}(x).
+\label{eq:total_island_force}
+\end{equation}
+
+\subsection{Canal section equations}
+
+\begin{equation}
+\rho_i^{t+1}
+=
+\rho_i^t-(F_{i+1/2}^t-F_{i-1/2}^t)-S_i^t+I_i^t
+\label{eq:density}
+\end{equation}
+\begin{equation}
+P_i^{t+1}=\gamma P_i^t+\bar{\mathrm{stress}}_i^t
+\label{eq:section_pressure}
+\end{equation}
+\begin{equation}
+\lambda_{\mathrm{eff},i}^{t+1}
+=
+\lambda_0\left[\sigma+(1-\sigma)e^{-\xi P_i^{t+1}}\right]
+\label{eq:section_lambda}
+\end{equation}
+\begin{equation}
+K_i^{t+1}=\frac{1}{\lambda_{\mathrm{eff},i}^{t+1}+\varepsilon}
+\label{eq:section_compliance}
+\end{equation}
+\begin{equation}
+W_{c,i}^{t+1}=W_{c,0,i}\frac{\lambda_0}{\lambda_{\mathrm{eff},i}^{t+1}}
+\label{eq:section_width}
+\end{equation}
+\begin{equation}
+C_i^{t+1}=
+C_{0,i}\frac{\lambda_0}{\lambda_{\mathrm{eff},i}^{t+1}}
+e^{-a_R R_i^t}e^{-a_m\bar m_i^t}
+\label{eq:section_capacity_exp}
+\end{equation}
+or linearized
+\begin{equation}
+C_i^{t+1}=
+\operatorname{sat}(C_{0,i}+c_P P_i^{t+1}-c_R R_i^t-c_m\bar m_i^t)
+\label{eq:section_capacity_lin}
+\end{equation}
+\begin{equation}
+v_{\mathrm{eff},i}^{t+1}
+=
+v_{0,i}+g_GG_i-g_D\rho_i-g_RR_i-g_m\bar m_i+g_KK_i
+\label{eq:veff}
+\end{equation}
+\begin{equation}
+F_i^{t+1}=\rho_i^{t+1}v_{\mathrm{eff},i}^{t+1}
+\label{eq:flux}
+\end{equation}
+\begin{equation}
+S_i^{t+1}=\sum_{e\in\mathcal{T}(i)}\pi_{e,i}^{t+1}F_i^{t+1}
+\label{eq:siphon}
+\end{equation}
+with
+\begin{equation}
+\pi_{e,i}^{t+1}\propto \mathrm{throatBias}_e\,g(\delta_e)\,K_i.
+\label{eq:siphon_fraction}
+\end{equation}
+
+\subsection{Pack/unpack rule}
+
+\begin{equation}
+\Theta_i=
+\theta_\rho \rho_i+\theta_m\bar m_i+\theta_s\bar s_i+\theta_I I_i+\theta_{PT}K_iT_i
+\label{eq:unpack_score}
+\end{equation}
+\begin{equation}
+U_i=\mathbf{1}[\Theta_i\ge \Theta_{\mathrm{crit}}].
+\label{eq:mode_indicator}
+\end{equation}
+
+\subsection{Hierarchical routing}
+
+For each level $k\in[n_{\min},n_{\max}]$ define
+\begin{equation}
+X_i^{(k)}=
+\bigl(
+E_i^{(k)},P_i^{(k)},M_i^{(k)},\kappa_i^{(k)},C_i^{(k)},W_i^{(k)},H_i^{(k)}
+\bigr).
+\label{eq:route_obj}
+\end{equation}
+
+Pressure law:
+\begin{equation}
+P_i^{(k)}(t+1)=
+\gamma_k P_i^{(k)}(t)
++\alpha_k \mathrm{stress}_i^{(k)}(t)
++\beta_k \mathrm{cong}_i^{(k)}(t)
++\chi_k \mathrm{interf}_i^{(k)}(t)
+\label{eq:level_pressure}
+\end{equation}
+\begin{equation}
+\lambda_i^{(k)}(t+1)=
+\lambda_{0,k}\left[\sigma_k+(1-\sigma_k)e^{-\xi_k P_i^{(k)}(t+1)}\right]
+\label{eq:level_lambda}
+\end{equation}
+\begin{equation}
+K_i^{(k)}(t+1)=\frac{1}{\lambda_i^{(k)}(t+1)+\varepsilon}
+\label{eq:level_compliance}
+\end{equation}
+
+Capacity:
+\begin{equation}
+C_i^{(k)}(t+1)=
+C_{0,k}\mu_C^k
+\frac{1+\beta_P K_i^{(k)}}{1+\beta_M M_i^{(k)}}
+(1+\beta_H H_i^{(k)})
+\label{eq:level_capacity}
+\end{equation}
+
+Lateral flow:
+\begin{equation}
+F_{ij}^{(k)}(t)=
+w_{ij}^{(k)}(t)\min(C_i^{(k)},C_j^{(k)})
+\frac{E_i^{(k)}(t)}{\sum_m w_{im}^{(k)}(t)+\varepsilon}
+\label{eq:level_flow}
+\end{equation}
+
+Loss:
+\begin{equation}
+\Lambda_i^{(k)}(t)=
+\lambda_k^{\mathrm{base}}+a_kM_i^{(k)}+b_k\kappa_i^{(k)}-c_kH_i^{(k)}
+\label{eq:level_loss}
+\end{equation}
+
+Energy:
+\begin{equation}
+E_i^{(k)}(t+1)=
+E_i^{(k)}(t)
+-\sum_j F_{ij}^{(k)}(t)
++\sum_j F_{ji}^{(k)}(t)
+-\Lambda_i^{(k)}(t)
++\Pi_i^{(k)}(t)
+-\Delta_i^{(k)}(t).
+\label{eq:level_energy}
+\end{equation}
+
+Promotion:
+\begin{equation}
+E_i^{(k)} \ge E_k^\uparrow,\qquad
+H_i^{(k)}\ge \theta_k^\uparrow,\qquad
+k+1\le n_{\max}
+\label{eq:promotion_cond}
+\end{equation}
+\begin{equation}
+\Pi_i^{(k+1)}=
+\eta_k^\uparrow E_i^{(k)}-a_kM_i^{(k)}-b_k\kappa_i^{(k)}
+\label{eq:promotion_energy}
+\end{equation}
+
+Demotion:
+\begin{equation}
+H_i^{(k)}<\theta_k^\downarrow
+\;\lor\;
+M_i^{(k)}>M_k^{\max}
+\label{eq:demotion_cond}
+\end{equation}
+\begin{equation}
+\Delta_i^{(k)}=
+(1-\eta_k^\downarrow)E_i^{(k)}+d_kM_i^{(k)}.
+\label{eq:demotion_energy}
+\end{equation}
+
+\subsection{Spectral quantities}
+
+\begin{equation}
+R_{\mathrm{eff}}(i,j)=(e_i-e_j)^\top L^+(e_i-e_j)
+\label{eq:effective_resistance}
+\end{equation}
+\begin{equation}
+L\psi_k=\lambda_k\psi_k
+\label{eq:eigenmodes}
+\end{equation}
+\begin{equation}
+I_R(t)=
+\frac{\sum_{k\in K_{\mathrm{hi}}}\|\psi_k|_R\|^2}
+{\sum_{k\in K_{\mathrm{lo}}}\|\psi_k|_R\|^2+\varepsilon}.
+\label{eq:modal_instability}
+\end{equation}
+
+\subsection{Poincar\'e return map}
+
+\begin{equation}
+Y_k(s)=
+(\rho_k,C_k,F_k,S_k,\bar E_k,\bar m_k,\bar s_k,P_k,\lambda_k,U_k)
+\label{eq:poincare_state}
+\end{equation}
+\begin{equation}
+Y_{k+1}=P_\Sigma(Y_k)
+\label{eq:poincare_map}
+\end{equation}
+with components
+\begin{align}
+P_{k+1}&=\gamma P_k+\bar{\mathrm{stress}}_k
+\label{eq:pmap_pressure}\\
+\lambda_{k+1}&=\lambda_0\left[\sigma+(1-\sigma)e^{-\xi P_{k+1}}\right]
+\label{eq:pmap_lambda}\\
+C_{k+1}&=\operatorname{sat}(C_0+c_P P_{k+1}-c_RR_k-c_m\bar m_k)
+\label{eq:pmap_capacity}\\
+F_{k+1}&=\rho_{k+1}\operatorname{sat}(v_0+g_GG_k-g_PP_k-g_RR_k-g_m\bar m_k+g_KK_{k+1})
+\label{eq:pmap_flux}\\
+S_{k+1}&=\sum_{e\in\mathcal{T}}\pi_e(P_{k+1},\delta_{e,k+1})F_{k+1}
+\label{eq:pmap_siphon}\\
+U_{k+1}&=\mathbf{1}[\Theta_{k+1}\ge \Theta_{\mathrm{crit}}].
+\label{eq:pmap_unpack}
+\end{align}
+
+\subsection{Unified kernel map}
+
+\begin{equation}
+\mathcal{K}_{t+1}=\mathrm{stepKernel}(\mathcal{K}_t)
+\label{eq:kernel_map}
+\end{equation}
+with substeps
+\begin{align}
+\mathcal{S}_{t+1}&=\mathrm{stepSection}(\mathcal{S}_t)
+\label{eq:kernel_sections}\\
+B_i&=\mathrm{sectionBundleState}(i)
+\label{eq:kernel_bundle}\\
+\mathcal{T}_t&=\mathrm{synthesizeAllThroats}(B_1,\dots,B_n)
+\label{eq:kernel_throats}\\
+\mathcal{T}_t^\oplus&=\mathrm{superposeOverlappingThroats}(\mathcal{T}_t)
+\label{eq:kernel_superposed}\\
+\mathcal{I}_t&=\mathrm{buildIslands}(\mathcal{T}_t^\oplus)
+\label{eq:kernel_islands}\\
+G_t'&=G_t\cup\mathcal{T}_t^\oplus
+\label{eq:kernel_injected}\\
+\mathcal{L}_{t+1}&=\mathrm{stepLaneWithIslands}(\mathcal{L}_t,G_t',\mathcal{I}_t)
+\label{eq:kernel_lanes}\\
+\mathcal{R}_{t+1}&=\mathrm{iteratePromotions}(\mathcal{L}_{t+1},\mathcal{T}_t^\oplus,\mathcal{I}_t)
+\label{eq:kernel_routes}\\
+\mathcal{A}_{t+1}&=\mathcal{A}_t\cup\mathrm{emitLeaves}(\mathcal{L}_{t+1}).
+\label{eq:kernel_avmr}
+\end{align}
+
+\subsection{Master coupled system}
+
+\begin{equation}
+\boxed{
+\begin{aligned}
+&\mathrm{DIAT}(n)=(a,b,ab,a-b)\\
+&R=\bigoplus_{\mathrm{avmr}}z_i\\
+&P_{t+1}=\gamma P_t+\mathrm{stress}_t\\
+&\lambda_{\mathrm{eff}}(P)=\lambda_0[\sigma+(1-\sigma)e^{-\xi P}]\\
+&K(P)=\frac{1}{\lambda_{\mathrm{eff}}(P)+\varepsilon}\\
+&\ell_{t+1}=\mathcal{T}_{r_t}(\ell_t,G_t,\delta_t,F_{\mathrm{island}})\\
+&\delta_{ij}=\mathrm{Dist}(R_i\oplus R_j,D(\Psi(H(R_i),H(R_j))))\\
+&w_{ij}(t)=\max(0,w_0-\lambda_\delta\delta_{ij}+\lambda_P(K-K_0)-\lambda_s s_t)\\
+&\mathrm{Coh}(\mathcal{T})=\frac{1}{k^2}\sum_{i,j}\exp(-\alpha I(T_i,T_j))\\
+&E_i^{(k)}(t+1)=E_i^{(k)}-\sum_jF_{ij}^{(k)}+\sum_jF_{ji}^{(k)}-\Lambda_i^{(k)}+\Pi_i^{(k)}-\Delta_i^{(k)}\\
+&\mathcal{K}_{t+1}=\mathrm{stepKernel}(\mathcal{K}_t)
+\end{aligned}
+}
+\label{eq:master_system}
+\end{equation}
+
+\end{document}

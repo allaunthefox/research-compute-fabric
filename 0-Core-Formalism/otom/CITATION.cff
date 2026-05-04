@@ -1,0 +1,313 @@
+cff-version: 1.2.0
+message: "If you use OTOM, 3I-ATLAS, or source-linked research artifacts from this repository, please cite this repository and the listed source references."
+title: "OTOM: Object Tracing on Manifolds"
+type: software
+authors:
+  - alias: "allaunthefox"
+repository-code: "https://github.com/allaunthefox/OTOM"
+url: "https://github.com/allaunthefox/OTOM"
+abstract: >-
+  OTOM is a research stack for object tracing on manifolds, geometric compression,
+  receipt-gated formalization, intrinsic system geometry, adaptive system
+  mapping, and source-linked research artifacts. The 3I-ATLAS framing maps
+  systems through Interfaces, Invariants, and Intelligence.
+keywords:
+  - OTOM
+  - 3I-ATLAS
+  - manifold topology
+  - interfaces
+  - invariants
+  - intelligence
+  - geometric compression
+  - spectral analysis
+  - Raman spectroscopy
+  - structured light
+  - metasurfaces
+  - nonlinear optics
+  - third-harmonic generation
+  - broken symmetry
+  - optical chirality
+  - spin-orbit interaction
+  - Jones matrices
+  - Poincare sphere
+  - exceptional points
+  - Cramer's rule
+  - oriented volume
+  - determinant geometry
+  - Lorentz transformation
+  - Lorentz group
+  - Lorentzian geometry
+  - rapidity
+  - Minkowski metric
+  - Lean 4
+  - formal verification
+references:
+  - type: webpage
+    title: "3I-ATLAS - Map your system: where it connects (Interfaces), what it guarantees (Invariants), how it responds (Intelligence)"
+    url: "https://www.reddit.com/r/OpenSourceeAI/comments/1t1gxuo/3iatlas_map_your_system_where_it_connects/"
+    notes: >-
+      Reddit post supplied by the project author as the public source for the
+      3I-ATLAS formulation: Interfaces, Invariants, and Intelligence. Live page
+      details were not independently verified in this commit environment.
+  - type: webpage
+    title: "Geometric meaning of Cramer's rule for a 3x3 system"
+    url: "https://www.reddit.com/r/LinearAlgebra/comments/1t2vd4m/geometric_meaning_of_cramers_rule_for_a_33_system/"
+    notes: >-
+      Reddit post supplied by the project author as a public explanatory source
+      for Cramer's rule as an oriented-volume ratio over a shared reference face.
+      Listed as a bounded linear-algebra/geometry source for the OTOM
+      Cramer's-rule oriented-volume adapter; not validation of broader OTOM claims.
+      Live page details were not independently verified in this commit environment.
+  - type: article
+    title: "On the Electrodynamics of Moving Bodies"
+    authors:
+      - family-names: "Einstein"
+        given-names: "Albert"
+    journal: "Annalen der Physik"
+    year: 1905
+    volume: 17
+    pages: "891-921"
+    doi: "10.1002/andp.19053221004"
+    notes: >-
+      Canonical special-relativity source for Lorentz transformations, relativity
+      of simultaneity, and invariant light-speed framing. Listed as bounded
+      physics/math reference for Lorentz-family adapters.
+  - type: article
+    title: "The Principle of Relativity"
+    authors:
+      - family-names: "Poincare"
+        given-names: "Henri"
+    journal: "Rendiconti del Circolo Matematico di Palermo"
+    year: 1906
+    volume: 21
+    pages: "129-176"
+    doi: "10.1007/BF03013466"
+    notes: >-
+      Canonical historical source for Lorentz group structure and relativity
+      principle. Listed as bounded reference for group-theoretic Lorentz variants.
+  - type: book
+    title: "Space-Time-Matter"
+    authors:
+      - family-names: "Weyl"
+        given-names: "Hermann"
+    year: 1922
+    notes: >-
+      Classical reference for spacetime geometry and relativistic invariance.
+      Listed as bounded historical/geometric source for Lorentzian framing.
+  - type: book
+    title: "The Classical Theory of Fields"
+    authors:
+      - family-names: "Landau"
+        given-names: "L. D."
+      - family-names: "Lifshitz"
+        given-names: "E. M."
+    year: 1975
+    notes: >-
+      Standard physics reference for Lorentz covariance, tensors, fields, and
+      relativistic dynamics. Listed as bounded source for Lorentz force and field
+      tensor adapter distinctions.
+  - type: book
+    title: "Gravitation"
+    authors:
+      - family-names: "Misner"
+        given-names: "Charles W."
+      - family-names: "Thorne"
+        given-names: "Kip S."
+      - family-names: "Wheeler"
+        given-names: "John Archibald"
+    year: 1973
+    notes: >-
+      Standard reference for Lorentzian geometry, tetrads/local Lorentz frames,
+      and causal structure in general relativity. Listed as bounded source for
+      local/global Lorentz adapter separation.
+  - type: book
+    title: "The Geometry of Minkowski Spacetime"
+    authors:
+      - family-names: "Naber"
+        given-names: "Gregory L."
+    year: 1992
+    notes: >-
+      Mathematical reference for Minkowski spacetime, Lorentz group geometry,
+      causal structure, and related representations. Listed as bounded source for
+      Lorentz-family adapter taxonomy.
+  - type: webpage
+    title: "Instant Raman"
+    url: "https://shekhardul.github.io/raman-instant/"
+    notes: >-
+      Separate web tool supplied by the project author for Raman spectral
+      analysis. The screenshot supplied by the project author shows spectral
+      data ingestion, auto cosmic ray removal, silicon calibration check, raw
+      spectrum display, baseline display, and an analysis workflow. It is listed
+      as an independent source/tool reference, not as part of the 3I-ATLAS post.
+      Live page details were not independently verified in this commit
+      environment.
+  - type: article
+    title: "Topological control of chirality and spin with structured light"
+    authors:
+      - family-names: "Mkhumbuza"
+        given-names: "Light"
+      - family-names: "Ornelas"
+        given-names: "Pedro"
+      - family-names: "Dudley"
+        given-names: "Angela"
+      - family-names: "Nape"
+        given-names: "Isaac"
+      - family-names: "Forbes"
+        given-names: "Kayn A."
+    journal: "Light: Science & Applications"
+    year: 2026
+    volume: 15
+    issue: 214
+    doi: "10.1038/s41377-026-02278-6"
+    url: "https://doi.org/10.1038/s41377-026-02278-6"
+    notes: >-
+      Uploaded PDF supplied by the project author. Listed as a bounded optics-domain
+      source for topology-controlled structured light, optical chirality, and
+      spin-orbit interaction; not validation of broader non-optical OTOM claims.
+  - type: article
+    title: "Multifunctional metasurfaces enabled by simultaneous and independent control of phase and amplitude for orthogonal polarization states"
+    authors:
+      - family-names: "Liu"
+        given-names: "Mingze"
+      - family-names: "Zhu"
+        given-names: "Wenqi"
+      - family-names: "Huo"
+        given-names: "Pengcheng"
+      - family-names: "Feng"
+        given-names: "Lei"
+      - family-names: "Song"
+        given-names: "Maowen"
+      - family-names: "Zhang"
+        given-names: "Cheng"
+      - family-names: "Chen"
+        given-names: "Lu"
+      - family-names: "Lezec"
+        given-names: "Henri J."
+      - family-names: "Lu"
+        given-names: "Yanqing"
+      - family-names: "Agrawal"
+        given-names: "Amit"
+      - family-names: "Xu"
+        given-names: "Ting"
+    journal: "Light: Science & Applications"
+    year: 2021
+    volume: 10
+    issue: 107
+    doi: "10.1038/s41377-021-00552-3"
+    url: "https://doi.org/10.1038/s41377-021-00552-3"
+    notes: >-
+      Bounded optics-domain source for metasurface Jones-matrix control of
+      independent amplitude and phase for two orthogonal polarization states.
+  - type: article
+    title: "Free-standing bilayer metasurfaces in the visible"
+    authors:
+      - family-names: "Dorrah"
+        given-names: "Ahmed H."
+      - family-names: "Park"
+        given-names: "Joon-Suh"
+      - family-names: "Palmieri"
+        given-names: "Alfonso"
+      - family-names: "Capasso"
+        given-names: "Federico"
+    journal: "Nature Communications"
+    year: 2025
+    volume: 16
+    issue: 3126
+    doi: "10.1038/s41467-025-58205-7"
+    url: "https://doi.org/10.1038/s41467-025-58205-7"
+    notes: >-
+      Bounded optics-domain source for bilayer metasurface composition and
+      geometric phase control in visible free-standing TiO2 nanofin stacks.
+  - type: article
+    title: "Creating pairs of exceptional points for arbitrary polarization control: asymmetric vectorial wavefront modulation"
+    authors:
+      - family-names: "Yang"
+        given-names: "Zijin"
+      - family-names: "Huang"
+        given-names: "Po-Sheng"
+      - family-names: "Lin"
+        given-names: "Yu-Tsung"
+      - family-names: "Qin"
+        given-names: "Haoye"
+      - family-names: "Zuniga-Perez"
+        given-names: "Jesus"
+      - family-names: "Shi"
+        given-names: "Yuzhi"
+      - family-names: "Wang"
+        given-names: "Zhanshan"
+      - family-names: "Cheng"
+        given-names: "Xinbin"
+      - family-names: "Tang"
+        given-names: "Man-Chung"
+      - family-names: "Han"
+        given-names: "Sanyang"
+      - family-names: "Kante"
+        given-names: "Boubacar"
+      - family-names: "Li"
+        given-names: "Bo"
+      - family-names: "Wu"
+        given-names: "Pin Chieh"
+      - family-names: "Genevet"
+        given-names: "Patrice"
+      - family-names: "Song"
+        given-names: "Qinghua"
+    journal: "Nature Communications"
+    year: 2024
+    volume: 15
+    issue: 232
+    doi: "10.1038/s41467-023-44428-z"
+    url: "https://doi.org/10.1038/s41467-023-44428-z"
+    notes: >-
+      Bounded optics-domain source for exceptional-point pairs, asymmetric
+      circular-polarization conversion, and PB phase control.
+  - type: article
+    title: "Exploiting hidden singularity on the surface of the Poincare sphere"
+    authors:
+      - family-names: "Li"
+        given-names: "Jinxing"
+      - family-names: "Jana"
+        given-names: "Aloke"
+      - family-names: "Yuan"
+        given-names: "Yueyi"
+      - family-names: "Zhang"
+        given-names: "Kuang"
+      - family-names: "Burokur"
+        given-names: "Shah Nawaz"
+      - family-names: "Genevet"
+        given-names: "Patrice"
+    journal: "Nature Communications"
+    year: 2025
+    volume: 16
+    issue: 5953
+    doi: "10.1038/s41467-025-60956-2"
+    url: "https://doi.org/10.1038/s41467-025-60956-2"
+    notes: >-
+      Bounded optics-domain source for co-polarized singular phase, Jones/Poincare
+      sphere evolution, and hidden singularity phase circulation.
+  - type: article
+    title: "Bilayer optical metasurfaces with multiple broken symmetries for nonlinear wavelength generation"
+    authors:
+      - family-names: "Zheng"
+        given-names: "Yuruo"
+      - family-names: "Barati Sedeh"
+        given-names: "H."
+      - family-names: "Ji"
+        given-names: "Yaoyang"
+      - family-names: "Feng"
+        given-names: "Liang"
+      - family-names: "Vincenti"
+        given-names: "M."
+      - family-names: "Scalora"
+        given-names: "Michael"
+      - family-names: "Litchinitser"
+        given-names: "N."
+    journal: "npj Metamaterials"
+    year: 2026
+    volume: 2
+    issue: 6
+    doi: "10.1038/s44455-025-00016-3"
+    url: "https://doi.org/10.1038/s44455-025-00016-3"
+    notes: >-
+      Bounded optics-domain source for double-layer metasurfaces with vertical and
+      horizontal broken symmetries enabling enhanced third-harmonic generation
+      through photonic-crystal effects and coupled guided-mode resonances.

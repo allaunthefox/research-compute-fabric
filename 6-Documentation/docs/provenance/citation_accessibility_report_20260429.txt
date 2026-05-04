@@ -1,0 +1,81 @@
+Citation Accessibility Verification Report
+Date: 2026-04-30T00:53:13Z
+=========================================
+
+Extracting URLs from markdown files...
+
+Found URLs:
+http://localhost:3000/health/notion
+https://en.wikipedia.org/wiki/Attractor
+https://en.wikipedia.org/wiki/Entropy_(information_theory
+https://en.wikipedia.org/wiki/Fourier_transform
+https://en.wikipedia.org/wiki/Hebbian_theory
+https://en.wikipedia.org/wiki/Laplacian_matrix
+https://en.wikipedia.org/wiki/Neural_coding
+https://en.wikipedia.org/wiki/Tangent_space
+https://en.wikipedia.org/wiki/Wave_function_collapse
+https://huggingface.co/datasets/leloy/enwik8`
+https://knowledge.workspace.google.com/admin/billing/cancel-google-workspace
+https://knowledge.workspace.google.com/admin/billing/cancel-google-workspace-for-gmail-accounts?hl=en&sjid=6205173843979796086-NC&visit_id=639127888147265825-1877941944&rd=1#:~:text=Personal%20data%20associated%20with%20these%20services%20is%20retained
+https://linear.app/settings/api
+https://workspace.google.com/pricing
+https://www.notion.so/my-integrations
+https://www.notion.so/USER/DATABASE_ID?v=...`
+http://www.scholarpedia.org/article/Spike-timing_dependent_plasticity
+
+Checking accessibility...
+
+Checking: http://localhost:3000/health/notion
+  Status: 404 - NOT ACCESSIBLE
+
+Checking: https://en.wikipedia.org/wiki/Attractor
+  Status: 200 - ACCESSIBLE
+
+Checking: https://en.wikipedia.org/wiki/Entropy_(information_theory
+  Status: 404 - NOT ACCESSIBLE
+
+Checking: https://en.wikipedia.org/wiki/Fourier_transform
+  Status: 200 - ACCESSIBLE
+
+Checking: https://en.wikipedia.org/wiki/Hebbian_theory
+  Status: 200 - ACCESSIBLE
+
+Checking: https://en.wikipedia.org/wiki/Laplacian_matrix
+  Status: 200 - ACCESSIBLE
+
+Checking: https://en.wikipedia.org/wiki/Neural_coding
+  Status: 200 - ACCESSIBLE
+
+Checking: https://en.wikipedia.org/wiki/Tangent_space
+  Status: 200 - ACCESSIBLE
+
+Checking: https://en.wikipedia.org/wiki/Wave_function_collapse
+  Status: 200 - ACCESSIBLE
+
+Checking: https://huggingface.co/datasets/leloy/enwik8`
+  Status: 401 - NOT ACCESSIBLE
+
+Checking: https://knowledge.workspace.google.com/admin/billing/cancel-google-workspace
+  Status: 200 - ACCESSIBLE
+
+Checking: https://knowledge.workspace.google.com/admin/billing/cancel-google-workspace-for-gmail-accounts?hl=en&sjid=6205173843979796086-NC&visit_id=639127888147265825-1877941944&rd=1#:~:text=Personal%20data%20associated%20with%20these%20services%20is%20retained
+  Status: 200 - ACCESSIBLE
+
+Checking: https://linear.app/settings/api
+  Status: 200 - ACCESSIBLE
+
+Checking: https://workspace.google.com/pricing
+  Status: 200 - ACCESSIBLE
+
+Checking: https://www.notion.so/my-integrations
+  Status: 200 - ACCESSIBLE
+
+Checking: https://www.notion.so/USER/DATABASE_ID?v=...`
+  Status: 404 - NOT ACCESSIBLE
+
+Checking: http://www.scholarpedia.org/article/Spike-timing_dependent_plasticity
+  Status: 200 - ACCESSIBLE
+
+=========================================
+Verification complete.
+Report saved to: /home/allaun/Documents/Research Stack/docs/provenance/citation_accessibility_report_20260429.txt

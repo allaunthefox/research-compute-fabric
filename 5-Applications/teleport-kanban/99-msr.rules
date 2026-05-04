@@ -1,0 +1,19 @@
+# Udev rule for MSR access for Soliton Governor
+# This allows the thermodynamic governor to access Model Specific Registers
+# for P-State control and thermal monitoring on AMD Zen 5 processors
+
+# Create MSR device nodes with proper permissions
+KERNEL=="msr[0-9]*", GROUP="msr", MODE="0660"
+
+# Create CPU device nodes for thermal monitoring
+KERNEL=="cpu[0-9]*", SUBSYSTEM=="cpu", GROUP="msr", MODE="0664"
+
+# Create hwmon device nodes for temperature sensors
+KERNEL=="hwmon[0-9]*", SUBSYSTEM=="hwmon", GROUP="msr", MODE="0664"
+
+# Create thermal device nodes
+KERNEL=="thermal_zone[0-9]*", SUBSYSTEM=="thermal", GROUP="msr", MODE="0664"
+
+# Create powercap device nodes for power monitoring
+KERNEL=="intel-rapl:[0-9]*", SUBSYSTEM=="powercap", GROUP="msr", MODE="0664"
+KERNEL=="amd_energy:[0-9]*", SUBSYSTEM=="powercap", GROUP="msr", MODE="0664"

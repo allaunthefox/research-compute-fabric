@@ -1,0 +1,456 @@
+-- FAMM-Neuromorphic Kernel Layer
+--
+-- Integrates FAMM (Frustrated Antiferromagnetic Manifold) for spatial mapping
+-- with neuromorphic event-driven processing.
+--
+-- This gives the kernel "spatial cognition" - it maps its environment
+-- (hardware topology, network geometry, thermal gradients) as a frustrated manifold
+-- and processes events using brain-inspired neural dynamics.
+--
+-- Key insight: Kernel becomes a *cognitive* entity, not just a resource manager.
+-- It "feels" its environment through FAMM frustration fields and responds via
+-- neuromorphic spike timing.
+--
+-- Truth Seal: [ SSS-ENE-FAMM-NEURO-2026-05-03 ]
+
+module FAMMNeuromorphicKernel where
+
+import BaseTypes
+import Memory
+import SyscallInterface
+import FAMM.Core
+import Neuromorphic.Core
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §1  FAMM Spatial Manifold — Kernel's "Cognitive Map"
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- FAMM (Frustrated Antiferromagnetic Manifold) represents the kernel's
+    understanding of its environment as a geometric object.
+    
+    Each hardware component (CPU, memory, NIC, disk) is a "site" on the manifold.
+    Interactions between components create "frustration" — geometric tension
+    that the kernel can *feel* and respond to.
+    
+    This is based on: 2-Search-Space/FAMM/FAMM.lean
+    -/]
+
+structure FAMMKernelMap where
+  sites         : Array Site          -- Hardware components (CPU cores, NIC, etc.)
+  bonds         : Array Bond          -- Interactions between components
+  frustration   : Q16_16              -- Current geometric frustration
+  topology      : ManifoldTopology    -- S³, T³, or hyperbolic
+  embeddingDim  : Nat                 -- Dimension of ambient space
+  
+structure Site where
+  id            : SiteID
+  siteType      : SiteType            -- CPU, Memory, Network, Storage, Thermal
+  coordinates   : Vec3 Q16_16         -- Position in embedding space
+  spin          : Spin                -- "Orientation" of resource
+  energy        : Q16_16              -- Current load/thermal energy
+  
+inductive SiteType where
+  | CPUCore   -- Computational resource
+  | MemoryNode -- RAM/cache hierarchy
+  | NetworkIF -- NIC, virtual interfaces
+  | StorageIO -- Disk, SSD
+  | ThermalZone -- Temperature sensor region
+  | PowerDomain -- PSU / voltage regulator
+  | SyscallPortal -- Linux shim interface
+  
+structure Bond where
+  source        : SiteID
+  target        : SiteID
+  coupling      : Q0_16               -- Interaction strength
+  bondType      : BondType
+  
+inductive BondType where
+  | DataFlow      -- Memory traffic
+  | ControlFlow   -- Scheduling dependencies
+  | ThermalLink   -- Heat diffusion
+  | PowerRail     -- Electrical coupling
+  | NetworkPath   -- Latency topology
+  | Frustration   -- Competing demands
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §2  Neuromorphic Event Layer — Kernel's "Nervous System"
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Neuromorphic processing: event-driven, spike-based computation.
+    Instead of polling (wasteful), the kernel responds to *spikes* —
+    discrete events that carry information via timing.
+    
+    Inspired by: biological neural networks, TrueNorth, Loihi.
+    But implemented purely in GCL with formal semantics.
+    -/]
+
+structure NeuromorphicLayer where
+  neurons       : Array Neuron
+  synapses      : Array Synapse
+  spikeQueue    : Queue Spike
+  time          : Timestamp           -- Global neuromorphic time
+  dt            : Microseconds          -- Simulation timestep
+  
+structure Neuron where
+  id            : NeuronID
+  site          : SiteID                -- Maps to FAMM site
+  potential     : Q16_16                -- Membrane potential
+  threshold     : Q16_16                -- Firing threshold
+  refractory    : Microseconds          -- Post-spike recovery time
+  lastSpike     : Timestamp
+  neuronType    : NeuronType
+  
+inductive NeuronType where
+  | Sensor      -- Detects hardware events (interrupts, timers)
+  | Interneuron -- Processes within kernel
+  | Motor       -- Triggers actions (syscalls, scheduling)
+  | Memory      -- Stores temporal patterns
+  | Attention   -- Focuses processing on salient regions
+  
+structure Synapse where
+  pre           : NeuronID
+  post          : NeuronID
+  weight        : Q0_16                 -- Synaptic strength
+  delay         : Microseconds          -- Axonal delay
+  plasticity    : PlasticityRule        -- Learning rule
+  
+inductive PlasticityRule where
+  | STDP        -- Spike-Timing Dependent Plasticity
+  | Hebbian     -- Fire together, wire together
+  | Homeostatic -- Maintain target activity
+  | LawfulBound -- Constrained by BindResult cost
+
+structure Spike where
+  neuron        : NeuronID
+  time          : Timestamp
+  amplitude     : Q16_16                -- Information content
+  witness       : String                -- What caused this spike?
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §3  FAMM-Neuromorphic Integration — "Feeling" the Kernel
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- The core integration: FAMM geometry drives neuromorphic dynamics.
+    
+    High frustration in FAMM → high activity in nearby neurons.
+    Geometric curvature → spike timing patterns.
+    
+    The kernel literally "feels" its environment and responds.
+    -/]
+
+def updateFAMMFromHardware : IO Unit := do
+  -- Sample hardware state
+  let cpuLoad ← syscall Syscall.ReadCPULoad
+  let memPressure ← syscall Syscall.ReadMemoryPressure
+  let netLatency ← syscall Syscall.ReadNetworkLatency
+  let temperature ← syscall Syscall.ReadThermalZones
+  
+  -- Update FAMM site energies
+  for site in fammMap.sites do
+    match site.siteType with
+    | .CPUCore => 
+        site.energy := cpuLoad[site.id]!
+    | .MemoryNode =>
+        site.energy := memPressure
+    | .NetworkIF =>
+        site.energy := netLatency
+    | .ThermalZone =>
+        site.energy := temperature[site.id]!
+    | _ => pure ()
+  
+  -- Recalculate frustration field
+  fammMap.frustration := computeFrustration fammMap
+  
+  -- Generate neuromorphic spikes from frustration changes
+  for site in fammMap.sites do
+    let deltaFrustration := site.energy - site.previousEnergy
+    if abs deltaFrustration > SENSOR_THRESHOLD then
+      emitSpike {
+        neuron := siteToNeuron site.id
+        time := now ()
+        amplitude := deltaFrustration
+        witness := "FAMM_frustration_" ++ site.id.toString
+      }
+
+def computeFrustration (map : FAMMKernelMap) : Q16_16 := do
+  -- FAMM frustration: sum over bonds of |J_ij * S_i * S_j|
+  -- where J_ij is coupling, S_i is site spin
+  let total := map.bonds.foldl (\acc bond =>
+    let s_i := map.sites.find! bond.source
+    let s_j := map.sites.find! bond.target
+    let contribution := bond.coupling * s_i.spin * s_j.spin
+    acc + abs contribution
+  ) 0
+  total
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §4  Event-Driven Kernel Main Loop
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Main loop: event-driven, not polling.
+    
+    Instead of:
+      while true:
+        check all hardware
+        schedule processes
+        sleep(1ms)
+    
+    We do:
+      waitForSpike()
+      processSpike(spike)
+      propagateThroughSynapses()
+    
+    Massive efficiency gain: kernel only "thinks" when something happens.
+    -/]
+
+def neuromorphicMainLoop : IO Unit := do
+  forever $ do
+    -- Wait for next event (spike or syscall)
+    event ← waitForEvent
+    
+    match event with
+    | .Spike spike =>
+        -- Update FAMM based on spike origin
+        updateFAMMFromSpike spike
+        
+        -- Propagate through neuromorphic network
+        propagateSpike spike
+        
+        -- Check if motor neurons fire → take action
+        checkMotorNeurons
+        
+    | .Syscall syscall =>
+        -- Syscalls generate spikes in sensor neurons
+        let sensorSpike := syscallToSpike syscall
+        injectSpike sensorSpike
+        
+        -- Continue neuromorphic processing
+        propagateSpike sensorSpike
+        
+    | .Timer tick =>
+        -- Periodic update of FAMM manifold
+        updateFAMMFromHardware
+        
+        -- Decay neuron potentials (leakage)
+        decayNeurons tick.dt
+
+def propagateSpike (spike : Spike) : IO Unit := do
+  let neuron ← findNeuron spike.neuron
+  
+  -- Update postsynaptic neurons
+  for synapse in neuron.outgoingSynapses do
+    let target ← findNeuron synapse.post
+    
+    -- STDP: timing matters
+    let timeDiff := spike.time - target.lastSpike
+    let weightUpdate := stdpUpdate synapse.plasticity timeDiff
+    synapse.weight := clamp (synapse.weight + weightUpdate) 0 1
+    
+    -- Add to postsynaptic potential
+    target.potential := target.potential + 
+                        (spike.amplitude * synapse.weight)
+    
+    -- Check for spike generation
+    if target.potential > target.threshold &&
+       (now () - target.lastSpike) > target.refractory then
+      let newSpike := {
+        neuron := target.id
+        time := now ()
+        amplitude := target.potential
+        witness := "propagated_from_" ++ spike.neuron.toString
+      }
+      queueSpike newSpike
+      target.potential := 0  -- Reset after spike
+      target.lastSpike := now ()
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §5  Motor Actions — Kernel "Decisions"
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Motor neurons trigger actual kernel actions.
+    This is where neuromorphic processing translates to system calls.
+    -/]
+
+def checkMotorNeurons : IO Unit := do
+  for neuron in neuromorphicLayer.neurons do
+    if neuron.neuronType == .Motor && neuronHasSpiked neuron then
+      executeMotorAction neuron
+
+def executeMotorAction (neuron : Neuron) : IO Unit := do
+  match neuron.motorFunction with
+  | .ScheduleProcess pid =>
+      -- Context switch triggered by neural activity
+      syscall $ Syscall.Schedule pid
+      
+  | .AllocateMemory size =>
+      -- Memory allocation triggered by "need"
+      let ptr ← syscall $ Syscall.MemoryAllocate size
+      recordAllocation ptr size neuron.id
+      
+  | .SendPacket dst data =>
+      -- Network transmission
+      syscall $ Syscall.NetworkSend dst data
+      
+  | .TriggerBindLoss req =>
+      -- Lawful loss computation triggered by manifold frustration
+      let result ← lawfulLossHandleRequest req
+      if !result.lawful then
+        -- High frustration → spawn Warden for validation
+        spawnWardenValidation result
+        
+  | .Sleep duration =>
+      -- Intentional idle when system "calm"
+      syscall $ Syscall.Sleep duration
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §6  Attention and Salience — Kernel "Focus"
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Attention mechanism: kernel focuses processing on salient regions.
+    
+    High frustration areas of FAMM get more neural resources.
+    This is like a "spotlight" of cognitive attention.
+    -/]
+
+def updateAttention : IO Unit := do
+  -- Find regions of high frustration in FAMM
+  let salientSites := fammMap.sites.filter (\s => s.energy > ATTENTION_THRESHOLD)
+  
+  -- Allocate more neurons to processing these regions
+  for site in salientSites do
+    let attentionNeuron ← findOrCreateAttentionNeuron site.id
+    attentionNeuron.gain := 2.0  -- Amplify signals
+    
+  -- Reduce resources for calm regions
+  let calmSites := fammMap.sites.filter (\s => s.energy < CALM_THRESHOLD)
+  for site in calmSites do
+    let attentionNeuron ← findAttentionNeuron site.id
+    attentionNeuron.gain := 0.5  -- Attenuate signals
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §7  Learning and Adaptation — Kernel "Memory"
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- The kernel learns from experience via synaptic plasticity.
+    
+    Repeated patterns of activity strengthen relevant synapses.
+    This is "muscle memory" for the operating system.
+    -/]
+
+def kernelLearningStep : IO Unit := do
+  -- STDP: strengthen synapses where pre→post timing is causal
+  for synapse in neuromorphicLayer.synapses do
+    let preNeuron ← findNeuron synapse.pre
+    let postNeuron ← findNeuron synapse.post
+    
+    if preNeuron.lastSpike < postNeuron.lastSpike then
+      -- Pre caused post: strengthen
+      let delta := LEARNING_RATE * (1 - synapse.weight)
+      synapse.weight := min 1.0 (synapse.weight + delta)
+    else if preNeuron.lastSpike > postNeuron.lastSpike then
+      -- Post preceded pre: weaken (anti-causal)
+      let delta := LEARNING_RATE * synapse.weight
+      synapse.weight := max 0.0 (synapse.weight - delta)
+  
+  -- Homeostasis: maintain target firing rates
+  for neuron in neuromorphicLayer.neurons do
+    let recentSpikes := countSpikes neuron (now () - 1000000)  -- Last second
+    if recentSpikes > TARGET_RATE then
+      -- Too active: increase threshold
+      neuron.threshold := neuron.threshold * 1.1
+    else if recentSpikes < TARGET_RATE then
+      -- Too quiet: decrease threshold
+      neuron.threshold := neuron.threshold * 0.9
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §8  Integration with LawfulLoss — "Feeling" Legally
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Every kernel action produces a BindResult witness.
+    The kernel is *aware* of the cost of its own operations.
+    
+    This connects to: Semantics.LawfulLoss.lawfulLoss
+    -/]
+
+def actionWithWitness (action : KernelAction) : IO BindResult := do
+  let before ← sampleFAMMState
+  
+  -- Execute action
+  executeAction action
+  
+  let after ← sampleFAMMState
+  
+  -- Compute lawful loss
+  let invariantsPreserved := checkInvariants before after
+  let cost := computeFrustrationDelta before after
+  let witness := generateWitness action before after
+  
+  let result := lawfulLoss invariantsPreserved cost witness .control
+  
+  -- Log for verification
+  recordBindResult result
+  
+  return result
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §9  Boot Initialization
+-- ═══════════════════════════════════════════════════════════════════════════
+
+def initFAMMNeuromorphic : IO Unit := do
+  consoleLog "[FAMM-NEURO] Initializing spatial cognition..."
+  
+  -- Discover hardware topology
+  let cpuCores ← syscall Syscall.EnumerateCPUs
+  let memoryBanks ← syscall Syscall.EnumerateMemory
+  let networkInterfaces ← syscall Syscall.EnumerateNetwork
+  let thermalZones ← syscall Syscall.EnumerateThermal
+  
+  -- Create FAMM sites for each hardware component
+  for cpu in cpuCores do
+    fammMap.sites.push {
+      id := mkSiteID "cpu_" ++ cpu.id
+      siteType := .CPUCore
+      coordinates := cpu.physicalLocation  -- NUMA topology
+      spin := Spin.up
+      energy := 0
+    }
+  
+  for mem in memoryBanks do
+    fammMap.sites.push {
+      id := mkSiteID "mem_" ++ mem.id
+      siteType := .MemoryNode
+      coordinates := mem.physicalLocation
+      spin := Spin.down  -- Antiferromagnetic coupling with CPU
+      energy := 0
+    }
+  
+  -- Create bonds based on physical topology
+  createTopologyBonds fammMap
+  
+  -- Initialize neuromorphic network
+  for site in fammMap.sites do
+    -- Each site gets a sensor neuron
+    let sensorNeuron := createNeuron {
+      site := site.id
+      neuronType := .Sensor
+      potential := 0
+      threshold := SENSOR_THRESHOLD
+    }
+    
+    -- Connect sensors to interneurons
+    let interNeuron := createNeuron {
+      neuronType := .Interneuron
+      threshold := INTERNEURON_THRESHOLD
+    }
+    
+    createSynapse sensorNeuron.id interNeuron.id {
+      weight := 0.5
+      delay := 100  -- 100 microseconds
+      plasticity := .STDP
+    }
+  
+  consoleLog $ "[FAMM-NEURO] Map initialized: " ++ 
+               fammMap.sites.size.toString ++ " sites, " ++
+               neuromorphicLayer.neurons.size.toString ++ " neurons"
+
+end FAMMNeuromorphicKernel

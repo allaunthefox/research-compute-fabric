@@ -1,0 +1,137 @@
+name: Wolfram Alpha Verification Check
+
+on:
+  pull_request:
+    paths:
+      - 'tools/lean/Semantics/**/*.lean'
+      - 'docs/AGENTS.md'
+  push:
+    paths:
+      - 'tools/lean/Semantics/**/*.lean'
+      - 'docs/AGENTS.md'
+
+jobs:
+  wolfram-verification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find changed Lean files
+        id: changed-files
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git diff --name-only origin/${{ github.base_ref }}...HEAD > /tmp/changed_files.txt
+          else
+            git diff --name-only HEAD~1 HEAD > /tmp/changed_files.txt
+          fi
+
+          # Filter for Lean files in Semantics
+          grep 'tools/lean/Semantics.*\.lean$' /tmp/changed_files.txt > /tmp/lean_files.txt || true
+
+          if [ -s /tmp/lean_files.txt ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            {
+              echo "files<<EOF"
+              cat /tmp/lean_files.txt
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check for mathematical formulas needing verification
+        if: steps.changed-files.outputs.changed == 'true'
+        run: |
+          python3 << 'EOF'
+          import re
+          import sys
+
+          # Read changed files
+          with open('/tmp/lean_files.txt', 'r') as f:
+              files = [line.strip() for line in f if line.strip()]
+
+          # Patterns that indicate mathematical formulas
+          math_patterns = [
+              r'Q16_16\.pow',              # Power operations
+              r'Q16_16\.sqrt',             # Square root
+              r'Q16_16\.sin',              # Trigonometric
+              r'Q16_16\.ln',               # Logarithm
+              r'Q16_16\.log2',             # Logarithm
+              r'Q16_16\.expNeg',           # Exponential
+              r'cross\s*\(',              # Cross product
+              r'dot\s*\(',                # Dot product
+              r'magnitude',               # Magnitude calculations
+              r'normalize',               # Normalization
+              r'exp\s*\(',                # Exponential
+              r'log\s*\(',                # Logarithm
+              r'sin\s*\(',                # Trigonometric
+              r'cos\s*\(',                # Trigonometric
+              r'tan\s*\(',                # Trigonometric
+          ]
+
+          # Check each file
+          violations = []
+          for file_path in files:
+              with open(file_path, 'r') as f:
+                  content = f.read()
+                  lines = content.split('\n')
+
+              # Find functions with mathematical operations
+              for i, line in enumerate(lines, 1):
+                  for pattern in math_patterns:
+                      if re.search(pattern, line):
+                          # Check if Wolfram Alpha verification comment exists nearby
+                          # Look in the current line and next 3 lines
+                          verification_found = False
+                          for j in range(max(0, i-2), min(len(lines), i+3)):
+                              if 'Verified with Wolfram Alpha' in lines[j] or 'wolfram-verify' in lines[j]:
+                                  verification_found = True
+                                  break
+
+                          if not verification_found:
+                              violations.append(f"{file_path}:{i}")
+                          break
+
+          if violations:
+              print("❌ Wolfram Alpha verification missing for mathematical formulas:")
+              for v in violations:
+                  print(f"  - {v}")
+              print("\nPlease add verification comments like:")
+              print("  -- Verified with Wolfram Alpha: formula matches standard quaternion multiplication")
+              print("Or mark with TODO if verification is deferred:")
+              print("  -- TODO(wolfram-verify): domain-specific operation")
+              sys.exit(1)
+          else:
+              print("✅ All mathematical formulas have Wolfram Alpha verification")
+          EOF
+
+      - name: Comment on PR if violations found
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ⚠️ Wolfram Alpha Verification Missing
+
+              This PR introduces mathematical formulas without Wolfram Alpha verification.
+
+              Please add verification comments to your code:
+              \`\`\`lean
+              -- Verified with Wolfram Alpha: formula matches standard quaternion multiplication
+              def myFormula (x : Q16_16) : Q16_16 := ...
+              \`\`\`
+
+              Or mark with TODO if verification is deferred:
+              \`\`\`lean
+              -- TODO(wolfram-verify): domain-specific operation
+              def customOp (x : Q16_16) : Q16_16 := ...
+              \`\`\`
+
+              See [AGENTS.md Section 5.1](docs/AGENTS.md) for details.`
+            })

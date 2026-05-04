@@ -1,0 +1,45 @@
+# Unimpeachable Hutter Compression Environment
+# Base: Alpine Linux (Minimal Substrate)
+# Security: Non-root user, static binaries where possible
+# Reproducibility: image digest pinned, project files verified against a lock manifest
+
+FROM alpine:3.19@sha256:c5b1261d6d31438d8629356ccab998a708cc890cfbd66468fe030076a953e5e2 AS base
+
+SHELL ["/bin/ash", "-ec"]
+
+# Phase 1: Build Substrate
+RUN apk add --no-cache \
+    build-base \
+    python3 \
+    tar \
+    xz
+
+# Phase 2: Create Hardened User
+RUN adduser -D -u 1000 hutter
+WORKDIR /home/hutter
+
+# Phase 3: Resource Limits & Minimal Config
+# uIP-style minimal networking is assumed via Container Runtime constraints (no-net)
+ENV PYTHONUNBUFFERED=1
+
+COPY Containerfile /opt/hutter/Containerfile
+COPY README.md /opt/hutter/README.md
+COPY components.lock.json /opt/hutter/components.lock.json
+COPY scripts /opt/hutter/scripts
+RUN python3 /opt/hutter/scripts/verify_components.py \
+    --lock /opt/hutter/components.lock.json \
+    --root /opt/hutter \
+ && python3 /opt/hutter/scripts/emit_build_manifest.py \
+    --root /opt/hutter \
+    --output /opt/hutter/build-manifest.json
+
+USER hutter
+
+# Metadata for reproducibility
+LABEL org.sovereign.stack.version="model_0001"
+LABEL org.sovereign.stack.mode="SOLIDIFIED_COMPRESSION"
+LABEL org.sovereign.stack.base_image="alpine:3.19@sha256:c5b1261d6d31438d8629356ccab998a708cc890cfbd66468fe030076a953e5e2"
+LABEL org.sovereign.stack.lock_manifest="/opt/hutter/components.lock.json"
+LABEL org.sovereign.stack.build_manifest="/opt/hutter/build-manifest.json"
+
+CMD ["/bin/sh"]

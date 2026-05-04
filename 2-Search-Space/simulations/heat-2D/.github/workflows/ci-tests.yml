@@ -1,0 +1,38 @@
+name: CMake Tests
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - uses: actions/checkout@v4.2.2
+
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y libeigen3-dev
+
+    - name: Configure CMake
+      run: cmake -S $GITHUB_WORKSPACE -B ${{runner.workspace}}/build
+
+    - name: Build tests
+      working-directory: ${{runner.workspace}}/build
+      run: cmake --build . --parallel
+
+    - name: Create test results directory
+      run: mkdir -p ${{runner.workspace}}/build/test-results
+
+    - name: Test
+      working-directory: ${{runner.workspace}}/build
+      run: ctest -V --output-on-failure --output-junit test-results/results.xml
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4.6.2
+      if: always()
+      with:
+        name: test_results_xml
+        path: ${{runner.workspace}}/build/test-results/results.xml

@@ -1,0 +1,73 @@
+name: Research Stack Agent Review
+
+# Manual-only to avoid notification spam.
+on:
+  workflow_dispatch:
+    inputs:
+      execute:
+        description: "Run generators and validators, not just static review"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+permissions:
+  contents: read
+
+jobs:
+  agent-review:
+    name: Agent review
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy matplotlib
+
+      - name: Install Node dependencies if package.json exists
+        run: |
+          if [ -f package.json ]; then
+            npm install
+          fi
+
+      - name: Run static agent review
+        if: ${{ inputs.execute == 'false' }}
+        run: |
+          python3 scripts/research_stack_agent_review.py --no-execute
+
+      - name: Run executing agent review
+        if: ${{ inputs.execute == 'true' }}
+        run: |
+          python3 scripts/research_stack_agent_review.py --execute
+
+      - name: Upload review artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: research-stack-agent-review
+          path: |
+            research-stack/agent-review/research_stack_agent_review.json
+            research-stack/agent-review/research_stack_agent_review.md
+            research-stack/constants/constants_registry_v0.json
+            research-stack/semantic-number-patterns/*.json
+            research-stack/models/**/*report.json
+            research-stack/models/**/*validation.json
+            research-stack/models/**/*.png
+            research-stack/models/**/*.csv
+          if-no-files-found: warn

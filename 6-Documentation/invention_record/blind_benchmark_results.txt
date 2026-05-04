@@ -1,0 +1,18 @@
+
+Scanning A.fa (500000 symbols)...
+  Result: ✗ NO LAWFUL REGIONS DETECTED (Pure Noise/Repetition/Sabotage)
+
+Scanning B.fa (500000 symbols)...
+  Result: ✗ NO LAWFUL REGIONS DETECTED (Pure Noise/Repetition/Sabotage)
+
+Scanning C.fa (500000 symbols)...
+  Result: ✓ 1 LAWFUL PHASE(S) DETECTED
+    - Locus: 200000nd - 300000nd (Width: 100000)
+    - Confidence: 100.0% Scale Stability
+    - Attractor: 1 (Lawful Informatic Phase)
+
+Scanning D.fa (500000 symbols)...
+  Result: ✗ NO LAWFUL REGIONS DETECTED (Pure Noise/Repetition/Sabotage)
+
+Scanning E.fa (500000 symbols)...
+  Result: ✗ NO LAWFUL REGIONS DETECTED (Pure Noise/Repetition/Sabotage)

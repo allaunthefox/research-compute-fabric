@@ -1,0 +1,25 @@
+-- GCL Kernel Module Registry
+-- Maps Research Stack math models to kernel subsystems
+-- Truth Seal: [ SSS-ENE-MODULES-2026-05-03 ]
+
+module ModuleRegistry where
+
+def registeredModules : Array KernelModule := #[
+  { id := "M001", name := "ThermodynamicStress",     source := "burgers_heat_diffusion",    function := "ThermalZoneManager",   status := .Active },
+  { id := "M002", name := "EntropyEncoding",         source := "shannon_entropy_v1",       function := "DeltaCompressor",      status := .Active },
+  { id := "M003", name := "RoutingCost",             source := "nuvmap_routing_v2",        function := "MemoryRouter",         status := .Active },
+  { id := "M004", name := "PISTGeometry",            source := "pist_shell_state_v1",      function := "ProcessTopology",      status := .Active },
+  { id := "M005", name := "BraidEventSequencing",    source := "braid_event_delta_gcl",    function := "EventScheduler",       status := .Active },
+  { id := "M006", name := "ShellStateClassification",source := "shell_state_classifier",   function := "ProcessClassifier",    status := .Active },
+  { id := "M007", name := "FAMMNanofield",           source := "famm_frustration_v2",      function := "ResourceBalancer",     status := .Active },
+  { id := "M008", name := "QuantumCompression",      source := "delta_gcl_compression",    function := "StateCompressor",      status := .Active },
+  { id := "M009", name := "WaveprobeTopology",       source := "waveprobe_metric_v1",      function := "NetworkMapper",        status := .Active },
+  { id := "M010", name := "AttestationHash",         source := "merkle_tree_v2",           function := "IntegrityChecker",     status := .Active },
+  { id := "M011", name := "TriumvirateConsensus",    source := "consensus_2of3_v1",        function := "FaultTolerance",       status := .Active },
+  { id := "M012", name := "LawfulLossBinding",       source := "lawful_loss_bind_v1",      function := "WitnessGenerator",     status := .Active },
+  { id := "M013", name := "NeuromorphicSpike",       source := "stdp_learning_v1",         function := "EventProcessor",       status := .Active },
+  { id := "M014", name := "FixedPointArithmetic",    source := "q16_16_math_v1",           function := "NumericEngine",        status := .Active },
+  { id := "M015", name := "ENESwarmTopology",        source := "topological_storage_v1",     function := "StorageManager",       status := .Active }
+]
+
+end ModuleRegistry

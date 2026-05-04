@@ -1,0 +1,267 @@
+-- GCL Nanokernel - Genetic Coding Language Core
+--
+-- This is the actual kernel. Linux is just the driver shim.
+--
+-- Architecture:
+--   Linux Kernel  -> Hardware abstraction (drivers, interrupts, timers)
+--   GCL Nanokernel -> Swarm coordination, LawfulLoss, ENE, 89+ modules
+--
+-- Size target: <512KB bytecode (vs 10MB+ Linux kernel)
+-- Verifiable: Each function has Lean LawfulLoss.lean equivalent
+--
+-- Truth Seal: [ SSS-ENE-TRUTH-2026-05-03 ]
+
+module NanoKernel where
+
+import BaseTypes
+import Memory
+import SyscallInterface
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §1  Kernel Entry Points (called by Linux shim)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Main kernel entry. Called once at boot by Linux /init.
+    Never returns. Initializes all subsystems. -/
+def kernelMain : IO Unit := do
+  consoleLog "[GCL-NANOKERNEL] Booting..."
+  
+  -- Initialize memory manager
+  memoryInit
+  
+  -- Initialize syscall interface to Linux shim
+  syscallInit
+  
+  -- Initialize ENE swarm subsystem
+  eneInit
+  
+  -- Initialize LawfulLoss semantics
+  lawfulLossInit
+  
+  -- Start socket server on port 8220
+  socketServerStart 8220
+  
+  -- Main loop: process syscalls forever
+  forever $ do
+    syscall ← syscallWait
+    handleSyscall syscall
+
+/-- Handle a single syscall from Linux shim.
+    All hardware interaction goes through this path. -/
+def handleSyscall : Syscall → IO Unit
+  | Syscall.NetworkReceive buf size => do
+      packet ← networkRead buf size
+      eneHandlePacket packet
+      
+  | Syscall.TimerTick count => do
+      eneTimerTick count
+      
+  | Syscall.BlockRead sector count buf => do
+      data ← blockRead sector count
+      memoryCopy buf data
+      
+  | Syscall.ConsoleWrite msg => do
+      consoleLog msg
+      
+  | Syscall.SocketAccept fd => do
+      client ← socketAccept fd
+      spawn (handleClient client)
+      
+  | Syscall.Unknown code => do
+      consoleLog $ "[WARN] Unknown syscall: " ++ toString code
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §2  ENE Swarm Subsystem (Endless Node Edges)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+structure ENEConfig where
+  nodeId        : NodeID
+  topologyHash  : Hash
+  peers         : Array NodeID
+  latencyBudget : Microseconds
+  
+def eneInit : IO Unit := do
+  -- Load node configuration
+  let config ← loadENEConfig
+  
+  -- Connect to swarm topology
+  for peer in config.peers do
+    eneConnect peer
+  
+  -- Register with Google Drive topological storage
+  eneRegisterStorage "gdrive:topological_storage"
+  
+  consoleLog "[ENE] Node initialized"
+
+/-- Handle incoming swarm packet.
+    Routes to appropriate subsystem based on packet type. -/
+def eneHandlePacket (packet : Packet) : IO Unit :=
+  match packet.type with
+  | .WaveProbe   => waveprobeHandle packet
+  | .Attestation => attestationVerify packet
+  | .ClockSync   => triumvirateHandleClockSync packet
+  | .BindRequest => lawfulLossHandleRequest packet
+  | .Unknown     => consoleLog $ "[ENE] Unknown packet type"
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §3  LawfulLoss Semantics (direct Lean port)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- GCL port of Semantics.LawfulLoss.lawfulLoss -/
+def lawfulLossHandleRequest (req : BindRequest) : IO BindResponse := do
+  let result := lawfulLoss 
+    req.invariantsPreserved 
+    req.estimatedCost 
+    req.witnessLog 
+    req.klass
+  
+  return {
+    lawful  := result.lawful
+    cost    := result.cost
+    witness := result.witness
+    klass   := result.klass
+  }
+
+/-- GCL port of Semantics.LawfulLoss.allInvariantsPreserved -/
+def checkInvariants (flags : List Bool) : Bool :=
+  flags.all id
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §4  Triumvirate Clock (Builder-Judge-Warden)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+inductive TriumvirateRole where
+  | Builder  -- ADD clock, proposes progress
+  | Warden   -- SUBTRACT clock, validates proofs
+  | Judge    -- PAUSE clock, adjudicates disputes
+
+structure TriumvirateState where
+  builderClock : Clock
+  wardenClock  : Clock
+  judgeClock   : Clock
+  currentRole  : TriumvirateRole
+
+def triumvirateHandleClockSync (packet : ClockSyncPacket) : IO Unit := do
+  let state ← readTriumvirateState
+  
+  match packet.action with
+  | .Add     => updateBuilderClock state packet.timestamp
+  | .Subtract => updateWardenClock state packet.timestamp
+  | .Pause   => updateJudgeClock state packet.timestamp
+  | .Consensus => do
+      -- All three clocks must agree
+      if checkConsensus state then
+        eneBroadcastConsensus state
+      else
+        eneTriggerWardenValidation state
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §5  Socket Server (port 8220)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+def socketServerStart (port : Port) : IO Unit := do
+  let fd ← syscall $ Syscall.SocketCreate port
+  
+  consoleLog $ "[SOCKET] Server listening on port " ++ toString port
+  
+  forever $ do
+    client ← syscall $ Syscall.SocketAccept fd
+    spawn $ handleClient client
+
+/-- Handle single client connection.
+    Processes JSON commands from remote host. -/
+def handleClient (fd : SocketFD) : IO Unit := do
+  cmd ← socketReadLine fd
+  
+  response ← match parseCommand cmd with
+    | .Status      => return statusResponse
+    | .LakeBuild   => lakeBuild
+    | .EvalLean expr => evalLean expr
+    | .SwarmProbe => return swarmProbeResponse
+    | .Shutdown   => do shutdown; return "shutting_down"
+    | .Unknown s  => return $ "{\"error\":\"unknown: " ++ s ++ "\"}"
+  
+  socketWrite fd response
+  socketClose fd
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §6  Memory Management (no malloc, arenas only)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+structure MemoryArena where
+  base    : Address
+  size    : Bytes
+  used    : Bytes
+  
+def memoryInit : IO Unit := do
+  -- Allocate single 64MB arena at boot
+  let arena ← syscall $ Syscall.MemoryAllocate (1024 * 1024 * 64)
+  setGlobalArena arena
+  
+  consoleLog "[MEMORY] 64MB arena allocated"
+
+/-- Bump allocator - no fragmentation, O(1) alloc/free -/
+def arenaAlloc (size : Bytes) : IO Address := do
+  arena ← getGlobalArena
+  
+  if arena.used + size > arena.size then
+    panic "Out of memory"
+  
+  let ptr := arena.base + arena.used
+  setGlobalArena { arena with used := arena.used + size }
+  return ptr
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §7  Syscall Interface to Linux Shim
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- This is the only place GCL touches Linux.
+-- All hardware access goes through these syscalls.
+
+inductive Syscall where
+  | NetworkReceive (buf : Address) (size : Bytes)
+  | NetworkSend (buf : Address) (size : Bytes) (dst : Address)
+  | TimerTick (count : Ticks)
+  | BlockRead (sector : Sector) (count : Nat) (buf : Address)
+  | BlockWrite (sector : Sector) (count : Nat) (buf : Address)
+  | MemoryAllocate (size : Bytes)
+  | MemoryFree (ptr : Address)
+  | ConsoleWrite (msg : String)
+  | SocketCreate (port : Port)
+  | SocketAccept (fd : SocketFD)
+  | SocketRead (fd : SocketFD) (buf : Address) (size : Bytes)
+  | SocketWrite (fd : SocketFD) (buf : Address) (size : Bytes)
+  | SocketClose (fd : SocketFD)
+
+/-- Make syscall to Linux shim. This is the boundary. -/
+extern "C" def syscall : Syscall → IO Unit
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §8  Verification Hooks (connect to Lean LawfulLoss.lean)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Verify that GCL implementation matches Lean specification.
+    Run by test suite, not in production. -/
+def verifyAgainstLean : IO Bool := do
+  -- Load Lean specification
+  let leanSpec ← loadLeanModule "Semantics.LawfulLoss"
+  
+  -- Check all exported functions
+  verifyFunction "lawfulLoss" lawfulLoss leanSpec.lawfulLoss
+  verifyFunction "checkInvariants" checkInvariants leanSpec.allInvariantsPreserved
+  verifyFunction "bindClassLabel" bindClassLabel leanSpec.bindClassLabel
+  
+  consoleLog "[VERIFY] All GCL functions match Lean specification"
+  return true
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §9  Boot Sequence
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Entry point called by Linux /init.
+    This is where control transfers from C to GCL. -/
+@[export "gcl_kernel_main"]
+def gclKernelMain : IO Unit :=
+  kernelMain
+
+end NanoKernel

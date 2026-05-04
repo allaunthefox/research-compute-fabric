@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sovereign Surface | Research Stack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --surface: rgba(255, 255, 255, 0.05);
+            --accent: #00ffcc;
+            --text: #e0e0e0;
+            --text-dim: #a0a0a0;
+            --glass: rgba(15, 15, 15, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+        }
+
+        /* Sidebar */
+        aside {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--accent);
+        }
+
+        .status-panel {
+            padding: 1rem;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-label { color: var(--text-dim); }
+        .status-value { font-family: 'JetBrains Mono', monospace; }
+
+        /* Main Content */
+        main {
+            padding: 2rem;
+            overflow-y: auto;
+            background: radial-gradient(circle at 50% 50%, #0a0a0a 0%, #050505 100%);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            background: var(--accent);
+            color: black;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .formula {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0,0,0,0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            overflow-x: auto;
+        }
+
+        .description {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        .live-indicator {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+    </style>
+</head>
+<body>
+    <aside>
+        <h1>SOVEREIGN<br>SURFACE</h1>
+        
+        <div class="status-panel">
+            <div class="status-item">
+                <span class="status-label">HEARTBEAT</span>
+                <span class="status-value"><span class="live-indicator"></span>LIVE</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">PHI (φ)</span>
+                <span id="phi-val" class="status-value">0.3547</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">GPU LOAD</span>
+                <span id="gpu-load" class="status-value">0%</span>
+            </div>
+            <div id="gpu-bar-container" style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 4px; overflow: hidden;">
+                <div id="gpu-bar" style="width: 0%; height: 100%; background: var(--accent); transition: width 0.5s;"></div>
+            </div>
+            <div class="status-item" style="margin-top: 1rem;">
+                <span class="status-label">REASONING ETC</span>
+                <span id="etc-val" class="status-value" style="color: var(--accent);">0s</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">FORMAL CORE</span>
+                <span class="status-value" style="color: #00ff00;">LOCKED</span>
+            </div>
+        </div>
+
+        <nav>
+            <!-- Navigation links would go here -->
+        </nav>
+    </aside>
+
+    <main>
+        <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="font-size: 1.8rem;">Equation Forest</h2>
+            <div class="tag" style="background: var(--surface); color: var(--text);">15 ACTIVE KERNELS</div>
+        </div>
+
+        <div id="equation-grid" class="grid">
+            <!-- Cards will be injected here -->
+        </div>
+    </main>
+
+    <script>
+        async function loadForest() {
+            const resp = await fetch('/api/forest');
+            const data = await resp.json();
+            const grid = document.getElementById('equation-grid');
+            
+            data.equations.forEach(eq => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="card-title">${eq.name}</span>
+                        <span class="tag">${eq.type}</span>
+                    </div>
+                    <div class="formula">${eq.formula}</div>
+                    <p class="description">${eq.description}</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function connectWS() {
+            const ws = new WebSocket(`ws://${window.location.host}/ws/telemetry`);
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'heartbeat') {
+                    document.getElementById('phi-val').innerText = data.phi.toFixed(4);
+                    document.getElementById('gpu-load').innerText = `${data.gpu.util}%`;
+                    document.getElementById('gpu-bar').style.width = `${data.gpu.util}%`;
+                    document.getElementById('etc-val').innerText = data.etc;
+                    
+                    // Update heartbeat pulse speed based on load
+                    const indicator = document.querySelector('.live-indicator');
+                    if (data.is_deriving) {
+                        indicator.style.animationDuration = '0.5s';
+                        indicator.style.background = '#ff0055';
+                    } else {
+                        indicator.style.animationDuration = '2s';
+                        indicator.style.background = 'var(--accent)';
+                    }
+                }
+            };
+            ws.onclose = () => setTimeout(connectWS, 5000);
+        }
+
+        loadForest();
+        connectWS();
+    </script>
+</body>
+</html>

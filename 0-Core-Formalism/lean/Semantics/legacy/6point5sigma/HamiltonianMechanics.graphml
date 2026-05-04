@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
+         http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- Key for node types -->
+  <key id="d0" for="node" attr.name="type" attr.type="string">
+    <default>definition</default>
+  </key>
+  <key id="d1" for="node" attr.name="label" attr.type="string"/>
+  <key id="d2" for="node" attr.name="region" attr.type="string"/>
+  <key id="d3" for="node" attr.name="status" attr.type="string">
+    <default>proven</default>
+  </key>
+  <key id="d4" for="node" attr.name="description" attr.type="string"/>
+  <key id="d5" for="edge" attr.name="relation" attr.type="string">
+    <default>uses</default>
+  </key>
+  <key id="d6" for="graph" attr.name="name" attr.type="string"/>
+
+  <graph id="G" edgedefault="directed">
+    <data key="d6">HamiltonianMechanics.lean — Dependency Graph</data>
+
+    <!-- ================================================================ -->
+    <!-- REGION: Single-Variable Analysis                                 -->
+    <!-- ================================================================ -->
+
+    <node id="ContinuousAt">
+      <data key="d0">definition</data>
+      <data key="d1">ContinuousAt</data>
+      <data key="d2">single-variable-analysis</data>
+      <data key="d4">ε-δ continuity of f : ℝ → ℝ at a point</data>
+    </node>
+
+    <node id="Continuous">
+      <data key="d0">definition</data>
+      <data key="d1">Continuous</data>
+      <data key="d2">single-variable-analysis</data>
+      <data key="d4">f is continuous at every point</data>
+    </node>
+
+    <node id="DifferentiableAt">
+      <data key="d0">definition</data>
+      <data key="d1">DifferentiableAt</data>
+      <data key="d2">single-variable-analysis</data>
+      <data key="d4">ε-δ differentiability of f : ℝ → ℝ at a point</data>
+    </node>
+
+    <node id="Differentiable">
+      <data key="d0">definition</data>
+      <data key="d1">Differentiable</data>
+      <data key="d2">single-variable-analysis</data>
+      <data key="d4">f is differentiable at every point</data>
+    </node>
+
+    <node id="CK">
+      <data key="d0">definition</data>
+      <data key="d1">CK</data>
+      <data key="d2">single-variable-analysis</data>
+      <data key="d4">Inductive C^k smoothness</data>
+    </node>
+
+    <node id="CInf">
+      <data key="d0">definition</data>
+      <data key="d1">CInf</data>
+      <data key="d2">single-variable-analysis</data>
+      <data key="d4">C^∞ : smooth for all k</data>
+    </node>
+
+    <node id="Convex">
+      <data key="d0">definition</data>
+      <data key="d1">Convex</data>
+      <data key="d2">single-variable-analysis</data>
+      <data key="d4">Convex function on ℝ via epigraph inequality</data>
+    </node>
+
+    <node id="constant_continuous">
+      <data key="d0">theorem</data>
+      <data key="d1">constant_continuous</data>
+      <data key="d2">single-variable-analysis</data>
+      <data key="d4">Constant functions are continuous</data>
+    </node>
+
+    <node id="identity_continuous">
+      <data key="d0">theorem</data>
+      <data key="d1">identity_continuous</data>
+      <data key="d2">single-variable-analysis</data>
+      <data key="d4">The identity function is continuous</data>
+    </node>
+
+    <node id="square_continuous">
+      <data key="d0">theorem</data>
+      <data key="d1">square_continuous</data>
+      <data key="d2">single-variable-analysis</data>
+      <data key="d4">x ↦ x² is continuous (ε-δ proof)</data>
+    </node>
+
+    <node id="square_differentiable">
+      <data key="d0">theorem</data>
+      <data key="d1">square_differentiable</data>
+      <data key="d2">single-variable-analysis</data>
+      <data key="d4">x ↦ x² is differentiable with derivative 2x</data>
+    </node>
+
+    <node id="division_by_constant_differentiable">
+      <data key="d0">theorem</data>
+      <data key="d1">division_by_constant_differentiable</data>
+      <data key="d2">single-variable-analysis</data>
+      <data key="d4">Division by non-zero constant preserves differentiability</data>
+    </node>
+
+    <node id="norm_squared_convex">
+      <data key="d0">theorem</data>
+      <data key="d1">norm_squared_convex</data>
+      <data key="d2">single-variable-analysis</data>
+      <data key="d4">x ↦ x² is convex</data>
+    </node>
+
+    <!-- ================================================================ -->
+    <!-- REGION: ODE Theory                                               -->
+    <!-- ================================================================ -->
+
+    <node id="IsSolution1D">
+      <data key="d0">definition</data>
+      <data key="d1">IsSolution1D</data>
+      <data key="d2">ode-theory</data>
+      <data key="d4">γ solves 1D ODE ẋ = f(x) with γ(0) = x₀</data>
+    </node>
+
+    <node id="IsSolutionND">
+      <data key="d0">definition</data>
+      <data key="d1">IsSolutionND</data>
+      <data key="d2">ode-theory</data>
+      <data key="d4">γ : ℝ → ℝⁿ solves nD ODE ẋ = f(x)</data>
+    </node>
+
+    <node id="picardIterate">
+      <data key="d0">definition</data>
+      <data key="d1">picardIterate</data>
+      <data key="d2">ode-theory</data>
+      <data key="d4">Picard iterates γ_{m+1}(t) = x₀ + ∫₀ᵗ f(γ_m(s)) ds</data>
+    </node>
+
+    <node id="constant_equilibrium_solution">
+      <data key="d0">theorem</data>
+      <data key="d1">constant_equilibrium_solution</data>
+      <data key="d2">ode-theory</data>
+      <data key="d4">Constant trajectory at equilibrium is a solution</data>
+    </node>
+
+    <node id="picard_lindelof_uniqueness">
+      <data key="d0">theorem</data>
+      <data key="d1">picard_lindelof_uniqueness</data>
+      <data key="d2">ode-theory</data>
+      <data key="d4">Uniqueness for globally Lipschitz ODEs via Gronwall</data>
+    </node>
+
+    <node id="picard_lindelof">
+      <data key="d0">theorem</data>
+      <data key="d1">picard_lindelof</data>
+      <data key="d2">ode-theory</data>
+      <data key="d3">existence-gap</data>
+      <data key="d4">Picard-Lindelöf: ∃! solution for Lipschitz f (existence via Banach FPT)</data>
+    </node>
+
+    <!-- ================================================================ -->
+    <!-- REGION: Phase Space & Multivariable Calculus                     -->
+    <!-- ================================================================ -->
+
+    <node id="PhaseSpace">
+      <data key="d0">definition</data>
+      <data key="d1">PhaseSpace n</data>
+      <data key="d2">phase-space</data>
+      <data key="d4">(q, p) pairs in ℝⁿ × ℝⁿ</data>
+    </node>
+
+    <node id="replaceQ">
+      <data key="d0">definition</data>
+      <data key="d1">replaceQ</data>
+      <data key="d2">phase-space</data>
+      <data key="d4">Replace q-coordinate at index i</data>
+    </node>
+
+    <node id="replaceP">
+      <data key="d0">definition</data>
+      <data key="d1">replaceP</data>
+      <data key="d2">phase-space</data>
+      <data key="d4">Replace p-coordinate at index i</data>
+    </node>
+
+    <node id="HasPartialDerivAtQ">
+      <data key="d0">definition</data>
+      <data key="d1">HasPartialDerivAtQ</data>
+      <data key="d2">phase-space</data>
+      <data key="d4">Partial derivative of H with respect to qᵢ</data>
+    </node>
+
+    <node id="HasPartialDerivAtP">
+      <data key="d0">definition</data>
+      <data key="d1">HasPartialDerivAtP</data>
+      <data key="d2">phase-space</data>
+      <data key="d4">Partial derivative of H with respect to pᵢ</data>
+    </node>
+
+    <node id="gradQ">
+      <data key="d0">definition</data>
+      <data key="d1">gradQ</data>
+      <data key="d2">phase-space</data>
+      <data key="d4">Gradient of H with respect to q-coordinates</data>
+    </node>
+
+    <node id="gradP">
+      <data key="d0">definition</data>
+      <data key="d1">gradP</data>
+      <data key="d2">phase-space</data>
+      <data key="d4">Gradient of H with respect to p-coordinates</data>
+    </node>
+
+    <!-- ================================================================ -->
+    <!-- REGION: Symplectic Structure                                     -->
+    <!-- ================================================================ -->
+
+    <node id="omega">
+      <data key="d0">definition</data>
+      <data key="d1">ω</data>
+      <data key="d2">symplectic-structure</data>
+      <data key="d4">Canonical symplectic form ω(u,v) = Σᵢ(pᵢq'ᵢ − qᵢp'ᵢ)</data>
+    </node>
+
+    <node id="omega_linear_left">
+      <data key="d0">theorem</data>
+      <data key="d1">ω_linear_left</data>
+      <data key="d2">symplectic-structure</data>
+      <data key="d4">ω is linear in its first argument</data>
+    </node>
+
+    <node id="omega_antisymmetric">
+      <data key="d0">theorem</data>
+      <data key="d1">ω_antisymmetric</data>
+      <data key="d2">symplectic-structure</data>
+      <data key="d4">ω(u,v) = −ω(v,u)</data>
+    </node>
+
+    <node id="omega_nondegenerate">
+      <data key="d0">theorem</data>
+      <data key="d1">ω_nondegenerate</data>
+      <data key="d2">symplectic-structure</data>
+      <data key="d4">ω(u,·) = 0 ⇒ u = 0</data>
+    </node>
+
+    <!-- ================================================================ -->
+    <!-- REGION: Hamiltonian Mechanics                                    -->
+    <!-- ================================================================ -->
+
+    <node id="HamiltonianVectorField">
+      <data key="d0">definition</data>
+      <data key="d1">HamiltonianVectorField</data>
+      <data key="d2">hamiltonian-mechanics</data>
+      <data key="d4">X_H = (∂H/∂p, −∂H/∂q)</data>
+    </node>
+
+    <node id="IsHamiltonianTrajectory">
+      <data key="d0">definition</data>
+      <data key="d1">IsHamiltonianTrajectory</data>
+      <data key="d2">hamiltonian-mechanics</data>
+      <data key="d4">γ satisfies ẋ = X_H(γ(t))</data>
+    </node>
+
+    <node id="hamiltonian_eqs_coordinates">
+      <data key="d0">theorem</data>
+      <data key="d1">hamiltonian_eqs_coordinates</data>
+      <data key="d2">hamiltonian-mechanics</data>
+      <data key="d4">Coordinate form: dqᵢ/dt = ∂H/∂pᵢ, dpᵢ/dt = −∂H/∂qᵢ</data>
+    </node>
+
+    <node id="HarmonicOscillatorH">
+      <data key="d0">definition</data>
+      <data key="d1">HarmonicOscillatorH</data>
+      <data key="d2">hamiltonian-mechanics</data>
+      <data key="d4">H(q,p) = p²/(2m) + kq²/2</data>
+    </node>
+
+    <node id="harmonic_oscillator_partial_p">
+      <data key="d0">theorem</data>
+      <data key="d1">harmonic_oscillator_partial_p</data>
+      <data key="d2">hamiltonian-mechanics</data>
+      <data key="d4">∂H/∂p = p/m (compositional HasDerivAt proof)</data>
+    </node>
+
+    <node id="harmonic_oscillator_partial_q">
+      <data key="d0">theorem</data>
+      <data key="d1">harmonic_oscillator_partial_q</data>
+      <data key="d2">hamiltonian-mechanics</data>
+      <data key="d4">∂H/∂q = kq (compositional HasDerivAt proof)</data>
+    </node>
+
+    <node id="gradQ_harmonic_oscillator">
+      <data key="d0">lemma</data>
+      <data key="d1">gradQ_harmonic_oscillator</data>
+      <data key="d2">hamiltonian-mechanics</data>
+      <data key="d4">gradQ H = k·q (proven via uniqueness of derivative)</data>
+    </node>
+
+    <node id="gradP_harmonic_oscillator">
+      <data key="d0">lemma</data>
+      <data key="d1">gradP_harmonic_oscillator</data>
+      <data key="d2">hamiltonian-mechanics</data>
+      <data key="d4">gradP H = p/m (proven via uniqueness of derivative)</data>
+    </node>
+
+    <node id="harmonic_oscillator_equations">
+      <data key="d0">theorem</data>
+      <data key="d1">harmonic_oscillator_equations</data>
+      <data key="d2">hamiltonian-mechanics</data>
+      <data key="d4">ẋq = p/m and ẋp = −kq for the harmonic oscillator</data>
+    </node>
+
+    <!-- ================================================================ -->
+    <!-- REGION: Energy & Conservation                                    -->
+    <!-- ================================================================ -->
+
+    <node id="clm_on_phaseSpace">
+      <data key="d0">lemma</data>
+      <data key="d1">clm_on_phaseSpace</data>
+      <data key="d2">energy-conservation</data>
+      <data key="d4">Basis expansion for continuous linear functionals on phase space</data>
+    </node>
+
+    <node id="energy_conservation">
+      <data key="d0">theorem</data>
+      <data key="d1">energy_conservation</data>
+      <data key="d2">energy-conservation</data>
+      <data key="d3">model-stub</data>
+      <data key="d4">d/dt H(γ(t)) = 0 along Hamiltonian trajectories</data>
+    </node>
+
+    <!-- ================================================================ -->
+    <!-- REGION: Poisson Brackets                                         -->
+    <!-- ================================================================ -->
+
+    <node id="poissonBracket">
+      <data key="d0">definition</data>
+      <data key="d1">poissonBracket</data>
+      <data key="d2">poisson-brackets</data>
+      <data key="d4">{f,g} = Σᵢ(∂f/∂qᵢ · ∂g/∂pᵢ − ∂f/∂pᵢ · ∂g/∂qᵢ)</data>
+    </node>
+
+    <node id="poissonBracket_antisym">
+      <data key="d0">theorem</data>
+      <data key="d1">poissonBracket_antisym</data>
+      <data key="d2">poisson-brackets</data>
+      <data key="d4">{f,g} = −{g,f}</data>
+    </node>
+
+    <node id="poissonBracket_self_zero">
+      <data key="d0">theorem</data>
+      <data key="d1">poissonBracket_self_zero</data>
+      <data key="d2">poisson-brackets</data>
+      <data key="d4">{H,H} = 0</data>
+    </node>
+
+    <node id="IsConserved">
+      <data key="d0">definition</data>
+      <data key="d1">IsConserved</data>
+      <data key="d2">poisson-brackets</data>
+      <data key="d4">f is conserved iff {f,H} = 0 everywhere</data>
+    </node>
+
+    <!-- ================================================================ -->
+    <!-- REGION: Flow of a Vector Field                                   -->
+    <!-- ================================================================ -->
+
+    <node id="IsFlow">
+      <data key="d0">definition</data>
+      <data key="d1">IsFlow</data>
+      <data key="d2">flow</data>
+      <data key="d4">Flow of a vector field: ϕ⁰ = id, d/dt ϕᵗ(x) = V(ϕᵗ(x))</data>
+    </node>
+
+    <node id="flow_identity">
+      <data key="d0">theorem</data>
+      <data key="d1">flow_identity</data>
+      <data key="d2">flow</data>
+      <data key="d4">ϕ⁰ = id</data>
+    </node>
+
+    <node id="flow_semigroup">
+      <data key="d0">theorem</data>
+      <data key="d1">flow_semigroup</data>
+      <data key="d2">flow</data>
+      <data key="d4">ϕˢ⁺ᵗ = ϕˢ ∘ ϕᵗ (proven via uniqueness)</data>
+    </node>
+
+    <!-- ================================================================ -->
+    <!-- REGION: Liouville's Theorem                                      -->
+    <!-- ================================================================ -->
+
+    <node id="hessianQQ">
+      <data key="d0">definition</data>
+      <data key="d1">hessianQQ</data>
+      <data key="d2">liouville</data>
+      <data key="d4">∂²H/∂qᵢ∂qⱼ</data>
+    </node>
+
+    <node id="hessianPP">
+      <data key="d0">definition</data>
+      <data key="d1">hessianPP</data>
+      <data key="d2">liouville</data>
+      <data key="d4">∂²H/∂pᵢ∂pⱼ</data>
+    </node>
+
+    <node id="hessianQP">
+      <data key="d0">definition</data>
+      <data key="d1">hessianQP</data>
+      <data key="d2">liouville</data>
+      <data key="d4">∂²H/∂qᵢ∂pⱼ</data>
+    </node>
+
+    <node id="hessianPQ">
+      <data key="d0">definition</data>
+      <data key="d1">hessianPQ</data>
+      <data key="d2">liouville</data>
+      <data key="d4">∂²H/∂pᵢ∂qⱼ</data>
+    </node>
+
+    <node id="DX_H_action">
+      <data key="d0">definition</data>
+      <data key="d1">DX_H_action</data>
+      <data key="d2">liouville</data>
+      <data key="d4">Derivative of Hamiltonian vector field at x applied to v</data>
+    </node>
+
+    <node id="hamiltonian_skew_symmetric">
+      <data key="d0">lemma</data>
+      <data key="d1">hamiltonian_skew_symmetric</data>
+      <data key="d2">liouville</data>
+      <data key="d3">model-stub</data>
+      <data key="d4">ω(DX_H·u, v) + ω(u, DX_H·v) = 0 (Clairaut's theorem)</data>
+    </node>
+
+    <node id="deriv_of_bilinear_omega">
+      <data key="d0">lemma</data>
+      <data key="d1">deriv_of_bilinear_ω</data>
+      <data key="d2">liouville</data>
+      <data key="d4">d/dt ω(a(t), b(t)) = ω(a', b) + ω(a, b')</data>
+    </node>
+
+    <node id="IsSymplecticMap">
+      <data key="d0">definition</data>
+      <data key="d1">IsSymplecticMap</data>
+      <data key="d2">liouville</data>
+      <data key="d4">F preserves ω at the linearized level</data>
+    </node>
+
+    <node id="liouville_theorem">
+      <data key="d0">theorem</data>
+      <data key="d1">liouville_theorem</data>
+      <data key="d2">liouville</data>
+      <data key="d3">model-stub</data>
+      <data key="d4">Flow of Hamiltonian vector field preserves ω</data>
+    </node>
+
+    <!-- ================================================================ -->
+    <!-- EDGES: Dependency Graph                                          -->
+    <!-- ================================================================ -->
+
+    <!-- Single-Variable Analysis dependencies -->
+    <edge source="Continuous" target="ContinuousAt"><data key="d5">depends-on</data></edge>
+    <edge source="CK" target="Continuous"><data key="d5">depends-on</data></edge>
+    <edge source="CK" target="Differentiable"><data key="d5">depends-on</data></edge>
+    <edge source="CInf" target="CK"><data key="d5">depends-on</data></edge>
+    <edge source="constant_continuous" target="ContinuousAt"><data key="d5">uses</data></edge>
+    <edge source="identity_continuous" target="ContinuousAt"><data key="d5">uses</data></edge>
+    <edge source="square_continuous" target="ContinuousAt"><data key="d5">uses</data></edge>
+    <edge source="square_differentiable" target="DifferentiableAt"><data key="d5">uses</data></edge>
+    <edge source="division_by_constant_differentiable" target="DifferentiableAt"><data key="d5">uses</data></edge>
+
+    <!-- ODE Theory dependencies -->
+    <edge source="IsSolution1D" target="HasDerivAt"><data key="d5">uses-mathlib</data></edge>
+    <edge source="IsSolutionND" target="HasDerivAt"><data key="d5">uses-mathlib</data></edge>
+    <edge source="constant_equilibrium_solution" target="IsSolution1D"><data key="d5">proves</data></edge>
+    <edge source="constant_equilibrium_solution" target="hasDerivAt_const"><data key="d5">uses-mathlib</data></edge>
+    <edge source="picard_lindelof_uniqueness" target="IsSolutionND"><data key="d5">uses</data></edge>
+    <edge source="picard_lindelof_uniqueness" target="exists_hasDerivAt_eq_slope"><data key="d5">uses-mathlib</data></edge>
+    <edge source="picard_lindelof" target="picard_lindelof_uniqueness"><data key="d5">uses-uniqueness</data></edge>
+    <edge source="picardIterate" target="IsSolutionND"><data key="d5">used-for</data></edge>
+    <edge source="picardIterate" target="intervalIntegral"><data key="d5">uses-mathlib</data></edge>
+
+    <!-- Phase Space dependencies -->
+    <edge source="replaceQ" target="PhaseSpace"><data key="d5">operates-on</data></edge>
+    <edge source="replaceP" target="PhaseSpace"><data key="d5">operates-on</data></edge>
+    <edge source="HasPartialDerivAtQ" target="replaceQ"><data key="d5">uses</data></edge>
+    <edge source="HasPartialDerivAtQ" target="HasDerivAt"><data key="d5">uses-mathlib</data></edge>
+    <edge source="HasPartialDerivAtP" target="replaceP"><data key="d5">uses</data></edge>
+    <edge source="HasPartialDerivAtP" target="HasDerivAt"><data key="d5">uses-mathlib</data></edge>
+    <edge source="gradQ" target="HasPartialDerivAtQ"><data key="d5">depends-on</data></edge>
+    <edge source="gradP" target="HasPartialDerivAtP"><data key="d5">depends-on</data></edge>
+
+    <!-- Symplectic Structure dependencies -->
+    <edge source="omega" target="PhaseSpace"><data key="d5">operates-on</data></edge>
+    <edge source="omega_linear_left" target="omega"><data key="d5">proves-property-of</data></edge>
+    <edge source="omega_antisymmetric" target="omega"><data key="d5">proves-property-of</data></edge>
+    <edge source="omega_nondegenerate" target="omega"><data key="d5">proves-property-of</data></edge>
+
+    <!-- Hamiltonian Mechanics dependencies -->
+    <edge source="HamiltonianVectorField" target="gradP"><data key="d5">uses</data></edge>
+    <edge source="HamiltonianVectorField" target="gradQ"><data key="d5">uses</data></edge>
+    <edge source="HamiltonianVectorField" target="PhaseSpace"><data key="d5">operates-on</data></edge>
+    <edge source="IsHamiltonianTrajectory" target="HamiltonianVectorField"><data key="d5">uses</data></edge>
+    <edge source="IsHamiltonianTrajectory" target="HasDerivAt"><data key="d5">uses-mathlib</data></edge>
+    <edge source="hamiltonian_eqs_coordinates" target="IsHamiltonianTrajectory"><data key="d5">uses</data></edge>
+    <edge source="hamiltonian_eqs_coordinates" target="HamiltonianVectorField"><data key="d5">uses</data></edge>
+    <edge source="hamiltonian_eqs_coordinates" target="HasDerivAt.fst"><data key="d5">uses-mathlib</data></edge>
+    <edge source="hamiltonian_eqs_coordinates" target="HasFDerivAt.comp_hasDerivAt"><data key="d5">uses-mathlib</data></edge>
+    <edge source="HarmonicOscillatorH" target="PhaseSpace"><data key="d5">operates-on</data></edge>
+    <edge source="harmonic_oscillator_partial_p" target="HasDerivAt"><data key="d5">uses-mathlib</data></edge>
+    <edge source="harmonic_oscillator_partial_p" target="hasDerivAt_pow"><data key="d5">uses-mathlib</data></edge>
+    <edge source="harmonic_oscillator_partial_q" target="HasDerivAt"><data key="d5">uses-mathlib</data></edge>
+    <edge source="harmonic_oscillator_partial_q" target="hasDerivAt_pow"><data key="d5">uses-mathlib</data></edge>
+    <edge source="gradQ_harmonic_oscillator" target="gradQ"><data key="d5">uses</data></edge>
+    <edge source="gradQ_harmonic_oscillator" target="harmonic_oscillator_partial_q"><data key="d5">uses</data></edge>
+    <edge source="gradQ_harmonic_oscillator" target="HasDerivAt.unique"><data key="d5">uses-mathlib</data></edge>
+    <edge source="gradP_harmonic_oscillator" target="gradP"><data key="d5">uses</data></edge>
+    <edge source="gradP_harmonic_oscillator" target="harmonic_oscillator_partial_p"><data key="d5">uses</data></edge>
+    <edge source="gradP_harmonic_oscillator" target="HasDerivAt.unique"><data key="d5">uses-mathlib</data></edge>
+    <edge source="harmonic_oscillator_equations" target="hamiltonian_eqs_coordinates"><data key="d5">uses</data></edge>
+    <edge source="harmonic_oscillator_equations" target="gradQ_harmonic_oscillator"><data key="d5">uses</data></edge>
+    <edge source="harmonic_oscillator_equations" target="gradP_harmonic_oscillator"><data key="d5">uses</data></edge>
+
+    <!-- Energy Conservation dependencies -->
+    <edge source="clm_on_phaseSpace" target="PhaseSpace"><data key="d5">operates-on</data></edge>
+    <edge source="energy_conservation" target="IsHamiltonianTrajectory"><data key="d5">uses</data></edge>
+    <edge source="energy_conservation" target="HamiltonianVectorField"><data key="d5">uses</data></edge>
+    <edge source="energy_conservation" target="clm_on_phaseSpace"><data key="d5">uses</data></edge>
+    <edge source="energy_conservation" target="HasFDerivAt.comp_hasDerivAt"><data key="d5">uses-mathlib</data></edge>
+    <edge source="energy_conservation" target="omega"><data key="d5">implicit-via</data></edge>
+
+    <!-- Poisson Bracket dependencies -->
+    <edge source="poissonBracket" target="gradQ"><data key="d5">uses</data></edge>
+    <edge source="poissonBracket" target="gradP"><data key="d5">uses</data></edge>
+    <edge source="poissonBracket" target="PhaseSpace"><data key="d5">operates-on</data></edge>
+    <edge source="poissonBracket_antisym" target="poissonBracket"><data key="d5">proves-property-of</data></edge>
+    <edge source="poissonBracket_self_zero" target="poissonBracket_antisym"><data key="d5">uses</data></edge>
+    <edge source="IsConserved" target="poissonBracket"><data key="d5">uses</data></edge>
+
+    <!-- Flow dependencies -->
+    <edge source="IsFlow" target="HasDerivAt"><data key="d5">uses-mathlib</data></edge>
+    <edge source="IsFlow" target="PhaseSpace"><data key="d5">operates-on</data></edge>
+    <edge source="flow_identity" target="IsFlow"><data key="d5">proves-property-of</data></edge>
+    <edge source="flow_semigroup" target="IsFlow"><data key="d5">uses</data></edge>
+    <edge source="flow_semigroup" target="picard_lindelof_uniqueness"><data key="d5">uses</data></edge>
+
+    <!-- Liouville's Theorem dependencies -->
+    <edge source="hessianQQ" target="gradQ"><data key="d5">differentiates</data></edge>
+    <edge source="hessianQQ" target="replaceQ"><data key="d5">uses</data></edge>
+    <edge source="hessianPP" target="gradP"><data key="d5">differentiates</data></edge>
+    <edge source="hessianPP" target="replaceP"><data key="d5">uses</data></edge>
+    <edge source="hessianQP" target="gradQ"><data key="d5">differentiates</data></edge>
+    <edge source="hessianQP" target="replaceP"><data key="d5">uses</data></edge>
+    <edge source="hessianPQ" target="gradP"><data key="d5">differentiates</data></edge>
+    <edge source="hessianPQ" target="replaceQ"><data key="d5">uses</data></edge>
+    <edge source="DX_H_action" target="hessianQQ"><data key="d5">uses</data></edge>
+    <edge source="DX_H_action" target="hessianPP"><data key="d5">uses</data></edge>
+    <edge source="DX_H_action" target="hessianQP"><data key="d5">uses</data></edge>
+    <edge source="DX_H_action" target="hessianPQ"><data key="d5">uses</data></edge>
+    <edge source="hamiltonian_skew_symmetric" target="DX_H_action"><data key="d5">uses</data></edge>
+    <edge source="hamiltonian_skew_symmetric" target="omega"><data key="d5">uses</data></edge>
+    <edge source="hamiltonian_skew_symmetric" target="hessianQQ"><data key="d5">uses-via-clairaut</data></edge>
+    <edge source="hamiltonian_skew_symmetric" target="hessianPP"><data key="d5">uses-via-clairaut</data></edge>
+    <edge source="hamiltonian_skew_symmetric" target="hessianQP"><data key="d5">uses-via-clairaut</data></edge>
+    <edge source="hamiltonian_skew_symmetric" target="hessianPQ"><data key="d5">uses-via-clairaut</data></edge>
+    <edge source="deriv_of_bilinear_omega" target="omega"><data key="d5">uses</data></edge>
+    <edge source="deriv_of_bilinear_omega" target="HasDerivAt"><data key="d5">uses-mathlib</data></edge>
+    <edge source="deriv_of_bilinear_omega" target="HasDerivAt.mul"><data key="d5">uses-mathlib</data></edge>
+    <edge source="IsSymplecticMap" target="omega"><data key="d5">uses</data></edge>
+    <edge source="liouville_theorem" target="IsFlow"><data key="d5">uses</data></edge>
+    <edge source="liouville_theorem" target="HamiltonianVectorField"><data key="d5">uses</data></edge>
+    <edge source="liouville_theorem" target="hamiltonian_skew_symmetric"><data key="d5">uses</data></edge>
+    <edge source="liouville_theorem" target="deriv_of_bilinear_omega"><data key="d5">uses</data></edge>
+    <edge source="liouville_theorem" target="IsSymplecticMap"><data key="d5">proves</data></edge>
+    <edge source="liouville_theorem" target="exists_hasDerivAt_eq_slope"><data key="d5">uses-mathlib</data></edge>
+
+    <!-- Cross-region conceptual edges -->
+    <edge source="HamiltonianVectorField" target="omega"><data key="d5">musical-isomorphism</data></edge>
+    <edge source="IsHamiltonianTrajectory" target="IsSolutionND"><data key="d5">instantiates</data></edge>
+    <edge source="poissonBracket" target="omega"><data key="d5">equivalent-to</data></edge>
+    <edge source="energy_conservation" target="poissonBracket_self_zero"><data key="d5">analogous-to</data></edge>
+    <edge source="flow_semigroup" target="picard_lindelof"><data key="d5">requires-existence</data></edge>
+    <edge source="liouville_theorem" target="flow_semigroup"><data key="d5">complements</data></edge>
+
+  </graph>
+</graphml>

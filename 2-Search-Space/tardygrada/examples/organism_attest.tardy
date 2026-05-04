@@ -1,0 +1,39 @@
+// Organism Attestation Agent
+//
+// Wraps the Research Stack's generate_trace_attestation.py output in a
+// Tardygrada @verified envelope.
+//
+// Integrity tier: @verified (SHA-256 + mprotect)
+//   - Hash is kernel-protected after writing; modifying artifact and
+//     updating hash simultaneously requires a kernel exploit
+//   - Replaces: generate_trace_attestation.py JSON output (filesystem-trust only)
+//
+// Usage:
+//   ./tardygrada examples/organism_attest.tardy
+//   (then send MCP messages with artifact paths via stdin)
+//
+// Integration path:
+//   1. Run generate_trace_attestation.py as before → trace_attestation.json
+//   2. Feed sha256 + path to this agent via receive()
+//   3. Agent seals them @verified → kernel-protected attestation record
+//   Warden upgrade: change @verified → @sovereign for ed25519 + BFT signing
+
+agent OrganismWarden @semantics(
+    truth.min_confidence: 0.99,
+    truth.min_consensus_agents: 1,
+    pipeline.min_passing_layers: 6,
+) {
+    invariant(trust_min: @verified)
+
+    // Artifact hashes — sealed at kernel level after receipt
+    let db_hash:       str = receive("substrate_index.db sha256")       @verified
+    let attest_hash:   str = receive("trace_attestation.json sha256")   @verified
+    let metrics_hash:  str = receive("metrics.log sha256")              @verified
+
+    // Attestation metadata
+    let dag_tick:      str = receive("current DAG tick")                @verified
+    let branch:        str = receive("git branch")                      @verified
+
+    // Warden identity — sovereign tier: ed25519 signed, BFT replicated
+    let warden_id:     str = "organism-warden-v1" @sovereign
+}

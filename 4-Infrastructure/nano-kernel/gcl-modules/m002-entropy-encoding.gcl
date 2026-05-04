@@ -1,0 +1,46 @@
+-- M002: Entropy Encoding Kernel Module
+-- Source: shannon_entropy_v1 (3-Mathematical-Models)
+-- Kernel Function: DeltaCompressor
+--
+-- Shannon entropy H(X) = -Σ p(x) log₂ p(x)
+-- Used for adaptive compression ratio estimation.
+-- Truth Seal: [ SSS-ENE-ENTROPY-2026-05-03 ]
+
+module M002_EntropyEncoding where
+
+import BaseTypes
+import Semantics.Q0_16 (Q0_16)
+
+structure SymbolDistribution where
+  symbols   : Array UInt8
+  counts    : Array Nat
+  total     : Nat
+  
+def shannonEntropy (dist : SymbolDistribution) : Q0_16 :=
+  let entropy := dist.counts.foldl (\acc count =>
+    if count == 0 then acc
+    else
+      let p := count.toFloat / dist.total.toFloat
+      acc - p * log₂ p
+  ) 0.0
+  Q0_16.ofFloat (entropy / 8.0)  -- Normalize to [0,1] (max entropy = 8 bits)
+
+-- Kernel interface: estimate compression ratio from entropy
+def estimateCompressionRatio (data : Array UInt8) : IO CompressionEstimate := do
+  let freqTable := frequencyTable data
+  let entropy := shannonEntropy freqTable
+  
+  -- Theoretical minimum size = entropy × original_size
+  -- Actual compression depends on model overhead
+  let theoreticalRatio := entropy  -- Q0_16 [0,1]
+  let modelOverhead := Q0_16.ofFloat 0.05  -- 5% for codon tables
+  let predictedRatio := add theoreticalRatio modelOverhead
+  
+  return {
+    entropy := entropy
+    theoreticalRatio := theoreticalRatio
+    predictedCompressedSize := (data.size.toFloat * predictedRatio.toFloat).toNat
+    confidence := Q0_16.sub Q0_16.one (abs (Q0_16.sub entropy Q0_16.half))
+  }
+
+end M002_EntropyEncoding

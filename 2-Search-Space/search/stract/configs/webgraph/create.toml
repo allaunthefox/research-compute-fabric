@@ -1,0 +1,9 @@
+limit_warc_files = 5
+graph_base_path = "data/webgraph"
+batch_size = 1
+canonical_index_path = "data/canonical"
+
+[warc_source]
+folder = "./data"
+names = ["sample.warc.gz"]
+type = "Local"

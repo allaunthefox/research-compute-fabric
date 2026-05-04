@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Semantic Mass Ontology Engine</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050608;
+      --panel: rgba(8, 12, 18, 0.72);
+      --text: #e7f9ff;
+      --muted: #82a0aa;
+      --accent: #00ffcc;
+      --warn: #ffcc66;
+      --bad: #ff667d;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 40%, #0c1720 0%, var(--bg) 55%, #010203 100%);
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    canvas { display: block; }
+
+    #ui-layer {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 20;
+      width: min(440px, calc(100vw - 28px));
+      padding: 14px 16px;
+      border: 1px solid rgba(0, 255, 204, 0.22);
+      border-radius: 14px;
+      background: var(--panel);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.38);
+      backdrop-filter: blur(10px);
+    }
+
+    #ui-layer h1 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      line-height: 1.2;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 148px 1fr;
+      gap: 10px;
+      align-items: baseline;
+      margin: 6px 0;
+      font-size: 12px;
+    }
+
+    .label { color: var(--muted); }
+    .value { color: var(--text); overflow-wrap: anywhere; }
+    .ok { color: var(--accent); }
+    .warn { color: var(--warn); }
+    .bad { color: var(--bad); }
+
+    #legend {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+  </style>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <section id="ui-layer" aria-live="polite">
+    <h1>Semantic Mass Ontology Engine</h1>
+    <div class="row"><span class="label">Renderer</span><span id="gpu-status" class="value warn">initializing</span></div>
+    <div class="row"><span class="label">Lean bridge</span><span id="lean-status" class="value warn">awaiting ontology.wasm</span></div>
+    <div class="row"><span class="label">mass_number</span><span id="mass-status" class="value">0.6200</span></div>
+    <div class="row"><span class="label">density</span><span id="density-status" class="value">0.4100</span></div>
+    <div class="row"><span class="label">torsion</span><span id="torsion-status" class="value">0.1800</span></div>
+    <div class="row"><span class="label">claim gate</span><span id="gate-status" class="value warn">U_scope</span></div>
+    <div id="legend">
+      This prototype renders a semantic kernel as a mass-bearing node. Lean/Wasm is treated as the formal oracle when available; otherwise the page uses a deterministic JavaScript fallback.
+    </div>
+  </section>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    const $ = (id) => document.getElementById(id);
+
+    let renderer;
+    let camera;
+    let scene;
+    let controls;
+    let semanticNodeMesh;
+    let haloMesh;
+    let edgeGroup;
+
+    const state = {
+      massNumber: 0.62,
+      density: 0.41,
+      torsion: 0.18,
+      receiptCoverage: 0.28,
+      elapsed: 0,
+    };
+
+    function clamp01(x) {
+      return Math.max(0, Math.min(1, Number.isFinite(x) ? x : 0));
+    }
+
+    function jsSemanticFallback(t) {
+      const massNumber = clamp01(0.58 + 0.22 * Math.sin(t * 0.47));
+      const density = clamp01(0.42 + 0.18 * Math.cos(t * 0.31));
+      const torsion = clamp01(0.20 + 0.16 * Math.sin(t * 0.73 + 1.7));
+      const receiptCoverage = clamp01(0.22 + 0.09 * Math.cos(t * 0.19));
+      return { massNumber, density, torsion, receiptCoverage };
+    }
+
+    async function initGraphics() {
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x050608, 0.035);
+
+      camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 1.6, 6.3);
+
+      if ('gpu' in navigator) {
+        renderer = new WebGPURenderer({ antialias: true, alpha: true });
+        await renderer.init();
+        $('gpu-status').textContent = 'WebGPU active';
+        $('gpu-status').className = 'value ok';
+      } else {
+        // Three.js WebGPU renderer cannot run without navigator.gpu. This keeps failure explicit.
+        $('gpu-status').textContent = 'WebGPU unsupported in this browser';
+        $('gpu-status').className = 'value bad';
+        throw new Error('WebGPU unsupported');
+      }
+
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.enablePan = false;
+
+      const key = new THREE.DirectionalLight(0xd8fffb, 2.6);
+      key.position.set(3, 4, 5);
+      scene.add(key);
+
+      const fill = new THREE.AmbientLight(0x8bbcff, 0.42);
+      scene.add(fill);
+
+      const nodeGeometry = new THREE.IcosahedronGeometry(1, 4);
+      const nodeMaterial = new THREE.MeshStandardMaterial({
+        color: 0x00ffcc,
+        emissive: 0x003d36,
+        emissiveIntensity: 0.8,
+        roughness: 0.38,
+        metalness: 0.15,
+        wireframe: false,
+      });
+      semanticNodeMesh = new THREE.Mesh(nodeGeometry, nodeMaterial);
+      scene.add(semanticNodeMesh);
+
+      const haloGeometry = new THREE.IcosahedronGeometry(1.12, 2);
+      const haloMaterial = new THREE.MeshBasicMaterial({
+        color: 0x00ffcc,
+        transparent: true,
+        opacity: 0.12,
+        wireframe: true,
+      });
+      haloMesh = new THREE.Mesh(haloGeometry, haloMaterial);
+      scene.add(haloMesh);
+
+      edgeGroup = new THREE.Group();
+      scene.add(edgeGroup);
+      buildOrbitEdges();
+
+      window.addEventListener('resize', onWindowResize);
+    }
+
+    function buildOrbitEdges() {
+      edgeGroup.clear();
+      const material = new THREE.LineBasicMaterial({ color: 0x3dffe3, transparent: true, opacity: 0.28 });
+      for (let ring = 0; ring < 3; ring++) {
+        const points = [];
+        const radius = 1.85 + ring * 0.58;
+        const zAmp = 0.18 + ring * 0.07;
+        for (let i = 0; i <= 160; i++) {
+          const a = (i / 160) * Math.PI * 2;
+          points.push(new THREE.Vector3(Math.cos(a) * radius, Math.sin(a) * radius * (0.42 + ring * 0.08), Math.sin(a * 3 + ring) * zAmp));
+        }
+        const curve = new THREE.BufferGeometry().setFromPoints(points);
+        const line = new THREE.Line(curve, material.clone());
+        line.rotation.x = ring * 0.5;
+        line.rotation.y = ring * 0.27;
+        edgeGroup.add(line);
+      }
+    }
+
+    async function initLeanBridge() {
+      // Expected exported names for a future Lean -> C -> Wasm bridge:
+      //   semantic_mass_q16(nodeId : UInt32) : UInt32
+      //   semantic_density_q16(nodeId : UInt32) : UInt32
+      //   semantic_torsion_q16(nodeId : UInt32) : UInt32
+      //   gate_scope(nodeId : UInt32) : UInt32  -- 0 U_scope, 1 V_scope
+      try {
+        const response = await fetch('./ontology.wasm', { cache: 'no-store' });
+        if (!response.ok) throw new Error('ontology.wasm not present');
+        const wasm = await WebAssembly.instantiateStreaming(response, {});
+        const exports = wasm.instance.exports;
+        const required = ['semantic_mass_q16', 'semantic_density_q16', 'semantic_torsion_q16', 'gate_scope'];
+        const missing = required.filter((name) => typeof exports[name] !== 'function');
+        if (missing.length > 0) throw new Error(`missing exports: ${missing.join(', ')}`);
+        $('lean-status').textContent = 'ontology.wasm active';
+        $('lean-status').className = 'value ok';
+        return exports;
+      } catch (error) {
+        $('lean-status').textContent = `fallback active: ${error.message}`;
+        $('lean-status').className = 'value warn';
+        return null;
+      }
+    }
+
+    function q16ToFloat(u32) {
+      return clamp01(Number(u32 >>> 0) / 65536.0);
+    }
+
+    function readSemanticState(leanBrain, t) {
+      if (leanBrain) {
+        const nodeId = 1;
+        return {
+          massNumber: q16ToFloat(leanBrain.semantic_mass_q16(nodeId)),
+          density: q16ToFloat(leanBrain.semantic_density_q16(nodeId)),
+          torsion: q16ToFloat(leanBrain.semantic_torsion_q16(nodeId)),
+          receiptCoverage: leanBrain.gate_scope(nodeId) === 1 ? 1.0 : 0.35,
+        };
+      }
+      return jsSemanticFallback(t);
+    }
+
+    function updateVisuals(next, t) {
+      Object.assign(state, next, { elapsed: t });
+
+      const scale = 0.72 + state.massNumber * 1.28;
+      const densityPulse = 1.0 + state.density * 0.08 * Math.sin(t * 3.0);
+      semanticNodeMesh.scale.setScalar(scale * densityPulse);
+
+      semanticNodeMesh.rotation.x += 0.002 + state.torsion * 0.014;
+      semanticNodeMesh.rotation.y += 0.004 + state.density * 0.010;
+      semanticNodeMesh.rotation.z = Math.sin(t * 0.4) * state.torsion * 0.5;
+
+      const hue = 0.47 + state.torsion * 0.18;
+      semanticNodeMesh.material.color.setHSL(hue, 0.82, 0.48 + state.receiptCoverage * 0.18);
+      semanticNodeMesh.material.emissive.setHSL(hue, 0.9, 0.08 + state.massNumber * 0.08);
+      semanticNodeMesh.material.roughness = 0.56 - state.density * 0.32;
+
+      haloMesh.scale.setScalar(scale * (1.16 + state.torsion * 0.55));
+      haloMesh.rotation.copy(semanticNodeMesh.rotation);
+      haloMesh.material.opacity = 0.08 + state.torsion * 0.22;
+
+      edgeGroup.rotation.y += 0.0015 + state.massNumber * 0.002;
+      edgeGroup.rotation.x = Math.sin(t * 0.19) * state.torsion * 0.7;
+      for (const child of edgeGroup.children) {
+        child.material.opacity = 0.12 + state.receiptCoverage * 0.22;
+      }
+
+      $('mass-status').textContent = state.massNumber.toFixed(4);
+      $('density-status').textContent = state.density.toFixed(4);
+      $('torsion-status').textContent = state.torsion.toFixed(4);
+      const verified = state.receiptCoverage >= 0.95;
+      $('gate-status').textContent = verified ? 'V_scope' : 'U_scope';
+      $('gate-status').className = verified ? 'value ok' : 'value warn';
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    async function animate(leanBrain) {
+      const t = performance.now() / 1000;
+      controls.update();
+      updateVisuals(readSemanticState(leanBrain, t), t);
+      await renderer.renderAsync(scene, camera);
+      requestAnimationFrame(() => animate(leanBrain));
+    }
+
+    async function boot() {
+      try {
+        await initGraphics();
+        const leanBrain = await initLeanBridge();
+        animate(leanBrain);
+      } catch (error) {
+        console.error(error);
+        $('gpu-status').textContent = error.message;
+        $('gpu-status').className = 'value bad';
+      }
+    }
+
+    boot();
+  </script>
+</body>
+</html>

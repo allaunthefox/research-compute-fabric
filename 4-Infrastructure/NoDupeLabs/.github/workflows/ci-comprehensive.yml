@@ -1,0 +1,19 @@
+name: Comprehensive CI
+
+# Quiet mode: manual-only.
+# Re-enable push/pull_request triggers only when the Research Stack repo is ready for full CI again.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quiet:
+    name: CI quiet mode
+    runs-on: ubuntu-latest
+    steps:
+      - name: Quiet mode notice
+        run: |
+          echo "Comprehensive CI is intentionally manual-only to prevent notification spam."
+          echo "Run this workflow manually when needed."

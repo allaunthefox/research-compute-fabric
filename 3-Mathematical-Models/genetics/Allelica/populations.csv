@@ -1,0 +1,41 @@
+Gene,Trait,Population,Allele_A_Freq,Allele_a_Freq
+TYR,Skin Pigmentation/Albinism,Tropical,0.94,0.06
+TYR,Skin Pigmentation/Albinism,Temperate,0.63,0.37
+TYR,Skin Pigmentation/Albinism,Intermediate,0.90,0.10
+TYR,Skin Pigmentation/Albinism,High Altitude,0.998,0.002
+MC1R,Pigmentation(red hair/freckles),Tropical,0.99,0.01
+MC1R,Pigmentation(red hair/freckles),Temperate,0.93,0.07
+MC1R,Pigmentation(red hair/freckles),Intermediate,0.996,0.004
+MC1R,Pigmentation(red hair/freckles),High Altitude,0.999,0.001
+SLC24A5,Pigmentation(light skin),Tropical,0.21,0.79
+SLC24A5,Pigmentation(light skin),Temperate,0.996,0.004
+SLC24A5,Pigmentation(light skin),Intermediate,0.75,0.25
+SLC24A5,Pigmentation(light skin),High Altitude,0.02,0.98
+EPAS1,High Altitude Adaptation,Tropical,0.22,0.78
+EPAS1,High Altitude Adaptation,Temperate,0.49,0.51
+EPAS1,High Altitude Adaptation,Intermediate,0.37,0.63
+EPAS1,High Altitude Adaptation,High Altitude,0.12,0.88
+HBB,Sickle Cell Trait,Tropical,0.96,0.04
+HBB,Sickle Cell Trait,Temperate,1.00,0.00
+HBB,Sickle Cell Trait,Intermediate,1.00,0.00
+HBB,Sickle Cell Trait,High Altitude,1.00,0.00
+LCT,Lactose Persistence,Tropical,0.53,0.47
+LCT,Lactose Persistence,Temperate,0.19,0.81
+LCT,Lactose Persistence,Intermediate,0.25,0.75
+LCT,Lactose Persistence,High Altitude,0.23,0.77
+FTO,Obesity Risk Allele,Tropical,0.63,0.37
+FTO,Obesity Risk Allele,Temperate,0.63,0.37
+FTO,Obesity Risk Allele,Intermediate,0.54,0.46
+FTO,Obesity Risk Allele,High Altitude,0.50,0.50
+CFTR,Cystic Fibrosis,Tropical,0.998,0.002
+CFTR,Cystic Fibrosis,Temperate,0.986,0.014
+CFTR,Cystic Fibrosis,Intermediate,0.998,0.002
+CFTR,Cystic Fibrosis,High Altitude,1.00,0.00
+ACKR1,Malarial Resistance,Tropical,0.16,0.84
+ACKR1,Malarial Resistance,Temperate,0.998,0.002
+ACKR1,Malarial Resistance,Intermediate,0.994,0.006
+ACKR1,Malarial Resistance,High Altitude,1.00,0.00
+APOE,Alzheimers Risk Allele(E4),Tropical,0.14,0.86
+APOE,Alzheimers Risk Allele(E4),Temperate,0.36,0.64
+APOE,Alzheimers Risk Allele(E4),Intermediate,0.48,0.52
+APOE,Alzheimers Risk Allele(E4),High Altitude,0.59,0.41

@@ -1,0 +1,13 @@
+[package]
+name = "ftdi_gimbal"
+version = "0.1.0"
+edition = "2021"
+
+# Zero external crate dependencies.
+# We link against system libftdi1 via #[link(name = "ftdi1")].
+# The library is already present on the target system (verified: /usr/lib/libftdi1.so.2).
+
+[profile.release]
+opt-level = 2
+lto = true
+strip = true

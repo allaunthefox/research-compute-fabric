@@ -1,0 +1,52 @@
+-- M006: Shell State Classifier Kernel Module
+-- Source: shell_state_classifier (3-Mathematical-Models)
+-- Kernel Function: ProcessClassifier
+--
+-- Classifies kernel entities (processes, pages, interrupts) by shell state.
+-- Used for resource allocation, scheduling, and security policies.
+-- Truth Seal: [ SSS-ENE-CLASSIFIER-2026-05-03 ]
+
+module M006_ShellStateClassifier where
+
+import BaseTypes
+import M004_PISTGeometry (PISTShell, BaseType)
+import Semantics.Q0_16
+
+-- Classification of any kernel entity by its shell state
+def classifyByShell (n : Nat) : ShellClassification :=
+  let k := isqrt n
+  let a := n - k * k
+  let b := (k + 1) * (k + 1) - n
+  let width := 2 * k + 1
+  
+  -- Distance from shell center
+  let centerDist := abs (a - b)
+  let maxDist := k
+  let normalizedDist := Q0_16.ofFloat (centerDist.toFloat / maxDist.toFloat)
+  
+  -- Classification
+  let baseType :=
+    if a == 0 then .A      -- Perfect square: stable core
+    else if a == k then .G  -- Midpoint: balanced
+    else if a == k + 1 then .C  -- Near edge: active
+    else if b == 0 then .T  -- Outer edge: volatile
+    else .A                 -- Default
+  
+  { n := n
+  , k := k
+  , a := a
+  , b := b
+  , baseType := baseType
+  , centrality := Q0_16.sub Q0_16.one normalizedDist  -- Higher = closer to center
+  , stability := Q0_16.ofFloat (1.0 / (k + 1).toFloat)  -- Lower shells = more stable
+  }
+
+-- Policy: allocate resources based on classification
+def resourcePolicy (cl : ShellClassification) : ResourceAllocation :=
+  match cl.baseType with
+  | .A => { priority := 1, quantum := 100, preemption := false }  -- Core: stable, long quanta
+  | .G => { priority := 2, quantum := 50, preemption := true }   -- Balanced: medium
+  | .C => { priority := 3, quantum := 25, preemption := true }    -- Active: short, responsive
+  | .T => { priority := 4, quantum := 10, preemption := true }    -- Edge: urgent, very short
+
+end M006_ShellStateClassifier

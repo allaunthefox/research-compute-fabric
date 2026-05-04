@@ -1,0 +1,493 @@
+# Research Stack CFF-style provenance database
+#
+# Purpose:
+#   Preserve source provenance for external material imported into Research Stack
+#   doctrine, especially Warden/GCL surfaces. This is intentionally conservative:
+#   public web articles may seed design patterns or analogy surfaces, but they do
+#   not promote scientific, biological, neurological, or formal claims without
+#   independent receipts.
+#
+# Warden policy:
+#   - public web article => HOLD unless independently reviewed
+#   - public science synthesis => HOLD / analogy-bounded unless backed by native-domain receipts
+#   - neuroscience / biology language => analogy-bounded unless peer-reviewed
+#   - biology / biomolecular scaffold language => analogy-bounded unless claimed inside its native domain
+#   - medical / diet / health claims => out of GCL engineering scope unless separately reviewed in medical context
+#   - no adversary => no earned confidence
+#   - no surviving phi => no promotion
+#   - peer-reviewed materials / biomolecular paper => external-source anchor only; does not prove GCL operators
+
+cff-version: "1.2.0"
+message: "Research Stack source provenance records for GCL/Warden imports."
+title: "Research Stack CFF Provenance Database"
+version: "0.1.0"
+date-released: "2026-05-02"
+
+references:
+  - type: webpage
+    title: "Building More Truthful and Stable AI with Adversarial Convergence"
+    authors:
+      - name: "socal21st.oc"
+    url: "https://medium.com/@socal21st.oc/building-more-truthful-and-stable-ai-with-adversarial-convergence-66ece2dff9f6"
+    date-accessed: "2026-05-02"
+    notes: >-
+      Source record for the Adversarial-Convergence-GCL Warden pass. Imported
+      only as a public-web design-pattern source for thesis/contra/surviving-phi
+      synthesis review. Not peer-reviewed; not a formal proof of AI truthfulness
+      or stability.
+
+  - type: webpage
+    title: "The Neurological Basis of Adversarial Convergence and How Neuroscience Can Inform AI Design"
+    authors:
+      - name: "socal21st.oc"
+    url: "https://medium.com/@socal21st.oc/the-neurological-basis-of-adversarial-convergence-and-how-neuroscience-can-inform-ai-design-4c1092b60cae"
+    date-accessed: "2026-05-02"
+    notes: >-
+      Source record for analogy-bounded neuroscience framing around adversarial
+      convergence. Imported only as a reference surface for cognitive-design
+      inspiration and Warden pressure-testing language. Not peer-reviewed; not a
+      biological proof of GCL, Warden, or any literal neuroscience implementation.
+
+  - type: article
+    title: "Ultrathin, Stretchable, and 3D-Printable Complementary Nanotubes-Polymer Composites for Multimodal Radiation Shielding in Extreme Environments"
+    authors:
+      - name: "Flandy"
+      - name: "Kun Kim"
+      - name: "Jaehyoung Ko"
+      - name: "Daeun Kim"
+      - name: "Daekwon Lee"
+      - name: "Heesuk Rho"
+      - name: "Sang Seok Lee"
+      - name: "Dong Su Lee"
+      - name: "Se Gyu Jang"
+      - name: "Seokhoon Ahn"
+      - name: "Seung-Yeol Jeon"
+      - name: "Dae-Young Jeon"
+      - name: "Yongho Joo"
+    journal: "Advanced Materials"
+    year: 2026
+    volume: "38"
+    doi: "10.1002/adma.202513805"
+    url: "https://advanced.onlinelibrary.wiley.com/doi/10.1002/adma.202513805"
+    date-accessed: "2026-05-02"
+    notes: >-
+      Peer-reviewed external-source anchor for geometry-programmable multimodal
+      energy attenuation. Used to support the Phonon Path Bezier Adapter as a
+      design precedent for material composition plus internal architecture
+      changing energy residence, scattering, attenuation, and survivability. It
+      does not prove phonon routing, GCL compression, or any Bezier-derived
+      physical transport operator.
+
+  - type: article
+    title: "Engineering solvent resistance in semiconducting polymer films through UV-induced polydiacetylene crosslinking"
+    authors:
+      - name: "Amit K. Sur"
+      - name: "Audithya Nyayachavadi"
+      - name: "Piumi Kulatunga"
+      - name: "Nien-Jung Li"
+      - name: "Yu-Cheng Chiu"
+      - name: "Simon Rondeau-Gagné"
+    journal: "RSC Advances"
+    year: 2025
+    volume: "15"
+    pages: "24142-24149"
+    doi: "10.1039/D5RA02367J"
+    url: "https://pubs.rsc.org/en/content/articlelanding/2025/ra/d5ra02367j"
+    date-accessed: "2026-05-02"
+    notes: >-
+      Peer-reviewed external-source anchor for crosslink lock-in, solvent
+      resistance, morphology preservation, and multilayer survivability in the
+      Phonon Path Bezier Adapter. It does not prove GCL, phonon routing, or
+      Bezier transport.
+
+  - type: article
+    title: "Plasmonic Nanomachines: Creating Local Potential Gradients and Motions"
+    authors:
+      - name: "Yoonhee Kim"
+      - name: "Soohyun Ji"
+      - name: "Donghyun Choi"
+      - name: "Jwa-Min Nam"
+    journal: "Advanced Materials"
+    year: 2026
+    doi: "10.1002/adma.73247"
+    url: "https://doi.org/10.1002/adma.73247"
+    date-accessed: "2026-05-02"
+    notes: >-
+      Peer-reviewed open-access Perspective used as an external-source anchor
+      for optical, thermal, and chemical local potential gradients, symmetry
+      breaking, nanoscale motion, and Brownian/stochastic Warden constraints.
+      It does not prove GCL, Bezier transport, or phonon routing.
+
+  - type: article
+    title: "Valency-Controlled Framework Nucleic Acid Signal Amplifiers"
+    authors:
+      - name: "Qi Liu"
+      - name: "Zhilei Ge"
+      - name: "Xiuhai Mao"
+      - name: "Guobao Zhou"
+      - name: "Xiaolei Zuo"
+      - name: "Juwen Shen"
+      - name: "Jiye Shi"
+      - name: "Jiang Li"
+      - name: "Lihua Wang"
+      - name: "Xiaoqing Chen"
+      - name: "Chunhai Fan"
+    journal: "Angewandte Chemie International Edition"
+    year: 2018
+    volume: "57"
+    issue: "24"
+    pages: "7131-7135"
+    doi: "10.1002/anie.201802701"
+    url: "https://doi.org/10.1002/anie.201802701"
+    date-accessed: "2026-05-02"
+    notes: >-
+      Peer-reviewed external-source anchor for framework nucleic acid scaffold
+      valency, placement-controlled signal amplification, purified building
+      blocks, and staircase-like discrete amplification behavior. It does not
+      prove GCL, geometric compression, phonon routing, or Bezier transport.
+
+  - type: article
+    title: "Mitochondria are more than powerhouses—they’re the motherboard of the cell"
+    authors:
+      - name: "Martin Picard"
+    journal: "Scientific American"
+    year: 2025
+    volume: "332"
+    issue: "6"
+    pages: "50"
+    doi: "10.1038/scientificamerican062025-QhEeouFRPCYEr2tKQNWqM"
+    url: "https://www.scientificamerican.com/article/mitochondria-are-more-than-powerhouses-theyre-the-motherboard-of-the-cell/"
+    date-accessed: "2026-05-02"
+    notes: >-
+      Public science synthesis source used as an analogy-bounded architecture
+      anchor for mitochondrial collectives, mitochondrial sociality, fusion,
+      fission, nanotunnels, specialization, and mitochondrial information
+      processing systems. It does not prove GCL, autopoiesis, compression,
+      health claims, or any engineering operator.
+
+x-research-stack-provenance:
+  schema_version: "0.1.0"
+  entries:
+    - id: "medium-socal21st-adversarial-convergence-truthful-stable-ai"
+      type: "online_article"
+      title: "Building More Truthful and Stable AI with Adversarial Convergence"
+      source_url: "https://medium.com/@socal21st.oc/building-more-truthful-and-stable-ai-with-adversarial-convergence-66ece2dff9f6"
+      source_account: "socal21st.oc"
+      accessed: "2026-05-02"
+      source_class: "public_web_article"
+      peer_reviewed: false
+      claim_state: "HOLD"
+      authority_scope: "design_pattern_only"
+      imported_as:
+        - "Adversarial-Convergence-GCL Warden pass"
+        - "thesis / contra-surface / surviving-phi / synthesis audit pattern"
+        - "LLM operator-review pressure test"
+      allowed_use: >-
+        Use as a conceptual source for dialectical Warden pressure testing of
+        GCL claims, DeepSeek review prompts, and LLM-generated compression
+        operators.
+      blocked_use: >-
+        Do not treat as proof of model truthfulness, formal verification,
+        empirical convergence, or guaranteed AI stability.
+      delta_phi_gamma_lambda_binding:
+        delta: "claim residue introduced or removed by adversarial pressure"
+        phi: "claim/invariant/concession that survives both positive and contra readings"
+        gamma: "counterargument pressure, evidence conflict, and decision stakes"
+        lambda: "analysis scale: sentence, claim, document, module, theory, corpus"
+      warden_notes:
+        - "No adversary, no earned confidence."
+        - "No surviving phi, no promotion."
+        - "Requires independent receipts before promotion beyond design-pattern status."
+
+    - id: "medium-socal21st-neurological-basis-adversarial-convergence"
+      type: "online_article"
+      title: "The Neurological Basis of Adversarial Convergence and How Neuroscience Can Inform AI Design"
+      source_url: "https://medium.com/@socal21st.oc/the-neurological-basis-of-adversarial-convergence-and-how-neuroscience-can-inform-ai-design-4c1092b60cae"
+      source_account: "socal21st.oc"
+      accessed: "2026-05-02"
+      source_class: "public_web_article"
+      peer_reviewed: false
+      claim_state: "HOLD"
+      authority_scope: "analogy_bound_neuroscience_reference_surface"
+      imported_as:
+        - "adversarial-convergence neuroscience analogy"
+        - "source receipt requiring biological-overclaim guard"
+        - "cognitive-design inspiration surface"
+      allowed_use: >-
+        Use only as analogy-bounded reference material for Warden interrogation
+        loops, adversarial pressure, and cognitive design inspiration.
+      blocked_use: >-
+        Do not treat as biological proof of GCL, proof of adversarial convergence,
+        proof of model stability, or evidence that Research Stack literally
+        implements neuroscience.
+      warden_notes:
+        - "Any biological or neurological language derived from this source requires a biological-overclaim guard."
+        - "Requires peer-reviewed external receipts before any empirical neuroscience claim promotion."
+        - "Keep imported language structural: analogy source, not biological authority."
+
+    - id: "flandy-2026-complementary-nanotubes-polymer-multimodal-shielding"
+      type: "peer_reviewed_article"
+      title: "Ultrathin, Stretchable, and 3D-Printable Complementary Nanotubes-Polymer Composites for Multimodal Radiation Shielding in Extreme Environments"
+      source_url: "https://advanced.onlinelibrary.wiley.com/doi/10.1002/adma.202513805"
+      doi: "10.1002/adma.202513805"
+      journal: "Advanced Materials"
+      year: 2026
+      volume: "38"
+      article_id: "e13805"
+      accessed: "2026-05-02"
+      source_class: "peer_reviewed_materials_science_article"
+      peer_reviewed: true
+      claim_state: "HOLD"
+      authority_scope: "external_source_anchor_for_geometry_programmable_energy_response"
+      authors:
+        - "Flandy"
+        - "Kun Kim"
+        - "Jaehyoung Ko"
+        - "Daeun Kim"
+        - "Daekwon Lee"
+        - "Heesuk Rho"
+        - "Sang Seok Lee"
+        - "Dong Su Lee"
+        - "Se Gyu Jang"
+        - "Seokhoon Ahn"
+        - "Seung-Yeol Jeon"
+        - "Dae-Young Jeon"
+        - "Yongho Joo"
+      imported_as:
+        - "Phonon Path Bezier Adapter external source anchor"
+        - "geometry-programmable multimodal shielding precedent"
+        - "DIW architecture / nanotube-interface / material-response reference surface"
+      allowed_use: >-
+        Use as an external materials-science precedent showing that composition,
+        nanotube interface geometry, and 3D-printed macro-architecture can
+        affect shielding performance, scattering, attenuation, mechanical
+        resilience, and extreme-environment survivability.
+      blocked_use: >-
+        Do not treat as proof of GCL, proof of geometric compression, proof of
+        phonon routing, proof of Bezier transport paths, or validation of any
+        simulation result without separate simulator receipts and baselines.
+      extracted_findings:
+        - "SWCNT/BNNT neat composites achieved EMI shielding effectiveness exceeding 50 dB."
+        - "Neat composites reported neutron attenuation coefficient of 1.27 mm^-1."
+        - "Polymer composites reached up to 23 dB EMI shielding at sub-millimeter thickness."
+        - "Direct ink writing enabled honeycomb and other programmable architectures."
+        - "Honeycomb-patterned composites showed about 10-15% higher shielding effectiveness than plain-patterned counterparts at equivalent thickness."
+        - "Performance was tested under cyclic strain and thermal extremes from -196 C to 250 C."
+      delta_phi_gamma_lambda_binding:
+        delta: "attenuation loss, leakage, scattering residue, path deviation, or failed shielding function"
+        phi: "preserved transport/shielding invariant such as bounded attenuation, target arrival, or retained multimodal shielding behavior"
+        gamma: "incident EMI/neutron/thermal/mechanical forcing pressure, shock intensity, strain, or simulator load"
+        lambda: "scale band from nanotube interface to printed filament, honeycomb cell, device layer, and full shield"
+      warden_notes:
+        - "Peer-reviewed external source, but still external to GCL proof authority."
+        - "Phonon-path claims require separate acoustic/thermal/material simulator receipts."
+        - "Rendered Bezier paths are projection surfaces, not physical proof."
+        - "Use as a geometry-dependent energy-response precedent, not a direct phonon-routing validation."
+
+    - id: "sur-2025-uv-induced-polydiacetylene-crosslinking-solvent-resistance"
+      type: "peer_reviewed_article"
+      title: "Engineering solvent resistance in semiconducting polymer films through UV-induced polydiacetylene crosslinking"
+      source_url: "https://pubs.rsc.org/en/content/articlelanding/2025/ra/d5ra02367j"
+      doi: "10.1039/D5RA02367J"
+      journal: "RSC Advances"
+      year: 2025
+      volume: "15"
+      pages: "24142-24149"
+      accessed: "2026-05-02"
+      source_class: "peer_reviewed_materials_science_article"
+      peer_reviewed: true
+      claim_state: "HOLD"
+      authority_scope: "external_source_anchor_for_crosslink_lock_in_and_multilayer_stability"
+      authors:
+        - "Amit K. Sur"
+        - "Audithya Nyayachavadi"
+        - "Piumi Kulatunga"
+        - "Nien-Jung Li"
+        - "Yu-Cheng Chiu"
+        - "Simon Rondeau-Gagné"
+      imported_as:
+        - "Phonon Path Bezier Adapter crosslink lock-in anchor"
+        - "UV-induced PDA morphology-preservation reference surface"
+        - "multilayer solvent-resistance stability precedent"
+      allowed_use: >-
+        Use as an external materials-science precedent showing that UV-induced
+        polydiacetylene crosslinking can improve solvent resistance, preserve
+        film morphology, and support sequential/multilayer processing.
+      blocked_use: >-
+        Do not treat as proof of GCL, proof of geometric compression, proof of
+        phonon routing, proof of Bezier transport paths, or validation of any
+        simulation result without separate simulator receipts and baselines.
+      extracted_findings:
+        - "Functionalized DPP-carbazole conjugated copolymer with 1,3-butadiyne groups."
+        - "UV-induced topochemical polymerization formed PDA crosslinks."
+        - "Raman spectroscopy confirmed PDA formation."
+        - "AFM/GIWAXS indicated film morphology was preserved after crosslinking."
+        - "Crosslinked films showed improved nanomechanical properties and solvent resistance."
+      delta_phi_gamma_lambda_binding:
+        delta: "morphology drift, solvent damage, path displacement, layer dissolution, or mechanical-integrity loss"
+        phi: "preserved morphology, retained film/path identity, retained electronic/transport function, or multilayer-safe state"
+        gamma: "UV exposure, solvent challenge, sequential deposition pressure, mechanical stress, or post-processing perturbation"
+        lambda: "scale band from molecular crosslink to polymer chain, thin-film domain, printed layer, and multilayer stack"
+      warden_notes:
+        - "Peer-reviewed external source, but still external to GCL proof authority."
+        - "Lock-in claims require stabilization receipts and before/after morphology metrics."
+        - "Stable film morphology is not automatically a valid Bezier transport path."
+        - "Use as crosslink stabilization precedent, not direct phonon-routing validation."
+
+    - id: "kim-2026-plasmonic-nanomachines-local-potential-gradients"
+      type: "peer_reviewed_article"
+      title: "Plasmonic Nanomachines: Creating Local Potential Gradients and Motions"
+      source_url: "https://doi.org/10.1002/adma.73247"
+      doi: "10.1002/adma.73247"
+      journal: "Advanced Materials"
+      year: 2026
+      article_id: "e73247"
+      accessed: "2026-05-02"
+      source_class: "peer_reviewed_perspective_article"
+      peer_reviewed: true
+      open_access: true
+      claim_state: "HOLD"
+      authority_scope: "external_source_anchor_for_local_potential_gradients_and_nanoscale_actuation"
+      authors:
+        - "Yoonhee Kim"
+        - "Soohyun Ji"
+        - "Donghyun Choi"
+        - "Jwa-Min Nam"
+      imported_as:
+        - "Phonon Path Bezier Adapter local-potential-gradient anchor"
+        - "optical / thermal / chemical gradient-driven force reference surface"
+        - "nanoscale Brownian/stochastic Warden constraint source"
+      allowed_use: >-
+        Use as an external Perspective anchoring local optical, thermal, and
+        chemical potential gradients as mechanisms for nanoscale force and
+        motion, including symmetry breaking, rectilinear motion, rotation,
+        twisting, and Brownian-dominated validation constraints.
+      blocked_use: >-
+        Do not treat as proof of GCL, proof of geometric compression, proof of
+        phonon routing, proof of Bezier transport paths, or validation of any
+        simulation result without separate simulator receipts and baselines.
+      extracted_findings:
+        - "Plasmonic nanostructures transduce light into localized optical, thermal, and chemical gradients."
+        - "Geometric and energetic asymmetries provide directional forces for translational and rotational motions."
+        - "Figure 1 separates optical, thermal, and chemical potential gradients as force-generation modalities."
+        - "The article highlights rectilinear, rotational, and twisting motion classes."
+        - "The nanoscale regime is Brownian-dominated and requires Pe/Stokes-style checks for directional claims."
+        - "Table 1 summarizes force scales, materials, morphologies, and motion modes for plasmonic micro/nanomachines."
+      delta_phi_gamma_lambda_binding:
+        delta: "failed motion, Brownian loss, path deviation, unbounded local heating, gradient-mode confusion, or unstable actuation"
+        phi: "preserved directional motion, controlled actuation, retained local-gradient response, or measurable probe response"
+        gamma: "optical intensity, thermal gradient, chemical potential gradient, viscous drag, Brownian stochasticity, or actuation load"
+        lambda: "scale band from nanoparticle interface to nanomachine body, microstructure, device layer, and inspection surface"
+      warden_notes:
+        - "Peer-reviewed open-access Perspective, but still external to GCL proof authority."
+        - "Gradient-driven actuation claims require explicit gradient type and Brownian/stochastic checks at nanoscale lambda."
+        - "Rendered Bezier paths are projection surfaces, not nanomachines."
+        - "Use as local-potential-gradient precedent, not direct phonon-routing validation."
+
+    - id: "liu-2018-valency-controlled-framework-nucleic-acid-signal-amplifiers"
+      type: "peer_reviewed_article"
+      title: "Valency-Controlled Framework Nucleic Acid Signal Amplifiers"
+      source_url: "https://doi.org/10.1002/anie.201802701"
+      doi: "10.1002/anie.201802701"
+      journal: "Angewandte Chemie International Edition"
+      year: 2018
+      volume: "57"
+      issue: "24"
+      pages: "7131-7135"
+      accessed: "2026-05-02"
+      source_class: "peer_reviewed_biomolecular_nanotechnology_article"
+      peer_reviewed: true
+      claim_state: "HOLD"
+      authority_scope: "external_source_anchor_for_framework_nucleic_acid_valency_and_signal_amplification"
+      authors:
+        - "Qi Liu"
+        - "Zhilei Ge"
+        - "Xiuhai Mao"
+        - "Guobao Zhou"
+        - "Xiaolei Zuo"
+        - "Juwen Shen"
+        - "Jiye Shi"
+        - "Jiang Li"
+        - "Lihua Wang"
+        - "Xiaoqing Chen"
+        - "Chunhai Fan"
+      imported_as:
+        - "Phonon Path Bezier Adapter framework-valency anchor"
+        - "tetrahedral DNA / framework nucleic acid scaffold reference surface"
+        - "discrete signal-count and staircase amplification precedent"
+      allowed_use: >-
+        Use as an external biomolecular-nanotechnology precedent showing that
+        framework nucleic acid scaffolds can encode controlled numbers of
+        addressable binding sites and produce discrete, valency-dependent signal
+        amplification after purification and aggregation control.
+      blocked_use: >-
+        Do not treat as proof of GCL, proof of geometric compression, proof of
+        phonon routing, proof of Bezier transport paths, or evidence that GCL is
+        literal biology. Biomolecular claims remain native-domain only.
+      extracted_findings:
+        - "T1 and T3 self-hybridization were identified by native PAGE and NUPACK free-energy estimates."
+        - "Placeholder strands improved TDN-T1 and TDN-T3 construction, with productivities over 55% after strategy refinement."
+        - "SEC purification produced mono-TDN, di-TDN, and tri-TDN FNA scaffolds with high-purity building blocks."
+        - "AFM verified designed mono-, di-, and tri-TDN morphology with minimal aggregation."
+        - "Defined-valent assemblies produced staircase-like migration patterns for DNA, AuNP, and avidin/protein loading."
+        - "Valency-controlled avidin-HRP signal amplification produced monotonic/staircase-like electrochemical responses."
+        - "The sensor reported roughly 131-fold current increase at 50 nM ALU115 over blank in the supporting information."
+      delta_phi_gamma_lambda_binding:
+        delta: "uncontrolled valency, self-hybridization residue, aggregation, signal-count error, scaffold misassembly, or amplification nonlinearity"
+        phi: "preserved scaffold geometry, declared binding-site count, controlled signal valency, and monotonic/staircase amplification behavior"
+        gamma: "hybridization pressure, analyte concentration, avidin-HRP enzymatic amplification, electrochemical readout pressure, or scaffold assembly stress"
+        lambda: "scale band from oligonucleotide sequence to TDN vertex, mono-/di-/tri-TDN scaffold, biomolecule/AuNP conjugate, and sensor-level readout"
+      warden_notes:
+        - "Peer-reviewed native-domain biomolecular source, but still external to GCL proof authority."
+        - "Biology language must remain analogy-bounded outside the native FNA/sensor context."
+        - "Valency claims require declared binding sites, purification/aggregation receipts, and observed signal-unit counts."
+        - "Use as controlled scaffold-valency precedent, not direct compression or phonon-routing validation."
+
+    - id: "picard-2025-social-lives-of-mitochondria-mips"
+      type: "public_science_article"
+      title: "Mitochondria are more than powerhouses—they’re the motherboard of the cell"
+      source_url: "https://www.scientificamerican.com/article/mitochondria-are-more-than-powerhouses-theyre-the-motherboard-of-the-cell/"
+      doi: "10.1038/scientificamerican062025-QhEeouFRPCYEr2tKQNWqM"
+      journal: "Scientific American"
+      year: 2025
+      volume: "332"
+      issue: "6"
+      pages: "50"
+      accessed: "2026-05-02"
+      source_class: "public_science_synthesis_article"
+      peer_reviewed: false
+      claim_state: "HOLD"
+      authority_scope: "analogy_bound_source_anchor_for_distributed_bioenergetic_information_processing"
+      authors:
+        - "Martin Picard"
+      imported_as:
+        - "Mitochondrial Collective / MIPS Bridge source anchor"
+        - "distributed energy-information processing analogy"
+        - "autopoietic sensing / signaling / repair inspiration surface"
+      allowed_use: >-
+        Use as a public-science synthesis source for analogy-bounded concepts:
+        mitochondrial collectives, mito-mito junctions, cristae alignment,
+        fusion/fission, nanotunnels, mtDNA sharing, intercellular mitochondrial
+        transfer, specialization, and mitochondrial information-processing
+        systems.
+      blocked_use: >-
+        Do not treat as proof of GCL, proof of compression, proof of autopoiesis,
+        proof of engineering correctness, or medical guidance. Do not import
+        diet, disease, mental-health, or treatment claims into GCL engineering
+        docs except as out-of-scope source context.
+      extracted_findings:
+        - "Mitochondria are described as dynamic organelles that move, stretch, morph, touch, communicate, and specialize."
+        - "The source describes mito-mito junctions and cristae alignment across interacting mitochondria."
+        - "The source discusses mitochondrial fusion/fission, mtDNA sharing, nanotunnels, and intercellular mitochondrial transfer."
+        - "The source frames mitochondria as social organelles and as a mitochondrial information-processing system."
+        - "The source uses a motherboard metaphor rather than a simple battery/powerhouse metaphor."
+      delta_phi_gamma_lambda_binding:
+        delta: "energy leak, membrane-potential mismatch, failed fusion, stress residue, uncontrolled signaling, malformed repair, or abstraction drift"
+        phi: "preserved energy-flow invariant, stable information transfer, repairable state continuity, bounded stress response, or collective viability"
+        gamma: "stress load, metabolic signal pressure, hormonal/environmental forcing, mutation-load analogy, or simulator pressure"
+        lambda: "scale band from crista, mitochondrion, mito-mito junction, nanotunnel, cell, tissue, organ, organism, to GCL inspection surface"
+      warden_notes:
+        - "Public science synthesis source, not peer-reviewed proof authority."
+        - "Biology language must remain analogy-bounded outside native mitochondrial biology."
+        - "Medical, diet, disease, or treatment claims are out of scope for GCL engineering docs."
+        - "Use as distributed bioenergetic information-processing precedent, not direct compression validation."

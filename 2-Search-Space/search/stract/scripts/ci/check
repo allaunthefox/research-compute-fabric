@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+cargo check
+cargo check --no-default-features
+cargo check --all-features
+cargo check --features "dev"
+cargo clippy -- -D warnings
+
+cd crates/client-wasm && wasm-pack build --target web && cd -
+cd frontend && npm install && npm run check && npm run lint

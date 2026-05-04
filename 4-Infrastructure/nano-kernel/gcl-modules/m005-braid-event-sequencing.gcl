@@ -1,0 +1,69 @@
+-- M005: Braid Event Sequencing Kernel Module
+-- Source: braid_event_delta_gcl (5-Applications/tools-scripts/formula_optimization)
+-- Kernel Function: EventScheduler
+--
+-- Events classified as A, G, C, T via shell states.
+-- Braid trace = sequence of events over time with interference patterns.
+-- Truth Seal: [ SSS-ENE-BRAID-2026-05-03 ]
+
+module M005_BraidEventSequencing where
+
+import BaseTypes
+import M004_PISTGeometry (PISTShell, classifyProcess, BaseType)
+import Semantics.Q16_16
+
+structure BraidEvent where
+  id        : EventID
+  timestamp : Timestamp
+  shell     : PISTShell        -- Position in shell hierarchy
+  et        : BaseType         -- A, G, C, T classification
+  Fm        : Q16_16           -- Mass field
+  Fp        : Q16_16           -- Polarity field
+  prevEvents : Array EventID   -- Tail references (braid strands)
+
+-- Compute event from shell state (from braid_event_delta_gcl.py)
+def computeBraidEvent (n : Nat) (tailWeights : Array (Nat × Float)) : BraidEvent :=
+  let s := shellState n
+  let et := classifyShell s
+  let mass := s.a * s.b
+  let polarity := s.a - s.b
+  
+  -- Echo from previous events (braid interference)
+  let echo := tailWeights.foldl (\acc (tail, weight) =>
+    if n < tail then acc
+    else
+      let prev := shellState (n - tail)
+      let prevEt := classifyShell prev
+      if prevEt != .None then
+        acc + weight * (prev.a * prev.b).toFloat
+      else acc
+  ) 0.0
+  
+  let Fm := Q16_16.ofFloat (mass.toFloat + 0.5 * echo)
+  let Fp := Q16_16.ofFloat (polarity.toFloat + 0.25 * echo)
+  
+  { id := generateEventID n
+  , timestamp := now ()
+  , shell := s
+  , et := et
+  , Fm := Fm
+  , Fp := Fp
+  , prevEvents := tailWeights.map (\(t,_) => generateEventID (n-t))
+  }
+
+-- Kernel interface: schedule events in braid order
+def braidEventQueue (pendingEvents : Array BraidEvent) : IO (Array BraidEvent) := do
+  -- Sort by shell width (inner shells first = higher priority)
+  let sorted := pendingEvents.sortBy (\a b => a.shell.width < b.shell.width)
+  
+  -- Check braid interference: don't schedule events with conflicting prevEvents
+  let scheduled := sorted.foldl (\acc ev =>
+    if acc.any (\s => s.prevEvents.intersects ev.prevEvents) then
+      acc  -- Skip: would cause braid crossing
+    else
+      acc.push ev
+  ) #[]
+  
+  return scheduled
+
+end M005_BraidEventSequencing

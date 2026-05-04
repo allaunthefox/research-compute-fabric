@@ -1,0 +1,195 @@
+-- Delta Kernel Compression
+-- Applies user's 3-layer Delta-GCL compression to kernel image
+--
+-- Target: 50KB compressed kernel (vs 1.5MB uncompressed)
+-- Based on: braid_event_delta_gcl.py 3-layer stack
+
+module DeltaKernelCompression where
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §1  Layer 1 — Delta Encoding (Kernel as Diff from Reference)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Instead of storing full kernel, store diff from "universal kernel template".
+    The template is a minimal Linux config that all deltas apply to.
+    
+    Template kernel: 1MB (shared, not stored per-instance)
+    Delta: ~200KB (the actual differences)
+    
+    This is like encoding event[n+1] as diff from event[n] in braid events. -/
+structure KernelDelta where
+  templateHash : Hash  -- Reference template (e.g., "linux-6.12-minimal-template")
+  patches      : List Patch
+  
+structure Patch where
+  offset : Address    -- Where to patch
+  data   : Bytes    -- New bytes (can be empty for deletions)
+  
+/-- Apply delta to template to reconstruct full kernel.
+    Similar to braid_event_delta_gcl.py delta decoding. -/
+def applyDelta (template : KernelImage) (delta : KernelDelta) : KernelImage :=
+  let patched := foldl (\img p → patchAt p.offset p.data img) template delta.patches
+  verifyChecksum delta.templateHash patched
+  patched
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §2  Layer 2 — PTOS Field Dictionary (Syscall Encoding)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- PTOS (Perfect Transformation Operating System) style syscall encoding.
+    Instead of storing full syscall numbers, use byte indices into dictionary.
+    
+    This mirrors braid_event_delta_gcl.py's PTOS field dictionary:
+      Factor magic-number tables to byte indices
+      
+    8 syscalls × 8 bytes = 64 bytes dictionary
+    Each syscall reference = 1 byte (index) vs 4 bytes (full number) -/
+
+def syscallDictionary : Array Syscall :=
+  #[ .NetworkReceive    -- 0x00
+   , .NetworkSend       -- 0x01
+   , .TimerTick         -- 0x02
+   , .BlockRead         -- 0x03
+   , .BlockWrite        -- 0x04
+   , .MemoryAllocate    -- 0x05
+   , .ConsoleWrite      -- 0x06
+   , .SocketAccept      -- 0x07
+   ]
+
+/-- Encode syscall as single byte index. -/
+def encodeSyscall (s : Syscall) : UInt8 :=
+  match syscallDictionary.findIdx (\x → x == s) with
+  | some idx => UInt8.ofNat idx
+  | none => 0xFF  -- Invalid/error
+
+/-- Decode single byte to syscall. -/
+def decodeSyscall (b : UInt8) : Option Syscall :=
+  let idx := b.toNat
+  if idx < syscallDictionary.size then
+    some syscallDictionary[idx]!
+  else
+    none
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §3  Layer 3 — Codon Instruction Encoding (Variable-Length)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Codon encoding for GCL bytecode instructions.
+    Similar to braid_event: et ∈ {A,G,C,T} → fixed-Huffman codon
+    
+    Common instructions get shorter codes (Huffman-style):
+      - Load/Store: 2-bit codes
+      - Branch: 3-bit codes
+      - Rare ops: 5-bit codes
+      
+    Average: ~3 bits per instruction vs 32 bits (4× compression) -/
+
+inductive Codon where
+  | Nop      -- 00 (2 bits)
+  | Load     -- 01 (2 bits)
+  | Store    -- 10 (2 bits)
+  | Add      -- 110 (3 bits)
+  | Sub      -- 111 (3 bits)
+  | Branch   -- 1110 (4 bits)
+  | Call     -- 1111 (4 bits)
+  | Syscall  -- 11110 (5 bits)
+  | Unknown  -- 11111 (5 bits, escape for extended)
+  
+/-- GCL instruction to codon. -/
+def instructionToCodon (i : Instruction) : Codon :=
+  match i.opcode with
+  | .NOP => .Nop
+  | .LOAD => .Load
+  | .STORE => .Store
+  | .ADD => .Add
+  | .SUB => .Sub
+  | .BRANCH => .Branch
+  | .CALL => .Call
+  | .SYSCALL => .Syscall
+  | _ => .Unknown
+
+/-- Stream of codons → bit-packed bytes. -/
+def packCodons (codons : List Codon) : Bytes :=
+  -- Pack variable-length codes into byte stream
+  -- Uses bit buffer: collect bits until we have 8, then emit byte
+  let bits := codons.map codonBits
+  bitPack bits
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §4  Combined Compression — 50KB Target
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Full compression pipeline:
+    
+    1. Start with GCL nanokernel source (~500KB of GCL code)
+    2. Compile to bytecode (~200KB)
+    3. Apply delta from template (~80KB delta)
+    4. Encode syscalls as PTOS dictionary (~60KB)
+    5. Pack instructions as codons (~50KB final)
+    
+    Total: 50KB compressed kernel image. -/
+def compressKernel (source : GCLSource) : CompressedKernel :=
+  let bytecode := gclCompile source
+  let delta := computeDelta templateKernel bytecode
+  let ptosEncoded := encodeSyscalls delta syscallDictionary
+  let codonPacked := packCodons (instructionsToCodons ptosEncoded)
+  
+  { compressed := codonPacked
+  , compressionRatio := (source.size.toFloat / codonPacked.size.toFloat)
+  , checksum := sha256 codonPacked
+  , template := templateHash
+  }
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §5  Decompression at Boot
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Boot-time decompression.
+    Runs in Linux shim before transferring control to GCL nanokernel. -/
+def decompressKernel (compressed : CompressedKernel) : KernelImage :=
+  -- 1. Unpack codons
+  let codons := unpackCodons compressed.compressed
+  
+  -- 2. Decode syscalls
+  let syscalls := decodeSyscalls codons
+  
+  -- 3. Apply delta to template
+  let template := loadTemplate compressed.template
+  let bytecode := applyDelta template syscalls
+  
+  -- 4. Verify
+  if sha256 bytecode == compressed.checksum then
+    bytecode
+  else
+    panic "Kernel decompression failed: checksum mismatch"
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §6  Size Analysis
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Expected sizes:
+
+    Original GCL source:          500 KB
+    Compiled bytecode:            200 KB  (gclc -O2)
+    After delta compression:       80 KB  (60% reduction)
+    After PTOS encoding:           60 KB  (25% reduction)
+    After codon packing:           50 KB  (17% reduction)
+    
+    Linux shim (drivers only):    ~20 KB  (absolute minimum)
+    Total boot image:             ~70 KB  (vs 1.5MB = 97% reduction!)
+    
+    Truth invariants:
+    - Decompression verified against SHA256
+    - Codon table fixed (no runtime generation)
+    - Delta template immutable (versioned)
+    -/]
+def expectedSizes : String :=
+  "Layer 0 (GCL source):      500 KB\n" ++
+  "Layer 1 (bytecode):        200 KB  (2.5:1)\n" ++
+  "Layer 2 (delta):            80 KB  (2.5:1)\n" ++
+  "Layer 3 (PTOS dict):        60 KB  (1.3:1)\n" ++
+  "Layer 4 (codon):            50 KB  (1.2:1)\n" ++
+  "Linux shim:                 20 KB\n" ++
+  "TOTAL:                      70 KB  (97% reduction)"
+
+end DeltaKernelCompression

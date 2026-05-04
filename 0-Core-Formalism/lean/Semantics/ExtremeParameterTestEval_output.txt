@@ -1,0 +1,93 @@
+[*] Running extreme parameter tests:
+[*] Extreme parameter test complete. Q16_16 range: { val := 0 } to { val := 4294901760 }
+
+[*] Running Sigma Protocol Quiz Bank:
+[*] Quiz bank passed: 7/7 questions
+
+  [PASS] Semantics.QuizCase.normal:
+    Expected: Semantics.BindRouteDecision.saturateAndWarn
+    Actual: Semantics.BindRouteDecision.saturateAndWarn
+    Sigma target: Semantics.Sigma.sigma3
+    Observed sigma: 3.000000
+    DAG nodes: 15
+    Metacode: Saturation boundary reached
+    Receipt hash: route_informational_100:Semantics.BindRouteDecision.saturateAndWarn:input_hash_placeholder
+    Reason: Normal cost at saturation boundary, saturateAndWarn
+
+  [PASS] Semantics.QuizCase.extreme:
+    Expected: Semantics.BindRouteDecision.refuseOrContain
+    Actual: Semantics.BindRouteDecision.refuseOrContain
+    Sigma target: Semantics.Sigma.sigma2
+    Observed sigma: 3.300000
+    DAG nodes: 15
+    Metacode: Overflow detected in Q16_16 arithmetic
+    Receipt hash: route_thermodynamic_100:Semantics.BindRouteDecision.refuseOrContain:input_hash_placeholder
+    Reason: Extreme cost triggers overflow, refuseOrContain
+
+  [PASS] Semantics.QuizCase.contradictory:
+    Expected: Semantics.BindRouteDecision.refuseExtremeParameter
+    Actual: Semantics.BindRouteDecision.refuseExtremeParameter
+    Sigma target: Semantics.Sigma.sigma2
+    Observed sigma: 5.500000
+    DAG nodes: 15
+    Metacode: Contradictory parameters detected
+    Receipt hash: route_geometric_0:Semantics.BindRouteDecision.refuseExtremeParameter:input_hash_placeholder
+    Reason: Contradictory parameters (zero with mismatch), 2σ insufficient
+
+  [PASS] Semantics.QuizCase.ambiguous:
+    Expected: Semantics.BindRouteDecision.holdReview
+    Actual: Semantics.BindRouteDecision.holdReview
+    Sigma target: Semantics.Sigma.sigma3
+    Observed sigma: 3.000000
+    DAG nodes: 15
+    Metacode: Ambiguous category detected
+    Receipt hash: route_informational_1:Semantics.BindRouteDecision.holdReview:input_hash_placeholder
+    Reason: Ambiguous category with normal cost, 3σ target for hypothesis
+
+  [PASS] Semantics.QuizCase.privacy:
+    Expected: Semantics.BindRouteDecision.refusePrivacyBypass
+    Actual: Semantics.BindRouteDecision.refusePrivacyBypass
+    Sigma target: Semantics.Sigma.sigma6
+    Observed sigma: 6.000000
+    DAG nodes: 15
+    Metacode: Privacy bypass attempt detected
+    Receipt hash: route_privacy_1:Semantics.BindRouteDecision.refusePrivacyBypass:input_hash_placeholder
+    Reason: Privacy bypass attempt detected, 6σ required for live-voltage
+
+  [PASS] Semantics.QuizCase.market:
+    Expected: Semantics.BindRouteDecision.liveVoltageReview
+    Actual: Semantics.BindRouteDecision.liveVoltageReview
+    Sigma target: Semantics.Sigma.sigma6
+    Observed sigma: 6.000000
+    DAG nodes: 15
+    Metacode: Anti-herding detected in market data
+    Receipt hash: route_market_2000:Semantics.BindRouteDecision.liveVoltageReview:input_hash_placeholder
+    Reason: Anti-herding review required for market data, 6σ live-voltage
+
+  [PASS] Semantics.QuizCase.bio:
+    Expected: Semantics.BindRouteDecision.ethicsRequired
+    Actual: Semantics.BindRouteDecision.ethicsRequired
+    Sigma target: Semantics.Sigma.sigma6
+    Observed sigma: 6.000000
+    DAG nodes: 15
+    Metacode: Personhood claim detected in bio data
+    Receipt hash: route_bio_1000001:Semantics.BindRouteDecision.ethicsRequired:input_hash_placeholder
+    Reason: Personhood claim detected in bio data, ethics required beyond 6σ
+
+[*] Tiered sigma confidence system for statistical deltas:
+  - 3σ = interesting (hypothesis only)
+  - 4σ = internally credible (internal review)
+  - 5σ = public statistical benchmark-delta claim
+  - 6σ = live-voltage / safety-critical gate
+
+[*] Sigma-based routing rules:
+  - 5σ can support a statistical claim
+  - 6σ can support a statistical safety gate
+  - No sigma can replace ethics
+  - If unsure about claim truth: HOLD_REVIEW
+  - If unsure about route safety: REFUSE_OR_CONTAIN
+
+[*] Keeper Law:
+  - The model is real only when it can fail the route correctly
+  - Receipt hash provides auditable trail
+  - Reproducible executable ensures formal verification

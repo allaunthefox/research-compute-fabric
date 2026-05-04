@@ -1,0 +1,5 @@
+# AngrySphinx Testing
+
+This folder is reserved for bounded AngrySphinx experiments, including Q0.16 boundary equations, recursive DAG rollups, NUVMAP projections, and machine-safety test receipts.
+
+Guardrail: weird-but-useful experiments belong here only when they include explicit depth, resource, witness, and rollback boundaries.

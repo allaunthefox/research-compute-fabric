@@ -1,0 +1,96 @@
+#ifndef SPATIALDISCRETIZATION2D_HPP
+#define SPATIALDISCRETIZATION2D_HPP
+
+#include <array>
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+#include <functional>
+#include <memory>
+#include <unordered_map>
+#include <vector>
+
+#include "BoundaryCondition.hpp"
+#include "Mesh2D.hpp"
+
+using SparseMatrixRM = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+
+namespace spatial
+{
+
+// Pointer required for run-time polymorphism and to be used in different instances of the class
+using BoundaryConditions = std::unordered_map<DomainSide, std::shared_ptr<BoundaryCondition>>;
+
+class SpatialDiscretization2D
+{
+    private: 
+        // TODO: Study change from reference to mesh to using a shared_ptr or even removing mesh altogether.
+        const Mesh2D& mesh_;
+
+    protected:
+        std::function<double (double, double, double)> source_;
+        std::function<double (double, double)> alpha_;
+
+        // Sparse matrix and tripletlist for assembly
+        SparseMatrixRM matrix_;
+        std::vector<Eigen::Triplet<double>> tripletList;
+        Eigen::VectorXd b_;
+
+        // Mappings for nodes in the local, reduced space (Dirichlet nodes are removed)
+        std::vector<int> local_to_global_;
+        std::vector<int> global_to_local_;
+
+        // Check if node has prescribed Dirichlet BCs
+        std::vector<bool> is_dirichlet_;
+
+        // Store boundary conditions
+        std::array<std::shared_ptr<BoundaryCondition>, 4> boundary_conditions_;
+        bool hasNeumann = false;
+
+    public:
+        SpatialDiscretization2D(std::function<double (double, double)> alpha, const Mesh2D& mesh, BoundaryConditions boundary_conditions, std::function<double (double, double, double)> source) 
+        :
+        alpha_(alpha),
+        mesh_(mesh), 
+        source_(source),
+        global_to_local_(mesh_.getNodes().size(), - 1),
+        is_dirichlet_(mesh_.getNodes().size(), false) 
+        {
+            // Convert boundary conditions from unordered_map to array for easier access. Check that all sides are present.
+            const std::array<DomainSide, 4> all_sides = {
+                DomainSide::Left, DomainSide::Right, DomainSide::Bottom, DomainSide::Top
+            };
+
+            for (DomainSide side : all_sides)
+            {
+                const auto it = boundary_conditions.find(side);
+                if (it == boundary_conditions.end())
+                {
+                    throw std::invalid_argument("Missing boundary condition for one or more domain sides.");
+                }
+                boundary_conditions_[sideToIndex(side)] = it->second;
+            }
+        };
+
+        virtual ~SpatialDiscretization2D() = default;
+
+        // Discretize and build matrix A and vector b
+        virtual void buildMappings() = 0;
+        virtual void discretize() = 0;
+        virtual void applyLaplacian() = 0;
+        virtual void applyBoundaryConditions() = 0;
+        virtual void updateRHS(double t) = 0;
+
+        // Solves Au = b for steady-state problems. For time-dependent PDEs, this is unused.
+        virtual Eigen::VectorXd solveSteadyState() = 0;
+        virtual Eigen::VectorXd reduce(std::function<double (double, double)>) = 0;
+        virtual Eigen::VectorXd fillDirichletNodes(const Eigen::Ref<const Eigen::VectorXd>&, double) const = 0;
+
+        // Getters
+        inline const SparseMatrixRM& getMatrix() const {return matrix_;};
+        inline const Eigen::VectorXd& getVector() const {return b_;};
+        inline const BoundaryCondition& getBoundaryCondition(DomainSide side) const {return *boundary_conditions_[sideToIndex(side)];}
+        inline bool isSPD() const {return !hasNeumann;};
+};
+
+}; // namespace
+#endif // ifndef SPATIALDISCRETIZATION2D_HPP

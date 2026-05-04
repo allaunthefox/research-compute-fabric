@@ -1,0 +1,31 @@
+[flake8]
+# Must match black line-length in pyproject.toml exactly
+max-line-length = 88
+
+# Black-compatible ignores
+extend-ignore =
+    E203,   # whitespace before ':' — black handles this
+    W503,   # line break before binary operator — conflicts with black
+    W504    # line break after binary operator — conflicts with black
+
+# Enable flake8-bugbear rules
+extend-select = B,B9
+
+# Per-file ignores
+per-file-ignores =
+    tests/*:S101,      # allow assert in tests
+    scripts/*:S101     # allow assert in scripts
+
+# Max complexity — matches radon CC Grade C ceiling and pylint max-branches
+max-complexity = 10
+
+# Exclude paths
+exclude =
+    .venv,
+    build,
+    dist,
+    docs,
+    scripts,
+    __pycache__,
+    *.egg-info,
+    .git

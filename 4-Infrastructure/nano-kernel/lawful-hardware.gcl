@@ -1,0 +1,369 @@
+-- Lawful Hardware Layer
+--
+-- Every hardware/kernel boundary crossing produces a BindResult witness.
+-- This turns the appliance VM into a lawful-loss measurement instrument.
+--
+-- The core question: "What survives translation, and what did it cost?"
+--
+-- Truth Seal: [ SSS-ENE-LAWFUL-HARDWARE-2026-05-03 ]
+
+module LawfulHardware where
+
+import BaseTypes
+import Memory
+import SyscallInterface
+import Semantics.LawfulLoss (BindResult, lawfulLoss, BindClass)
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §1  Hardware Event Witnesses
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Every hardware event that crosses into kernel space generates
+    a witness recording what changed and what it cost.
+    
+    This is the foundation of lawful hardware: no transition without accounting.
+    -/]
+
+structure HardwareEvent where
+  eventType     : EventType
+  sourceState   : MachineState      -- CPU registers, flags, before
+  targetState   : MachineState      -- After kernel mediation
+  timestamp     : Timestamp
+  duration      : Cycles            -- How long in kernel
+  invariantFlags : List Bool         -- Which invariants survived?
+  
+inductive EventType where
+  | Interrupt     -- Hardware interrupt (timer, NIC, disk)
+  | Syscall       -- User→kernel syscall
+  | PageFault     -- Memory access violation
+  | ContextSwitch -- Process switch
+  | Trap          -- Exception (div by zero, etc.)
+  | DeviceDMA     -- Direct memory access
+  | ThermalAlert  -- Temperature threshold
+  | PowerEvent    -- Sleep/wake, frequency change
+  
+structure MachineState where
+  pc            : Address           -- Program counter
+  sp            : Address           -- Stack pointer
+  registers     : Array UInt64      -- General purpose regs
+  flags         : CPUFlags
+  cr3           : Address           -- Page table root
+  ring          : PrivilegeLevel    -- 0=kernel, 3=user
+  
+inductive PrivilegeLevel where
+  | Ring0       -- Kernel
+  | Ring3       -- User
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §2  BindResult Generation from Hardware Events
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Convert any hardware event into a lawful BindResult witness.
+    This is the core function that makes hardware "lawful."
+    -/]
+
+def eventToBindResult (event : HardwareEvent) : BindResult :=
+  let invariantsPreserved := checkInvariantPreservation event
+  let cost := computeTransitionCost event
+  let witness := generateEventWitness event
+  let klass := classifyEvent event.eventType
+  
+  lawfulLoss invariantsPreserved cost witness klass
+
+/-- Check which invariants survived the hardware→kernel transition.
+    
+    Invariants checked:
+    - Memory ownership (did we stay in assigned pages?)
+    - Privilege boundary (ring transition correct?)
+    - Register preservation (callee-saved intact?)
+    - Stack integrity (SP valid, no overflow?)
+    - Timestamp monotonicity (time moved forward?)
+    -/]
+
+def checkInvariantPreservation (event : HardwareEvent) : Bool :=
+  let checks := #[
+    checkMemoryInvariant event,
+    checkPrivilegeInvariant event,
+    checkRegisterInvariant event,
+    checkStackInvariant event,
+    checkTimeInvariant event
+  ]
+  checks.all id
+
+def checkMemoryInvariant (event : HardwareEvent) : Bool :=
+  -- Page fault handled correctly? Access was to valid region?
+  match event.eventType with
+  | .PageFault => 
+      event.targetState.cr3 == event.sourceState.cr3 &&
+      validPageTable event.targetState.cr3
+  | .Interrupt => 
+      -- Interrupt handler didn't corrupt user memory
+      userMemoryUnchanged event.sourceState event.targetState
+  | _ => true
+
+def checkPrivilegeInvariant (event : HardwareEvent) : Bool :=
+  -- Ring transitions are correct:
+  -- Syscall: Ring3 → Ring0 → Ring3
+  -- Interrupt: Ring3 → Ring0 → Ring3 (or stay Ring0)
+  -- No stuck in Ring0, no sudden Ring3 in kernel code
+  match event.eventType with
+  | .Syscall => 
+      event.sourceState.ring == .Ring3 &&
+      event.targetState.ring == .Ring0
+  | .Interrupt =>
+      event.targetState.ring == .Ring0
+  | .ContextSwitch =>
+      -- Must switch between valid processes
+      validProcessSwitch event.sourceState event.targetState
+  | _ => true
+
+/-- Compute the "cost" of this hardware transition.
+    
+    Cost factors:
+    - Cycles spent in kernel
+    - Cache pollution (lines evicted)
+    - TLB invalidations
+    - Pipeline flushes
+    
+    Normalized to Q0_16 [0,1] where 1 = maximum tolerable cost.
+    -/]
+
+def computeTransitionCost (event : HardwareEvent) : Q0_16 :=
+  let cycleCost := normalizeCycles event.duration
+  let cacheCost := estimateCacheImpact event
+  let tlbCost := countTLBInvalidations event
+  
+  -- Weighted combination
+  let total := cycleCost * 0.5 + cacheCost * 0.3 + tlbCost * 0.2
+  clamp total 0 1
+
+def normalizeCycles (cycles : Cycles) : Float :=
+  -- Normalize: 0 cycles = 0 cost, 10000 cycles = 1.0 cost (arbitrary threshold)
+  min (cycles.toFloat / 10000.0) 1.0
+
+/-- Generate human-readable witness string.
+    This is the "receipt" that gets logged and can be audited.
+    -/]
+
+def generateEventWitness (event : HardwareEvent) : String :=
+  "EVENT:" ++ event.eventType.toString ++
+  ";PC:" ++ hex event.sourceState.pc ++
+  "→" ++ hex event.targetState.pc ++
+  ";CYCLES:" ++ event.duration.toString ++
+  ";INV:" ++ (if checkInvariantPreservation event then "PASS" else "FAIL") ++
+  ";TIME:" ++ event.timestamp.toString
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §3  Event Classifier
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Classify hardware events by BindClass.
+    This determines which subsystem governs the lawful loss.
+    -/]
+
+def classifyEvent (eventType : EventType) : BindClass :=
+  match eventType with
+  | .Interrupt     => .control      -- Scheduling decisions
+  | .Syscall       => .informational -- Data transfer user↔kernel
+  | .PageFault     => .geometric     -- Memory topology changes
+  | .ContextSwitch => .control       -- Process orchestration
+  | .Trap          => .physical      -- Exception handling
+  | .DeviceDMA     => .thermodynamic -- Energy/throughput tradeoff
+  | .ThermalAlert  => .thermodynamic -- Temperature management
+  | .PowerEvent    => .physical      -- Hardware state changes
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §4  Witness Logging and Storage
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Ring buffer of recent witnesses for debugging/analysis.
+    Older witnesses can be compressed and archived. -/]
+structure WitnessLog where
+  entries       : Array BindResult
+  head          : Nat               -- Next write position
+  capacity      : Nat               -- Ring buffer size
+  totalEvents   : Nat               -- All-time counter
+
+def initWitnessLog (capacity : Nat) : WitnessLog := {
+  entries := Array.mk capacity (BindResult.default)
+  head := 0
+  capacity := capacity
+  totalEvents := 0
+}
+
+/-- Log a new witness. Overwrites oldest if at capacity. -/]
+
+def logWitness (log : WitnessLog) (witness : BindResult) : IO Unit := do
+  log.entries[log.head] := witness
+  log.head := (log.head + 1) % log.capacity
+  log.totalEvents := log.totalEvents + 1
+  
+  -- If high-cost or unlawful, immediately flush to persistent storage
+  if witness.cost > Q0_16.half || !witness.lawful then
+    flushWitnessToStorage witness
+
+/-- Persist important witnesses for later analysis.
+    Writes to ENE topological storage. -/]
+
+def flushWitnessToStorage (witness : BindResult) : IO Unit := do
+  let witnessJSON := toJSON witness
+  let filename := "witness_" ++ witness.timestamp.toString ++ ".json"
+  
+  -- Write to local ring buffer first (fast)
+  appendToLocalWitnessRing witnessJSON
+  
+  -- Async upload to ENE storage
+  spawn $ eneUploadWitness filename witnessJSON
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §5  Hardware Event Handlers (Integration Points)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- These functions are called by the actual hardware interrupt/syscall
+    handlers in the Linux shim. They wrap the raw events with lawful
+    witness generation.
+    -/]
+
+/-- Called from interrupt handler entry. -/]
+@[export "lawful_interrupt_entry"]
+def lawfulInterruptEntry (regs : RegisterFrame) : IO Unit := do
+  let event := createEvent .Interrupt regs
+  let witness := eventToBindResult event
+  logWitness globalWitnessLog witness
+  
+  -- If unlawful, trigger Warden validation
+  if !witness.lawful then
+    triggerWardenInterrupt witness
+
+/-- Called from syscall entry (before executing syscall). -/]
+@[export "lawful_syscall_entry"]
+def lawfulSyscallEntry (regs : RegisterFrame) (syscallNum : UInt64) : IO Unit := do
+  let event := createSyscallEvent regs syscallNum
+  let witness := eventToBindResult event
+  logWitness globalWitnessLog witness
+  
+  -- High-cost syscalls get extra scrutiny
+  if witness.cost > Q0_16.quarter then
+    incrementSyscallBudget syscallNum witness.cost
+
+/-- Called from page fault handler. -/]
+@[export "lawful_pagefault_entry"]
+def lawfulPageFaultEntry (regs : RegisterFrame) (faultAddr : Address) : IO Unit := do
+  let event := createPageFaultEvent regs faultAddr
+  let witness := eventToBindResult event
+  logWitness globalWitnessLog witness
+  
+  -- Page faults are geometric events - check manifold integrity
+  if !witness.lawful then
+    -- Potential security issue: invalid page access
+    triggerWardenPageFault witness
+
+/-- Called from context switch (switch_to). -/]
+@[export "lawful_context_switch"]
+def lawfulContextSwitch (prev : TaskStruct) (next : TaskStruct) : IO Unit := do
+  let event := createContextSwitchEvent prev next
+  let witness := eventToBindResult event
+  logWitness globalWitnessLog witness
+  
+  -- Track scheduling fairness via cost accumulation
+  updateProcessCost next.pid witness.cost
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §6  Warden Integration
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- When a hardware event is unlawful or high-cost, the Warden is notified.
+    The Warden can: validate, rollback, or escalate to Judge.
+    -/]
+
+def triggerWardenInterrupt (witness : BindResult) : IO Unit := do
+  let wardenPacket := {
+    packetType := .WardenAlert
+    severity := if witness.lawful then 50 else 85
+    witness := witness
+    suggestedAction := if witness.lawful then .Log else .Validate
+  }
+  eneSendToWarden wardenPacket
+
+def triggerWardenPageFault (witness : BindResult) : IO Unit := do
+  let wardenPacket := {
+    packetType := .WardenAlert
+    severity := 90  -- High: potential security issue
+    witness := witness
+    suggestedAction := .Quarantine
+  }
+  eneSendToWarden wardenPacket
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §7  Statistics and Reporting
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Query statistics about hardware event costs. -/]
+
+def getHardwareStatistics : IO HardwareStats := do
+  let log := globalWitnessLog
+  
+  let totalEvents := log.totalEvents
+  let unlawfulEvents := log.entries.count (\w => !w.lawful)
+  let highCostEvents := log.entries.count (\w => w.cost > Q0_16.half)
+  
+  let avgCost := log.entries.foldl (\acc w => acc + w.cost) 0 / totalEvents
+  
+  return {
+    totalEvents := totalEvents
+    unlawfulEvents := unlawfulEvents
+    highCostEvents := highCostEvents
+    averageCost := avgCost
+    currentLoad := estimateCurrentLoad log
+    lawfulFraction := (totalEvents - unlawfulEvents).toFloat / totalEvents.toFloat
+  }
+
+/-- Generate summary report for debugging/audit. -/]
+
+def generateWitnessReport : IO String := do
+  let stats ← getHardwareStatistics
+  
+  return "\n=== Lawful Hardware Report ===\n" ++
+         "Total Events: " ++ stats.totalEvents.toString ++ "\n" ++
+         "Unlawful: " ++ stats.unlawfulEvents.toString ++
+         " (" ++ (stats.unlawfulEvents * 100 / stats.totalEvents).toString ++ "%)\n" ++
+         "High Cost: " ++ stats.highCostEvents.toString ++ "\n" ++
+         "Avg Cost: " ++ stats.averageCost.toString ++ "\n" ++
+         "Lawful Fraction: " ++ stats.lawfulFraction.toString ++ "\n" ++
+         "============================\n"
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §8  Initialization
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Global witness log (initialized at boot). -/
+globalWitnessLog : WitnessLog := initWitnessLog 10000  -- Last 10K events
+
+/-- Initialize lawful hardware subsystem. -/]
+
+def initLawfulHardware : IO Unit := do
+  consoleLog "[LAWFUL-HARDWARE] Initializing witness subsystem..."
+  
+  -- Reset witness log
+  globalWitnessLog := initWitnessLog 10000
+  
+  -- Register with Linux shim
+  syscall $ Syscall.RegisterLawfulCallbacks {
+    interruptEntry := lawfulInterruptEntry
+    syscallEntry := lawfulSyscallEntry
+    pageFaultEntry := lawfulPageFaultEntry
+    contextSwitch := lawfulContextSwitch
+  }
+  
+  -- Log boot event
+  let bootWitness := {
+    lawful := true
+    cost := Q0_16.zero
+    witness := "lawful_hardware_initialized"
+    klass := .control
+  }
+  logWitness globalWitnessLog bootWitness
+  
+  consoleLog "[LAWFUL-HARDWARE] Ready. Every transition will be witnessed."
+
+end LawfulHardware

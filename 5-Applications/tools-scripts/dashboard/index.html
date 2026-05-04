@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Stack | Controller</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0b10;
+            --surface: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --primary: #5865F2;
+            --primary-glow: rgba(88, 101, 242, 0.3);
+            --secondary: #ff007a; /* Euretha Magenta */
+            --secondary-glow: rgba(255, 0, 122, 0.3);
+            --accent: #00ffa3; /* Physics Bound Green */
+            --hazard: #ffaa00; /* Memetic Hazard Orange */
+            --text-main: #e0e0e0;
+            --text-muted: #888888;
+            --glass: blur(12px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background: none;
+            border: none;
+            outline: none;
+            color: inherit;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+        }
+
+        .glow {
+            position: fixed;
+            width: 40vw;
+            height: 40vw;
+            border-radius: 50%;
+            background: var(--primary-glow);
+            filter: blur(150px);
+            z-index: -1;
+            pointer-events: none;
+        }
+        .glow-1 { top: -10%; left: -10%; }
+        .glow-2 { bottom: -10%; right: -10%; background: var(--secondary-glow); }
+
+        aside {
+            width: 280px;
+            height: 100%;
+            background: var(--surface);
+            backdrop-filter: var(--glass);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            z-index: 10;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 8px;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+        }
+
+        nav ul { list-style: none; }
+        nav li { margin-bottom: 0.5rem; }
+        nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        nav a:hover, nav a.active {
+            background: var(--surface);
+            color: var(--text-main);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        nav a.active { border: 1px solid var(--border); }
+
+        main {
+            flex-grow: 1;
+            height: 100%;
+            padding: 3rem;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.4s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: var(--surface);
+            backdrop-filter: var(--glass);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 24px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+        .card h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-hazard { background: var(--hazard); color: #000; box-shadow: 0 0 10px rgba(255, 170, 0, 0.4); }
+        .badge-bound { background: var(--accent); color: #000; box-shadow: 0 0 10px rgba(0, 255, 163, 0.4); }
+
+        .stat-val { font-size: 2.5rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.5rem; }
+        .stat-label { font-size: 0.85rem; color: var(--text-muted); }
+
+        /* Search Styles */
+        .search-area {
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .search-input-container {
+            position: relative;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        .search-input-container:focus-within { border-color: var(--primary); }
+        .search-input-container input { flex-grow: 1; font-size: 1.1rem; }
+        
+        .result-card {
+            margin-bottom: 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 16px;
+            transition: all 0.2s ease;
+        }
+        .result-card:hover { background: rgba(255,255,255,0.08); border-color: var(--primary); }
+        .result-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        .result-id { font-weight: 800; color: var(--primary); font-family: 'JetBrains Mono'; }
+        .result-tags { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+        .tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px; color: var(--text-muted); }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <aside>
+        <div class="header">
+            <div class="logo"></div>
+            <h1>Substrate</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a data-view="overview" class="active">Overview</a></li>
+                <li><a data-view="linear">Linear Navigator</a></li>
+                <li><a data-view="notion">Notion Navigator</a></li>
+                <li><a data-view="manifold">Manifold Stats</a></li>
+                <li><a data-view="patent">Patent Archive</a></li>
+            </ul>
+        </nav>
+        <div style="flex-grow: 1;"></div>
+        <div class="card" style="padding: 1rem; border-radius: 12px; font-size: 0.8rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span style="width: 8px; height: 8px; background: #00ff00; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #00ff00;"></span>
+                <span style="color: #00ff00; font-weight: 700;">SESSION OPERATIONAL</span>
+            </div>
+            <p id="uptime-display" style="color: var(--text-muted);">Uptime: 45d 12h 4m</p>
+        </div>
+    </aside>
+
+    <main>
+        <!-- OVERVIEW VIEW -->
+        <section id="overview-section" class="view-section active">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1rem;">
+                <div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.25rem;">Wednesday, April 22</p>
+                    <h1 style="font-size: 2.5rem; font-weight: 800; letter-spacing: -1.5px;">PATAMATHEMATICAL CONTROLLER</h1>
+                </div>
+                <div class="badge badge-hazard">MEMETIC_HAZARD ACTIVE</div>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header"><h2>Dynamic Cannal Pressure</h2></div>
+                    <div class="stat-val" id="pressure-val">0.82</div>
+                    <div class="stat-label">$\lambda$ Effective</div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h2>Linear Index</h2></div>
+                    <div class="stat-val">2,314</div>
+                    <div class="stat-label">Total Intent Nodes</div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h2>Archive Status</h2></div>
+                    <div class="stat-val">152</div>
+                    <div class="stat-label">Sealed Components</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SUBSTRATE NAVIGATOR (Unified for Linear/Notion) -->
+        <section id="linear-section" class="view-section">
+            <h1 id="nav-title" style="font-size: 2.5rem; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 2rem;">LINEAR NAVIGATOR</h1>
+            <div class="search-area">
+                <div class="search-input-container">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="linear-search" placeholder="Search intent space..." autocomplete="off">
+                </div>
+                <div id="search-stats" style="font-size: 0.8rem; color: var(--text-muted); padding-left: 1rem;">
+                    Ready. 2,314 nodes indexed.
+                </div>
+            </div>
+            <div id="linear-results"></div>
+        </section>
+
+        <!-- MANIFOLD STATS VIEW -->
+        <section id="manifold-section" class="view-section">
+            <h1 style="font-size: 2.5rem; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 2rem;">MANIFOLD STATS</h1>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header"><h2>PIST Tension</h2></div>
+                    <div class="stat-val" id="tension-mon">0.824</div>
+                    <div class="stat-label">Neutralized Mass (m)</div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h2>Active Phase</h2></div>
+                    <div class="stat-val" style="color: var(--primary);">GROUNDED</div>
+                    <div class="stat-label">Formal Policy Sort</div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h2>$\Phi$-Phase</h2></div>
+                    <div class="stat-val" id="phi-mon">1.618</div>
+                    <div class="stat-label">Golden Ratio Accumulator</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PATENT ARCHIVE VIEW -->
+        <section id="patent-section" class="view-section">
+            <h1 style="font-size: 2.5rem; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 2rem;">PATENT ARCHIVE</h1>
+            <div class="card">
+                <div class="card-header"><h2>Sealed Components</h2></div>
+                <p style="color: var(--text-muted);">Accessing forensic audit log...</p>
+                <div id="patent-results" style="margin-top: 1rem;">
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span class="result-id">ARCHIVE-001</span>
+                            <span class="badge">SEALED</span>
+                        </div>
+                        <div>PBACS REV3 Core Netlist</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // View Switching
+        const navLinks = document.querySelectorAll('nav a');
+        const sections = document.querySelectorAll('.view-section');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                const view = link.getAttribute('data-view');
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                sections.forEach(s => s.classList.remove('active'));
+                const target = document.getElementById(`${view}-section`);
+                if (target) target.classList.add('active');
+            });
+        });
+
+        // Polymorphic Search Implementation
+        const searchInput = document.getElementById('linear-search');
+        const resultsContainer = document.getElementById('linear-results');
+        const statsDisplay = document.getElementById('search-stats');
+        const navTitle = document.getElementById('nav-title');
+        let currentDomain = 'LINEAR';
+
+        // Nav switching logic
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const view = link.getAttribute('data-view');
+                
+                // Unified Navigator handling
+                if (view === 'linear' || view === 'notion') {
+                    currentDomain = view.toUpperCase();
+                    // Remap the nav click to the 'linear-section' container but update title/placeholder
+                    sections.forEach(s => s.classList.remove('active'));
+                    document.getElementById('linear-section').classList.add('active');
+                    
+                    navTitle.innerText = `${currentDomain} NAVIGATOR`;
+                    searchInput.placeholder = `Search ${currentDomain} substrate...`;
+                    resultsContainer.innerHTML = '';
+                    statsDisplay.innerText = `Ready. ${currentDomain === 'LINEAR' ? '2,314' : '2,172'} nodes indexed.`;
+                }
+            });
+        });
+
+        searchInput.addEventListener('input', async (e) => {
+            const query = e.target.value.trim();
+            if (query.length < 2) {
+                resultsContainer.innerHTML = '';
+                statsDisplay.innerText = `Ready. ${currentDomain === 'LINEAR' ? '2,314' : '2,172'} nodes indexed.`;
+                return;
+            }
+
+            statsDisplay.innerText = `Searching ${currentDomain} context...`;
+            try {
+                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&domain=${currentDomain}`);
+                const results = await response.json();
+                
+                statsDisplay.innerText = `Found ${results.length} matching nodes.`;
+                resultsContainer.innerHTML = results.map(res => `
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span class="result-id">${res.id.split('/').pop()}</span>
+                            <span class="badge" style="background: rgba(88, 101, 242, 0.1); color: var(--primary);">${currentDomain === 'LINEAR' ? 'INTENT' : 'RESEARCH'}</span>
+                        </div>
+                        <div style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">
+                            ${res.description.split('\n')[0]}
+                        </div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted); white-space: pre-wrap;">
+                            ${res.description.split('\n').slice(1, 4).join('\n')}...
+                        </div>
+                        <div class="result-tags">
+                            ${JSON.parse(res.tags || '[]').map(t => `<span class="tag">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                statsDisplay.innerText = 'Search failed. System isolated?';
+                console.error(err);
+            }
+        });
+
+        // Dynamic elements
+        setInterval(() => {
+            const pressureVal = document.getElementById('pressure-val');
+            const tensionMon = document.getElementById('tension-mon');
+            const phiMon = document.getElementById('phi-mon');
+            
+            if (pressureVal) {
+                const v = (1.0 + (Math.random() - 0.5) * 0.1).toFixed(3);
+                pressureVal.innerText = v;
+                if (tensionMon) tensionMon.innerText = v;
+            }
+            if (phiMon) {
+                const p = (1.618033 + (Math.random() - 0.5) * 0.001).toFixed(6);
+                phiMon.innerText = p;
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

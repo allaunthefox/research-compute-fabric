@@ -1,0 +1,67 @@
+; Mechanical Logic - Locks and Balances
+; Implemented in SUBLEQ (One Instruction Set Computer)
+; Formal Source: tools/lean/Semantics/Semantics/MechanicalLogic.lean
+;
+; Instruction: A B C (M[B] = M[B] - M[A]; if M[B] <= 0 goto C)
+
+; --- MECHANICAL LOCK ---
+; if LOCK_CONTROL >= THRESHOLD (0x8000) then LOCK_OUTPUT = 0 else LOCK_OUTPUT = LOCK_INPUT
+
+start_lock:
+    ; SCRATCH = 0x7FFF
+    scratch scratch next1
+next1:
+    const_7fff scratch next2
+next2:
+    ; SCRATCH = 0x7FFF - LOCK_CONTROL
+    lock_control scratch blocked
+
+    ; NOT BLOCKED: LOCK_OUTPUT = LOCK_INPUT
+    lock_output lock_output next3
+next3:
+    lock_input scratch_val next4 ; scratch_val = -input
+next4:
+    scratch_val lock_output next5
+next5:
+    zero zero start_balance ; Go to next primitive
+
+blocked:
+    ; BLOCKED: LOCK_OUTPUT = 0
+    lock_output lock_output start_balance
+
+; --- MECHANICAL BALANCE ---
+; BAL_OUTPUT = BAL_A + BAL_B + BAL_C
+
+start_balance:
+    bal_output bal_output b1
+b1:
+    bal_a bal_output b2 ; output = -A
+b2:
+    bal_b bal_output b3 ; output = -A - B
+b3:
+    bal_c bal_output b4 ; output = -A - B - C
+b4:
+    ; Flip sign to get positive sum
+    scratch scratch b5
+b5:
+    bal_output scratch b6 ; scratch = A+B+C
+b6:
+    bal_output bal_output b7 ; output = 0
+b7:
+    scratch bal_output halt
+
+halt:
+    zero zero halt
+
+; --- DATA SECTION ---
+zero: 0
+const_7fff: 32767
+scratch: 0
+scratch_val: 0
+lock_control: 0
+lock_input: 0
+lock_output: 0
+bal_a: 0
+bal_b: 0
+bal_c: 0
+bal_output: 0

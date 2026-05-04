@@ -1,0 +1,92 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,bm}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\title{Waveprobe Quadratic Unconstrained Binary Optimization (QUBO) Specification}
+\author{Sovereign Stack Research}
+\date{2026-04-17}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+The \textbf{Waveprobe} is a local selection kernel designed to identify high-coherence state injection candidates within a search window $W$. It formalizes the transition from a diffuse search manifold to a discrete execution trace by evaluating the overlap energy between the active engram state and historical witness traces.
+
+\section{The Waveprobe State}
+
+Let $|\psi(x)\rangle \in \mathbb{C}^n$ be the complex-valued state vector representing the informatic properties of a byte sequence $x$. The state is composed of discrete basis states $|e_i\rangle$:
+\begin{equation}
+|\psi(x)\rangle = \sum_{i=1}^{k} c_i |e_i\rangle
+\end{equation}
+where $c_i \in \mathbb{C}$ are coefficients encoding local features. The state is typically normalized such that $\langle \psi | \psi \rangle = 1$.
+
+\section{Projector and Local QUBO Formalism}
+
+The Waveprobe selection kernel acts as a projection operator $\hat{P}$ constructed from the current active state $|\psi_{\text{curr}}\rangle$:
+\begin{equation}
+\hat{P} = |\psi_{\text{curr}}\rangle \langle \psi_{\text{curr}}|
+\end{equation}
+
+The \textbf{overlap energy} $E$ between the current state and a past state $|\psi_{\text{past}}\rangle$ is given by the quadratic form characteristic of a QUBO solver:
+\begin{equation}
+E(s) = \langle \psi_{\text{past}} | \hat{P} | \psi_{\text{past}} \rangle = |\langle \psi_{\text{curr}} | \psi_{\text{past}} \rangle|^2
+\end{equation}
+
+In matrix form, the local selection problem is represented as a QUBO matrix $Q$:
+\begin{equation}
+Q_{ij} = \bar{c}_i c_j
+\end{equation}
+where the objective is to maximize $x^\dagger Q x$ over the candidate states in the search window.
+
+\section{Phase-Lock Coherence and Feature Fusion}
+
+The magnitude of the overlap is governed by the \textbf{phase-lock coherence} $\phi(s, x)$. This scalar signal fuses three primary informatic features:
+\begin{equation}
+\phi(s, x) = w_e \phi_e + w_r \phi_r + w_d \phi_d
+\end{equation}
+with the canonical weights:
+\begin{equation}
+w_e = 0.4, \quad w_r = 0.3, \quad w_d = 0.3
+\end{equation}
+where:
+\begin{itemize}
+    \item $\phi_e$ is the normalized Shannon entropy component.
+    \item $\phi_r$ is the byte repetition rate component.
+    \item $\phi_d$ is the dictionary potential (4-gram density) component.
+\end{itemize}
+
+\section{Indefinite Causal Order and Superposition}
+
+Consistent with the wave-particle duality of the engram, past states exist in a state of \textbf{indefinite causal order} before injection. The selection event $\arg\max E(s)$ retroactively collapses the history:
+\begin{itemize}
+    \item \textbf{Wave state}: Diffuse contribution to the torsion gradient.
+    \item \textbf{Particle state}: Discrete, traceable anchor for compression.
+\end{itemize}
+
+The causal order observable $\mathcal{O}_{AB}$ distinguishes between classical matching and quantum-inspired advantage via the Bell-like bound:
+\begin{equation}
+|\langle \mathcal{O}_{AB} \rangle| \leq 2
+\end{equation}
+Violations of this bound ($>2$) confirm the non-classical nature of the Waveprobe selection.
+
+\section{Regret-Blink Coupling}
+
+The search process is synchronized with the \textbf{Gated Epoch Synchronizer (GES)}. The timing $\Delta t_{\text{blink}}$ is coupled to the regret magnitude $R_{\text{mag}}$:
+\begin{equation}
+\Delta t_{\text{blink}} = 500\text{ms} + 200\text{ms} \cdot R_{\text{mag}}
+\end{equation}
+where $R_{\text{mag}}$ measures the prediction surprise. The \textbf{decoherence time} $t_{\text{dec}} = 200\text{ms}$ defines the refractory window during which the torsion frame correction is computed before the next emission.
+
+\section{Conservation and Totality}
+
+The Waveprobe is \textbf{information-conservative}. The injection of a state $s_{\text{probe}}$ is permitted if and only if it does not increase the local bits-per-byte (BPB) cost:
+\begin{equation}
+\text{BPB}(x, s_{\text{probe}}) \leq \text{BPB}(x, s_{\text{local}})
+\end{equation}
+This ensures that the "spoiler" player (boundary pressure) cannot terminate the trace, preserving the topological integrity of the manifold.
+
+\end{document}

@@ -1,0 +1,10 @@
+[package]
+name = "benchmark_gpu_4070"
+version = "0.1.0"
+edition = "2021"
+publish = false  # Internal use only
+
+[dependencies]
+wgpu = "0.19"
+bytemuck = "1.14"
+pollster = "0.3"

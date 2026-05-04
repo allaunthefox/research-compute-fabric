@@ -1,0 +1,46 @@
+-- Invariant Receipt Protocol: Core theorems
+-- Th1/Th2 proven; Th3 deferred to AVM instance; Th4/Th5 deferred
+
+import InvariantReceipt.Core
+import InvariantReceipt.SubstrateAdapter
+
+namespace InvariantReceipt
+
+-- Th1: admissibility_soundness -- PROVEN
+-- From lawfulStep, invariant and validAtScale are immediate conjuncts.
+theorem Th1_admissibility_soundness
+  (M : ModelUpgrade S Sc P) (lam : Sc) (eps : Int) (a b : S)
+  (h : lawfulStep M lam eps a b) : M.invariant b ∧ M.validAtScale lam b :=
+by
+  have h' := h
+  rcases h' with ⟨_, _, h_inv_b, _, h_valid_b, _⟩
+  exact And.intro h_inv_b h_valid_b
+
+-- Th2: adapter_round_trip -- PROVEN
+-- Directly from the roundTrip field of SubstrateAdapter.
+theorem Th2_adapter_round_trip
+  (M : ModelUpgrade S Sc P) (A : SubstrateAdapter M) (s : S)
+  (h : M.invariant s) : A.fromTarget (A.toTarget s) = s :=
+by
+  exact A.roundTrip s h
+
+-- Th3: avm_closure -- DEFERRED to Instances/AVM.lean
+-- Proof is trivial under computable ≡ True once avmModel is defined.
+theorem Th3_avm_closure :
+  Hostable (sorryAx (ModelUpgrade _ _ _) sorry) :=
+by
+  unfold Hostable computable
+  trivial
+
+-- Th4: compression_admissibility -- DEFERRED
+-- Obligation: define DoctrineAdmissible in DeltaPhiGammaKLambda.lean
+-- and prove iff with lawfulStep on compression instance.
+theorem Th4_compression_admissibility : True := by
+  sorry
+
+-- Th5: grw_receipt_soundness -- DEFERRED
+-- Obligation: T_GRW(a, b) = ok(b) ↔ I_GRW(a) ∧ K_GRW(a, b) = a.declared_pay
+theorem Th5_grw_receipt_soundness : True := by
+  sorry
+
+end InvariantReceipt

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manifold Navigation Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            overflow: hidden;
+        }
+        
+        #container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        #sidebar {
+            width: 300px;
+            background: #111;
+            border-right: 1px solid #333;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        #canvas-container {
+            flex: 1;
+            position: relative;
+            background: #0a0a0a;
+        }
+        
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        
+        h1 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #00ff88;
+        }
+        
+        h2 {
+            font-size: 14px;
+            margin: 20px 0 10px 0;
+            color: #888;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        
+        select, input[type="range"] {
+            width: 100%;
+            padding: 8px;
+            background: #222;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            font-family: inherit;
+        }
+        
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #00ff88;
+            border: none;
+            color: #0a0a0a;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #00cc6a;
+        }
+        
+        #info-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(17, 17, 17, 0.9);
+            border: 1px solid #333;
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 200px;
+            display: none;
+        }
+        
+        #info-panel h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #00ff88;
+        }
+        
+        #info-panel p {
+            font-size: 12px;
+            margin: 5px 0;
+            color: #888;
+        }
+        
+        #info-panel .value {
+            color: #e0e0e0;
+        }
+        
+        #status {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .axis-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="sidebar">
+            <h1>Manifold Navigation</h1>
+            
+            <div class="control-group">
+                <label>Projection Method</label>
+                <select id="projection-method">
+                    <option value="PCA">PCA</option>
+                    <option value="tSNE">t-SNE</option>
+                    <option value="UMAP">UMAP</option>
+                    <option value="ManifoldChart">Manifold Chart</option>
+                </select>
+            </div>
+            
+            <h2>Slice Axes (for ManifoldChart)</h2>
+            <div class="axis-selector">
+                <div class="control-group">
+                    <label>X Axis (0-13)</label>
+                    <select id="axis-x">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3" selected>3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Y Axis (0-13)</label>
+                    <select id="axis-y">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4" selected>4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                    </select>
+                </div>
+            </div>
+            
+            <h2>Navigation</h2>
+            <div class="control-group">
+                <label>Neighborhood Radius</label>
+                <input type="range" id="radius" min="0.1" max="5.0" step="0.1" value="1.0">
+            </div>
+            
+            <div class="control-group">
+                <label>Point Size</label>
+                <input type="range" id="point-size" min="1" max="10" step="1" value="3">
+            </div>
+            
+            <div class="control-group">
+                <label>Confidence Threshold</label>
+                <input type="range" id="confidence" min="0.0" max="1.0" step="0.1" value="0.0">
+            </div>
+            
+            <button id="load-data">Load from ENE Database</button>
+            <button id="reset-view">Reset View</button>
+            
+            <h2>Statistics</h2>
+            <p id="stats">No data loaded</p>
+        </div>
+        
+        <div id="canvas-container">
+            <canvas id="manifold-canvas"></canvas>
+            <div id="info-panel">
+                <h3 id="info-title">Point Info</h3>
+                <p>Archive ID: <span class="value" id="info-id">-</span></p>
+                <p>Coordinates: <span class="value" id="info-coords">-</span></p>
+                <p>Confidence: <span class="value" id="info-confidence">-</span></p>
+            </div>
+            <div id="status">Ready</div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import init, { ProjectionEngine } from './projection_engine.js';
+        
+        let engine = null;
+        let projectedPoints = [];
+        let canvas, ctx;
+        let offsetX = 0, offsetY = 0;
+        let scale = 1.0;
+        let isDragging = false;
+        let lastMouseX, lastMouseY;
+        let hoveredPoint = null;
+        
+        // Initialize
+        async function initApp() {
+            canvas = document.getElementById('manifold-canvas');
+            ctx = canvas.getContext('2d');
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Event listeners
+            document.getElementById('load-data').addEventListener('click', loadData);
+            document.getElementById('reset-view').addEventListener('click', resetView);
+            document.getElementById('projection-method').addEventListener('change', updateProjection);
+            document.getElementById('axis-x').addEventListener('change', updateProjection);
+            document.getElementById('axis-y').addEventListener('change', updateProjection);
+            
+            canvas.addEventListener('mousedown', onMouseDown);
+            canvas.addEventListener('mousemove', onMouseMove);
+            canvas.addEventListener('mouseup', onMouseUp);
+            canvas.addEventListener('wheel', onWheel);
+            
+            // Initialize WebAssembly
+            try {
+                await init();
+                engine = new ProjectionEngine();
+                document.getElementById('status').textContent = 'Engine initialized';
+            } catch (e) {
+                console.error('Failed to initialize engine:', e);
+                document.getElementById('status').textContent = 'Engine initialization failed';
+            }
+            
+            render();
+        }
+        
+        function resizeCanvas() {
+            const container = document.getElementById('canvas-container');
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            render();
+        }
+        
+        async function loadData() {
+            document.getElementById('status').textContent = 'Loading data...';
+            
+            try {
+                const response = await fetch('/api/load-concept-vectors');
+                const data = await response.json();
+                
+                // Transform using projection engine
+                const result = engine.fit_transform(data.vectors);
+                projectedPoints = result.points;
+                
+                updateStats();
+                resetView();
+                render();
+                
+                document.getElementById('status').textContent = `Loaded ${projectedPoints.length} points`;
+            } catch (e) {
+                console.error('Failed to load data:', e);
+                document.getElementById('status').textContent = 'Failed to load data';
+            }
+        }
+        
+        function updateProjection() {
+            if (!engine || projectedPoints.length === 0) return;
+            
+            const method = document.getElementById('projection-method').value;
+            const axisX = parseInt(document.getElementById('axis-x').value);
+            const axisY = parseInt(document.getElementById('axis-y').value);
+            
+            document.getElementById('status').textContent = 'Updating projection...';
+            
+            // Re-project with new parameters
+            const result = engine.transform(projectedPoints, method, axisX, axisY);
+            projectedPoints = result.points;
+            
+            render();
+            document.getElementById('status').textContent = 'Projection updated';
+        }
+        
+        function resetView() {
+            offsetX = 0;
+            offsetY = 0;
+            scale = 1.0;
+            render();
+        }
+        
+        function updateStats() {
+            const avgConfidence = projectedPoints.reduce((sum, p) => sum + p.confidence, 0) / projectedPoints.length;
+            document.getElementById('stats').textContent = 
+                `Points: ${projectedPoints.length}\n` +
+                `Avg Confidence: ${avgConfidence.toFixed(3)}`;
+        }
+        
+        function render() {
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            if (projectedPoints.length === 0) {
+                ctx.fillStyle = '#666';
+                ctx.font = '14px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('No data loaded. Click "Load from ENE Database" to begin.', 
+                           canvas.width / 2, canvas.height / 2);
+                return;
+            }
+            
+            const radius = parseFloat(document.getElementById('radius').value);
+            const pointSize = parseInt(document.getElementById('point-size').value);
+            const confidenceThreshold = parseFloat(document.getElementById('confidence').value);
+            
+            ctx.save();
+            ctx.translate(canvas.width / 2 + offsetX, canvas.height / 2 + offsetY);
+            ctx.scale(scale, scale);
+            
+            // Draw points
+            for (const point of projectedPoints) {
+                if (point.confidence < confidenceThreshold) continue;
+                
+                const x = point.x * 100;  // Scale up for visibility
+                const y = point.y * 100;
+                
+                // Color based on confidence
+                const hue = point.confidence * 120;  // 0=red, 120=green
+                ctx.fillStyle = `hsl(${hue}, 70%, 50%)`;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, pointSize, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Draw neighborhood around hovered point
+            if (hoveredPoint) {
+                const hx = hoveredPoint.x * 100;
+                const hy = hoveredPoint.y * 100;
+                
+                ctx.strokeStyle = '#00ff88';
+                ctx.lineWidth = 2 / scale;
+                ctx.beginPath();
+                ctx.arc(hx, hy, radius * 100, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Highlight point
+                ctx.fillStyle = '#00ff88';
+                ctx.beginPath();
+                ctx.arc(hx, hy, pointSize + 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            ctx.restore();
+        }
+        
+        function onMouseDown(e) {
+            isDragging = true;
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+        }
+        
+        function onMouseMove(e) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            if (isDragging) {
+                offsetX += e.clientX - lastMouseX;
+                offsetY += e.clientY - lastMouseY;
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+                render();
+            } else {
+                // Check for hover
+                const centerX = canvas.width / 2 + offsetX;
+                const centerY = canvas.height / 2 + offsetY;
+                
+                let found = null;
+                for (const point of projectedPoints) {
+                    const px = centerX + point.x * 100 * scale;
+                    const py = centerY + point.y * 100 * scale;
+                    
+                    const dist = Math.sqrt((mouseX - px) ** 2 + (mouseY - py) ** 2);
+                    if (dist < 10) {
+                        found = point;
+                        break;
+                    }
+                }
+                
+                if (found !== hoveredPoint) {
+                    hoveredPoint = found;
+                    updateInfoPanel();
+                    render();
+                }
+            }
+        }
+        
+        function onMouseUp() {
+            isDragging = false;
+        }
+        
+        function onWheel(e) {
+            e.preventDefault();
+            const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+            scale *= zoomFactor;
+            scale = Math.max(0.1, Math.min(10, scale));
+            render();
+        }
+        
+        function updateInfoPanel() {
+            const panel = document.getElementById('info-panel');
+            if (hoveredPoint) {
+                panel.style.display = 'block';
+                document.getElementById('info-id').textContent = hoveredPoint.archive_id;
+                document.getElementById('info-coords').textContent = 
+                    `(${hoveredPoint.x.toFixed(3)}, ${hoveredPoint.y.toFixed(3)})`;
+                document.getElementById('info-confidence').textContent = 
+                    hoveredPoint.confidence.toFixed(3);
+            } else {
+                panel.style.display = 'none';
+            }
+        }
+        
+        initApp();
+    </script>
+</body>
+</html>

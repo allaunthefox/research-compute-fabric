@@ -1,0 +1,81 @@
+-- M004: PIST Geometry Kernel Module
+-- Source: pist_shell_state_v1 (2-Search-Space/PIST)
+-- Kernel Function: ProcessTopology
+--
+-- Processes live on PIST torus geometry. Shell state S(n) = (k, a, b, width).
+-- Process scheduling follows shell-state classification: A, G, C, T.
+-- Truth Seal: [ SSS-ENE-PIST-2026-05-03 ]
+
+module M004_PISTGeometry where
+
+import BaseTypes
+import Semantics.Q16_16
+
+structure PISTShell where
+  n     : Nat           -- Process priority / quantum number
+  k     : Nat           -- Shell index = floor(sqrt(n))
+  a     : Nat           -- Forward distance = n - k²
+  b     : Nat           -- Backward distance = (k+1)² - n
+  width : Nat           -- Shell width = 2k + 1
+
+structure PISTProcess where
+  pid       : PID
+  shell     : PISTShell
+  et        : BaseType    -- A, G, C, T classification
+  position  : Vec3        -- On torus surface
+  spin      : Q16_16      -- Scheduling priority weight
+
+inductive BaseType where
+  | A  -- Adenine  : n = k² (perfect square, stable)
+  | G  -- Guanine  : n = k² + k (mid-shell, balanced)
+  | C  -- Cytosine : n = k² + k + 1 (near-edge, active)
+  | T  -- Thymine  : n = (k+1)² - 1 (shell boundary, volatile)
+
+-- Compute shell state for process priority n
+def shellState (n : Nat) : PISTShell :=
+  let k := isqrt n
+  let a := n - k * k
+  let b := (k + 1) * (k + 1) - n
+  { n := n, k := k, a := a, b := b, width := 2 * k + 1 }
+
+-- Classify process by its shell position
+def classifyProcess (proc : PISTProcess) : BaseType :=
+  let s := proc.shell
+  if s.n == s.k * s.k then .A
+  else if s.n == s.k * s.k + s.k then .G
+  else if s.n == s.k * s.k + s.k + 1 then .C
+  else if s.n == (s.k + 1) * (s.k + 1) - 1 then .T
+  else .A  -- Default stable
+
+-- Torus embedding: position from shell geometry
+def torusPosition (s : PISTShell) (θ : Float) (φ : Float) : Vec3 :=
+  let R := 1.0  -- Major radius
+  let r := 1.0 / (s.k.toFloat + 1.0)  -- Minor radius shrinks with shell
+  let x := (R + r * cos φ) * cos θ
+  let y := (R + r * cos φ) * sin θ
+  let z := r * sin φ
+  Vec3.mk (Q16_16.ofFloat x) (Q16_16.ofFloat y) (Q16_16.ofFloat z)
+
+-- Scheduling weight from base type and shell position
+def schedulingWeight (proc : PISTProcess) : Q16_16 :=
+  let baseWeight := match proc.et with
+    | .A => Q16_16.ofFloat 0.25  -- Stable, low priority
+    | .G => Q16_16.ofFloat 0.50  -- Balanced
+    | .C => Q16_16.ofFloat 0.75  -- Active, higher priority
+    | .T => Q16_16.ofFloat 1.00  -- Volatile, urgent
+  
+  -- Shell position adjustment: edge processes (high a or b) get boost
+  let edgeFactor := Q16_16.ofFloat (
+    (proc.shell.a.toFloat + proc.shell.b.toFloat) / 
+    (2.0 * proc.shell.k.toFloat + 1.0)
+  )
+  
+  baseWeight + edgeFactor * Q16_16.ofFloat 0.25
+
+-- Kernel interface: PIST-aware scheduler
+def pistScheduleNext (readyQueue : Array PISTProcess) : IO PISTProcess := do
+  let scored := readyQueue.map (\p => { proc := p, weight := schedulingWeight p })
+  let next := scored.maxBy (\s => s.weight)
+  return next.proc
+
+end M004_PISTGeometry

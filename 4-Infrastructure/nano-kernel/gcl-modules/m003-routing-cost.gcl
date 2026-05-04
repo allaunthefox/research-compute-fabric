@@ -1,0 +1,40 @@
+-- M003: Routing Cost Kernel Module
+-- Source: nuvmap_routing_v2 (3-Mathematical-Models)
+-- Kernel Function: MemoryRouter
+--
+-- Routing cost metric C(route) = Σ (distance × traffic_density × energy_factor)
+-- Truth Seal: [ SSS-ENE-ROUTING-2026-05-03 ]
+
+module M003_RoutingCost where
+
+import BaseTypes
+import NUVMAPKernelIntegration (NUVMAPCoordinate, computeNUVMAPPath, nuvmapDistance)
+import Semantics.Q0_16 (Q0_16)
+
+structure RouteNode where
+  coord     : NUVMAPCoordinate
+  traffic   : Q0_16          -- Current load [0,1]
+  energy    : Q0_16          -- Energy per packet [0,1]
+  bandwidth : Q0_16          -- Available bandwidth [0,1]
+  
+def routeCost (route : Array RouteNode) : Q0_16 :=
+  route.windows(2).foldl (\acc (a,b) =>
+    let dist := nuvmapDistance a.coord b.coord
+    let loadFactor := Q0_16.div a.traffic a.bandwidth
+    let energyFactor := a.energy
+    acc + (dist × loadFactor × energyFactor)
+  ) Q0_16.zero
+
+-- Kernel interface: select route with minimum cost
+def syscallSelectRoute (src : NUVMAPCoordinate) (dst : NUVMAPCoordinate) : IO Route := do
+  let candidates ← findAllRoutes src dst MAX_ROUTE_HOPS
+  let scored := candidates.map (\r => { route := r, cost := routeCost r })
+  let best := scored.minBy (\s => s.cost)
+  
+  return {
+    path := best.route
+    expectedCost := best.cost
+    alternatives := scored.filter (\s => s.cost < best.cost × 1.5)
+  }
+
+end M003_RoutingCost

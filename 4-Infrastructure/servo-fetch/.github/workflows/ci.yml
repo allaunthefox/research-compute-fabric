@@ -1,0 +1,181 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
+        id: filter
+        with:
+          filters: |
+            code:
+              - 'src/**'
+              - 'tests/**'
+              - 'Cargo.toml'
+              - 'Cargo.lock'
+              - 'deny.toml'
+              - 'clippy.toml'
+              - '.rustfmt.toml'
+              - 'rust-toolchain.toml'
+              - '.github/workflows/ci.yml'
+
+  clippy:
+    name: Clippy
+    needs: [changes]
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    env:
+      CARGO_INCREMENTAL: 0
+      SCCACHE_GHA_ENABLED: true
+      RUSTC_WRAPPER: sccache
+      CCACHE: sccache
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@e97e2d8cc328f1b50210efc529dca0028893a2d9 # v1
+        with:
+          toolchain: "1.95.0"
+          components: clippy
+      - uses: mozilla-actions/sccache-action@9e7fa8a12102821edf02ca5dbea1acd0f89a2696 # v0.0.10
+      - name: Install servo build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake clang pkg-config libfontconfig-dev libfreetype-dev \
+            libssl-dev libglib2.0-dev libegl1-mesa-dev
+      - run: cargo clippy --locked --all-targets -- -D warnings
+      - name: sccache stats
+        if: always()
+        run: sccache --show-stats
+
+  test:
+    name: Test
+    needs: [changes]
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    env:
+      CARGO_INCREMENTAL: 0
+      SCCACHE_GHA_ENABLED: true
+      RUSTC_WRAPPER: sccache
+      CCACHE: sccache
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@e97e2d8cc328f1b50210efc529dca0028893a2d9 # v1
+        with:
+          toolchain: "1.95.0"
+      - uses: mozilla-actions/sccache-action@9e7fa8a12102821edf02ca5dbea1acd0f89a2696 # v0.0.10
+      - uses: taiki-e/install-action@481c34c1cf3a84c68b5e46f4eccfc82af798415a # v2.75.23
+        with:
+          tool: cargo-nextest
+      - name: Install servo build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake clang pkg-config libfontconfig-dev libfreetype-dev \
+            libssl-dev libglib2.0-dev libegl1-mesa-dev
+      - run: cargo nextest run --locked --cargo-profile ci --no-fail-fast
+      - run: cargo test --locked --profile ci --doc
+      - name: sccache stats
+        if: always()
+        run: sccache --show-stats
+
+  fmt:
+    name: Format
+    needs: [changes]
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@e97e2d8cc328f1b50210efc529dca0028893a2d9 # v1
+        with:
+          toolchain: "1.95.0"
+          components: rustfmt
+      - run: cargo fmt --check
+
+  deny:
+    name: Licenses & Advisories
+    needs: [changes]
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: EmbarkStudios/cargo-deny-action@91bf2b620e09e18d6eb78b92e7861937469acedb # v2.0.17
+
+  typos:
+    name: Spell Check
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: crate-ci/typos@7c572958218557a3272c2d6719629443b5cc26fd # v1.45.2
+        with:
+          config: typos.toml
+
+  ci-passed:
+    name: CI Passed
+    if: always()
+    needs: [changes, clippy, test, fmt, deny, typos]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check required jobs
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          set -euo pipefail
+          # Any failure or cancellation is a hard fail.
+          if printf '%s' "$NEEDS" | grep -qE '"result": *"(failure|cancelled)"'; then
+            echo "::error::One or more required jobs failed or were cancelled"
+            printf '%s\n' "$NEEDS"
+            exit 1
+          fi
+          # `changes` and `typos` have no `if:` guard, so they must succeed.
+          for job in changes typos; do
+            result=$(printf '%s' "$NEEDS" | python3 -c "import json,sys; print(json.loads(sys.stdin.read())['$job']['result'])")
+            if [ "$result" != "success" ]; then
+              echo "::error::Required job '$job' did not succeed (result=$result)"
+              exit 1
+            fi
+          done
+          echo "All required jobs passed (paths-filter skips are allowed for code-gated jobs)"

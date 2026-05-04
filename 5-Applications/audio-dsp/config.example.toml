@@ -1,0 +1,17 @@
+[streaming]
+chunk_size = 1024
+hop_size = 512          # 50% overlap ensures temporal continuity
+sample_rate = 48000.0
+channels = 2
+
+[analysis]
+fft_size = 2048
+spectral_bins = 16      # Fixed dimensionality for consistent encoding
+history_depth = 4       # Previous frames for predictability analysis
+enable_transient = true
+enable_information = true
+
+[output]
+format = "JsonLines"    # Options: JsonLines, Csv, Binary
+compression = false     # Skip similar consecutive chunks
+threshold = 0.95        # Cosine similarity threshold for compression

@@ -1,0 +1,436 @@
+-- Triumvirate Kernel — Builder / Judge / Warden Consensus
+--
+-- Three parallel kernel instances on same hardware.
+-- 2/3 consensus required for any state transition.
+--
+-- If one kernel gets "pulled into dimension 822yTe~" (crashes/corrupts/diverges),
+-- the other two preserve the boundary law. System continues.
+--
+-- Consensus rule:
+--   accept_transition := at least 2/3 agree AND Warden does not veto
+--
+-- This is the fault model for "machine loss" — one agent can fail,
+-- but the quorum preserves lawful behavior.
+--
+-- Truth Seal: [ SSS-ENE-TRIUMVIRATE-2026-05-03 ]
+
+module TriumvirateKernel where
+
+import BaseTypes
+import Memory
+import SyscallInterface
+import Semantics.LawfulLoss (BindResult, lawfulLoss, mkLawful, mkUnlawful, BindClass)
+import LawfulHardware (HardwareEvent, eventToBindResult)
+import GCLSelfHost (ChildKernel, ChildState)
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §1  Triumvirate Roles
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- The three roles of the triumvirate:
+--
+-- Builder: Proposes new structures, generates candidates, builds forward
+--   ADD clock action
+--   manifold_reg: Topological state registry
+--   
+-- Judge: Adjudicates disputes, validates proofs, decides conflicts
+--   PAUSE clock action  
+--   heatsink_halt: Energy guard, prevents runaway
+--   
+-- Warden: Validates integrity, checks proofs, enforces rollback
+--   SUBTRACT clock action
+--   stark_trace: Integrity chain
+--   warden_valid: Proof validation
+--
+-- Each role runs as separate kernel instance with isolated memory.
+-- They communicate via shared memory ring buffer (lawful channel).
+-- -/]
+
+inductive TriumvirateRole where
+  | Builder   -- Proposes, builds, progresses
+  | Judge     -- Adjudicates, decides, pauses
+  | Warden    -- Validates, verifies, enforces
+  deriving Repr, BEq, Inhabited
+
+/-- Clock actions for each role. -/]
+inductive ClockAction where
+  | Add       -- Builder: forward progress
+  | Subtract  -- Warden: validation/rollback
+  | Pause     -- Judge: hold for decision
+  deriving Repr, BEq
+
+def roleToAction : TriumvirateRole → ClockAction
+  | .Builder => .Add
+  | .Warden  => .Subtract
+  | .Judge   => .Pause
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §2  Triumvirate Kernel Instance
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Each kernel instance knows its role and communicates with others. -/]
+
+structure TriumvirateInstance where
+  role          : TriumvirateRole
+  instanceId    : InstanceID              -- 0=Builder, 1=Judge, 2=Warden
+  clock         : TriumvirateClock
+  hardware      : HardwareInterface       -- Access to actual hardware (via shim)
+  commChannel   : TriumvirateChannel      -- Shared memory with other instances
+  state         : TriumvirateState
+  
+structure TriumvirateClock where
+  builderTicks  : Nat                     -- ADD actions taken
+  wardenTicks   : Nat                     -- SUBTRACT actions taken
+  judgeTicks    : Nat                     -- PAUSE actions taken
+  lastSync      : Timestamp               -- Last consensus point
+  
+structure TriumvirateState where
+  active        : Bool                    -- Is this instance running?
+  healthy       : Bool                    -- Passed health checks?
+  lastProposal  : Option Proposal         -- What we last proposed/voted on
+  voteHistory   : Array Vote              -- Record of all votes
+
+/-- Shared communication channel between instances.
+    Implemented as lock-free ring buffer in shared memory. -/]
+
+structure TriumvirateChannel where
+  proposals     : RingBuffer Proposal     -- Builder proposals
+  votes         : RingBuffer Vote         -- All instance votes
+  decisions     : RingBuffer Decision   -- Final consensus
+  healthBeats   : Array Timestamp         -- Last heartbeat from each instance
+  
+structure Proposal where
+  id            : ProposalID
+  proposer      : TriumvirateRole
+  action        : ProposedAction
+  timestamp     : Timestamp
+  evidence      : Array BindResult        -- Supporting witnesses
+  
+inductive ProposedAction where
+  | AcceptChildKernel child  -- From GCLSelfHost
+  | MigrateProcess pid dst   -- Process migration
+  | UpdateTopology change    -- ENE topology change
+  | CheckpointSystem         -- Save state
+  | EmergencyRollback        -- Revert to safe state
+  | RebootToStandardKernel   -- Exit nano kernel
+  
+structure Vote where
+  proposalId    : ProposalID
+  voter         : TriumvirateRole
+  decision      : VoteDecision
+  timestamp     : Timestamp
+  witness       : BindResult              -- Why we voted this way
+  
+inductive VoteDecision where
+  | Yes         -- Approve
+  | No          -- Reject
+  | Abstain     -- Cannot decide
+  | Veto        -- Warden emergency veto
+  deriving Repr, BEq
+
+structure Decision where
+  proposal      : Proposal
+  votes         : Array Vote
+  outcome       : DecisionOutcome
+  timestamp     : Timestamp
+  
+inductive DecisionOutcome where
+  | Accepted    -- 2+ Yes, no Veto
+  | Rejected    -- 2+ No or 1 Veto
+  | Pending     -- Waiting for votes
+  | Disputed    -- Split vote, needs Judge
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §3  Consensus Algorithm
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Core consensus: collect votes, decide outcome.
+    
+    Rules:
+    1. Builder proposes (always Yes to own proposal)
+    2. Warden validates (Yes if evidence checks out, No if not)
+    3. Judge adjudicates (Yes/No based on overall merit, or extends deliberation)
+    
+    4. Warden can Veto at any time (emergency stop)
+    5. If split, Judge decides (breaks ties)
+    
+    6. Decision recorded with full witness chain
+    -/]
+
+def processProposal (proposal : Proposal) : IO Decision := do
+  -- Broadcast proposal to all instances
+  broadcastToChannel proposal
+  
+  -- Collect votes (with timeout)
+  let votes ← collectVotes proposal.id (timeout := 5000)  -- 5 second timeout
+  
+  -- Count votes
+  let yesCount := votes.count (\v => v.decision == .Yes)
+  let noCount := votes.count (\v => v.decision == .No)
+  let vetoCount := votes.count (\v => v.decision == .Veto)
+  
+  -- Determine outcome
+  let outcome :=
+    if vetoCount > 0 then
+      -- Warden veto always wins
+      .Rejected
+    else if yesCount >= 2 then
+      -- Majority approval
+      .Accepted
+    else if noCount >= 2 then
+      -- Majority rejection
+      .Rejected
+    else
+      -- Split or incomplete
+      .Disputed
+  
+  -- If disputed, Judge decides
+  let finalOutcome ←
+    if outcome == .Disputed then
+      let judgeVote ← findJudgeVote votes
+      if judgeVote.decision == .Yes then
+        pure .Accepted
+      else if judgeVote.decision == .No then
+        pure .Rejected
+      else
+        pure .Pending  -- Judge abstained, stay pending
+    else
+      pure outcome
+  
+  -- Record decision
+  let decision := {
+    proposal := proposal
+    votes := votes
+    outcome := finalOutcome
+    timestamp := now ()
+  }
+  
+  -- Log with BindResult witness
+  let witness := {
+    lawful := finalOutcome == .Accepted
+    cost := computeConsensusCost votes
+    witness := "CONSENSUS:" ++ proposal.id ++
+               ";outcome:" ++ finalOutcome.toString ++
+               ";yes:" ++ yesCount.toString ++
+               ";no:" ++ noCount.toString ++
+               ";veto:" ++ vetoCount.toString
+    klass := .control
+  }
+  logWitness globalWitnessLog witness
+  
+  return decision
+
+/-- Warden validation: check proposal evidence.
+    This is the "proof validation" role. -/]
+
+def wardenValidate (proposal : Proposal) : IO VoteDecision := do
+  -- Check all evidence BindResults
+  for evidence in proposal.evidence do
+    if !evidence.lawful then
+      -- Unlawful evidence
+      return .No
+    
+    if evidence.cost > Q0_16.half then
+      -- High cost, flag for scrutiny
+      consoleLog "[WARDEN] High cost evidence: " ++ evidence.witness
+  
+  -- Check for known attack patterns
+  if detectAttackPattern proposal then
+    consoleLog "[WARDEN] Attack pattern detected in proposal " ++ proposal.id
+    return .Veto  -- Emergency stop
+  
+  -- Check evidence chain integrity
+  if !verifyEvidenceChain proposal.evidence then
+    consoleLog "[WARDEN] Evidence chain failed verification"
+    return .No
+  
+  -- All checks passed
+  return .Yes
+
+/-- Builder proposal generation. -/]
+
+def builderPropose (action : ProposedAction) : IO Proposal := do
+  let evidence ← gatherEvidenceForAction action
+  
+  return {
+    id := generateProposalID
+    proposer := .Builder
+    action := action
+    timestamp := now ()
+    evidence := evidence
+  }
+
+/-- Judge adjudication: break ties, decide disputes. -/]
+
+def judgeAdjudicate (votes : Array Vote) : IO VoteDecision := do
+  -- Review all evidence
+  let allEvidence := votes.flatMap (\v => v.witness)
+  
+  -- Consider system state
+  let systemLoad ← getSystemLoad
+  let recentFailures ← getRecentFailureCount
+  
+  -- Conservative if system stressed
+  if systemLoad > 0.8 || recentFailures > 3 then
+    -- Be cautious
+    if votes.any (\v => v.decision == .No) then
+      return .No  -- Reject if any No in stressed system
+  
+  -- Otherwise, check overall merit
+  let meritScore := computeMeritScore votes
+  
+  if meritScore > 0.7 then
+    return .Yes
+  else if meritScore < 0.3 then
+    return .No
+  else
+    return .Abstain  -- Can't decide, let it stay pending
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §4  Fault Tolerance — Handling Instance Failure
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Detect if an instance has failed ("pulled into dimension 822yTe~").
+    If one fails, the other two continue with reduced quorum. -/]
+
+def checkInstanceHealth : IO Unit := do
+  for i in [0, 1, 2] do
+    let lastBeat := commChannel.healthBeats[i]
+    let timeSince := now () - lastBeat
+    
+    if timeSince > HEARTBEAT_TIMEOUT then
+      -- Instance i has failed
+      consoleLog "[TRIUMVIRATE] Instance " ++ i.toString ++ " has failed (no heartbeat)"
+      
+      -- Mark as unhealthy
+      markInstanceUnhealthy i
+      
+      -- If we still have 2 healthy instances, continue in degraded mode
+      let healthyCount := countHealthyInstances
+      
+      if healthyCount >= 2 then
+        consoleLog "[TRIUMVIRATE] Continuing in degraded mode with " ++ healthyCount.toString ++ " instances"
+        enterDegradedMode
+      else
+        -- Only 1 or 0 instances left
+        consoleLog "[TRIUMVIRATE] CRITICAL: Insufficient quorum, entering safe mode"
+        enterSafeMode
+
+/-- Degraded mode: 2-instance operation.
+    Both must agree (unanimous consent since only 2). -/]
+
+def enterDegradedMode : IO Unit := do
+  -- Change consensus rule: require unanimous (2/2 instead of 2/3)
+  setConsensusRule .Unanimous
+  
+  -- Increase health check frequency
+  setHealthCheckInterval 500  -- Check every 500ms
+  
+  -- Log degraded entry
+  let witness := {
+    lawful := true
+    cost := Q0_16.half
+    witness := "DEGRADED_MODE:2_instances_active"
+    klass := .control
+  }
+  logWitness globalWitnessLog witness
+
+/-- Safe mode: emergency halt of all modifications.
+    System is read-only until quorum restored. -/]
+
+def enterSafeMode : IO Unit := do
+  -- Reject all new proposals
+  setProposalPolicy .RejectAll
+  
+  -- Checkpoint current state
+  emergencyCheckpoint
+  
+  -- Attempt to restart failed instance
+  spawn $ attemptInstanceRecovery
+  
+  -- Log safe mode entry
+  let witness := {
+    lawful := false  -- This is a failure mode
+    cost := Q0_16.one
+    witness := "SAFE_MODE:quorum_lost"
+    klass := .control
+  }
+  logWitness globalWitnessLog witness
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §5  Integration with GCL Self-Host
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Child kernel proposals go through triumvirate consensus. -/]
+
+def proposeChildKernel (candidate : ChildKernel) : IO Decision := do
+  let proposal ← builderPropose (.AcceptChildKernel candidate)
+  
+  -- Warden validates
+  let wardenVote ← wardenValidate proposal
+  
+  -- If Warden vetos, immediate rejection
+  if wardenVote == .Veto then
+    return {
+      proposal := proposal
+      votes := #[{voter := .Warden, decision := .Veto, witness := mkUnlawful "Validation failed" .control}]
+      outcome := .Rejected
+      timestamp := now ()
+    }
+  
+  -- Otherwise full consensus
+  processProposal proposal
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §6  Main Loop
+-- ═══════════════════════════════════════════════════════════════════════════
+
+def triumvirateMainLoop : IO Unit := do
+  forever $ do
+    -- Check health of all instances
+    checkInstanceHealth
+    
+    -- Process any pending proposals
+    while (hasPendingProposals) $ do
+      let proposal ← dequeueProposal
+      let decision ← processProposal proposal
+      executeDecision decision
+    
+    -- Send heartbeat
+    sendHeartbeat myInstanceId
+    
+    -- Small delay to prevent busy-waiting
+    sleep 10  -- 10ms
+
+/-- Execute an accepted decision. -/]
+
+def executeDecision (decision : Decision) : IO Unit :=
+  if decision.outcome != .Accepted then
+    return ()  -- Nothing to do
+  
+  match decision.proposal.action with
+  | .AcceptChildKernel child =>
+      -- Boot the child
+      bootChildWithTriumvirate child
+      
+  | .MigrateProcess pid dst =>
+      -- Execute migration
+      executeProcessMigration pid dst
+      
+  | .UpdateTopology change =>
+      -- Apply topology change
+      applyTopologyUpdate change
+      
+  | .CheckpointSystem =>
+      -- Save full system state
+      performSystemCheckpoint
+      
+  | .EmergencyRollback =>
+      -- Revert to last checkpoint
+      performEmergencyRollback
+      
+  | .RebootToStandardKernel =>
+      -- Exit nano kernel, return to Linux
+      kexecToStandardKernel
+
+end TriumvirateKernel

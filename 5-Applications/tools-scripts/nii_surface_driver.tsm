@@ -1,0 +1,491 @@
+// NII Surface Driver - Native TSM Bytecode Implementation
+// TSM-ISA v2.9 Genetic Bytecode
+// Calls the NII Core Surface Driver with SSS monitoring, warp metric, FAMM scheduling, and topological adaptation
+//
+// Architecture:
+//   - TSM-ISA v2.9 Opcodes: Native hardware instruction mapping
+//   - SSS (Steady-State Stability) monitoring from Layer 6
+//   - Alcubierre warp metric from Layer 7
+//   - FAMM-aware scheduling
+//   - Topological state management with N-local adaptation
+//   - Q16.16 fixed-point arithmetic
+//
+// Expected Performance:
+//   - SSS computation: < 10μs
+//   - Warp metric: < 15μs
+//   - FAMM scheduling: < 5μs
+//   - Total driver overhead: < 50μs
+
+module NIISurfaceDriver {
+
+  // ========================================================================
+  // CONSTANTS & CONFIGURATION
+  // ========================================================================
+
+  const Q16_16_ONE: u32 = 0x00010000;        // 1.0 in Q16.16
+  const Q16_16_ZERO: u32 = 0x00000000;       // 0.0 in Q16.16
+  const Q16_16_HALF: u32 = 0x00008000;       // 0.5 in Q16.16
+  const Q16_16_QUARTER: u32 = 0x00004000;    // 0.25 in Q16.16
+
+  // TSM-ISA v2.9 Opcode Definitions (from substrate_isa_spec.md)
+  enum TSM_Opcode: u8 {
+    INGEST_FLOW = 0x01,          // Absorb data into manifold
+    FOLD_SPACE = 0x02,           // Einstein-Rosen fold
+    SYNC_CLOCK = 0x03,           // System clock synchronization
+    OMNI_BAL = 0x04,             // Balance all registers
+    ENTANGLE = 0x05,             // Quantum entanglement
+    EVOLVE = 0x06,               // Evolution step
+    VRAM_FLUSH = 0x07,           // Clear GPU memory (MODE_SURVIVAL)
+    STARK_PROVE = 0x08,          // Generate ZK-STARK proof
+    LEDGER_COMMIT = 0x09,        // Commit to HyperDAG ledger
+    SOLITONIFY = 0x0E,           // Set Soliton State to "Frozen"
+    GPGPU_SURF = 0x0F,           // Launch GPGPU kernel
+    RESONATE = 0x14,             // Compute Hamming distance / frequency match
+    NII_SURFACE = 0x20,          // NII Surface Driver intrinsic (custom)
+  }
+
+  // ========================================================================
+  // DATA STRUCTURES
+  // ========================================================================
+
+  struct SSSConstant {
+    routing_load: u32;           // L_R: routing load (counter-torque)
+    memory_load: u32;            // L_M: memory load (counter-torque)
+    extraneous_weight: u32;      // λ_E: extraneous load weight
+    engram_length: u32;          // ℓ: characteristic engram neighborhood length
+    extraneous_gradient: u32;    // ‖∇L_E‖: gradient magnitude
+  }
+
+  struct SlipCondition {
+    sss_constant: u32;
+    heel_dig_limit: u32;         // σ_sys: slip threshold
+  }
+
+  struct WarpFunction {
+    kappa: u32;                  // Steepness parameter
+    sss_constant: u32;
+    opcode_efficacy: u32;        // Ω_opcode
+  }
+
+  struct EffectiveVelocity {
+    local_velocity: u32;
+    coherence: u32;              // φ: phase coherence angle
+  }
+
+  struct FAMMTiming {
+    torsional_stress: u32;       // Σ²
+    interlocking_energy: u32;    // I_lock
+    laplacian_energy: u32;       // Δϕ
+  }
+
+  struct TopologicalState {
+    cognitive_load: u32;
+    topology_metric: string;     // "relational", "semantic", "topological", "minimal"
+    coherence: u32;
+  }
+
+  struct NIISurfaceDriverState {
+    core_id: u32;
+    sss_constant: SSSConstant;
+    slip_condition: SlipCondition;
+    warp_function: WarpFunction;
+    famm_timing: FAMMTiming;
+    topological_state: TopologicalState;
+    current_status: u8;
+  }
+
+  // ========================================================================
+  // TSM-ISA HARDWARE INTRINSICS
+  // ========================================================================
+
+  // [0x01] INGEST_FLOW - Absorb data into manifold
+  intrinsic tsm_ingest_flow(data: array<u8>) -> string;
+
+  // [0x03] SYNC_CLOCK - System clock synchronization
+  intrinsic tsm_sync_clock() -> f64;
+
+  // [0x07] VRAM_FLUSH - Clear GPU memory (MODE_SURVIVAL trigger)
+  intrinsic tsm_vram_flush() -> bool;
+
+  // [0x0E] SOLITONIFY - Set Soliton State to "Frozen"
+  intrinsic tsm_solitonify(state: any) -> bool;
+
+  // [0x14] RESONATE - Compute Hamming distance / frequency match
+  intrinsic tsm_resonate(a: u128, b: u128) -> u32;
+
+  // [0x20] NII_SURFACE - NII Surface Driver intrinsic (custom)
+  intrinsic tsm_nii_surface(state: NIISurfaceDriverState) -> NIISurfaceDriverState;
+
+  // ========================================================================
+  // Q16.16 FIXED-POINT ARITHMETIC
+  // ========================================================================
+
+  kernel Q16_16_Arithmetic {
+
+    fn q16_16_add(a: u32, b: u32) -> u32 {
+      return a + b;
+    }
+
+    fn q16_16_sub(a: u32, b: u32) -> u32 {
+      return a - b;
+    }
+
+    fn q16_16_mul(a: u32, b: u32) -> u32 {
+      // Q16.16 multiplication: (a * b) >> 16
+      let product = (a as u64) * (b as u64);
+      return (product >> 16) as u32;
+    }
+
+    fn q16_16_div(a: u32, b: u32) -> u32 {
+      // Q16.16 division: (a << 16) / b
+      let numerator = (a as u64) << 16;
+      return (numerator / (b as u64)) as u32;
+    }
+
+    fn q16_16_compare(a: u32, b: u32) -> i32 {
+      if a < b { return -1; }
+      if a > b { return 1; }
+      return 0;
+    }
+  }
+
+  // ========================================================================
+  // SSS MONITOR - LAYER 6
+  // ========================================================================
+
+  kernel SSSMonitor {
+
+    fn compute_sss(c: SSSConstant) -> u32 {
+      // Φ_sss = (L_R + L_M) - λ_E · ℓ · ‖∇L_E‖
+      let counter_torque = Q16_16_Arithmetic::q16_16_add(c.routing_load, c.memory_load);
+      let torsional_term = Q16_16_Arithmetic::q16_16_mul(
+        Q16_16_Arithmetic::q16_16_mul(c.extraneous_weight, c.engram_length),
+        c.extraneous_gradient
+      );
+      return Q16_16_Arithmetic::q16_16_sub(counter_torque, torsional_term);
+    }
+
+    fn is_slip_threshold_crossed(c: SlipCondition) -> bool {
+      // Φ_sss < -σ_sys
+      let negative_heel_dig = Q16_16_Arithmetic::q16_16_sub(Q16_16_ZERO, c.heel_dig_limit);
+      return Q16_16_Arithmetic::q16_16_compare(c.sss_constant, negative_heel_dig) < 0;
+    }
+  }
+
+  // ========================================================================
+  // WARP METRIC - LAYER 7
+  // ========================================================================
+
+  kernel WarpMetric {
+
+    // Simplified sigmoid approximation for Q16.16
+    fn sigmoid_q16_16(x: u32) -> u32 {
+      // Piecewise linear approximation
+      let neg_5 = Q16_16_Arithmetic::q16_16_mul(Q16_16_FROM_FLOAT(-5.0), Q16_16_ONE);
+      let pos_5 = Q16_16_Arithmetic::q16_16_mul(Q16_16_FROM_FLOAT(5.0), Q16_16_ONE);
+      
+      if Q16_16_Arithmetic::q16_16_compare(x, neg_5) < 0 {
+        return Q16_16_ZERO;
+      }
+      if Q16_16_Arithmetic::q16_16_compare(x, pos_5) > 0 {
+        return Q16_16_ONE;
+      }
+      
+      let x_plus_5 = Q16_16_Arithmetic::q16_16_add(x, pos_5);
+      let ten = Q16_16_Arithmetic::q16_16_mul(Q16_16_FROM_FLOAT(10.0), Q16_16_ONE);
+      return Q16_16_Arithmetic::q16_16_div(x_plus_5, ten);
+    }
+
+    fn compute_warp(w: WarpFunction) -> u32 {
+      // f(x_i) = sigmoid(-κ·Φ_sss) · Ω_opcode
+      let exponent = Q16_16_Arithmetic::q16_16_mul(-w.kappa, w.sss_constant);
+      let sigmoid = sigmoid_q16_16(exponent);
+      return Q16_16_Arithmetic::q16_16_mul(sigmoid, w.opcode_efficacy);
+    }
+
+    fn compute_effective_velocity(v: EffectiveVelocity) -> u32 {
+      // v_eff = v_local / (1 - φ)
+      let denominator = Q16_16_Arithmetic::q16_16_sub(Q16_16_ONE, v.coherence);
+      if Q16_16_Arithmetic::q16_16_compare(denominator, Q16_16_ZERO) <= 0 {
+        return v.local_velocity;  // Avoid division by zero
+      }
+      return Q16_16_Arithmetic::q16_16_div(v.local_velocity, denominator);
+    }
+  }
+
+  // ========================================================================
+  // FAMM SCHEDULER
+  // ========================================================================
+
+  kernel FAMMScheduler {
+
+    enum ScheduleDecision {
+      EXECUTE = 0,
+      DEFER = 1,
+      THROTTLE = 2,
+    }
+
+    fn compute_famm_load(t: FAMMTiming) -> u32 {
+      // L_famm = Σ² + I_lock + Δϕ
+      let temp = Q16_16_Arithmetic::q16_16_add(t.torsional_stress, t.interlocking_energy);
+      return Q16_16_Arithmetic::q16_16_add(temp, t.laplacian_energy);
+    }
+
+    fn make_schedule_decision(load: u32) -> ScheduleDecision {
+      // Load < 0.25: Execute
+      // Load < 0.5: Throttle
+      // Load >= 0.5: Defer
+      if Q16_16_Arithmetic::q16_16_compare(load, Q16_16_QUARTER) < 0 {
+        return ScheduleDecision::EXECUTE;
+      } else if Q16_16_Arithmetic::q16_16_compare(load, Q16_16_HALF) < 0 {
+        return ScheduleDecision::THROTTLE;
+      } else {
+        return ScheduleDecision::DEFER;
+      }
+    }
+  }
+
+  // ========================================================================
+  // TOPOLOGICAL ADAPTER
+  // ========================================================================
+
+  kernel TopologicalAdapter {
+
+    fn adapt_topology(cognitive_load: u32) -> string {
+      // Cognitive load < 0.25: Relational
+      // Cognitive load < 0.5: Semantic
+      // Cognitive load < 0.75: Topological
+      // Cognitive load >= 0.75: Minimal
+      if Q16_16_Arithmetic::q16_16_compare(cognitive_load, Q16_16_QUARTER) < 0 {
+        return "relational";
+      } else if Q16_16_Arithmetic::q16_16_compare(cognitive_load, Q16_16_HALF) < 0 {
+        return "semantic";
+      } else if Q16_16_Arithmetic::q16_16_compare(cognitive_load, Q16_16_FROM_FLOAT(0.75)) < 0 {
+        return "topological";
+      } else {
+        return "minimal";
+      }
+    }
+  }
+
+  // ========================================================================
+  // NII SURFACE DRIVER MAIN
+  // ========================================================================
+
+  kernel NIISurfaceDriverMain {
+
+    fn init_nii_driver_state(core_id: u32) -> NIISurfaceDriverState {
+      // Initialize SSS constant
+      let sss_constant = SSSConstant {
+        routing_load: Q16_16_FROM_FLOAT(1.0),
+        memory_load: Q16_16_FROM_FLOAT(0.8),
+        extraneous_weight: Q16_16_FROM_FLOAT(0.5),
+        engram_length: Q16_16_FROM_FLOAT(4.0),
+        extraneous_gradient: Q16_16_FROM_FLOAT(0.1)
+      };
+
+      // Initialize slip condition
+      let sss_value = SSSMonitor::compute_sss(sss_constant);
+      let slip_condition = SlipCondition {
+        sss_constant: sss_value,
+        heel_dig_limit: Q16_16_HALF
+      };
+
+      // Initialize warp function
+      let warp_function = WarpFunction {
+        kappa: Q16_16_ONE,
+        sss_constant: sss_value,
+        opcode_efficacy: Q16_16_ONE
+      };
+
+      // Initialize FAMM timing
+      let famm_timing = FAMMTiming {
+        torsional_stress: Q16_16_FROM_FLOAT(1.0),
+        interlocking_energy: Q16_16_FROM_FLOAT(0.5),
+        laplacian_energy: Q16_16_FROM_FLOAT(0.3)
+      };
+
+      // Initialize topological state
+      let topological_state = TopologicalState {
+        cognitive_load: Q16_16_ZERO,
+        topology_metric: "relational",
+        coherence: Q16_16_ONE
+      };
+
+      return NIISurfaceDriverState {
+        core_id: core_id,
+        sss_constant: sss_constant,
+        slip_condition: slip_condition,
+        warp_function: warp_function,
+        famm_timing: famm_timing,
+        topological_state: topological_state,
+        current_status: 0  // IDLE
+      };
+    }
+
+    fn execute_work_item(state: NIISurfaceDriverState, item: WorkItem) -> NIISurfaceDriverState {
+      // Update SSS constant based on item parameters
+      let new_sss_constant = SSSConstant {
+        routing_load: item.kappa_squared,
+        memory_load: item.kappa_hierarchy,
+        extraneous_weight: state.sss_constant.extraneous_weight,
+        engram_length: state.sss_constant.engram_length,
+        extraneous_gradient: item.epsilon_mutation
+      };
+
+      let sss_value = SSSMonitor::compute_sss(new_sss_constant);
+
+      // Check slip threshold
+      let new_slip_condition = SlipCondition {
+        sss_constant: sss_value,
+        heel_dig_limit: state.slip_condition.heel_dig_limit
+      };
+
+      // Update FAMM timing
+      let new_famm_timing = FAMMTiming {
+        torsional_stress: item.kappa_squared,
+        interlocking_energy: Q16_16_Arithmetic::q16_16_div(
+          Q16_16_Arithmetic::q16_16_mul(item.kappa_hierarchy, item.kappa_hierarchy),
+          Q16_16_Arithmetic::q16_16_add(Q16_16_ONE, item.kappa_hierarchy)
+        ),
+        laplacian_energy: item.epsilon_mutation
+      };
+
+      let famm_load = FAMMScheduler::compute_famm_load(new_famm_timing);
+      let schedule_decision = FAMMScheduler::make_schedule_decision(famm_load);
+
+      // Update topological state
+      let new_topology_metric = TopologicalAdapter::adapt_topology(state.topological_state.cognitive_load);
+      let new_topological_state = TopologicalState {
+        cognitive_load: state.topological_state.cognitive_load,
+        topology_metric: new_topology_metric,
+        coherence: state.topological_state.coherence
+      };
+
+      // Update warp function
+      let new_warp_function = WarpFunction {
+        kappa: state.warp_function.kappa,
+        sss_constant: sss_value,
+        opcode_efficacy: state.warp_function.opcode_efficacy
+      };
+
+      // Update status based on slip condition and schedule decision
+      let new_status = if SSSMonitor::is_slip_threshold_crossed(new_slip_condition) {
+        // MODE_SURVIVAL trigger
+        tsm_vram_flush();  // [0x07] VRAM_FLUSH
+        3  // ERROR
+      } else if schedule_decision == FAMMScheduler::ScheduleDecision::DEFER {
+        0  // IDLE
+      } else if schedule_decision == FAMMScheduler::ScheduleDecision::THROTTLE {
+        1  // PROCESSING
+      } else {
+        2  // COMPLETE
+      };
+
+      return NIISurfaceDriverState {
+        core_id: state.core_id,
+        sss_constant: new_sss_constant,
+        slip_condition: new_slip_condition,
+        warp_function: new_warp_function,
+        famm_timing: new_famm_timing,
+        topological_state: new_topological_state,
+        current_status: new_status
+      };
+    }
+  }
+
+  // ========================================================================
+  // WORK ITEM STRUCTURE
+  // ========================================================================
+
+  struct WorkItem {
+    id: u32;
+    source_path: string;
+    target_path: string;
+    priority: u8;
+    kappa_squared: u32;
+    kappa_hierarchy: u32;
+    epsilon_mutation: u32;
+  }
+
+  // ========================================================================
+  // HELPER FUNCTIONS
+  // ========================================================================
+
+  fn Q16_16_FROM_FLOAT(f: f64) -> u32 {
+    return (f * 65536.0) as u32;
+  }
+
+  // ========================================================================
+  // PROGRAM ENTRYPOINT
+  // ========================================================================
+
+  fn main() {
+    log::info("==============================================");
+    log::info("  NII SURFACE DRIVER - TSM v2.9");
+    log::info("  SSS Monitoring | Warp Metric | FAMM Scheduling");
+    log::info("==============================================");
+
+    // [0x03] SYNC_CLOCK - Initialize with cosmic clock
+    let sync_time = tsm_sync_clock();
+    log::info(string::format("System clock synchronized at {0} GHz", [sync_time / 1e9]));
+
+    // Initialize NII surface driver state
+    let state = NIISurfaceDriverMain::init_nii_driver_state(0);  // SEMANTIC core
+
+    log::info(string::format("Initial SSS constant: {0}", [state.slip_condition.sss_constant]));
+    log::info(string::format("Initial topology: {0}", [state.topological_state.topology_metric]));
+
+    // Create test work item
+    let item = WorkItem {
+      id: 1,
+      source_path: "core/gwl-vm/src/bytecode.rs",
+      target_path: "Semantics/Substrate.lean",
+      priority: 128,
+      kappa_squared: Q16_16_FROM_FLOAT(1.0),
+      kappa_hierarchy: Q16_16_FROM_FLOAT(0.3),
+      epsilon_mutation: Q16_16_FROM_FLOAT(0.01)
+    };
+
+    // [0x01] INGEST_FLOW - Absorb work item into manifold
+    let item_data = json::serialize(item);
+    let manifold_id = tsm_ingest_flow(item_data);
+    log::info(string::format("Work item ingested into manifold: {0}", [manifold_id]));
+
+    // Execute work item
+    let new_state = NIISurfaceDriverMain::execute_work_item(state, item);
+
+    log::info(string::format("New SSS constant: {0}", [new_state.slip_condition.sss_constant]));
+    log::info(string::format("New topology: {0}", [new_state.topological_state.topology_metric]));
+    log::info(string::format("Status: {0}", [new_state.current_status]));
+
+    // [0x0E] SOLITONIFY - Freeze the state
+    let frozen = tsm_solitonify(new_state);
+    log::info(string::format("State frozen: {0}", [frozen]));
+
+    // [0x08] STARK_PROVE - Generate proof of execution
+    let proof = tsm_stark_prove(new_state);
+    log::info(string::format("Proof generated: {0}", [proof]));
+
+    // [0x09] LEDGER_COMMIT - Commit to HyperDAG ledger
+    let committed = tsm_ledger_commit(proof, "permanent");
+    log::info(string::format("Committed to ledger: {0}", [committed]));
+
+    log::info("NII Surface Driver execution complete");
+  }
+
+}
+
+// ============================================================================
+// SUPPORTING STRUCTS
+// ============================================================================
+
+struct WorkItem {
+  id: u32;
+  source_path: string;
+  target_path: string;
+  priority: u8;
+  kappa_squared: u32;
+  kappa_hierarchy: u32;
+  epsilon_mutation: u32;
+}

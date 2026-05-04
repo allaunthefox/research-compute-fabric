@@ -1,0 +1,93 @@
+[package]
+name = "servo-fetch"
+version = "0.5.0"
+edition = "2024"
+description = "A browser engine in a binary. Fetch, render, and extract web content powered by Servo."
+license = "MIT"
+rust-version = "1.86.0"
+repository = "https://github.com/konippi/servo-fetch"
+homepage = "https://github.com/konippi/servo-fetch"
+readme = "README.md"
+keywords = ["servo", "fetch", "headless", "browser", "mcp"]
+categories = ["command-line-utilities", "web-programming"]
+include = ["src/**/*", "tests/**/*", "Cargo.toml", "Cargo.lock", "LICENSE", "README.md"]
+
+[[bin]]
+name = "servo-fetch"
+path = "src/main.rs"
+
+[dependencies]
+servo = { version = "0.1.0", default-features = false, features = ["baked-in-resources", "js_jit"] }
+dom_smoothie = "0.16"
+dom_query = "0.26"
+clap = { version = "4", features = ["derive"] }
+anyhow = "1"
+dpi = "0.1"
+euclid = "0.22"
+url = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+image = { version = "0.25", default-features = false, features = ["png"] }
+htmd = "0.5"
+thiserror = "2"
+rmcp = { version = "1", features = ["server", "transport-io", "transport-streamable-http-server", "macros"] }
+schemars = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "signal"] }
+axum = "0.8"
+base64 = "0.22"
+pdf-extract = "0.10"
+ureq = "3"
+globset = "0.4"
+psl = "2"
+rustls = { version = "0.23", default-features = false, features = ["aws-lc-rs"] }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[target.'cfg(windows)'.dependencies]
+servo = { version = "0.1.0", default-features = false, features = ["baked-in-resources", "js_jit", "no-wgl"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = "s"
+panic = "abort"
+debug = "line-tables-only"
+
+[profile.ci]
+inherits = "test"
+debug = 0
+strip = "debuginfo"
+incremental = false
+
+[lints.rust]
+missing_docs = "warn"
+unreachable_pub = "warn"
+unused_lifetimes = "warn"
+unused_macro_rules = "warn"
+unused_qualifications = "warn"
+
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = { level = "allow", priority = 1 }
+implicit_clone = "warn"
+redundant_clone = "warn"
+redundant_type_annotations = "warn"
+use_self = "warn"
+missing_assert_message = "warn"
+cast_possible_truncation = "warn"
+cast_sign_loss = "warn"
+cast_precision_loss = "warn"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+
+[dev-dependencies]
+assert_cmd = "2"
+predicates = "3"
+rmcp = { version = "1", features = ["client", "transport-io", "transport-child-process"] }
+futures-util = "0.3"
+
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/v{ version }/servo-fetch-v{ version }-{ target }.tar.gz"
+pkg-fmt = "tgz"
+bin-dir = "servo-fetch"

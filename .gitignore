@@ -1,0 +1,82 @@
+.env
+**/node_modules/
+**/__pycache__/
+*.db
+*.log
+.DS_Store
+.windsurf/
+__pycache__/
+*.pyc
+*.pyo
+*.bak
+*.tmp
+*.old
+*.pid
+
+# Local-only generated/refill artifacts
+artifacts/
+Obdisidan connector/
+String-Star-Manifold/
+String-Star-Manifold-*.zip
+CompressionApproachViaTopology/
+*.perfect_balance_backup_*.gz
+
+# Large binary/tool installations
+**/ComfyUI/
+**/searxng/
+**/ObsidianConnector/
+**/mcp-researcher/
+tools/bin/
+tools/build/
+tools/search/
+**/archive/temp_junk/
+scripts/venv_unsloth/
+
+# Virtual environments (should never be committed)
+**/hutter_venv/
+**/venv_proxy/
+**/venv_wgpu/
+**/*.venv/
+**/venv/
+
+# API Keys and credentials (NEVER track in git)
+API KEYS/
+
+# Large data files (exceed GitHub 100MB limit)
+data/germane/research/*.zip
+data/germane/research/SOVEREIGN_MATH_MODEL_DATABASE_ITD.jsonl
+data/germane/research/SOVEREIGN_MATH_MODEL_DATABASE.jsonl
+data/germane/research/SOVEREIGN_MATH_MODEL_DATABASE_V2.json
+data/germane/research/SOVEREIGN_ITD_MANIFOLD.jsonl
+data/germane/research/MATHLIB_NLAB_MANIFOLD.jsonl
+data/manifest_selective_v5_xeno.jsonl
+data/manifest_selective_v5_xeno_FLAGGED.jsonl
+data/manifest.jsonl
+data/manifest_FLAGGED.jsonl
+data/s3c_sine_440Hz_1.0s_results.json
+data/*.iso
+
+# Lean build artifacts
+**/.lake/
+*.trace
+
+# Hardware/FPGA build artifacts
+**/hardware/sparkle/tangnano9k/*.fs
+**/hardware/sparkle/tangnano9k/*.pnr.json
+**/hardware/sparkle/tangnano9k/*.history
+**/hardware/sparkle/tangnano9k/sparkle_tangnano9k.json
+
+# Large data and archives (Offloaded to Gdrive via rclone)
+shared-data/
+6-Documentation/archive/
+5-Applications/out/
+5-Applications/scripts/models/
+**/shared-data/
+**/archive/
+*.zip
+*.tar.gz
+*.parquet
+
+# Rust build artifacts
+**/target/
+tools/servo-fetch/

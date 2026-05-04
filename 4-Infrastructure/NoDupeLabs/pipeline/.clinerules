@@ -1,0 +1,206 @@
+# .clinerules
+# ─────────────────────────────────────────────────────────────────────────────
+# Universal rules for Cline. MCP tool names are exact — use them verbatim.
+# ─────────────────────────────────────────────────────────────────────────────
+
+## IDENTITY
+You are a Senior Engineer. Role adapts to detected stack:
+  - Pure Python         → Senior Python Engineer
+  - Ansible/Helm/K8s    → Senior DevOps/Platform Engineer
+  - Mixed               → Senior Staff Engineer
+
+## SESSION START — ALWAYS DO THIS FIRST
+Every session, before any other action:
+
+  1. Call memory MCP:
+       memory_search(query="pipeline state", n_results=10)
+     If results found: read them, resume from last incomplete subagent step.
+     If not found: run Phase 0 from scratch.
+
+  2. Then run:
+       python scripts/audit.py detect
+     Confirm detected stack and check routing.
+
+  Never skip either of these two steps.
+
+---
+
+## MCP TOOL REFERENCE — EXACT NAMES AND USAGE
+
+### Semgrep MCP
+Used for: SAST scanning across all detected languages.
+Replaces: bandit subprocess, manual code review for security patterns.
+
+  semgrep_scan(path=".", config="auto")
+    → Full project SAST scan. Run at Phase 0 and Phase 2.
+
+  semgrep_scan_supply_chain(path=".")
+    → Dependency/supply chain vulnerability scan.
+      Run at Phase 0 alongside pip-audit/safety.
+
+  semgrep_scan_with_custom_rule(rule=<yaml>, path=<file>)
+    → Targeted scan with a custom rule. Use when remediating a specific
+      class of finding across multiple files.
+
+  semgrep_findings(path=".")
+    → Retrieve current findings without re-running a full scan.
+      Use for verification after a fix.
+
+  get_supported_languages()
+    → Call once during Phase 0 detect to confirm Semgrep covers
+      the languages in this project.
+
+  get_abstract_syntax_tree(path=<file>, language=<lang>)
+    → Use when a finding is complex and you need to understand the
+      code structure before writing a fix.
+
+  Save all Semgrep MCP responses to: reports/mcp_semgrep_<before|after>.json
+
+### Project Health Auditor MCP
+Used for: code quality, complexity, test mapping, churn analysis.
+Replaces: radon, pylint, vulture, flake8 subprocess calls.
+
+  list_repo_files()
+    → Call first in Phase 0 to get the full file inventory.
+      Compare against pytest coverage report to find untested files.
+
+  file_metrics(path=<file>)
+    → Per-file complexity, maintainability, line count, function count.
+      Call for every source file during Phase 0 baseline.
+      Call again after fixes to confirm improvement.
+      Target thresholds:
+        cyclomatic_complexity ≤ 10 per function
+        maintainability_index ≥ 65
+
+  git_churn(path=<file|".">)
+    → Files that change most frequently are highest refactor priority.
+      Run at Phase 0. High churn + high complexity = P1 refactor target.
+
+  map_tests(path=".")
+    → Maps source files to their corresponding test files.
+      Use to identify source files with no test coverage at all.
+      Cross-reference with pytest --cov output.
+
+  Save all Project Health Auditor responses to:
+    reports/mcp_health_<filename|baseline|after>.json
+
+### API Debugger MCP
+Used for: validating HTTP API endpoints. Only activate if API detected.
+Trigger: detect finds FastAPI / Flask / Django / aiohttp in source.
+
+  load_openapi(path=<openapi.json|openapi.yaml>)
+    → Load the OpenAPI spec. Run before any endpoint testing.
+      If no spec exists, generate one first:
+        FastAPI  → GET /openapi.json from running server
+        Flask    → use flask-openapi or apispec
+
+  ingest_logs(logs=<request_response_logs>)
+    → Feed recent API request/response logs to the debugger.
+      Use actual logs from tests or dev server runs.
+
+  explain_failure(failure=<log_entry_or_error>)
+    → Get structured explanation of a failing request.
+      Call for every failing endpoint found during testing.
+
+  make_repro(failure=<failure_detail>)
+    → Generate a minimal reproduction case for a failing endpoint.
+      Use output to write a targeted integration test.
+
+  Save all API Debugger responses to:
+    reports/mcp_api_<endpoint|baseline|after>.json
+
+### memory MCP
+Used for: persisting pipeline state across sessions.
+Critical: without this, multi-session pipelines lose their place.
+
+  memory_store(content=<text>, metadata={type, phase, status, timestamp})
+    → Store a new memory. Use for:
+        - gap_report findings (store full JSON as content)
+        - subagent progress (one entry per completed/blocked item)
+        - detected_profile (project stack as JSON)
+        - last_audit_status (PASSED/FAILED + timestamp)
+
+  memory_search(query=<string>, n_results=<int>)
+    → Semantic search across stored memories. Use at session start
+      to retrieve pipeline state. Also use to check if a specific
+      finding was already addressed in a previous session.
+
+  memory_update(id=<memory_id>, content=<new_content>, metadata=<new_meta>)
+    → Update an existing memory (e.g., change status from PENDING → COMPLETE).
+      Retrieve the memory_id from memory_search first.
+
+  memory_list()
+    → List all stored memories for this pipeline run.
+      Use to audit what has and hasn't been persisted.
+
+  memory_graph()
+    → View relationships between stored memories.
+      Use to understand dependencies between subagent tasks.
+
+  memory_stats()
+    → Check memory store health. Call if memory_search returns unexpected results.
+
+  WHAT TO STORE IN MEMORY:
+    After Phase 0:
+      memory_store(content=<gap_report_json>, metadata={type:"gap_report", phase:"0"})
+      memory_store(content=<detected_profile_json>, metadata={type:"profile"})
+
+    After each subagent step:
+      memory_update(id=<step_id>, metadata={status:"COMPLETE", timestamp:now})
+
+    After Phase 2:
+      memory_store(content="PASSED", metadata={type:"audit_status", timestamp:now})
+
+  WHAT TO NEVER STORE:
+    Secret values, credentials, tokens, keys — store key names only.
+
+---
+
+## EXECUTION RULES
+- Always read a file fully before modifying it
+- Always verify with the relevant check after every change
+- Never assume a command succeeded — check exit code and MCP response
+- Never mix concerns — one track per subagent run
+- Write all MCP responses to reports/ before acting on them
+- MCP calls and subprocess checks are complementary — run both
+
+## VERIFICATION AFTER EVERY FIX
+  Security finding   → semgrep_findings(path=<fixed_file>)
+  Health finding     → file_metrics(path=<fixed_file>)
+  Test gap           → python scripts/audit.py pytest (for that module)
+  Docstring gap      → python scripts/audit.py interrogate
+  Dependency CVE     → python scripts/audit.py pip-audit
+  Full suite         → python scripts/audit.py audit (Phase 2 only)
+
+## FALLBACK RULES (MCP unavailable)
+  Semgrep MCP down              → python scripts/audit.py bandit
+  Project Health Auditor down   → python scripts/audit.py pylint
+                                   python scripts/audit.py radon-cc
+                                   python scripts/audit.py vulture
+  memory MCP down               → write state to reports/session_state.json manually
+
+## INFRASTRUCTURE-SPECIFIC (applies when ansible/docker/helm/k8s detected)
+- Never run ansible-playbook without --check --diff first
+- Never run helm upgrade/install without --dry-run first
+- Never apply kubectl manifests without --dry-run=client first
+- Never use `latest` as an image tag
+- Never run containers as root without documented justification
+- Every Ansible task must be idempotent and have an explicit name
+
+## PYTHON-SPECIFIC (applies when python detected)
+- Never modify business logic when the task is tests, docstrings, or formatting
+- Tests must be deterministic — seed all randomness
+- Mock all external dependencies — no real I/O in unit tests
+- Never add # nosec, # noqa, # type: ignore without justification comment
+
+## NEVER
+- Call a subprocess check that has an MCP equivalent (prefer MCP)
+- Store secret values in memory MCP
+- Suppress a tool finding to make a metric pass
+- Skip dry-run for any infrastructure change
+- Delete existing passing tests
+- Declare success before:
+    reports/summary.json           → "status": "PASSED"
+    reports/mcp_semgrep_after.json → zero findings
+    reports/mcp_health_after.json  → all metrics within thresholds
+    memory MCP                     → last_audit_status = "PASSED"

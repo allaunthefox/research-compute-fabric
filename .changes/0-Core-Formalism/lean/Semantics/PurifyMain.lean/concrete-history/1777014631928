@@ -1,0 +1,1 @@
+{"type":"new","contents":"import Semantics.Purify\n\ndef main (args : List String) : IO Unit := do\n  if args.length < 2 then\n    IO.println \"Usage: purify <input_json> <output_json>\"\n  else\n    let input := args[0]!\n    let output := args[1]!\n    Semantics.Purify.runPurification input output\n","mtime":1777014631928}

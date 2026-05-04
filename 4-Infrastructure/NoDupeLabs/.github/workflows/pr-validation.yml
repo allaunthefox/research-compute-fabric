@@ -1,0 +1,19 @@
+name: PR Validation
+
+# Quiet mode: manual-only.
+# Re-enable pull_request triggers only when PR validation is wanted again.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quiet:
+    name: PR validation quiet mode
+    runs-on: ubuntu-latest
+    steps:
+      - name: Quiet mode notice
+        run: |
+          echo "PR Validation is intentionally manual-only to prevent notification spam."
+          echo "Run this workflow manually when needed."

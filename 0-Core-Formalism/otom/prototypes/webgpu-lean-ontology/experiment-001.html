@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EXP-001 — Single Semantic Gravity Well</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #030406;
+      --panel: rgba(7, 10, 15, 0.76);
+      --text: #efffff;
+      --muted: #8ab0b8;
+      --accent: #00ffcc;
+      --warn: #ffcc66;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, #101e28 0%, var(--bg) 62%, #000 100%);
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    canvas { display: block; }
+
+    #ui {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 10;
+      width: min(470px, calc(100vw - 28px));
+      padding: 14px 16px;
+      background: var(--panel);
+      border: 1px solid rgba(0, 255, 204, 0.24);
+      border-radius: 14px;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.45);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      margin: 0 0 10px 0;
+      color: var(--accent);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 8px;
+      margin: 5px 0;
+      font-size: 12px;
+    }
+
+    .label { color: var(--muted); }
+    .value { color: var(--text); overflow-wrap: anywhere; }
+    .ok { color: var(--accent); }
+    .warn { color: var(--warn); }
+
+    .note {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+  </style>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <section id="ui">
+    <h1>EXP-001 — Single Semantic Gravity Well</h1>
+    <div class="row"><span class="label">Renderer</span><span id="renderer" class="value warn">initializing</span></div>
+    <div class="row"><span class="label">Node</span><span id="node-label" class="value">Semantic Mass</span></div>
+    <div class="row"><span class="label">mass_number</span><span id="mass" class="value">0.9200</span></div>
+    <div class="row"><span class="label">density</span><span id="density" class="value">0.7800</span></div>
+    <div class="row"><span class="label">torsion</span><span id="torsion" class="value">0.2100</span></div>
+    <div class="row"><span class="label">receipt_coverage</span><span id="receipts" class="value">0.3400</span></div>
+    <div class="row"><span class="label">gate</span><span id="gate" class="value warn">U_scope</span></div>
+    <div class="note">
+      Projection layer only. Visual mass is not proof. The node stays U_scope until receipts/Lean promote it.
+    </div>
+  </section>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    const $ = (id) => document.getElementById(id);
+
+    const config = {
+      label: 'Semantic Mass',
+      mass_number: 0.92,
+      density: 0.78,
+      torsion: 0.21,
+      receipt_coverage: 0.34,
+      gate: 'U_scope',
+    };
+
+    let renderer, scene, camera, controls;
+    let core, halo, orbitGroup, particleField;
+
+    async function init() {
+      if (!('gpu' in navigator)) {
+        $('renderer').textContent = 'WebGPU unavailable';
+        return;
+      }
+
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x030406, 0.032);
+
+      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 2.2, 7.2);
+
+      renderer = new WebGPURenderer({ antialias: true, alpha: true });
+      await renderer.init();
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+      $('renderer').textContent = 'WebGPU active';
+      $('renderer').className = 'value ok';
+
+      controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.enablePan = false;
+
+      scene.add(new THREE.AmbientLight(0x88dfff, 0.44));
+      const key = new THREE.DirectionalLight(0xffffff, 2.8);
+      key.position.set(4, 5, 6);
+      scene.add(key);
+
+      const radius = 0.6 + config.mass_number * 1.35;
+      const geometry = new THREE.IcosahedronGeometry(radius, 5);
+      const material = new THREE.MeshStandardMaterial({
+        color: 0x00ffcc,
+        emissive: 0x00372f,
+        emissiveIntensity: 1.1,
+        roughness: 0.22,
+        metalness: 0.16,
+      });
+      core = new THREE.Mesh(geometry, material);
+      scene.add(core);
+
+      const haloGeometry = new THREE.IcosahedronGeometry(radius * 1.18, 2);
+      const haloMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffcc66,
+        transparent: true,
+        opacity: 0.12 + config.torsion * 0.35,
+        wireframe: true,
+      });
+      halo = new THREE.Mesh(haloGeometry, haloMaterial);
+      scene.add(halo);
+
+      orbitGroup = new THREE.Group();
+      scene.add(orbitGroup);
+      buildCompressedOrbits(radius);
+      buildParticleField();
+
+      window.addEventListener('resize', onResize);
+      animate();
+    }
+
+    function buildCompressedOrbits(radius) {
+      const compression = 1.0 - config.mass_number * 0.42;
+      for (let r = 0; r < 7; r++) {
+        const ringRadius = radius * (1.2 + r * 0.32 * compression);
+        const yScale = 0.28 + r * 0.075 + config.torsion * 0.12;
+        const points = [];
+        for (let i = 0; i <= 220; i++) {
+          const a = (i / 220) * Math.PI * 2;
+          const skew = Math.sin(a * 3 + r) * config.torsion * 0.16;
+          points.push(new THREE.Vector3(
+            Math.cos(a) * ringRadius,
+            Math.sin(a) * ringRadius * yScale,
+            skew + Math.cos(a * 2 + r) * config.density * 0.08
+          ));
+        }
+        const geo = new THREE.BufferGeometry().setFromPoints(points);
+        const mat = new THREE.LineBasicMaterial({
+          color: r % 2 === 0 ? 0x00ffcc : 0xffcc66,
+          transparent: true,
+          opacity: 0.12 + config.receipt_coverage * 0.25,
+        });
+        const line = new THREE.Line(geo, mat);
+        line.rotation.x = r * 0.38;
+        line.rotation.y = r * 0.21;
+        orbitGroup.add(line);
+      }
+    }
+
+    function buildParticleField() {
+      const count = 850;
+      const positions = new Float32Array(count * 3);
+      const masses = new Float32Array(count);
+      for (let i = 0; i < count; i++) {
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        const base = 4.2 + Math.random() * 6.8;
+        const pull = 1.0 - config.mass_number * 0.34;
+        const rr = base * pull;
+        positions[i * 3 + 0] = rr * Math.sin(phi) * Math.cos(theta);
+        positions[i * 3 + 1] = rr * Math.sin(phi) * Math.sin(theta) * 0.72;
+        positions[i * 3 + 2] = rr * Math.cos(phi);
+        masses[i] = Math.random();
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geo.setAttribute('semanticWeight', new THREE.BufferAttribute(masses, 1));
+      const mat = new THREE.PointsMaterial({
+        color: 0x9befff,
+        size: 0.015 + config.density * 0.026,
+        transparent: true,
+        opacity: 0.32,
+      });
+      particleField = new THREE.Points(geo, mat);
+      scene.add(particleField);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const t = performance.now() / 1000;
+      controls.update();
+
+      const wobble = 1 + config.density * 0.035 * Math.sin(t * 3.3);
+      core.scale.setScalar(wobble);
+      core.rotation.x += 0.004 + config.torsion * 0.016;
+      core.rotation.y += 0.007 + config.density * 0.01;
+
+      halo.rotation.x -= 0.006 + config.torsion * 0.018;
+      halo.rotation.y += 0.004;
+      halo.scale.setScalar(1 + config.torsion * 0.12 * Math.sin(t * 5.0));
+
+      orbitGroup.rotation.y += 0.002 + config.mass_number * 0.0025;
+      orbitGroup.rotation.x = Math.sin(t * 0.36) * config.torsion * 0.7;
+
+      particleField.rotation.y -= 0.0008 + config.mass_number * 0.0008;
+      particleField.rotation.x = Math.cos(t * 0.21) * config.torsion * 0.22;
+
+      renderer.renderAsync(scene, camera);
+    }
+
+    function onResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    init();
+  </script>
+</body>
+</html>

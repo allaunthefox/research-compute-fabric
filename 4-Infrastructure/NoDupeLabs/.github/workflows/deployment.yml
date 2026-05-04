@@ -1,0 +1,19 @@
+name: Deployment
+
+# Quiet mode: manual-only.
+# Re-enable tag push deployment only when release/deploy automation is wanted again.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quiet:
+    name: Deployment quiet mode
+    runs-on: ubuntu-latest
+    steps:
+      - name: Quiet mode notice
+        run: |
+          echo "Deployment is intentionally manual-only to prevent notification spam."
+          echo "Run this workflow manually when needed."

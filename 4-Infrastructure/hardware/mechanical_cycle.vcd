@@ -1,0 +1,659 @@
+$date
+	Wed Apr 22 23:15:52 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module mechanical_cycle_harness $end
+$var wire 16 ! virtual_warp_value [15:0] $end
+$var wire 16 " virtual_warp_metric [15:0] $end
+$var wire 2 # topology_metric [1:0] $end
+$var wire 16 $ sss_constant [15:0] $end
+$var wire 1 % slip_threshold_crossed $end
+$var wire 2 & schedule_decision [1:0] $end
+$var wire 1 ' mode_survival_trigger $end
+$var wire 16 ( effective_velocity [15:0] $end
+$var reg 1 ) clk $end
+$var reg 16 * cognitive_load [15:0] $end
+$var reg 16 + coherence [15:0] $end
+$var reg 16 , engram_length [15:0] $end
+$var reg 16 - entropy_displacement [15:0] $end
+$var reg 16 . extraneous_gradient [15:0] $end
+$var reg 16 / extraneous_weight [15:0] $end
+$var reg 16 0 heel_dig_limit [15:0] $end
+$var reg 16 1 kappa [15:0] $end
+$var reg 16 2 local_velocity [15:0] $end
+$var reg 16 3 memory_load [15:0] $end
+$var reg 16 4 opcode_efficacy [15:0] $end
+$var reg 16 5 proper_time [15:0] $end
+$var reg 1 6 reset_n $end
+$var reg 16 7 routing_load [15:0] $end
+$scope module dut $end
+$var wire 1 ) clk $end
+$var wire 16 8 cognitive_load [15:0] $end
+$var wire 16 9 coherence [15:0] $end
+$var wire 16 : effective_velocity_out [15:0] $end
+$var wire 16 ; engram_length [15:0] $end
+$var wire 16 < entropy_displacement [15:0] $end
+$var wire 16 = extraneous_gradient [15:0] $end
+$var wire 16 > extraneous_weight [15:0] $end
+$var wire 16 ? famm_load_out [15:0] $end
+$var wire 16 @ heel_dig_limit [15:0] $end
+$var wire 16 A interlocking_energy [15:0] $end
+$var wire 16 B kappa [15:0] $end
+$var wire 16 C laplacian_energy [15:0] $end
+$var wire 16 D local_velocity [15:0] $end
+$var wire 16 E memory_load [15:0] $end
+$var wire 16 F opcode_efficacy [15:0] $end
+$var wire 16 G proper_time [15:0] $end
+$var wire 1 6 reset_n $end
+$var wire 16 H routing_load [15:0] $end
+$var wire 2 I schedule_decision_out [1:0] $end
+$var wire 16 J sss_constant_out [15:0] $end
+$var wire 2 K topology_metric_out [1:0] $end
+$var wire 16 L torsional_stress [15:0] $end
+$var wire 1 M virtual_warp_value_wire $end
+$var wire 16 N virtual_warp_value_out [15:0] $end
+$var wire 1 O virtual_warp_metric_wire $end
+$var wire 16 P virtual_warp_metric_out [15:0] $end
+$var wire 2 Q topology_metric_wire [1:0] $end
+$var wire 16 R sss_constant_wire [15:0] $end
+$var wire 1 % slip_threshold_crossed $end
+$var wire 2 S schedule_decision_wire [1:0] $end
+$var wire 1 ' mode_survival_trigger $end
+$var wire 16 T famm_load_wire [15:0] $end
+$var wire 16 U effective_velocity_wire [15:0] $end
+$scope module famm_inst $end
+$var wire 1 ) clk $end
+$var wire 16 V interlocking_energy [15:0] $end
+$var wire 16 W laplacian_energy [15:0] $end
+$var wire 1 6 reset_n $end
+$var wire 16 X torsional_stress [15:0] $end
+$var wire 16 Y temp1 [15:0] $end
+$var wire 2 Z schedule_decision [1:0] $end
+$var wire 1 [ load_lt_050 $end
+$var wire 1 \ load_lt_025 $end
+$var wire 16 ] famm_load [15:0] $end
+$scope module add1_inst $end
+$var wire 16 ^ a [15:0] $end
+$var wire 16 _ b [15:0] $end
+$var wire 16 ` sum [15:0] $end
+$upscope $end
+$scope module add2_inst $end
+$var wire 16 a a [15:0] $end
+$var wire 16 b b [15:0] $end
+$var wire 16 c sum [15:0] $end
+$upscope $end
+$upscope $end
+$scope module sss_inst $end
+$var wire 1 ) clk $end
+$var wire 16 d engram_length [15:0] $end
+$var wire 16 e extraneous_gradient [15:0] $end
+$var wire 16 f extraneous_weight [15:0] $end
+$var wire 16 g heel_dig_limit [15:0] $end
+$var wire 16 h memory_load [15:0] $end
+$var wire 1 6 reset_n $end
+$var wire 16 i routing_load [15:0] $end
+$var wire 1 % slip_threshold_crossed $end
+$var wire 16 j torsional_term [15:0] $end
+$var wire 16 k temp1 [15:0] $end
+$var wire 1 l sss_lt_threshold $end
+$var wire 16 m sss_constant [15:0] $end
+$var wire 16 n negative_heel_dig [15:0] $end
+$var wire 1 ' mode_survival_trigger $end
+$var wire 16 o counter_torque [15:0] $end
+$var reg 4 p slip_counter [3:0] $end
+$var reg 1 q slip_crossed_reg $end
+$scope module compare_inst $end
+$var wire 16 r b [15:0] $end
+$var wire 1 l lt $end
+$var wire 1 s gt $end
+$var wire 1 t eq $end
+$var wire 16 u a [15:0] $end
+$upscope $end
+$scope module counter_torque_inst $end
+$var wire 16 v a [15:0] $end
+$var wire 16 w b [15:0] $end
+$var wire 16 x sum [15:0] $end
+$upscope $end
+$scope module mul1_inst $end
+$var wire 16 y a [15:0] $end
+$var wire 16 z b [15:0] $end
+$var wire 32 { temp [31:0] $end
+$var wire 16 | product [15:0] $end
+$upscope $end
+$scope module mul2_inst $end
+$var wire 16 } a [15:0] $end
+$var wire 16 ~ b [15:0] $end
+$var wire 32 !" temp [31:0] $end
+$var wire 16 "" product [15:0] $end
+$upscope $end
+$scope module sss_inst $end
+$var wire 16 #" a [15:0] $end
+$var wire 16 $" b [15:0] $end
+$var wire 16 %" diff [15:0] $end
+$upscope $end
+$upscope $end
+$scope module topo_inst $end
+$var wire 1 ) clk $end
+$var wire 16 &" cognitive_load [15:0] $end
+$var wire 1 6 reset_n $end
+$var wire 2 '" topology_metric [1:0] $end
+$var wire 1 (" load_lt_075 $end
+$var wire 1 )" load_lt_050 $end
+$var wire 1 *" load_lt_025 $end
+$upscope $end
+$scope module virtual_warp_inst $end
+$var wire 1 ) clk $end
+$var wire 16 +" coherence [15:0] $end
+$var wire 16 ," entropy_displacement [15:0] $end
+$var wire 16 -" kappa [15:0] $end
+$var wire 16 ." local_velocity [15:0] $end
+$var wire 16 /" opcode_efficacy [15:0] $end
+$var wire 16 0" proper_time [15:0] $end
+$var wire 1 6 reset_n $end
+$var wire 16 1" sss_constant [15:0] $end
+$var wire 16 2" virtual_warp_value [15:0] $end
+$var wire 16 3" virtual_warp_metric_value [15:0] $end
+$var wire 16 4" virtual_warp_final [15:0] $end
+$var wire 1 5" virtual_warp_coupling $end
+$var wire 16 6" v_eff_warp_dtau [15:0] $end
+$var wire 16 7" time_term [15:0] $end
+$var wire 16 8" space_term_inner [15:0] $end
+$var wire 16 9" space_term [15:0] $end
+$var wire 16 :" one_minus_coherence [15:0] $end
+$var wire 16 ;" neg_kappa_sss [15:0] $end
+$var wire 16 <" effective_velocity [15:0] $end
+$var wire 16 =" denominator [15:0] $end
+$scope module div_velocity_inst $end
+$var wire 16 >" denominator [15:0] $end
+$var wire 16 ?" numerator [15:0] $end
+$var wire 32 @" temp [31:0] $end
+$var wire 16 A" quotient [15:0] $end
+$upscope $end
+$scope module mul_kappa_inst $end
+$var wire 16 B" a [15:0] $end
+$var wire 16 C" b [15:0] $end
+$var wire 32 D" temp [31:0] $end
+$var wire 16 E" product [15:0] $end
+$upscope $end
+$scope module mul_space1_inst $end
+$var wire 16 F" a [15:0] $end
+$var wire 16 G" b [15:0] $end
+$var wire 32 H" temp [31:0] $end
+$var wire 16 I" product [15:0] $end
+$upscope $end
+$scope module mul_space2_inst $end
+$var wire 16 J" a [15:0] $end
+$var wire 16 K" b [15:0] $end
+$var wire 32 L" temp [31:0] $end
+$var wire 16 M" product [15:0] $end
+$upscope $end
+$scope module mul_space_final_inst $end
+$var wire 32 N" temp [31:0] $end
+$var wire 16 O" product [15:0] $end
+$var wire 16 P" b [15:0] $end
+$var wire 16 Q" a [15:0] $end
+$upscope $end
+$scope module mul_time_inst $end
+$var wire 16 R" a [15:0] $end
+$var wire 16 S" b [15:0] $end
+$var wire 32 T" temp [31:0] $end
+$var wire 16 U" product [15:0] $end
+$upscope $end
+$scope module mul_warp_inst $end
+$var wire 16 V" b [15:0] $end
+$var wire 32 W" temp [31:0] $end
+$var wire 16 X" product [15:0] $end
+$var wire 16 Y" a [15:0] $end
+$upscope $end
+$scope module sigmoid_inst $end
+$var wire 16 Z" x [15:0] $end
+$var wire 16 [" y [15:0] $end
+$var wire 16 \" x_plus_5 [15:0] $end
+$var wire 1 ]" x_lt_neg5 $end
+$var wire 1 ^" x_gt_pos5 $end
+$var wire 16 _" x_div_10 [15:0] $end
+$scope module add_inst $end
+$var wire 16 `" a [15:0] $end
+$var wire 16 a" b [15:0] $end
+$var wire 16 b" sum [15:0] $end
+$upscope $end
+$scope module div_inst $end
+$var wire 16 c" denominator [15:0] $end
+$var wire 16 d" numerator [15:0] $end
+$var wire 32 e" temp [31:0] $end
+$var wire 16 f" quotient [15:0] $end
+$upscope $end
+$upscope $end
+$scope module sub_coherence_inst $end
+$var wire 16 g" a [15:0] $end
+$var wire 16 h" b [15:0] $end
+$var wire 16 i" diff [15:0] $end
+$upscope $end
+$scope module sub_space_inst $end
+$var wire 16 j" a [15:0] $end
+$var wire 16 k" b [15:0] $end
+$var wire 16 l" diff [15:0] $end
+$upscope $end
+$upscope $end
+$upscope $end
+$scope task run_mechanical_cycle $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+bx l"
+bx k"
+b0 j"
+b1111111111111111 i"
+b0 h"
+b1111111111111111 g"
+bx f"
+bx e"
+bx d"
+b1010000000000000 c"
+bx b"
+b101000000000000 a"
+bx `"
+bx _"
+x^"
+x]"
+bx \"
+bx ["
+bx Z"
+bx Y"
+bx X"
+bx W"
+b1111111111111111 V"
+b111111110 U"
+b111111110000000000000000 T"
+b100000000 S"
+b1111111100000000 R"
+bx Q"
+bx P"
+bx O"
+bx N"
+bx M"
+bx L"
+b100000000 K"
+bx J"
+bx I"
+bx H"
+b0x G"
+b1000000000000 F"
+bx E"
+bx D"
+bx C"
+b1111000000000000 B"
+b1000000000000 A"
+b1000000000000 @"
+b1000000000000 ?"
+b1111111111111111 >"
+b1111111111111111 ="
+b1000000000000 <"
+bx ;"
+b1111111111111111 :"
+bx 9"
+bx 8"
+b111111110 7"
+bx 6"
+x5"
+bx 4"
+bx 3"
+bx 2"
+bx 1"
+b100000000 0"
+b1111111111111111 /"
+b1000000000000 ."
+b1000000000000 -"
+b0 ,"
+b0 +"
+1*"
+1)"
+1("
+b0 '"
+b0 &"
+bx %"
+bx $"
+b0 #"
+bx ""
+bx !"
+bx ~
+bx }
+bx |
+bx {
+bx z
+bx y
+b0 x
+b0 w
+b0 v
+bx u
+xt
+xs
+b1100000000000000 r
+0q
+b0 p
+b0 o
+b1100000000000000 n
+bx m
+xl
+bx k
+bx j
+b0 i
+b0 h
+b100000000000000 g
+bx f
+bx e
+bx d
+b0 c
+b0 b
+b0 a
+b0 `
+b0 _
+b0 ^
+b0 ]
+1\
+1[
+b0 Z
+b0 Y
+b0 X
+b0 W
+b0 V
+b1000000000000 U
+b0 T
+b0 S
+bx R
+b0 Q
+b0x P
+xO
+b0x N
+xM
+b0 L
+b0 K
+bx J
+b0 I
+b0 H
+b100000000 G
+b1111111111111111 F
+b0 E
+b1000000000000 D
+b0 C
+b1000000000000 B
+b0 A
+b100000000000000 @
+b0 ?
+bx >
+bx =
+b0 <
+bx ;
+b1000000000000 :
+b0 9
+b0 8
+b0 7
+06
+b100000000 5
+b1111111111111111 4
+b0 3
+b1000000000000 2
+b1000000000000 1
+b100000000000000 0
+bx /
+bx .
+b0 -
+bx ,
+b0 +
+b0 *
+0)
+b1000000000000 (
+0'
+b0 &
+0%
+bx $
+b0 #
+b0x "
+b0x !
+$end
+#10000
+1)
+#20000
+0)
+#30000
+1)
+#40000
+0)
+#50000
+x%
+xq
+1)
+b10000000000000 3
+b10000000000000 E
+b10000000000000 h
+b10000000000000 w
+b110000000000000 o
+b110000000000000 x
+b110000000000000 #"
+b100000000000000 7
+b100000000000000 H
+b100000000000000 i
+b100000000000000 v
+16
+#60000
+0)
+#70000
+1)
+#80000
+0)
+#90000
+1)
+#100000
+0)
+#110000
+1)
+#120000
+0)
+#130000
+1)
+#140000
+0)
+#150000
+b0 "
+b0 P
+0O
+b0 3"
+b0 O"
+b0 N"
+b0 9"
+b0 P"
+b0 Q"
+b0 l"
+b0 8"
+b0 M"
+b0 k"
+b0 L"
+b0 6"
+b0 I"
+b0 J"
+b0 H"
+b0 G"
+05"
+b1100110 _"
+b1100110 f"
+b1111111111111100 4"
+b1111111111111100 X"
+b1 !
+b1 N
+b1100110 e"
+b11111111111111100000000000000001 W"
+1M
+b1111111111111111 2"
+b1111111111111111 Y"
+b1111111111111111 ["
+0]"
+1^"
+b1000000 \"
+b1000000 b"
+b1000000 d"
+b1011000001000000 ;"
+b1011000001000000 E"
+b1011000001000000 Z"
+b1011000001000000 `"
+b1011000001000000000000000000000 D"
+0s
+0t
+1l
+b101111000000000 $
+b101111000000000 J
+b101111000000000 R
+b101111000000000 m
+b101111000000000 u
+b101111000000000 %"
+b101111000000000 1"
+b101111000000000 C"
+b1000000000 j
+b1000000000 ""
+b1000000000 $"
+b1000000000000000000000000 !"
+b1000000000000 k
+b1000000000000 |
+b1000000000000 }
+b1000000000000000000000000000 {
+1)
+b1000000000000 .
+b1000000000000 =
+b1000000000000 e
+b1000000000000 ~
+b100000000000000 ,
+b100000000000000 ;
+b100000000000000 d
+b100000000000000 z
+b10000000000000 /
+b10000000000000 >
+b10000000000000 f
+b10000000000000 y
+#160000
+0)
+#170000
+b1 p
+1%
+1q
+1)
+#180000
+0)
+#190000
+b10 p
+1)
+#200000
+0)
+#210000
+b11 p
+1)
+#220000
+0)
+#230000
+b100 p
+1)
+#240000
+0)
+#250000
+b101 p
+b11010000011 _"
+b11010000011 f"
+b1111111111111100 4"
+b1111111111111100 X"
+b1 !
+b1 N
+b11010000011 e"
+b11111111111111100000000000000001 W"
+1M
+b1111111111111111 2"
+b1111111111111111 Y"
+b1111111111111111 ["
+0]"
+b10000010010 \"
+b10000010010 b"
+b10000010010 d"
+b1011010000010010 ;"
+b1011010000010010 E"
+b1011010000010010 Z"
+b1011010000010010 `"
+b1011010000010010110000000000000 D"
+b110000000001010 $
+b110000000001010 J
+b110000000001010 R
+b110000000001010 m
+b110000000001010 u
+b110000000001010 %"
+b110000000001010 1"
+b110000000001010 C"
+b1111111111110110 j
+b1111111111110110 ""
+b1111111111110110 $"
+b1111111111111100 k
+b1111111111111100 |
+b1111111111111100 }
+b11111111111110110000000000000100 !"
+b11111111111111100000000000000001 {
+1)
+b1111111111111111 .
+b1111111111111111 =
+b1111111111111111 e
+b1111111111111111 ~
+b1111111111111111 ,
+b1111111111111111 ;
+b1111111111111111 d
+b1111111111111111 z
+b1111111111111111 /
+b1111111111111111 >
+b1111111111111111 f
+b1111111111111111 y
+#260000
+0)
+#270000
+b110 p
+1)
+#280000
+0)
+#290000
+b111 p
+1)
+#300000
+0)
+#310000
+1'
+b1000 p
+1)
+#320000
+0)
+#330000
+b1001 p
+1)
+#340000
+0)
+#350000
+b1010 p
+1)
+#360000
+0)
+#370000
+b1011 p
+1)
+#380000
+0)
+#390000
+b1100 p
+1)
+#400000
+0)
+#410000
+b1101 p
+1)
+#420000
+0)

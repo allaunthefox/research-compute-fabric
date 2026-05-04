@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hydrogenic Phi-Torsion Braid</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101216;
+      --panel: #272a2f;
+      --panel-2: #343846;
+      --line: #5d6475;
+      --text: #f4f6fb;
+      --muted: #a6adba;
+      --cyan: #69d7d0;
+      --blue: #8db7ff;
+      --gold: #e3c16f;
+      --danger: #e17f7f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    #app {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #canvas-wrap {
+      position: relative;
+      min-height: 0;
+      background: #12151b;
+    }
+
+    #canvas-container {
+      width: 100%;
+      height: 100%;
+    }
+
+    #hud {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      display: grid;
+      gap: 6px;
+      padding: 12px 14px;
+      border: 1px solid rgba(141, 183, 255, 0.28);
+      border-radius: 6px;
+      background: rgba(16, 18, 22, 0.72);
+      backdrop-filter: blur(10px);
+      max-width: 320px;
+    }
+
+    #hud h1 {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.15;
+      font-weight: 700;
+      color: var(--cyan);
+      text-transform: uppercase;
+    }
+
+    #hud dl {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 3px 10px;
+      margin: 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    #hud dd {
+      margin: 0;
+      color: var(--text);
+    }
+
+    #controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 14px 18px;
+      align-items: end;
+      padding: 18px max(18px, 6vw) 20px;
+      background: linear-gradient(180deg, rgba(39, 42, 47, 0.96), rgba(30, 32, 37, 0.98));
+      border-top: 1px solid rgba(255, 255, 255, 0.11);
+      box-shadow: 0 -14px 32px rgba(0, 0, 0, 0.24);
+    }
+
+    .field {
+      display: grid;
+      grid-template-columns: minmax(132px, auto) minmax(140px, 1fr) 70px;
+      gap: 10px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .field label {
+      color: var(--text);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .field output,
+    select,
+    button {
+      min-height: 42px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 8px;
+      background: #2c3035;
+      color: var(--text);
+      font: inherit;
+    }
+
+    select {
+      width: 100%;
+      padding: 0 12px;
+    }
+
+    .field output {
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blue);
+    }
+
+    .toggle {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      min-height: 42px;
+      color: var(--text);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .toggle input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--cyan);
+    }
+
+    button {
+      width: 100%;
+      min-width: 160px;
+      background: #41485e;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #4b5470;
+    }
+
+    #fallback {
+      position: absolute;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      color: var(--danger);
+      text-align: center;
+      background: #12151b;
+    }
+
+    @media (max-width: 1180px) {
+      #controls {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      #controls {
+        grid-template-columns: 1fr;
+      }
+
+      .field {
+        grid-template-columns: 1fr 76px;
+      }
+
+      .field label {
+        grid-column: 1 / -1;
+      }
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+  <main id="app">
+    <section id="canvas-wrap">
+      <div id="canvas-container"></div>
+      <div id="fallback">Three.js did not load. Serve this file with network access or add a local Three.js bundle.</div>
+      <aside id="hud">
+        <h1>Hydrogenic Phi-Torsion Braid</h1>
+        <dl>
+          <dt>stairs</dt><dd id="hud-stairs">-</dd>
+          <dt>constraint</dt><dd id="hud-constraint">2s topology</dd>
+          <dt>z range</dt><dd id="hud-z">-</dd>
+          <dt>peak emit</dt><dd id="hud-emit">-</dd>
+          <dt>node</dt><dd id="hud-node">r = 2a0</dd>
+        </dl>
+      </aside>
+    </section>
+
+    <section id="controls">
+      <div class="field">
+        <label for="orbital">Orbital Type</label>
+        <select id="orbital">
+          <option value="2s" selected>2s</option>
+          <option value="1s">1s</option>
+        </select>
+        <output></output>
+      </div>
+
+      <div class="field">
+        <label for="radial">Radial Torsion</label>
+        <input id="radial" type="range" min="0.5" max="8" step="0.1" value="5">
+        <output id="radial-out">5.0</output>
+      </div>
+
+      <div class="field">
+        <label for="angular">Angular Torsion</label>
+        <input id="angular" type="range" min="0.5" max="6" step="0.1" value="3">
+        <output id="angular-out">3.0</output>
+      </div>
+
+      <div class="field">
+        <label for="points">Point Complexity</label>
+        <input id="points" type="range" min="400" max="4000" step="100" value="2000">
+        <output id="points-out">2000</output>
+      </div>
+
+      <label class="toggle">
+        <input id="stairs" type="checkbox" checked>
+        Stair lift
+      </label>
+
+      <div class="field">
+        <label for="rise">Step Rise</label>
+        <input id="rise" type="range" min="0" max="0.08" step="0.005" value="0.035">
+        <output id="rise-out">0.035</output>
+      </div>
+
+      <button id="reset" type="button">Reset Manifold</button>
+      <button id="export-json" type="button">Export Trace JSON</button>
+      <button id="export-q16" type="button">Export Q16 CSV</button>
+    </section>
+  </main>
+
+  <script>
+    const fallback = document.getElementById("fallback");
+    if (!window.THREE || !THREE.OrbitControls) {
+      fallback.style.display = "grid";
+      throw new Error("Three.js unavailable");
+    }
+
+    const PHI = (1 + Math.sqrt(5)) / 2;
+    const state = {
+      orbital: "2s",
+      radial: 5,
+      angular: 3,
+      points: 2000,
+      stairs: true,
+      rise: 0.035,
+      scale: 1.5,
+      bohr: 2.5,
+      torsionRadius: 0.8,
+      thetaEnd: 12 * Math.PI,
+      stairDivisions: 4
+    };
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x12151b);
+    scene.fog = new THREE.FogExp2(0x12151b, 0.028);
+
+    const camera = new THREE.PerspectiveCamera(58, 1, 0.1, 1000);
+    camera.position.set(0, 14, 26);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    document.getElementById("canvas-container").appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.target.set(0, 0, 1.8);
+
+    const group = new THREE.Group();
+    scene.add(group);
+
+    const grid = new THREE.GridHelper(44, 44, 0x4f5a6a, 0x252a33);
+    grid.position.y = -5.5;
+    scene.add(grid);
+
+    const shell = new THREE.Mesh(
+      new THREE.SphereGeometry(18, 40, 24),
+      new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.035
+      })
+    );
+    scene.add(shell);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.36));
+    const key = new THREE.PointLight(0xd7e6ff, 1.25);
+    key.position.set(18, 22, 20);
+    scene.add(key);
+    const rim = new THREE.PointLight(0x69d7d0, 1.0);
+    rim.position.set(-18, -8, -18);
+    scene.add(rim);
+    const gold = new THREE.PointLight(0xe3c16f, 0.45);
+    gold.position.set(0, 10, -22);
+    scene.add(gold);
+
+    let tubeMesh = null;
+    let stairLine = null;
+    let nodeRing = null;
+    let currentTrace = [];
+
+    class TorsionedOrbitalCurve extends THREE.Curve {
+      constructor(points) {
+        super();
+        this.points = points;
+      }
+
+      getPoint(t, target = new THREE.Vector3()) {
+        const idx = Math.min(this.points.length - 1, Math.max(0, Math.floor(t * (this.points.length - 1))));
+        const p = this.points[idx];
+        return target.set(p.x, p.y, p.z);
+      }
+    }
+
+    function density2s(r) {
+      const rho = r / state.bohr;
+      const psi = (2 - rho) * Math.exp(-rho / 2);
+      return psi * psi;
+    }
+
+    function density1s(r) {
+      const rho = r / state.bohr;
+      const psi = Math.exp(-rho);
+      return psi * psi;
+    }
+
+    function buildPoints() {
+      const growth = (2 / Math.PI) * Math.log(PHI);
+      const raw = [];
+      let maxDensity = 0;
+      for (let i = 0; i < state.points; i++) {
+        const theta = (i / (state.points - 1)) * state.thetaEnd;
+        const rBase = Math.exp(growth * theta);
+        const d = state.orbital === "1s" ? density1s(rBase) : density2s(rBase);
+        raw.push({ theta, rBase, density: d });
+        maxDensity = Math.max(maxDensity, d);
+      }
+
+      const stairPeriod = (2 * Math.PI) / state.stairDivisions;
+      const pts = raw.map((p) => {
+        const constraint = maxDensity > 0 ? p.density / maxDensity : 0;
+        const r = p.rBase * constraint;
+        const xSpine = r * Math.cos(p.theta);
+        const ySpine = r * Math.sin(p.theta);
+        const torsionAngle = state.radial * p.theta;
+        const angularTheta = state.angular * p.theta;
+        const stairIndex = Math.floor(torsionAngle / stairPeriod);
+        const stairPhase = (torsionAngle % stairPeriod) / stairPeriod;
+        const stairLift = state.stairs ? stairIndex * state.rise : 0;
+        const x = (xSpine + state.torsionRadius * Math.cos(torsionAngle) * Math.cos(angularTheta)) * state.scale;
+        const y = (ySpine + state.torsionRadius * Math.cos(torsionAngle) * Math.sin(angularTheta)) * state.scale;
+        const zTorsion = state.torsionRadius * Math.sin(torsionAngle);
+        const z = (zTorsion + stairLift) * state.scale;
+        return {
+          theta: p.theta,
+          rBase: p.rBase,
+          rho: p.rBase / state.bohr,
+          constraint,
+          rConstrained: r,
+          torsionAngle,
+          angularTheta,
+          stairIndex,
+          stairPhase,
+          stairLift,
+          x,
+          y,
+          z,
+          zTorsion: zTorsion * state.scale
+        };
+      });
+      for (let i = 0; i < pts.length; i++) {
+        const prev = pts[Math.max(0, i - 1)];
+        const next = pts[Math.min(pts.length - 1, i + 1)];
+        const dTheta = Math.max(1e-9, next.theta - prev.theta);
+        pts[i].strain = Math.abs((next.rConstrained - prev.rConstrained) / dTheta);
+        pts[i].emittedAmplitude = Math.abs((next.z - prev.z) / dTheta) * pts[i].constraint;
+      }
+      return pts;
+    }
+
+    function clearObject(obj) {
+      if (!obj) return;
+      group.remove(obj);
+      obj.traverse((child) => {
+        if (child.geometry) child.geometry.dispose();
+        if (child.material) child.material.dispose();
+      });
+    }
+
+    function rebuild() {
+      clearObject(tubeMesh);
+      clearObject(stairLine);
+      clearObject(nodeRing);
+
+      const pts = buildPoints();
+      currentTrace = pts;
+      const curve = new TorsionedOrbitalCurve(pts);
+      const tubeGeometry = new THREE.TubeGeometry(curve, Math.max(128, state.points - 1), 0.13, 14, false);
+      const tubeMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0x9fc0ff,
+        emissive: 0x194d8c,
+        roughness: 0.24,
+        metalness: 0.35,
+        clearcoat: 0.85,
+        transparent: true,
+        opacity: 0.82
+      });
+      tubeMesh = new THREE.Mesh(tubeGeometry, tubeMaterial);
+      group.add(tubeMesh);
+
+      const lineGeometry = new THREE.BufferGeometry().setFromPoints(pts.map((p) => new THREE.Vector3(p.x, p.y, p.z)));
+      stairLine = new THREE.Line(
+        lineGeometry,
+        new THREE.LineBasicMaterial({ color: 0x3c8cff, transparent: true, opacity: 0.58 })
+      );
+      group.add(stairLine);
+
+      if (state.orbital === "2s") {
+        const nodeRadius = 2 * state.bohr * state.scale;
+        nodeRing = new THREE.Mesh(
+          new THREE.TorusGeometry(nodeRadius, 0.018, 8, 96),
+          new THREE.MeshBasicMaterial({ color: 0xe3c16f, transparent: true, opacity: 0.42 })
+        );
+        nodeRing.rotation.x = Math.PI / 2;
+        group.add(nodeRing);
+      }
+
+      const zValues = pts.map((p) => p.z);
+      const stairs = pts[pts.length - 1].stairIndex - pts[0].stairIndex + 1;
+      const peakEmit = Math.max(...pts.map((p) => p.emittedAmplitude));
+      document.getElementById("hud-stairs").textContent = String(stairs);
+      document.getElementById("hud-constraint").textContent = `${state.orbital} topology`;
+      document.getElementById("hud-z").textContent = `${Math.min(...zValues).toFixed(2)} .. ${Math.max(...zValues).toFixed(2)}`;
+      document.getElementById("hud-emit").textContent = peakEmit.toFixed(3);
+    }
+
+    function syncControls() {
+      state.orbital = document.getElementById("orbital").value;
+      state.radial = parseFloat(document.getElementById("radial").value);
+      state.angular = parseFloat(document.getElementById("angular").value);
+      state.points = parseInt(document.getElementById("points").value, 10);
+      state.stairs = document.getElementById("stairs").checked;
+      state.rise = parseFloat(document.getElementById("rise").value);
+      document.getElementById("radial-out").textContent = state.radial.toFixed(1);
+      document.getElementById("angular-out").textContent = state.angular.toFixed(1);
+      document.getElementById("points-out").textContent = String(state.points);
+      document.getElementById("rise-out").textContent = state.rise.toFixed(3);
+      rebuild();
+    }
+
+    for (const id of ["orbital", "radial", "angular", "points", "stairs", "rise"]) {
+      document.getElementById(id).addEventListener("input", syncControls);
+    }
+
+    document.getElementById("reset").addEventListener("click", () => {
+      document.getElementById("orbital").value = "2s";
+      document.getElementById("radial").value = "5";
+      document.getElementById("angular").value = "3";
+      document.getElementById("points").value = "2000";
+      document.getElementById("stairs").checked = true;
+      document.getElementById("rise").value = "0.035";
+      controls.reset();
+      syncControls();
+    });
+
+    function q16(value) {
+      return Math.round(value * 65536);
+    }
+
+    function download(name, type, body) {
+      const blob = new Blob([body], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function generationManifest() {
+      return {
+        parameters: { ...state },
+        equations: {
+          phi: "(1 + sqrt(5)) / 2",
+          growthRate: "(2 / pi) * ln(phi)",
+          rBase: "r0 * exp(growthRate * theta)",
+          psi2s: "(2 - rho) * exp(-rho / 2)",
+          constraint: "normalize(psi2s^2)",
+          rConstrained: "rBase * constraint",
+          torsionAngle: "radialTorsion * theta",
+          angularTheta: "angularTorsion * theta",
+          stairIndex: "floor(torsionAngle / ((2*pi) / stairDivisions))",
+          zStair: "torsionRadius * sin(torsionAngle) + stairIndex * stairRise"
+        }
+      };
+    }
+
+    document.getElementById("export-json").addEventListener("click", () => {
+      download(
+        "hydrogenic_phi_torsion_trace.json",
+        "application/json",
+        JSON.stringify({ ...generationManifest(), trace: currentTrace }, null, 2)
+      );
+    });
+
+    document.getElementById("export-q16").addEventListener("click", () => {
+      const rows = [
+        "idx,stair_index,r_constrained_q16,constraint_q16,phase_unit_q16,strain_q16,emitted_amplitude_q16,z_stair_q16"
+      ];
+      for (let i = 0; i < currentTrace.length; i += 8) {
+        const p = currentTrace[i];
+        const phaseUnit = ((p.torsionAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI) / (2 * Math.PI);
+        rows.push([
+          i,
+          p.stairIndex,
+          q16(p.rConstrained),
+          q16(p.constraint),
+          q16(phaseUnit),
+          q16(p.strain),
+          q16(p.emittedAmplitude),
+          q16(p.z)
+        ].join(","));
+      }
+      download("hydrogenic_phi_torsion_q16.csv", "text/csv", rows.join("\n") + "\n");
+    });
+
+    function resize() {
+      const wrap = document.getElementById("canvas-wrap");
+      const w = wrap.clientWidth;
+      const h = wrap.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h, false);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      group.rotation.y += 0.0014;
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener("resize", resize);
+    resize();
+    syncControls();
+    animate();
+  </script>
+</body>
+</html>

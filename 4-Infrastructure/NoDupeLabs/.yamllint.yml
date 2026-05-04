@@ -1,0 +1,21 @@
+extends: default
+
+rules:
+  truthy:
+    allowed-values: ['true', 'false', 'yes', 'no', 'on', 'off']
+
+  line-length:
+    max: 120
+    level: warning
+
+  comments:
+    min-spaces-from-content: 1
+
+ignore: |
+  .venv/
+  .venv-audit/
+  output/
+  node_modules/
+  build/
+  dist/
+  *.egg-info/

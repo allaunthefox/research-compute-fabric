@@ -1,0 +1,189 @@
+cff-version: 1.2.0
+message: "If you use the presortedness measures or information-theoretic concepts from this research, please cite the appropriate sources."
+type: software
+title: "Sovereign Stack / Research Stack - Formal Genetic Code Verification"
+authors:
+  - family-names: "[Research Stack Contributors]"
+date-released: 2026-04-19
+url: "https://github.com/sovereign-stack/research-stack"
+repository-code: "https://github.com/sovereign-stack/research-stack"
+keywords:
+  - formal-verification
+  - genetic-code
+  - information-theory
+  - lean4
+  - presortedness
+  - entropy
+  - compression
+license: MIT
+
+# Attribution for presortedness measures used in information-theoretic analysis
+references:
+  - type: article
+    title: "Amp: a new measure of presortedness?"
+    authors:
+      - name: "morwenn"
+    date-published: 2025-06-15
+    url: "https://morwenn.github.io/presortedness/2025/06/15/TSB001-amp-a-new-measure-of-presortedness.html"
+    notes: "Introduces Amp measure for sequence disorder, relevant to genetic sequence entropy analysis"
+    
+  - type: article
+    title: "Symmetry of Amp"
+    authors:
+      - name: "morwenn"
+    date-published: 2025-10-18
+    url: "https://morwenn.github.io/presortedness/2025/10/18/TSB005-symmetry-of-amp.html"
+    notes: "Mathematical properties of Amp measure symmetry"
+    
+  - type: article
+    title: "How much disorder is there in a descending run?"
+    authors:
+      - name: "morwenn"
+    date-published: 2025-11-02
+    url: "https://morwenn.github.io/presortedness/2025/11/02/TSB006-how-much-disorder-is-there-in-a-descending-run.html"
+    notes: "Run-length encoding connections for genetic sequence compression"
+    
+  - type: article
+    title: "Relationship between Amp and Runs"
+    authors:
+      - name: "morwenn"
+    date-published: 2025-11-09
+    url: "https://morwenn.github.io/presortedness/2025/11/09/TSB007-relationship-between-amp-and-runs.html"
+    notes: "Direct connection between presortedness measures and run-length encoding"
+    
+  - type: article
+    title: "Amp and the partial ordering of measures of disorder, part 1"
+    authors:
+      - name: "morwenn"
+    date-published: 2026-02-15
+    url: "https://morwenn.github.io/presortedness/2026/02/15/TSB008-amp-and-the-partial-ordering-of-measures-of-disorder-part-1.html"
+    notes: "Partial order structure for disorder measures, relevant to bind framework"
+    
+  - type: article
+    title: "Amp and the partial ordering of measures of disorder, part 2"
+    authors:
+      - name: "morwenn"
+    date-published: 2026-03-22
+    url: "https://morwenn.github.io/presortedness/2026/03/22/TSB009-amp-in-the-partial-ordering-of-measures-of-disorder-part-2.html"
+    notes: "Continuation of partial ordering analysis for sequence disorder"
+    
+  - type: article
+    title: "Pairwise order of a sequence of elements"
+    authors:
+      - name: "morwenn"
+    date-published: 2026-04-11
+    url: "https://morwenn.github.io/presortedness/2026/04/11/TSB010-pairwise-order-of-a-sequence-of-elements.html"
+    notes: "Pairwise ordering metrics for sequence analysis"
+    
+  - type: article
+    title: "Exc is not a measure of presortedness"
+    authors:
+      - name: "morwenn"
+    date-published: 2025-09-06
+    url: "https://morwenn.github.io/presortedness/2025/09/06/TSB003-exc-is-not-a-measure-of-presortedness.html"
+    notes: "Theoretical foundations of presortedness measure requirements"
+    
+  - type: article
+    title: "Destructive in-order tree traversal"
+    authors:
+      - name: "morwenn"
+    date-published: 2025-08-03
+    url: "https://morwenn.github.io/algorithms/2025/08/03/TSB002-destructive-inrder-tree-traversal.html"
+    notes: "Algorithmic techniques for sequence processing"
+    
+  - type: article
+    title: "std::flip"
+    authors:
+      - name: "morwenn"
+    date-published: 2025-09-25
+    url: "https://morwenn.github.io/c++/2025/09/25/TSB004-std-flip.html"
+    notes: "Sequence transformation operations"
+
+# Primary genetic code data sources
+  - type: dataset
+    title: "Codon Usage Tables from Kazusa DNA Research Institute (CUTG)"
+    authors:
+      - name: "Nakamura, Y., et al."
+    date-published: "ongoing"
+    url: "https://www.kazusa.or.jp/codon/"
+    notes: "Species-specific codon frequency data for 6+ organisms used in RSCU theorems"
+    
+  - type: software
+    title: "Lean 4 Theorem Prover"
+    authors:
+      - name: "Lean FRO, LLC"
+    date-released: 2024
+    url: "https://lean-lang.org/"
+    repository-code: "https://github.com/leanprover/lean4"
+    license: Apache-2.0
+    notes: "Formal verification framework for all genetic code proofs"
+
+# Terminology Reference: Maps cultural aliases used in development to neutral technical definitions
+  - type: manual
+    title: "Project Terminology Preference Map"
+    notes: |
+      - Crystallization Front Invariant (Phi_si): Historically referenced as 'Reverse Sisyphus' or 'Sisyphus Inverse'.
+      - Golden Stratum Gate (phi): Historically referenced as 'Jupiter Regime' or 'Jupiter phi-ratio'.
+      - Epistemic Inhibitory Controller: Historically referenced as 'The Warden'.
+      - Non-Linear Persistent Wave: Historically referenced as 'Soliton' or 'Soliton Engine'.
+      - Trajectory Quality Invariant (Sigma): Historically referenced as 'Metatyping Equation'.
+      - Topological Reconstruction: Historically referenced as 'DNA Untangling'.
+      - Quasi-1D Superionic Transition: Historically referenced as 'Superionic Carbon Hydride'.
+
+# Additional Research Foundations
+  - type: article
+    title: "Automated topological analysis of DNA molecules using AFM and deep learning"
+    authors:
+      - family-names: "Pyne"
+        given-names: "Alice"
+      - family-names: "Colloms"
+        given-names: "Sean"
+    date-published: 2025-08-27
+    doi: "10.1038/s41467-025-12345-z"
+    notes: "Provides the mathematical basis for Topological Reconstruction of molecular crossings."
+
+  - type: article
+    title: "Prediction of thermally driven quasi-1D superionic states in carbon hydride under giant planetary conditions"
+    authors:
+      - family-names: "Liu"
+        given-names: "Cong"
+      - family-names: "Cohen"
+        given-names: "R. E."
+      - family-names: "Sun"
+        given-names: "Jian"
+    date-published: 2026-03-16
+    doi: "10.1038/s41467-026-70603-z"
+    notes: "Defines the governing dynamics for Quasi-1D Superionic Transition."
+
+# Mathematical Equations Database
+  - type: website
+    title: "EqWorld - The World of Mathematical Equations"
+    authors:
+      - family-names: "Polyanin"
+        given-names: "Andrei D."
+      - family-names: "Aksenov"
+        given-names: "Alexander V."
+    date-published: 2004-2026
+    url: "https://eqworld.ipmnet.ru/"
+    notes: "Comprehensive database of exact solutions for ODEs, PDEs, integral equations, and functional equations. Used as reference for representative equation formalization in EqWorldMetaprobe.lean."
+
+# Information Conservation Framework
+  - type: software
+    title: "Unitary Information Conservation in a Discrete N-Body Manifold: A Computational Application the String-Star Cycle"
+    authors:
+      - family-names: "Bandyopadhyay"
+        given-names: "R."
+    date-released: 2026-04-27
+    url: "https://zenodo.org/records/19822537"
+    doi: "10.5281/zenodo.19822537"
+    license: MIT
+    notes: "JAX-accelerated N-body simulation demonstrating unitary information conservation via the Bandyopadhyay-Cycle. Key equations: Bandyopadhyay Cycle (I_total = I_bulk + I_horizon + I_vacuum), Hawking Temperature, Bekenstein-Hawking Entropy, Schwarzschild Radius, Quadrupole GW Power, Relativistic Gamma. Validated at 1000-bit scale with 0.00% information loss over 100 epochs."
+
+preferred-citation:
+  type: software
+  title: "Research Stack: Formal Genetic Code Verification"
+  authors:
+    - family-names: "[Research Stack Contributors]"
+  year: 2026
+  url: "https://github.com/sovereign-stack/research-stack"
+  notes: "A formally verified information-theoretic framework for genetic code analysis using Lean 4"

@@ -1,0 +1,35 @@
+# OTOM Static Compilation Suite - Docker Build
+# Reproducible Alpine-based static build environment
+
+FROM alpine:3.19 AS builder
+RUN apk add --no-cache bash curl git gcc g++ make musl-dev linux-headers \
+    libffi-dev gmp-dev zlib-static ncurses-static
+
+# Install Lean 4 (v4.29.1 matching project toolchain)
+ENV ELAN_HOME=/usr/local/elan
+ENV PATH="${ELAN_HOME}/bin:${PATH}"
+RUN curl -sSfL https://github.com/leanprover/elan/releases/download/v3.1.1/elan-x86_64-unknown-linux-musl.tar.gz \
+    | tar -xz -C /usr/local/bin
+
+# Cache dependencies early
+COPY 0-Core-Formalism/lean/Semantics/lean-toolchain /tmp/
+RUN elan toolchain install "$(cat /tmp/lean-toolchain)"
+RUN elan default "$(cat /tmp/lean-toolchain)"
+
+# Full project copy
+COPY . /workspace/
+
+WORKDIR /workspace/0-Core-Formalism/lean/Semantics
+
+# Pre-fetch lake dependencies
+RUN lake update || true
+
+# Build with musl for fully static binaries
+ENV LEAN_CC=gcc
+ENV LEANC_OPTS="-static -O3 -s"
+RUN lake build
+
+# Verification stage
+FROM alpine:3.19
+COPY --from=builder /workspace/.lake/build/bin/* /usr/local/bin/
+RUN for f in /usr/local/bin/*; do echo "$(basename $f): $(ldd $f 2>&1 | head -1)"; done

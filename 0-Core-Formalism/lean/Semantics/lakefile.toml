@@ -1,0 +1,69 @@
+name = "Semantics"
+version = "0.1.0"
+srcDir = "."
+defaultTargets = ["Semantics"]
+
+[[require]]
+name = "sparkle"
+git = "https://github.com/Verilean/sparkle.git"
+rev = "252341078dba3c2612719746e6a459dada2248ea"
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4"
+rev = "v4.29.1"
+
+[[lean_lib]]
+name = "Semantics"
+
+[[lean_lib]]
+name = "PIST"
+srcDir = "../../../2-Search-Space/PIST"
+roots = ["PIST", "PistBridge", "PistSimulation", "PISTMachine", "TorsionalPIST", "HybridTSMPISTTorus"]
+
+[[lean_lib]]
+name = "FAMM"
+srcDir = "../../../2-Search-Space/FAMM"
+roots = ["FAMM"]
+
+[[lean_lib]]
+name = "ExtensionScaffold"
+
+[[lean_lib]]
+name = "Biology"
+
+[[lean_exe]]
+name = "bindserver"
+root = "BindServer"
+
+[[lean_exe]]
+name = "searchserver"
+root = "SearchServer"
+
+[[lean_exe]]
+name = "SemanticsCli"
+root = "Main"
+
+[[lean_exe]]
+name = "openworm_benchmark"
+root = "OpenWormBenchmark"
+
+[[lean_exe]]
+name = "ExtremeParameterTestEval"
+root = "ExtremeParameterTestEval"
+
+[[lean_exe]]
+name = "NominalParameterTestEval"
+root = "NominalParameterTestEval"
+
+[[lean_exe]]
+name = "moim_benchmark"
+root = "MOIMBenchmarkMain"
+
+[[lean_exe]]
+name = "generate_sparkle_phi_s3c"
+root = "GenerateSparklePhiS3C"
+
+[[lean_exe]]
+name = "tangnano9k_emitter"
+root = "TangNano9KEmitter"

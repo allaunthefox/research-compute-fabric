@@ -1,0 +1,35 @@
+[Unit]
+Description=Zen 5 Thermodynamic Soliton Governor
+After=network.target
+Documentation=https://github.com/your-repo/teleport-kanban
+
+[Service]
+# Path to your compiled Rust binary
+ExecStart=/usr/local/bin/teleport-kanban
+# Pin the governor to Core 0 to prevent interference with the wave
+CPUAffinity=0
+# Give it Real-Time priority so it can react to thermal spikes in <1ms
+CPUSchedulingPolicy=rr
+CPUSchedulingPriority=99
+# Permissions to write to MSRs and manage P-States
+CapabilityBoundingSet=CAP_SYS_RAWIO
+AmbientCapabilities=CAP_SYS_RAWIO
+# Run as root to access hardware registers
+User=root
+Group=root
+# Restart on failure
+Restart=always
+RestartSec=3
+# Set environment for production
+Environment=RUST_LOG=info
+Environment=MSR_ACCESS=enabled
+
+# Security settings (minimal restrictions for hardware access)
+NoNewPrivileges=no
+PrivateDevices=no
+ProtectKernelTunables=no
+ProtectKernelModules=no
+ProtectControlGroups=no
+
+[Install]
+WantedBy=multi-user.target

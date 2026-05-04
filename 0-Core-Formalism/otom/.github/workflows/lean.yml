@@ -1,0 +1,24 @@
+name: Lean CI
+
+on:
+  push:
+    paths:
+      - 'tools/lean/Semantics/**'
+      - '.github/workflows/lean.yml'
+  pull_request:
+    paths:
+      - 'tools/lean/Semantics/**'
+      - '.github/workflows/lean.yml'
+
+jobs:
+  lean-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+      - name: Build Semantics package
+        working-directory: tools/lean/Semantics
+        run: lake build

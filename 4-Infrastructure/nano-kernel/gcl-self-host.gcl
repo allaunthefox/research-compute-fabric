@@ -1,0 +1,498 @@
+-- GCL Self-Host — Child Kernel Generation with Lawful Boundaries
+--
+-- The dangerous version:
+--   "Kernel compiles itself because recursion is cool."
+--
+-- The useful version:
+--   "Kernel emits child only when build has lawfulLoss receipt
+--    and child preserves required invariants."
+--
+-- Architecture:
+--   Parent Kernel → GCL Compile Pass → Child Candidate
+--              ↓
+--         Metaprobe Gate (verification)
+--              ↓
+--         Bootable Child (if lawful)
+--
+-- The child kernel does not need to be trusted because
+-- Linux/the VM harness can judge it via LawfulHardware witnesses.
+--
+-- Truth Seal: [ SSS-ENE-SELF-HOST-2026-05-03 ]
+
+module GCLSelfHost where
+
+import BaseTypes
+import Memory
+import SyscallInterface
+import Semantics.LawfulLoss (BindResult, lawfulLoss, mkLawful, mkUnlawful)
+import LawfulHardware (HardwareEvent, eventToBindResult, generateWitnessReport)
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §1  Compilation Pass — Source to Bytecode
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- The GCL compiler transforms source code into bytecode.
+    This is the "build" operation that must be witnessed.
+    -/]
+
+def gclCompile (source : GCLSource) (config : CompileConfig) : CompileResult :=
+  -- Phase 1: Lexical analysis
+  let tokens ← lexSource source
+  recordPhaseWitness "lex" tokens.size
+  
+  -- Phase 2: Parse to AST
+  let ast ← parseTokens tokens
+  recordPhaseWitness "parse" ast.nodeCount
+  
+  -- Phase 3: Type checking
+  let typedAST ← typeCheckAST ast
+  recordPhaseWitness "typecheck" typedAST.typeCount
+  
+  -- Phase 4: Optimization
+  let optimized ← optimizeAST typedAST config.optimizationLevel
+  recordPhaseWitness "optimize" optimized.optimizationScore
+  
+  -- Phase 5: Code generation
+  let bytecode ← generateBytecode optimized
+  recordPhaseWitness "codegen" bytecode.size
+  
+  -- Compute total compilation cost
+  let totalCost := computeCompileCost source bytecode
+  
+  -- Verify invariants
+  let invariantsPreserved := verifyCompileInvariants source bytecode
+  
+  -- Generate compilation witness
+  let witness := "GCL_COMPILE:" ++ source.path ++
+                 ";phases:lex,parse,typecheck,optimize,codegen" ++
+                 ";size_in:" ++ source.size.toString ++
+                 ";size_out:" ++ bytecode.size.toString
+  
+  -- Create BindResult for this compilation
+  let compileResult := lawfulLoss invariantsPreserved totalCost witness .control
+  
+  return {
+    bytecode := bytecode
+    compileWitness := compileResult
+    success := compileResult.lawful
+  }
+
+/-- Record intermediate witness for each compilation phase.
+    This allows fine-grained rollback if a phase fails. -/]
+
+def recordPhaseWitness (phase : String) (metric : Nat) : IO Unit := do
+  let phaseWitness := {
+    lawful := true
+    cost := Q0_16.ofFloat (metric.toFloat / 1000000.0)  -- Normalize
+    witness := "COMPILE_PHASE:" ++ phase ++ ";metric:" ++ metric.toString
+    klass := .control
+  }
+  logWitness globalWitnessLog phaseWitness
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §2  Child Kernel Candidate Generation
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Generate a child kernel candidate from current kernel source.
+    The child is a modified version optimized for a specific target.
+    -/]
+
+def generateChildCandidate 
+  (parentSource : GCLSource)
+  (targetConfig : TargetConfig)
+  : IO ChildCandidate := do
+  
+  consoleLog "[SELF-HOST] Generating child kernel candidate..."
+  
+  -- 1. Analyze parent capabilities
+  let parentCaps ← analyzeKernelCapabilities
+  
+  -- 2. Determine child requirements
+  let childReqs := deriveChildRequirements parentCaps targetConfig
+  
+  -- 3. Transform source for child
+  let childSource := transformSourceForChild parentSource childReqs
+  
+  -- 4. Compile child
+  let compileResult := gclCompile childSource {
+    optimizationLevel := .Aggressive
+    targetPlatform := targetConfig.platform
+    stripDebug := true
+  }
+  
+  if !compileResult.success then
+    consoleLog "[SELF-HOST] Child compilation failed"
+    return { valid := false }
+  
+  -- 5. Package with required metadata
+  return {
+    valid := true
+    bytecode := compileResult.bytecode
+    compileWitness := compileResult.compileWitness
+    parentHash := hash parentSource
+    targetConfig := targetConfig
+    capabilities := childReqs
+    generation := parentCaps.generation + 1
+  }
+
+/-- Derive what the child kernel needs based on target and parent.
+    This is the "specification" phase. -/]
+
+def deriveChildRequirements 
+  (parentCaps : KernelCapabilities)
+  (target : TargetConfig)
+  : ChildRequirements :=
+  
+  -- Child inherits parent's lawful hardware capability
+  -- But may lose FAMM-neuromorphic if target is memory-constrained
+  -- May gain specialized drivers for target hardware
+  
+  {
+    hardwareInterface := target.requiredDrivers
+    memoryBudget := min parentCaps.availableMemory target.maxMemory
+    networkStack := if target.hasNetwork then .Full else .Minimal
+    lawfulHardware := true  -- Always required
+    fammNeuromorphic := parentCaps.fammSupport && target.memory >= 128
+    eneSwarm := parentCaps.eneSupport
+    generationNumber := parentCaps.generation + 1
+  }
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §3  Metaprobe Gate — Verification Before Boot
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- The metaprobe gate is the critical checkpoint.
+    Child candidate is verified before it ever boots.
+    
+    Three checks:
+    1. Structural: Bytecode is well-formed
+    2. Behavioral: Child preserves parent invariants
+    3. Safety: Child cannot escape sandbox
+    -/]
+
+def metaprobeGate (candidate : ChildCandidate) : IO GateResult := do
+  consoleLog "[METAPROBE] Verifying child kernel candidate..."
+  
+  -- Check 1: Structural verification
+  let structCheck ← structuralVerification candidate.bytecode
+  if !structCheck.passed then
+    return {
+      passed := false
+      reason := "Structural: " ++ structCheck.failureReason
+      witness := structCheck.witness
+    }
+  
+  -- Check 2: Behavioral equivalence (requires Linux harness)
+  consoleLog "[METAPROBE] Running behavioral comparison..."
+  let behaviorCheck ← behavioralVerification candidate
+  if !behaviorCheck.passed then
+    return {
+      passed := false
+      reason := "Behavioral: " ++ behaviorCheck.failureReason
+      witness := behaviorCheck.witness
+    }
+  
+  -- Check 3: Safety sandbox check
+  let safetyCheck ← safetyVerification candidate
+  if !safetyCheck.passed then
+    return {
+      passed := false
+      reason := "Safety: " ++ safetyCheck.failureReason
+      witness := safetyCheck.witness
+    }
+  
+  -- All checks passed
+  let gateWitness := {
+    lawful := true
+    cost := Q0_16.half  -- Significant cost to run metaprobe
+    witness := "METAPROBE_PASS:gen" ++ candidate.generation.toString ++
+               ";struct:" ++ structCheck.score.toString ++
+               ";behavior:" ++ behaviorCheck.score.toString ++
+               ";safety:" ++ safetyCheck.score.toString
+    klass := .control
+  }
+  
+  return {
+    passed := true
+    witness := gateWitness
+  }
+
+/-- Structural verification: Bytecode analysis.
+    Checks for:
+    - Valid opcodes
+    - Proper stack discipline
+    - No undefined jumps
+    - Memory bounds respected
+    -/]
+
+def structuralVerification (bytecode : Bytecode) : IO StructuralResult := do
+  let verifier := createBytecodeVerifier
+  
+  -- Check each instruction
+  for instr in bytecode.instructions do
+    if !verifier.validOpcode instr.opcode then
+      return {
+        passed := false
+        failureReason := "Invalid opcode: " ++ instr.opcode.toString
+        witness := "STRUCT_FAIL:opcode:" ++ instr.offset.toString
+      }
+  
+  -- Check stack balance
+  let stackDepth := computeStackDepth bytecode
+  if stackDepth.max > MAX_STACK || stackDepth.min < 0 then
+    return {
+      passed := false
+      failureReason := "Stack imbalance"
+      witness := "STRUCT_FAIL:stack:max=" ++ stackDepth.max.toString
+    }
+  
+  return {
+    passed := true
+    score := computeStructuralScore bytecode
+    witness := "STRUCT_PASS:instrs=" ++ bytecode.instructions.size.toString
+  }
+
+/-- Behavioral verification: Compare against parent in system call harness.
+    
+    Both parent and child run in VM harness, executing same test sequence.
+    Their syscall traces are compared for equivalence.
+    -/]
+
+def behavioralVerification (candidate : ChildCandidate) : IO BehavioralResult := do
+  -- This requires Linux VM harness (QEMU or similar)
+  -- Parent runs test suite, records syscall trace
+  -- Child runs same test suite, records syscall trace
+  -- Compare traces for divergence
+  
+  let parentTrace ← runInHarness candidate.parentHash testSequence
+  let childTrace ← runInHarness candidate.bytecode testSequence
+  
+  let divergence := compareTraces parentTrace childTrace
+  
+  if divergence.significant then
+    return {
+      passed := false
+      failureReason := "Behavioral divergence at: " ++ divergence.location
+      witness := "BEHAV_FAIL:" ++ divergence.details
+    }
+  
+  return {
+    passed := true
+    score := 1.0 - divergence.amount
+    witness := "BEHAV_PASS:divergence=" ++ divergence.amount.toString
+  }
+
+/-- Safety verification: Ensure child cannot escape sandbox.
+    Checks for:
+    - No direct hardware access (must go through shim)
+    - No arbitrary memory writes
+    - No privilege escalation paths
+    - Bounded resource consumption
+    -/]
+
+def safetyVerification (candidate : ChildCandidate) : IO SafetyResult := do
+  -- Static analysis of bytecode
+  let dangerousOps := findDangerousOperations candidate.bytecode
+  
+  if dangerousOps.any then
+    return {
+      passed := false
+      failureReason := "Dangerous operations: " ++ dangerousOps.list
+      witness := "SAFETY_FAIL:" ++ dangerousOps.first.toString
+    }
+  
+  -- Check resource bounds
+  let resourceBounds ← analyzeResourceBounds candidate.bytecode
+  if resourceBounds.memory > candidate.targetConfig.maxMemory then
+    return {
+      passed := false
+      failureReason := "Memory bound exceeded"
+      witness := "SAFETY_FAIL:memory=" ++ resourceBounds.memory.toString
+    }
+  
+  return {
+    passed := true
+    score := 1.0
+    witness := "SAFETY_PASS:ops=" ++ bytecode.instructions.size.toString
+  }
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §4  Child Kernel Boot (After Passing Gate)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Boot the verified child kernel.
+    Parent remains running as supervisor. -/]
+
+def bootChildKernel 
+  (candidate : ChildCandidate)
+  (gateResult : GateResult)
+  : IO BootResult := do
+  
+  if !gateResult.passed then
+    consoleLog "[SELF-HOST] Child rejected by metaprobe gate"
+    return { success := false }
+  
+  consoleLog "[SELF-HOST] Booting generation " ++ candidate.generation.toString ++ " child..."
+  
+  -- 1. Allocate child memory space
+  let childMemory ← allocateChildMemory candidate.targetConfig.maxMemory
+  
+  -- 2. Load bytecode into child space
+  loadBytecodeIntoMemory candidate.bytecode childMemory
+  
+  -- 3. Set up child execution context
+  let childContext := createChildContext {
+    memory := childMemory
+    entryPoint := candidate.bytecode.entryPoint
+    stackSize := DEFAULT_STACK_SIZE
+  }
+  
+  -- 4. Start child (but parent continues running as supervisor)
+  let childPid ← spawnChild childContext
+  
+  -- 5. Parent monitors child via lawful hardware
+  startChildMonitoring childPid candidate
+  
+  -- 6. Log the boot
+  let bootWitness := {
+    lawful := true
+    cost := Q0_16.half
+    witness := "CHILD_BOOT:gen=" ++ candidate.generation.toString ++
+               ";pid=" ++ childPid.toString ++
+               ";parent=" ++ candidate.parentHash.toString
+    klass := .control
+  }
+  logWitness globalWitnessLog bootWitness
+  
+  return {
+    success := true
+    childPid := childPid
+    monitorHandle := createMonitorHandle childPid
+  }
+
+/-- Monitor child kernel via lawful hardware witnesses.
+    If child produces unlawful events, parent can intervene. -/]
+
+def startChildMonitoring (childPid : PID) (candidate : ChildCandidate) : IO Unit := do
+  forever $ do
+    -- Check child's lawful hardware log
+    let childLog ← readChildWitnessLog childPid
+    
+    -- Look for concerning patterns
+    let recentUnlawful := childLog.entries.filter (\w => !w.lawful)
+    let recentHighCost := childLog.entries.filter (\w => w.cost > Q0_16.half)
+    
+    if recentUnlawful.size > 3 then
+      -- Child is misbehaving
+      consoleLog "[SELF-HOST] Child " ++ childPid.toString ++ " producing unlawful events"
+      triggerWardenChildIntervention childPid candidate
+      
+    else if recentHighCost.size > 10 then
+      -- Child is expensive
+      consoleLog "[SELF-HOST] Child " ++ childPid.toString ++ " high cost events"
+      -- May throttle or checkpoint
+      
+    sleep 1000  -- Check every 1000ms
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §5  Main Self-Host Interface
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Public API: Attempt to self-host a new kernel generation.
+    This is the entry point for the "make child" command. -/]
+
+@[export "gcl_self_host_attempt"]
+def gclSelfHostAttempt (targetConfig : TargetConfig) : IO SelfHostResult := do
+  consoleLog "[SELF-HOST] Attempting to generate child kernel..."
+  
+  -- 1. Get current kernel source
+  let parentSource ← loadCurrentKernelSource
+  
+  -- 2. Generate child candidate
+  let candidate ← generateChildCandidate parentSource targetConfig
+  
+  if !candidate.valid then
+    return {
+      success := false
+      stage := "generation"
+      reason := "Child candidate generation failed"
+    }
+  
+  -- 3. Run metaprobe gate
+  let gateResult ← metaprobeGate candidate
+  
+  if !gateResult.passed then
+    return {
+      success := false
+      stage := "metaprobe"
+      reason := gateResult.reason
+      witness := gateResult.witness
+    }
+  
+  -- 4. Boot child
+  let bootResult ← bootChildKernel candidate gateResult
+  
+  if !bootResult.success then
+    return {
+      success := false
+      stage := "boot"
+      reason := "Child boot failed"
+    }
+  
+  -- Success!
+  return {
+    success := true
+    childPid := bootResult.childPid
+    generation := candidate.generation
+    compileWitness := candidate.compileWitness
+    gateWitness := gateResult.witness
+    bootWitness := bootResult.witness
+  }
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- §6  Child Kernel States
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Possible states of a child kernel in the hierarchy. -/]
+inductive ChildState where
+  | Candidate    -- Generated, not yet verified
+  | Queued       -- Waiting for metaprobe gate
+  | Verifying    -- Currently in metaprobe
+  | Verified     -- Passed metaprobe
+  | Rejected     -- Failed metaprobe
+  | Booting      -- Starting up
+  | Running      -- Active and supervised
+  | Suspended    -- Checkpointed/paused
+  | Terminated   -- Clean shutdown
+  | Orphaned     -- Parent died, needs adoption
+  | Corrupted    -- Detected misbehavior
+
+/-- State machine transitions with lawful witnesses. -/]
+
+def transitionChildState 
+  (child : ChildKernel)
+  (newState : ChildState)
+  : IO BindResult := do
+  
+  let oldState := child.state
+  
+  -- Verify transition is legal
+  let legal := verifyStateTransition oldState newState
+  
+  if !legal then
+    return mkUnlawful 
+      "Illegal state transition: " ++ oldState.toString ++ " → " ++ newState.toString
+      .control
+  
+  -- Execute transition
+  child.state := newState
+  
+  -- Compute cost
+  let cost := computeTransitionCost oldState newState
+  
+  -- Generate witness
+  return mkLawful cost 
+    ("STATE:" ++ oldState.toString ++ "→" ++ newState.toString)
+    .control
+
+end GCLSelfHost

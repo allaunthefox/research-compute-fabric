@@ -1,0 +1,259 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,bm}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\title{Master Market/Cognitive Dynamics Equation}
+\author{Sovereign Stack Research}
+\date{2026-04-17}
+
+\begin{document}
+
+\maketitle
+
+\section{Master Equation, Stability Island, and Throat Existence}
+
+\subsection{Agent Dynamics}
+
+Let $x_i(t)$ be the state of agent/subsystem $i$. The master dynamics are:
+\begin{equation}
+\frac{dx_i}{dt} = -\eta \nabla L(x_i) + \sum_{j \in \mathcal{N}_i} F_{ij} + F_A(x_i) + F_{\mathrm{ext}}(t) + \xi_i(t)
+\label{eq:master_dynamics}
+\end{equation}
+
+with load potential:
+\begin{equation}
+L(x_i) = \lambda_1 H(x_i) + \lambda_2 B(x_i) + \lambda_3 R(x_i) + \lambda_4 D(x_i)
+\label{eq:load_potential}
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $H$: uncertainty / entropy
+    \item $B$: branching complexity
+    \item $R$: recursion / dependency depth
+    \item $D$: mismatch, sink burden, propagation-rate stress
+\end{itemize}
+
+and distortion:
+\begin{equation}
+D(x_i, t) = \mu_1 \Delta\kappa + \mu_2 \Delta\Theta + \mu_3 \Delta L + \mu_4 \Delta H_{\mathrm{herd}} + \mu_5 S(x_i, t) + \mu_6 \frac{dI}{dt}
+\label{eq:distortion}
+\end{equation}
+
+\subsection{Compatibility and Stability}
+
+Define pairwise compatibility:
+\begin{equation}
+C(x_i, x_j) = \exp(-D(x_i, x_j))
+\label{eq:pairwise_compat}
+\end{equation}
+
+and neighborhood compatibility:
+\begin{equation}
+\bar{C}_i = \frac{1}{|\mathcal{N}_i|} \sum_{j \in \mathcal{N}_i} C(x_i, x_j)
+\label{eq:neighborhood_compat}
+\end{equation}
+
+Stable systems require:
+\begin{equation}
+\bar{C}_i > C_{\min} \quad \Leftrightarrow \quad D(x_i) < D_{\max} := -\log C_{\min}
+\label{eq:stability_condition}
+\end{equation}
+
+\subsection{Stability Island}
+
+The admissible region (stability island) is:
+\begin{equation}
+\mathcal{I} = \left\{ x : L(x) \leq L_{\max}, \; D(x) \leq D_{\max}, \; \bar{C}(x) \geq C_{\min}, \; \frac{dS}{dt} \leq \Sigma_{\max} \right\}
+\label{eq:stability_island}
+\end{equation}
+
+Interpretation:
+\begin{itemize}
+    \item Low enough load: $L(x) \leq L_{\max}$
+    \item Low enough distortion: $D(x) \leq D_{\max}$
+    \item High enough compatibility: $\bar{C}(x) \geq C_{\min}$
+    \item Bounded entropy production/dissipation: $\frac{dS}{dt} \leq \Sigma_{\max}$
+\end{itemize}
+
+\subsection{Throat from the Island}
+
+Let $a_p, a_q$ be two metastability anchors. Define the throat as the connected admissible corridor between their boundary layers:
+\begin{equation}
+T_{p \to q} = \{ x \in \mathcal{I} : x \text{ lies on a connected path from } a_p \text{ to } a_q \}
+\label{eq:throat_definition}
+\end{equation}
+
+This is the wormhole-throat physics in canonical form: a narrow admissible transition corridor, derived from the master equation.
+
+\subsection{Waveprobe Selection Closes the Loop}
+
+From the Waveprobe spec, local transition energy is:
+\begin{equation}
+E(s) = \langle \psi_{\mathrm{past}} | \hat{P} | \psi_{\mathrm{past}} \rangle = |\langle \psi_{\mathrm{curr}} | \psi_{\mathrm{past}} \rangle|^2
+\label{eq:waveprobe_energy}
+\end{equation}
+
+and the step selects:
+\begin{equation}
+s^* = \arg\max_{s \in W(x)} E(s)
+\label{eq:waveprobe_selection}
+\end{equation}
+
+subject to the conservation condition:
+\begin{equation}
+\mathrm{BPB}(x, s^*) \leq \mathrm{BPB}(x, s_{\mathrm{local}})
+\label{eq:bpb_conservation}
+\end{equation}
+
+The throat exists only if viable local transitions remain available:
+\begin{equation}
+T = \{ x \in \mathcal{I} : \exists s \in W(x) \text{ with } E(s) \geq E_{\min} \text{ and BPB admissible} \}
+\label{eq:throat_waveprobe}
+\end{equation}
+
+\subsection{AVMR Aggregation (Associative Form)}
+
+Define the phasor embedding:
+\begin{equation}
+\Phi(z_i) = w_i (\cos\phi_i, \sin\phi_i) \in \mathbb{R}^2.
+\label{eq:phasor_embedding}
+\end{equation}
+
+Define aggregation over a set $Z = \{z_i\}$ as:
+\begin{equation}
+z_\phi(Z) = \sum_{z_i \in Z} \Phi(z_i).
+\label{eq:phasor_aggregation}
+\end{equation}
+
+Define:
+\begin{equation}
+\phi_R = \mathrm{atan2}(z_{\phi,y}, z_{\phi,x}), \quad
+\kappa_R = \|z_\phi\|.
+\label{eq:phase_coherence}
+\end{equation}
+
+Then the AVMR merge is:
+\begin{equation}
+R = \bigoplus_{\mathrm{avmr}} Z := (c_R, m_R, E_R, \iota_R, \omega_R, m_{R,\max}, \phi_R, \kappa_R),
+\label{eq:avmr_merge}
+\end{equation}
+with scalar components defined componentwise.
+
+\begin{proposition}[Associativity]
+The AVMR merge is associative:
+\begin{equation}
+(A \oplus B) \oplus C = A \oplus (B \oplus C),
+\label{eq:avmr_assoc}
+\end{equation}
+because all components reduce to associative operations, and $z_\phi$ is defined via vector addition, which is associative.
+\end{proposition}
+
+\subsection{Quine States and Regeneration Policy}
+
+A quine state is a fixed point of the Waveprobe selector:
+\begin{equation}
+\psi_q = \arg\max_{s \in W(\psi_q)} |\langle \psi_q | s \rangle|^2
+\label{eq:quine_state}
+\end{equation}
+
+with BPB admissibility still enforced. This gives persistent local anchors inside the throat.
+
+\textbf{Regeneration} occurs when the feasible set empties:
+\begin{itemize}
+    \item $L > L_{\max}$, or
+    \item $\bar{C} < C_{\min}$, or
+    \item no $s$ with $E(s) \geq E_{\min}$
+\end{itemize}
+
+Then the system exits $T$ and regenerates from a mistake vector / policy payload.
+
+\textbf{Summary:}
+\begin{itemize}
+    \item \textbf{Quines}: persistent self-sustaining points
+    \item \textbf{Regeneration}: fallback when no admissible self- or near-self transition exists
+\end{itemize}
+
+\subsection{Failure Modes}
+
+Two useful failure modes:
+
+\paragraph{Degenerate quine}
+A trivial fixed point with high self-overlap but no gain:
+\begin{equation}
+E \approx 1, \quad G \approx 0
+\label{eq:degenerate_quine}
+\end{equation}
+It sustains itself but contributes nothing.
+
+\paragraph{Parasitic loop}
+A small cycle $\psi_1 \to \psi_2 \to \psi_1$ with high overlap but rising load:
+\begin{equation}
+E(\psi_1, \psi_2) \text{ high}, \quad L(t) \uparrow
+\label{eq:parasitic_loop}
+\end{equation}
+This appears stable locally but pushes the system out of $\mathcal{I}$.
+
+Both are useful in market dynamics:
+\begin{itemize}
+    \item Degenerate quine = repetitive self-confirming local regime
+    \item Parasitic loop = feedback loop that appears stable until load or distortion breaks thresholds
+\end{itemize}
+
+\subsection{Market Dynamics Interpretation}
+
+The master equation applies directly to market microstructure:
+
+\begin{equation}
+\frac{dx_i}{dt} = -\eta \nabla L(x_i) + \sum_{j \in \mathcal{N}_i} F_{ij} + F_A(x_i) + F_{\mathrm{ext}}(t) + \xi_i(t)
+\end{equation}
+
+with market-specific mappings:
+\begin{itemize}
+    \item $L$: information/routing/decision burden
+    \item $F_{ij}$: interaction and coupling of strategies (Hawkes process self-excitation)
+    \item $F_A$: anchor pull toward metastable regimes (liquidity pools)
+    \item $F_{\mathrm{ext}}$: macro shock / large order / policy event
+    \item $\xi$: microstructure noise
+\end{itemize}
+
+Throat collapse = no viable low-cost, high-coherence transition remains (Flash Crash dynamics).
+
+\subsection{Stability Theorems}
+
+\begin{theorem}[Stability Island Existence]
+If:
+\begin{enumerate}
+    \item $L(x)$ is bounded below and locally Lipschitz,
+    \item $\bar{C}(x) \geq C_{\min}$ on a connected neighborhood,
+    \item $dS/dt \leq \Sigma_{\max}$,
+    \item The Waveprobe feasible set is non-empty: $\exists s \in W(x) : E(s) \geq E_{\min}$, BPB admissible,
+\end{enumerate}
+then there exists a positively invariant metastable region $\mathcal{I}$.
+\end{theorem}
+
+\begin{theorem}[Throat Existence]
+If two anchors $a_p, a_q$ have overlapping admissible boundary layers inside $\mathcal{I}$, then there exists a connected transition corridor $T_{p \to q} \subseteq \mathcal{I}$.
+\end{theorem}
+
+\begin{theorem}[Throat Collapse]
+If for some region:
+\begin{equation}
+L > L_{\max} \quad \text{or} \quad \bar{C} < C_{\min} \quad \text{or} \quad \forall s \in W(x), E(s) < E_{\min}
+\end{equation}
+then $T = \emptyset$, i.e. no admissible corridor exists.
+\end{theorem}
+
+\subsection{Compact Paper Statement}
+
+We model the evolution of each subsystem by Equation~(\ref{eq:master_dynamics}), where $L(x_i)$ is the cognitive-load potential, $F_{ij}$ are local interaction forces, $F_A$ is the metastability-anchor force, and $F_{\mathrm{ext}}$ is external forcing.
+
+Define compatibility by Equation~(\ref{eq:pairwise_compat}) with neighborhood average (\ref{eq:neighborhood_compat}). The admissible stability island is given by Equation~(\ref{eq:stability_island}).
+
+Discrete state transitions are governed locally by the Waveprobe overlap energy (\ref{eq:waveprobe_energy}), with admissible transition selected by Equation~(\ref{eq:waveprobe_selection}) subject to the information conservation constraint (\ref{eq:bpb_conservation}).
+
+A transition corridor (throat) exists if and only if the Waveprobe feasible set remains non-empty within $\mathcal{I}$, as defined by Equation~(\ref{eq:throat_waveprobe}).
+
+\end{document}

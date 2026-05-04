@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TSM-L Protocol v2.9 Harness</title>
+    <style>
+        :root {
+            --bg: #0d0d0d;
+            --text: #00ffcc;
+            --warn: #ffcc00;
+            --err: #ff3300;
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Source Code Pro", monospace;
+            padding: 2em;
+        }
+        #terminal {
+            border: 1px solid var(--text);
+            padding: 1em;
+            height: 400px;
+            overflow-y: auto;
+            background: #1a1a1a;
+            box-shadow: 0 0 10px var(--text);
+        }
+        #input-line {
+            display: flex;
+            margin-top: 1em;
+        }
+        #prompt { margin-right: 0.5em; }
+        input {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            outline: none;
+            flex-grow: 1;
+            font-size: 1.1em;
+        }
+        .log-entry { margin: 0.2em 0; }
+        .warn { color: var(--warn); }
+        .err { color: var(--err); }
+    </style>
+</head>
+<body>
+    <h1>TSM-L Protocol v2.9 Harness</h1>
+    <div id="terminal">
+        <div class="log-entry">[SYSTEM] AETHER Substrate v2.9 Ready.</div>
+        <div class="log-entry">[SYSTEM] Hardware Tier: Tier 2 (PLASMA)</div>
+        <div class="log-entry">[SYSTEM] Type 'OMNI_BAL' or 'VRAM_FLUSH' to interact.</div>
+    </div>
+    <div id="input-line">
+        <span id="prompt">architect@aether:~$</span>
+        <input type="text" id="cmd-input" autofocus autocomplete="off">
+    </div>
+
+    <script src="mcp_harness.js"></script>
+</body>
+</html>

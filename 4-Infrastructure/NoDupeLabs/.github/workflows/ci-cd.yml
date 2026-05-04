@@ -1,0 +1,19 @@
+name: CI/CD Pipeline
+
+# Quiet mode: manual-only.
+# Re-enable push/pull_request triggers only when the repo is ready for full CI/CD again.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quiet:
+    name: CI/CD quiet mode
+    runs-on: ubuntu-latest
+    steps:
+      - name: Quiet mode notice
+        run: |
+          echo "CI/CD Pipeline is intentionally manual-only to prevent notification spam."
+          echo "Run this workflow manually when needed."

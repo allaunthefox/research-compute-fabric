@@ -1,0 +1,127 @@
+cff-version: 1.2.0
+message: "If you use Allelica or derived population-genetics visualizations from this repository, please cite this software, the upstream source, and the listed source references."
+title: "Allelica: Hardy-Weinberg Population Genetics Visualizer"
+type: software
+authors:
+  - alias: "khandelwalsumo-oss"
+  - alias: "allaunthefox"
+repository-code: "https://github.com/allaunthefox/Allelica"
+url: "https://github.com/allaunthefox/Allelica"
+abstract: >-
+  Allelica is a Python-based Hardy-Weinberg population genetics visualizer for
+  allele-frequency data, Hardy-Weinberg expected genotype-frequency estimates,
+  and population-level comparisons across selected genes and traits. It is
+  currently a bounded, educational and exploratory tool, not a clinical genetics
+  system or evidence of causation for traits, adaptation, disease risk, or
+  evolutionary mechanisms.
+keywords:
+  - Allelica
+  - allele frequency
+  - Hardy-Weinberg equilibrium
+  - population genetics
+  - genotype frequency
+  - genetic variation
+  - biological addressability
+  - gnomAD
+license: MIT
+references:
+  - type: software
+    title: "Allelica upstream repository"
+    authors:
+      - alias: "khandelwalsumo-oss"
+    repository-code: "https://github.com/khandelwalsumo-oss/Allelica"
+    url: "https://github.com/khandelwalsumo-oss/Allelica"
+    notes: >-
+      Upstream source repository named by GitHub as the fork origin for this
+      repository. Preserve this attribution when using or extending the fork.
+  - type: webpage
+    title: "Built a Hardy-Weinberg population genetics visualizer with real gnomAD data — looking for honest feedback (17 y/o, self taught)"
+    authors:
+      - alias: "Puzzled_Maximum7018"
+    url: "https://www.reddit.com/r/bioinformatics/"
+    notes: >-
+      Reddit r/bioinformatics provenance page supplied by the fork maintainer as
+      context for the original project goals, feedback, and limitations. The page
+      frames Allelica as a first GitHub / high-school informatics project using
+      Hardy-Weinberg expected genotype frequencies from allele-frequency data and
+      asks for critique on biological validity. Treat this as provenance and
+      review context, not as a scientific source or validation of the method.
+      A canonical Reddit post permalink was not captured in the pasted source.
+  - type: dataset
+    title: "Genome Aggregation Database (gnomAD)"
+    url: "https://gnomad.broadinstitute.org/"
+    notes: >-
+      Source database named in the project README for allele-frequency data.
+      Users should cite the relevant gnomAD release and any underlying studies
+      directly when performing scientific analyses. This entry records repository
+      provenance only and is not a substitute for release-specific gnomAD citation.
+  - type: article
+    title: "A global reference for human genetic variation"
+    authors:
+      - family-names: "Karczewski"
+        given-names: "Konrad J."
+      - family-names: "Francioli"
+        given-names: "Laurent C."
+      - family-names: "Tiao"
+        given-names: "Grace"
+      - family-names: "Cummings"
+        given-names: "Beryl B."
+      - family-names: "Alföldi"
+        given-names: "Jessica"
+      - family-names: "Wang"
+        given-names: "Qingbo"
+      - family-names: "Collins"
+        given-names: "Ryan L."
+      - family-names: "Laricchia"
+        given-names: "Kristen M."
+      - family-names: "Ganna"
+        given-names: "Andrea"
+      - family-names: "Birnbaum"
+        given-names: "Daniel P."
+    journal: "Nature"
+    year: 2020
+    volume: 581
+    pages: "434-443"
+    doi: "10.1038/s41586-020-2308-7"
+    url: "https://doi.org/10.1038/s41586-020-2308-7"
+    notes: >-
+      Canonical gnomAD reference for human genetic variation. Listed as a bounded
+      data-source reference for Allelica's population-genetics visualizations.
+  - type: article
+    title: "Mendelian proportions in a mixed population"
+    authors:
+      - family-names: "Hardy"
+        given-names: "G. H."
+    journal: "Science"
+    year: 1908
+    volume: 28
+    issue: 706
+    pages: "49-50"
+    doi: "10.1126/science.28.706.49"
+    url: "https://doi.org/10.1126/science.28.706.49"
+    notes: >-
+      Original short note associated with the Hardy-Weinberg equilibrium baseline.
+      Allelica uses this equilibrium as a baseline comparator, not as proof that
+      real populations satisfy all equilibrium assumptions.
+  - type: article
+    title: "On the law of inheritance in man"
+    authors:
+      - family-names: "Weinberg"
+        given-names: "Wilhelm"
+    journal: "Jahreshefte des Vereins für vaterländische Naturkunde in Württemberg"
+    year: 1908
+    volume: 64
+    pages: "368-382"
+    notes: >-
+      Historical source associated with the Hardy-Weinberg equilibrium principle.
+      Included to document the mathematical baseline underlying Allelica.
+notes: >-
+  Project guardrail: VariantExists does not imply VariantMatters. Allele and
+  Hardy-Weinberg expected genotype-frequency visualizations require population
+  context, phenotype context, environmental assumptions, database provenance,
+  sample size, uncertainty estimates, and evidence receipts before supporting
+  biological interpretation. Hardy-Weinberg output should be treated as a baseline
+  comparator when equilibrium assumptions may be violated. Reddit feedback in the
+  supplied provenance page specifically flags hardcoded values, unclear extraction,
+  ancestry/environment grouping ambiguity, lack of observed genotype comparison,
+  and the need for sample sizes, uncertainty, and equilibrium/selection tests.

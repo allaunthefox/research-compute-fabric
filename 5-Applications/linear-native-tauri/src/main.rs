@@ -3,7 +3,7 @@
 
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use tauri::{Manager, WebviewUrl};
+use tauri::Manager;
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 4)]
 async fn main() {
@@ -23,9 +23,7 @@ async fn main() {
             });
 
             let window = app.get_webview_window("main").unwrap();
-            window.navigate(WebviewUrl::External(
-                "https://linear.app".parse().unwrap(),
-            ));
+            window.navigate("https://linear.app".parse().unwrap());
             Ok(())
         })
         .run(tauri::generate_context!())

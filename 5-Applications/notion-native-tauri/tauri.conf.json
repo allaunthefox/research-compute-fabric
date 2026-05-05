@@ -5,7 +5,9 @@
   "identifier": "com.allaunthefox.notion-native",
   "build": {
     "frontendDist": "./",
-    "devUrl": "https://www.notion.so"
+    "devUrl": "https://www.notion.so",
+    "beforeBuildCommand": "",
+    "beforeDevCommand": ""
   },
   "app": {
     "withGlobalTauri": false,

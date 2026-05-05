@@ -5,7 +5,9 @@
   "identifier": "com.allaunthefox.linear-native",
   "build": {
     "frontendDist": "./",
-    "devUrl": "https://linear.app"
+    "devUrl": "https://linear.app",
+    "beforeBuildCommand": "",
+    "beforeDevCommand": ""
   },
   "app": {
     "withGlobalTauri": false,

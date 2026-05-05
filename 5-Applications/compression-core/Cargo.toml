@@ -1,0 +1,12 @@
+[package]
+name = "compression-core"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["delta-gcl"]
+delta-gcl = []
+noop = []
+next-gen = []  # placeholder for future upgrade
+
+[dependencies]

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.tauri.app/config/2.0.0",
+  "productName": "Linear Native",
+  "version": "0.1.0",
+  "identifier": "com.allaunthefox.linear-native",
+  "build": {
+    "frontendDist": "./",
+    "devUrl": "https://linear.app"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "title": "Linear Native",
+        "width": 1400,
+        "height": 900,
+        "resizable": true,
+        "fullscreen": false,
+        "transparent": false,
+        "decorations": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["deb"],
+    "category": "Productivity",
+    "shortDescription": "Native Linux wrapper for Linear",
+    "longDescription": "A lightweight Tauri-based native wrapper for Linear, replacing the laggy Electron build.",
+    "icon": []
+  }
+}

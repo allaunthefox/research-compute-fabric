@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.tauri.app/config/2.0.0",
+  "productName": "Notion Native",
+  "version": "0.1.0",
+  "identifier": "com.allaunthefox.notion-native",
+  "build": {
+    "frontendDist": "./",
+    "devUrl": "https://www.notion.so"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "title": "Notion Native",
+        "width": 1400,
+        "height": 900,
+        "resizable": true,
+        "fullscreen": false,
+        "transparent": false,
+        "decorations": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["deb"],
+    "category": "Productivity",
+    "shortDescription": "Native Linux wrapper for Notion",
+    "longDescription": "A lightweight Tauri-based native wrapper for Notion, replacing the heavy Electron build.",
+    "icon": []
+  }
+}

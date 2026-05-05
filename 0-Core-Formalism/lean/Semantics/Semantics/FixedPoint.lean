@@ -76,6 +76,10 @@ namespace Q16_16
 
 def ofNat (n : Nat) : Q16_16 := ⟨(n * 65536).toUInt32⟩
 
+def satFromNat (n : Nat) : Q16_16 :=
+  if n ≥ 32768 then ⟨0x7FFFFFFF⟩
+  else ⟨(n * 65536).toUInt32⟩
+
 /-- Rational constructor: numerator/denominator → Q16_16.
     No Float used. Intermediate in Nat to avoid overflow.
     Returns zero literal if den=0 to avoid forward reference. -/
@@ -206,6 +210,16 @@ def ge (a b : Q16_16) : Bool := b.toInt ≤ a.toInt
 
 @[inline]
 def gt (a b : Q16_16) : Bool := b.toInt < a.toInt
+
+def sat01 (q : Q16_16) : Q16_16 :=
+  if q.toInt < 0 then zero
+  else if q.toInt > 65536 then one
+  else q
+
+def max (a b : Q16_16) : Q16_16 :=
+  if a.toInt ≥ b.toInt then a else b
+
+def le (a b : Q16_16) : Bool := a.toInt ≤ b.toInt
 
 end Q16_16
 

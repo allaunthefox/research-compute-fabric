@@ -31,6 +31,8 @@ route_signature: otom/axis-12-publishing/markdownspec/project-map/v0
 - `docs/plumbing/PROJECT_DOMAIN_TYPE_MAP.md` — placement taxonomy
 - `docs/plumbing/GITHUB_MISSING_MAP.md` — current backfill map
 - `tools/lean/Semantics/Semantics/Constitution.lean` — Lean entry point
+- `tools/lean/Semantics/Semantics/VisualPrimitive.lean` — coordinate-bearing visual witness formalism
+- `docs/visual_primitives_goxel_witness.md` — research note mapping visual primitives to Goxel witnesses
 
 ## Current phase
 

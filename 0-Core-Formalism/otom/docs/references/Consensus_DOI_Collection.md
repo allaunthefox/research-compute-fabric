@@ -26,6 +26,7 @@ Copy/paste block:
 10.1002/adma.73247
 10.1002/anie.201802701
 10.1038/scientificamerican062025-QhEeouFRPCYEr2tKQNWqM
+10.1103/6c4q-kx6f
 10.13069/jacodesmath.v11i3.281
 10.1016/j.jnt.2025.07.007
 10.4171/lem/1097
@@ -69,6 +70,7 @@ Copy/paste block:
 | 9 | `10.1002/adma.73247` | *Plasmonic Nanomachines: Creating Local Potential Gradients and Motions* | 2026 | Local optical/thermal/chemical potential gradients; nanoscale actuation; Brownian/Stochastic Warden constraints | `data/cff/provenance-database.yml` |
 | 10 | `10.1002/anie.201802701` | *Valency-Controlled Framework Nucleic Acid Signal Amplifiers* | 2018 | Framework nucleic acid valency; controlled scaffold signal amplification; discrete valency/source-count precedent | `data/cff/provenance-database.yml` |
 | 11 | `10.1038/scientificamerican062025-QhEeouFRPCYEr2tKQNWqM` | *Mitochondria are more than powerhouses—they’re the motherboard of the cell* | 2025 | Public-science synthesis; mitochondrial collective / MIPS analogy source; not peer-reviewed proof authority | `data/cff/provenance-database.yml` |
+| 12 | `10.1103/6c4q-kx6f` | *Frozen-In Gravitational Fields* | 2026 | General relativity; frozen-in gravitational field connectivity; conserved gravitational flux/helicity; topology-preserving admissible spacetime evolution; lawfulness / RGFlow analogy boundary | Session intake; pending source note / provenance record |
 
 ### Sidon / Sidon-spaces / additive combinatorics / coding cluster
 
@@ -140,6 +142,12 @@ These were present in the pasted BibTeX but are **not** included in the Consensu
 10.1002/anie.201802701
 ```
 
+### Gravity / topology / spacetime dynamics
+
+```text
+10.1103/6c4q-kx6f
+```
+
 ### Sidon / Sidon spaces / additive combinatorics / coding theory
 
 ```text
@@ -193,7 +201,7 @@ Use the Sidon cluster as source material for Sidon anti-aliasing, Sidon spaces, 
 ```text
 Do not treat this DOI list as proof of OTOM.
 Do not infer that all listed sources are peer-reviewed; the Scientific American source is public-science synthesis.
-Do not transfer optics, materials, or biological claims into non-native domains without a bridge theorem, measurement, benchmark, or source-specific receipt.
+Do not transfer optics, materials, biology, or gravity/topology claims into non-native domains without a bridge theorem, measurement, benchmark, or source-specific receipt.
 Do not promote project claims merely because a related DOI exists.
 Do not treat Sidon cryptosystem papers as security validation; attack papers must be used as adversarial boundaries.
 Do not treat Sidon-space coding results as proof of OTOM compression performance without benchmarks.

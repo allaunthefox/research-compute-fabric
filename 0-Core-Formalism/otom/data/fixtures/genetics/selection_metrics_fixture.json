@@ -1,0 +1,23 @@
+{
+  "fixture_id": "selection_metrics_demo_v0",
+  "claim_state": "ENGINEERING_SCAFFOLD",
+  "provenance": {
+    "source": "synthetic_fixture",
+    "created_for": "OTOM genetics information substrate receipt smoke test",
+    "date": "2026-05-05",
+    "notes": "Synthetic numbers only. Not biological evidence. Use to validate receipt wiring before real gnomAD / VCF / population fixtures."
+  },
+  "tajimas_d_input": {
+    "sample_size": 10,
+    "segregating_sites": 12,
+    "pairwise_differences": 4.2
+  },
+  "hudson_fst_input": {
+    "within_pairwise_differences": [1.2, 1.5, 1.1],
+    "between_pairwise_differences": [3.0, 3.3, 2.8]
+  },
+  "promotion_policy": {
+    "may_promote_claims": false,
+    "reason": "Synthetic fixture validates code path only; reviewed genetics claims require real-data provenance and MassNumber gate integration."
+  }
+}

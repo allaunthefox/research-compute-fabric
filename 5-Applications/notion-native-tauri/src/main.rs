@@ -17,11 +17,6 @@ async fn main() {
                 let _ = compressor.decompress(&compressed);
             });
 
-            // Background prefetch on thread pool
-            tokio::spawn(async {
-                let _ = reqwest::get("https://www.notion.so").await;
-            });
-
             let window = app.get_webview_window("main").unwrap();
             window.navigate("https://www.notion.so".parse().unwrap());
             Ok(())

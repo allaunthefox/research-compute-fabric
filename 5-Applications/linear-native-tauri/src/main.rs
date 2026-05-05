@@ -17,11 +17,6 @@ async fn main() {
                 let _ = compressor.decompress(&compressed);
             });
 
-            // Background prefetch on thread pool
-            tokio::spawn(async {
-                let _ = reqwest::get("https://linear.app").await;
-            });
-
             let window = app.get_webview_window("main").unwrap();
             window.navigate("https://linear.app".parse().unwrap());
             Ok(())

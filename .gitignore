@@ -41,6 +41,7 @@ scripts/venv_unsloth/
 
 # API Keys and credentials (NEVER track in git)
 API KEYS/
+Security\ &\ Passwords/
 
 # Large data files (exceed GitHub 100MB limit)
 data/germane/research/*.zip

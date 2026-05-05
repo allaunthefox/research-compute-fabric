@@ -15,6 +15,7 @@ import Semantics.Graph.Diff
 import Semantics.Graph.Torsion
 import Semantics.FAMM
 import Semantics.RGFlow
+import Semantics.VisualPrimitive
 
 namespace Semantics.Constitution
 
@@ -23,5 +24,8 @@ def artifactFirstInvariant : Prop := True
 
 /-- FORMING marker for the bootstrap constitution. -/
 def settlementState : String := "FORMING"
+
+/-- Visual primitives are now part of the canonical witness surface. -/
+def visualPrimitiveWitnessSurface : Prop := True
 
 end Semantics.Constitution

@@ -13,7 +13,7 @@ Gate criteria:
   5. taxonomy_gap_fill (must declare which GCCL group it covers)
 
 Reference:
-  - Core/MassNumber.lean (three-layer gate)
+  - Semantics/Core/MassNumber.lean (three-layer gate)
   - otom/docs/genetics_information_substrate_boundary.md (four buckets)
 -/
 

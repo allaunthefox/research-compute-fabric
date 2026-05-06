@@ -137,6 +137,13 @@ def minVal : Q16_16 := ⟨0x80000000⟩
 def toInt (q : Q16_16) : Int :=
   Int.ofNat (q.val.toUInt64 : UInt64).toNat - (if q.val ≥ 0x80000000 then 0x100000000 else 0)
 
+/-- Signed raw Q16.16 constructor with saturation at the representable bounds. -/
+@[inline]
+def ofRawInt (raw : Int) : Q16_16 :=
+  if raw > 0x7FFFFFFF then maxVal
+  else if raw < -0x80000000 then minVal
+  else ⟨UInt32.ofInt raw⟩
+
 /-- Boundary conversion from external float -/
 @[inline]
 def ofFloat (f : Float) : Q16_16 :=
@@ -152,7 +159,7 @@ def scale : Nat := 65536
 
 @[inline]
 def ofInt (n : Int) : Q16_16 :=
-  ⟨UInt32.ofInt (n * 65536)⟩
+  ofRawInt (n * 65536)
 
 /-- Saturating addition (matches hardware add_sat) -/
 @[inline]
@@ -315,10 +322,14 @@ def max (a b : Q16_16) : Q16_16 :=
 def le (a b : Q16_16) : Bool := a.toInt ≤ b.toInt
 
 def recip (x : Q16_16) : Q16_16 :=
-  if x.val == 0 then maxVal
+  let xInt := x.toInt
+  if xInt == 0 then maxVal
   else
-    let numer := 0x100000000
-    ⟨(numer / x.val.toNat).toUInt32⟩
+    let numer : Nat := 0x100000000
+    let denom := (if xInt < 0 then -xInt else xInt).toNat
+    let r := numer / denom
+    let y := if r > 0x7FFFFFFF then maxVal else ⟨r.toUInt32⟩
+    if xInt < 0 then neg y else y
 
 def ofRaw (n : Nat) : Q16_16 := ⟨n.toUInt32⟩
 
@@ -464,7 +475,7 @@ end Semantics.FixedPoint
 namespace Semantics
   export FixedPoint (Q0_16 Q16_16 Q0_64)
   namespace Q16_16
-    export FixedPoint.Q16_16 (mk zero one negOne epsilon two infinity maxVal minVal ofNat satFromNat ofRatio toInt ofFloat toFloat scale ofInt add sub mul div abs neg sqrt ln log2 expNeg sat01 max min le ge gt lt recip ofRaw clip isNeg)
+    export FixedPoint.Q16_16 (mk zero one negOne epsilon two infinity maxVal minVal ofNat satFromNat ofRatio toInt ofRawInt ofFloat toFloat scale ofInt add sub mul div abs neg sqrt ln log2 expNeg sat01 max min le ge gt lt recip ofRaw clip isNeg)
   end Q16_16
   namespace Q0_16
     export FixedPoint.Q0_16 (zero one half neg add sub mul div abs lt le gt ge toFloat ofFloat log2 min)

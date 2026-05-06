@@ -42,7 +42,7 @@ def lcgNext (seed : Nat) : (Nat × Q16_16) :=
   let signed := if next >= 2147483648 then Int.ofNat next - 4294967296 else Int.ofNat next
   let scaled := (signed * 65536) / 32768
   let rawScaled := if scaled > 2147483647 then 2147483647 else if scaled < -2147483648 then -2147483648 else scaled
-  let qval := Q16_16.ofInt rawScaled
+  let qval := Q16_16.ofRawInt rawScaled
   (next, qval)
 
 /-- Recursive helper: accumulate N noise samples -/
@@ -76,7 +76,7 @@ def stochasticBurgersRHS (state : StochasticBurgersState) (i : Nat) : Q16_16 :=
 
 /-- One Euler-Maruyama step: draw fresh noise, then step -/
 def stepEulerMaruyama (state : StochasticBurgersState) : StochasticBurgersState :=
-  let (stateWithNoise, ξ) := generateNoise state
+  let (stateWithNoise, _) := generateNoise state
   let newU := Array.ofFn (fun i : Fin stateWithNoise.base.N =>
     let rhs := stochasticBurgersRHS stateWithNoise i.val
     let dt_rhs := Q16_16.mul stateWithNoise.base.dt rhs

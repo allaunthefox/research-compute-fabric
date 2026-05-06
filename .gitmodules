@@ -1,0 +1,24 @@
+[submodule "4-Infrastructure/gpu/wasmgpu"]
+	path = 4-Infrastructure/gpu/wasmgpu
+	url = https://github.com/Zushah/WasmGPU.git
+[submodule "6-Documentation/docs/nlab"]
+	path = 6-Documentation/docs/nlab
+	url = https://github.com/ncatlab/nlab-content.git
+[submodule "ai-math-discovery-systems/AI-Feynman"]
+	path = ai-math-discovery-systems/AI-Feynman
+	url = https://github.com/SJ001/AI-Feynman.git
+[submodule "ai-math-discovery-systems/AI-Newton"]
+	path = ai-math-discovery-systems/AI-Newton
+	url = https://github.com/Science-Discovery/AI-Newton.git
+[submodule "ai-math-discovery-systems/Goedel-Prover-V2"]
+	path = ai-math-discovery-systems/Goedel-Prover-V2
+	url = https://github.com/Goedel-LM/Goedel-Prover-V2.git
+[submodule "ai-math-discovery-systems/PINNs"]
+	path = ai-math-discovery-systems/PINNs
+	url = https://github.com/maziarraissi/PINNs.git
+[submodule "ai-math-discovery-systems/alphageometry"]
+	path = ai-math-discovery-systems/alphageometry
+	url = https://github.com/google-deepmind/alphageometry.git
+[submodule "ai-math-discovery-systems/neural-conservation-law"]
+	path = ai-math-discovery-systems/neural-conservation-law
+	url = https://github.com/facebookresearch/neural-conservation-law.git

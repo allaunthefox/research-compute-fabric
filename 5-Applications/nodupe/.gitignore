@@ -1,0 +1,98 @@
+# =============================================================================
+# NoDupeLabs Professional .gitignore
+# =============================================================================
+# Python / General
+# =============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# =============================================================================
+# Virtual Environments
+# =============================================================================
+.env
+.envrc
+.venv/
+venv/
+ENV/
+env/
+.venv-audit/
+
+# =============================================================================
+# Testing & Coverage
+# =============================================================================
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+coverage.json
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+*.cover
+.pytest_cache/
+
+# =============================================================================
+# IDE & Editor
+# =============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.clinerules/
+
+# =============================================================================
+# Type Checkers & Linters
+# =============================================================================
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+.pybuilder/
+cython_debug/
+
+# =============================================================================
+# Project Specific
+# =============================================================================
+# NoDupeLabs backup data (environment-specific with absolute paths)
+.nodupe/
+!.nodupe/backups/README.md
+!.nodupe/backups/RECOVERY.txt
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Generated reports (keep reports/ directory, ignore generated files)
+reports/*.txt
+reports/*.json
+!reports/.gitkeep
+
+# Temporary files
+output/
+remote_storage/
+shard_*.db
+*.log
+
+# =============================================================================
+# OS Files
+# =============================================================================
+.DS_Store
+Thumbs.db

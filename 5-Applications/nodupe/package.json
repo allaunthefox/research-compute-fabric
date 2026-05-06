@@ -1,0 +1,12 @@
+{
+  "name": "nodupelabs-topological-engine",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "neo4j-driver": "^5.27.0"
+  }
+}

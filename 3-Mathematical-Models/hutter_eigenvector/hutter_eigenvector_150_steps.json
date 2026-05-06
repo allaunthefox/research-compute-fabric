@@ -1,0 +1,1124 @@
+{
+  "data_size_bytes": 1000000000,
+  "eigenvalues": [
+    0.01509981572837515,
+    0.0220717723294754,
+    0.024035452900619786,
+    0.04502808869416914,
+    0.09802988819074886
+  ],
+  "flow_log": [
+    {
+      "cluster": 1,
+      "eigenvalue": 0.01509981572837515,
+      "trajectory": [
+        {
+          "step": 1,
+          "byte": 212,
+          "state": "MP(00000001, r=12, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0x1"
+        },
+        {
+          "step": 2,
+          "byte": 213,
+          "state": "MP(00000101, r=13, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0x101"
+        },
+        {
+          "step": 3,
+          "byte": 211,
+          "state": "MP(00000100, r=15, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0x100"
+        },
+        {
+          "step": 4,
+          "byte": 210,
+          "state": "MP(00010100, r=14, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0x10100"
+        },
+        {
+          "step": 5,
+          "byte": 200,
+          "state": "MP(00010101, r=12, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0x10101"
+        },
+        {
+          "step": 6,
+          "byte": 214,
+          "state": "MP(00020101, r=14, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0x20101"
+        },
+        {
+          "step": 7,
+          "byte": 198,
+          "state": "MP(00010101, r=14, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0x10101"
+        },
+        {
+          "step": 8,
+          "byte": 205,
+          "state": "MP(00010001, r=13, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0x10001"
+        },
+        {
+          "step": 9,
+          "byte": 203,
+          "state": "MP(00010002, r=15, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0x10002"
+        },
+        {
+          "step": 10,
+          "byte": 218,
+          "state": "MP(00000002, r=14, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0x2"
+        },
+        {
+          "step": 11,
+          "byte": 204,
+          "state": "MP(00000001, r=12, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0x1"
+        },
+        {
+          "step": 12,
+          "byte": 226,
+          "state": "MP(ffff0001, r=14, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffff0001"
+        },
+        {
+          "step": 13,
+          "byte": 240,
+          "state": "MP(ffff0000, r=12, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffff0000"
+        },
+        {
+          "step": 14,
+          "byte": 217,
+          "state": "MP(fffeff00, r=13, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfffeff00"
+        },
+        {
+          "step": 15,
+          "byte": 224,
+          "state": "MP(fffefeff, r=12, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfffefeff"
+        },
+        {
+          "step": 16,
+          "byte": 227,
+          "state": "MP(fffeff00, r=15, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfffeff00"
+        },
+        {
+          "step": 17,
+          "byte": 128,
+          "state": "MP(fffefeff, r=8, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfffefeff"
+        },
+        {
+          "step": 18,
+          "byte": 216,
+          "state": "MP(fffefefe, r=12, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfffefefe"
+        },
+        {
+          "step": 19,
+          "byte": 235,
+          "state": "MP(fffefeff, r=15, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfffefeff"
+        },
+        {
+          "step": 20,
+          "byte": 209,
+          "state": "MP(fffefdff, r=13, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfffefdff"
+        },
+        {
+          "step": 21,
+          "byte": 220,
+          "state": "MP(fffefdfe, r=12, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfffefdfe"
+        },
+        {
+          "step": 22,
+          "byte": 142,
+          "state": "MP(fffdfdfe, r=10, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfffdfdfe"
+        },
+        {
+          "step": 23,
+          "byte": 230,
+          "state": "MP(fffcfdfe, r=14, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfffcfdfe"
+        },
+        {
+          "step": 24,
+          "byte": 174,
+          "state": "MP(fffbfdfe, r=10, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfffbfdfe"
+        },
+        {
+          "step": 25,
+          "byte": 231,
+          "state": "MP(fffbfdff, r=15, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfffbfdff"
+        },
+        {
+          "step": 26,
+          "byte": 189,
+          "state": "MP(fffbfcff, r=9, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfffbfcff"
+        },
+        {
+          "step": 27,
+          "byte": 133,
+          "state": "MP(fffbfbff, r=9, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfffbfbff"
+        },
+        {
+          "step": 28,
+          "byte": 215,
+          "state": "MP(fffbfc00, r=15, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfffbfc00"
+        },
+        {
+          "step": 29,
+          "byte": 161,
+          "state": "MP(fffbfb00, r=9, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfffbfb00"
+        },
+        {
+          "step": 30,
+          "byte": 207,
+          "state": "MP(fffbfb01, r=15, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfffbfb01"
+        }
+      ],
+      "final_state": "MP(fffbfb01, r=15, c=0.000, h=LEFT)",
+      "final_curvature": 0,
+      "final_locus": "0xfffbfb01"
+    },
+    {
+      "cluster": 2,
+      "eigenvalue": 0.0220717723294754,
+      "trajectory": [
+        {
+          "step": 31,
+          "byte": 220,
+          "state": "MP(fffbfb02, r=12, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfffbfb02"
+        },
+        {
+          "step": 32,
+          "byte": 204,
+          "state": "MP(fffbfb01, r=12, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfffbfb01"
+        },
+        {
+          "step": 33,
+          "byte": 240,
+          "state": "MP(fffbfb00, r=12, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfffbfb00"
+        },
+        {
+          "step": 34,
+          "byte": 152,
+          "state": "MP(fffbfaff, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfffbfaff"
+        },
+        {
+          "step": 35,
+          "byte": 157,
+          "state": "MP(fffbf9ff, r=9, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfffbf9ff"
+        },
+        {
+          "step": 36,
+          "byte": 213,
+          "state": "MP(fffbf8ff, r=13, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfffbf8ff"
+        },
+        {
+          "step": 37,
+          "byte": 172,
+          "state": "MP(fffbf8fe, r=8, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfffbf8fe"
+        },
+        {
+          "step": 38,
+          "byte": 144,
+          "state": "MP(fffbf8fd, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfffbf8fd"
+        },
+        {
+          "step": 39,
+          "byte": 212,
+          "state": "MP(fffbf8fc, r=12, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfffbf8fc"
+        },
+        {
+          "step": 40,
+          "byte": 171,
+          "state": "MP(fffbf8fd, r=11, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfffbf8fd"
+        },
+        {
+          "step": 41,
+          "byte": 170,
+          "state": "MP(fffaf8fd, r=10, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfffaf8fd"
+        },
+        {
+          "step": 42,
+          "byte": 162,
+          "state": "MP(fff9f8fd, r=10, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff9f8fd"
+        },
+        {
+          "step": 43,
+          "byte": 146,
+          "state": "MP(fff8f8fd, r=10, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff8f8fd"
+        },
+        {
+          "step": 44,
+          "byte": 160,
+          "state": "MP(fff8f8fc, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff8f8fc"
+        },
+        {
+          "step": 45,
+          "byte": 159,
+          "state": "MP(fff8f8fd, r=11, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff8f8fd"
+        },
+        {
+          "step": 46,
+          "byte": 136,
+          "state": "MP(fff8f8fc, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff8f8fc"
+        },
+        {
+          "step": 47,
+          "byte": 150,
+          "state": "MP(fff7f8fc, r=10, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff7f8fc"
+        },
+        {
+          "step": 48,
+          "byte": 163,
+          "state": "MP(fff7f8fd, r=11, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff7f8fd"
+        },
+        {
+          "step": 49,
+          "byte": 149,
+          "state": "MP(fff7f7fd, r=9, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff7f7fd"
+        },
+        {
+          "step": 50,
+          "byte": 200,
+          "state": "MP(fff7f7fc, r=12, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff7f7fc"
+        },
+        {
+          "step": 51,
+          "byte": 151,
+          "state": "MP(fff7f7fd, r=11, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff7f7fd"
+        },
+        {
+          "step": 52,
+          "byte": 165,
+          "state": "MP(fff7f6fd, r=9, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff7f6fd"
+        },
+        {
+          "step": 53,
+          "byte": 161,
+          "state": "MP(fff7f5fd, r=9, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff7f5fd"
+        },
+        {
+          "step": 54,
+          "byte": 166,
+          "state": "MP(fff6f5fd, r=10, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff6f5fd"
+        },
+        {
+          "step": 55,
+          "byte": 169,
+          "state": "MP(fff6f4fd, r=9, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff6f4fd"
+        },
+        {
+          "step": 56,
+          "byte": 198,
+          "state": "MP(fff5f4fd, r=14, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff5f4fd"
+        },
+        {
+          "step": 57,
+          "byte": 205,
+          "state": "MP(fff5f3fd, r=13, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff5f3fd"
+        },
+        {
+          "step": 58,
+          "byte": 148,
+          "state": "MP(fff5f3fc, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff5f3fc"
+        },
+        {
+          "step": 59,
+          "byte": 219,
+          "state": "MP(fff5f3fd, r=15, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff5f3fd"
+        },
+        {
+          "step": 60,
+          "byte": 147,
+          "state": "MP(fff5f3fe, r=11, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff5f3fe"
+        }
+      ],
+      "final_state": "MP(fff5f3fe, r=11, c=0.000, h=LEFT)",
+      "final_curvature": 0,
+      "final_locus": "0xfff5f3fe"
+    },
+    {
+      "cluster": 3,
+      "eigenvalue": 0.024035452900619786,
+      "trajectory": [
+        {
+          "step": 61,
+          "byte": 240,
+          "state": "MP(fff5f3ff, r=12, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff5f3ff"
+        },
+        {
+          "step": 62,
+          "byte": 140,
+          "state": "MP(fff5f3fe, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff5f3fe"
+        },
+        {
+          "step": 63,
+          "byte": 144,
+          "state": "MP(fff5f3fd, r=8, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff5f3fd"
+        },
+        {
+          "step": 64,
+          "byte": 213,
+          "state": "MP(fff5f2fd, r=13, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff5f2fd"
+        },
+        {
+          "step": 65,
+          "byte": 212,
+          "state": "MP(fff5f2fc, r=12, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff5f2fc"
+        },
+        {
+          "step": 66,
+          "byte": 220,
+          "state": "MP(fff5f2fb, r=12, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff5f2fb"
+        },
+        {
+          "step": 67,
+          "byte": 141,
+          "state": "MP(fff5f1fb, r=9, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff5f1fb"
+        },
+        {
+          "step": 68,
+          "byte": 142,
+          "state": "MP(fff4f1fb, r=10, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff4f1fb"
+        },
+        {
+          "step": 69,
+          "byte": 185,
+          "state": "MP(fff4f0fb, r=9, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff4f0fb"
+        },
+        {
+          "step": 70,
+          "byte": 191,
+          "state": "MP(fff4f0fc, r=11, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff4f0fc"
+        },
+        {
+          "step": 71,
+          "byte": 200,
+          "state": "MP(fff4f0fb, r=12, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff4f0fb"
+        },
+        {
+          "step": 72,
+          "byte": 176,
+          "state": "MP(fff4f0fa, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff4f0fa"
+        },
+        {
+          "step": 73,
+          "byte": 189,
+          "state": "MP(fff4effa, r=9, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff4effa"
+        },
+        {
+          "step": 74,
+          "byte": 211,
+          "state": "MP(fff4effb, r=15, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff4effb"
+        },
+        {
+          "step": 75,
+          "byte": 132,
+          "state": "MP(fff4effa, r=8, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff4effa"
+        },
+        {
+          "step": 76,
+          "byte": 210,
+          "state": "MP(fff3effa, r=14, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff3effa"
+        },
+        {
+          "step": 77,
+          "byte": 178,
+          "state": "MP(fff2effa, r=10, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff2effa"
+        },
+        {
+          "step": 78,
+          "byte": 180,
+          "state": "MP(fff2eff9, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff2eff9"
+        },
+        {
+          "step": 79,
+          "byte": 183,
+          "state": "MP(fff2effa, r=11, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff2effa"
+        },
+        {
+          "step": 80,
+          "byte": 198,
+          "state": "MP(fff1effa, r=14, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff1effa"
+        },
+        {
+          "step": 81,
+          "byte": 133,
+          "state": "MP(fff1eefa, r=9, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff1eefa"
+        },
+        {
+          "step": 82,
+          "byte": 130,
+          "state": "MP(fff0eefa, r=10, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xfff0eefa"
+        },
+        {
+          "step": 83,
+          "byte": 187,
+          "state": "MP(fff0eefb, r=11, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xfff0eefb"
+        },
+        {
+          "step": 84,
+          "byte": 134,
+          "state": "MP(ffefeefb, r=10, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffefeefb"
+        },
+        {
+          "step": 85,
+          "byte": 205,
+          "state": "MP(ffefedfb, r=13, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffefedfb"
+        },
+        {
+          "step": 86,
+          "byte": 186,
+          "state": "MP(ffeeedfb, r=10, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffeeedfb"
+        },
+        {
+          "step": 87,
+          "byte": 182,
+          "state": "MP(ffededfb, r=10, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffededfb"
+        },
+        {
+          "step": 88,
+          "byte": 218,
+          "state": "MP(ffecedfb, r=14, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffecedfb"
+        },
+        {
+          "step": 89,
+          "byte": 131,
+          "state": "MP(ffecedfc, r=11, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffecedfc"
+        },
+        {
+          "step": 90,
+          "byte": 179,
+          "state": "MP(ffecedfd, r=11, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffecedfd"
+        }
+      ],
+      "final_state": "MP(ffecedfd, r=11, c=0.000, h=LEFT)",
+      "final_curvature": 0,
+      "final_locus": "0xffecedfd"
+    },
+    {
+      "cluster": 4,
+      "eigenvalue": 0.04502808869416914,
+      "trajectory": [
+        {
+          "step": 91,
+          "byte": 238,
+          "state": "MP(ffededfd, r=14, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffededfd"
+        },
+        {
+          "step": 92,
+          "byte": 129,
+          "state": "MP(ffedecfd, r=9, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffedecfd"
+        },
+        {
+          "step": 93,
+          "byte": 132,
+          "state": "MP(ffedecfc, r=8, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffedecfc"
+        },
+        {
+          "step": 94,
+          "byte": 128,
+          "state": "MP(ffedecfb, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffedecfb"
+        },
+        {
+          "step": 95,
+          "byte": 134,
+          "state": "MP(ffececfb, r=10, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffececfb"
+        },
+        {
+          "step": 96,
+          "byte": 140,
+          "state": "MP(ffececfa, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffececfa"
+        },
+        {
+          "step": 97,
+          "byte": 144,
+          "state": "MP(ffececf9, r=8, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffececf9"
+        },
+        {
+          "step": 98,
+          "byte": 136,
+          "state": "MP(ffececf8, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffececf8"
+        },
+        {
+          "step": 99,
+          "byte": 133,
+          "state": "MP(ffecebf8, r=9, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffecebf8"
+        },
+        {
+          "step": 100,
+          "byte": 152,
+          "state": "MP(ffecebf7, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffecebf7"
+        },
+        {
+          "step": 101,
+          "byte": 154,
+          "state": "MP(ffebebf7, r=10, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffebebf7"
+        },
+        {
+          "step": 102,
+          "byte": 156,
+          "state": "MP(ffebebf6, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffebebf6"
+        },
+        {
+          "step": 103,
+          "byte": 165,
+          "state": "MP(ffebeaf6, r=9, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffebeaf6"
+        },
+        {
+          "step": 104,
+          "byte": 145,
+          "state": "MP(ffebe9f6, r=9, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffebe9f6"
+        },
+        {
+          "step": 105,
+          "byte": 148,
+          "state": "MP(ffebe9f5, r=8, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffebe9f5"
+        },
+        {
+          "step": 106,
+          "byte": 149,
+          "state": "MP(ffebe8f5, r=9, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffebe8f5"
+        },
+        {
+          "step": 107,
+          "byte": 138,
+          "state": "MP(ffeae8f5, r=10, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffeae8f5"
+        },
+        {
+          "step": 108,
+          "byte": 143,
+          "state": "MP(ffeae8f6, r=11, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffeae8f6"
+        },
+        {
+          "step": 109,
+          "byte": 142,
+          "state": "MP(ffe9e8f6, r=10, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe9e8f6"
+        },
+        {
+          "step": 110,
+          "byte": 166,
+          "state": "MP(ffe8e8f6, r=10, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe8e8f6"
+        },
+        {
+          "step": 111,
+          "byte": 160,
+          "state": "MP(ffe8e8f5, r=8, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe8e8f5"
+        },
+        {
+          "step": 112,
+          "byte": 157,
+          "state": "MP(ffe8e7f5, r=9, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe8e7f5"
+        },
+        {
+          "step": 113,
+          "byte": 135,
+          "state": "MP(ffe8e7f6, r=11, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe8e7f6"
+        },
+        {
+          "step": 114,
+          "byte": 150,
+          "state": "MP(ffe7e7f6, r=10, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe7e7f6"
+        },
+        {
+          "step": 115,
+          "byte": 178,
+          "state": "MP(ffe6e7f6, r=10, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe6e7f6"
+        },
+        {
+          "step": 116,
+          "byte": 137,
+          "state": "MP(ffe6e6f6, r=9, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe6e6f6"
+        },
+        {
+          "step": 117,
+          "byte": 210,
+          "state": "MP(ffe5e6f6, r=14, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe5e6f6"
+        },
+        {
+          "step": 118,
+          "byte": 220,
+          "state": "MP(ffe5e6f5, r=12, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe5e6f5"
+        },
+        {
+          "step": 119,
+          "byte": 147,
+          "state": "MP(ffe5e6f6, r=11, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe5e6f6"
+        },
+        {
+          "step": 120,
+          "byte": 131,
+          "state": "MP(ffe5e6f7, r=11, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe5e6f7"
+        }
+      ],
+      "final_state": "MP(ffe5e6f7, r=11, c=0.000, h=LEFT)",
+      "final_curvature": 0,
+      "final_locus": "0xffe5e6f7"
+    },
+    {
+      "cluster": 5,
+      "eigenvalue": 0.09802988819074886,
+      "trajectory": [
+        {
+          "step": 121,
+          "byte": 222,
+          "state": "MP(ffe6e6f7, r=14, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe6e6f7"
+        },
+        {
+          "step": 122,
+          "byte": 135,
+          "state": "MP(ffe6e6f8, r=11, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe6e6f8"
+        },
+        {
+          "step": 123,
+          "byte": 142,
+          "state": "MP(ffe5e6f8, r=10, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe5e6f8"
+        },
+        {
+          "step": 124,
+          "byte": 168,
+          "state": "MP(ffe5e6f7, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe5e6f7"
+        },
+        {
+          "step": 125,
+          "byte": 139,
+          "state": "MP(ffe5e6f8, r=11, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe5e6f8"
+        },
+        {
+          "step": 126,
+          "byte": 172,
+          "state": "MP(ffe5e6f7, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe5e6f7"
+        },
+        {
+          "step": 127,
+          "byte": 137,
+          "state": "MP(ffe5e5f7, r=9, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe5e5f7"
+        },
+        {
+          "step": 128,
+          "byte": 150,
+          "state": "MP(ffe4e5f7, r=10, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe4e5f7"
+        },
+        {
+          "step": 129,
+          "byte": 167,
+          "state": "MP(ffe4e5f8, r=11, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe4e5f8"
+        },
+        {
+          "step": 130,
+          "byte": 170,
+          "state": "MP(ffe3e5f8, r=10, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe3e5f8"
+        },
+        {
+          "step": 131,
+          "byte": 176,
+          "state": "MP(ffe3e5f7, r=8, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe3e5f7"
+        },
+        {
+          "step": 132,
+          "byte": 136,
+          "state": "MP(ffe3e5f6, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe3e5f6"
+        },
+        {
+          "step": 133,
+          "byte": 171,
+          "state": "MP(ffe3e5f7, r=11, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe3e5f7"
+        },
+        {
+          "step": 134,
+          "byte": 141,
+          "state": "MP(ffe3e4f7, r=9, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe3e4f7"
+        },
+        {
+          "step": 135,
+          "byte": 128,
+          "state": "MP(ffe3e4f6, r=8, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe3e4f6"
+        },
+        {
+          "step": 136,
+          "byte": 140,
+          "state": "MP(ffe3e4f5, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe3e4f5"
+        },
+        {
+          "step": 137,
+          "byte": 148,
+          "state": "MP(ffe3e4f4, r=8, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe3e4f4"
+        },
+        {
+          "step": 138,
+          "byte": 173,
+          "state": "MP(ffe3e3f4, r=9, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe3e3f4"
+        },
+        {
+          "step": 139,
+          "byte": 130,
+          "state": "MP(ffe2e3f4, r=10, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe2e3f4"
+        },
+        {
+          "step": 140,
+          "byte": 144,
+          "state": "MP(ffe2e3f3, r=8, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe2e3f3"
+        },
+        {
+          "step": 141,
+          "byte": 132,
+          "state": "MP(ffe2e3f2, r=8, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe2e3f2"
+        },
+        {
+          "step": 142,
+          "byte": 131,
+          "state": "MP(ffe2e3f3, r=11, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe2e3f3"
+        },
+        {
+          "step": 143,
+          "byte": 175,
+          "state": "MP(ffe2e3f4, r=11, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe2e3f4"
+        },
+        {
+          "step": 144,
+          "byte": 129,
+          "state": "MP(ffe2e2f4, r=9, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe2e2f4"
+        },
+        {
+          "step": 145,
+          "byte": 196,
+          "state": "MP(ffe2e2f3, r=12, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe2e2f3"
+        },
+        {
+          "step": 146,
+          "byte": 58,
+          "state": "MP(ffe1e2f3, r=2, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe1e2f3"
+        },
+        {
+          "step": 147,
+          "byte": 240,
+          "state": "MP(ffe1e2f2, r=12, c=0.000, h=RIGHT)",
+          "curvature": 0,
+          "locus": "0xffe1e2f2"
+        },
+        {
+          "step": 148,
+          "byte": 199,
+          "state": "MP(ffe1e2f3, r=15, c=0.000, h=LEFT)",
+          "curvature": 0,
+          "locus": "0xffe1e2f3"
+        },
+        {
+          "step": 149,
+          "byte": 118,
+          "state": "MP(ffe0e2f3, r=6, c=0.300, h=RIGHT)",
+          "curvature": 19661,
+          "locus": "0xffe0e2f3"
+        },
+        {
+          "step": 150,
+          "byte": 220,
+          "state": "MP(ffe0e2f2, r=12, c=0.210, h=LEFT)",
+          "curvature": 13762,
+          "locus": "0xffe0e2f2"
+        }
+      ],
+      "final_state": "MP(ffe0e2f2, r=12, c=0.210, h=LEFT)",
+      "final_curvature": 13762,
+      "final_locus": "0xffe0e2f2"
+    }
+  ],
+  "topology": {
+    "trajectory_length": 150,
+    "betti_0": 1,
+    "betti_1": 2,
+    "euler_characteristic": 0,
+    "persistent_features": 2,
+    "avg_curvature": 0.00339996337890625,
+    "curvature_variance": 0.0008824286051094532
+  },
+  "tsm_final_state": "MP(ffe0e2f2, r=12, c=0.210, h=LEFT)",
+  "cache_stats": {
+    "bank_path": "/home/allaun/Documents/Research Stack/3-Mathematical-Models/hutter_eigenvector/tsm_cache/famm_bank.bin",
+    "bank_size_mb": 0.25,
+    "cells_used": 300,
+    "bank_capacity": 65536,
+    "utilization": "0.46%"
+  }
+}

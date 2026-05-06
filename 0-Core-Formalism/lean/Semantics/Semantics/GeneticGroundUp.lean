@@ -25,7 +25,7 @@ import Semantics.QFactor
 
 namespace Semantics.GeneticGroundUp
 
-open Q16_16
+open Semantics.Q16_16 Q16_16
 
 -- Use Q16_16 from Semantics.FixedPoint instead of custom definition
 
@@ -335,8 +335,15 @@ def targetFoldTimeForResidues (n : Nat) : Q16_16 :=
   ofFloat ((n / 200).toFloat * 10.0)
 
 /-- Theorem: Target fold time is non-negative for any protein size. -/
-axiom targetFoldTimeNonneg (n : Nat) :
-    targetFoldTimeForResidues n ≥ Q16_16.zero
+theorem targetFoldTimeNonneg (n : Nat) :
+    targetFoldTimeForResidues n ≥ Q16_16.zero := by
+  unfold targetFoldTimeForResidues Q16_16.zero
+  have h : ((n / 200).toFloat * (10 : Float)) ≥ (0 : Float) := by
+    have hn : ((n / 200 : Nat) : Float) ≥ (0 : Float) := Nat.cast_nonneg _
+    have h10 : (10 : Float) ≥ 0 := by norm_num
+    nlinarith
+  simp [Q16_16.ofFloat, h]
+  split <;> simp
 
 /-- Distributed genome can tolerate redundancy-1 node failures. -/
 theorem genomeFaultTolerance (dg : DistributedGenome) :

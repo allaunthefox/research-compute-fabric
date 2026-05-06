@@ -1,0 +1,10 @@
+{
+  "total_files": 10459,
+  "verified": 10459,
+  "verification_failed": 0,
+  "errors": 0,
+  "elapsed_time": 81.76291942596436,
+  "files_per_second": 127.91862219976792,
+  "gpu_available": true,
+  "architecture": "GPU workhorse + FPGA verifier"
+}

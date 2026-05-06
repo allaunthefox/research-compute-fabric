@@ -16,7 +16,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.SocialVision
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Biological Motion Detection -/
 

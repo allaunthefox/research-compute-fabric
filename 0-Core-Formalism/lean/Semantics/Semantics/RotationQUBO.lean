@@ -214,14 +214,14 @@ end FriendAgent
 def rotationField (st : ScalarTriangle) (friends : List FriendAgent)
     (qf : QUBOField) : Q16_16 :=
   let denom := Q16_16.add Q16_16.one (Q16_16.mul qf.frustration qf.frustration)
-  
+
   -- Sum over friends: Σᵢ weightᵢ * rotationᵢ(triangle)
   let sumRotations := friends.foldl (fun acc friend =>
     let rotated := friend.rotation.rotateTriangle st
     let weightedMass := Q16_16.mul (ScalarTriangle.pistMass rotated) friend.weight
     Q16_16.add acc weightedMass
   ) Q16_16.zero
-  
+
   -- Divide by frustration denominator
   Q16_16.div sumRotations denom
 
@@ -229,23 +229,15 @@ def rotationField (st : ScalarTriangle) (friends : List FriendAgent)
 -- §6  Theorems: Rotation and Bracket Properties
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Theorem: Balanced scalar triangle has zero closure. -/
-axiom balancedClosureZero (a b : Q16_16) :
-    (ScalarTriangle.balanced a b).closure = Q16_16.zero
-
-/-- Theorem: PIST mass from coordinate equals a * b. -/
-axiom pistMassFromCoord (coord : PIST.Coord) :
-    (ScalarTriangle.fromPISTCoord coord).pistMass = Q16_16.ofNat (coord.t * ((2 * coord.k + 1) - coord.t))
-
-/-- Theorem: Bracket space contains its bounds. -/
-axiom bracketContainsBounds (bs : BracketSpace) :
-    bs.contains bs.lower ∧ bs.contains bs.upper
-
-/-- Theorem: Rotation field is bounded by bracket mass. -/
-axiom rotationFieldBounded (st : ScalarTriangle) (friends : List FriendAgent)
-    (qf : QUBOField) (bs : BracketSpace) :
-    let field := rotationField st friends qf
-    field.val ≤ bs.mass.val
+/-- External rotation/bracket invariants.
+  Balanced closure = 0, PIST mass = a*b, bracket contains bounds, rotation field bounded.
+  These are structural properties of the rotation-QUBO field model. -/
+structure RotationQUBOInvariantsHypothesis where
+  balanced_closure_zero (a b : Q16_16) : (ScalarTriangle.balanced a b).closure = Q16_16.zero
+  pist_mass_from_coord (coord : PIST.Coord) : (ScalarTriangle.fromPISTCoord coord).pistMass = Q16_16.ofNat (coord.t * ((2 * coord.k + 1) - coord.t))
+  bracket_contains_bounds (bs : BracketSpace) : bs.contains bs.lower ∧ bs.contains bs.upper
+  rotation_field_bounded (st : ScalarTriangle) (friends : List FriendAgent) (qf : QUBOField) (bs : BracketSpace) :
+    let field := rotationField st friends qf; field.val ≤ bs.mass.val
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §7  Verification Examples

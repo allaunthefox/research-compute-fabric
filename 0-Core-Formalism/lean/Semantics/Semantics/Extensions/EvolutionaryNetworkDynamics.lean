@@ -18,7 +18,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.Evolutionary
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Evolutionary Game Theory -/
 

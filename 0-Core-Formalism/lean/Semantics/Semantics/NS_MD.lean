@@ -4,8 +4,8 @@ Authors: Research Stack Team
 
 NS_MD.lean — Nibble-Switched Manifold Delta Semantics
 
-This module formalizes the NS-MΔ encoding mechanism. It defines the structure 
-of a nibble-switched update and proves that the manifold state can be 
+This module formalizes the NS-MΔ encoding mechanism. It defines the structure
+of a nibble-switched update and proves that the manifold state can be
 deterministically reconstructed from a baseline and a sequence of deltas.
 -/
 
@@ -85,7 +85,7 @@ structure GCCLByteRepresentative where
 /-- Deterministic Fixed-Point Orthogonality Verification.
     Checks if vectors q_i, q_j are orthogonal within Q16.16 ε-tolerance. -/
 def is_epsilon_orthogonal (_qi _qj : List Int) (_epsilon : Int) : Prop :=
-  -- dot(qi, qj) - delta_ij <= epsilon
+  -- TODO(lean-port): define dot product and orthogonality check (WIP-2026-05-05)
   sorry
 
 /-- Goxel: Bounded scalar sub-manifold / geometric-volume element. -/
@@ -114,9 +114,9 @@ structure GoxelAdmission where
 
 /-- The Admission Gate: Admit(G_t) = 1 ⟺ ρ_G ≤ ε_G ∧ ρ_Π ≤ ε_Π ∧ KOT_t ≤ B_t ∧ A_t = valid -/
 def admit (g : GoxelAdmission) (epsilon_g epsilon_pi budget : Nat) : Prop :=
-  g.residual_g ≤ epsilon_g ∧ 
-  g.residual_pi ≤ epsilon_pi ∧ 
-  g.kot_cost ≤ budget ∧ 
+  g.residual_g ≤ epsilon_g ∧
+  g.residual_pi ≤ epsilon_pi ∧
+  g.kot_cost ≤ budget ∧
   g.audit_bundle == "valid"
 
 /-- O-AMMR Node Validity Predicate (Goxel-Aware). -/
@@ -139,18 +139,25 @@ def project (_rep : GCCLByteRepresentative) (m : Mountain) : Prop :=
 /-- THEOREM: Multi-Projected Validation (Hardened & Goxel-Aware).
     A representative is valid if and only if all mountains satisfy their native law. -/
 def is_multi_verified (rep : GCCLByteRepresentative) (o_node : O_AMMR_Node) (eg epi b : Nat) : Prop :=
-  project rep Mountain.NUVMAP ∧ 
-  project rep Mountain.AVMR ∧ 
+  project rep Mountain.NUVMAP ∧
+  project rep Mountain.AVMR ∧
   O_AMMR_valid o_node eg epi b
 
 /-- THEOREM: Nibble Mapping Integrity.
     Verifies that the 4-bit nibble correctly encodes both control state and domain. -/
-def get_control_state (n : Fin 16) : Fin 4 := ⟨n.val / 4, by sorry⟩
-def get_domain_selector (n : Fin 16) : Fin 4 := ⟨n.val % 4, by sorry⟩
+def get_control_state (n : Fin 16) : Fin 4 :=
+  ⟨n.val / 4, by
+    have h := n.isLt
+    omega⟩
+
+def get_domain_selector (n : Fin 16) : Fin 4 :=
+  ⟨n.val % 4, by
+    have h := n.isLt
+    omega⟩
 
 /-- Decoder: ByteArray → List NibbleSwitch -/
 def decode_rep (_ : GCCLByteRepresentative) : List NibbleSwitch :=
-  -- This would be the implementation of the NS-MΔ byte-stream decoder
+  -- TODO(lean-port): NS-MΔ byte-stream decoder implementation (WIP-2026-05-05)
   sorry
 
 /-- Replay a representative onto a baseline. -/

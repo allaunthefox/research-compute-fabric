@@ -67,7 +67,7 @@ structure LatentMetric where
   distance : Q16_16
   positivity : distance ≥ Q16_16.zero
   symmetry : distance = (LatentMetric.swap vector1 vector2).distance
-  triangle_inequality : ∀ v3, distance ≤ 
+  triangle_inequality : ∀ v3, distance ≤
     (LatentMetric vector1 v3).distance + (LatentMetric v3 vector2).distance
 
 /-- Riemannian Manifold structure on LLM latent space -/
@@ -81,7 +81,7 @@ structure LatentManifold where
 structure SemanticField where
   manifold : LatentManifold
   field : manifold.points → SemanticCategory
-  continuity : ∀ (p q : manifold.points), 
+  continuity : ∀ (p q : manifold.points),
     (manifold.metric p q).distance < Q16_16.ofNat 100 → field p = field q
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -104,7 +104,7 @@ structure DecimationOperator where
   topologicalPreservation : Bool
 
 /-- Apply decimation: coarse-grain by removing irrelevant DOFs -/
-def applyDecimation 
+def applyDecimation
     (vector : LatentVector)
     (collectiveVars : List CollectiveVariable) : DecimationOperator :=
   let preserved := collectiveVars.filter (fun cv => cv.importance > Q16_16.ofNat 50)
@@ -151,11 +151,11 @@ structure RGFlowEquation where
   flow : SemanticField
 
 /-- Compute beta function from mutual information (Minimal Mutual Information Principle) -/
-def computeBetaFunction 
+def computeBetaFunction
     (coupling : Q16_16)
     (scale : RGScale)
     (mutualInformation : Q16_16) : BetaFunction :=
-  let derivative := if mutualInformation < Q16_16.ofNat 10 
+  let derivative := if mutualInformation < Q16_16.ofNat 10
                    then Q16_16.zero  -- No flow if MI minimized
                    else Q16_16.one * (mutualInformation / Q16_16.ofNat 100)
   {
@@ -165,7 +165,7 @@ def computeBetaFunction
   }
 
 /-- Apply RG flow: evolve metric according to beta function -/
-def applyRGFlow 
+def applyRGFlow
     (metric : SemanticField)
     (scale : RGScale) : RGFlowEquation :=
   let beta := computeBetaFunction Q16_16.one scale Q16_16.ofNat 50
@@ -191,18 +191,15 @@ structure SemanticFixedPoint where
   basinGeometry : Q16_16  -- Geometry of attractor basin
 
 /-- Law (Fixed Point): For a given Semantic Category, there exists a Fixed Point G* where β(G) = 0 -/
-axiom fixedPointTheorem
-    (category : SemanticCategory)
-    (metric : SemanticField) :
+structure FixedPointExistenceHypothesis where
+  ex (category : SemanticCategory) (metric : SemanticField) :
     ∃ (fixedPoint : SemanticFixedPoint),
       fixedPoint.category = category ∧
       fixedPoint.betaZero.derivative = Q16_16.zero
 
 /-- Law (Convergence to Fixed Point): RG flow converges to semantic attractor -/
-axiom convergenceToFixedPoint
-    (initialMetric : SemanticField)
-    (category : SemanticCategory)
-    (n : Nat) :
+structure ConvergenceToFixedPointHypothesis where
+  ex (initialMetric : SemanticField) (category : SemanticCategory) (n : Nat) :
     ∃ (fixedPoint : SemanticFixedPoint),
       ∀ (i : Nat), i ≥ n →
       (applyRGFlow initialMetric {value := Q16_16.ofNat i, direction := RGDirection.coarse}).beta.derivative →
@@ -216,7 +213,7 @@ structure BasinGeometry where
   dimension : ℕ
 
 /-- Compute basin geometry for semantic attractor -/
-def computeBasinGeometry 
+def computeBasinGeometry
     (fixedPoint : SemanticFixedPoint) : BasinGeometry :=
   {
     radius := Q16_16.ofNat 100,
@@ -245,7 +242,7 @@ structure AttractorDescent where
   converged : Bool
 
 /-- Perform attractor descent: evolve metric toward semantic attractor -/
-def performAttractorDescent 
+def performAttractorDescent
     (initialMetric : SemanticField)
     (_category : SemanticCategory)
     (maxSteps : ℕ) : AttractorDescent :=
@@ -273,7 +270,7 @@ structure SemanticSheafRGIntegration where
   mutualInformationMinimized : Bool
 
 /-- Verify consistency between semantic RG flow and sheaf-persistent RG hybrid -/
-def verifySemanticSheafConsistency 
+def verifySemanticSheafConsistency
     (semanticFlow : RGFlowEquation)
     (sheafRG : SheafPersistentRGHybrid) : Bool :=
   -- Verify that semantic RG flow preserves sheaf consistency
@@ -283,31 +280,22 @@ def verifySemanticSheafConsistency
 -- §7  Theorems
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Law: Decimation preserves topological invariants -/
-axiom decimationPreservesTopologicalInvariants
-    (decimation : DecimationOperator)
-    (h : decimation.topologicalPreservation = true) :
-    ∀ (invariant : decimation.preservedInvariants),
-      invariant.snd = invariant.snd
-
-/-- Law: Minimal mutual information implies beta function = 0 -/
-axiom minimalMIImpliesBetaZero
+/-- Minimal mutual information implies beta = 0 (provable from computeBetaFunction). -/
+theorem minimalMIImpliesBetaZero
     (mutualInformation : Q16_16)
     (h : mutualInformation < Q16_16.ofNat 10) :
-    (computeBetaFunction Q16_16.one (RGScale.mk Q16_16.one RGDirection.coarse) mutualInformation).derivative = Q16_16.zero
+    (computeBetaFunction Q16_16.one (RGScale.mk Q16_16.one RGDirection.coarse) mutualInformation).derivative = Q16_16.zero := by
+  unfold computeBetaFunction
+  simp [h]
 
-/-- Law: Semantic attractor is stable under perturbations -/
-axiom attractorStability
-    (fixedPoint : SemanticFixedPoint)
-    (perturbation : Q16_16)
-    (h : perturbation < fixedPoint.stability) :
-    ∀ (scale : RGScale),
-      (applyRGFlow fixedPoint.metric scale).beta.derivative = Q16_16.zero
-
-/-- Law: Basin geometry determines convergence rate -/
-axiom basinGeometryConvergence
-    (basin : AttractorBasin)
-    (h : basin.basinGeometry.curvature > Q16_16.zero) :
+/-- RG Flow external invariants: decimation, attractor stability, basin geometry.
+  These are external properties of the semantic RG flow. -/
+structure RGFExternalInvariantsHypothesis where
+  decimation_preserves (decimation : DecimationOperator) (h : decimation.topologicalPreservation = true) :
+    ∀ (invariant : decimation.preservedInvariants), invariant.snd = invariant.snd
+  attractor_stable (fixedPoint : SemanticFixedPoint) (perturbation : Q16_16) (h : perturbation < fixedPoint.stability) :
+    ∀ (scale : RGScale), (applyRGFlow fixedPoint.metric scale).beta.derivative = Q16_16.zero
+  basin_geometry_convergence (basin : AttractorBasin) (h : basin.basinGeometry.curvature > Q16_16.zero) :
     basin.convergenceRate = Q16_16.one / basin.basinGeometry.curvature
 
 -- ═══════════════════════════════════════════════════════════════════════════

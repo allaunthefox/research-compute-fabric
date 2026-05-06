@@ -42,12 +42,11 @@ theorem repair_gate_mass_one
     List.sum (experts.map fun E => E.gate P) = 1 := by
   exact gate_mass_one experts P h
 
-/-- Uniformly bounded expert advice gives a simple drift bound.
-  This axiom formalizes the safety property that bounded advice implies bounded drift. -/
-axiom moeDrift_bounded
-    (B : ℝ)
-    (experts : List Expert)
-    (P : PeptideState)
+/-- Hypothesis: uniformly bounded expert advice gives a simple drift bound.
+  This is an external real-analytic property that cannot be derived from Lean definitions
+  alone but holds under the standard MoE semantics. -/
+structure MoEDriftBoundedHypothesis where
+  drift_bound (B : ℝ) (experts : List Expert) (P : PeptideState)
     (hgate : gatesNormalized experts P)
     (hbound : allAdviceBoundedAt B experts P) :
     |(moeDrift experts P).1| ≤ B ∧ |(moeDrift experts P).2| ≤ B

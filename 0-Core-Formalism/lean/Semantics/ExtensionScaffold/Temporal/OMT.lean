@@ -6,6 +6,11 @@
   Theorems without omitted proofs are fully verified.
 -/
 
+/-
+  OMT uses an abstract ordered domain R. These are genuinely external parameters
+  since the paper does not define a concrete model (ℝ, Q16_16, etc.).
+-/
+-- TODO(lean-port): external ordered domain — replace with concrete ℝ or Q16_16
 axiom R : Type
 axiom R_le : R → R → Prop
 axiom R_lt : R → R → Prop
@@ -208,15 +213,22 @@ theorem horizons_coincide {Xi Xj Ci Cj : Type}
 -- §5  SHANNON-LANDAUER BOUNDS
 -- ════════════════════════════════════════════════════════════════
 
-axiom shannonCap {Xi Xj Ci Cj : Type}
-    {Si : DynSystem Xi Ci} {Sj : DynSystem Xj Cj}
+-- ════════════════════════════════════════════════════════════
+-- §5  SHANNON-LANDAUER BOUNDS
+-- ════════════════════════════════════════════════════════════
+
+/-- Shannon-Landauer information-theoretic parameters.
+  Shannon capacity, source entropy, reconstruction error, kBTln2.
+  These are external information-theoretic quantities requiring a full
+  information theory background not present in this file. -/
+structure ShannonLandauerParams where
+  shannonCap {Xi Xj Ci Cj : Type} {Si : DynSystem Xi Ci} {Sj : DynSystem Xj Cj}
     (A : Adapter Xi Xj Ci Cj Si Sj) : R
-axiom sourceH {X C : Type} (S : DynSystem X C) : R
-axiom reconErr {Xi Xj Ci Cj : Type}
-    {Si : DynSystem Xi Ci} {Sj : DynSystem Xj Cj}
+  sourceH {X C : Type} (S : DynSystem X C) : R
+  reconErr {Xi Xj Ci Cj : Type} {Si : DynSystem Xi Ci} {Sj : DynSystem Xj Cj}
     (A : Adapter Xi Xj Ci Cj Si Sj) : R
-axiom kBTln2 : R
-axiom kBTln2_pos : R_lt R_zero kBTln2  -- SORRY 4: T>0 not derived
+  kBTln2 : R
+  kBTln2_pos : R_lt R_zero kBTln2
 
 -- Explicit bridge: the paper asserts the Shannon floor but does not derive
 -- it from information-theoretic axioms. We make the bridge explicit.

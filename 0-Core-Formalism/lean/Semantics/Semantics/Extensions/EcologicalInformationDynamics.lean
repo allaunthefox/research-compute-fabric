@@ -18,7 +18,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.EcoInfo
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Diversity and Richness (Margalef) -/
 

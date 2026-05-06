@@ -249,14 +249,10 @@ theorem gate_mass_one
 /-
   Intended invariant:
   Any candidate returned by `bestCandidate?` should be admissible.
-  This is left as a stated axiom here so the file stays lightweight and usable
-  while the selection function remains fold-based.
+  This is an external correctness property of the fold-based selection.
 -/
-axiom bestCandidate_is_admissible
-    (tp : ThermoParams)
-    (ap : AdmissibilityParams)
-    (cands : List Candidate)
-    (c : Candidate) :
+structure BestCandidateAdmissibleHypothesis where
+  property (tp : ThermoParams) (ap : AdmissibilityParams) (cands : List Candidate) (c : Candidate) :
     bestCandidate? tp ap cands = some c → admissible ap c.state
 
 /-
@@ -286,34 +282,29 @@ theorem filteredScore_eq_phiPeptide_of_admissible
   · simp
   · contradiction
 
-/-- Axiom: filtered score is bounded when structural coherence is bounded -/
-axiom filteredScore_bounded
-    (tp : ThermoParams) (ap : AdmissibilityParams) (P : PeptideState)
+/-- Hypothesis: filtered score is bounded when structural coherence is bounded -/
+structure FilteredScoreBoundedHypothesis where
+  property (tp : ThermoParams) (ap : AdmissibilityParams) (P : PeptideState)
     (h : 0 ≤ P.structuralCoherence) (hdenom : 0 < freeEnergy tp P + ap.c0) :
     0 ≤ filteredScore tp ap P ∧ filteredScore tp ap P ≤ P.structuralCoherence
 
-/-- Axiom: φ_peptide is positive when denominator is safe and structural coherence is positive -/
-axiom phiPeptide_pos_of_denominatorSafe
-    (tp : ThermoParams) (ap : AdmissibilityParams) (P : PeptideState)
+/-- Hypothesis: φ_peptide is positive when denominator is safe and structural coherence is positive -/
+structure PhiPeptidePosHypothesis where
+  property (tp : ThermoParams) (ap : AdmissibilityParams) (P : PeptideState)
     (h : 0 < P.structuralCoherence) (hdenom : 0 < freeEnergy tp P + ap.c0) :
     0 < phiPeptide tp ap P
 
-/-- Theorem: MoE drift is bounded when expert advice is bounded -/
-axiom moeDrift_bounded
-    (B : ℝ)
-    (experts : List Expert)
-    (P : PeptideState)
+/-- Hypothesis: MoE drift is bounded when expert advice is bounded -/
+structure MoEDriftBoundedHypothesis where
+  property (B : ℝ) (experts : List Expert) (P : PeptideState)
     (hgate : gatesNormalized experts P)
     (hbound : ∀ E ∈ experts, |E.advicePhi P| ≤ B ∧ |E.advicePsi P| ≤ B) :
     |(moeDrift experts P).1| ≤ B ∧ |(moeDrift experts P).2| ≤ B
 
-/-- Theorem: MoE drift preserves angle bounds when gates are normalized -/
-axiom moeDrift_preserves_bounds
-    (experts : List Expert)
-    (ap : AdmissibilityParams)
-    (P : PeptideState)
-    (hgate : gatesNormalized experts P)
-    (h : admissible ap P)
+/-- Hypothesis: MoE drift preserves angle bounds when gates are normalized -/
+structure MoEDriftPreservesBoundsHypothesis where
+  property (experts : List Expert) (ap : AdmissibilityParams) (P : PeptideState)
+    (hgate : gatesNormalized experts P) (h : admissible ap P)
     (hbound : ∀ E ∈ experts, |E.advicePhi P| ≤ 1 ∧ |E.advicePsi P| ≤ 1) :
     ap.phiMin ≤ P.phi + (moeDrift experts P).1 ∧
     P.phi + (moeDrift experts P).1 ≤ ap.phiMax ∧

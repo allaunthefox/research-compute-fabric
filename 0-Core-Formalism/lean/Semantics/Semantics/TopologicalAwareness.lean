@@ -686,58 +686,41 @@ def computeEulerCharacteristic (primitive : GeometricPrimitive) : Q16_16 :=
   | some χ => χ
   | none => zero
 
-/-- Theorem: Euler characteristic of sphere S² is 2 -/
-axiom sphereEulerCharacteristic
-    (primitive : GeometricPrimitive)
-    (h_sphere : primitive.id = "G-SPHERE")
-    : computeEulerCharacteristic primitive = ofNat 2
-
-/-- Theorem: Euler characteristic of torus T² is 0 -/
-axiom torusEulerCharacteristic
-    (primitive : GeometricPrimitive)
-    (h_torus : primitive.id = "G-TORUS")
-    : computeEulerCharacteristic primitive = ofNat 0
-
-/-- Theorem: Euler characteristic of real projective plane RP² is 1 -/
-axiom projectivePlaneEulerCharacteristic
-    (primitive : GeometricPrimitive)
-    (h_projective : primitive.id = "G-PROJECTIVE")
-    : computeEulerCharacteristic primitive = ofNat 1
-
-/-- Theorem: Fractal dimension of Menger sponge is ~2.7268 -/
-axiom mengerFractalDimension
-    (primitive : GeometricPrimitive)
-    (h_menger : primitive.id = "G-MENGER")
-    : primitive.fractalDimension = some (Q16_16.ofFloat 2.7268)
-
-/-- Theorem: Poincaré conjecture - every simply connected closed 3-manifold is homeomorphic to S³ -/
-axiom poincareConjecture
-    (primitive : GeometricPrimitive)
-    (h_sphere3 : primitive.id = "G-SPHERE3")
+/-
+  The following well-known topological invariants are packaged as an external
+  hypothesis structure. Proving them inside Lean would require a full algebraic
+  topology library; they are stated here as assumptions that external topology
+  tools (or future Mathlib developments) can supply.
+-/
+structure TopologicalInvariantsHypothesis where
+  /-- Euler characteristic of sphere S² is 2 -/
+  sphereEulerChar (primitive : GeometricPrimitive) (h_sphere : primitive.id = "G-SPHERE") :
+    computeEulerCharacteristic primitive = ofNat 2
+  /-- Euler characteristic of torus T² is 0 -/
+  torusEulerChar (primitive : GeometricPrimitive) (h_torus : primitive.id = "G-TORUS") :
+    computeEulerCharacteristic primitive = ofNat 0
+  /-- Euler characteristic of real projective plane RP² is 1 -/
+  projectivePlaneEulerChar (primitive : GeometricPrimitive) (h_projective : primitive.id = "G-PROJECTIVE") :
+    computeEulerCharacteristic primitive = ofNat 1
+  /-- Fractal dimension of Menger sponge is ~2.7268 -/
+  mengerFractalDim (primitive : GeometricPrimitive) (h_menger : primitive.id = "G-MENGER") :
+    primitive.fractalDimension = some (Q16_16.ofFloat 2.7268)
+  /-- Poincaré conjecture: every simply connected closed 3-manifold is homeomorphic to S³ -/
+  poincare (primitive : GeometricPrimitive) (h_sphere3 : primitive.id = "G-SPHERE3")
     (h_connected : primitive.properties.connected = true)
-    (h_compact : primitive.properties.compact = true)
-    (h_simplyConnected : true)  -- Placeholder for simply connected condition
-    : primitive.manifoldType = .spherical
-
-/-- Theorem: Gauss-Bonnet theorem for surfaces -/
-axiom gaussBonnetTheorem
-    (primitive : GeometricPrimitive)
-    (h_closed : primitive.properties.boundary = false)
-    (h_euler : primitive.eulerCharacteristic = some χ)
-    : χ = ofNat 2 ∨ χ = ofNat 0 ∨ χ = ofNat 1
-
-/-- Theorem: Euler characteristic of K3 surface is 24 -/
-axiom k3SurfaceEulerCharacteristic
-    (primitive : GeometricPrimitive)
-    (h_k3 : primitive.id = "G-K3-SURFACE")
-    : computeEulerCharacteristic primitive = ofNat 24
-
-/-- Theorem: Orientable manifolds have trivial first Stiefel-Whitney class -/
-axiom orientableImpliesTrivialStiefelWhitney
-    (primitive : GeometricPrimitive)
-    (h_orientable : primitive.properties.orientable = true)
-    : primitive.manifoldType ≠ .klein ∧ primitive.manifoldType ≠ .mobius ∧
-      primitive.manifoldType ≠ .projective
+    (h_compact : primitive.properties.compact = true) (_h_simplyConnected : true) :
+    primitive.manifoldType = .spherical
+  /-- Gauss-Bonnet theorem for surfaces -/
+  gaussBonnet (primitive : GeometricPrimitive) (h_closed : primitive.properties.boundary = false)
+    (h_euler : primitive.eulerCharacteristic = some χ) :
+    χ = ofNat 2 ∨ χ = ofNat 0 ∨ χ = ofNat 1
+  /-- Euler characteristic of K3 surface is 24 -/
+  k3SurfaceEulerChar (primitive : GeometricPrimitive) (h_k3 : primitive.id = "G-K3-SURFACE") :
+    computeEulerCharacteristic primitive = ofNat 24
+  /-- Orientable manifolds have trivial first Stiefel-Whitney class -/
+  orientableStiefelWhitney (primitive : GeometricPrimitive) (h_orientable : primitive.properties.orientable = true) :
+    primitive.manifoldType ≠ .klein ∧ primitive.manifoldType ≠ .mobius ∧
+    primitive.manifoldType ≠ .projective
 
 /-! §6 Evaluation Examples
 -/

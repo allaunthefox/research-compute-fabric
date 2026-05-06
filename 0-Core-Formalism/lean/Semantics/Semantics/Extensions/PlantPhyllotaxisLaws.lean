@@ -17,7 +17,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.Phyllotaxis
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Vogel's Model (Spiral Geometry) -/
 

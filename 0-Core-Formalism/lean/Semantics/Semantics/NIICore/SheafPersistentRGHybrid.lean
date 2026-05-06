@@ -51,7 +51,7 @@ structure Presheaf where
 structure Sheaf where
   presheaf : Presheaf
   gluing : ∀ {U : presheaf.opens} {cover : Finset (presheaf.opens)},
-    (∀ (i : cover), presheaf.assignments i) → 
+    (∀ (i : cover), presheaf.assignments i) →
     (∀ (i j : cover), presheaf.restriction _ _ (by simp) (cover i) = cover j) →
     presheaf.assignments U
 
@@ -59,7 +59,7 @@ structure Sheaf where
 structure GlobalSection where
   sheaf : Sheaf
   section : sheaf.presheaf.assignments ⊤
-  consistency : ∀ (U : sheaf.presheaf.opens), 
+  consistency : ∀ (U : sheaf.presheaf.opens),
     sheaf.presheaf.restriction ⊤ U (by simp) section = section
 
 /-- Simplicial Complex: basic structure for persistent homology -/
@@ -103,7 +103,7 @@ structure RGFlow where
   metric : Type  -- Riemannian metric
   ricci_tensor : metric → metric
   flow : metric → RGParameter → metric
-  monotonicity : ∀ (g : metric) (p : RGParameter), 
+  monotonicity : ∀ (g : metric) (p : RGParameter),
     flow g p ≤ g  -- scalar curvature monotonicity
 
 /-- Fixed Point Attractor: topological invariant under RG flow -/
@@ -120,21 +120,21 @@ structure SheafPersistentRGHybrid where
   persistent_homology : PersistentHomology
   rg_flow : RGFlow
   fixed_point : FixedPointAttractor
-  
+
   -- Consistency condition: sheaf global section preserved under RG flow
   sheaf_consistency : ∀ (g : rg_flow.metric) (p : RGParameter),
     GlobalSection.sheaf sheaf.presheaf.assignments ⊤ =
     GlobalSection.sheaf sheaf.presheaf.assignments (rg_flow.flow g p)
-  
+
   -- Topological invariance: persistent homology preserved under RG flow
   topological_invariance : ∀ (g : rg_flow.metric) (p : RGParameter),
-    persistent_homology.homology 0 = 
+    persistent_homology.homology 0 =
     fixed_point.topological_invariant.homology 0
-  
+
   -- Scale-invariance: homology preserved across RG scales
   scale_invariance : ∀ (p₁ p₂ : RGParameter),
     p₁.scale = p₂.scale →
-    persistent_homology.homology 0 = 
+    persistent_homology.homology 0 =
     persistent_homology.homology 0
 
 /-- Morphic State with Hybrid Consistency -/
@@ -155,32 +155,14 @@ structure MorphicTransitionHybrid where
   scale_invariance : Bool
   valid : Bool := sheaf_consistency ∧ topological_preservation ∧ scale_invariance
 
-/-- Law: Sheaf global sections are preserved under RG flow -/
-axiom sheaf_preservation_under_rg_flow
-    (hybrid : SheafPersistentRGHybrid)
-    (g : hybrid.rg_flow.metric)
-    (p : RGParameter) :
-    hybrid.sheaf_consistency g p
-
-/-- Law: Persistent homology is preserved under RG flow -/
-axiom homology_preservation_under_rg_flow
-    (hybrid : SheafPersistentRGHybrid)
-    (g : hybrid.rg_flow.metric)
-    (p : RGParameter) :
-    hybrid.topological_invariance g p
-
-/-- Law: Scale-invariance of homology under RG flow -/
-axiom scale_invariance_of_homology
-    (hybrid : SheafPersistentRGHybrid)
-    (p₁ p₂ : RGParameter)
-    (h : p₁.scale = p₂.scale) :
-    hybrid.scale_invariance p₁ p₂ h
-
-/-- Law: Morphic transitions preserve hybrid consistency -/
-axiom morphic_transition_preserves_consistency
-    (transition : MorphicTransitionHybrid) :
-    transition.valid →
-    transition.from_state.hybrid = transition.to_state.hybrid
+/-- External sheaf-persistent-RG consistency invariants.
+  Sheaf sections, persistent homology, scale invariance, and morphic transitions
+  are preserved under RG flow. These are structural consistency laws. -/
+structure SheafPersistentRGInvariantsHypothesis where
+  sheaf_preservation (hybrid : SheafPersistentRGHybrid) (g : hybrid.rg_flow.metric) (p : RGParameter) : hybrid.sheaf_consistency g p
+  homology_preservation (hybrid : SheafPersistentRGHybrid) (g : hybrid.rg_flow.metric) (p : RGParameter) : hybrid.topological_invariance g p
+  scale_invariance (hybrid : SheafPersistentRGHybrid) (p₁ p₂ : RGParameter) (h : p₁.scale = p₂.scale) : hybrid.scale_invariance p₁ p₂ h
+  morphic_transition_preserves (transition : MorphicTransitionHybrid) : transition.valid → transition.from_state.hybrid = transition.to_state.hybrid
 
 /-- IO: Create default SheafPersistentRGHybrid -/
 def defaultSheafPersistentRGHybrid : IO SheafPersistentRGHybrid := do

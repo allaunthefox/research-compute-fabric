@@ -42,7 +42,7 @@ def lcgNext (seed : Nat) : (Nat × Q16_16) :=
   let signed := if next >= 2147483648 then Int.ofNat next - 4294967296 else Int.ofNat next
   let scaled := (signed * 65536) / 32768
   let rawScaled := if scaled > 2147483647 then 2147483647 else if scaled < -2147483648 then -2147483648 else scaled
-  let qval := Q16_16.ofRaw rawScaled
+  let qval := Q16_16.ofInt rawScaled
   (next, qval)
 
 /-- Recursive helper: accumulate N noise samples -/

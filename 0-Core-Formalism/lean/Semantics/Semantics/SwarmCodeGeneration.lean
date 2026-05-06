@@ -199,7 +199,7 @@ def advancePipeline (state : PipelineState) : PipelineState :=
 /-- Execute pipeline stage -/
 def executePipelineStage (state : PipelineState) : PipelineState :=
   match state.stage with
-  | .analysis => 
+  | .analysis =>
       let analysisResult := s!"Analyzed specification: {state.request.specification}"
       { state with intermediateResults := analysisResult :: state.intermediateResults }
   | .synthesis =>
@@ -304,7 +304,7 @@ def processMessages (state : SwarmCoordinationState) : SwarmCoordinationState :=
   | [] => state
   | msg :: rest =>
     match msg.messageType with
-    | "request" => 
+    | "request" =>
       -- Forward to appropriate agent
       let updatedAgents := state.agents.map (fun agent =>
         if agent.agentId = msg.receiverId then
@@ -314,11 +314,12 @@ def processMessages (state : SwarmCoordinationState) : SwarmCoordinationState :=
       { state with agents := updatedAgents, messageQueue := rest.reverse }
     | _ => { state with messageQueue := rest.reverse }
 
-/-- Theorem: Swarm coordination terminates -/
-axiom swarmCoordinationTerminates
-    (state : SwarmCoordinationState)
-    (h_bounded : state.messageQueue.length < 1000)
-    : ∃ n, (processMessages^[n] state).completed = true
+/-- Invariant: Swarm coordination terminates on bounded queues.
+  Termination follows from monotonically decreasing queue length; a full
+  termination proof would require a measure function on the state. -/
+structure SwarmCoordinationTerminationHypothesis where
+  terminates (state : SwarmCoordinationState) (h_bounded : state.messageQueue.length < 1000) :
+    ∃ n, (processMessages^[n] state).completed = true
 
 /-! §6 Evaluation Examples
 -/

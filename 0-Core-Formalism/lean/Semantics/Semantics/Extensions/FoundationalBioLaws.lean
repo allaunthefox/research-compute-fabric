@@ -17,7 +17,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.Foundations
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Classical Genetics -/
 
@@ -44,7 +44,7 @@ def recombinationFrequency (recombinants total : Nat) : Q16_16 :=
     Growth is limited by the scarcest resource, not total availability. -/
 def liebigGrowthRate (resource_contributions : List Q16_16) : Q16_16 :=
   -- Returns the minimum contribution from the list
-  resource_contributions.foldl (fun acc r => 
+  resource_contributions.foldl (fun acc r =>
     if r.val.toNat < acc.val.toNat then r else acc
   ) (Q16_16.mk 0xFFFFFFFF) -- Initialize with max bits
 

@@ -1,7 +1,7 @@
 import Semantics.FixedPoint
 
 open Semantics.Q16_16
-open Semantics.Q0_16
+open Semantics.Q16_16
 
 namespace Semantics.CellSnowballConstraint
 

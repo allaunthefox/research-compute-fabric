@@ -15,7 +15,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.ThermoTopology
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Non-Equilibrium Thermodynamics -/
 
@@ -42,7 +42,7 @@ def jarzynskiFreeEnergy (average_work_exp : Q16_16) : Q16_16 :=
     Where S is the stoichiometric matrix and v is the flux vector. -/
 def fbaSteadyState (stoichiometry : List (List Int)) (fluxes : List Q16_16) : Bool :=
   -- Checks if Σ S_ij * v_j = 0 for all metabolites i
-  let rows := stoichiometry.map (fun row => 
+  let rows := stoichiometry.map (fun row =>
     List.zipWith (fun s v => Q16_16.mul (Q16_16.ofInt (Int.ofNat s.toNat)) v) row fluxes
     |>.foldl Q16_16.add Q16_16.zero
   )

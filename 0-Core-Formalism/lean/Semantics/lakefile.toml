@@ -11,7 +11,7 @@ rev = "252341078dba3c2612719746e6a459dada2248ea"
 [[require]]
 name = "mathlib"
 git = "https://github.com/leanprover-community/mathlib4"
-rev = "v4.29.1"
+rev = "v4.30.0-rc2"
 
 [[lean_lib]]
 name = "Semantics"

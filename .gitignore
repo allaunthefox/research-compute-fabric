@@ -66,6 +66,8 @@ data/*.iso
 **/hardware/sparkle/tangnano9k/*.pnr.json
 **/hardware/sparkle/tangnano9k/*.history
 **/hardware/sparkle/tangnano9k/sparkle_tangnano9k.json
+*_tb.v
+*_test_vectors.json
 
 # Large data and archives (Offloaded to Gdrive via rclone)
 shared-data/
@@ -81,3 +83,15 @@ shared-data/
 # Rust build artifacts
 **/target/
 tools/servo-fetch/
+
+# Kernel module build artifacts
+*.ko
+*.mod
+*.mod.c
+*.order
+*.symvers
+Module.symvers
+
+# Symlinks for local dev convenience
+5-Applications/scripts/config/
+data

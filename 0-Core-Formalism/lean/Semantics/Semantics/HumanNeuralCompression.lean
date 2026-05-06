@@ -34,7 +34,7 @@ import Semantics.ElectronOrbitalConstraint
 namespace Semantics.HumanNeuralCompression
 
 open Semantics.Q16_16
-open Semantics.Q0_16
+open Semantics.Q16_16
 open Semantics.StreamCompression
 open Semantics.TopologicalPersistence
 open Semantics.GlymphaticPumpConstraint
@@ -192,7 +192,7 @@ def wireThroughputAdvantage (fastTier slowTier : PrecisionTier) : Nat :=
 
 /-- Total compression ratio: multiplicative across all 4 layers. -/
 def totalCompressionRatio : Q16_16 :=
-  layer1DeltaExtraction.compressionRatio * 
+  layer1DeltaExtraction.compressionRatio *
   layer2GeneticCodon.compressionRatio *
   layer3DeltaGcl.compressionRatio *
   layer4SwarmComposition.compressionRatio

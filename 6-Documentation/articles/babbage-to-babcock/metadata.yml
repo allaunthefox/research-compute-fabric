@@ -1,0 +1,31 @@
+title: From Babbage to Babcock
+subtitle: "Or: I like pipes. And cooling. And oh no."
+slug: babbage-to-babcock
+status: published
+publication: Frog in (n) Ponds
+canonical_url: https://froginnponds.substack.com/p/from-babbage-to-babcock
+published_at: 2026-05-05T22:53:21Z
+updated_at: 2026-05-06T00:06:41Z
+primary_category: computational-infrastructure
+subcategories:
+  - thermodynamic-witness
+  - babcock-matrix
+  - reservoir-substrates
+  - privacy-preserving-infrastructure
+topics:
+  - Babbage
+  - Babcock
+  - Babcock Matrix
+  - coolant loops
+  - hospital steam
+  - hydraulic analog computing
+  - reservoir computing
+  - SCADA
+  - screaming infrastructure
+  - thermodynamic witness
+artifacts:
+  source: article.md
+  citation: CITATION.cff
+  substack_markdown: substack_bundle/post.md
+  substack_html_preview: substack_bundle/post.html
+  bundle_manifest: substack_bundle/manifest.json

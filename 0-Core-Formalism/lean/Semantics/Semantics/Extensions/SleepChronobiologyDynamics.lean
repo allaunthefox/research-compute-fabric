@@ -17,7 +17,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.Chronobiology
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Two-Process Model (Borbély) -/
 

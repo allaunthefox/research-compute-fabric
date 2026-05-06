@@ -1,0 +1,1189 @@
+{
+  "metadata": {
+    "equations_count": 1388,
+    "eigenvalues": [
+      0.9687499999999981,
+      0.9696969696969681,
+      0.9705882352941179,
+      0.9920634920634951,
+      0.998463901689711
+    ],
+    "cluster_names": [
+      "Electromagnetism & Circuits",
+      "Condensed Matter & Superconductivity",
+      "Quantum Mechanics & Particle Physics",
+      "Materials Science & Engineering",
+      "Cognitive & Semantic Systems"
+    ]
+  },
+  "flow_log": [
+    {
+      "cluster": 1,
+      "name": "Electromagnetism & Circuits",
+      "eigenvalue": 0.9687499999999981,
+      "equation_count": 72,
+      "trajectory": [
+        {
+          "step": 1,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000001, r=4, c=0.300, h=RIGHT)",
+          "curvature": 19661,
+          "locus": "0x1"
+        },
+        {
+          "step": 2,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000002, r=4, c=0.510, h=LEFT)",
+          "curvature": 33423,
+          "locus": "0x2"
+        },
+        {
+          "step": 3,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000003, r=4, c=0.657, h=RIGHT)",
+          "curvature": 43056,
+          "locus": "0x3"
+        },
+        {
+          "step": 4,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000004, r=4, c=0.760, h=LEFT)",
+          "curvature": 49800,
+          "locus": "0x4"
+        },
+        {
+          "step": 5,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000005, r=4, c=0.832, h=RIGHT)",
+          "curvature": 54520,
+          "locus": "0x5"
+        },
+        {
+          "step": 6,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000006, r=4, c=0.882, h=LEFT)",
+          "curvature": 57824,
+          "locus": "0x6"
+        },
+        {
+          "step": 7,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000007, r=4, c=0.918, h=RIGHT)",
+          "curvature": 60137,
+          "locus": "0x7"
+        },
+        {
+          "step": 8,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000008, r=4, c=0.942, h=LEFT)",
+          "curvature": 61756,
+          "locus": "0x8"
+        },
+        {
+          "step": 9,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000009, r=4, c=0.960, h=RIGHT)",
+          "curvature": 62890,
+          "locus": "0x9"
+        },
+        {
+          "step": 10,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(0000000a, r=4, c=0.972, h=LEFT)",
+          "curvature": 63683,
+          "locus": "0xa"
+        },
+        {
+          "step": 11,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(0000000b, r=4, c=0.980, h=RIGHT)",
+          "curvature": 64238,
+          "locus": "0xb"
+        },
+        {
+          "step": 12,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(0000000c, r=4, c=0.986, h=LEFT)",
+          "curvature": 64627,
+          "locus": "0xc"
+        },
+        {
+          "step": 13,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(0000000d, r=4, c=0.990, h=RIGHT)",
+          "curvature": 64899,
+          "locus": "0xd"
+        },
+        {
+          "step": 14,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(0000000e, r=4, c=0.993, h=LEFT)",
+          "curvature": 65090,
+          "locus": "0xe"
+        },
+        {
+          "step": 15,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(0000000f, r=4, c=0.995, h=RIGHT)",
+          "curvature": 65223,
+          "locus": "0xf"
+        },
+        {
+          "step": 16,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000010, r=4, c=0.997, h=LEFT)",
+          "curvature": 65316,
+          "locus": "0x10"
+        },
+        {
+          "step": 17,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000011, r=4, c=0.998, h=RIGHT)",
+          "curvature": 65382,
+          "locus": "0x11"
+        },
+        {
+          "step": 18,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000012, r=4, c=0.998, h=LEFT)",
+          "curvature": 65428,
+          "locus": "0x12"
+        },
+        {
+          "step": 19,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000013, r=4, c=0.999, h=RIGHT)",
+          "curvature": 65460,
+          "locus": "0x13"
+        },
+        {
+          "step": 20,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000014, r=4, c=0.999, h=LEFT)",
+          "curvature": 65482,
+          "locus": "0x14"
+        },
+        {
+          "step": 21,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000015, r=4, c=0.999, h=RIGHT)",
+          "curvature": 65498,
+          "locus": "0x15"
+        },
+        {
+          "step": 22,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000016, r=4, c=1.000, h=LEFT)",
+          "curvature": 65509,
+          "locus": "0x16"
+        },
+        {
+          "step": 23,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000017, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65517,
+          "locus": "0x17"
+        },
+        {
+          "step": 24,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000018, r=4, c=1.000, h=LEFT)",
+          "curvature": 65522,
+          "locus": "0x18"
+        },
+        {
+          "step": 25,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(00000019, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65526,
+          "locus": "0x19"
+        },
+        {
+          "step": 26,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(0000001a, r=4, c=1.000, h=LEFT)",
+          "curvature": 65529,
+          "locus": "0x1a"
+        },
+        {
+          "step": 27,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(0000001b, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65531,
+          "locus": "0x1b"
+        },
+        {
+          "step": 28,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(0000001c, r=4, c=1.000, h=LEFT)",
+          "curvature": 65532,
+          "locus": "0x1c"
+        },
+        {
+          "step": 29,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(0000001d, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1d"
+        },
+        {
+          "step": 30,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(0000001e, r=4, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e"
+        }
+      ],
+      "final_state": "MP(0000001e, r=4, c=1.000, h=LEFT)",
+      "final_curvature": 65533,
+      "final_locus": "0x1e"
+    },
+    {
+      "cluster": 2,
+      "name": "Condensed Matter & Superconductivity",
+      "eigenvalue": 0.9696969696969681,
+      "equation_count": 268,
+      "trajectory": [
+        {
+          "step": 31,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000011e, r=5, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x11e"
+        },
+        {
+          "step": 32,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000021e, r=5, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x21e"
+        },
+        {
+          "step": 33,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000031e, r=5, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x31e"
+        },
+        {
+          "step": 34,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000041e, r=5, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x41e"
+        },
+        {
+          "step": 35,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000051e, r=5, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x51e"
+        },
+        {
+          "step": 36,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000061e, r=5, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x61e"
+        },
+        {
+          "step": 37,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000071e, r=5, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x71e"
+        },
+        {
+          "step": 38,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000081e, r=5, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x81e"
+        },
+        {
+          "step": 39,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000091e, r=5, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x91e"
+        },
+        {
+          "step": 40,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(00000a1e, r=5, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0xa1e"
+        },
+        {
+          "step": 41,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(00000b1e, r=5, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0xb1e"
+        },
+        {
+          "step": 42,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(00000c1e, r=5, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0xc1e"
+        },
+        {
+          "step": 43,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(00000d1e, r=5, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0xd1e"
+        },
+        {
+          "step": 44,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(00000e1e, r=5, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0xe1e"
+        },
+        {
+          "step": 45,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(00000f1e, r=5, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0xf1e"
+        },
+        {
+          "step": 46,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000101e, r=5, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x101e"
+        },
+        {
+          "step": 47,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000111e, r=5, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x111e"
+        },
+        {
+          "step": 48,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000121e, r=5, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x121e"
+        },
+        {
+          "step": 49,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000131e, r=5, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x131e"
+        },
+        {
+          "step": 50,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000141e, r=5, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x141e"
+        },
+        {
+          "step": 51,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000151e, r=5, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x151e"
+        },
+        {
+          "step": 52,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000161e, r=5, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x161e"
+        },
+        {
+          "step": 53,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000171e, r=5, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x171e"
+        },
+        {
+          "step": 54,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000181e, r=5, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x181e"
+        },
+        {
+          "step": 55,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(0000191e, r=5, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x191e"
+        },
+        {
+          "step": 56,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(00001a1e, r=5, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1a1e"
+        },
+        {
+          "step": 57,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(00001b1e, r=5, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1b1e"
+        },
+        {
+          "step": 58,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(00001c1e, r=5, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1c1e"
+        },
+        {
+          "step": 59,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(00001d1e, r=5, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1d1e"
+        },
+        {
+          "step": 60,
+          "nibble": "[LEFT:ACCEPT|C_WINDING]",
+          "state": "MP(00001e1e, r=5, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e"
+        }
+      ],
+      "final_state": "MP(00001e1e, r=5, c=1.000, h=LEFT)",
+      "final_curvature": 65533,
+      "final_locus": "0x1e1e"
+    },
+    {
+      "cluster": 3,
+      "name": "Quantum Mechanics & Particle Physics",
+      "eigenvalue": 0.9705882352941179,
+      "equation_count": 187,
+      "trajectory": [
+        {
+          "step": 61,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00011e1e, r=6, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x11e1e"
+        },
+        {
+          "step": 62,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00021e1e, r=6, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x21e1e"
+        },
+        {
+          "step": 63,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00031e1e, r=6, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x31e1e"
+        },
+        {
+          "step": 64,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00041e1e, r=6, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x41e1e"
+        },
+        {
+          "step": 65,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00051e1e, r=6, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x51e1e"
+        },
+        {
+          "step": 66,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00061e1e, r=6, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x61e1e"
+        },
+        {
+          "step": 67,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00071e1e, r=6, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x71e1e"
+        },
+        {
+          "step": 68,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00081e1e, r=6, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x81e1e"
+        },
+        {
+          "step": 69,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00091e1e, r=6, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x91e1e"
+        },
+        {
+          "step": 70,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(000a1e1e, r=6, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0xa1e1e"
+        },
+        {
+          "step": 71,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(000b1e1e, r=6, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0xb1e1e"
+        },
+        {
+          "step": 72,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(000c1e1e, r=6, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0xc1e1e"
+        },
+        {
+          "step": 73,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(000d1e1e, r=6, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0xd1e1e"
+        },
+        {
+          "step": 74,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(000e1e1e, r=6, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0xe1e1e"
+        },
+        {
+          "step": 75,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(000f1e1e, r=6, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0xf1e1e"
+        },
+        {
+          "step": 76,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00101e1e, r=6, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x101e1e"
+        },
+        {
+          "step": 77,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00111e1e, r=6, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x111e1e"
+        },
+        {
+          "step": 78,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00121e1e, r=6, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x121e1e"
+        },
+        {
+          "step": 79,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00131e1e, r=6, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x131e1e"
+        },
+        {
+          "step": 80,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00141e1e, r=6, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x141e1e"
+        },
+        {
+          "step": 81,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00151e1e, r=6, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x151e1e"
+        },
+        {
+          "step": 82,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00161e1e, r=6, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x161e1e"
+        },
+        {
+          "step": 83,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00171e1e, r=6, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x171e1e"
+        },
+        {
+          "step": 84,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00181e1e, r=6, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x181e1e"
+        },
+        {
+          "step": 85,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(00191e1e, r=6, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x191e1e"
+        },
+        {
+          "step": 86,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(001a1e1e, r=6, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1a1e1e"
+        },
+        {
+          "step": 87,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(001b1e1e, r=6, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1b1e1e"
+        },
+        {
+          "step": 88,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(001c1e1e, r=6, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1c1e1e"
+        },
+        {
+          "step": 89,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(001d1e1e, r=6, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1d1e1e"
+        },
+        {
+          "step": 90,
+          "nibble": "[LEFT:ACCEPT|M_TENSION]",
+          "state": "MP(001e1e1e, r=6, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e1e"
+        }
+      ],
+      "final_state": "MP(001e1e1e, r=6, c=1.000, h=LEFT)",
+      "final_curvature": 65533,
+      "final_locus": "0x1e1e1e"
+    },
+    {
+      "cluster": 4,
+      "name": "Materials Science & Engineering",
+      "eigenvalue": 0.9920634920634951,
+      "equation_count": 165,
+      "trajectory": [
+        {
+          "step": 91,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e1f, r=7, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e1f"
+        },
+        {
+          "step": 92,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e20, r=7, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e20"
+        },
+        {
+          "step": 93,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e21, r=7, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e21"
+        },
+        {
+          "step": 94,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e22, r=7, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e22"
+        },
+        {
+          "step": 95,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e23, r=7, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e23"
+        },
+        {
+          "step": 96,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e24, r=7, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e24"
+        },
+        {
+          "step": 97,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e25, r=7, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e25"
+        },
+        {
+          "step": 98,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e26, r=7, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e26"
+        },
+        {
+          "step": 99,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e27, r=7, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e27"
+        },
+        {
+          "step": 100,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e28, r=7, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e28"
+        },
+        {
+          "step": 101,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e29, r=7, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e29"
+        },
+        {
+          "step": 102,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e2a, r=7, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e2a"
+        },
+        {
+          "step": 103,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e2b, r=7, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e2b"
+        },
+        {
+          "step": 104,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e2c, r=7, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e2c"
+        },
+        {
+          "step": 105,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e2d, r=7, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e2d"
+        },
+        {
+          "step": 106,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e2e, r=7, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e2e"
+        },
+        {
+          "step": 107,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e2f, r=7, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e2f"
+        },
+        {
+          "step": 108,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e30, r=7, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e30"
+        },
+        {
+          "step": 109,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e31, r=7, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e31"
+        },
+        {
+          "step": 110,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e32, r=7, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e32"
+        },
+        {
+          "step": 111,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e33, r=7, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e33"
+        },
+        {
+          "step": 112,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e34, r=7, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e34"
+        },
+        {
+          "step": 113,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e35, r=7, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e35"
+        },
+        {
+          "step": 114,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e36, r=7, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e36"
+        },
+        {
+          "step": 115,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e37, r=7, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e37"
+        },
+        {
+          "step": 116,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e38, r=7, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e38"
+        },
+        {
+          "step": 117,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e39, r=7, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e39"
+        },
+        {
+          "step": 118,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e3a, r=7, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e3a"
+        },
+        {
+          "step": 119,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e3b, r=7, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e3b"
+        },
+        {
+          "step": 120,
+          "nibble": "[LEFT:ACCEPT|Y_BREAK]",
+          "state": "MP(001e1e3c, r=7, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e3c"
+        }
+      ],
+      "final_state": "MP(001e1e3c, r=7, c=1.000, h=LEFT)",
+      "final_curvature": 65533,
+      "final_locus": "0x1e1e3c"
+    },
+    {
+      "cluster": 5,
+      "name": "Cognitive & Semantic Systems",
+      "eigenvalue": 0.998463901689711,
+      "equation_count": 696,
+      "trajectory": [
+        {
+          "step": 121,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e3b, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e3b"
+        },
+        {
+          "step": 122,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e3a, r=4, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e3a"
+        },
+        {
+          "step": 123,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e39, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e39"
+        },
+        {
+          "step": 124,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e38, r=4, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e38"
+        },
+        {
+          "step": 125,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e37, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e37"
+        },
+        {
+          "step": 126,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e36, r=4, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e36"
+        },
+        {
+          "step": 127,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e35, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e35"
+        },
+        {
+          "step": 128,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e34, r=4, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e34"
+        },
+        {
+          "step": 129,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e33, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e33"
+        },
+        {
+          "step": 130,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e32, r=4, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e32"
+        },
+        {
+          "step": 131,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e31, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e31"
+        },
+        {
+          "step": 132,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e30, r=4, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e30"
+        },
+        {
+          "step": 133,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e2f, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e2f"
+        },
+        {
+          "step": 134,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e2e, r=4, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e2e"
+        },
+        {
+          "step": 135,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e2d, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e2d"
+        },
+        {
+          "step": 136,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e2c, r=4, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e2c"
+        },
+        {
+          "step": 137,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e2b, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e2b"
+        },
+        {
+          "step": 138,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e2a, r=4, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e2a"
+        },
+        {
+          "step": 139,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e29, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e29"
+        },
+        {
+          "step": 140,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e28, r=4, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e28"
+        },
+        {
+          "step": 141,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e27, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e27"
+        },
+        {
+          "step": 142,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e26, r=4, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e26"
+        },
+        {
+          "step": 143,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e25, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e25"
+        },
+        {
+          "step": 144,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e24, r=4, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e24"
+        },
+        {
+          "step": 145,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e23, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e23"
+        },
+        {
+          "step": 146,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e22, r=4, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e22"
+        },
+        {
+          "step": 147,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e21, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e21"
+        },
+        {
+          "step": 148,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e20, r=4, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e20"
+        },
+        {
+          "step": 149,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e1f, r=4, c=1.000, h=RIGHT)",
+          "curvature": 65533,
+          "locus": "0x1e1e1f"
+        },
+        {
+          "step": 150,
+          "nibble": "[LEFT:ACCEPT|K_AXIS]",
+          "state": "MP(001e1e1e, r=4, c=1.000, h=LEFT)",
+          "curvature": 65533,
+          "locus": "0x1e1e1e"
+        }
+      ],
+      "final_state": "MP(001e1e1e, r=4, c=1.000, h=LEFT)",
+      "final_curvature": 65533,
+      "final_locus": "0x1e1e1e"
+    }
+  ],
+  "topology_analysis": {
+    "topology": {
+      "trajectory_length": 150,
+      "betti_0": 1,
+      "betti_1": 71,
+      "euler_characteristic": 72,
+      "persistent_features": 71,
+      "avg_curvature": 0.9844039916992188,
+      "curvature_variance": 0.006162311881780624
+    },
+    "cluster_transitions": {
+      "1\u21922": 1,
+      "2\u21923": 1,
+      "3\u21924": 1,
+      "4\u21925": 1
+    },
+    "total_fluid_steps": 150,
+    "final_tsm_state": "MP(001e1e1e, r=4, c=1.000, h=LEFT)"
+  },
+  "tsm_final_state": {
+    "step": 150,
+    "current_state": {
+      "locus": "0x1e1e1e",
+      "register": 4,
+      "curvature": 65533,
+      "history_hash": "2824058fb9c52a6b"
+    },
+    "source_code": {
+      "source_hash": "2d6d210daec6459a",
+      "function_count": 1,
+      "functions": [
+        "main"
+      ],
+      "invariant_distribution": {
+        "ASSIGN": 156,
+        "IMPORT": 9,
+        "CLASS_DEF": 7,
+        "FUNC_DEF": 45,
+        "COND": 20,
+        "RETURN": 31,
+        "LOOP": 8
+      },
+      "line_count": 672
+    },
+    "topology": {
+      "trajectory_length": 150,
+      "betti_0": 1,
+      "betti_1": 71,
+      "euler_characteristic": 72,
+      "persistent_features": 71,
+      "avg_curvature": 0.9844039916992188,
+      "curvature_variance": 0.006162311881780624
+    },
+    "cache_stats": {
+      "bank_path": "/home/allaun/Documents/Research Stack/3-Mathematical-Models/eigenvector_tsm/tsm_cache/famm_bank.bin",
+      "bank_size_mb": 0.25,
+      "cells_used": 300,
+      "bank_capacity": 65536,
+      "utilization": "0.46%"
+    },
+    "transition_count": 150,
+    "restorability": "1:1 \u2014 every transition is logged and reversible via hash chain"
+  }
+}

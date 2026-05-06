@@ -317,7 +317,7 @@ AVM converts math-capable languages (Lean, Julia, Haskell, Coq, Idris, etc.) dir
 **Implementation Location:**
 - AVM core: `avm_core.py` (universal adapter implementation)
 - ABI surface: `avm_abi.py` (stable interface for existing modules)
-- Architecture: `AVM_ARCHITECTURE.md` (universal adapter specification)
+- Architecture: `docs/specs/AVM_CANONICAL_SPEC.md` (universal adapter specification)
 
 **Integration Rule:**
 When implementing new math language integration:

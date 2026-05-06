@@ -11,153 +11,175 @@ source_audit: uploaded-codemap-2026-05-05
 
 # Genetics Information Substrate Boundary
 
+Status: FORMING — claim-state hygiene document
+Authority: audit receipt from `MATH_MODEL_MAP.tsv` + `0-Core-Formalism/lean/Semantics` tree
+Date: 2026-05-04
+
+---
+
 ## Purpose
 
-This boundary record separates genuinely plumbed genetics-information models from
-registry-only, ghost, aspirational, and misfiled entries.
+Classify every genetics-connected model in the Research Stack into one of four buckets so that:
+- no model is promoted on false pretenses
+- ghost entries are visible and demotable
+- misfiled artifacts are relocated
+- canonical plumb has a clear perimeter
 
-The immediate goal is claim-state hygiene:
+---
 
-```text
-Do not claim the genetics layer is fully implemented when only part of it has
-compiled Lean, running data code, or executable evidence receipts.
-```
+## The Four Buckets
 
-## Canonical boundary statement
-
-```text
-The Research Stack currently has a partial but real genetics-information
-substrate: compiled codon/peptide/compression formalizations, one real-data
-population-genetics script, and a larger registry of unplumbed or ghost model
-entries. Claims about genetics information capacity must cite the plumbed
-substrate or remain BEAUTIFUL_PROVISIONAL.
-```
-
-## Classification buckets
-
-| Bucket | Meaning | Promotion rule |
+| Bucket | Meaning | Promotion Rule |
 |---|---|---|
-| `CANONICAL_PLUMBED` | compiled Lean module or running real-data script | may support bounded claims |
-| `REGISTRY_ONLY` | equation/model exists in registry but has no executable path | may support roadmap claims only |
-| `GHOST_ENTRY` | marked complete/available but no corresponding implementation found | must be demoted or implemented |
-| `MISFILED` | present near genetics but not genetics-relevant | relocate or mark out-of-scope |
-| `ASPIRATIONAL_MIXTURE_PRIMITIVE` | taxonomy concept without proof/data path | BEAUTIFUL_PROVISIONAL only |
+| `CANONICAL_PLUMBED` | Compiled Lean or running real-data code exists and is reachable from `lake build` or a Python entry point | May be used as dependency, cited in proofs, or connected to production pipelines |
+| `REGISTRY_ONLY` | Equation and purpose statement exist in `MATH_MODEL_MAP.tsv`, but no executable path found | May be referenced in docs and roadmaps; must be flagged for implementation if promoted |
+| `GHOST_ENTRY` | Marked `✅` in registry but no Lean module, Python script, or data pipeline found after exhaustive search | Must be demoted to `⛔` or assigned an owner and deadline before any promotion |
+| `MISFILED` | Physically located near genetics but has no biological sequence or population-information connection | Must be relocated to correct domain directory |
+| `ASPIRATIONAL_MIXTURE_PRIMITIVE` | Taxonomy concept without proof/data path | BEAUTIFUL_PROVISIONAL only |
 
-## Plumbed genetics substrate
+---
 
-### Lean / formalized substrate
+## CANONICAL_PLUMBED
 
-The audit identifies the following as the strongest plumbed genetics-connected
-information models:
+### Lean Formalizations (compiled, in `lake build` tree)
 
-| Module | Information-holding mechanism | Genetics tie | Status |
+| Module | Path | Genetics Layer | Information-Holding Mechanism |
 |---|---|---|---|
-| `GeneticCode.lean` | NCBI Table 1 codon-to-amino-acid map; 64 codon states plus outputs | canonical translation and codon degeneracy | `CANONICAL_PLUMBED` |
-| `CodonOTOM.lean` | codon efficiency functional, mutation delta, selection condition | codon usage bias and mutation-selection balance | `CANONICAL_PLUMBED` |
-| `PeptideMoE.lean` | peptide state, Ramachandran coordinates, internal energy, entropy | conformational search as information geometry | `CANONICAL_PLUMBED` |
-| `GenomicCompression.lean` | compression windows, phiGenomic, Q16_16 arithmetic | formal sequence-compression substrate | `CANONICAL_PLUMBED` |
-| `SyntheticGeneticCoding.lean` | coding and biological parameter projections | normalized biological parameter projection | `CANONICAL_PLUMBED` |
-| `GeneticGroundUp.lean` | nucleotide-state encoding, expression probability, binding energy, fold angle | synthetic biology / nucleotide-state model | `CANONICAL_PLUMBED` |
-| `HachimojiPipeline.lean` | 8-symbol expanded genetic alphabet analog | expanded DNA/RNA coding regime | `CANONICAL_PLUMBED` |
+| **GeneticCode.lean** | `Semantics/GeneticCode.lean` | B — Codon/Translation | Full NCBI Table 1: 64 codon states → 20 amino acids + stop. Codon degeneracy analysis. Start/stop identification. |
+| **CodonOTOM.lean** | `Semantics/CodonOTOM.lean` | B — Codon/Translation | Codon efficiency functional `Φ_codon`, mutation `δΦ`, selection condition `beneficialMutation`. |
+| **PeptideMoE.lean** | `Semantics/PeptideMoE.lean` | C — Protein/Peptide | `PeptideState` with Ramachandran (φ,ψ), internal energy, conformational entropy. MoE expert gating. |
+| **GenomicCompression.lean** | `Semantics/GenomicCompression.lean` + submodules | L — Compression | `phiGenomic`, `compressWindow`, Q16_16 fixed-point. Theorems + `NonDriftProof`. |
+| **SyntheticGeneticCoding.lean** | `Semantics/SyntheticGeneticCoding.lean` | M — Synthetic Alphabets | Three-layer type system: `CodingQ` (Q0_64), `BioParamQ` (Q16_16), `BioCodingProjection`. |
+| **GeneticGroundUp.lean** | `Semantics/GeneticGroundUp.lean` | N — GCCL-Native / M | 6-state nucleotide (A/T/C/G/U/X) with exact `ofRatio`/`ofInt`/`neg` constants. No `ofFloat` — passes Lifeguard Rule 4. Quantum nucleotide encoding. |
+| **HachimojiPipeline.lean** | `Semantics/HachimojiPipeline.lean` | M — Synthetic Alphabets | 8-symbol DNA/RNA alphabet analog (hachimoji). |
+| **CodonPeptideConsistency.lean** | `Semantics/CodonPeptideConsistency.lean` | B→C bridge | Formal bridge between codon layer and peptide layer consistency. |
 
-### Running data substrate
+### Real-Data Scripts
 
-| File | Information-holding mechanism | Genetics tie | Status |
+| Script | Path | Genetics Layer | Information-Holding Mechanism |
 |---|---|---|---|
-| `Allelica.py` | Hardy-Weinberg genotype-frequency model over real gnomAD data | p² + 2pq + q² = 1 applied to real allele/genotype data | `CANONICAL_PLUMBED` |
+| **Allelica.py** | `3-Mathematical-Models/genetics/Allelica/Allelica.py` | G — Population / A | Hardy-Weinberg genotype frequencies on gnomAD real data. Allele frequency → genotype frequency distribution. |
+| **populations.csv** | `3-Mathematical-Models/genetics/Allelica/populations.csv` | G — Population | Real allele frequencies for 10 genes across 4 populations. |
 
-## Registry-only model surface
+---
 
-These models may be scientifically relevant but should not be promoted as
-implemented until a Lean module, Python script, test fixture, or receipt path
-exists.
+## REGISTRY_ONLY
 
-| Model family | Examples | Status |
+These exist in `MATH_MODEL_MAP.tsv` with equations and purpose statements but **no executable path** was found.
+
+| Model | Equation | Purpose | Missing Implementation |
+|---|---|---|---|
+| **Hardy-Weinberg** | `p² + 2pq + q² = 1` | Genetic state closure condition | Lean theorem exists in `Allelica.py` context but not as standalone formal module |
+| **Wright-Fisher Drift** | `Var(Δp) = p(1-p)/N` | Stochastic genetic sampling invariant | No Lean module; no simulation script |
+| **Fisher's Fundamental Theorem** | `dM/dt = Var_A(w)` | Population fitness increase identity | No implementation found |
+| **Price Equation** | `Δz̄ = cov(w,z)/w̄ + E[wΔz]/w̄` | General law of selection and transmission | No implementation found |
+| **Central Dogma ODE** | `ṁ = α_m - δ_m·m` | Cellular state production drift | No implementation found |
+| **RNA Folding ΔG** | `ΔG = Σ E_stack + E_loop` | Thermodynamic information topology | No implementation found |
+| **Waddington Potential** | `V(x) = x⁴/4 - bx²/2 - ax` | Epigenetic landscape bifurcation | No implementation found |
+| **Gierer-Meinhardt** | Activator-inhibitor PDEs | Morphogenetic pattern formation | No implementation found |
+| **Shannon Entropy (Genomic)** | `H(X) = -Σ p(x_i) log₂ p(x_i)` | Per-position sequence information | Referenced in `BioRxivFormalization.lean` but not as standalone genetics module |
+| **Per-Position Entropy** | `H(x) = -Σ P(c\|x) log₂ P(c\|x)` | Information at each locus | Referenced in `BioRxivFormalization.lean` |
+| **Jensen-Shannon Divergence** | `JSD(P\|Q) = ½ D_KL(P\|M) + ½ D_KL(Q\|M)` | Population/sequence differentiation | Referenced in `BioRxivFormalization.lean` |
+| **Jukes-Cantor Distance** | `d = -(3/4) ln(1 - 4p/3)` | Phylogenetic sequence divergence | Referenced in `BioRxivFormalization.lean` |
+| **ANI** | `ANI = (percent_identity × coverage)/100` | Genome similarity metric | Referenced in `BioRxivFormalization.lean` |
+| **AAI** | `AAI = average(sequence_identity)` | Protein similarity metric | Referenced in `BioRxivFormalization.lean` |
+| **Mutation Rate (μ)** | `μ = N_mutations / L_genome` | Normalized mutation count | No standalone module; only registry entry |
+| **Novel Mutation Count** | `N_novel = L_genome × (1 - ANI/100)` | Strain variant discovery | No standalone module |
+| **Gibbs Free Energy** | `ΔG = ΔH - TΔS` | Equilibrium state function | No standalone module |
+| **Fitness-Entropy Tradeoff** | `f = f_max - α·H` | Sequence evolvability constraint | No standalone module |
+
+---
+
+## GHOST_ENTRY
+
+Marked `✅` in `MATH_MODEL_MAP.tsv` but **no implementation found** after exhaustive search of:
+- `0-Core-Formalism/lean/Semantics/Semantics/` (417 .lean files)
+- `0-Core-Formalism/lean/Semantics/Core/` (4 .lean files)
+- `0-Core-Formalism/lean/Semantics/ExtensionScaffold/` (subdirs)
+- `3-Mathematical-Models/` tree
+- `2-Search-Space/` tree
+
+| Model | Registry Claim | Ghost Status |
 |---|---|---|
-| Population genetics registry | Wright-Fisher drift, Fisher fundamental theorem, Price equation | `REGISTRY_ONLY` |
-| Sequence information registry | Shannon entropy, per-position entropy, Jensen-Shannon divergence, Jukes-Cantor distance, ANI/AAI, mutation rate, novel mutation count | `REGISTRY_ONLY` unless connected to compiled module |
-| Thermodynamic/folding registry | RNA folding delta-G, Gibbs free energy, fitness-entropy tradeoff, Waddington potential | `REGISTRY_ONLY` |
-| Cellular/regulatory registry | Central Dogma ODE, Gierer-Meinhardt pattern formation | `REGISTRY_ONLY` |
+| **Quasispecies Equation** | `ẋ_i = (w_i q_i - w̄)x_i + Σ w_ij x_j` — molecular evolution error threshold | **GHOST** — no Lean, no Python, no spec beyond registry |
+| **Replicator Equation** | `ẋ_i = x_i(f_i - f̄)` — evolutionary game theory | **GHOST** — no implementation found |
+| **Neutral Theory (Kimura)** | `k = v` — genomic drift baseline | **GHOST** — no implementation found |
+| **Masked Language Modeling Loss** | `L = -Σ log P(x \| x̃)` — could apply to DNA sequences | **GHOST** — no genetics-specific implementation |
+| **pTM Template Modeling Score** | `TM-score` for protein structure | **GHOST** — only generic structural biology mention |
+| **Free Energy Principle** | `F = E_q[ln q - ln p]` — variational self-organization | **GHOST** — generic information theory, no genetics bridge |
+| **Tetz's Law** | `t_death ← q(t) ≥ q_max` — pangenome lifespan | **GHOST** — no implementation found |
 
-## Ghost entries requiring demotion or implementation
+**Action required:** Demote to `⛔` or assign owner + deadline.
 
-The audit reports these as present in the registry but not backed by a found Lean
-module, Python implementation, or data pipeline:
+---
 
-| Ghost entry | Why it matters | Recommended action |
-|---|---|---|
-| Quasispecies equation | mutation-selection balance, error threshold, viral evolution | implement Lean skeleton + simulator |
-| Replicator equation | evolutionary game dynamics | implement only if tied to population-genetics or ecology use case |
-| Neutral theory / Kimura | drift-mutation balance | implement after drift/selection metrics |
-| Masked language modeling loss for DNA | sequence-prediction information model | defer until corpus/data pipeline exists |
-| pTM / TM-score | structural biology information metric | defer until protein-structure pipeline exists |
+## MISFILED
 
-## Misfiled entry
+| Artifact | Current Location | Actual Domain | Why Misfiled |
+|---|---|---|---|
+| **parametric-learn** | `3-Mathematical-Models/genetics/parametric-learn/` | Geometry / Machine Learning | Three.js/TensorFlow.js parametric surface fitting demo. No biological sequence, no population data, no genetic information. Surfaces: Klein bottle, torus, Möbius strip, sphere, ripple. |
 
-| Entry | Reason | Action |
-|---|---|---|
-| `parametric-learn` | Three.js/TensorFlow.js parametric surface fitting demo; no biological sequence, population, or genetics-information role found | mark `MISFILED` or relocate outside genetics |
+**Action required:** Move to `3-Mathematical-Models/manifold_compression/` or `5-Applications/visualization/`.
 
-## Missing canonical gaps
+---
 
-| Missing area | Why it matters | Suggested implementation route |
-|---|---|---|
-| Selection detection | identifies signatures of selection in sequence/population data | implement Tajima's D and FST first |
-| Phylogenetic tree inference | reconstructs evolutionary history as tree-structured information | use Jukes-Cantor distance, then neighbor-joining |
-| Population structure | ancestry/latent-variable information | PCA/admixture after real genotype fixtures exist |
-| Epigenetic HMM / chromatin states | regulatory information layer | HMM implementation plus receipt schema |
-| Splicing / isoform quantification | transcript-level information | defer until RNA-seq or transcript fixtures exist |
-| Variant calling | raw read to variant state inference | hard; requires aligner/error model |
-| Comparative genomics | synteny/CNE/regulatory homology | hard; defer |
+## Coverage Map: GCCL Taxonomy vs. Reality
 
-## Mass Number interpretation for genetics
+The GCCL taxonomy (`GCCL_GENETIC_INFORMATION_MIXTURE_PRIMITIVES.md`) lists 14 primitive groups A–N.
 
-Genetics is a communication regime, not a human-language regime.
+| Group | Name | Coverage | Canonical Modules |
+|---|---|---|---|
+| A | Molecular Alphabets | **Strong** | `GeneticCode.lean`, `GeneticGroundUp.lean`, `SyntheticGeneticCoding.lean` |
+| B | Codon/Translation | **Strong** | `GeneticCode.lean`, `CodonOTOM.lean`, `CodonPeptideConsistency.lean` |
+| C | Protein/Peptide | **Strong** | `PeptideMoE.lean` |
+| D | Ambiguity/Degeneracy | **Weak** | Partial in `GeneticCode.lean` (IUPAC mentions) but no formal ambiguity algebra |
+| E | Sequence File/Quality | **None** | No FASTA/FASTQ/Phred parser |
+| F | Alignment/Assembly/Graph | **None** | No CIGAR, BWT, de Bruijn, or pangenome graph module |
+| G | Variant/Haplotype/Population | **Partial** | `Allelica.py` (Hardy-Weinberg only); no VCF, BCF, or GWAS model |
+| H | Annotation/Feature | **None** | No GFF/GTF/BED parser or gene model formalization |
+| I | Epigenetic/Regulatory | **None** | Explicit TODO in `GenomicCompression.lean`: "Extract formal lemmas from 2504.03733 epigenetic analysis" |
+| J | Structural/3D Genome | **None** | No TAD, Hi-C, or contact map module |
+| K | Expression/Multi-omics | **None** | No RNA-seq, ATAC-seq, ChIP-seq, or proteomics module |
+| L | Compression/Indexing | **Strong** | `GenomicCompression.lean` with Types, Components, Field, Theorems, `NonDriftProof` |
+| M | Synthetic/Expanded Alphabets | **Strong** | `SyntheticGeneticCoding.lean`, `HachimojiPipeline.lean`, `GeneticGroundUp.lean` |
+| N | GCCL-Native Model-Genome | **Strong** | `GeneBytecodeJIT.lean`, `GeneticGroundUp.lean` |
+
+**Summary:** 5 of 14 groups are strongly covered (A, B, C, L, M, N). 6 groups have zero formalization (E, F, H, I, J, K). 2 groups are partial (D, G).
+
+---
+
+## Promotion Gate
+
+Any genetics model may be promoted from `REGISTRY_ONLY` → `CANONICAL_PLUMBED` only if it passes:
 
 ```text
-DNA sequence
-  -> transcriptional decoder
-  -> RNA folding / splicing decoder
-  -> codon translation decoder
-  -> peptide folding decoder
-  -> cellular phenotype decoder
-  -> population-selection decoder
+MassNumber gate:
+  admissible_reduction = information_capacity_gain
+  residual_risk        = implementation_complexity + data_dependency + biological_equivalence_claim_risk
+  threshold            = 0.2 (generous for foundational models)
+  depth                ≤ 2 (no deep abstraction recursion)
+  boundCheck           = true (must declare data source and validation plan)
 ```
 
-Recommended Mass Number classes:
+Warden rule: If a model claims biological equivalence (e.g., "GCCL is DNA"), it must emit `UnderversePacket.biological_equivalence_without_receipt` and be blocked.
 
-```text
-MN-BIO-GEN   Genetic sequence mass
-MN-BIO-COD   Codon / translation mass
-MN-BIO-FOLD  Folding / conformation mass
-MN-BIO-POP   Population-genetic mass
-MN-BIO-REG   Regulatory / epigenetic mass
-MN-BIO-EVO   Evolutionary trajectory mass
-```
+---
 
-## Promotion policy
+## Next Actions
 
-A genetics model may be promoted beyond `BEAUTIFUL_PROVISIONAL` only when it has
-at least one of:
+1. **Relocate `parametric-learn`** from `genetics/` to correct domain.
+2. **Demote ghost entries** to `⛔` or assign owners.
+3. **Pick one REGISTRY_ONLY model to implement:**
+   - `Jukes-Cantor` + phylogenetic tree inference (medium complexity, clear mathematical path)
+   - `Wright-Fisher` drift simulation (low complexity, connects to existing `Allelica.py`)
+   - `RNA Folding ΔG` + ViennaRNA-style Nussinov (medium complexity, well-documented algorithms)
+4. **Fill the epigenetics gap** — start with the paper reference already in `GenomicCompression.lean` TODO: 2504.03733 (AI for Epigenetic Sequence Analysis → Methylation pattern compression).
 
-1. compiled Lean theorem or executable definition;
-2. running Python/Rust pipeline with test fixtures;
-3. real-data receipt with source provenance;
-4. adversarial or benchmark receipt;
-5. explicit connection to MassNumber admissibility or SemanticMass carrier scoring.
+---
 
-## Immediate promotion candidate
+## Audit Trail
 
-Implement selection metrics first:
-
-```text
-Tajima's D + FST
-```
-
-Rationale:
-
-- low implementation difficulty;
-- high genetics-information value;
-- direct path from allele/genotype state to population selection signal;
-- good MassNumber gate candidate for deciding whether selection evidence is
-  strong enough to promote a registry model.
+- Audit performed: 2026-05-04
+- Tools used: `rg` over 2633-row `MATH_MODEL_MAP.tsv`, `find` over Lean tree (440+ .lean files), manual inspection of `genetics/` directory
+- Auditor: Cascade (Research Stack pair programmer)
+- Receipt hash: genetics-audit-20260504-v1

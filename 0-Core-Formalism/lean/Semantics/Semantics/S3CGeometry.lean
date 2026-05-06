@@ -109,17 +109,17 @@ noncomputable def arithmeticDecomposition (n : Nat) : S3CExtendedState :=
 
 /-
 Verify the arithmetic decomposition property: n = k² + a
-This is a basic algebraic identity - marked as axiomatic for this helper module
 -/
-axiom decompositionProperty (n k a : Nat) (ha : a = n - k * k) :
-  n = k * k + a
+theorem decompositionProperty (n k a : Nat) (ha : a = n - k * k) :
+  n = k * k + a := by
+  omega
 
 /-
 Verify the complement property: (k+1)² = n + b
-This is a basic algebraic identity - marked as axiomatic for this helper module
 -/
-axiom complementProperty (n k b : Nat) (hb : b = (k + 1) * (k + 1) - n) :
-  (k + 1) * (k + 1) = n + b
+theorem complementProperty (n k b : Nat) (hb : b = (k + 1) * (k + 1) - n) :
+  (k + 1) * (k + 1) = n + b := by
+  omega
 
 /-
 Geometric mean theorem (Euclid's second theorem)
@@ -130,21 +130,19 @@ This is a classical result from Euclid's Elements, known as the
 second Euclidean theorem or "bouncing ball" theorem. It shows
 that the circle is the locus of precise square root dispositions,
 making it a "linear-to-radical" calculator.
-
-Reference: This construction was known to Euclid and is exactly the
-construction that shows straightedge-and-compass constructible numbers
-include those reachable with square root operations.
 -/
-axiom geometricMeanTheorem (construction : CircleConstruction) :
-  (chordHeight construction)^2 = construction.a_L * (construction.a_L + construction.a_R)
+structure GeometricMeanHypothesis where
+  theorem (construction : CircleConstruction) :
+    (chordHeight construction)^2 = construction.a_L * (construction.a_L + construction.a_R)
 
 /-
 Unit segment special case: with a_L = 1, c_L = √D
 This is the key property that makes the circle a "radical ruler"
 -/
-axiom unitSegmentSqrt (D : Nat) :
-  let construction := unitSegmentConstruction D
-  chordHeight construction = Real.sqrt (D : ℝ)
+structure UnitSegmentSqrtHypothesis where
+  property (D : Nat) :
+    let construction := unitSegmentConstruction D
+    chordHeight construction = Real.sqrt (D : ℝ)
 
 /-
 Parity consistency: geometric root position respects parity bifurcation
@@ -179,7 +177,8 @@ Geometric root position property: rootPosition = √n
 This follows from unitSegmentSqrt and shows that the geometric construction
 provides a Euclidean witness for √n
 -/
-axiom rootPositionProperty (n : Nat) (rootPos : ℝ) (hpos : rootPos = geometricSqrt n) :
-  rootPos = Real.sqrt (n : ℝ)
+structure RootPositionHypothesis where
+  property (n : Nat) (rootPos : ℝ) (hpos : rootPos = geometricSqrt n) :
+    rootPos = Real.sqrt (n : ℝ)
 
 end S3CGeometry

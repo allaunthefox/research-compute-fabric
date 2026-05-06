@@ -17,20 +17,24 @@ open PeptideMoE
   through a sequence-level aggregate score.
 -/
 
-/-- Abstract peptide alphabet label induced by amino acids. -/
-axiom aaToPeptideClass : AminoAcid → Nat
+/-- Abstract peptide alphabet label induced by amino acids.
+  TODO(lean-port): external biological mapping — replace with concrete genetic code table. -/
+opaque aaToPeptideClass : AminoAcid → Nat
 
 /-- A coding sequence is a list of codons. -/
 abbrev CDS := List Codon
 
-/-- Codon-dependent translation speed (strongest biological defensibility). -/
-axiom translationSpeed : Codon → ℝ
+/-- Codon-dependent translation speed (strongest biological defensibility).
+  TODO(lean-port): external simulator measurement — replace with empirical data. -/
+opaque translationSpeed : Codon → ℝ
 
-/-- Local folding delay (clearest simulator signal). -/
-axiom foldingDelay : Codon → ℝ
+/-- Local folding delay (clearest simulator signal).
+  TODO(lean-port): external simulator measurement — replace with empirical data. -/
+opaque foldingDelay : Codon → ℝ
 
-/-- Synonymous-codon-specific structural bias (most ambitious structural claim). -/
-axiom structuralBias : Codon → ℝ
+/-- Synonymous-codon-specific structural bias (most ambitious structural claim).
+  TODO(lean-port): external structural model — replace with empirical data. -/
+opaque structuralBias : Codon → ℝ
 
 /-- Expert bias for codon-specific structural effects. -/
 structure CodonBias where
@@ -49,12 +53,14 @@ noncomputable def phiCDSCodon
   | 0 => 0
   | n => (s.map (fun c => phiCodon w (fs c) c)).sum / n
 
-/-- Abstract peptide state induced by a translated coding sequence with codon dynamics. -/
-axiom buildPeptideStateWithDynamics :
+/-- Abstract peptide state induced by a translated coding sequence with codon dynamics.
+  TODO(lean-port): external biological model — replace with concrete folding simulator. -/
+opaque buildPeptideStateWithDynamics :
   List AminoAcid → (Codon → ℝ) → (Codon → ℝ) → (Codon → ℝ) → PeptideState
 
-/-- Abstract peptide state induced by a translated coding sequence (legacy, no dynamics). -/
-axiom buildPeptideState :
+/-- Abstract peptide state induced by a translated coding sequence (legacy, no dynamics).
+  TODO(lean-port): external biological model — replace with concrete folding simulator. -/
+opaque buildPeptideState :
   List AminoAcid → PeptideState
 
 /-- Peptide-level score induced by the translated coding sequence with dynamics. -/
@@ -171,28 +177,20 @@ def beneficialAtCDS
   0 < phiCDS tp ap w fs α β s' - phiCDS tp ap w fs α β s
 
 /-
-  Consistency axiom:
+  Consistency property:
   a synonymous mutation that improves local codon score and leaves the peptide
   builder invariant should improve the combined CDS score when α > 0 and β ≥ 0.
+  This is an external biological invariant that depends on the concrete
+  buildPeptideState implementation.
 -/
-axiom synonymous_codon_improves_cds
-    (tp : ThermoParams)
-    (ap : AdmissibilityParams)
-    (w : CodonWeights)
-    (fs : Codon → CodonFeatures)
-    (α β : ℝ)
-    (hα : 0 < α)
-    (hβ : 0 ≤ β)
-    (s : CDS)
-    (i : Nat)
-    (c₁ c₂ : Codon)
-    (hi : i < s.length)
-    (hget : s.get ⟨i, hi⟩ = c₁)
-    (hsyn : synonymous c₁ c₂)
+structure SynonymousCodonImprovesCDSHypothesis where
+  property (tp : ThermoParams) (ap : AdmissibilityParams) (w : CodonWeights)
+    (fs : Codon → CodonFeatures) (α β : ℝ) (hα : 0 < α) (hβ : 0 ≤ β)
+    (s : CDS) (i : Nat) (c₁ c₂ : Codon) (hi : i < s.length)
+    (hget : s.get ⟨i, hi⟩ = c₁) (hsyn : synonymous c₁ c₂)
     (hlocal : beneficialAtCodon w fs c₁ c₂)
-    (hpep :
-      buildPeptideState (translateCDS (pointMutate s i c₂)) =
-      buildPeptideState (translateCDS s)) :
+    (hpep : buildPeptideState (translateCDS (pointMutate s i c₂)) =
+            buildPeptideState (translateCDS s)) :
     beneficialAtCDS tp ap w fs α β s (pointMutate s i c₂)
 
 /-- A zero peptide weight reduces the CDS score to codon-average selection. -/
@@ -266,16 +264,25 @@ theorem cotranslationalWindow_full
   unfold cotranslationalWindow
   simp
 
-/-- Theorem: Φ_CDS is bounded when codon and peptide components bounded. -/
-axiom phiCDS_bounded
-    (tp : ThermoParams)
-    (ap : AdmissibilityParams)
-    (w : CodonWeights)
-    (fs : Codon → CodonFeatures)
-    (α β : ℝ)
+/-- Theorem: Φ_CDS is bounded when codon and peptide components bounded.
+  This follows from the triangle inequality; the proof is straightforward. -/
+theorem phiCDS_bounded
+    (tp : ThermoParams) (ap : AdmissibilityParams) (w : CodonWeights)
+    (fs : Codon → CodonFeatures) (α β : ℝ)
     (M_codon M_peptide : ℝ)
     (h_codon : ∀ s, |phiCDSCodon w fs s| ≤ M_codon)
     (h_peptide : ∀ s, |phiCDSPeptide tp ap s| ≤ M_peptide) :
-    ∃ M, ∀ s, |phiCDS tp ap w fs α β s| ≤ M
+    ∃ M, ∀ s, |phiCDS tp ap w fs α β s| ≤ M := by
+  refine ⟨|α| * M_codon + |β| * M_peptide, fun s => ?_⟩
+  unfold phiCDS
+  have h_c : |phiCDSCodon w fs s| ≤ M_codon := h_codon s
+  have h_p : |phiCDSPeptide tp ap s| ≤ M_peptide := h_peptide s
+  calc
+    |α * phiCDSCodon w fs s + β * phiCDSPeptide tp ap s|
+        ≤ |α * phiCDSCodon w fs s| + |β * phiCDSPeptide tp ap s| := abs_add _ _ _
+    _ = |α| * |phiCDSCodon w fs s| + |β| * |phiCDSPeptide tp ap s| := by
+      rw [abs_mul, abs_mul]
+    _ ≤ |α| * M_codon + |β| * M_peptide := by
+      nlinarith
 
 end CodonPeptideConsistency

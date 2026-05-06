@@ -1,92 +1,272 @@
-# GCCL-Rep: Representative Bytecode for Manifold Transitions
+# VLB Nibble-Delta Witness Substrate — Earthside Estimate
 
-## Overview
-**GCCL-Rep (GCCL Representative Bytecode)** is a byte-array transport encoding where each byte represents two counted, replayable GCCL transition atoms over a committed baseline manifold. 
+Status: HOLD / workbench projection
+Domain: ENE / GCCL / telemetry / compression / witness accounting
+Safety: benign software/data modeling only; not propulsion hardware
 
-Instead of transmitting full state, we transmit **representatives** of transition classes. It is not truth by itself; it is a compact representative of a transition class whose validity depends on replay, ΔGCCL lawfulness, KOT budget accounting, receipt verification, and AMMR commitment.
+## Purpose
 
-## The Core Transformation (Protocol Spine)
-The transport layer processes data through a multi-stage audit:
-1.  **ByteArray** — Raw transport representative.
-2.  **NibbleSwitch Stream** — Decoded 4-bit transition atoms.
-3.  **ManifoldDelta** — Sparse topological update package.
-4.  **ΔGCCL** — Lawfulness profile (Geometric, Cognitive, and Compression Law).
-5.  **KOT Audit** — Kinetic Operation Token (action-cost / budget accounting).
-6.  **Receipt / MetaProbe** — Witness object and verification.
-7.  **AMMR Commit** — Deterministic commit trail.
+This note translates the old Pioneer / VLB instrumentation idea into an Earthside repository experiment:
 
-## Nibble Semantics (GCCL Bridge)
-Each byte contains two nibbles, each representing a compact transition event:
+> Treat repository, Drive, ENE, and instrumentation-like update streams as topology-bearing manifolds whose updates are encoded as counted 4-bit switch events rather than full snapshots.
 
-| Bits | Meaning | State / Domain |
-|------|---------|----------------|
-| **High 2** | **Control State** | 00: Reject, 01: Accept, 10: Hold, 11: Snap |
-| **Low 2** | **Strand Selector**| 00: K-axis, 01: C-winding, 10: M-tension, 11: Y-break |
+The goal is to estimate the gain from a **Nibble-Switched Manifold Delta** encoding before writing an implementation.
 
-### Example Transition: `0x5A` (0101 1010)
-1.  `0101`: **ACCEPT** + **C-winding** (Route-deformation update).
-2.  `1010`: **HOLD** + **M-tension** (Attestation / witness recovery).
+## Core model
 
-## The Layered Mountain Model (Scaling Architecture)
-GCCL-Rep is not just a delta; it is the **rope between mountains**. A single representative transition stream is multi-projected across distinct architectural layers:
+A baseline state is committed once. After that, updates are stored as sparse counted nibble switches.
 
-| Mountain | Projection Meaning | Verified By |
-|----------|--------------------|-------------|
-| **NUVMAP** | Address/projection locus changed | Topology validator |
-| **AVMR** | Vector-state branch appended or merged | Append/Merge law |
-## The Goxel-Aware O-AMMR (O-AMMR^G)
-The ultimate hardening of the commit mountain is the transition from committing "rendered objects" to committing **admitted Goxel states** plus their projection/audit receipts. 
+```text
+baseline manifold state
+→ local update
+→ counted nibble switches
+→ witness receipt
+→ replay to reconstruct target state
+```
 
-### The $O-AMMR^G$ Equation
-The upgraded commit step is defined as:
+A minimal update atom:
 
-$O-AMMR^G_{t+1} = Commit(O-AMMR^G_t, \langle G_t, \Pi_k, \rho_G, \rho_\Pi, KOT_t, A_t \rangle)$
+```gclang
+structure NibbleSwitch where
+  locusId    : String        -- NUVMAP / repo / document / symbol locus
+  nibble     : UInt4         -- 4-bit transition symbol
+  count      : Nat           -- run length / duration / repeated update count
+  polarity   : SignedQ16     -- signed contribution or debt
+  kotCost    : SignedQ16     -- action cost
+  receiptId  : Option String
+```
 
-| Symbol | Meaning |
-|--------|---------|
-| $G_t$ | **The Goxel:** Bounded scalar sub-manifold / geometric-volume element. |
-| $\Pi_k$ | **Projection:** Declared projection (voxel, mesh, SDF, QR-witness). |
-| $\rho_G$ | **Internal Residual:** Does the Goxel satisfy its own scalar-field constraints? |
-| $\rho_\Pi$ | **Projection Residual:** Information loss/distortion from projection. |
-| $A_t$ | **Audit Bundle:** Receipts, witness hashes, provenance. |
-| $KOT_t$ | **KOT Budget:** Thermodynamic / computational cost ledger. |
+A manifold delta:
 
-### The Admission Gate
-A Goxel is only admitted to the mountain if it passes the lawfulness gate:
-$Admit(G_t) = 1 \iff \rho_G \le \epsilon_G \land \rho_\Pi \le \epsilon_\Pi \land KOT_t \le B_t \land A_t = valid$
+```gclang
+structure ManifoldDelta where
+  baselineHash : String
+  targetHash   : String
+  sourceDomain  : String
+  switches      : Array NibbleSwitch
+  deltaGCCL     : DeltaGCCL
+  kotCost       : KOTValue
+  replayPass    : Bool
+```
 
-## Four Architectural Protections
-1.  **No Projection Laundering:** A rendered artifact cannot pretend to be the source geometry.
-2.  **No Free Geometry:** Every geometric state must pay a KOT cost.
-3.  **No Silent Dimensional Collapse:** Projection from N-space to 3D/2D must declare residual loss.
-4.  **No Fake Proof by Visualization:** The Goxel and its audit receipt are the source truth; the image is only a witness.
+## Nibble semantics
 
----
-*Note: O-AMMR^G is an append-only lawful geometry ledger: it commits bounded scalar sub-manifolds, their declared projections, their residuals, and their thermodynamic/accounting receipts.*
+Use the 4-bit symbol as a compact transition atom:
 
-## Standards-Native Interoperability Claim
-The Sovereign Research Stack is standards-native in the limited but meaningful sense that its core abstractions are designed around externally auditable properties: deterministic arithmetic, replayable state transitions, verifiable receipts, bounded resource accounting, and projection-local validation.
+```text
+high 2 bits = quandary control state
+low  2 bits = CMYK / strand / domain selector
+```
 
-This does not by itself constitute certification under ISO 26262, W3C DID/VC, MPEG-G, or related standards. Instead, the stack provides internal structures that can be mapped into those standards through explicit adapters, schemas, test vectors, and conformance harnesses.
+### High bits: quandary state
 
-### Alignment Status
-| Standard Target | Internal Substrate | Current Stance |
-|-----------------|--------------------|----------------|
-| **ISO 26262** | Q16.16, deterministic replay, Warden receipts | Architecture-aligned |
-| **W3C DID/VC** | AMMR receipts, GCCL-Rep transition atoms | Schema-ready |
-| **MPEG-G** | Genome18, NUVMAP address projection | Adapter-ready |
+```text
+00 = REJECT / no-change / cooling
+01 = ACCEPT / apply update
+10 = HOLD / needs witness / recovery
+11 = QUARANTINE / break / reset
+```
 
-- **Functional Safety:** The Q16.16 fixed-point core is compatible with the deterministic arithmetic expectations of high-assurance ISO 26262-style workflows, but ASIL-D compliance would require a separate certified safety case.
-- **Trust Layer:** AMMR can serve as a receipt substrate compatible with DID/VC-style verifiable state transitions, provided the stack defines DID bindings, credential schemas, signature suites, canonicalization, and revocation handling.
-- **Informatic Squeeze:** Genome18 provides a topological address-space design that may be mapped toward MPEG-G-like genomic indexing and compression workflows, but formal MPEG-G interoperability requires an explicit adapter and conformance test suite.
+### Low bits: strand selector
 
----
-*Note: A byte array is not the truth. It is the transport representative of a transition class whose validity depends on independent multi-layer projection and standards-native lawfulness.*
+```text
+00 = K / axis / stable backbone
+01 = C / winding / route deformation
+10 = M / tension / attestation
+11 = Y / break / reset
+```
 
-## Future Target: Pipeline Collapse (GRW)
-To further optimize the stack, we are targeting a collapse of the 7-stage verification pipeline into a 2-stage **Goxel-Rep Witness (GRW)**.
+So a symbol is:
 
-- **Current:** `ByteArray → NibbleSwitch → ManifoldDelta → ΔGCCL → KOT → Receipt → O-AMMR^G`
-- **Proposed (GRW):** `GCCL-Rep (as Witness) → O-AMMR^G`
+```text
+[quandary_state][strand]
+```
 
-In the GRW model, the bytecode is restricted to an algebraic subspace where the bit-stream existence implies lawfulness. "Checking the law" becomes "executing the law," turning the transport representative into a self-authenticating proof of the **Manifold Invariant ($\Psi$)**.
+Example:
+
+```text
+0101 = ACCEPT + C-winding update
+1010 = HOLD + M-attestation update
+1111 = QUARANTINE + Y-reset update
+```
+
+## Compression estimate
+
+Let:
+
+```text
+N = number of loci in a full state
+B = bytes per locus in the snapshot representation
+r = fraction of loci changed per update epoch
+E = bytes per encoded switch event
+c = mean run length captured by count compression
+```
+
+Then:
+
+```text
+Full snapshot bytes = N × B
+Nibble-delta bytes  ≈ (N × r / c) × E + receipt overhead
+Gain ratio          ≈ Full snapshot bytes / Nibble-delta bytes
+```
+
+## Conservative Earthside assumptions
+
+These are deliberately boring values, intended for repo/Drive/ENE metadata and text-update streams rather than deep-space probes.
+
+```text
+B = 32 bytes per locus
+E = 8–16 bytes per encoded switch after practical framing
+receipt overhead = 128–512 bytes per epoch
+c = 1–16 depending on local repetition
+```
+
+The dominant variable is sparsity: how much of the manifold actually changes per epoch.
+
+## Estimated gains
+
+For large enough states where receipt overhead is amortized:
+
+| Changed loci per epoch | Mean run length | Practical gain estimate | Interpretation |
+|---:|---:|---:|---|
+| 20% | 1× | 2×–4× | weak sparsity; still useful mostly for witnesses |
+| 10% | 2× | 4×–8× | ordinary sparse update stream |
+| 5% | 4× | 10×–25× | good repo/ENE delta regime |
+| 1% | 8× | 50×–150× | strong long-baseline / telemetry-like regime |
+| 0.1% | 16× | 500×+ | very sparse remote-instrument regime |
+
+## Expected gains for this repository
+
+### Near-term realistic target
+
+```text
+5×–20× reduction
+```
+
+This is realistic for repo/document/ENE update streams where most loci are stable and only a few package states, registry terms, claims, or witness edges change per epoch.
+
+### Strong target
+
+```text
+25×–100× reduction
+```
+
+This becomes plausible if updates are batched by locus, counted, and replayed against stable baselines using AMMR commits.
+
+### Extreme target
+
+```text
+100×–500×+
+```
+
+Only plausible for very sparse telemetry-like streams where the baseline is stable, updates are localized, and count compression captures long periods of no-change / repeated state.
+
+## What counts as a gain
+
+A gain is not just smaller bytes. A valid gain must satisfy:
+
+```text
+1. replay(baseline, delta) == target
+2. AMMR commits baseline and target hashes
+3. ΔGCCL shows no hidden loss
+4. KOT cost is bounded and paid
+5. Warden does not quarantine the update
+```
+
+So the system is not allowed to win by deleting evidence.
+
+## Earthside experiment plan
+
+### Phase 0 — Passive measurement
+
+Measure current update sparsity without changing behavior.
+
+```text
+Input:
+  repo files, Drive-derived ENE exports, wiki definitions, registry docs
+
+Output:
+  per-epoch changed loci
+  run-length statistics
+  estimated delta size
+  estimated replay cost
+```
+
+### Phase 1 — JSONL delta prototype
+
+Create an append-only stream:
+
+```text
+data/nibble-delta/events.jsonl
+```
+
+Each line:
+
+```json
+{"baseline":"sha256:...","target":"sha256:...","locus":"docs/wiki/Mass_Number.md#G_MNL","nibble":"0101","count":3,"kot":"0x00002000","receipt":"..."}
+```
+
+### Phase 2 — Replay verifier
+
+Build a verifier:
+
+```text
+tools/nibble_delta/replay.py
+```
+
+Checks:
+
+```text
+baseline + event stream → target hash
+missing receipt → HOLD
+invalid replay → QUARANTINE
+unbounded update cost → QUARANTINE
+```
+
+### Phase 3 — GCCL integration
+
+Add profile deltas:
+
+```text
+G_geo, G_comp, G_load, G_spec, G_topo, G_arith, G_MNL, G_AMN
+```
+
+A delta is valid only when the transition is smaller **and** lawful.
+
+## Why this belongs in ENE
+
+ENE already treats knowledge packages as manifold objects with semantic vectors, settlement states, and activation/magnitude. Nibble-delta updates turn that idea into a sparse update stream: instead of re-exporting whole package states, only topology-bearing switch events are transmitted and witnessed.
+
+## Risks
+
+| Risk | Mitigation |
+|---|---|
+| Delta stream loses semantic context | Keep baseline hash + AMMR commit |
+| Compression hides evidence | Require replay verifier |
+| Old metaphors contaminate current framing | FAMM Sieve sanitizes raw source |
+| False gain from metric shift | ΔGCCL multi-axis gate |
+| Overspend or runaway update churn | KOT budget + Warden quarantine |
+
+## Initial conclusion
+
+The Earthside version is worth implementing as a measurement/prototype layer.
+
+Expected practical gain:
+
+```text
+5×–20× near term
+25×–100× if sparsity and run-length structure are good
+100×+ only for telemetry-like streams
+```
+
+The strongest non-byte gain is not compression ratio alone. It is that every update becomes:
+
+```text
+small
+replayable
+witnessed
+budgeted
+quarantinable
+```
+
+That makes this a good fit for GCCL/KOT/ENE rather than a generic compression trick.

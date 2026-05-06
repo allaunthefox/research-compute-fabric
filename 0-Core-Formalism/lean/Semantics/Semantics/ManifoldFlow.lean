@@ -1,8 +1,8 @@
 /-
 Semantics/ManifoldFlow.lean - Anisotropically Frustrated Torsional Gradient Flow
 
-This module formalizes the "n-space foldback-lock" equation as the authoritative 
-governing physics for the Sovereign Informatic Manifold. 
+This module formalizes the "n-space foldback-lock" equation as the authoritative
+governing physics for the Sovereign Informatic Manifold.
 
 Governing Equation:
 ∂_t ϕ = ∇_i(M^ij ∇_j δF/δϕ) - σ ∂ϕ/∂I_lock
@@ -18,6 +18,7 @@ namespace Semantics.ManifoldFlow
 
 open DynamicCanal
 open Semantics.BraidBracket
+open Semantics.Q16_16
 
 -- =============================================================================
 -- 1. TENSOR FIELDS (Q16.16)
@@ -63,7 +64,7 @@ structure ManifoldPoint where
 
 /-- Locking potential W(z; A) = w * (1 - cos(k * z)) approximation -/
 def lockingPotential (z : Q16_16) (weight : Q16_16) : Q16_16 :=
-  -- Periodic frustration: Using a simplified multiwell 
+  -- Periodic frustration: Using a simplified multiwell
   -- Q16_16 approximation of (1 - cos(z))
   let z_mod : Q16_16 := ⟨z.val % 0x00010000⟩ -- mod 1.0
   Q16_16.mul weight (Q16_16.mul z_mod (Q16_16.sub Q16_16.one z_mod))
@@ -108,14 +109,14 @@ def flowEmbedding (p : ManifoldPoint) (dt : Q16_16) (prevX : PhaseVec) : PhaseVe
   -- Tendency to return to X0: Pull = -Λ(X - X0)
   let pullX := Q16_16.mul ⟨0x00004000⟩ (Q16_16.sub p.x_pos.x p.x0_pos.x)
   let pullY := Q16_16.mul ⟨0x00004000⟩ (Q16_16.sub p.x_pos.y p.x0_pos.y)
-  
+
   -- Frustration from locking: snagging on previous pattern
   let snag := interlockingEnergy p.x_pos prevX p.a
-  
+
   -- Torsional forcing: τ * T
   let forceX := Q16_16.mul ⟨0x00002000⟩ p.t.t1_12
   let forceY := Q16_16.mul ⟨0x00002000⟩ p.t.t2_12
-  
+
   { x := Q16_16.sub p.x_pos.x (Q16_16.mul dt' (Q16_16.add (Q16_16.add pullX snag) forceX))
   , y := Q16_16.sub p.x_pos.y (Q16_16.mul dt' (Q16_16.add (Q16_16.add pullY snag) forceY)) : PhaseVec }
 

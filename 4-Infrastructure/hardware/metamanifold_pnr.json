@@ -1,0 +1,481 @@
+{
+  "creator": "Next Generation Place and Route (Version nextpnr-0.10-59-g946faea3)",
+  "modules": {
+    "top": {
+      "settings": {
+        "route": "00000000000000000000000000000001",
+        "router/tmg_ripup": "0 ",
+        "router1/useEstimate": "1 ",
+        "router1/fullCleanupReroute": "1 ",
+        "router1/cleanupReroute": "1 ",
+        "router1/maxIterCnt": "200",
+        "place": "00000000000000000000000000000001",
+        "placer1/startTemp": "1.000000",
+        "placer1/minBelsForGridPick": "64",
+        "placer1/netShareWeight": "0.000000",
+        "placer1/constraintWeight": "10.000000",
+        "placerHeap/cellPlacementTimeout": "8",
+        "placerHeap/noCtrlSet": "0 ",
+        "placerHeap/netShareWeight": "0.000000",
+        "placerHeap/parallelRefine": "0 ",
+        "pack": "00000000000000000000000000000001",
+        "synth": "00000000000000000000000000000001",
+        "placerHeap/timingWeight": "10 ",
+        "placerHeap/criticalityExponent": "2",
+        "placerHeap/beta": "0.900000",
+        "placerHeap/alpha": "0.100000",
+        "seed": "0011000101000001010110010010011001010011010110001001011110010011",
+        "arch.type": " ",
+        "arch.name": "ARCHNAME",
+        "router": "default",
+        "placer": "heap",
+        "auto_freq": "00000000000000000000000000000000",
+        "timing_driven": "00000000000000000000000000000001",
+        "target_freq": "27000000.000000",
+        "cst.filename": "metamanifold_prover_test.cst",
+        "packer.partno": "GW1NR-LV9QN88PC6/I5",
+        "packer.chipdb": "GW1N-9C",
+        "packer.arch": "himbaechel/gowin"
+      },
+      "attributes": {
+        "top": "00000000000000000000000000000001",
+        "src": "metamanifold_prover_test.v:1.1-58.10"
+      },
+      "ports": {
+        "rst_n": {
+          "direction": "input",
+          "bits": [ 7709 ]
+        },
+        "done": {
+          "direction": "output",
+          "bits": [ 7708 ]
+        },
+        "clk": {
+          "direction": "input",
+          "bits": [ 7707 ]
+        },
+        "busy": {
+          "direction": "output",
+          "bits": [ 7706 ]
+        }
+      },
+      "cells": {
+        "done_OBUF_O_I_DFFCE_Q_passthrough_lut$": {
+          "hide_name": 0,
+          "type": "LUT4",
+          "parameters": {
+            "INIT": "00000000000000001111111100000000"
+          },
+          "attributes": {
+            "BEL_STRENGTH": "00000000000000000000000000000101",
+            "NEXTPNR_BEL": "X1Y11/LUT2"
+          },
+          "port_directions": {
+            "F": "output",
+            "I3": "input"
+          },
+          "connections": {
+            "F": [ 7768 ],
+            "I3": [ 7716 ]
+          }
+        },
+        "state_DFFCE_Q_passthrough_lut$": {
+          "hide_name": 0,
+          "type": "LUT4",
+          "parameters": {
+            "INIT": "00000000000000000000000000000000"
+          },
+          "attributes": {
+            "BEL_STRENGTH": "00000000000000000000000000000101",
+            "NEXTPNR_BEL": "X1Y12/LUT2"
+          },
+          "port_directions": {
+            "F": "output"
+          },
+          "connections": {
+            "F": [ 7766 ]
+          }
+        },
+        "GSR": {
+          "hide_name": 0,
+          "type": "GSR",
+          "parameters": {
+          },
+          "attributes": {
+            "BEL_STRENGTH": "00000000000000000000000000000010",
+            "NEXTPNR_BEL": "X0Y0/GSR"
+          },
+          "port_directions": {
+            "GSRI": "input"
+          },
+          "connections": {
+            "GSRI": [ 7747 ]
+          }
+        },
+        "$PACKER_VCC_DRV": {
+          "hide_name": 1,
+          "type": "GOWIN_VCC",
+          "parameters": {
+          },
+          "attributes": {
+            "BEL_STRENGTH": "00000000000000000000000000000010",
+            "NEXTPNR_BEL": "X0Y0/VCC"
+          },
+          "port_directions": {
+            "V": "output"
+          },
+          "connections": {
+            "V": [ 7747 ]
+          }
+        },
+        "$PACKER_GND_DRV": {
+          "hide_name": 1,
+          "type": "GOWIN_GND",
+          "parameters": {
+          },
+          "attributes": {
+            "BEL_STRENGTH": "00000000000000000000000000000010",
+            "NEXTPNR_BEL": "X0Y0/GND"
+          },
+          "port_directions": {
+            "G": "output"
+          },
+          "connections": {
+            "G": [ 7748 ]
+          }
+        },
+        "state_DFFCE_Q": {
+          "hide_name": 0,
+          "type": "DFFCE",
+          "parameters": {
+          },
+          "attributes": {
+            "BEL_STRENGTH": "00000000000000000000000000000001",
+            "NEXTPNR_BEL": "X1Y12/DFF2",
+            "src": "metamanifold_prover_test.v:23.5-56.8|/usr/bin/../share/yosys/gowin/cells_map.v:115.8-115.68",
+            "module_not_derived": "00000000000000000000000000000001"
+          },
+          "port_directions": {
+            "Q": "output",
+            "D": "input",
+            "CLK": "input",
+            "CLEAR": "input",
+            "CE": "input"
+          },
+          "connections": {
+            "Q": [ 7716 ],
+            "D": [ 7766 ],
+            "CLK": [ 7718 ],
+            "CLEAR": [ 7717 ],
+            "CE": [ 7716 ]
+          }
+        },
+        "rst_n_IBUF_I_O_LUT1_I0": {
+          "hide_name": 0,
+          "type": "LUT1",
+          "parameters": {
+            "INIT": "01"
+          },
+          "attributes": {
+            "BEL_STRENGTH": "00000000000000000000000000000001",
+            "NEXTPNR_BEL": "X1Y6/LUT7",
+            "src": "/usr/bin/../share/yosys/gowin/cells_map.v:135.23-136.15",
+            "module_not_derived": "00000000000000000000000000000001"
+          },
+          "port_directions": {
+            "I0": "input",
+            "F": "output"
+          },
+          "connections": {
+            "I0": [ 7727 ],
+            "F": [ 7717 ]
+          }
+        },
+        "rst_n_IBUF_I": {
+          "hide_name": 0,
+          "type": "IBUF",
+          "parameters": {
+            "NET_I": "NET",
+            "NET_O": "NET"
+          },
+          "attributes": {
+            "BEL_STRENGTH": "00000000000000000000000000000101",
+            "NEXTPNR_BEL": "X0Y4/IOBA",
+            "src": "metamanifold_prover_test.v:5.16-5.21",
+            "&IO_TYPE=LVCMOS33": "00000000000000000000000000000001",
+            "&PULL_MODE=UP": "00000000000000000000000000000001",
+            "keep": "00000000000000000000000000000001"
+          },
+          "port_directions": {
+            "O": "output",
+            "I": "input"
+          },
+          "connections": {
+            "O": [ 7727 ],
+            "I": [ 7709 ]
+          }
+        },
+        "done_OBUF_O_I_DFFCE_Q": {
+          "hide_name": 0,
+          "type": "DFFCE",
+          "parameters": {
+          },
+          "attributes": {
+            "BEL_STRENGTH": "00000000000000000000000000000001",
+            "NEXTPNR_BEL": "X1Y11/DFF2",
+            "src": "metamanifold_prover_test.v:23.5-56.8|/usr/bin/../share/yosys/gowin/cells_map.v:115.8-115.68",
+            "module_not_derived": "00000000000000000000000000000001"
+          },
+          "port_directions": {
+            "Q": "output",
+            "D": "input",
+            "CLK": "input",
+            "CLEAR": "input",
+            "CE": "input"
+          },
+          "connections": {
+            "Q": [ 7724 ],
+            "D": [ 7768 ],
+            "CLK": [ 7718 ],
+            "CLEAR": [ 7717 ],
+            "CE": [ 7716 ]
+          }
+        },
+        "done_OBUF_O": {
+          "hide_name": 0,
+          "type": "OBUF",
+          "parameters": {
+            "NET_I": "NET",
+            "NET_O": "NET"
+          },
+          "attributes": {
+            "BEL_STRENGTH": "00000000000000000000000000000101",
+            "NEXTPNR_BEL": "X0Y15/IOBB",
+            "src": "metamanifold_prover_test.v:9.16-9.20",
+            "&IO_TYPE=LVCMOS33": "00000000000000000000000000000001",
+            "keep": "00000000000000000000000000000001"
+          },
+          "port_directions": {
+            "O": "output",
+            "I": "input"
+          },
+          "connections": {
+            "O": [ 7708 ],
+            "I": [ 7724 ]
+          }
+        },
+        "clk_IBUF_I": {
+          "hide_name": 0,
+          "type": "IBUF",
+          "parameters": {
+            "NET_I": "NET",
+            "NET_O": "NET"
+          },
+          "attributes": {
+            "BEL_STRENGTH": "00000000000000000000000000000101",
+            "NEXTPNR_BEL": "X46Y16/IOBA",
+            "src": "metamanifold_prover_test.v:4.16-4.19",
+            "&IO_TYPE=LVCMOS33": "00000000000000000000000000000001",
+            "&PULL_MODE=NONE": "00000000000000000000000000000001",
+            "keep": "00000000000000000000000000000001"
+          },
+          "port_directions": {
+            "O": "output",
+            "I": "input"
+          },
+          "connections": {
+            "O": [ 7718 ],
+            "I": [ 7707 ]
+          }
+        },
+        "busy_OBUF_O_I_DFFCE_Q_D_LUT1_F": {
+          "hide_name": 0,
+          "type": "LUT1",
+          "parameters": {
+            "INIT": "01"
+          },
+          "attributes": {
+            "BEL_STRENGTH": "00000000000000000000000000000001",
+            "NEXTPNR_BEL": "X1Y13/LUT0",
+            "src": "/usr/bin/../share/yosys/gowin/cells_map.v:135.23-136.15",
+            "module_not_derived": "00000000000000000000000000000001"
+          },
+          "port_directions": {
+            "I0": "input",
+            "F": "output"
+          },
+          "connections": {
+            "I0": [ 7716 ],
+            "F": [ 7719 ]
+          }
+        },
+        "busy_OBUF_O_I_DFFCE_Q": {
+          "hide_name": 0,
+          "type": "DFFCE",
+          "parameters": {
+          },
+          "attributes": {
+            "BEL_STRENGTH": "00000000000000000000000000000001",
+            "NEXTPNR_BEL": "X1Y13/DFF0",
+            "src": "metamanifold_prover_test.v:23.5-56.8|/usr/bin/../share/yosys/gowin/cells_map.v:115.8-115.68",
+            "module_not_derived": "00000000000000000000000000000001"
+          },
+          "port_directions": {
+            "Q": "output",
+            "D": "input",
+            "CLK": "input",
+            "CLEAR": "input",
+            "CE": "input"
+          },
+          "connections": {
+            "Q": [ 7713 ],
+            "D": [ 7719 ],
+            "CLK": [ 7718 ],
+            "CLEAR": [ 7717 ],
+            "CE": [ 7716 ]
+          }
+        },
+        "busy_OBUF_O": {
+          "hide_name": 0,
+          "type": "OBUF",
+          "parameters": {
+            "NET_I": "NET",
+            "NET_O": "NET"
+          },
+          "attributes": {
+            "BEL_STRENGTH": "00000000000000000000000000000101",
+            "NEXTPNR_BEL": "X0Y14/IOBA",
+            "src": "metamanifold_prover_test.v:8.16-8.20",
+            "&IO_TYPE=LVCMOS33": "00000000000000000000000000000001",
+            "keep": "00000000000000000000000000000001"
+          },
+          "port_directions": {
+            "O": "output",
+            "I": "input"
+          },
+          "connections": {
+            "O": [ 7706 ],
+            "I": [ 7713 ]
+          }
+        }
+      },
+      "netnames": {
+        "done_OBUF_O_I_DFFCE_Q$conn$D": {
+          "hide_name": 0,
+          "bits": [ 7768 ] ,
+          "attributes": {
+            "ROUTING": "X1Y11/F2;;1;X1Y11/XD2;X1Y11/XD2/F2;1"
+          }
+        },
+        "state_DFFCE_Q$conn$D": {
+          "hide_name": 0,
+          "bits": [ 7766 ] ,
+          "attributes": {
+            "ROUTING": "X1Y12/F2;;1;X1Y12/XD2;X1Y12/XD2/F2;1"
+          }
+        },
+        "$PACKER_VCC": {
+          "hide_name": 1,
+          "bits": [ 7747 ] ,
+          "attributes": {
+            "ROUTING": "X0Y0/C4;X0Y0/C4/N202;1;X0Y2/N200;X0Y2/N200/VCC;1;X0Y2/VCC;;1"
+          }
+        },
+        "$PACKER_GND": {
+          "hide_name": 1,
+          "bits": [ 7748 ] ,
+          "attributes": {
+            "ROUTING": " "
+          }
+        },
+        "rst_n_IBUF_I_O": {
+          "hide_name": 0,
+          "bits": [ 7727 ] ,
+          "attributes": {
+            "ROUTING": "X0Y4/F6;;1;X0Y4/E130;X0Y4/E130/F6;1;X1Y4/S230;X1Y4/S230/E131;1;X1Y6/A7;X1Y6/A7/S232;1",
+            "src": "/usr/bin/../share/yosys/gowin/cells_map.v:130.20-130.21",
+            "single_bit_vector": "00000000000000000000000000000001",
+            "force_downto": "00000000000000000000000000000001"
+          }
+        },
+        "rst_n": {
+          "hide_name": 0,
+          "bits": [ 7709 ] ,
+          "attributes": {
+            "ROUTING": " ",
+            "src": "metamanifold_prover_test.v:5.16-5.21"
+          }
+        },
+        "done": {
+          "hide_name": 0,
+          "bits": [ 7708 ] ,
+          "attributes": {
+            "ROUTING": " ",
+            "src": "metamanifold_prover_test.v:9.16-9.20"
+          }
+        },
+        "done_OBUF_O_I": {
+          "hide_name": 0,
+          "bits": [ 7724 ] ,
+          "attributes": {
+            "ROUTING": "X1Y11/Q2;;1;X1Y11/S810;X1Y11/S810/Q2;1;X1Y15/W220;X1Y15/W220/S814;1;X0Y15/D1;X0Y15/D1/W221;1"
+          }
+        },
+        "clk": {
+          "hide_name": 0,
+          "bits": [ 7707 ] ,
+          "attributes": {
+            "ROUTING": " ",
+            "src": "metamanifold_prover_test.v:4.16-4.19"
+          }
+        },
+        "busy_OBUF_O_I_DFFCE_Q_D": {
+          "hide_name": 0,
+          "bits": [ 7719 ] ,
+          "attributes": {
+            "ROUTING": "X1Y13/F0;;1;X1Y13/XD0;X1Y13/XD0/F0;1",
+            "src": "metamanifold_prover_test.v:23.5-56.8"
+          }
+        },
+        "clk_IBUF_I_O": {
+          "hide_name": 0,
+          "bits": [ 7718 ] ,
+          "attributes": {
+            "ROUTING": "X3Y12/GB00;X3Y12/GBO0/GT00;5;X1Y12/CLK1;X1Y12/CLK1/GB00;5;X3Y11/GBO0;X3Y11/GBO0/GT00;5;X1Y11/CLK1;X1Y11/CLK1/GB00;5;X23Y19/SPINE16;X27Y9/SPINE16/PCLKR1;5;X3Y19/GT00;X3Y19/GT00/SPINE16;5;X0Y13/GB00;X3Y13/GBO0/GT00;5;X1Y13/CLK0;X1Y13/CLK0/GB00;5;X46Y16/F6;;5"
+          }
+        },
+        "rst_n_IBUF_I_O_LUT1_I0_F": {
+          "hide_name": 0,
+          "bits": [ 7717 ] ,
+          "attributes": {
+            "ROUTING": "X1Y12/N270;X1Y12/N270/N272;1;X1Y11/LSR1;X1Y11/LSR1/N271;1;X1Y13/LSR0;X1Y13/LSR0/N271;1;X1Y6/F7;;1;X1Y6/S820;X1Y6/S820/F7;1;X1Y14/N270;X1Y14/N270/S828;1;X1Y12/LSR1;X1Y12/LSR1/N272;1"
+          }
+        },
+        "state[0]": {
+          "hide_name": 0,
+          "bits": [ 7716 ] ,
+          "attributes": {
+            "ROUTING": "X1Y13/X01;X1Y13/X01/S221;1;X1Y13/A0;X1Y13/A0/X01;1;X1Y11/D2;X1Y11/D2/N221;1;X1Y12/X05;X1Y12/X05/Q2;1;X1Y12/CE1;X1Y12/CE1/X05;1;X1Y12/N220;X1Y12/N220/Q2;1;X1Y11/X07;X1Y11/X07/N221;1;X1Y11/CE1;X1Y11/CE1/X07;1;X1Y12/Q2;;1;X1Y12/S220;X1Y12/S220/Q2;1;X1Y13/X07;X1Y13/X07/S221;1;X1Y13/CE0;X1Y13/CE0/X07;1",
+            "src": "metamanifold_prover_test.v:18.15-18.20",
+            "fsm_encoding": "auto"
+          }
+        },
+        "busy": {
+          "hide_name": 0,
+          "bits": [ 7706 ] ,
+          "attributes": {
+            "ROUTING": " ",
+            "src": "metamanifold_prover_test.v:8.16-8.20"
+          }
+        },
+        "busy_OBUF_O_I": {
+          "hide_name": 0,
+          "bits": [ 7713 ] ,
+          "attributes": {
+            "ROUTING": "X1Y13/Q0;;1;X1Y13/S130;X1Y13/S130/Q0;1;X1Y14/W270;X1Y14/W270/S131;1;X0Y14/A0;X0Y14/A0/W271;1"
+          }
+        }
+      }
+    }
+  }
+}

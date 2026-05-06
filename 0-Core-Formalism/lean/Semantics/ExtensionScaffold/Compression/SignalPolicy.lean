@@ -5,6 +5,7 @@ set_option linter.dupNamespace false
 namespace ExtensionScaffold.Compression.SignalPolicy
 
 open Semantics
+open Semantics.Q16_16
 open ExtensionScaffold.Compression.CellCore
 open ExtensionScaffold.Compression.PriorityGossip
 

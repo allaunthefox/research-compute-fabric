@@ -49,7 +49,7 @@ import Semantics.FixedPoint
 
 namespace Semantics.SyntheticGeneticCoding
 
-open Semantics.Q0_64
+open Semantics.Q16_16.Q0_64
 open Semantics.Q16_16
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -147,10 +147,10 @@ def codeByte : Nat := codeSpaceSize 2 8
 /-- Normalized information capacity per symbol = log2(N) / 8
     For comparison across alphabet sizes, normalized to [0, 1] in CodingQ.
     Uses pre-computed rational values — NO FLOAT in canonical code.
-    
+
     With max alphabet = 256 (byte), log2(256) = 8 bits:
     - 2-symbol: log2(2)/8 = 1/8 = 0.125
-    - 4-symbol: log2(4)/8 = 2/8 = 0.25  
+    - 4-symbol: log2(4)/8 = 2/8 = 0.25
     - 8-symbol: log2(8)/8 = 3/8 = 0.375
     - 16-symbol: log2(16)/8 = 4/8 = 0.5
     - 256-symbol: log2(256)/8 = 8/8 = 1.0

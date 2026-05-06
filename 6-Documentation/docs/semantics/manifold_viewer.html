@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIST Composite Manifold Viewer</title>
+<style>
+  body { margin: 0; overflow: hidden; background: #0a0a0a; font-family: 'Segoe UI', sans-serif; }
+  #info {
+    position: absolute; top: 10px; left: 10px; color: #ccc;
+    background: rgba(0,0,0,0.7); padding: 12px; border-radius: 8px;
+    font-size: 12px; line-height: 1.5; max-width: 280px;
+    pointer-events: none; user-select: none;
+  }
+  #controls {
+    position: absolute; bottom: 10px; left: 10px;
+    background: rgba(0,0,0,0.7); padding: 10px; border-radius: 8px;
+    color: #ccc; font-size: 12px;
+  }
+  #controls label { display: block; margin: 4px 0; }
+  #controls input[type=range] { width: 120px; vertical-align: middle; }
+  #n-display {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(0,0,0,0.7); padding: 12px; border-radius: 8px;
+    color: #0ff; font-family: monospace; font-size: 13px;
+    text-align: right;
+  }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+
+<div id="info">
+  <b style="color:#fff;font-size:14px;">PIST Composite Manifold</b><br>
+  Tree × Surface × Torus × Shell<br><br>
+  <span style="color:#888;">Each byte position <i>n</i> maps to a 9D coordinate tuple derived deterministically.</span><br><br>
+  <b>Controls:</b><br>
+  Mouse: rotate / zoom<br>
+  Click: select position
+</div>
+
+<div id="n-display">
+  n = <span id="n-val">0</span><br>
+  k = <span id="k-val">0</span>, t = <span id="t-val">0</span><br>
+  mass = <span id="m-val">0</span>
+</div>
+
+<div id="controls">
+  <label>Rotation Speed <input type="range" id="rotSpeed" min="0" max="2" step="0.1" value="0.5"></label>
+  <label>Show Tree <input type="checkbox" id="showTree" checked></label>
+  <label>Show Surface <input type="checkbox" id="showSurface" checked></label>
+  <label>Show Torus <input type="checkbox" id="showTorus" checked></label>
+  <label>Show Shells <input type="checkbox" id="showShells" checked></label>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<script>
+// ── PIST Coordinate Primitives ──
+const PHI = (1 + Math.sqrt(5)) / 2;
+
+function pistK(n) { return Math.floor(Math.sqrt(n)); }
+function pistT(n) { return n - pistK(n) * pistK(n); }
+function pistMass(k, t) {
+  if (k === 0) return 0;
+  const tf = Math.min(t, 2 * k + 1 - t);
+  return tf * (2 * k + 1 - tf);
+}
+
+function treeAddress(n, depth) {
+  const path = [];
+  let remaining = n;
+  for (let level = 0; level < depth; level++) {
+    path.push({ level, branch: remaining % 20 });
+    remaining = Math.floor(remaining / 20);
+  }
+  return path;
+}
+
+function surfaceCoord(n) {
+  const x = 1.0 + (n % 255) * (255.0 / 255.0);
+  const y = 1.0 / x;
+  const theta = (n * PHI) % (2 * Math.PI);
+  return { x, y, theta };
+}
+
+function torusAngles(n) {
+  const nReal = n;
+  return {
+    theta: (nReal * PHI) % (2 * Math.PI),
+    phi: (nReal * PHI * PHI) % (2 * Math.PI),
+    psi: (nReal * PHI * PHI * PHI) % (2 * Math.PI)
+  };
+}
+
+function compositeAddress(n) {
+  return {
+    tree: treeAddress(n, 3),
+    surface: surfaceCoord(n),
+    torus: torusAngles(n),
+    pist: { k: pistK(n), t: pistT(n) },
+    linear: n
+  };
+}
+
+// ── Three.js Setup ──
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0a0a);
+scene.fog = new THREE.FogExp2(0x0a0a0a, 0.008);
+
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(15, 10, 25);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.5;
+
+// ── Lighting ──
+scene.add(new THREE.AmbientLight(0x404040, 2));
+const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+dirLight.position.set(10, 20, 10);
+scene.add(dirLight);
+const pointLight = new THREE.PointLight(0x00ffff, 1, 50);
+pointLight.position.set(0, 5, 0);
+scene.add(pointLight);
+
+// ── Geometry Builders ──
+
+const groups = {
+  tree: new THREE.Group(),
+  surface: new THREE.Group(),
+  torus: new THREE.Group(),
+  shells: new THREE.Group(),
+  active: new THREE.Group()
+};
+Object.values(groups).forEach(g => scene.add(g));
+
+// PIST Shells (concentric polygonal rings)
+function buildShells() {
+  const maxShell = 12;
+  for (let k = 0; k <= maxShell; k++) {
+    const nPoints = k === 0 ? 1 : 2 * k + 1;
+    const radius = k * 1.5;
+    const geometry = new THREE.BufferGeometry();
+    const vertices = [];
+    const colors = [];
+    const color = new THREE.Color().setHSL(k / maxShell, 0.7, 0.5);
+
+    for (let t = 0; t < nPoints; t++) {
+      const angle = (2 * Math.PI * t) / nPoints;
+      const x = radius * Math.cos(angle);
+      const z = radius * Math.sin(angle);
+      vertices.push(x, k * 0.5, z);
+      colors.push(color.r, color.g, color.b);
+    }
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+    const material = new THREE.PointsMaterial({ size: 0.15, vertexColors: true, transparent: true, opacity: 0.8 });
+    groups.shells.add(new THREE.Points(geometry, material));
+
+    // Ring line
+    if (k > 0) {
+      const ringGeo = new THREE.BufferGeometry();
+      const ringVerts = [];
+      for (let t = 0; t <= nPoints; t++) {
+        const angle = (2 * Math.PI * t) / nPoints;
+        ringVerts.push(radius * Math.cos(angle), k * 0.5, radius * Math.sin(angle));
+      }
+      ringGeo.setAttribute('position', new THREE.Float32BufferAttribute(ringVerts, 3));
+      groups.shells.add(new THREE.Line(ringGeo, new THREE.LineBasicMaterial({ color: color.getHex(), transparent: true, opacity: 0.3 })));
+    }
+  }
+}
+
+// Surface of revolution (Gabriel's horn slice)
+function buildSurface() {
+  const curve = new THREE.CatmullRomCurve3([]);
+  const points = [];
+  for (let n = 1; n <= 256; n += 4) {
+    const sc = surfaceCoord(n);
+    points.push(new THREE.Vector3(sc.x / 10, sc.y * 20, 0));
+  }
+  curve.points = points;
+
+  const geometry = new THREE.TubeGeometry(curve, 64, 0.3, 8, false);
+  const material = new THREE.MeshPhysicalMaterial({
+    color: 0x4488ff, metalness: 0.8, roughness: 0.2,
+    transparent: true, opacity: 0.6, side: THREE.DoubleSide
+  });
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.set(-12, 0, -10);
+  groups.surface.add(mesh);
+
+  // Position markers along surface
+  for (let n = 16; n <= 240; n += 32) {
+    const sc = surfaceCoord(n);
+    const markerGeo = new THREE.SphereGeometry(0.2, 8, 8);
+    const markerMat = new THREE.MeshBasicMaterial({ color: 0xffaa00 });
+    const marker = new THREE.Mesh(markerGeo, markerMat);
+    marker.position.set(sc.x / 10 - 12, sc.y * 20, 0);
+    groups.surface.add(marker);
+  }
+}
+
+// Hypertorus (3D projection)
+function buildTorus() {
+  const R = 6, r = 2;
+  const torusGeo = new THREE.TorusGeometry(R, r, 32, 64);
+  const torusMat = new THREE.MeshPhysicalMaterial({
+    color: 0x00ff88, metalness: 0.5, roughness: 0.3,
+    wireframe: true, transparent: true, opacity: 0.4
+  });
+  const torus = new THREE.Mesh(torusGeo, torusMat);
+  torus.position.set(10, 0, -5);
+  groups.torus.add(torus);
+
+  // Sample points colored by psi
+  for (let n = 0; n < 64; n++) {
+    const angs = torusAngles(n);
+    const x = (R + r * Math.cos(angs.phi)) * Math.cos(angs.theta);
+    const y = r * Math.sin(angs.phi);
+    const z = (R + r * Math.cos(angs.phi)) * Math.sin(angs.theta);
+    const ptGeo = new THREE.SphereGeometry(0.15, 8, 8);
+    const hue = 0.5 + 0.5 * Math.sin(angs.psi);
+    const ptMat = new THREE.MeshBasicMaterial({ color: new THREE.Color().setHSL(hue, 0.8, 0.6) });
+    const pt = new THREE.Mesh(ptGeo, ptMat);
+    pt.position.set(x + 10, y, z - 5);
+    groups.torus.add(pt);
+  }
+}
+
+// Tree (Menger-like)
+function buildTree() {
+  const rootPos = new THREE.Vector3(-8, 8, 5);
+  const depth = 3;
+
+  function buildNode(level, branch, parentPos, parentSize) {
+    if (level >= depth) return;
+    const angle = (2 * Math.PI * branch) / 20;
+    const size = parentSize * 0.7;
+    const offset = new THREE.Vector3(
+      Math.cos(angle) * size,
+      -size,
+      Math.sin(angle) * size
+    );
+    const pos = parentPos.clone().add(offset);
+
+    const geo = new THREE.BoxGeometry(size * 0.5, size * 0.5, size * 0.5);
+    const hue = level / depth;
+    const mat = new THREE.MeshBasicMaterial({ color: new THREE.Color().setHSL(hue, 0.6, 0.5), wireframe: true });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.copy(pos);
+    groups.tree.add(mesh);
+
+    // Line to parent
+    const lineGeo = new THREE.BufferGeometry().setFromPoints([parentPos, pos]);
+    groups.tree.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: 0x666666, transparent: true, opacity: 0.3 })));
+  }
+
+  // Build a few sample branches
+  const n = 42;
+  const addr = treeAddress(n, depth);
+  let currentPos = rootPos.clone();
+  let currentSize = 2.0;
+  addr.forEach(node => {
+    buildNode(node.level, node.branch, currentPos, currentSize);
+    const angle = (2 * Math.PI * node.branch) / 20;
+    currentPos.add(new THREE.Vector3(
+      Math.cos(angle) * currentSize,
+      -currentSize,
+      Math.sin(angle) * currentSize
+    ));
+    currentSize *= 0.7;
+  });
+}
+
+// Active position indicator
+const activeGeo = new THREE.SphereGeometry(0.4, 16, 16);
+const activeMat = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.8 });
+const activeMesh = new THREE.Mesh(activeGeo, activeMat);
+groups.active.add(activeMesh);
+
+// Build everything
+buildShells();
+buildSurface();
+buildTorus();
+buildTree();
+
+// ── Interaction ──
+let currentN = 0;
+const nVal = document.getElementById('n-val');
+const kVal = document.getElementById('k-val');
+const tVal = document.getElementById('t-val');
+const mVal = document.getElementById('m-val');
+
+function updateDisplay(n) {
+  currentN = n;
+  const k = pistK(n), t = pistT(n);
+  const mass = pistMass(k, t);
+  nVal.textContent = n;
+  kVal.textContent = k;
+  tVal.textContent = t;
+  mVal.textContent = mass;
+
+  // Move active indicator to PIST shell position
+  const radius = k * 1.5;
+  const nPoints = k === 0 ? 1 : 2 * k + 1;
+  const angle = nPoints > 1 ? (2 * Math.PI * t) / nPoints : 0;
+  activeMesh.position.set(
+    radius * Math.cos(angle),
+    k * 0.5,
+    radius * Math.sin(angle)
+  );
+}
+
+// Animate through positions
+let animationTime = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  animationTime += 0.016;
+
+  // Cycle through n values
+  const cycleN = Math.floor((animationTime * 30) % 500);
+  updateDisplay(cycleN);
+
+  // Rotate groups slightly
+  groups.torus.rotation.y += 0.002;
+  groups.tree.rotation.y += 0.001;
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+// Toggle visibility
+document.getElementById('showTree').addEventListener('change', e => groups.tree.visible = e.target.checked);
+document.getElementById('showSurface').addEventListener('change', e => groups.surface.visible = e.target.checked);
+document.getElementById('showTorus').addEventListener('change', e => groups.torus.visible = e.target.checked);
+document.getElementById('showShells').addEventListener('change', e => groups.shells.visible = e.target.checked);
+document.getElementById('rotSpeed').addEventListener('input', e => controls.autoRotateSpeed = parseFloat(e.target.value));
+
+// Resize
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+animate();
+</script>
+</body>
+</html>

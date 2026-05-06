@@ -17,7 +17,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.CardiacYield
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Constant Final Yield (Shinozaki-Kira) -/
 

@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this research or the Babcock Matrix formalism, please cite it as below."
+authors:
+- family-names: "Allaun"
+  given-names: "The Fox"
+  orcid: "https://orcid.org/0009-0000-1594-0095"
+title: "From Babbage to Babcock: Topological State Matrices and Thermodynamic Witness in Mandatory Infrastructure"
+version: 1.0.0
+date-released: 2026-05-05
+url: "https://froginnponds.substack.com/p/from-babbage-to-babcock"
+repository-code: "https://github.com/allaunthefox/Research-Stack"
+keywords:
+  - Babcock Matrix
+  - Babbage
+  - Infrastructure Graph
+  - Reservoir Computing
+  - Thermodynamic Witness
+  - Screaming Infrastructure
+  - Topological State Matrix

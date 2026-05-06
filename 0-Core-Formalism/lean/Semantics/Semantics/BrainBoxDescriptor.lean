@@ -13,7 +13,7 @@ import Semantics.FixedPoint
 
 namespace Semantics.BrainBoxDescriptor
 
-open Semantics.Q0_16
+open Semantics.Q16_16
 open Semantics.Q16_16
 
 /-- Brain Box Descriptor — information-conservative processing unit. -/

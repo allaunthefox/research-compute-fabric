@@ -18,7 +18,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.Specialized
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Gerontology: The Math of Mortality -/
 

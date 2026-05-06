@@ -123,7 +123,7 @@ def canCapture (grid : TileGrid) (pos : TilePosition) : Bool :=
 -- §7  Ko Check (Shape Repetition Prevention)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-def wouldRepeatShape (grid : TileGrid) (pos : TilePosition) (newState : TileState) 
+def wouldRepeatShape (grid : TileGrid) (pos : TilePosition) (newState : TileState)
     (history : List TileGrid) : Bool :=
   -- Create hypothetical grid with tile flipped
   let hypotheticalGrid := grid  -- Placeholder: would need deep copy
@@ -134,7 +134,7 @@ def wouldRepeatShape (grid : TileGrid) (pos : TilePosition) (newState : TileStat
 -- §8  State Transition Rules
 -- ═══════════════════════════════════════════════════════════════════════════
 
-def canTransition (grid : TileGrid) (pos : TilePosition) (newState : TileState) 
+def canTransition (grid : TileGrid) (pos : TilePosition) (newState : TileState)
     (condition : GoRuleCondition) (history : List TileGrid) : Bool :=
   match grid.tiles[pos.row]![pos.col]!, newState, condition with
   | TileState.empty, TileState.black, GoRuleCondition.liberty =>
@@ -154,7 +154,7 @@ def canTransition (grid : TileGrid) (pos : TilePosition) (newState : TileState)
 -- §9  Apply Tile Flip
 -- ═══════════════════════════════════════════════════════════════════════════
 
-def flipTile (grid : TileGrid) (pos : TilePosition) (newState : TileState) 
+def flipTile (grid : TileGrid) (pos : TilePosition) (newState : TileState)
     (condition : GoRuleCondition) (history : List TileGrid) : TileGrid :=
   if canTransition grid pos newState condition history then
     -- Apply flip (placeholder: would need mutable grid)
@@ -182,7 +182,7 @@ def createEmptyGrid (rows cols : Nat) : TileGrid :=
 #eval wouldRepeatShape (createEmptyGrid 3 3) { row := 1, col := 1 } TileState.black []
 -- Expected: false (empty history)
 
-#eval canTransition (createEmptyGrid 3 3) { row := 1, col := 1 } TileState.black 
+#eval canTransition (createEmptyGrid 3 3) { row := 1, col := 1 } TileState.black
         GoRuleCondition.liberty []
 -- Expected: true (empty → black with liberty)
 
@@ -190,21 +190,37 @@ def createEmptyGrid (rows cols : Nat) : TileGrid :=
 -- §11  Theorems
 -- ═══════════════════════════════════════════════════════════════════════════
 
-axiom libertyTransitionRequiresEmptyNeighbor (grid : TileGrid) (pos : TilePosition) 
+theorem libertyTransitionRequiresEmptyNeighbor (grid : TileGrid) (pos : TilePosition)
     (h : canTransition grid pos TileState.black GoRuleCondition.liberty []) :
-    hasLiberty grid pos
+    hasLiberty grid pos := by
+  unfold canTransition at h
+  split at h
+  · exact h
+  · contradiction
 
-axiom captureTransitionRequiresNoLiberty (grid : TileGrid) (pos : TilePosition) 
+theorem captureTransitionRequiresNoLiberty (grid : TileGrid) (pos : TilePosition)
     (h : canTransition grid pos TileState.captured GoRuleCondition.capture []) :
-    canCapture grid pos
+    canCapture grid pos := by
+  unfold canTransition at h
+  split at h
+  · exact h
+  · contradiction
 
-axiom koPreventsShapeRepetition (grid : TileGrid) (pos : TilePosition) 
+theorem koPreventsShapeRepetition (grid : TileGrid) (pos : TilePosition)
     (newState : TileState) (history : List TileGrid)
     (h : canTransition grid pos newState GoRuleCondition.ko history) :
-    ¬wouldRepeatShape grid pos newState history
+    ¬wouldRepeatShape grid pos newState history := by
+  unfold canTransition at h
+  split at h
+  · exact h
+  · contradiction
 
-axiom capturedToEmptyAlwaysAllowed (grid : TileGrid) (pos : TilePosition) 
+theorem capturedToEmptyAlwaysAllowed (grid : TileGrid) (pos : TilePosition)
     (h : grid.tiles[pos.row]![pos.col]! = TileState.captured) :
-    canTransition grid pos TileState.empty GoRuleCondition.none []
+    canTransition grid pos TileState.empty GoRuleCondition.none [] := by
+  unfold canTransition
+  have := h
+  rw [h]
+  rfl
 
 end Semantics.TileStateMachine

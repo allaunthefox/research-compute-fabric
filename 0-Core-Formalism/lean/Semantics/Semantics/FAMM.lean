@@ -94,7 +94,14 @@ def fammRead (bank : FAMMBank) (address : Nat) : FAMMResult :=
     let bindResult := fammBind bank .read address
     { success := false, value := none, cost := bindResult.cost, invariant := bindResult.invariant }
 
-/-- Write FAMM cell at address with specified delay. -/
+/-- Eigenmass equation: M = λ × |v| × Q16_ONE
+    Computes causal inertia from eigenvector data.
+    Used to set FAMM delayMass based on eigenvector cluster strength.
+-/
+def eigenmass (eigenvalue : Q16_16) (magnitude : Q16_16) : Q16_16 :=
+  Q16_16.mul eigenvalue magnitude
+
+/-- Write FAMM cell at address with specified delay and eigenmass. -/
 def fammWrite (bank : FAMMBank) (address : Nat) (data : Q16_16) (delay : Q16_16) : FAMMResult :=
   if address < bank.size then
     let bindResult := fammBind bank .write address
@@ -102,6 +109,19 @@ def fammWrite (bank : FAMMBank) (address : Nat) (data : Q16_16) (delay : Q16_16)
     let newCell := { data := data, delay := delay, delayMass := Q16_16.mul delay Q16_16.one, delayWeight := Q16_16.one }
     let newBank := { bank with cells := bank.cells.set! address newCell }
     { success := delayCompliant, value := some data, cost := bindResult.cost, invariant := bindResult.invariant }
+  else
+    let bindResult := fammBind bank .write address
+    { success := false, value := none, cost := bindResult.cost, invariant := bindResult.invariant }
+
+/-- Write FAMM cell with eigenmass-based delayMass. -/
+def fammWriteEigenmass (bank : FAMMBank) (address : Nat) (data : Q16_16) (delay : Q16_16) (eigenvalue : Q16_16) (magnitude : Q16_16) : FAMMResult :=
+  if address < bank.size then
+    let bindResult := fammBind bank .write address
+    let delayCompliant := delay.val ≤ bank.maxDelay.val
+    let mass := eigenmass eigenvalue magnitude
+    let newCell := { data := data, delay := delay, delayMass := mass, delayWeight := magnitude }
+    let newBank := { bank with cells := bank.cells.set! address newCell }
+    { success := delayCompliant, value := some data, cost := bindResult.cost, invariant := s!"eigenmass={mass.val}" }
   else
     let bindResult := fammBind bank .write address
     { success := false, value := none, cost := bindResult.cost, invariant := bindResult.invariant }
@@ -123,7 +143,7 @@ theorem fammBindReflexive (bank : FAMMBank) (mode : FAMMAccessMode) (address : N
   rfl
 
 /-- MORE FAMM Architecture Integration
-    
+
     The unified architecture requires capability-based memory isolation
     and thermal management for safe operation. These extensions integrate
     FAMM with the nanokernel, TSM, and pruning systems.
@@ -199,7 +219,7 @@ deriving Repr, Inhabited
 
 /-- Theorem: FAMM compression achieves space reduction
     Formal guarantee that metadata collapse reduces state size.
-    
+
     Note: bannedCount tracking is a TODO. Currently proves that
     collapsed state represents the bank's cells count. -/
 theorem famm_compression_property
@@ -211,7 +231,7 @@ theorem famm_compression_property
 /-- Integration with Entropy Phase Engine
     FAMM provides memory substrate for nanokernel isolation,
     enabling TSM thermal control and GCL evolution.
-    
+
     The complete pipeline:
     1. Entropy Phase Engine (6.5σ detection) → prunes irrelevant models
     2. Layer 3 (localOnly) → computes without global anchor

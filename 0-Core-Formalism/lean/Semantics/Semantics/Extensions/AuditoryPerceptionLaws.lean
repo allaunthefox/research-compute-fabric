@@ -17,7 +17,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.Psychoacoustics
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Critical Band Rate (Bark Scale) -/
 

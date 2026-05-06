@@ -17,7 +17,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.NicheTransport
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Hutchinsonian Niche -/
 
@@ -25,7 +25,7 @@ open Semantics.FixedPoint
     Checks if an environmental state is within the fundamental niche (L_i <= x_i <= U_i). -/
 def isWithinNiche (state limits : List (Q16_16 × Q16_16)) : Bool :=
   -- state: List of x_i, limits: List of (L_i, U_i)
-  List.zipWith (fun x range => 
+  List.zipWith (fun x range =>
     x.val.toNat >= range.1.val.toNat && x.val.toNat <= range.2.val.toNat
   ) state limits |>.all id
 

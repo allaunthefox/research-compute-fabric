@@ -1,0 +1,17 @@
+{
+    "file_name": "metamanifold",
+    "design": {
+        "device": "GW1NR-9",
+        "package": "LQFP48",
+        "performance": "C8/I6"
+    },
+    "files": [
+        {
+            "name": "/home/allaun/Documents/Research Stack/4-Infrastructure/hardware/metamanifold_prover_gowin.v",
+            "file_type": "verilog"
+        }
+    ],
+    "constraint": {
+        "file_name": "/home/allaun/Documents/Research Stack/4-Infrastructure/hardware/metamanifold_prover_gowin.cst"
+    }
+}

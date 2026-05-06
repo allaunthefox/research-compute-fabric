@@ -1,0 +1,302 @@
+// Constraint file for Meta-Manifold Prover on Gowin GW1NR-9 / Tang Nano 9K
+// Pin assignments for Tang Nano 9K board
+
+# Clock
+IO_LOC "clk" 35;
+IO_PORT "clk" PULL_MODE=UP IO_TYPE=LVCMOS33;
+
+# Reset (active low, button)
+IO_LOC "rst_n" 10;
+IO_PORT "rst_n" PULL_MODE=UP IO_TYPE=LVCMOS33;
+
+# Control signals (buttons)
+IO_LOC "start" 11;
+IO_PORT "start" PULL_MODE=UP IO_TYPE=LVCMOS33;
+
+# Status LEDs
+IO_LOC "busy" 13;
+IO_PORT "busy" IO_TYPE=LVCMOS33;
+IO_LOC "done" 14;
+IO_PORT "done" IO_TYPE=LVCMOS33;
+
+# Operation select (dip switches)
+IO_LOC "op_select[0]" 16;
+IO_LOC "op_select[1]" 17;
+IO_LOC "op_select[2]" 18;
+IO_PORT "op_select[0]" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+IO_PORT "op_select[1]" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+IO_PORT "op_select[2]" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+# Mass Number gate inputs (GPIO)
+IO_LOC "admissible[0]" 19;
+IO_LOC "admissible[1]" 20;
+IO_LOC "admissible[2]" 21;
+IO_LOC "admissible[3]" 22;
+IO_LOC "admissible[4]" 23;
+IO_LOC "admissible[5]" 24;
+IO_LOC "admissible[6]" 25;
+IO_LOC "admissible[7]" 26;
+IO_LOC "admissible[8]" 27;
+IO_LOC "admissible[9]" 28;
+IO_LOC "admissible[10]" 29;
+IO_LOC "admissible[11]" 30;
+IO_LOC "admissible[12]" 31;
+IO_LOC "admissible[13]" 32;
+IO_LOC "admissible[14]" 33;
+IO_LOC "admissible[15]" 34;
+IO_PORT "admissible" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+IO_LOC "residual[0]" 38;
+IO_LOC "residual[1]" 39;
+IO_LOC "residual[2]" 40;
+IO_LOC "residual[3]" 41;
+IO_LOC "residual[4]" 42;
+IO_LOC "residual[5]" 43;
+IO_LOC "residual[6]" 44;
+IO_LOC "residual[7]" 45;
+IO_LOC "residual[8]" 46;
+IO_LOC "residual[9]" 47;
+IO_LOC "residual[10]" 48;
+IO_LOC "residual[11]" 49;
+IO_LOC "residual[12]" 50;
+IO_LOC "residual[13]" 51;
+IO_LOC "residual[14]" 52;
+IO_LOC "residual[15]" 53;
+IO_PORT "residual" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+IO_LOC "epsilon[0]" 54;
+IO_LOC "epsilon[1]" 55;
+IO_LOC "epsilon[2]" 56;
+IO_LOC "epsilon[3]" 57;
+IO_LOC "epsilon[4]" 58;
+IO_LOC "epsilon[5]" 59;
+IO_LOC "epsilon[6]" 60;
+IO_LOC "epsilon[7]" 61;
+IO_LOC "epsilon[8]" 62;
+IO_LOC "epsilon[9]" 63;
+IO_LOC "epsilon[10]" 64;
+IO_LOC "epsilon[11]" 65;
+IO_LOC "epsilon[12]" 66;
+IO_LOC "epsilon[13]" 67;
+IO_LOC "epsilon[14]" 68;
+IO_LOC "epsilon[15]" 69;
+IO_PORT "epsilon" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+IO_LOC "threshold[0]" 70;
+IO_LOC "threshold[1]" 71;
+IO_LOC "threshold[2]" 72;
+IO_LOC "threshold[3]" 73;
+IO_LOC "threshold[4]" 74;
+IO_LOC "threshold[5]" 75;
+IO_LOC "threshold[6]" 76;
+IO_LOC "threshold[7]" 77;
+IO_LOC "threshold[8]" 78;
+IO_LOC "threshold[9]" 79;
+IO_LOC "threshold[10]" 80;
+IO_LOC "threshold[11]" 81;
+IO_LOC "threshold[12]" 82;
+IO_LOC "threshold[13]" 83;
+IO_LOC "threshold[14]" 84;
+IO_LOC "threshold[15]" 85;
+IO_PORT "threshold" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+# Mass Number gate output
+IO_LOC "mass_le_result" 86;
+IO_PORT "mass_le_result" IO_TYPE=LVCMOS33;
+
+# Torus coordinates (simplified to 20 pins for demo)
+IO_LOC "coord1[0]" 87;
+IO_LOC "coord1[1]" 88;
+IO_LOC "coord1[2]" 89;
+IO_LOC "coord1[3]" 90;
+IO_LOC "coord1[4]" 91;
+IO_LOC "coord1[5]" 92;
+IO_LOC "coord1[6]" 93;
+IO_LOC "coord1[7]" 94;
+IO_LOC "coord1[8]" 95;
+IO_LOC "coord1[9]" 96;
+IO_PORT "coord1" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+IO_LOC "coord2[0]" 97;
+IO_LOC "coord2[1]" 98;
+IO_LOC "coord2[2]" 99;
+IO_LOC "coord2[3]" 100;
+IO_LOC "coord2[4]" 101;
+IO_LOC "coord2[5]" 102;
+IO_LOC "coord2[6]" 103;
+IO_LOC "coord2[7]" 104;
+IO_LOC "coord2[8]" 105;
+IO_LOC "coord2[9]" 106;
+IO_PORT "coord2" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+# Torus distance output
+IO_LOC "torus_distance[0]" 107;
+IO_LOC "torus_distance[1]" 108;
+IO_LOC "torus_distance[2]" 109;
+IO_LOC "torus_distance[3]" 110;
+IO_LOC "torus_distance[4]" 111;
+IO_LOC "torus_distance[5]" 112;
+IO_LOC "torus_distance[6]" 113;
+IO_LOC "torus_distance[7]" 114;
+IO_LOC "torus_distance[8]" 115;
+IO_LOC "torus_distance[9]" 116;
+IO_LOC "torus_distance[10]" 117;
+IO_LOC "torus_distance[11]" 118;
+IO_PORT "torus_distance" IO_TYPE=LVCMOS33;
+
+# Menger inputs (simplified)
+IO_LOC "menger_x[0]" 119;
+IO_LOC "menger_x[1]" 120;
+IO_LOC "menger_x[2]" 121;
+IO_LOC "menger_x[3]" 122;
+IO_LOC "menger_x[4]" 123;
+IO_LOC "menger_x[5]" 124;
+IO_LOC "menger_x[6]" 125;
+IO_LOC "menger_x[7]" 126;
+IO_PORT "menger_x" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+IO_LOC "menger_y[0]" 127;
+IO_LOC "menger_y[1]" 128;
+IO_LOC "menger_y[2]" 129;
+IO_LOC "menger_y[3]" 130;
+IO_LOC "menger_y[4]" 131;
+IO_LOC "menger_y[5]" 132;
+IO_LOC "menger_y[6]" 133;
+IO_LOC "menger_y[7]" 134;
+IO_PORT "menger_y" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+IO_LOC "menger_z[0]" 135;
+IO_LOC "menger_z[1]" 136;
+IO_LOC "menger_z[2]" 137;
+IO_LOC "menger_z[3]" 138;
+IO_LOC "menger_z[4]" 139;
+IO_LOC "menger_z[5]" 140;
+IO_LOC "menger_z[6]" 141;
+IO_LOC "menger_z[7]" 142;
+IO_PORT "menger_z" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+IO_LOC "hausdorff_dim[0]" 143;
+IO_LOC "hausdorff_dim[1]" 144;
+IO_LOC "hausdorff_dim[2]" 145;
+IO_LOC "hausdorff_dim[3]" 146;
+IO_LOC "hausdorff_dim[4]" 147;
+IO_LOC "hausdorff_dim[5]" 148;
+IO_LOC "hausdorff_dim[6]" 149;
+IO_LOC "hausdorff_dim[7]" 150;
+IO_LOC "hausdorff_dim[8]" 151;
+IO_LOC "hausdorff_dim[9]" 152;
+IO_LOC "hausdorff_dim[10]" 153;
+IO_LOC "hausdorff_dim[11]" 154;
+IO_LOC "hausdorff_dim[12]" 155;
+IO_LOC "hausdorff_dim[13]" 156;
+IO_LOC "hausdorff_dim[14]" 157;
+IO_LOC "hausdorff_dim[15]" 158;
+IO_PORT "hausdorff_dim" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+# Menger address output
+IO_LOC "menger_address[0]" 159;
+IO_LOC "menger_address[1]" 160;
+IO_LOC "menger_address[2]" 161;
+IO_LOC "menger_address[3]" 162;
+IO_LOC "menger_address[4]" 163;
+IO_LOC "menger_address[5]" 164;
+IO_LOC "menger_address[6]" 165;
+IO_LOC "menger_address[7]" 166;
+IO_PORT "menger_address" IO_TYPE=LVCMOS33;
+
+# Fold energy inputs (simplified for demo)
+IO_LOC "torus_energy[0]" 167;
+IO_LOC "torus_energy[1]" 168;
+IO_LOC "torus_energy[2]" 169;
+IO_LOC "torus_energy[3]" 170;
+IO_LOC "torus_energy[4]" 171;
+IO_LOC "torus_energy[5]" 172;
+IO_LOC "torus_energy[6]" 173;
+IO_LOC "torus_energy[7]" 174;
+IO_PORT "torus_energy" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+IO_LOC "menger_energy[0]" 175;
+IO_LOC "menger_energy[1]" 176;
+IO_LOC "menger_energy[2]" 177;
+IO_LOC "menger_energy[3]" 178;
+IO_LOC "menger_energy[4]" 179;
+IO_LOC "menger_energy[5]" 180;
+IO_LOC "menger_energy[6]" 181;
+IO_LOC "menger_energy[7]" 182;
+IO_PORT "menger_energy" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+IO_LOC "horn_energy[0]" 183;
+IO_LOC "horn_energy[1]" 184;
+IO_LOC "horn_energy[2]" 185;
+IO_LOC "horn_energy[3]" 186;
+IO_LOC "horn_energy[4]" 187;
+IO_LOC "horn_energy[5]" 188;
+IO_LOC "horn_energy[6]" 189;
+IO_LOC "horn_energy[7]" 190;
+IO_PORT "horn_energy" IO_TYPE=LVCMOS33;
+
+IO_LOC "alpha[0]" 191;
+IO_LOC "alpha[1]" 192;
+IO_LOC "alpha[2]" 193;
+IO_LOC "alpha[3]" 194;
+IO_LOC "alpha[4]" 195;
+IO_LOC "alpha[5]" 196;
+IO_LOC "alpha[6]" 197;
+IO_LOC "alpha[7]" 198;
+IO_PORT "alpha" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+IO_LOC "beta[0]" 199;
+IO_LOC "beta[1]" 200;
+IO_LOC "beta[2]" 201;
+IO_LOC "beta[3]" 202;
+IO_LOC "beta[4]" 203;
+IO_LOC "beta[5]" 204;
+IO_LOC "beta[6]" 205;
+IO_LOC "beta[7]" 206;
+IO_PORT "beta" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+IO_LOC "gamma[0]" 207;
+IO_LOC "gamma[1]" 208;
+IO_LOC "gamma[2]" 209;
+IO_LOC "gamma[3]" 210;
+IO_LOC "gamma[4]" 211;
+IO_LOC "gamma[5]" 212;
+IO_LOC "gamma[6]" 213;
+IO_LOC "gamma[7]" 214;
+IO_PORT "gamma" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+# Fold energy output
+IO_LOC "fold_energy_total[0]" 215;
+IO_LOC "fold_energy_total[1]" 216;
+IO_LOC "fold_energy_total[2]" 217;
+IO_LOC "fold_energy_total[3]" 218;
+IO_LOC "fold_energy_total[4]" 219;
+IO_LOC "fold_energy_total[5]" 220;
+IO_LOC "fold_energy_total[6]" 221;
+IO_LOC "fold_energy_total[7]" 222;
+IO_PORT "fold_energy_total" IO_TYPE=LVCMOS33;
+
+# Surface check inputs
+IO_LOC "surface_height[0]" 223;
+IO_LOC "surface_height[1]" 224;
+IO_LOC "surface_height[2]" 225;
+IO_LOC "surface_height[3]" 226;
+IO_LOC "surface_height[4]" 227;
+IO_LOC "surface_height[5]" 228;
+IO_LOC "surface_height[6]" 229;
+IO_LOC "surface_height[7]" 230;
+IO_PORT "surface_height" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+IO_LOC "surface_ridge[0]" 231;
+IO_LOC "surface_ridge[1]" 232;
+IO_LOC "surface_ridge[2]" 233;
+IO_LOC "surface_ridge[3]" 234;
+IO_LOC "surface_ridge[4]" 235;
+IO_LOC "surface_ridge[5]" 236;
+IO_LOC "surface_ridge[6]" 237;
+IO_LOC "surface_ridge[7]" 238;
+IO_PORT "surface_ridge" PULL_MODE=DOWN IO_TYPE=LVCMOS33;
+
+# Surface check output
+IO_LOC "surface_admissible" 239;
+IO_PORT "surface_admissible" IO_TYPE=LVCMOS33;

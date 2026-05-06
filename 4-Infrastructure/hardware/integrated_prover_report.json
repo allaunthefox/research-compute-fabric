@@ -1,0 +1,7609 @@
+{
+  "total_files": 100,
+  "prover_distribution": {
+    "Goedel-Prover-V2": 1,
+    "bf4prover": 2,
+    "GPU+FPGA": 97,
+    "bfs_prover": "success"
+  },
+  "success_count": 99,
+  "error_count": 1,
+  "elapsed_time": 144.19547176361084,
+  "files_per_second": 0.6935030537154219,
+  "gpu_available": true,
+  "results": [
+    {
+      "file": "test.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "2-Search-Space/SearchSpace.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "shared-data/data/ingested/kim_matroska_branes/AMMR_AVMR_TruthTest.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "shared-data/data/ingested/kim_matroska_branes/AcceleratingLoop.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "shared-data/data/ingested/kim_matroska_branes/DiscoveryFirst.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "shared-data/data/ingested/kim_matroska_branes/MatroskaS3C.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "shared-data/data/ingested/kim_matroska_branes/MerkleMountainNeuron.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "shared-data/data/ingested/kim_matroska_branes/MetaOntologicalInversionMachine.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "shared-data/data/ingested/kim_matroska_branes/PlanckScale.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "shared-data/data/ingested/kim_matroska_branes/SovereignMathModel.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "shared-data/data/ingested/kim_matroska_branes/SpawnQuantum.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "shared-data/data/ingested/kim_matroska_branes/SpawnScalar.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "shared-data/data/ingested/kim_matroska_branes/UberLUT.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "shared-data/data/ingested/kim_matroska_branes/forest_walker.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "shared-data/data/germane/research/REVISED_EQUATIONS/AMMR_AVMR_TruthTest.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "shared-data/data/germane/research/REVISED_EQUATIONS/SovereignMathModel.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "6-Documentation/invention_record/KillerCriterion.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "6-Documentation/invention_record/SabotagePrevention.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "6-Documentation/docs/semantics/missingproofs/AVMR_Theorems.lean",
+      "prover": "Goedel-Prover-V2",
+      "status": "error",
+      "output": "",
+      "error": "Traceback (most recent call last):\n  File \"/home/allaun/Documents/Research Stack/ai-math-discovery-systems/Goedel-Prover-V2/src/inference.py\", line 4, in <module>\n    from vllm import LLM, SamplingParams\nModuleNotFoundError: No module named 'vllm'\n"
+    },
+    {
+      "file": "6-Documentation/docs/semantics/missingproofs/Domain_Intersections.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "6-Documentation/docs/geoweird/agent_coordination/lean_port_swarm/nii_cores/NIICore.lean",
+      "prover": "bf4prover",
+      "status": "success",
+      "output": "No TODO(lean-port) sorry blocks found in /home/allaun/Documents/Research Stack/6-Documentation/docs/geoweird/agent_coordination/lean_port_swarm/nii_cores/NIICore.lean\n",
+      "error": null
+    },
+    {
+      "file": "6-Documentation/docs/geoweird/agent_coordination/lean_port_swarm/nii_cores/SemanticAnalysisCore.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "6-Documentation/docs/geoweird/agent_coordination/lean_port_swarm/nii_cores/TranslationEngineCore.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "6-Documentation/docs/geoweird/agent_coordination/lean_port_swarm/nii_cores/VerificationCore.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "6-Documentation/docs/geoweird/agent_coordination/lean_port_swarm/blackboard/artifacts/MaliciousTest.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "3-Mathematical-Models/AMMR/AMMRLUT.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "3-Mathematical-Models/manifold_compression/src/AutoAdaptiveMetatypeSystem.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "2-Search-Space/PIST/PIST.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "2-Search-Space/PIST/PistBridge.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "2-Search-Space/PIST/PistSimulation.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "2-Search-Space/PIST/PISTMachine.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "2-Search-Space/PIST/TorsionalPIST.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "2-Search-Space/PIST/HybridTSMPISTTorus.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "2-Search-Space/FAMM/FAMM_refactored.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "2-Search-Space/FAMM/FAMM.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "2-Search-Space/simulations/Newtonian-Superfluid-Simulation/custom_stack/SuperfluidSemanticKernel.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/lakefile.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/AlphabetReduction.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/FAMM.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/FullMasterMassNumberReduction.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/Graph.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/LochMonsterFilter.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/MarketFilter.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/MetasurfacePolarizationControl.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/OracleInterrogation.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/QuaternionSidonField.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/RGFlow.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/ReceiptCore.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/ReceiptLedgerPromotionGate.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/SorryCollapseGate.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/StructuredLightChiralitySpin.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/TorsionFlipOperator.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/TranslatorPackets.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/TwoLayerKineticSidonEquations.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/TwoLayerKineticSidonLattice.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/VisualPrimitive.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/Constitution.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/Graph/Diff.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/Graph/Torsion.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/Plumbing/Artifact.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/Plumbing/FAMMUpdate.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/tools/lean/Semantics/Semantics/Plumbing/Route.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/prototypes/webgpu-lean-ontology/OntologyKernel.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/formal/lean/SidonAudit/AlignmentDischargeCycle.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/formal/lean/SidonAudit/BodyVestDisproof.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/formal/lean/SidonAudit/BurgersRuzsaDecoupling.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/formal/lean/SidonAudit/FlexureMisalignmentReceipts.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/formal/lean/SidonAudit/LagrangianTransfer.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/formal/lean/SidonAudit/MetaCrystalGlobalObstruction.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/formal/lean/SidonAudit/MetaCrystallineStructure.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/formal/lean/SidonAudit/ModularTransition.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/formal/lean/SidonAudit/OobleckTransfer.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/formal/lean/SidonAudit/QuasiChargedMetaCrystalCells.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/formal/lean/SidonAudit/ShockBurgersCoupling.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/formal/lean/SidonAudit/ShockwaveAlignmentRelaxation.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/otom/formal/lean/SidonAudit/StressMetamaterial.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/PurifyMain.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/ExtensionScaffold.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/TangNano9KEmitter.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/SearchServer.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/BindServer.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/GenerateSparklePhiS3C.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/ExtremeParameterTestEval.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/FPGAExtraction.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/MOIMBenchmarkMain.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/NominalParameterTestEval.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/OpenWormBenchmark.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/OriginProtocol.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/AdaptivePrecision.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/CombinatorialPrecision.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/ManifoldCompressionAgnostic.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/MetadataOverheadBudget.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/MinimumNeuralCompression.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/GenerateLUTMain.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/Semantics.lean",
+      "prover": "bf4prover",
+      "status": "success",
+      "output": "No TODO(lean-port) sorry blocks found in /home/allaun/Documents/Research Stack/0-Core-Formalism/lean/Semantics/Semantics.lean\n",
+      "error": null
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/debug_eval.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/Main.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/test.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/QuizTest.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    },
+    {
+      "file": "0-Core-Formalism/lean/Semantics/MetaManifoldLanguageMerging.lean",
+      "prover": "GPU+FPGA",
+      "status": "verified",
+      "verified": true,
+      "details": [
+        {
+          "test_id": 0,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 1,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 2,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 3,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 4,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 5,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 6,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 7,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 8,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        },
+        {
+          "test_id": 9,
+          "mass_verified": true,
+          "shell_verified": true,
+          "phase_verified": true,
+          "overall": true
+        }
+      ]
+    }
+  ],
+  "bfs_audit": {
+    "prover": "bfs_prover",
+    "status": "success",
+    "output": "Querying Auditor (deepseek-r1:8b)...\nConnecting to llama3.1:8b at http://localhost:11435 (Timeout: 600s)...\n\n================================================================================\nAVM TRACE AUDIT REPORT\n================================================================================\n**Audit Report**\n\n### Pass/Fail Checks\n\n1. **Stack Shape**: Passed\n\t* Both `nu_eff` and `q_eff` golden traces have a consistent stack shape throughout their execution.\n2. **PC Monotonicity**: Passed\n\t* The program counter (PC) is monotonically increasing in both golden traces, indicating correct instruction sequencing.\n3. **Instruction/Result Consistency**: Passed\n\t* Instructions and results are consistently represented across both golden traces.\n4. **Q16.16 Representation**: Passed\n\t* All values are correctly represented as Q16.16 fixed-point numbers.\n\n### Missing Metadata Fields\n\n1. **UART Configuration**: The manifest is missing UART configuration details for the FPGA replay, such as baud rate, protocol, sync request, and response.\n2. **Arithmetic Policy Details**: While the arithmetic policy is specified as \"Q16_16 signed saturating arithmetic per FixedPoint.lean\", more detailed information about the policy implementation would be beneficial.\n\n### Ambiguous Claims\n\n1. **Lean Theorem Targets**: The manifest specifies Lean theorem targets but does not provide explicit links to the corresponding Lean code or theorem statements.\n2. **Python Trace Generation**: Although the Python trace generator is specified, its version and any relevant configuration options are not provided in the manifest.\n\n### Claim-Boundary Problems\n\n1. **Provenance**: While the provenance section provides some information about the logic (Lean 4) and traces (Python 3.14), it lacks explicit connections to the Lean theorem targets, Python trace generation, Q16.16 arithmetic policy, and UART hardware replay.\n2. **Hashes**: The manifest includes hashes for various files but does not specify how these hashes were generated or verified.\n\n### Additional Recommendations\n\n1. **FPGA Replay Configuration**: Include detailed FPGA replay configuration information in the manifest to ensure deterministic replay on the target platform.\n2. **Lean Code and Theorem Statements**: Provide explicit links to the corresponding Lean code and theorem statements for the specified Lean theorem targets.\n3. **Python Trace Generation Details**: Specify Python version, relevant configuration options, or any other necessary details about the trace generator.\n\n**Audit Conclusion**\n\nThe golden traces appear to be correctly formatted and consistent with the specified arithmetic policy. However, some metadata fields are missing or ambiguous, which may impact the reproducibility and verifiability of the results. Addressing these issues will ensure a more robust and reliable AVM implementation.\n================================================================================\n\nAudit saved to: /home/allaun/Documents/Research Stack/shared-data/artifacts/audit/burgers_avm_trace_audit.md\n",
+    "error": null
+  }
+}

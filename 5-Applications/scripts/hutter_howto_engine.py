@@ -37,31 +37,47 @@ OUTDIR.mkdir(parents=True, exist_ok=True)
 # ── GCCL Nibble-Switch Constants ──────────────────────────────────────────────
 
 CONTROL_STATES = {0: "REJECT", 1: "ACCEPT", 2: "HOLD", 3: "SNAP"}
-DOMAINS = {0: "K-AXIS", 1: "C-WINDING", 2: "M-TENSION", 3: "Y-BREAK"}
+DOMAINS_L = {0: "K-AXIS", 1: "C-WINDING", 2: "M-TENSION", 3: "Y-BREAK"}
+DOMAINS_R = {0: "Y-BREAK", 1: "M-TENSION", 2: "C-WINDING", 3: "K-AXIS"}
+CHIRALITY = {0: "LEFT", 1: "RIGHT"}
 
 class NibbleSwitch:
-    __slots__ = ['nibble', 'count', 'control', 'domain']
-    def __init__(self, nibble: int, count: int = 1):
+    __slots__ = ['nibble', 'count', 'control', 'domain', 'hand']
+    def __init__(self, nibble: int, count: int = 1, hand: int = 0):
         self.nibble = nibble & 0xF
         self.count = count
         self.control = (self.nibble >> 2) & 0x3
         self.domain = self.nibble & 0x3
+        self.hand = hand & 1
     def __repr__(self):
-        return f"[{CONTROL_STATES[self.control]}][{DOMAINS[self.domain]}]x{self.count}"
+        domains = DOMAINS_L if self.hand == 0 else DOMAINS_R
+        return f"[{CHIRALITY[self.hand]}:{CONTROL_STATES[self.control]}][{domains[self.domain]}]x{self.count}"
     def pack(self) -> int:
         return self.nibble
 
 class GCCLStream:
-    """Pack nibble switches into byte stream (2 per byte)."""
+    """Pack chiral nibble switches into byte stream (2 per byte).
+
+    Chirality alternates by stream position (even=LEFT, odd=RIGHT)
+    unless overridden by the NibbleSwitch itself.
+    """
     def __init__(self):
         self.bytes = bytearray()
         self.pending = None
+        self.pos = 0  # nibble position counter for hand determination
+    def hand_at(self) -> int:
+        """Determine chirality at current nibble position."""
+        return self.pos & 1  # even=LEFT, odd=RIGHT
     def append(self, nib: NibbleSwitch):
+        # If hand not explicitly set, use position-based alternation
+        if not hasattr(nib, 'hand') or nib.hand is None:
+            nib.hand = self.hand_at()
         if self.pending is None:
             self.pending = nib.pack()
         else:
             self.bytes.append((self.pending << 4) | nib.pack())
             self.pending = None
+        self.pos += 1
     def flush(self):
         if self.pending is not None:
             self.bytes.append(self.pending << 4)

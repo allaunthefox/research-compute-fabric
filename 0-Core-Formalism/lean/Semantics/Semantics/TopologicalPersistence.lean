@@ -3,7 +3,7 @@ import Semantics.FixedPoint
 
 namespace Semantics.TopologicalPersistence
 
-open Semantics.Q0_16
+open Semantics.Q16_16
 open Semantics.Q16_16
 
 -- =========================================================================

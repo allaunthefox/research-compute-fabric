@@ -18,7 +18,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.Photosynthesis
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Carbon Assimilation (FvCB) -/
 
@@ -47,7 +47,7 @@ def rubpRegenRate (j_flux cc gamma : Q16_16) : Q16_16 :=
     g0: residual conductance, m: sensitivity, An: assimilation, hs: humidity, Cs: surface CO2. -/
 def stomatalConductance (g0 sensitivity an humidity cs : Q16_16) : Q16_16 :=
   if cs == Q16_16.zero then g0
-  else 
+  else
     let bb_index := Q16_16.div (Q16_16.mul an humidity) cs
     Q16_16.add g0 (Q16_16.mul sensitivity bb_index)
 

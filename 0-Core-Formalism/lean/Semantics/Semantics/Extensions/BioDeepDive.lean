@@ -15,7 +15,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Molecular Layer: Information and Energy -/
 

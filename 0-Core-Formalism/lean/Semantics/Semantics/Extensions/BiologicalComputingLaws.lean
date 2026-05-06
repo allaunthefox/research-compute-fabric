@@ -17,7 +17,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.Computing
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Molecular Combinators (SKI Calculus) -/
 

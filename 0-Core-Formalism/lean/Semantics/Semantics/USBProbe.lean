@@ -13,7 +13,7 @@ import Semantics.ScalarCollapse
 namespace Semantics.USBProbe
 
 open Semantics.Q16_16
-open Semantics.Q0_16
+open Semantics.Q16_16
 open Semantics.ENE
 open Semantics.BraidBracket
 
@@ -65,8 +65,8 @@ structure USBCapability where
   usb4 : Bool
   deriving Repr, DecidableEq
 
-/-- 
-  Informatic Metrics. 
+/--
+  Informatic Metrics.
   Normalized ratios use Q0_16 as per AGENTS.md 1.4.
 -/
 structure USBMetrics where
@@ -86,7 +86,7 @@ structure USBProbeState where
   active : Bool
   deriving Repr, DecidableEq
 
-/-- 
+/--
   Calculate the 14-axis Concept Vector from physical metrics.
   - Axis 0 (Substrate/Tension): Maps 1:1 to link stability (Q0_16 -> Q16_16).
   - Axis 3 (Action): Maps USB Speed (Mbps) to normalized effort.
@@ -128,7 +128,7 @@ def usbToBraidBracket (state : USBProbeState) : BraidBracket :=
   let μ := Q16_16.ofFloat (Q0_16.toFloat state.metrics.linkStability)
   fromPhaseVec z μ
 
-/-- 
+/--
   ENE Scalar Collapse:
   Collapses the 14-axis (or complex hardware state) into a 0D scalar.
   For USB, we define the "ENE Scalar" as Axis 0 (Substrate/Entropy) of the Concept Vector.
@@ -151,11 +151,11 @@ def usbTopologicalResidual (s1 s2 : USBProbeState) : Q16_16 :=
   let diff := Q16_16.sub v1 v2
   Q16_16.mul diff diff
 
-/-- 
-  Invariant: An active USB-C device must have a non-zero ENE scalar if stable. 
+/--
+  Invariant: An active USB-C device must have a non-zero ENE scalar if stable.
   Proof: v0 is derived 1:1 from stability. If stability > 0, v0 > 0.
 -/
-theorem usb_active_stable_nonzero (state : USBProbeState) 
+theorem usb_active_stable_nonzero (state : USBProbeState)
     (h_active : state.active = true)
     (h_stable : state.metrics.linkStability.val > 0)
     (h_v0 : state.conceptVector.v0 = Q16_16.ofFloat (Q0_16.toFloat state.metrics.linkStability)) :

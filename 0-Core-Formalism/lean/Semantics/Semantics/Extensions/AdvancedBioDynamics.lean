@@ -4,7 +4,7 @@ Authors: Research Stack Team
 
 AdvancedBioDynamics.lean — Foundation-scale biophysical laws and information physics.
 
-This module formalizes high-level biophysical identities that have proven resilient 
+This module formalizes high-level biophysical identities that have proven resilient
 to challenge, mapping them to the manifold's information-theoretic and geometric structure.
 -/
 
@@ -15,7 +15,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.Advanced
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Information Physics: Free Energy Principle (FEP) -/
 
@@ -53,12 +53,12 @@ structure NeuralFieldState where
 
 def wilsonCowanUpdate (s : NeuralFieldState) (w_ee w_ei w_ie w_ii P Q dt : Q16_16) : NeuralFieldState :=
   -- Logistic sigmoid approximation
-  let sigmoid (x : Q16_16) : Q16_16 := 
+  let sigmoid (x : Q16_16) : Q16_16 :=
     if x.val.toNat > 0x00010000 then Q16_16.one else Q16_16.zero -- Extreme simplification
 
   let dE := Q16_16.add (Q16_16.neg s.excitatory) (sigmoid (Q16_16.add (Q16_16.sub (Q16_16.mul w_ee s.excitatory) (Q16_16.mul w_ei s.inhibitory)) P))
   let dI := Q16_16.add (Q16_16.neg s.inhibitory) (sigmoid (Q16_16.add (Q16_16.sub (Q16_16.mul w_ie s.excitatory) (Q16_16.mul w_ii s.inhibitory)) Q))
-  
+
   { excitatory := Q16_16.add s.excitatory (Q16_16.mul dE dt)
   , inhibitory := Q16_16.add s.inhibitory (Q16_16.mul dI dt) }
 

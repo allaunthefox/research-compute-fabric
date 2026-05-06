@@ -16,7 +16,7 @@ This document is a working synthesis. It is not a design claim. It is a scaffold
 figuring out what to test next. Anti-narrative-fitting rule: disclose mismatches, do not
 stretch evidence to fit the theory.
 
-**Cross-reference:** `docs/MATHEMATICAL_AUDIT.md` §5.
+**Cross-reference:** Mathematical audit was consolidated into the 7-invariant system (see `docs/specs/` for invariant specifications).
 
 ---
 

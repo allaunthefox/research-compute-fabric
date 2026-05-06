@@ -760,21 +760,19 @@ theorem checkOperationAdmissibility_deterministic (op : WorkloadOperation) (capa
   unfold checkOperationAdmissibility
   simp
 
-/-- Euclidean distance is symmetric. -/
-axiom geodesicDistance_symmetric (topology : ASICTopology) (sourceId targetId : Nat) :
-  let sourceNode := findNode topology sourceId
-  let targetNode := findNode topology targetId
-  match sourceNode, targetNode with
-  | some s, some t => geodesicDistance topology sourceId targetId = geodesicDistance topology targetId sourceId
-  | _, _ => true
-
-/-- Optimal path cost is non-negative. -/
-axiom optimalPathCost_nonNegative (topology : ASICTopology) (sourceId targetId : Nat) :
-  (findOptimalPath topology sourceId targetId).totalCost ≥ zero
-
-/-- ASIC to manifold translation preserves node count. -/
-axiom asicToManifold_preservesCount (topology : ASICTopology) (manifoldDimension : Nat) :
-  (createASICToManifoldMapping topology manifoldDimension).size = topology.nodes.size
+/-- External ASIC topology invariants.
+  Geodesic distance symmetric, optimal path cost non-negative,
+  ASIC-to-manifold mapping preserves node count. -/
+structure ASICTopologyInvariantsHypothesis where
+  geodesic_symmetric (topology : ASICTopology) (sourceId targetId : Nat) :
+    let sourceNode := findNode topology sourceId; let targetNode := findNode topology targetId
+    match sourceNode, targetNode with
+    | some s, some t => geodesicDistance topology sourceId targetId = geodesicDistance topology targetId sourceId
+    | _, _ => true
+  optimal_cost_nonneg (topology : ASICTopology) (sourceId targetId : Nat) :
+    (findOptimalPath topology sourceId targetId).totalCost ≥ zero
+  asic_to_manifold_count (topology : ASICTopology) (manifoldDimension : Nat) :
+    (createASICToManifoldMapping topology manifoldDimension).size = topology.nodes.size
 
 /-! ## Manifold Networking Integration (TopoASIC Chain) -/
 

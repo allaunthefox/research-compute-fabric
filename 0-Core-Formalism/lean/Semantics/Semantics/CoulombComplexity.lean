@@ -41,7 +41,7 @@ import Mathlib.Data.Real.Basic
 namespace Semantics.CoulombComplexity
 
 open Semantics
-open Semantics.Q0_16
+open Semantics.Q16_16
 open Semantics.Q16_16
 
 -- ═══════════════════════════════════════════════════════════════════════════

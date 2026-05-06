@@ -59,44 +59,20 @@ noncomputable def adaptiveDegeneracyCost (c : HachimojiCodon) : ℝ :=
 noncomputable def combinedReducedCost (p : Nat → ℝ) (hp : Σ n, p n = 1) (c : HachimojiCodon) : ℝ :=
   Real.log (effectiveAlphabetSize p hp) / (degeneracyFunction c)
 
-/-- Theorem: Effective alphabet cost ≤ raw alphabet cost -/
-axiom effectiveAlphabet_cost_le_raw
-  (p : Nat → ℝ)
-  (hp : Σ n, p n = 1) :
-  effectiveAlphabetCost p hp ≤ hachimojiRawCost
-
-/-- Theorem: Adaptive degeneracy cost ≤ raw cost for high-degeneracy codons -/
-axiom adaptiveDegeneracy_cost_le_raw
-  (c : HachimojiCodon)
-  (hdeg : 1 < degeneracyFunction c) :
-  adaptiveDegeneracyCost c ≤ hachimojiRawCost
-
-/-- Theorem: Combined cost reduction achieves target scaling (< 1.2x) -/
-axiom combined_achieves_target_scaling
-  (p : Nat → ℝ)
-  (hp : Σ n, p n = 1)
-  (c : HachimojiCodon)
-  (h_eff : effectiveAlphabetCost p hp ≤ 4.605)  -- ln 100
-  (h_deg : degeneracyFunction c ≥ 26) :
-  combinedReducedCost p hp c ≤ 1.2 * standardBaseCost
-
-/-- Theorem: Landauer consistency maintained under cost reduction -/
-axiom landauer_consistency_maintained
-  (p : Nat → ℝ)
-  (hp : Σ n, p n = 1)
-  (c : HachimojiCodon) :
-  combinedReducedCost p hp c = Real.log (effectiveAlphabetSize p hp) / (degeneracyFunction c) ∧
-  ∃ N, combinedReducedCost p hp c = Real.log N
-
-/-- Information-theoretic interpretation: effective alphabet size reflects actual choice space -/
-noncomputable def informationTheoreticCost (p : Nat → ℝ) (hp : Σ n, p n = 1) : ℝ :=
-  shannonEntropy p hp
-
-/-- Theorem: Information-theoretic cost ≤ logarithmic cost for non-uniform distributions -/
-axiom info_cost_le_log_cost
-  (p : Nat → ℝ)
-  (hp : Σ n, p n = 1)
-  (h_nonuniform : ∃ n m, p n ≠ p m) :
-  informationTheoreticCost p hp ≤ Real.log 512
+/-- External cost-refinement invariants.
+  Effective alphabet cost ≤ raw, adaptive degeneracy ≤ raw, combined achieves target scaling,
+  Landauer consistency maintained, info-theoretic cost ≤ log cost.
+  These are information-theoretic bounds requiring external entropy analysis. -/
+structure HachimojiCostInvariantsHypothesis where
+  effective_le_raw (p : Nat → ℝ) (hp : Σ n, p n = 1) : effectiveAlphabetCost p hp ≤ hachimojiRawCost
+  adaptive_le_raw (c : HachimojiCodon) (hdeg : 1 < degeneracyFunction c) : adaptiveDegeneracyCost c ≤ hachimojiRawCost
+  combined_target_scaling (p : Nat → ℝ) (hp : Σ n, p n = 1) (c : HachimojiCodon)
+    (h_eff : effectiveAlphabetCost p hp ≤ 4.605) (h_deg : degeneracyFunction c ≥ 26) :
+    combinedReducedCost p hp c ≤ 1.2 * standardBaseCost
+  landauer_consistency (p : Nat → ℝ) (hp : Σ n, p n = 1) (c : HachimojiCodon) :
+    combinedReducedCost p hp c = Real.log (effectiveAlphabetSize p hp) / (degeneracyFunction c) ∧
+    ∃ N, combinedReducedCost p hp c = Real.log N
+  info_le_log (p : Nat → ℝ) (hp : Σ n, p n = 1) (h_nonuniform : ∃ n m, p n ≠ p m) :
+    informationTheoreticCost p hp ≤ Real.log 512
 
 end HachimojiCostRefinement

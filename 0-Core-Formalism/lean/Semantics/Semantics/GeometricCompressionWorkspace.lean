@@ -32,7 +32,7 @@ import Semantics.ReceiptCore
 
 namespace Semantics.GeometricCompressionWorkspace
 
-open Semantics.Q0_64
+open Semantics.Q16_16.Q0_64
 open Semantics.Q16_16
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -142,7 +142,7 @@ structure DeltaPhiGammaLambdaAudit where
 
 /-- Project SourceValue to CodingAtom using explicit normalization.
     No Float. Uses rational arithmetic via ofRatio.
-    
+
     Example: diameter=2.2nm, maxExpected=4.0nm
     → normalized = 2.2/4.0 = 0.55 = ofRatio 22 40 -/
 def projectToCoding (src : SourceValue) (maxExpected : Q16_16) : CodingAtom :=
@@ -170,7 +170,7 @@ def embedToSurface2D (atom : CodingAtom) (cellId : String) : SurfaceCoordinate :
   }
 
 /-- Create perturbation direction between two coordinates -/
-def makePerturbation (start end_ : SurfaceCoordinate) (rank : Nat) 
+def makePerturbation (start end_ : SurfaceCoordinate) (rank : Nat)
     (phiEstimate : CodingAtom) : PerturbationDirection :=
   { directionId := s!"pert_{start.cellId}_{end_.cellId}",
     basisRank := rank,
@@ -200,7 +200,7 @@ def lowRankCollapseTemplate (rank : Nat) : CollapseOperator :=
     inputDims := 512,
     outputDims := 64,
     embedding := fun atom => embedToSurface2D atom "low_rank_cell",
-    basis := [makePerturbation 
+    basis := [makePerturbation
                 (embedToSurface2D (codingFromRatio 1 10 "start") "start")
                 (embedToSurface2D (codingFromRatio 9 10 "end") "end")
                 rank
@@ -220,11 +220,11 @@ def runDpglAudit
     (pressure : GammaPressure)
     (scale : LambdaScale) : DeltaPhiGammaLambdaAudit :=
   let deltaMag := Q0_64.sub input.value output.value |> Q0_64.abs
-  let delta := DeltaResidual.mk 
+  let delta := DeltaResidual.mk
     s!"Change from {op.inputDims} to {op.outputDims} dims"
     (CodingAtom.mk deltaMag "delta_calc")
     (some "auto_delta")
-  let phi := PhiInvariant.mk 
+  let phi := PhiInvariant.mk
     "Structural invariants preserved"
     (deltaMag < Q0_64.ofRatio 1 10)  -- threshold 0.1
     (some "phi_check")
@@ -254,7 +254,7 @@ structure WardenValidation where
   deriving Repr, Inhabited
 
 /-- Validate operator against Warden rules -/
-def wardenValidate (op : CollapseOperator) (audit : DeltaPhiGammaLambdaAudit) 
+def wardenValidate (op : CollapseOperator) (audit : DeltaPhiGammaLambdaAudit)
     : WardenValidation :=
   let emissions : List WardenEmission := []
   -- Check 1: Delta bounded
@@ -314,15 +314,15 @@ def runBenchmark
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-- N-Voxel: A dimension-parameterized volumetric cell primitive.
-    Generalizes voxel across dimension. Used in Geometry-Space for 
+    Generalizes voxel across dimension. Used in Geometry-Space for
     representing compressed or partially compressed geometric states.
-    
+
     Hierarchy:
     - Goxel: pre-compression / shape-agnostic manifold primitive
-    - Voxel: compressed 3D cell  
+    - Voxel: compressed 3D cell
     - N-Voxel: compressed n-dimensional cell (dimension is a parameter)
     - Surface: rendered projection of Goxel / voxel / n-voxel states
-    
+
     Note: No Inhabited deriving because of proof field hRefl.
     -/
 structure NVoxel (n : Nat) where
@@ -375,7 +375,7 @@ inductive FailurePattern where
 
 /-- A repair proposal generated from observed failure patterns.
     This is NOT an accepted repair. It is a HOLD-state candidate.
-    
+
     Warden Rule: Autopoietic repair proposals must never promote themselves.
     if repair_proposal.generated_by == workspace_autopoiesis:
       claim_state = HOLD
@@ -493,13 +493,13 @@ inductive WardenStatus where
 
 /-- AdversarialTrial tests whether a proposed collapse operator survives
     an explicitly constructed contra-operator.
-    
+
     Doctrine: The workspace gains dynamic trial execution as an object of audit,
     but does not gain operator mutation authority.
-    
+
     It may emit: surviving phi, delta residue, bounded synthesis, Warden status.
     It may not: rewrite the operator set, promote itself to proof, silently repair.
-    
+
     Pipeline:
       CollapseOperator -> FailurePattern -> AdversarialTrial
         -> surviving φ / Δ residue -> RepairProposal -> WardenStatus
@@ -519,7 +519,7 @@ structure AdversarialTrial where
 /-- Proof receipt gate for AdversarialTrial.
     Delegates to ReceiptCore.hasProofReceipt over an externally supplied
     receipt list. The workspace never self-issues proof receipts.
-    
+
     A trial must be paired with receipts via promoteTrial before it can
     achieve REVIEWED status. -/
 def hasProofReceipt
@@ -529,7 +529,7 @@ def hasProofReceipt
 
 /-- Promote a trial from CANDIDATE to REVIEWED if receipts satisfy the gate.
     Returns the trial unchanged if promotion criteria are not met.
-    
+
     Uses `match` on status so the proof of `promoteTrial_preserves_receipt_gate`
     reduces cleanly by `simp [promoteTrial]`. -/
 def promoteTrial
@@ -546,7 +546,7 @@ def promoteTrial
 
 /-- Promotion invariant: promoteTrial only produces REVIEWED when
     the receipt gate is satisfied.
-    
+
     This theorem is provable by definition of promoteTrial: the only
     way a CANDIDATE trial becomes REVIEWED is through the hasProofReceipt gate. -/
 theorem promoteTrial_preserves_receipt_gate
@@ -595,7 +595,7 @@ theorem promoteTrialLedger_preserves_invariant
 
 /-- Run adversarial trial: thesis vs contra, emit surviving structure.
     Trial generates an audit receipt; it does not modify operators.
-    
+
     On successful survival, status is always CANDIDATE (not REVIEWED).
     Promotion to REVIEWED requires external receipts via promoteTrial. -/
 def runAdversarialTrial
@@ -656,11 +656,11 @@ def runAdversarialTrial
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- Source-Space examples (PlanetWaves analogy)
-def titanWaveHeight : SourceValue := 
-  { name := "wave_height", rawValue := Q16_16.ofRatio 10 1, unit := "feet", 
+def titanWaveHeight : SourceValue :=
+  { name := "wave_height", rawValue := Q16_16.ofRatio 10 1, unit := "feet",
     measurementProvenance := "Titan methane lake simulation" }
 
-def lavaWaveHeight : SourceValue := 
+def lavaWaveHeight : SourceValue :=
   { name := "wave_height", rawValue := Q16_16.ofRatio 1 10, unit := "feet",
     measurementProvenance := "55 Cancri e lava ocean" }
 
@@ -672,11 +672,11 @@ def lavaWaveHeight : SourceValue :=
 #eval embedToSurface2D (codingFromRatio 5 10 "test") "cell_0"
 
 -- N-Voxel
-def testVoxel3D : Voxel3D := 
+def testVoxel3D : Voxel3D :=
   { x := CodingAtom.mk Q0_64.one "test",
     y := CodingAtom.mk Q0_64.half "test",
     z := CodingAtom.mk Q0_64.zero "test",
-    cellId := "voxel_0", 
+    cellId := "voxel_0",
     occupancy := CodingAtom.mk Q0_64.one "test" }
 
 #eval (voxel3DToNVoxel testVoxel3D).dimensions
@@ -686,10 +686,10 @@ def testVoxel3D : Voxel3D :=
 #eval (lowRankCollapseTemplate 4).basis.length
 
 -- Δφγλ Audit
-#eval (runDpglAudit identityCollapse 
-  (codingFromRatio 8 10 "input") 
+#eval (runDpglAudit identityCollapse
+  (codingFromRatio 8 10 "input")
   (codingFromRatio 8 10 "output")
-  { pressureLevel := CodingAtom.mk (Q0_64.ofRatio 3 10) "gamma", 
+  { pressureLevel := CodingAtom.mk (Q0_64.ofRatio 3 10) "gamma",
     description := "test" }
   { scaleDescription := "test", byteSpan := none, temporalWindow := none }).auditPassed
 
@@ -699,9 +699,9 @@ def testVoxel3D : Voxel3D :=
 #eval (proposeRepairForPattern FailurePattern.lowRankBasisFailure).receiptRequired
 
 -- Autopoietic: Build from Warden result
-#eval (buildAutopoiesis 
+#eval (buildAutopoiesis
   { passed := false, emissions := [WardenEmission.deltaUnbounded, WardenEmission.phiNotPreserved],
-    requiredHolds := true } 
+    requiredHolds := true }
   "autopoiesis_test_001").failurePatterns.length
 
 -- AdversarialTrial: WardenStatus
@@ -752,7 +752,7 @@ def testVoxel3D : Voxel3D :=
    ReceiptCore.benchmarkReceipt "test_input" true true] "test_input").status
 
 -- Warden validation
-#eval (wardenValidate identityCollapse 
+#eval (wardenValidate identityCollapse
   (runDpglAudit identityCollapse
     (codingFromRatio 8 10 "input")
     (codingFromRatio 7 10 "output")
@@ -761,7 +761,7 @@ def testVoxel3D : Voxel3D :=
     { scaleDescription := "test", byteSpan := none, temporalWindow := none })).passed
 
 -- Benchmark
-#eval (runBenchmark identityCollapse 128 
+#eval (runBenchmark identityCollapse 128
   (codingFromRatio 8 10 "test")).operatorName
 
 end Semantics.GeometricCompressionWorkspace

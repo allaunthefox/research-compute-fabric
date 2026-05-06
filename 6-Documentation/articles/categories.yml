@@ -1,0 +1,42 @@
+categories:
+  - id: computational-infrastructure
+    label: Computational Infrastructure
+    description: Physical infrastructure interpreted as lawful state, witness, readout, and maintenance substrate.
+    subcategories:
+      - id: thermodynamic-witness
+        label: Thermodynamic Witness
+        description: Heat, steam, coolant, and pressure systems as readable evidence surfaces.
+      - id: babcock-matrix
+        label: Babcock Matrix
+        description: Graph-aligned state matrices for pipes, roads, steam loops, coolant systems, and other infrastructure networks.
+      - id: reservoir-substrates
+        label: Reservoir Substrates
+        description: Physical reservoir computing and substrate-inversion arguments across water, weather, roads, bridges, and city systems.
+      - id: privacy-preserving-infrastructure
+        label: Privacy-Preserving Infrastructure
+        description: Asset-state diagnostics that avoid identity tracking and behavioral surveillance.
+
+  - id: formal-systems
+    label: Formal Systems
+    description: Lean, theorem-bearing specifications, semantic primitives, and proof-oriented artifacts.
+    subcategories:
+      - id: semantics
+        label: Semantics
+        description: Semantic substrate, binding, routing, and invariant surfaces.
+      - id: compression
+        label: Compression
+        description: Hutter, GCL, MISC, GENSIS, and related compression-oriented theory.
+      - id: verification
+        label: Verification
+        description: Executable checks, proof gates, build evidence, and formal audit trails.
+
+  - id: speculative-engineering
+    label: Speculative Engineering
+    description: Early technical concepts, invention notes, mechanisms, and publishable exploratory design arguments.
+    subcategories:
+      - id: infrastructure-design
+        label: Infrastructure Design
+        description: Concepts for civil, hospital, datacenter, utility, and maintenance systems.
+      - id: substrate-design
+        label: Substrate Design
+        description: Nonstandard computational media and physical state-transition substrates.

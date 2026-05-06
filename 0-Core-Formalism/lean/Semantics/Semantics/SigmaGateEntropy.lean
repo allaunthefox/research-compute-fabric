@@ -18,7 +18,7 @@ namespace Semantics.SigmaGateEntropy
 
 open Semantics.SigmaGate
 open Semantics.EntropyMeasures
-open Semantics.Q0_16
+open Semantics.Q16_16
 open Semantics.Q16_16
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -127,7 +127,7 @@ def kernelJSD {B : Nat} (p q : ProbDist B) : KernelOutput :=
 --   let maxEntropy := Q16_16.ofFloat 100.0
 --   let sigma := entropyToSigmaScore entropy maxEntropy "acoustic_shannon"
 --   ⟨5, sigma.value, ⟨0x2000⟩⟩
--- 
+--
 -- /-- Kernel 6: Resonance entropy confidence.
 --     Measures eigenmode distribution disorder. -/
 -- def kernelResonanceEntropy (eigenmodes : Array Q16_16) : KernelOutput :=

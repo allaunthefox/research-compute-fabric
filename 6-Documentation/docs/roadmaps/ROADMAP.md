@@ -1,0 +1,279 @@
+# Sovereign Research Stack — Authoritative Roadmap
+
+> **This is the single authoritative roadmap.** Other roadmap files (`docs/roadmaps/UNIVERSAL_SUBSTRATE_ROADMAP.md`, `docs/roadmaps/RESEARCH_STACK_FOREST_MAP_WATERFALL.md`) are retained for historical reference. Task-level granularity lives in `TODO_MAP.md` at the repository root.
+
+**Framework:** USTSM (Universal Substrate Topological State Machine)
+**Timeline:** 7 phases / 7 months
+**Active Milestone:** Burgers 4-Theorem Attack Plan (see `6-Documentation/docs/research/BURGERS_READINESS_ASSESSMENT.md`)
+**Source of Truth:** Lean 4 (`0-Core-Formalism/lean/Semantics/`)
+
+---
+
+## 1. The Core Idea
+
+The Sovereign Research Stack is a formalized system where Lean 4 is the single source of truth, all computation is Q16.16 fixed-point (with Q0_64 scalars as the universal interface), and architectural invariants derive from cross-domain equation analysis spanning 2,634 mathematical models across 40+ families. Every transformation must declare what changed, what survived, what was lost, what it cost, at what scale, and what receipt proves it. This is not an opinionated workflow — it is a receipt-bounded law stack (GCCL) executed by a manifold compression engine (MISC) generalized to n-dimensional genetic shells (GENSIS), all unified under one substrate machine (USTSM). The operational goal is a hardware-extractable formal kernel with FPGA-verified invariants and Lean-proven correctness.
+
+---
+
+## 2. The Layer Model
+
+| Level | Name | Domain | Status | Key Components |
+|-------|------|--------|--------|----------------|
+| **L0** | Primordial | Pure math, fixed-point arithmetic, braid fields | **Implemented** (Lean) | Q16_16 FixedPoint, Q0_64 Scalar, PIST/DIAT Shell, BraidField, SSMS_nD |
+| **L1** | Geometric | Shape-aware topology, coupling geometry | **Partial** (docs migrated, partial Lean) | GWL 5-factor Coupling, TorsionalPIST (quaternion), HybridTSMPISTTorus, GWL Throat |
+| **L2** | Biological | Genetic codes, spiking neurons, STDP | **Speculative** (docs exist, minor Lean) | 30+ Genetic Code Tables, Codon Optimization, SpikingDynamics (Izhikevich), GenomicCompression |
+| **L3** | Thermodynamic | Energy-aware quality, homeostatic governance | **Speculative** (docs migrated) | Trixal Quality (thermal/work/irreversibility), Homeostatic Governor, HyperFlow (Navier-Stokes) |
+| **L4** | Security | Attack-aware gating, frustration memory | **Partial** (AngrySphinx in Lean) | AngrySphinx (exponential PoD), FAMM Frustration, ASICTopology |
+| **L5** | Semantic | Meaning-aware filtering, manifold routing, compression governance | **Speculative** (docs migrated) | CrossDimensionalFilter (12 semantic primes), Manifold Networking, BracketedCalculus, CompressionControl |
+| **L6** | Meta | Self-aware adaptation, cognitive routing, auto-adaptive metatyping | **Speculative** (docs migrated) | Cognitive Load Decomposition (5-factor), Adaptation, DynamicCanal, CompressionMechanics |
+
+**Status legend:** `Implemented` = Lean code with `#eval`/theorems exists. `Partial` = some Lean modules exist, docs are migrated. `Speculative` = documentation and design exist, awaiting Lean formalization.
+
+---
+
+## 3. The Three-Axis Pipeline
+
+```
+Substrate (ENE) ←→ Surface (Notion/Obsidian) ←→ Intent (Linear)
+                          ↓
+                      Metatype
+```
+
+| Axis | Role | Primary Tool | Direction |
+|------|------|-------------|-----------|
+| **Substrate** | Raw data, credential mesh, equation registry, FAMM memory, FPGA bitstreams | ENE distributed nodes, SQLite, Tang Nano 9K, Google Drive/Rclone | Bidirectional sync |
+| **Surface** | Human-readable workbench, canonical graph authority, semantic registry, topological queries | Obsidian, Neo4j, Graph.lean, Notion, FastAPI/WebSocket surface | Read-heavy, projection target |
+| **Intent** | Task routing, cognitive load decomposition, strategy selection, proof goals | Linear (task tracking), MCP Router, Cognitive Router | Write-heavy, command source |
+
+**Data flow:** Intent issues a task → Surface resolves canonical references → Substrate executes (Lean proves, FPGA routes) → Result projects back to Surface → Metatype (auto-adaptive type judgment) classifies and promotes/holds/quarantines.
+
+---
+
+## 4. Data Flow
+
+```
+Raw Data → PIST/DIAT Shell Remap → GWL Multi-Factor Coupling → Cognitive Router (strategy select)
+    → Delta GCL Encoding → Trixal Quality Verify → Homeostatic Governor Update → Compressed Output
+    → [Optional: AngrySphinx Gate → FAMM Scar/Basin Write → AMMR Commit]
+```
+
+| Stage | What Happens | Substrate |
+|-------|-------------|-----------|
+| **PIST Remap** | Map tokens to shell coordinates `(k, t)` with mass `= t·(2k+1−t)` | PIST/DIAT (#1) |
+| **GWL Coupling** | Compute 5-factor similarity weight between token positions | GWL Rotational (#2) |
+| **Cognitive Router** | Decompose load into I/E/G/R/M components; select optimal compression strategy | Cognitive Load (#14) |
+| **Delta GCL** | Encode as manifest; compute delta from previous block | Delta GCL (#19) |
+| **Trixal Verify** | Assess compression as thermodynamic process (thermal/work/irreversibility) | Trixal (#13) |
+| **Homeostatic Update** | Compute surprise/regret; adjust pressure and canal width | Homeostatic (#15) |
+| **Output** | Emit compressed bitstream with trixal stamp + shell map | — |
+
+The full loop adds security gates (AngrySphinx exponential gate #3, FAMM frustration check #6) and memory writes (AMMR/O-AMMR commit mountains) for transitions that pass all quality thresholds.
+
+---
+
+## 5. Master Timeline — Phases 0–7
+
+### Phase 0 — Unification (Month 1) | **Status: IN PROGRESS**
+
+- Define `USTSM_State` as discriminated union of all 36 substrate states
+- Implement USTSM kernel (scalar → gate → route → transition → assess → update → check)
+- Implement `reductionFilter` for every substrate (state → Q0_64)
+- Prove cross-substrate resonances (mass = entropy = scalar)
+- **Forest Map absorption:** Lock authority and substrate plumbing (Forest Phase 0), including ENE private connector, Graph.lean authority, Obsidian+Neo4j connector
+
+### Phase 1 — Primordial Substrates (Month 2) | **Status: PARTIAL (some Lean exists)**
+
+- Q0_64 full Lean implementation + totality proofs
+- PIST/DIAT n-dimensional generalization + zero-mass theorem
+- BraidField invariant preservation across merge operations
+- Q16_16 → Q0_64 bridge
+- **Forest Map absorption:** Build canonical forest skeleton (Forest Phase 1): Graph.lean snapshot, ForestGradientRoads.lean, canonical node/edge taxonomies
+
+### Phase 2 — Geometric Substrates (Month 3) | **Status: SPECULATIVE (docs migrated, Burgers active)**
+
+- GWL Rotational 5-factor coupling in Q0_64
+- HybridTSMPISTTorus proof (wrapping eliminates zero-mass degeneracy)
+- TorsionalPIST quaternion RG flow in shell space
+- GWL Throat traversal as topological transition
+- **Forest Map absorption:** Complete equation inventory by domain (Forest Phase 2) — equation packs with required fields
+- **Active milestone: BURGERS_READINESS_ASSESSMENT.md — Day 1-4 theorems (Energy Dissipation, FNWH Regularization, Shock Width, KdV Soliton)**
+
+### Phase 3 — Biological Substrates (Month 4) | **Status: SPECULATIVE (GENSIS doc exists)**
+
+- Genetic Code: all 30+ variant tables mapped to USTSM
+- Genomic Compression field-theoretic pass
+- Codon Optimization (CAI + GC content as state constraints)
+- Spiking Neuron Izhikevich → Q0_64 spike encoding
+- STDP weight update as GWL coupling replacement
+- **Forest Map absorption:** Semantic Number Pattern Search (Forest Phase 3), COUCH coupling degeneracy fix (Forest Phase 4)
+
+### Phase 4 — Thermodynamic & Security (Month 3–4, parallel) | **Status: PARTIAL (AngrySphinx in Lean)**
+
+- Trixal State Carnot efficiency in Q0_64
+- Homeostatic Governor fixed point theorem in Q0_64
+- HyperFlow Navier-Stokes convergence in shell space
+- AngrySphinx full Lean formalization of E_solve ≥ 2^n
+- FAMM Frustration triadic rejection as state machine guard
+- ASICTopology admissible operation proofs
+- **Forest Map absorption:** Extract first verified basin candidate (Forest Phase 5), build torsion heatmap (Forest Phase 6)
+
+### Phase 5 — Semantic & Meta Substrates (Month 5) | **Status: SPECULATIVE**
+
+- CrossDimensionalFilter 12 semantic primes as Q0_64 anchors
+- Manifold Networking routing cost over all substrates
+- Cognitive Load strategy selection over 36 substrates
+- DynamicCanal adaptive canal per substrate
+- SSMS_nD fractal shell hierarchy proof
+- CompressionMechanics physical admissibility proofs
+- **Forest Map absorption:** Batch ingest light-source corpus (Forest Phase 7), Neo4j topological traversal (Forest Phase 8)
+
+### Phase 6 — Compiler (Month 6) | **Status: SPECULATIVE**
+
+- Lean 4 → Rust extraction for all 36 substrates
+- Lean 4 → C extraction for embedded targets
+- Lean 4 → Verilog extraction for FPGA targets
+- Universal GENSIS compiler with auto substrate selection
+- Cross-substrate benchmark suite
+- **Forest Map absorption:** Closure criteria for complete map (Forest Phase 9)
+
+### Phase 7 — Proof of Completeness (Month 7) | **Status: SPECULATIVE**
+
+- Prove every substrate transition preserves at least one invariant
+- Prove every substrate can communicate via Q0_64 scalar
+- Prove substrate composition is associative and commutative
+- Prove USTSM state space is connected
+- Prove USTSM is a topological quantum field theory (TQFT)
+
+---
+
+## 6. The 7 Core Invariants
+
+| # | Invariant | Source Primitive | Statement |
+|---|-----------|-----------------|-----------|
+| **1** | Mass Conservation | PIST/DIAT Shell | `mass = t·(2k+1−t)`; dM/dt ≤ 0 under dissipative transitions; zero at perfect-square shell endpoints |
+| **2** | Exponential Gate | AngrySphinx | `E_solve ≥ 2^depth`; F > 0 guard; NaN boundary at F→0 prevents unbounded compute |
+| **3** | Semantic Prime Conservation | CrossDimensionalFilter | 12 semantic primes; reductionFilter preserves prime set; monotonic prime understanding |
+| **4** | Frustration Monotonicity | FAMM | Triadic frustration F < threshold; frustration never spontaneously decreases without route resolution |
+| **5** | Homeostatic Fixed Point | Homeostatic Governor | `|γ + s'(p*)| < 1`; stable equilibrium pressure where surprise + regret balance decay |
+| **6** | Cognitive Load Decomposition | Cognitive Router | `L_total = λ_I·L_I + λ_E·L_E − λ_G·L_G + λ_R·L_R + λ_M·L_M`; strategy selected minimizes total load |
+| **7** | Q0_64 Scalar Universality | Q0_64 / USTSM | Every substrate state reduces to a Q0_64 scalar ∈ [0,1); scalar is the universal communication primitive |
+
+All 7 invariants are enforced by the USTSM kernel on every transition. No substrate is exempt.
+
+---
+
+## 7. The Burgers 4-Theorem Attack Plan (Active Milestone)
+
+**Location:** `6-Documentation/docs/research/BURGERS_READINESS_ASSESSMENT.md`
+**Goal:** Close the 7 "half-solved" Burgers PDE files (zero theorems currently) using GENSIS/USTSM invariants.
+
+| Day | Theorem | Maps To | Proof Template |
+|-----|---------|---------|----------------|
+| **Day 1** | Energy Dissipation `d(Σ½u²)/dt ≤ 0` | Invariant 1 (Mass) | `massConservation` + `frustration_monotonic` |
+| **Day 2** | FNWH Regularization Bounded `∃Ω_max, Ω ≤ Ω_max` | Invariants 4,5,6 | `fixed_point_exists` + `cognitiveEfficiency` |
+| **Day 3** | Shock Width Optimal `w* = argmin L_total(w)` | Invariant 6 (Cognitive) | `selectStrategy` + `totalTypeLoad` |
+| **Day 4** | KdV Soliton Stability `mass(soliton) = constant` | Invariant 7 (Scalar) | `scalarImpliesMassEquality` |
+
+**Status:** The Burgers stack has 7 Lean files with full numerical implementations (`#eval` passing) but zero theorems. The GENSIS 7-invariant system provides exact proof templates. The theorems are tractable — 4 days of formalization using `AutoAdaptiveMetatypeSystem.lean` templates.
+
+---
+
+## 8. Repository Structure
+
+| Path | Purpose |
+|------|---------|
+| `0-Core-Formalism/lean/Semantics/` | **Source of truth.** All Lean 4 formalizations, theorems, invariants |
+| `0-Core-Formalism/lean/Semantics/Foundations/` | F01–F12 foundation kernel definitions (Shannon, Carnot, Landauer, etc.) |
+| `0-Core-Formalism/lean/Semantics/Semantics/` | Domain modules: PIST, FAMM, AngrySphinx, Burgers, GWL, Q16_16, FixedPoint |
+| `4-Infrastructure/infra/` | Infrastructure shims (Python): ENE distributed node, surface server |
+| `5-Applications/out/verilog/` | FPGA RTL (Verilog): Tang Nano 9K router, sim testbenches, bitstreams |
+| `5-Applications/scripts/` | Python tools: formula canonicalizer, P9 query, compression demos |
+| `6-Documentation/docs/` | All documentation: roadmaps, research theory, semantics specs, AGENTS.md |
+| `6-Documentation/docs/research/` | Theory docs: GCCL, MISC, GENSIS, Burgers assessment, framework relationships |
+| `6-Documentation/docs/roadmaps/` | Planning docs: **ROADMAP.md (this file — authoritative)**, historical roadmaps |
+| `shared-data/data/` | Runtime data: equations_forest.jsonl, distance matrices, supernodes |
+| `shared-data/artifacts/` | Experiment artifacts: photonic witness outputs, benchmarks |
+| `tools/` | Codegen, MCP servers, Lean shims, equivalence checkers |
+| `TODO_MAP.md` (root) | **Granular task tracker:** file-by-file status, dependency graph, blockers |
+| `CONCEPTS.md` (root) | Quick-reference concept dictionary (FAMM, PIST, OTOM, ENE, etc.) |
+
+---
+
+## 9. Key Invariants (System Primitives)
+
+### 9.1 The `bind` Primitive
+
+Every algorithm must be expressible as:
+
+```lean
+bind : (A × B × Metric) → Bind A B
+```
+
+With a lawful check (`Bool`), a cost function (Q16_16 or Q0_64), and an invariant extractor. Five allowed classes: `informational_bind`, `geometric_bind`, `thermodynamic_bind`, `physical_bind`, `control_bind`. No sixth class without a blackboard session.
+
+### 9.2 Settlement States
+
+```
+SEED → SANITIZED_METAPHOR → TOY_MODEL → TYPED_MODEL → RESIDUAL_TESTED
+    → COST_ACCOUNTED → PROOF_CANDIDATE → CORE_MODULE → COMPRESSED
+```
+
+Reverse path for failures (e.g., `CORE_MODULE → failed proof → PROOF_CANDIDATE`). No transformation can skip a rung. `COMPRESSED` is the terminal settled state — a receipt-bearing, invariant-preserving, fixed-point artifact.
+
+### 9.3 Promotion Ladder
+
+```
+BEAUTIFUL_PROVISIONAL (default, LLM-supported, unbenchmarked)
+    → CALIBRATED_ENGINEERING_DELTA (requires baseline comparison: zlib/gzip/brotli/zstd)
+    → REVIEWED (requires non-LLM validation: human reviewer, hardware measurement)
+    → VERIFIED (requires reproducible benchmark + corpus provenance + Lean theorems)
+```
+
+No promotion without domain-appropriate evidence. Compression claims require SI standard `CR = original/compressed` ratio against named baselines. Statistical claims require ≥5σ minimum, ≥6.5σ preferred. Formal claims require Lean proof terms with zero `sorry`/`axiom` in the main import path.
+
+### 9.4 Safety Words
+
+- **`red`** (recording context): All cameras off, operator retreats. Used during Burgers AVM witness recording.
+
+---
+
+## 10. Current State Summary
+
+| Layer | Status | Progress |
+|-------|--------|----------|
+| **L0 Primordial** | ✅ Lean implemented | PIST, Q16_16, BraidField, Genome18, NS-MΔ all have theorems/#eval |
+| **L1 Geometric** | 🔄 Burgers active | Numerical impls exist; 4-theorem attack in progress |
+| **L2 Biological** | 📋 Speculative | GENSIS doc, genetic code tables mapped; no Lean |
+| **L3 Thermodynamic** | 📋 Speculative | Trixal, Homeostatic docs; no Lean |
+| **L4 Security** | 🔄 Partial | AngrySphinx Lean exists; FAMM, ASICTopology spec'd |
+| **L5 Semantic** | 📋 Speculative | CrossDimensionalFilter, ManifoldNetworking docs exist |
+| **L6 Meta** | 📋 Speculative | Cognitive load theory complete; awaits Lean |
+| **FPGA Hardware** | ✅ Synthesized | Tang Nano 9K: Yosys pass (614 cells), P&R pass (162 MHz), bitstream (2 MB) |
+| **Surface** | 📋 TODO | FastAPI/WebSocket skeleton spec'd in TODO_MAP Phase F |
+| **Integration** | 📋 TODO | Lean→Verilog extraction, equivalence checking spec'd |
+
+**Immediate next actions** (from `TODO_MAP.md` §Immediate Next Actions):
+1. Audit Lean for `sorry` — `grep -rn "sorry\|admit\|axiom" 0-Core-Formalism/lean/Semantics/`
+2. UART packet format design (start byte + 3-byte payload + checksum)
+3. Create `4-Infrastructure/surface/` FastAPI skeleton
+4. Flash Tang Nano 9K with generated bitstream; verify LED behavior
+5. Execute Burgers Day 1 theorem (Energy Dissipation)
+
+---
+
+## 11. Substrate Census Summary
+
+The USTSM unifies all 36 substrates across 7 abstraction levels. Every substrate has: state space, metric, transition function, invariant, guard, Q0_64 reduction, and AngrySphinx gate compatibility. For the complete census table, see `docs/roadmaps/UNIVERSAL_SUBSTRATE_ROADMAP.md` §1.
+
+**Key substrates for current work:**
+- #1 (PIST/DIAT Shell): mass conservation, Burgers energy Lyapunov
+- #3 (AngrySphinx): exponential gate, CFL stability condition
+- #6 (FAMM Frustration): triadic rejection, FNWH regularization trigger
+- #13 (Trixal): thermodynamic quality, compression as heat engine
+- #14 (Cognitive Load): 5-component routing, shock width optimizer
+- #15 (Homeostatic Governor): fixed point, AVM witness convergence
+- #12 (Q0_64 Scalar): universal interface, soliton mass invariant
+
+---
+
+*Authoritative roadmap. All other roadmap files are historical reference. Task-level detail: `TODO_MAP.md`. Active milestone: `BURGERS_READINESS_ASSESSMENT.md`.*

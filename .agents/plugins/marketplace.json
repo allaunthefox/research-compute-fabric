@@ -1,0 +1,20 @@
+{
+  "name": "research-stack-local-plugins",
+  "interface": {
+    "displayName": "Research Stack Local Plugins"
+  },
+  "plugins": [
+    {
+      "name": "substack-connector",
+      "source": {
+        "source": "local",
+        "path": "./plugins/substack-connector"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

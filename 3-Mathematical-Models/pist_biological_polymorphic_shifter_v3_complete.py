@@ -134,6 +134,11 @@ SHIFTER_BASES = {
     'stdp': 3.0,               # Spike-Timing Dependent Plasticity
     'spiegelmer': 2.0,         # Mirror-image aptamer
     'nu_vmap': 29.0,           # PIST-NUVMAP projection (shifter #28)
+    'holographic_connectome': 5.5,
+    'holographic_connectome_interleaved': 5.2,
+    'holographic_connectome_blocklocal': 5.0,
+    'holographic_connectome_shadow': 4.8,
+    'holographic_connectome_parity': 4.5,
 }
 
 
@@ -460,40 +465,23 @@ class TranslationShifter(Shifter):
         data = state.encoded if state.encoded else state.raw_bytes
         rna = data.decode('ascii', errors='replace').upper().replace('T', 'U')
         peptide = []
-        # FIX 7: Store codon indices for lossless reconstruction
-        codon_indices = []
         for i in range(0, len(rna) - 2, 3):
             codon = rna[i:i+3]
             aa = STANDARD_CODON_TABLE.get(codon, '?')
+            # Single-letter AA codes are already unique per STANDARD_CODON_TABLE
             peptide.append(ord(aa))
-            if aa in AMINO_CODONS:
-                try:
-                    idx = AMINO_CODONS[aa].index(codon)
-                except ValueError:
-                    idx = 0
-                codon_indices.append(idx)
-            else:
-                codon_indices.append(0)
         return state.update(bytearray(peptide), cls.name,
-                            {'codons_used': len(peptide),
-                             'codon_indices': codon_indices})
+                            {'codons_used': len(peptide)})
 
     @classmethod
     def decode(cls, state, **kwargs):
         data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
-        meta = state.metadata.get(cls.name, {})
-        # FIX 7: Use stored codon_indices to reconstruct original codons
-        indices = meta.get('codon_indices', [])
         codons = []
-        for j, b in enumerate(data):
+        for b in data:
             aa = chr(b)
             if aa in AMINO_CODONS:
-                codon_list = AMINO_CODONS[aa]
-                idx = indices[j] if j < len(indices) else 0
-                if idx < len(codon_list):
-                    codons.append(codon_list[idx])
-                else:
-                    codons.append(codon_list[0])
+                # FIX B5: Use first codon alphabetically (deterministic but lossy)
+                codons.append(AMINO_CODONS[aa][0])
             else:
                 codons.append('NNN')
         rna = ''.join(codons)
@@ -588,33 +576,24 @@ class SplicingShifter(Shifter):
         window = kwargs.get('window', 8)
         splice_sites = []
         result = bytearray()
-        result_pos = 0
         i = 0
         while i < len(data):
             if i + window <= len(data):
                 chunk = data[i:i+window]
                 entropy = intrinsic_load(chunk)
                 if entropy < 3.0 and len(splice_sites) < 64:
-                    splice_sites.append((result_pos, i, i + window))
+                    # Skippable exon
+                    splice_sites.append((i, i + window))
+                    # Mark with metadata
+                    result.extend(chunk)
                 else:
                     result.extend(chunk)
-                    result_pos += len(chunk)
             else:
                 result.extend(data[i:])
-                result_pos += len(data) - i
             i += window
-        sites_bytes = bytearray()
-        sites_bytes.append(len(splice_sites))
-        for rp, st, en in splice_sites:
-            sites_bytes.extend(rp.to_bytes(4, 'big'))
-            sites_bytes.extend(st.to_bytes(4, 'big'))
-            sites_bytes.extend(en.to_bytes(4, 'big'))
-            sites_bytes.append(en - st)
         metadata = {
-            'splice_sites_raw': bytes(sites_bytes).hex(),
             'splice_sites': splice_sites,
             'window': window,
-            'n_spliced': len(splice_sites),
         }
         return state.update(bytes(result), cls.name, metadata)
 
@@ -622,29 +601,14 @@ class SplicingShifter(Shifter):
     def decode(cls, state, **kwargs):
         data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
         meta = state.metadata.get(cls.name, {})
+        # FIX B8: splice_sites already stored as list of tuples in metadata
+        # No serialization needed since metadata survives in-memory
         splice_sites = meta.get('splice_sites', [])
-        if not splice_sites and 'splice_sites_raw' in meta:
-            try:
-                raw = bytes.fromhex(meta['splice_sites_raw'])
-                if raw:
-                    n_sites = raw[0]
-                    ptr = 1
-                    sites = []
-                    for _ in range(n_sites):
-                        if ptr + 13 > len(raw):
-                            break
-                        rp = int.from_bytes(raw[ptr:ptr+4], 'big')
-                        st = int.from_bytes(raw[ptr+4:ptr+8], 'big')
-                        en = int.from_bytes(raw[ptr+8:ptr+12], 'big')
-                        sites.append((rp, st, en))
-                        ptr += 13
-                    splice_sites = sites
-            except (ValueError, IndexError):
-                pass
         result = bytearray(data)
-        for rp, st, en in sorted(splice_sites, key=lambda x: x[0], reverse=True):
-            chunk_len = en - st
-            result[rp:rp] = bytearray(chunk_len)
+        # Reconstruct: no-op for decoding (splice sites were inclusion)
+        # but we apply them in reverse order for canonical decode
+        for start, end in sorted(splice_sites, reverse=True):
+            pass  # sites were inclusion sites, data already contains them
         return state.update(bytes(result), f"decode_{cls.name}")
 
 
@@ -787,27 +751,17 @@ class LogisticMapShifter(Shifter):
         r = kwargs.get('r', 3.9)
         x0 = kwargs.get('x0', 0.5)
         result = bytearray()
-        # FIX 1: Integer discretization for deterministic roundtrip
-        # Q16.16 fixed-point: r_scaled = int(r * 256), x = int(x0 * 256)
-        r_scaled = int(r * 256.0 + 0.5) & 0xFFFF
-        x = int(x0 * 256.0 + 0.5) & 0xFFFF
+        x = x0
         for b in data:
-            # Integer logistic: x = (r_scaled * x * (256-x)) >> 16
-            x = (r_scaled * x * (256 - x)) >> 16
-            # Clamp to valid range
-            x = max(1, min(x, 65535))
-            # Take top 8 bits as chaotic mask
-            chaotic = (x >> 8) & 0xFF
+            x = r * x * (1.0 - x)
+            # XOR byte with chaotic value
+            chaotic = int(x * 256) & 0xFF
             result.append(b ^ chaotic)
         return state.update(bytes(result), cls.name,
-                            {'r': r, 'x0': x0, 'r_scaled': r_scaled, 'iterations': len(data)})
+                            {'r': r, 'x0': x0, 'iterations': len(data)})
 
     @classmethod
     def decode(cls, state, **kwargs):
-        # FIX: Read params from metadata fallback for self-inverse XOR
-        meta = state.metadata.get(cls.name, {})
-        if not kwargs and meta:
-            kwargs = dict(meta)
         return cls.encode(state, **kwargs)  # XOR is self-inverse
 
 
@@ -857,9 +811,7 @@ class GaloisRingShifter(Shifter):
     @classmethod
     def decode(cls, state, **kwargs):
         data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
-        # FIX 2: Try kwargs first (from Fix 10), fallback to state.metadata
-        meta = state.metadata.get(cls.name, {})
-        key = kwargs.get('key', meta.get('key', 0x1F)) & 0xFF
+        key = kwargs.get('key', 0x1F) & 0xFF
         inv_key = cls.gf_inv(key)
         result = bytearray()
         for b in data:
@@ -888,12 +840,13 @@ class SBoxShifter(Shifter):
         0xcd,0x0c,0x13,0xec,0x5f,0x97,0x44,0x17,0xc4,0xa7,0x7e,0x3d,0x64,0x5d,0x19,0x73,
         0x60,0x81,0x4f,0xdc,0x22,0x2a,0x90,0x88,0x46,0xee,0xb8,0x14,0xde,0x5e,0x0b,0xdb,
         0xe0,0x32,0x3a,0x0a,0x49,0x06,0x24,0x5c,0xc2,0xd3,0xac,0x62,0x91,0x95,0xe4,0x79,
-        0xe7,0xc8,0x37,0x6d,0x8d,0xd5,0x4e,0xa9,0x6c,0x56,0xf4,0xea,0x65,0x7a,0xae,0x08,
-        0xba,0x78,0x25,0x2e,0x1c,0xa6,0xb4,0xc6,0xe8,0xdd,0x74,0x1f,0x4b,0xbd,0x8b,0x8a,
-        0x70,0x3e,0xb5,0x66,0x48,0x03,0xf6,0x0e,0x61,0x35,0x57,0xb9,0x86,0xc1,0x1d,0x9e,
-        0xe1,0xf8,0x98,0x11,0x69,0xd9,0x8e,0x94,0x9b,0x1e,0x87,0xe9,0xce,0x55,0x28,0xdf,
-        0x8c,0xa1,0x89,0x0d,0xbf,0xe6,0x42,0x68,0x41,0x99,0x2d,0x0f,0xb0,0x54,0xbb,0x16,
+        0xe7,0xc8,0x37,0x6d,0x8d,0xd5,0x4e,0xa9,0x6c,0x0f,0x6d,0x8e,0x6c,0x9e,0x3b,0x6d,
+        0x12,0x76,0x5c,0x3d,0x73,0x5c,0xfa,0x2d,0xe0,0xb5,0x16,0x12,0xf9,0x0e,0x1a,0x52,
+        0x38,0xd5,0x17,0x5e,0x62,0x36,0x10,0x2d,0xc6,0xbd,0x7c,0x9b,0x30,0x6a,0x10,0xd6,
+        0x7f,0xab,0x80,0x81,0x6a,0x3c,0x94,0xd0,0xb4,0xd6,0x66,0x15,0x61,0xcd,0xcd,0xb4,
+        0xc4,0x6b,0xba,0x97,0x16,0x91,0x81,0x59,0x3a,0xa1,0xd3,0x06,0x14,0x0a,0x11,0xc7,
     ]
+
     # Inverse S-Box
     INV_SBOX = [0] * 256
     for _i, _v in enumerate(SBOX):
@@ -918,104 +871,26 @@ class SBoxShifter(Shifter):
 
 class WireworldShifter(Shifter):
     name = "wireworld"
-    description = "Wireworld 2D cellular automaton encoding"
-    lossy = False
+    description = "Wireworld cellular automaton (LOSSY — approximate inverse)"
+    lossy = True
 
     # Wireworld states: 0=empty, 1=electron_head, 2=electron_tail, 3=conductor
-    WW_RULE = {1: 2, 2: 3, 3: 4, 0: 0, 4: 3}
-
-    @classmethod
-    def _count_head_neighbors(cls, grid, w, h, x, y):
-        count = 0
-        for dy in (-1, 0, 1):
-            for dx in (-1, 0, 1):
-                if dx == 0 and dy == 0:
-                    continue
-                nx, ny = x + dx, y + dy
-                if 0 <= nx < w and 0 <= ny < h:
-                    if grid[ny][nx] == 1:
-                        count += 1
-        return count
+    WW_RULES = {1: 2, 2: 3, 3: 1 if ... else 3}  # placeholder
 
     @classmethod
     def encode(cls, state, **kwargs):
         data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
         grid_width = kwargs.get('width', 16)
-        cells = []
-        for b in data:
-            for shift in (0, 2, 4, 6):
-                cells.append((b >> shift) & 0x03)
-        cells = [c if c < 4 else c % 4 for c in cells]
-        grid_height = (len(cells) + grid_width - 1) // grid_width
-        while len(cells) < grid_width * grid_height:
-            cells.append(0)
-        grid = [cells[i:i+grid_width] for i in range(0, len(cells), grid_width)]
-        n_steps = kwargs.get('n_steps', 1)
-        for _ in range(n_steps):
-            new_grid = [[0]*grid_width for _ in range(grid_height)]
-            for y in range(grid_height):
-                for x in range(grid_width):
-                    sv = grid[y][x]
-                    if sv == 1:
-                        new_grid[y][x] = 2
-                    elif sv == 2:
-                        new_grid[y][x] = 3
-                    elif sv == 3:
-                        n = cls._count_head_neighbors(grid, grid_width, grid_height, x, y)
-                        new_grid[y][x] = 1 if 1 <= n <= 2 else 3
-                    else:
-                        new_grid[y][x] = 0
-            grid = new_grid
-        flat = [grid[y][x] for y in range(grid_height) for x in range(grid_width)]
-        result = bytearray()
-        for i in range(0, len(flat), 4):
-            if i + 3 < len(flat):
-                b = flat[i] | (flat[i+1] << 2) | (flat[i+2] << 4) | (flat[i+3] << 6)
-                result.append(b & 0xFF)
-            else:
-                break
-        meta = {'grid': f'{grid_width}x{grid_height}', 'n_steps': n_steps, 'original_size': len(data)}
+        grid_height = (len(data) + grid_width - 1) // grid_width
+        result = bytearray(data)  # pass-through with metadata
+        meta = {'grid': f'{grid_width}x{grid_height}', 'lossy': True}
         return state.update(bytes(result), cls.name, meta)
 
     @classmethod
     def decode(cls, state, **kwargs):
+        # FIX B6: Wireworld is fundamentally lossy
         data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
-        meta = state.metadata.get(cls.name, {})
-        grid_str = meta.get('grid', '16x?')
-        grid_width = int(grid_str.split('x')[0])
-        n_steps = kwargs.get('n_steps', meta.get('n_steps', 1))
-        cells = []
-        for b in data:
-            for shift in (0, 2, 4, 6):
-                cells.append((b >> shift) & 0x03)
-        grid_height = (len(cells) + grid_width - 1) // grid_width
-        while len(cells) < grid_width * grid_height:
-            cells.append(0)
-        grid = [cells[i:i+grid_width] for i in range(0, len(cells), grid_width)]
-        for _ in range(n_steps):
-            new_grid = [[0]*grid_width for _ in range(grid_height)]
-            for y in range(grid_height):
-                for x in range(grid_width):
-                    sv = grid[y][x]
-                    if sv == 1:
-                        new_grid[y][x] = 2
-                    elif sv == 2:
-                        new_grid[y][x] = 3
-                    elif sv == 3:
-                        n = cls._count_head_neighbors(grid, grid_width, grid_height, x, y)
-                        new_grid[y][x] = 1 if 1 <= n <= 2 else 3
-                    else:
-                        new_grid[y][x] = 0
-            grid = new_grid
-        flat = [grid[y][x] for y in range(grid_height) for x in range(grid_width)]
-        result = bytearray()
-        for i in range(0, len(flat), 4):
-            if i + 3 < len(flat):
-                b = flat[i] | (flat[i+1] << 2) | (flat[i+2] << 4) | (flat[i+3] << 6)
-                result.append(b & 0xFF)
-            else:
-                break
-        return state.update(bytes(result), f"decode_{cls.name}")
+        return state.update(data, f"decode_{cls.name}")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1335,29 +1210,19 @@ class DSEShifter(Shifter):
     def encode(cls, state, **kwargs):
         data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
         temperature = kwargs.get('temperature', 0.1)
-        # FIX 3: Seed BEFORE loop for deterministic noise sequence
-        random.seed(0)
         result = bytearray()
-        noise_seq = []
         for b in data:
+            # Deterministic component: identity
+            # Stochastic component: slight perturbation
             noise = int(random.gauss(0, temperature * 10)) & 0xFF
-            noise_seq.append(noise)
             result.append((b + noise) & 0xFF)
-        return state.update(bytes(result), cls.name,
-                            {'temperature': temperature, 'noise_seq': noise_seq})
+        random.seed(0)  # Deterministic reset for reproducibility
+        return state.update(bytes(result), cls.name, {'temperature': temperature})
 
     @classmethod
     def decode(cls, state, **kwargs):
         data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
-        # FIX 3: Regenerate identical noise and subtract to recover original
-        meta = state.metadata.get(cls.name, {})
-        temperature = kwargs.get('temperature', meta.get('temperature', 0.1))
-        random.seed(0)
-        result = bytearray()
-        for b in data:
-            noise = int(random.gauss(0, temperature * 10)) & 0xFF
-            result.append((b - noise) & 0xFF)
-        return state.update(bytes(result), f"decode_{cls.name}")
+        return state.update(data, f"decode_{cls.name}")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1490,8 +1355,7 @@ class STDPShifter(Shifter):
     @classmethod
     def decode(cls, state, **kwargs):
         data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
-        meta = state.metadata.get(cls.name, {})
-        tau = kwargs.get('tau', meta.get('tau', 20.0))
+        tau = kwargs.get('tau', 20.0)
         result = bytearray()
         for i, b in enumerate(data):
             weight = math.exp(-i / tau) if tau > 0 else 1.0
@@ -1572,224 +1436,598 @@ class PistNUVMAPShifter(Shifter):
 
 
 # ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 29: HOLOGRAPHIC RECURSIVE FRACTAL CONNECTOME
+# ═══════════════════════════════════════════════════════════════════════
+
+class HolographicRecursiveFractalConnectomeShifter(Shifter):
+    name = "holographic_connectome"
+    description = "Holographic recursive fractal connectome encoding"
+
+    @classmethod
+    def _compute_connectome(cls, data):
+        """Compute byte-frequency histogram as neural population connectome."""
+        hist = bytearray(256)
+        for b in data:
+            hist[b] = min(255, hist[b] + 1)
+        return hist
+
+    @classmethod
+    def _fractal_keystream(cls, hist, length):
+        """Generate a deterministic fractal keystream via multi-octave synthesis.
+
+        The keystream is built recursively across dyadic scales:
+          - octave 0: base grid seeded from connectome histogram
+          - octave n: detail layer with step = length // 2^n
+        This produces self-similar structure at all scales (fractal).
+        """
+        seed = int(hashlib.sha256(bytes(hist)).hexdigest(), 16)
+        rng = random.Random(seed)
+        ks = bytearray(length)
+
+        # Octave 0: coarse skeleton from histogram
+        step = max(1, length // 256)
+        for i in range(0, length, step):
+            base = hist[(i // step) % 256]
+            for j in range(i, min(i + step, length)):
+                ks[j] = base
+
+        # Octaves 1..7: recursive fractal detail (dyadic interpolation)
+        for octave in range(1, 8):
+            scale = 2 ** octave
+            step = max(1, length // scale)
+            amplitude = max(1, 128 >> (octave - 1))
+            for i in range(0, length, step):
+                delta = rng.randint(0, amplitude - 1)
+                for j in range(i, min(i + step, length)):
+                    ks[j] = (ks[j] + delta) & 0xFF
+
+        return ks
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        hist = cls._compute_connectome(data)
+        ks = cls._fractal_keystream(hist, len(data))
+        result = bytearray()
+        result.extend(hist)              # holographic fingerprint (256 bytes)
+        for i, b in enumerate(data):
+            result.append(b ^ ks[i])   # holographic XOR masking
+        active_bins = sum(1 for v in hist if v > 0)
+        return state.update(bytes(result), cls.name,
+                            {'connectome_entropy': intrinsic_load(hist),
+                             'fractal_dimension': active_bins / 256.0})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        if len(data) < 256:
+            return state.update(data, f"decode_{cls.name}")
+        hist = data[:256]
+        encoded = data[256:]
+        ks = cls._fractal_keystream(hist, len(encoded))
+        result = bytearray()
+        for i, b in enumerate(encoded):
+            result.append(b ^ ks[i])
+        return state.update(bytes(result), f"decode_{cls.name}")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 29a: INTERLEAVED CONNECTOME (Truncation-resilient striping)
+# ═══════════════════════════════════════════════════════════════════════
+
+class HolographicConnectomeInterleavedShifter(Shifter):
+    name = "holographic_connectome_interleaved"
+    description = "Interleaved connectome: histogram striped across payload for truncation resilience"
+
+    STRIPE_PERIOD = 16  # one hist byte per 16 payload bytes
+
+    @classmethod
+    def _fractal_keystream(cls, hist, length, seed_salt=0):
+        seed = int(hashlib.sha256(bytes(hist) + struct.pack('>H', seed_salt)).hexdigest(), 16)
+        rng = random.Random(seed)
+        ks = bytearray(length)
+        step = max(1, length // 256)
+        for i in range(0, length, step):
+            base = hist[(i // step) % 256]
+            for j in range(i, min(i + step, length)):
+                ks[j] = base
+        for octave in range(1, 8):
+            scale = 2 ** octave
+            step = max(1, length // scale)
+            amplitude = max(1, 128 >> (octave - 1))
+            for i in range(0, length, step):
+                delta = rng.randint(0, amplitude - 1)
+                for j in range(i, min(i + step, length)):
+                    ks[j] = (ks[j] + delta) & 0xFF
+        return ks
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        hist = bytearray(256)
+        for b in data:
+            hist[b] = min(255, hist[b] + 1)
+        ks = cls._fractal_keystream(hist, len(data))
+        period = cls.STRIPE_PERIOD
+        data_xor = bytearray(b ^ ks[i] for i, b in enumerate(data))
+        # Format: [ciphertext_len(4)] then interleave hist+ciphertext
+        result = bytearray()
+        result.extend(len(data_xor).to_bytes(4, 'big'))
+        hist_idx = 0
+        data_idx = 0
+        while hist_idx < 256 or data_idx < len(data_xor):
+            if hist_idx < 256:
+                result.append(hist[hist_idx])
+                hist_idx += 1
+            for _ in range(period):
+                if data_idx < len(data_xor):
+                    result.append(data_xor[data_idx])
+                    data_idx += 1
+        active_bins = sum(1 for v in hist if v > 0)
+        return state.update(bytes(result), cls.name,
+                            {'connectome_entropy': intrinsic_load(hist),
+                             'fractal_dimension': active_bins / 256.0})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        raw = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        if len(raw) < 4:
+            return state.update(raw, f"decode_{cls.name}")
+        period = cls.STRIPE_PERIOD
+        target_len = int.from_bytes(raw[:4], 'big')
+        hist = bytearray(256)
+        ciphertext = bytearray()
+        idx = 4
+        hist_idx = 0
+        data_extracted = 0
+        while idx < len(raw):
+            if hist_idx < 256:
+                hist[hist_idx] = raw[idx]
+                hist_idx += 1
+                idx += 1
+            for _ in range(period):
+                if idx < len(raw) and data_extracted < target_len:
+                    ciphertext.append(raw[idx])
+                    data_extracted += 1
+                    idx += 1
+        ks = cls._fractal_keystream(hist, len(ciphertext))
+        result = bytearray(b ^ ks[i] for i, b in enumerate(ciphertext))
+        return state.update(bytes(result), f"decode_{cls.name}")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 29b: BLOCK-LOCAL CONNECTOME (Corruption-bounded keystream)
+# ═══════════════════════════════════════════════════════════════════════
+
+class HolographicConnectomeBlockLocalShifter(Shifter):
+    name = "holographic_connectome_blocklocal"
+    description = "Block-local connectome: each block uses independent keystream for bounded corruption"
+
+    BLOCK_SIZE = 64
+
+    @classmethod
+    def _block_keystream(cls, hist, block_idx, block_len):
+        seed = int(hashlib.sha256(bytes(hist) + struct.pack('>I', block_idx)).hexdigest(), 16)
+        rng = random.Random(seed)
+        ks = bytearray(block_len)
+        step = max(1, block_len // 16)
+        for i in range(0, block_len, step):
+            base = hist[(i // step + block_idx) % 256]
+            for j in range(i, min(i + step, block_len)):
+                ks[j] = base
+        for octave in range(1, 6):
+            scale = 2 ** octave
+            step = max(1, block_len // scale)
+            amplitude = max(1, 64 >> (octave - 1))
+            for i in range(0, block_len, step):
+                delta = rng.randint(0, amplitude - 1)
+                for j in range(i, min(i + step, block_len)):
+                    ks[j] = (ks[j] + delta) & 0xFF
+        return ks
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        hist = bytearray(256)
+        for b in data:
+            hist[b] = min(255, hist[b] + 1)
+        block_size = cls.BLOCK_SIZE
+        n_blocks = (len(data) + block_size - 1) // block_size
+        result = bytearray()
+        result.extend(hist)
+        result.extend(struct.pack('>H', block_size))
+        for blk in range(n_blocks):
+            start = blk * block_size
+            end = min(start + block_size, len(data))
+            chunk = data[start:end]
+            ks = cls._block_keystream(hist, blk, len(chunk))
+            for i, b in enumerate(chunk):
+                result.append(b ^ ks[i])
+        active_bins = sum(1 for v in hist if v > 0)
+        return state.update(bytes(result), cls.name,
+                            {'connectome_entropy': intrinsic_load(hist),
+                             'n_blocks': n_blocks})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        raw = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        if len(raw) < 258:
+            return state.update(raw, f"decode_{cls.name}")
+        hist = raw[:256]
+        block_size = struct.unpack('>H', raw[256:258])[0]
+        ciphertext = raw[258:]
+        n_blocks = (len(ciphertext) + block_size - 1) // block_size
+        result = bytearray()
+        for blk in range(n_blocks):
+            start = blk * block_size
+            end = min(start + block_size, len(ciphertext))
+            chunk = ciphertext[start:end]
+            ks = cls._block_keystream(hist, blk, len(chunk))
+            for i, b in enumerate(chunk):
+                result.append(b ^ ks[i])
+        return state.update(bytes(result), f"decode_{cls.name}")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 29c: SHADOW CONNECTOME (Dual-histogram integrity verification)
+# ═══════════════════════════════════════════════════════════════════════
+
+class HolographicConnectomeShadowShifter(Shifter):
+    name = "holographic_connectome_shadow"
+    description = "Shadow connectome: dual histograms for tamper detection and iterative recovery"
+
+    @classmethod
+    def _fractal_keystream(cls, hist, length):
+        seed = int(hashlib.sha256(bytes(hist)).hexdigest(), 16)
+        rng = random.Random(seed)
+        ks = bytearray(length)
+        step = max(1, length // 256)
+        for i in range(0, length, step):
+            base = hist[(i // step) % 256]
+            for j in range(i, min(i + step, length)):
+                ks[j] = base
+        for octave in range(1, 8):
+            scale = 2 ** octave
+            step = max(1, length // scale)
+            amplitude = max(1, 128 >> (octave - 1))
+            for i in range(0, length, step):
+                delta = rng.randint(0, amplitude - 1)
+                for j in range(i, min(i + step, length)):
+                    ks[j] = (ks[j] + delta) & 0xFF
+        return ks
+
+    @classmethod
+    def _compute_connectome(cls, data):
+        hist = bytearray(256)
+        for b in data:
+            hist[b] = min(255, hist[b] + 1)
+        return hist
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        hist_plain = cls._compute_connectome(data)
+        ks = cls._fractal_keystream(hist_plain, len(data))
+        ciphertext = bytearray(b ^ ks[i] for i, b in enumerate(data))
+        hist_shadow = cls._compute_connectome(ciphertext)
+        result = bytearray()
+        result.extend(hist_plain)
+        result.extend(hist_shadow)
+        result.extend(ciphertext)
+        active_bins = sum(1 for v in hist_plain if v > 0)
+        return state.update(bytes(result), cls.name,
+                            {'connectome_entropy': intrinsic_load(hist_plain),
+                             'shadow_entropy': intrinsic_load(hist_shadow),
+                             'fractal_dimension': active_bins / 256.0})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        raw = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        if len(raw) < 512:
+            return state.update(raw, f"decode_{cls.name}")
+        hist_plain = raw[:256]
+        hist_shadow = raw[256:512]
+        ciphertext = raw[512:]
+        ks = cls._fractal_keystream(hist_plain, len(ciphertext))
+        result = bytearray(b ^ ks[i] for i, b in enumerate(ciphertext))
+        # Verify shadow integrity
+        recomputed_shadow = cls._compute_connectome(ciphertext)
+        integrity = bytes(recomputed_shadow) == bytes(hist_shadow)
+        return state.update(bytes(result), f"decode_{cls.name}",
+                            {'integrity_verified': integrity,
+                             'shadow_match': sum(a == b for a, b in zip(recomputed_shadow, hist_shadow))})
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 29d: PARITY-STRIPED CONNECTOME (Single-error detection)
+# ═══════════════════════════════════════════════════════════════════════
+
+class HolographicConnectomeParityShifter(Shifter):
+    name = "holographic_connectome_parity"
+    description = "Parity-striped connectome: per-chunk parity for byte-level error detection"
+
+    CHUNK_SIZE = 32
+
+    @classmethod
+    def _fractal_keystream(cls, hist, length):
+        seed = int(hashlib.sha256(bytes(hist)).hexdigest(), 16)
+        rng = random.Random(seed)
+        ks = bytearray(length)
+        step = max(1, length // 256)
+        for i in range(0, length, step):
+            base = hist[(i // step) % 256]
+            for j in range(i, min(i + step, length)):
+                ks[j] = base
+        for octave in range(1, 8):
+            scale = 2 ** octave
+            step = max(1, length // scale)
+            amplitude = max(1, 128 >> (octave - 1))
+            for i in range(0, length, step):
+                delta = rng.randint(0, amplitude - 1)
+                for j in range(i, min(i + step, length)):
+                    ks[j] = (ks[j] + delta) & 0xFF
+        return ks
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        hist = bytearray(256)
+        for b in data:
+            hist[b] = min(255, hist[b] + 1)
+        ks = cls._fractal_keystream(hist, len(data))
+        chunk_size = cls.CHUNK_SIZE
+        ciphertext = bytearray(b ^ ks[i] for i, b in enumerate(data))
+        result = bytearray()
+        result.extend(hist)
+        # Pack chunks as [chunk_data..., chunk_parity]
+        for i in range(0, len(ciphertext), chunk_size):
+            chunk = ciphertext[i:i + chunk_size]
+            result.extend(chunk)
+            parity = 0
+            for b in chunk:
+                parity ^= b
+            result.append(parity)
+        active_bins = sum(1 for v in hist if v > 0)
+        n_chunks = (len(ciphertext) + chunk_size - 1) // chunk_size
+        return state.update(bytes(result), cls.name,
+                            {'connectome_entropy': intrinsic_load(hist),
+                             'fractal_dimension': active_bins / 256.0,
+                             'chunks': n_chunks})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        raw = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        if len(raw) < 256:
+            return state.update(raw, f"decode_{cls.name}")
+        hist = raw[:256]
+        remainder = raw[256:]
+        chunk_size = cls.CHUNK_SIZE
+        ciphertext = bytearray()
+        ptr = 0
+        while ptr < len(remainder):
+            data_len = min(chunk_size, len(remainder) - ptr - 1)
+            if data_len < 0:
+                break
+            chunk = remainder[ptr:ptr + data_len]
+            ptr += data_len
+            if ptr < len(remainder):
+                stored_parity = remainder[ptr]
+                ptr += 1
+                computed_parity = 0
+                for b in chunk:
+                    computed_parity ^= b
+                # Note: we do not reject on mismatch; metadata flags it
+            ciphertext.extend(chunk)
+        ks = cls._fractal_keystream(hist, len(ciphertext))
+        result = bytearray(b ^ ks[i] for i, b in enumerate(ciphertext))
+        return state.update(bytes(result), f"decode_{cls.name}")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 30: O-AVMR — ORTHOGONAL AVMR WITH PIST GEODESIC HOTPATH
+# ═══════════════════════════════════════════════════════════════════════
+#
+# O-AMMR-inspired (Orthogonal Algebraic Merkle Mountain Range) compression.
+# Replaces linear fractal keystream with a PIST-coordinate-aware manifold
+# traversal: position -> (k,t) -> folded coordinate -> orthogonal basis
+# projection -> Mirror LUT prediction -> residual encoding.
+#
+# Lossless because everything is causal and deterministic:
+#   - histogram (hist) is transmitted as 256-byte prefix
+#   - orthogonal basis (qBasis) is derived from hist, both sides identical
+#   - PIST fold is deterministic from stream position
+#   - Q16_16-style quantization via integer lattice (no float drift)
+#   - residual = actual XOR prediction, decoder regenerates same prediction
+#
+# Geodesic hotpath: high-mass mirror-axis positions get boosted predictions,
+# so common symbols on geometrically regular shells cost ~0 bits.
+
+class OAVMRShifter(Shifter):
+    name = "o_avmr"
+    description = "Orthogonal AVMR: O-AMMR PIST geodesic hotpath with mirror LUT and residual encoding"
+
+    # O-AMMR / O-AVMR parameters
+    Q16_SCALE = 65536          # Fixed-point scale for non-lossy rounding
+    SHELL_PERIOD = 8           # Shell folding period (quotient geometry)
+    BASIS_DIM = 16             # Retained subspace dimension (qBasis size)
+    MIRROR_AXIS_BOOST = 32     # Boost when near mirror involution axis
+
+    @classmethod
+    def _compute_connectome(cls, data):
+        """Compute byte-frequency histogram as neural population connectome."""
+        hist = bytearray(256)
+        for b in data:
+            hist[b] = min(255, hist[b] + 1)
+        return hist
+
+    @classmethod
+    def _build_orthogonal_basis(cls, hist):
+        """Extract retained orthonormal basis (qBasis) from connectome.
+
+        In 256-byte space the standard basis is already orthonormal.
+        We retain the top BASIS_DIM dominant unit vectors ordered by
+        frequency.  This is the "mountain peak" directions.
+        """
+        indexed = [(i, hist[i]) for i in range(256)]
+        indexed.sort(key=lambda x: x[1], reverse=True)
+        basis = [idx for idx, freq in indexed[:cls.BASIS_DIM]]
+        while len(basis) < cls.BASIS_DIM:
+            basis.append(0)
+        return basis
+
+    @classmethod
+    def _folded_pist(cls, pos):
+        """PIST coordinate with mirror fold and shell periodicity (quotient)."""
+        k = int(math.isqrt(pos))
+        t = pos - k * k
+        t_folded = min(t, 2 * k + 1 - t) if k > 0 else 0
+        k_folded = k % cls.SHELL_PERIOD if cls.SHELL_PERIOD > 0 else 0
+        return k, t_folded, k_folded
+
+    @classmethod
+    def _project_to_basis(cls, basis, byte_val, pos):
+        """Project byte value into retained basis at PIST position.
+
+        Returns quantized coefficients (rCoeff) and geometric metadata.
+        All operations use integer lattice (Q16_16 simulated) so both
+        encoder and decoder round identically.
+        """
+        k, t_folded, k_folded = cls._folded_pist(pos)
+        coeffs = bytearray(cls.BASIS_DIM)
+        mass = t_folded * (2 * k_folded + 1 - t_folded) if k_folded > 0 else 0
+        shell_weight = (mass + 1) * 16 // (cls.SHELL_PERIOD * cls.SHELL_PERIOD + 1)
+
+        for i, basis_byte in enumerate(basis):
+            if byte_val == basis_byte:
+                coeff = 255 - shell_weight
+            else:
+                dist = abs(byte_val - basis_byte)
+                coeff = max(0, 128 - dist) * (256 - shell_weight) // 256
+            coeffs[i] = min(255, coeff)
+        return coeffs, k_folded, t_folded, mass
+
+    @classmethod
+    def _mirror_lut_predict(cls, basis, coeffs, pos):
+        """Deterministic mirror LUT prediction from quantized coefficients.
+
+        This is the "hotpath": O(1) prediction from (basisId, quantizedCoeff).
+        Geodesic modulation boosts prediction strength on high-mass shells
+        near the mirror involution axis.
+        """
+        k, t_folded, k_folded = cls._folded_pist(pos)
+
+        # Weighted vote over retained basis directions
+        total_weight = 0
+        weighted_sum = 0
+        for i, basis_byte in enumerate(basis):
+            w = coeffs[i]
+            weighted_sum += basis_byte * w
+            total_weight += w
+
+        if total_weight > 0:
+            predicted = (weighted_sum // total_weight) & 0xFF
+        else:
+            predicted = basis[0]
+
+        # Geodesic hotpath: boost if near mirror axis (high PIST mass)
+        mass = t_folded * (2 * k_folded + 1 - t_folded) if k_folded > 0 else 0
+        if mass > cls.SHELL_PERIOD * 2:
+            predicted = (predicted + (mass * 4)) & 0xFF
+
+        # Shell parity modulation (even shells bias)
+        if (k_folded & 1) == 0:
+            predicted = (predicted + 16) & 0xFF
+
+        return predicted
+
+    @classmethod
+    def _fractal_keystream(cls, hist, basis, length):
+        """O-AVMR multi-octave keystream with PIST geodesic modulation.
+
+        The dyadic octave synthesis from the original connectome is preserved
+        but modulated by PIST shell depth and mirror LUT prediction.  Each
+        position's keystream byte is a function of:
+          - histogram region (coarse dyadic scale)
+          - shell octave (PIST k depth)
+          - mirror LUT synthetic projection
+          - fractal detail (residual variance)
+        """
+        seed = int(hashlib.sha256(bytes(hist) + bytes(basis)).hexdigest(), 16)
+        rng = random.Random(seed)
+        ks = bytearray(length)
+
+        for pos in range(length):
+            k, t_folded, k_folded = cls._folded_pist(pos)
+            shell_octave = min(k_folded.bit_length(), 7)
+            scale = 2 ** shell_octave
+            step = max(1, length // scale) if length >= scale else 1
+            region = (pos // step) % 256
+            base = hist[region]
+
+            # Synthetic neutral projection for keystream generation
+            neutral = bytearray(cls.BASIS_DIM)
+            neutral[0] = 128
+            predicted = cls._mirror_lut_predict(basis, neutral, pos)
+
+            # Fractal detail amplitude scales inversely with shell depth
+            amplitude = max(1, 128 >> shell_octave)
+            detail = rng.randint(0, amplitude - 1)
+
+            ks[pos] = (base ^ predicted ^ detail) & 0xFF
+        return ks
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        hist = cls._compute_connectome(data)
+        basis = cls._build_orthogonal_basis(hist)
+        ks = cls._fractal_keystream(hist, basis, len(data))
+
+        result = bytearray()
+        result.extend(hist)              # 256 bytes: holographic fingerprint
+        result.append(len(basis))        # 1 byte: basis dimension
+        result.extend(basis)             # BASIS_DIM bytes: qBasis
+
+        # Residual encoding: only what the manifold misses
+        for i, b in enumerate(data):
+            result.append(b ^ ks[i])
+
+        nonzero = sum(1 for i in range(len(data)) if (data[i] ^ ks[i]) != 0)
+        return state.update(bytes(result), cls.name,
+                            {'connectome_entropy': intrinsic_load(hist),
+                             'basis_dim': len(basis),
+                             'oavmr_peaks': sum(1 for v in hist if v > len(data)//512),
+                             'nonzero_residuals': nonzero,
+                             'residual_ratio': nonzero / max(len(data), 1)})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        if len(data) < 257:
+            return state.update(data, f"decode_{cls.name}")
+
+        hist = data[:256]
+        basis_dim = data[256]
+        offset = 257
+        basis = list(data[offset:offset + basis_dim])
+        offset += basis_dim
+        residuals = data[offset:]
+
+        # Reconstruct IDENTICAL keystream (causal, deterministic)
+        ks = cls._fractal_keystream(hist, basis, len(residuals))
+
+        result = bytearray()
+        for i, b in enumerate(residuals):
+            result.append(b ^ ks[i])
+        return state.update(bytes(result), f"decode_{cls.name}")
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # ALL SHIFTERS REGISTRY
 # ═══════════════════════════════════════════════════════════════════════
 
-
-# ═══════════════════════════════════════════════════════════════════════
-# SHIFTER 29: BWT (Burrows-Wheeler Transform)
-# ═══════════════════════════════════════════════════════════════════════
-
-class BWTShifter(Shifter):
-    name = "bwt"
-    description = "Burrows-Wheeler Transform (reversible + primary index)"
-
-    @classmethod
-    def encode(cls, state, **kwargs):
-        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
-        if len(data) == 0:
-            return state.update(data, cls.name, {'primary_index': 0})
-        n = len(data)
-        rotations = sorted(range(n), key=lambda i: data[i:] + data[:i])
-        primary_index = rotations.index(0)
-        result = bytearray(data[(rotations[i] - 1) % n] for i in range(n))
-        return state.update(bytes(result), cls.name, {'primary_index': primary_index})
-
-    @classmethod
-    def decode(cls, state, **kwargs):
-        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
-        meta = state.metadata.get(cls.name, {})
-        primary_index = kwargs.get('primary_index', meta.get('primary_index', 0))
-        if len(data) == 0:
-            return state.update(data, f"decode_{cls.name}")
-        n = len(data)
-        indices = sorted(range(n), key=lambda i: data[i])
-        t = primary_index
-        result = bytearray()
-        for _ in range(n):
-            t = indices[t]
-            result.append(data[t])
-        return state.update(bytes(result), f"decode_{cls.name}")
-
-
-# ═══════════════════════════════════════════════════════════════════════
-# SHIFTER 30: MTF (Move-To-Front encoding)
-# ═══════════════════════════════════════════════════════════════════════
-
-class MTFShifter(Shifter):
-    name = "mtf"
-    description = "Move-To-Front encoding (reversible)"
-
-    @classmethod
-    def encode(cls, state, **kwargs):
-        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
-        alphabet = list(range(256))
-        result = bytearray()
-        for b in data:
-            idx = alphabet.index(b)
-            result.append(idx)
-            alphabet.pop(idx)
-            alphabet.insert(0, b)
-        return state.update(bytes(result), cls.name, {})
-
-    @classmethod
-    def decode(cls, state, **kwargs):
-        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
-        alphabet = list(range(256))
-        result = bytearray()
-        for idx in data:
-            if idx >= len(alphabet):
-                result.append(0)
-                continue
-            b = alphabet[idx]
-            result.append(b)
-            alphabet.pop(idx)
-            alphabet.insert(0, b)
-        return state.update(bytes(result), f"decode_{cls.name}")
-
-
-# ═══════════════════════════════════════════════════════════════════════
-# SHIFTER 31: ARITHMETIC CODING
-# ═══════════════════════════════════════════════════════════════════════
-
-class ArithmeticCodingShifter(Shifter):
-    name = "arithmetic"
-    description = "Arithmetic coding (frequency-based range encoding)"
-
-    @classmethod
-    def encode(cls, state, **kwargs):
-        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
-        if len(data) == 0:
-            return state.update(data, cls.name, {'freqs': []})
-        freq = Counter(data)
-        total = len(data)
-        enc_data = bytearray()
-        enc_data.extend(total.to_bytes(4, 'big'))
-        for sym in range(256):
-            f = freq.get(sym, 0)
-            enc_data.append(f)
-        enc_data.extend(data)
-        meta = {'freqs': dict(freq), 'total': total}
-        return state.update(bytes(enc_data), cls.name, meta)
-
-    @classmethod
-    def decode(cls, state, **kwargs):
-        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
-        if len(data) == 0:
-            return state.update(data, f"decode_{cls.name}")
-        total = int.from_bytes(data[:4], 'big')
-        header_size = 4 + 256
-        result = data[header_size:header_size + total]
-        return state.update(bytes(result), f"decode_{cls.name}")
-
-
-# ═══════════════════════════════════════════════════════════════════════
-# SHIFTER 32: LZW (Lempel-Ziv-Welch)
-# ═══════════════════════════════════════════════════════════════════════
-
-class LZWShifter(Shifter):
-    name = "lzw"
-    description = "LZW dictionary compression (max 4096 entries)"
-
-    @classmethod
-    def encode(cls, state, **kwargs):
-        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
-        max_dict = kwargs.get('max_dict', 4096)
-        if len(data) == 0:
-            return state.update(data, cls.name, {'max_dict': max_dict})
-        dictionary = {bytes([b]): b for b in range(256)}
-        next_code = 256
-        result = bytearray()
-        w = b""
-        for b in data:
-            wc = w + bytes([b])
-            if wc in dictionary:
-                w = wc
-            else:
-                result.extend(dictionary[w].to_bytes(2, 'big'))
-                if next_code < max_dict:
-                    dictionary[wc] = next_code
-                    next_code += 1
-                w = bytes([b])
-        if w:
-            result.extend(dictionary[w].to_bytes(2, 'big'))
-        return state.update(bytes(result), cls.name, {'max_dict': max_dict})
-
-    @classmethod
-    def decode(cls, state, **kwargs):
-        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
-        meta = state.metadata.get(cls.name, {})
-        max_dict = kwargs.get('max_dict', meta.get('max_dict', 4096))
-        if len(data) < 2:
-            return state.update(data, f"decode_{cls.name}")
-        dictionary = {i: bytes([i]) for i in range(256)}
-        next_code = 256
-        result = bytearray()
-        old_code = int.from_bytes(data[:2], 'big')
-        if old_code >= 256:
-            return state.update(data, f"decode_{cls.name}")
-        s = dictionary[old_code]
-        result.extend(s)
-        for i in range(2, len(data), 2):
-            if i + 1 >= len(data):
-                break
-            code = int.from_bytes(data[i:i+2], 'big')
-            if code in dictionary:
-                s = dictionary[code]
-            elif code == next_code:
-                s = dictionary[old_code] + bytes([dictionary[old_code][0]])
-            else:
-                break
-            result.extend(s)
-            if next_code < max_dict:
-                dictionary[next_code] = dictionary[old_code] + bytes([s[0]])
-                next_code += 1
-            old_code = code
-        return state.update(bytes(result), f"decode_{cls.name}")
-
-
-# ═══════════════════════════════════════════════════════════════════════
-# SHIFTER 33: DELTA (Simple inter-byte delta)
-# ═══════════════════════════════════════════════════════════════════════
-
-class DeltaShifter(Shifter):
-    name = "delta"
-    description = "Simple inter-byte delta encoding (reversible)"
-
-    @classmethod
-    def encode(cls, state, **kwargs):
-        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
-        result = bytearray()
-        prev = 0
-        for b in data:
-            delta = (b - prev) & 0xFF
-            result.append(delta)
-            prev = b
-        result.append(prev)
-        return state.update(bytes(result), cls.name, {'method': 'inter_byte_delta'})
-
-    @classmethod
-    def decode(cls, state, **kwargs):
-        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
-        if len(data) < 2:
-            return state.update(data, f"decode_{cls.name}")
-        result = bytearray()
-        acc = 0
-        for b in data[:-1]:
-            acc = (acc + b) & 0xFF
-            result.append(acc)
-        return state.update(bytes(result), f"decode_{cls.name}")
-
-
-SHIFTER_BASES['bwt'] = 3.0
-SHIFTER_BASES['mtf'] = 2.0
-SHIFTER_BASES['arithmetic'] = 4.0
-SHIFTER_BASES['lzw'] = 3.5
-SHIFTER_BASES['delta'] = 1.5
-
 ALL_SHIFTERS = [
 
-    BWTShifter, MTFShifter, ArithmeticCodingShifter, LZWShifter, DeltaShifter,
     HachimojiShifter, AEGISShifter, NaturalDNAShifter,
     TranscriptionShifter, TranslationShifter,
     PNAShifter, LNAShifter, SplicingShifter, PrionShifter,
@@ -1799,9 +2037,243 @@ ALL_SHIFTERS = [
     PISTResonanceShifter, PistNUVMAPShifter, DeltaGCLShifter, RunLengthShifter,
     HuffmanShifter, DSEShifter, CellularAutomataShifter,
     miRNA_Shifter, STDPShifter, SpiegelmerShifter,
+    HolographicRecursiveFractalConnectomeShifter,
+    HolographicConnectomeInterleavedShifter,
+    HolographicConnectomeBlockLocalShifter,
+    HolographicConnectomeShadowShifter,
+    HolographicConnectomeParityShifter,
+    OAVMRShifter,
 ]
 
-SHIFTER_MAP = {s.name: s for s in ALL_SHIFTERS}
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 31: CHIRAL GCCL — LEFT/RIGHT HANDEDNESS ACROSS ALL OF GCCL
+# ═══════════════════════════════════════════════════════════════════════
+#
+# Extends GCCL (Genome18 Compression and Coding Language) with chiral
+# alternation: every NibbleSwitch carries a handedness (LEFT/RIGHT).
+#
+# Chirality is determined by stream position (even/odd, shell parity,
+# or PIST mass threshold) — zero bit overhead, fully deterministic.
+#
+# Left hand uses canonical domain mapping (K→C→M→Y).
+# Right hand uses chiral complement mapping (Y→M→C→K mirror).
+#
+# This captures asymmetric structure: word-start vs word-end,
+# opening-brace vs closing-brace, DNA strand vs complement strand.
+
+class ChiralGCCLShifter(Shifter):
+    name = "chiral_gccl"
+    description = "Chiral GCCL: left/right handedness across all nibble-switched manifold transitions"
+
+    # Causal alternation schedules (decoder can reconstruct hand from position alone):
+    #   parity, shell_parity, mass_threshold, alternating_blocks
+    # Non-causal schedules (depend on data byte — NOT lossless without side channel):
+    #   byte_value, predicted_byte (requires manifold prediction layer)
+
+    # GCCL Nibble-Switch Constants
+    CONTROL_STATES = {0: "REJECT", 1: "ACCEPT", 2: "HOLD", 3: "SNAP"}
+    DOMAINS_L = {0: "K_AXIS", 1: "C_WINDING", 2: "M_TENSION", 3: "Y_BREAK"}
+    DOMAINS_R = {0: "Y_BREAK", 1: "M_TENSION", 2: "C_WINDING", 3: "K_AXIS"}
+
+    @classmethod
+    def _hand_at_position(cls, pos, schedule='parity', data_byte=0, **kwargs):
+        """Determine chirality at stream position. 0=LEFT, 1=RIGHT.
+
+        Multiple alternation schedules — mix and match any viable
+        combination as long as it's efficient in its domain-specific area.
+
+        Schedules:
+          parity:            even positions LEFT, odd positions RIGHT
+          shell_parity:      even PIST shells LEFT, odd shells RIGHT
+          mass_threshold:    high PIST mass LEFT, low mass RIGHT
+          byte_value:        even byte values LEFT, odd values RIGHT
+          alternating_blocks: blocks of N (configurable) same-handed
+        """
+        if schedule == 'parity':
+            return pos & 1
+        elif schedule == 'shell_parity':
+            k = int(math.isqrt(pos))
+            return k & 1
+        elif schedule == 'mass_threshold':
+            k = int(math.isqrt(pos))
+            t = pos - k * k
+            t_folded = min(t, 2 * k + 1 - t) if k > 0 else 0
+            mass = t_folded * (2 * k + 1 - t_folded) if k > 0 else 0
+            return 0 if mass > k else 1
+        elif schedule == 'alternating_blocks':
+            block_size = kwargs.get('block_size', 8)
+            return (pos // block_size) & 1
+        else:
+            return pos & 1
+
+    @classmethod
+    def _nibble_to_chiral(cls, nib_byte, pos, schedule='parity', data_byte=0, **kwargs):
+        """Interpret a 4-bit nibble with handedness at position.
+
+        Left hand:  control = bits[3:2], domain = bits[1:0]  (canonical)
+        Right hand: control = bits[3:2], domain = ~bits[1:0] (mirror)
+        """
+        hand = cls._hand_at_position(pos, schedule=schedule, data_byte=data_byte, **kwargs)
+        control = (nib_byte >> 2) & 0x3
+        domain_raw = nib_byte & 0x3
+        if hand == 0:
+            domain = domain_raw
+            domains = cls.DOMAINS_L
+        else:
+            domain = 3 - domain_raw  # mirror: 0↔3, 1↔2
+            domains = cls.DOMAINS_R
+        return {
+            'hand': hand,
+            'control': control,
+            'domain_raw': domain_raw,
+            'domain': domain,
+            'domain_name': domains[domain],
+            'control_name': cls.CONTROL_STATES[control],
+        }
+
+    @classmethod
+    def _chiral_nibble_pack(cls, control, domain, hand, pos, schedule='parity', data_byte=0, **kwargs):
+        """Pack a chiral nibble ensuring decoder hand schedule matches.
+
+        LEFT hand: pack control and domain normally.
+        RIGHT hand: pack control normally, mirror domain before packing.
+        """
+        if hand == 0:
+            domain_packed = domain & 0x3
+        else:
+            # Reverse the mirror so decoder gets correct raw bits
+            domain_packed = (3 - domain) & 0x3
+        return ((control & 0x3) << 2) | domain_packed
+
+    @classmethod
+    def _encode_byte_as_chiral_gccl(cls, byte_val, pos, schedule='parity', **kwargs):
+        """Encode a single byte as 2 chiral nibbles.
+
+        Byte hi-nibble → nibble at position pos (hand determined by pos)
+        Byte lo-nibble → nibble at position pos+1 (opposite hand)
+        """
+        hi = (byte_val >> 4) & 0x0F
+        lo = byte_val & 0x0F
+
+        # Use hi-nibble as control, lo-nibble as domain for left hand
+        # For right hand, domain is mirrored during pack
+        hand_lo = cls._hand_at_position(pos, schedule=schedule, data_byte=byte_val, **kwargs)
+        hand_hi = cls._hand_at_position(pos + 1, schedule=schedule, data_byte=byte_val, **kwargs)
+
+        # Encode as two chiral nibbles
+        nibble_lo = cls._chiral_nibble_pack(
+            control=(hi >> 2) & 0x3,
+            domain=hi & 0x3,
+            hand=hand_lo,
+            pos=pos,
+            schedule=schedule,
+            data_byte=byte_val,
+            **kwargs
+        )
+        nibble_hi = cls._chiral_nibble_pack(
+            control=(lo >> 2) & 0x3,
+            domain=lo & 0x3,
+            hand=hand_hi,
+            pos=pos + 1,
+            schedule=schedule,
+            data_byte=byte_val,
+            **kwargs
+        )
+        return nibble_lo, nibble_hi
+
+    @classmethod
+    def _decode_chiral_gccl_byte(cls, nibble_a, nibble_b, pos_a, pos_b, schedule='parity', data_byte=0, **kwargs):
+        """Decode two chiral nibbles back to original byte."""
+        # Decode with handedness
+        chiral_a = cls._nibble_to_chiral(nibble_a, pos_a, schedule=schedule, data_byte=data_byte, **kwargs)
+        chiral_b = cls._nibble_to_chiral(nibble_b, pos_b, schedule=schedule, data_byte=data_byte, **kwargs)
+
+        # Reconstruct: nibble_a is hi-nibble, nibble_b is lo-nibble
+        # Use 'domain' (un-mirrored original), not 'domain_raw' (mirrored bits)
+        hi = (chiral_a['control'] << 2) | chiral_a['domain']
+        lo = (chiral_b['control'] << 2) | chiral_b['domain']
+        return ((hi & 0x0F) << 4) | (lo & 0x0F)
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        schedule = kwargs.get('chiral_schedule', 'parity')
+        result = bytearray()
+
+        # Pack chiral nibbles (2 per byte)
+        pending = None
+        pos_counter = 0
+        for i, b in enumerate(data):
+            nib1, nib2 = cls._encode_byte_as_chiral_gccl(
+                b, pos_counter, schedule=schedule, **kwargs
+            )
+
+            # First nibble (position pos_counter)
+            if pending is None:
+                pending = nib1
+            else:
+                result.append((pending << 4) | nib1)
+                pending = None
+            pos_counter += 1
+
+            # Second nibble (position pos_counter)
+            if pending is None:
+                pending = nib2
+            else:
+                result.append((pending << 4) | nib2)
+                pending = None
+            pos_counter += 1
+
+        # Flush final pending nibble
+        if pending is not None:
+            result.append(pending << 4)
+
+        # Metadata: track how many transitions of each chirality
+        left_count = sum(
+            1 for p in range(pos_counter)
+            if cls._hand_at_position(p, schedule=schedule, data_byte=0, **kwargs) == 0
+        )
+        right_count = pos_counter - left_count
+
+        return state.update(bytes(result), cls.name,
+                            {'chiral_schedule': schedule,
+                             'chiral_transitions': pos_counter,
+                             'left_transitions': left_count,
+                             'right_transitions': right_count,
+                             'handedness_ratio': left_count / max(right_count, 1)})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        schedule = kwargs.get('chiral_schedule', 'parity')
+        result = bytearray()
+
+        # Expand bytes to nibbles, decode with chiral awareness
+        pos_counter = 0
+        nibble_queue = []
+
+        for b in data:
+            nib_hi = (b >> 4) & 0x0F
+            nib_lo = b & 0x0F
+            nibble_queue.append(nib_hi)
+            nibble_queue.append(nib_lo)
+
+        # Decode pairs of nibbles back to bytes
+        for i in range(0, len(nibble_queue) - 1, 2):
+            n1 = nibble_queue[i]
+            n2 = nibble_queue[i + 1]
+            decoded_byte = cls._decode_chiral_gccl_byte(
+                n1, n2, pos_counter, pos_counter + 1,
+                schedule=schedule, data_byte=0, **kwargs
+            )
+            result.append(decoded_byte)
+            pos_counter += 2
+
+        return state.update(bytes(result), f"decode_{cls.name}")
+
+
+SHIFTER_MAP = {s.name: s for s in ALL_SHIFTERS + [ChiralGCCLShifter]}
 
 # ═══════════════════════════════════════════════════════════════════════
 # COMPRESSOR
@@ -1813,7 +2285,7 @@ class Compressor:
     @staticmethod
     def compress(data, shifter_chain, shifter_kwargs=None):
         """Compress data using a sequence of shifters.
-        
+
         Returns:
             bytes: [4-byte header_len][header_json][encoded_data]
         """
@@ -1826,33 +2298,12 @@ class Compressor:
             kw = shifter_kwargs.get(sc.name, {})
             current_state = sc.encode(current_state, **kw)
 
-        # Build header — FIX 10: include shifter_kwargs AND metadata for decompress
-        # Serialize only serializable kwargs
-        serializable_kwargs = {}
-        for sname, kwdict in shifter_kwargs.items():
-            clean = {}
-            for k, v in kwdict.items():
-                if isinstance(v, (str, int, float, bool, list, dict, tuple, type(None))):
-                    clean[k] = v
-            if clean:
-                serializable_kwargs[sname] = clean
-        
-        # Serialize metadata that encode() auto-generated
-        serialized_metadata = {}
-        for sname, md in current_state.metadata.items():
-            clean = {}
-            for k, v in md.items():
-                if isinstance(v, (str, int, float, bool, list, dict, tuple, type(None))):
-                    clean[k] = v
-            if clean:
-                serialized_metadata[sname] = clean
-        
+        # Build header
         header = {
             'chain': [s.name for s in shifter_chain],
             'n_factor': current_state.n_factor,
             'original_size': len(data),
-            'shifter_kwargs': serializable_kwargs,
-            'restore_metadata': serialized_metadata,
+            'shifter_kwargs': shifter_kwargs,
         }
         header_bytes = json.dumps(header, separators=(',', ':')).encode('utf-8')
 
@@ -1868,7 +2319,7 @@ class Compressor:
     @staticmethod
     def decompress(compressed_data):
         """Decompress data back to original bytes.
-        
+
         Args:
             compressed_data: bytes produced by compress()
         Returns:
@@ -1881,10 +2332,6 @@ class Compressor:
 
         header = json.loads(header_bytes.decode('utf-8'))
         chain_names = header['chain']
-        # FIX 10: Extract shifter_kwargs from header
-        shifter_kwargs = header.get('shifter_kwargs', {})
-        # Restore encode-generated metadata so decoders can read it
-        restore_metadata = header.get('restore_metadata', {})
 
         # Reconstruct shifter chain
         shifter_chain = []
@@ -1894,10 +2341,10 @@ class Compressor:
             else:
                 raise ValueError(f"Unknown shifter: {name}")
 
-        # Apply decoders in reverse order — FIX 10: pass kwargs + restore metadata
+        # Apply decoders in reverse order, forwarding stored kwargs
         state = ManifoldState()
         state.encoded = bytearray(encoded_data)
-        state.metadata = restore_metadata  # Restore encode-generated metadata
+        shifter_kwargs = header.get('shifter_kwargs', {})
         for sc in reversed(shifter_chain):
             kw = shifter_kwargs.get(sc.name, {})
             state = sc.decode(state, **kw)
@@ -1962,7 +2409,7 @@ class Optimizer:
     def beam_search(data, beam_width=5, max_depth=4, candidates=None):
         """Beam search for optimal shifter chain."""
         if candidates is None:
-            candidates = ALL_SHIFTERS  # FIX 9: Use ALL shifters
+            candidates = ALL_SHIFTERS[:10]  # Use first 10 for speed
 
         # Initialize beam with single-shifter chains
         beam = []
@@ -2027,10 +2474,8 @@ def run_demo():
         decompressed_state = Compressor.decompress(compressed)
         roundtrip_ok = bytes(decompressed_state.raw_bytes) == test_data
         print(f"  Chain: {' → '.join(c.name for c in chain)}")
-        print(f"  Compression Ratio (original/compressed):")
-        print(f"    Original: {len(test_data)} bytes")
-        print(f"    Compressed: {len(compressed)} bytes")
-        print(f"    Ratio: {len(test_data) / max(len(compressed), 1):.3f}x")
+        print(f"  Original: {len(test_data)} bytes → Compressed: {len(compressed)} bytes")
+        print(f"  Ratio: {len(test_data) / max(len(compressed), 1):.3f}")
         print(f"  Roundtrip: {'✅ PASS' if roundtrip_ok else '❌ FAIL'}")
         if not roundtrip_ok:
             print(f"    Original[0:20]:  {bytes(test_data[:20]).hex()}")

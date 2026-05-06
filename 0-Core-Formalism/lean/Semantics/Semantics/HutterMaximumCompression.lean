@@ -344,12 +344,20 @@ theorem foundationVectorDistance_nonneg (v1 v2 : FoundationVector) :
   simp [Semantics.Q16_16.Q16_16.le, Semantics.Q16_16.Q16_16.zero, Semantics.Q16_16.Q16_16.abs,
         Semantics.Q16_16.Q16_16.add, Semantics.Q16_16.Q16_16.sub, Semantics.Q16_16.Q16_16.div]
 
-/-- Axiom: Street transition cost is bounded between 0 and 1.
-    The function returns one of three constants: 0.1, 0.5, or 1.0.
--/
-axiom streetTransitionCost_bounded (fv1 fv2 : FoundationVector) :
+/-- Theorem: Street transition cost is bounded between 0 and 1.
+    The function returns one of three constants: 0.1, 0.5, or 1.0. -/
+theorem streetTransitionCost_bounded (fv1 fv2 : FoundationVector) :
   Semantics.Q16_16.Q16_16.le Semantics.Q16_16.Q16_16.zero (streetTransitionCost fv1 fv2) ∧
-  Semantics.Q16_16.Q16_16.le (streetTransitionCost fv1 fv2) Semantics.Q16_16.Q16_16.one
+  Semantics.Q16_16.Q16_16.le (streetTransitionCost fv1 fv2) Semantics.Q16_16.Q16_16.one := by
+  unfold streetTransitionCost
+  split
+  · unfold Semantics.Q16_16.Q16_16.le Q16_16.zero Q16_16.one Q16_16.div Q16_16.ofNat
+    simp
+  · split
+    · unfold Semantics.Q16_16.Q16_16.le Q16_16.zero Q16_16.one Q16_16.div Q16_16.ofNat
+      simp
+    · unfold Semantics.Q16_16.Q16_16.le Q16_16.zero Q16_16.one
+      simp
 
 /-- Theorem: RGFlow scale distance is bounded between 0 and 1. -/
 theorem rgflowScaleDistance_bounded (ctx1 ctx2 : CompressionContext) :

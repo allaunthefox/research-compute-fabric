@@ -18,7 +18,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.LifeHistory
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Cole's Paradox Resolution -/
 

@@ -59,34 +59,43 @@ def badCandidates : List Candidate :=
 -/
 
 /-- Theorem: bad parameters have zero offset c0 -/
-axiom bad_c0_zero : badApZeroC0.c0 = 0
+theorem bad_c0_zero : badApZeroC0.c0 = 0 := rfl
 
 /-- Theorem: bad parameters have very loose steric maximum -/
-axiom bad_steric_max_loose : ap.stericMax < badApZeroC0.stericMax
+theorem bad_steric_max_loose : ap.stericMax < badApZeroC0.stericMax := by
+  unfold ap badApZeroC0; norm_num
 
 /-- Theorem: singular state has zero free energy with bad parameters -/
-axiom singular_free_energy_zero :
-    freeEnergy tp singularState = 0
+theorem singular_free_energy_zero :
+    freeEnergy tp singularState = 0 := by
+  unfold freeEnergy tp singularState; norm_num
 
 /-- Theorem: singular state has zero denominator with bad parameters -/
-axiom singular_denominator_zero :
-    freeEnergy tp singularState + badApZeroC0.c0 = 0
+theorem singular_denominator_zero :
+    freeEnergy tp singularState + badApZeroC0.c0 = 0 := by
+  rw [singular_free_energy_zero, bad_c0_zero]; norm_num
 
 /-- Theorem: negative gate expert has negative gate weight -/
-axiom negative_gate_expert_negative : negativeGateExpert.gate singularState < 0
+theorem negative_gate_expert_negative : negativeGateExpert.gate singularState < 0 := by
+  unfold negativeGateExpert singularState; norm_num
 
 /-- Theorem: gates are not normalized with negative expert -/
-axiom gates_not_normalized_with_negative_expert :
-    ¬ gatesNormalized [negativeGateExpert] singularState
+theorem gates_not_normalized_with_negative_expert :
+    ¬ gatesNormalized [negativeGateExpert] singularState := by
+  unfold gatesNormalized
+  simp [negativeGateExpert]
+  norm_num
 
 /-- Theorem: explosive expert has very large advice magnitude -/
-axiom explosive_advice_large :
+theorem explosive_advice_large :
     |explosiveExpert.advicePhi singularState| > 100000 ∧
-    |explosiveExpert.advicePsi singularState| > 100000
+    |explosiveExpert.advicePsi singularState| > 100000 := by
+  unfold explosiveExpert singularState; norm_num
 
 /-- Theorem: clash state is admissible under loose steric bounds -/
-axiom clash_admissible_under_loose_sterics :
-    admissible badApZeroC0 clashState
+theorem clash_admissible_under_loose_sterics :
+    admissible badApZeroC0 clashState := by
+  unfold admissible badApZeroC0 clashState; norm_num
 
 /-
   Summary of failures documented by this file:

@@ -16,7 +16,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.GenomicOcean
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Genomic Information Theory -/
 

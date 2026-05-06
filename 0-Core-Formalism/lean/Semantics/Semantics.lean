@@ -139,6 +139,7 @@ import Semantics.Burgers2DPDE
 import Semantics.Burgers3DPDE
 import Semantics.ColeHopfTransform
 import Semantics.LawfulLoss
+import Semantics.Core.MassNumber
 
 namespace Semantics
 

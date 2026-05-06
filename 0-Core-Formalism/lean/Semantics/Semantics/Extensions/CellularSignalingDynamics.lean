@@ -18,7 +18,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.Signaling
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Zeroth-Order Ultrasensitivity -/
 

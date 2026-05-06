@@ -20,7 +20,7 @@ Swarm agents analyze design decisions and recommend improvements to:
 Per AGENTS.md §1.4: Q16_16 fixed-point for hardware extraction.
 Per AGENTS.md §2: PascalCase types, camelCase functions.
 Per AGENTS.md §4: Every def has eval witness or theorem.
--/ 
+-/
 
 import Mathlib.Data.Nat.Basic
 import Mathlib.Data.Real.Basic
@@ -87,7 +87,7 @@ structure GeometricAnalysis where
 
 /-- Analyze curvature utilization in compression design.
     Measures how effectively κ² modulates compression decisions. -/
-def analyzeCurvatureUtilization (params : GeometricParameters) : Q16_16 := 
+def analyzeCurvatureUtilization (params : GeometricParameters) : Q16_16 :=
   -- κ² should be non-zero and significantly affect thresholds
   if params.kappaSquared = zero then
     zero  -- No curvature utilization
@@ -280,7 +280,7 @@ def isaAnalystAnalyze (agent : SwarmAgent) (_params : GeometricParameters) : Swa
     ISAOpc.geom_persistence, ISAOpc.geom_morse, ISAOpc.geom_reeb, ISAOpc.geom_sheaf
   ]
   let opcodeUtil := analyzeOpcodeGeometricUtilization opcodes
-  
+
   -- Extended TSM v2.9 register layout with swarm-suggested geometric registers
   let layout := {
     hyperfluidValueBits := 32,
@@ -292,16 +292,16 @@ def isaAnalystAnalyze (agent : SwarmAgent) (_params : GeometricParameters) : Swa
     fractalBits := 32
   }
   let registerEff := analyzeRegisterGeometricEfficiency layout
-  
+
   let overall := div (opcodeUtil + registerEff) (ofNat 2)
-  
+
   let findings := if overall < (ofNat 32768) then  -- 0.5 in Q16.16
     ["ISA geometric utilization low: recommend adding curvature-aware opcodes"]
   else if overall > (ofNat 52428) then  -- 0.8 in Q16.16
     ["ISA geometric utilization excellent: opcodes well-designed for geometric operations"]
   else
     ["ISA geometric utilization moderate: consider adding FAMM-aware opcodes"]
-  
+
   { agent with
     confidence := overall,
     findings := findings,
@@ -371,24 +371,24 @@ def initializeSwarm : SwarmState :=
 def runISASwarmAnalysis (params : GeometricParameters) : ISAAnalysis :=
   let swarm := initializeSwarm
   let result := runSwarmAnalysis swarm params
-  
+
   -- Extract ISA-specific findings
   let isaAgent := result.agents.find? (fun a => a.specialization = AgentSpecialization.isaAnalyst)
   let isaFindings := match isaAgent with
     | some agent => agent.findings
     | none => []
-  
+
   -- Analyze opcodes
   let opcodes := [
     ISAOpc.resonate, ISAOpc.mergeModes, ISAOpc.ingestVib, ISAOpc.solitonify,
     ISAOpc.propagateWave, ISAOpc.observeMode, ISAOpc.syncClock
   ]
   let opcodeUtil := analyzeOpcodeGeometricUtilization opcodes
-  
+
   -- Analyze register layout
   let layout := ISARegisterLayout.mk 32 32 32 32 32 32 32
   let registerEff := analyzeRegisterGeometricEfficiency layout
-  
+
   -- Identify missing geometric opcodes
   let missingOpcodes := if opcodeUtil < (ofNat 39321) then  -- 0.6 in Q16.16
     ["TSM_CURVATURE_MODULATE: opcode to modulate κ² curvature coupling",
@@ -397,11 +397,11 @@ def runISASwarmAnalysis (params : GeometricParameters) : ISAAnalysis :=
      "TSM_FAMM_TIMING: opcode for FAMM-aware timing adjustment"]
   else
     []
-  
+
   let overallISA := div (opcodeUtil + registerEff) (ofNat 2)
-  
+
   let recommendations := result.recommendations ++ isaFindings ++ missingOpcodes
-  
+
   ISAAnalysis.mk opcodeUtil registerEff missingOpcodes overallISA recommendations
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -409,8 +409,8 @@ def runISASwarmAnalysis (params : GeometricParameters) : ISAAnalysis :=
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-- Extract geometric parameters from DSP compression params (for integration). -/
-def extractGeometricParams 
-    (kappaSquared rhoSeq vEpigenetic tauStructure sigmaEntropy qConservation 
+def extractGeometricParams
+    (kappaSquared rhoSeq vEpigenetic tauStructure sigmaEntropy qConservation
      kappaHierarchy epsilonMutation : Q16_16) : GeometricParameters :=
   {
     kappaSquared := kappaSquared,
@@ -424,33 +424,19 @@ def extractGeometricParams
   }
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- §5  Theorems: Swarm Convergence
+-- §5  Swarm Convergence Hypotheses
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Theorem: Curvature utilization is bounded in [0, 1]. -/
-axiom curvatureUtilizationBounded (params : GeometricParameters) :
-    let u := analyzeCurvatureUtilization params
-    u ≥ zero ∧ u ≤ Q16_16.one
-
-/-- Theorem: Hierarchy efficiency is bounded in [0, 1]. -/
-axiom hierarchyEfficiencyBounded (params : GeometricParameters) :
-    let e := analyzeHierarchyEfficiency params
-    e ≥ zero ∧ e ≤ Q16_16.one
-
-/-- Theorem: Mutation adaptivity is bounded in [0, 1]. -/
-axiom mutationAdaptivityBounded (params : GeometricParameters) :
-    let a := analyzeMutationAdaptivity params
-    a ≥ zero ∧ a ≤ Q16_16.one
-
-/-- Theorem: Overall geometric score is bounded in [0, 1]. -/
-axiom overallGeometricScoreBounded (analysis : GeometricAnalysis) :
-    let s := computeOverallGeometricScore analysis
-    s ≥ zero ∧ s ≤ Q16_16.one
-
-/-- Theorem: Swarm consensus is bounded in [0, 1]. -/
-axiom consensusBounded (swarm : SwarmState) :
-    let c := computeConsensus swarm.agents
-    c ≥ zero ∧ c ≤ Q16_16.one
+/-- External boundedness invariants for swarm geometric analysis.
+  Curvature, hierarchy, mutation, overall geometric score, and consensus
+  are all bounded in [0, 1]. These are convergence properties of the swarm
+  optimization dynamics. -/
+structure SwarmBoundednessHypothesis where
+  curvatureUtil (params : GeometricParameters) : let u := analyzeCurvatureUtilization params; u ≥ zero ∧ u ≤ Q16_16.one
+  hierarchyEff (params : GeometricParameters) : let e := analyzeHierarchyEfficiency params; e ≥ zero ∧ e ≤ Q16_16.one
+  mutationAdapt (params : GeometricParameters) : let a := analyzeMutationAdaptivity params; a ≥ zero ∧ a ≤ Q16_16.one
+  overallGeom (analysis : GeometricAnalysis) : let s := computeOverallGeometricScore analysis; s ≥ zero ∧ s ≤ Q16_16.one
+  consensusBound (swarm : SwarmState) : let c := computeConsensus swarm.agents; c ≥ zero ∧ c ≤ Q16_16.one
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §6  Verification Examples

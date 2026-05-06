@@ -18,7 +18,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.Exergy
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Exergy Destruction (Gouy-Stodola) -/
 

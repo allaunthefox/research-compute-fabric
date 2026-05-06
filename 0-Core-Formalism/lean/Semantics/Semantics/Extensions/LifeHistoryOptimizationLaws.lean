@@ -17,7 +17,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.Optimization
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Optimal Clutch Size (Lack's Principle) -/
 

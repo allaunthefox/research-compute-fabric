@@ -112,45 +112,59 @@ noncomputable def best : Option Candidate :=
 -/
 
 /-- Theorem: toy parameters have positive offset c0 -/
-axiom toy_c0_positive : 0 < ap.c0
+theorem toy_c0_positive : 0 < ap.c0 := by
+  unfold ap; norm_num
 
 /-- Theorem: toy parameters have non-negative steric and bond maxima -/
-axiom toy_steric_bond_max_nonneg : 0 ≤ ap.stericMax ∧ 0 ≤ ap.bondMax
+theorem toy_steric_bond_max_nonneg : 0 ≤ ap.stericMax ∧ 0 ≤ ap.bondMax := by
+  unfold ap; norm_num
 
 /-- Theorem: toy parameters have symmetric angle bounds -/
-axiom toy_angle_bounds_symmetric : ap.phiMin = -ap.phiMax ∧ ap.psiMin = -ap.psiMax
+theorem toy_angle_bounds_symmetric : ap.phiMin = -ap.phiMax ∧ ap.psiMin = -ap.psiMax := by
+  unfold ap; norm_num
 
 /-- Theorem: toy states have non-negative energies -/
-axiom toy_states_nonneg_energy :
+theorem toy_states_nonneg_energy :
     0 ≤ helixState.internalEnergy ∧
     0 ≤ sheetState.internalEnergy ∧
-    0 ≤ clashState.internalEnergy
+    0 ≤ clashState.internalEnergy := by
+  unfold helixState sheetState clashState; norm_num
 
 /-- Theorem: toy states have positive structural coherence -/
-axiom toy_states_pos_coh :
+theorem toy_states_pos_coh :
     0 < helixState.structuralCoherence ∧
     0 < sheetState.structuralCoherence ∧
-    0 < clashState.structuralCoherence
+    0 < clashState.structuralCoherence := by
+  unfold helixState sheetState clashState; norm_num
 
 /-- Theorem: clash state exceeds steric maximum -/
-axiom toy_clash_steric_exceeds : clashState.stericEnergy > ap.stericMax
+theorem toy_clash_steric_exceeds : clashState.stericEnergy > ap.stericMax := by
+  unfold ap clashState; norm_num
 
 /-- Theorem: helix state steric energy is within bounds -/
-axiom toy_helix_steric_safe : helixState.stericEnergy < ap.stericMax
+theorem toy_helix_steric_safe : helixState.stericEnergy < ap.stericMax := by
+  unfold ap helixState; norm_num
 
 /-- Theorem: sheet state steric energy is within bounds -/
-axiom toy_sheet_steric_safe : sheetState.stericEnergy < ap.stericMax
+theorem toy_sheet_steric_safe : sheetState.stericEnergy < ap.stericMax := by
+  unfold ap sheetState; norm_num
 
 /-- Theorem: toy experts have non-negative gate weights -/
-axiom toy_experts_nonneg_gates (P : PeptideState) :
+theorem toy_experts_nonneg_gates (P : PeptideState) :
     0 ≤ helixExpert.gate P ∧
     0 ≤ sheetExpert.gate P ∧
-    0 ≤ loopExpert.gate P
+    0 ≤ loopExpert.gate P := by
+  unfold helixExpert sheetExpert loopExpert
+  simp
+  repeat' (split <;> norm_num)
 
 /-- Theorem: toy expert gate weights are bounded by 1 -/
-axiom toy_experts_gate_bounded (P : PeptideState) :
+theorem toy_experts_gate_bounded (P : PeptideState) :
     helixExpert.gate P ≤ 1 ∧
     sheetExpert.gate P ≤ 1 ∧
-    loopExpert.gate P ≤ 1
+    loopExpert.gate P ≤ 1 := by
+  unfold helixExpert sheetExpert loopExpert
+  simp
+  repeat' (split <;> norm_num)
 
 end PeptideMoEExamples

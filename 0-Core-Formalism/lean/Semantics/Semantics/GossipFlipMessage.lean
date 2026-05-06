@@ -125,7 +125,7 @@ structure ConsensusVoteMessage where
 -- §8  Message Creation Helpers
 -- ═══════════════════════════════════════════════════════════════════════════
 
-def createDiscoveryMessage (nodeId timestamp signature : Nat) 
+def createDiscoveryMessage (nodeId timestamp signature : Nat)
     (tilePositions : List TilePosition) (dagVersion : Nat) : GossipFlipMessage :=
   {
     messageType := GossipMessageType.discovery,
@@ -141,7 +141,7 @@ def createDiscoveryMessage (nodeId timestamp signature : Nat)
     dagVersion := dagVersion
   }
 
-def createHeartbeatMessage (nodeId timestamp signature : Nat) 
+def createHeartbeatMessage (nodeId timestamp signature : Nat)
     (dagVersion : Nat) : GossipFlipMessage :=
   {
     messageType := GossipMessageType.heartbeat,
@@ -157,7 +157,7 @@ def createHeartbeatMessage (nodeId timestamp signature : Nat)
     dagVersion := dagVersion
   }
 
-def createCredentialSyncMessage (nodeId timestamp signature : Nat) 
+def createCredentialSyncMessage (nodeId timestamp signature : Nat)
     (tilePositions : List TilePosition) (dagVersion : Nat) : GossipFlipMessage :=
   {
     messageType := GossipMessageType.credentialSync,
@@ -173,7 +173,7 @@ def createCredentialSyncMessage (nodeId timestamp signature : Nat)
     dagVersion := dagVersion
   }
 
-def createReplicateMessage (nodeId timestamp signature : Nat) 
+def createReplicateMessage (nodeId timestamp signature : Nat)
     (tilePositions : List TilePosition) (dagVersion : Nat) : GossipFlipMessage :=
   {
     messageType := GossipMessageType.replicate,
@@ -189,7 +189,7 @@ def createReplicateMessage (nodeId timestamp signature : Nat)
     dagVersion := dagVersion
   }
 
-def createCredentialRotationProposalMessage (nodeId timestamp signature : Nat) 
+def createCredentialRotationProposalMessage (nodeId timestamp signature : Nat)
     (tilePositions : List TilePosition) (dagVersion : Nat) : GossipFlipMessage :=
   {
     messageType := GossipMessageType.credentialRotationProposal,
@@ -205,7 +205,7 @@ def createCredentialRotationProposalMessage (nodeId timestamp signature : Nat)
     dagVersion := dagVersion
   }
 
-def createConsensusVoteMessage (nodeId proposalId timestamp signature : Nat) 
+def createConsensusVoteMessage (nodeId proposalId timestamp signature : Nat)
     (vote : Vote) : ConsensusVoteMessage :=
   {
     messageType := 0,  -- consensus_vote placeholder
@@ -242,19 +242,22 @@ def createConsensusVoteMessage (nodeId proposalId timestamp signature : Nat)
 -- §10  Theorems
 -- ═══════════════════════════════════════════════════════════════════════════
 
-theorem discoveryMessageHasDiscoveryType (msg : GossipFlipMessage) 
-    (h : msg.messageType = GossipMessageType.discovery) : 
+theorem discoveryMessageHasDiscoveryType (msg : GossipFlipMessage)
+    (h : msg.messageType = GossipMessageType.discovery) :
     msg.messageType = GossipMessageType.discovery := by
   -- Proof: By assumption
   assumption
 
-/-- Heartbeat messages have empty tile positions in flip delta -/
-axiom heartbeatMessageHasNoFlipDelta (msg : GossipFlipMessage)
-    (h : msg.messageType = GossipMessageType.heartbeat) :
+/-- Invariant: heartbeat messages carry empty tile positions.
+  This holds for messages created via `createHeartbeatMessage` but must be enforced
+  as a protocol constraint for all heartbeat messages. -/
+structure HeartbeatInvariantHypothesis where
+  noFlipDelta (msg : GossipFlipMessage) (h : msg.messageType = GossipMessageType.heartbeat) :
     msg.flipDelta.tilePositions = []
 
-/-- Consensus vote messages have vote field with enum values -/
-axiom consensusVoteMessageHasVoteField (msg : ConsensusVoteMessage) :
-    msg.vote = Vote.approve ∨ msg.vote = Vote.reject ∨ msg.vote = Vote.abstain
+/-- Theorem: consensus vote messages have enum values (trivial by Vote type). -/
+theorem consensusVoteMessageHasVoteField (msg : ConsensusVoteMessage) :
+    msg.vote = Vote.approve ∨ msg.vote = Vote.reject ∨ msg.vote = Vote.abstain := by
+  cases msg.vote <;> simp
 
 end Semantics.GossipFlipMessage

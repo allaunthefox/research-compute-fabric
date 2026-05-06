@@ -16,7 +16,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.EcologyMech
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Species-Area Relationship (SAR) -/
 

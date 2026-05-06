@@ -69,14 +69,14 @@ constant VerifiedPayload :
 /-- Security bridge.
 
 The benchmark should not unfold internal security definitions directly.
-Instead, security exposes the intended theorem:
-
+Instead, security exposes the intended invariant:
 scale-coherent genomes are not classified as informatic sabotage.
+This is an external security property depending on concrete Swarm/Security modules.
 -/
-axiom scale_coherent_not_sabotage
-  (g : Semantics.Adaptation.Genome) :
-  Semantics.Swarm.isScaleCoherent g →
-  Semantics.Security.NotAllowed_InformaticSabotage g = False
+structure ScaleCoherentNotSabotageHypothesis where
+  property (g : Semantics.Adaptation.Genome) :
+    Semantics.Swarm.isScaleCoherent g →
+    Semantics.Security.NotAllowed_InformaticSabotage g = False
 
 /-- Exact thresholds for the spectral invariant. -/
 def entropyLower : Rat := 5 / 2      -- 2.5

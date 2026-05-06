@@ -170,6 +170,14 @@ theorem pathCost_append (p : Path) (e : AdmissibilityEdge) :
   simp [List.foldl_cons]
   rfl
 
+private lemma foldl_add_add (xs : List Score) (init x : Score) :
+    (xs.foldl Score.add init).add x = xs.foldl Score.add (init.add x) := by
+  induction xs generalizing init x with
+  | nil => rfl
+  | cons a as ih =>
+    rw [List.foldl_cons, ih (init.add a) x]
+    rw [Score.add_assoc, Score.add_comm a x, Score.add_assoc]
+
 /-- Helper: foldl with commutative/associative operation is invariant under reversal. -/
 theorem foldl_add_reverse (l : List Score) (init : Score) :
     l.reverse.foldl Score.add init = l.foldl Score.add init := by
@@ -178,10 +186,7 @@ theorem foldl_add_reverse (l : List Score) (init : Score) :
   | cons x xs ih =>
     rw [List.reverse_cons, List.foldl_append]
     simp [List.foldl_cons]
-    rw [Score.add_comm, ih]
-    -- Need to show foldl add (init + x) xs = (foldl add init xs) + x
-    -- This follows from associativity.
-    sorry
+    rw [ih, foldl_add_add]
 
 /-- Reversing an edge swaps endpoints and preserves cost. -/
 def AdmissibilityEdge.reverse (e : AdmissibilityEdge) : AdmissibilityEdge :=
@@ -240,7 +245,7 @@ def shortestPathDist (g : AdmissibilityGraph) (x y : CandidateRecord) : Score :=
   let paths := allPaths g x y
   match paths with
   | [] => { num := 1, den := 0, den_ne := by simp } -- Infinite distance
-  | p :: ps => ps.foldl (fun min_cost path => 
+  | p :: ps => ps.foldl (fun min_cost path =>
       let c := pathCost path
       if Score.le c min_cost then c else min_cost) (pathCost p)
 
@@ -343,13 +348,24 @@ def shellMass (n : Nat) : Nat :=
 
 /-- Shell mass is maximized at the midpoint between consecutive squares. -/
 theorem shellMass_max_at_midpoint (k : Nat) :
-    let n := k * k + k  -- midpoint: a = k, b = k+1-1 = k? No...
+    let n := k * k + k
     shellMass n = k * (k + 1) := by
-  -- At midpoint between k² and (k+1)²:
-  -- n = k² + k, a = k, b = (k+1)² - (k²+k) = 2k+1 - k = k+1
-  -- shellMass = k * (k+1)
+  intro n
   unfold shellMass
-  sorry  -- TODO(lean-port): algebraic simplification (WIP-2026-04-30)
+  have hle_low : k * k ≤ n := by
+    dsimp [n]
+    omega
+  have hle_high : n < (k + 1) * (k + 1) := by
+    dsimp [n]
+    nlinarith
+  have hsq : Nat.sqrt n = k := by
+    rw [Nat.sqrt_eq_iff_sq_le]
+    constructor
+    · exact hle_low
+    · exact hle_high
+  rw [hsq]
+  dsimp [n]
+  nlinarith
 
 /-- Shell mass is NOT a distance: it does not satisfy the triangle inequality. -/
 theorem shellMass_not_distance :

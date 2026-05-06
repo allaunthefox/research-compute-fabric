@@ -26,7 +26,7 @@ references:
     date-published: 2025-06-15
     url: "https://morwenn.github.io/presortedness/2025/06/15/TSB001-amp-a-new-measure-of-presortedness.html"
     notes: "Introduces Amp measure for sequence disorder, relevant to genetic sequence entropy analysis"
-    
+
   - type: article
     title: "Symmetry of Amp"
     authors:
@@ -34,7 +34,7 @@ references:
     date-published: 2025-10-18
     url: "https://morwenn.github.io/presortedness/2025/10/18/TSB005-symmetry-of-amp.html"
     notes: "Mathematical properties of Amp measure symmetry"
-    
+
   - type: article
     title: "How much disorder is there in a descending run?"
     authors:
@@ -42,7 +42,7 @@ references:
     date-published: 2025-11-02
     url: "https://morwenn.github.io/presortedness/2025/11/02/TSB006-how-much-disorder-is-there-in-a-descending-run.html"
     notes: "Run-length encoding connections for genetic sequence compression"
-    
+
   - type: article
     title: "Relationship between Amp and Runs"
     authors:
@@ -50,7 +50,7 @@ references:
     date-published: 2025-11-09
     url: "https://morwenn.github.io/presortedness/2025/11/09/TSB007-relationship-between-amp-and-runs.html"
     notes: "Direct connection between presortedness measures and run-length encoding"
-    
+
   - type: article
     title: "Amp and the partial ordering of measures of disorder, part 1"
     authors:
@@ -58,7 +58,7 @@ references:
     date-published: 2026-02-15
     url: "https://morwenn.github.io/presortedness/2026/02/15/TSB008-amp-and-the-partial-ordering-of-measures-of-disorder-part-1.html"
     notes: "Partial order structure for disorder measures, relevant to bind framework"
-    
+
   - type: article
     title: "Amp and the partial ordering of measures of disorder, part 2"
     authors:
@@ -66,7 +66,7 @@ references:
     date-published: 2026-03-22
     url: "https://morwenn.github.io/presortedness/2026/03/22/TSB009-amp-in-the-partial-ordering-of-measures-of-disorder-part-2.html"
     notes: "Continuation of partial ordering analysis for sequence disorder"
-    
+
   - type: article
     title: "Pairwise order of a sequence of elements"
     authors:
@@ -74,7 +74,7 @@ references:
     date-published: 2026-04-11
     url: "https://morwenn.github.io/presortedness/2026/04/11/TSB010-pairwise-order-of-a-sequence-of-elements.html"
     notes: "Pairwise ordering metrics for sequence analysis"
-    
+
   - type: article
     title: "Exc is not a measure of presortedness"
     authors:
@@ -82,7 +82,7 @@ references:
     date-published: 2025-09-06
     url: "https://morwenn.github.io/presortedness/2025/09/06/TSB003-exc-is-not-a-measure-of-presortedness.html"
     notes: "Theoretical foundations of presortedness measure requirements"
-    
+
   - type: article
     title: "Destructive in-order tree traversal"
     authors:
@@ -90,7 +90,7 @@ references:
     date-published: 2025-08-03
     url: "https://morwenn.github.io/algorithms/2025/08/03/TSB002-destructive-inrder-tree-traversal.html"
     notes: "Algorithmic techniques for sequence processing"
-    
+
   - type: article
     title: "std::flip"
     authors:
@@ -98,6 +98,75 @@ references:
     date-published: 2025-09-25
     url: "https://morwenn.github.io/c++/2025/09/25/TSB004-std-flip.html"
     notes: "Sequence transformation operations"
+
+# Fractal Compression Foundations
+  - type: article
+    title: "Fractal Compression"
+    authors:
+      - family-names: "Meny"
+        given-names: "Janos"
+    date-published: 2024
+    url: "https://janosmeny.com/blog/fractal-compression/index.html"
+    notes: |
+      Exploits self-similarities in images via contraction mappings whose fixed point is the original image (Barnsley 1988, Jacquin 1992).
+      Key insight: store the transformation, not the pixels. Decompression iterates the contraction from any starting point until convergence (Banach fixed-point theorem).
+      Relevance to PIST: replaces O(N^2) domain-range block search with O(1) deterministic coordinate mapping (n -> composite address),
+      achieving fractal-like self-similarity exploitation without search overhead.
+
+# Spectral Generator Compression — Physical Analogy
+  - type: article
+    title: "Squeezing, trisqueezing and quadsqueezing in a hybrid oscillator–spin system"
+    authors:
+      - family-names: "Băzăvan"
+        given-names: "O."
+      - family-names: "Saner"
+        given-names: "S."
+      - family-names: "Webb"
+        given-names: "D. J."
+      - family-names: "Ainley"
+        given-names: "E. M."
+      - family-names: "Drmota"
+        given-names: "P."
+      - family-names: "Nadlinger"
+        given-names: "D. P."
+      - family-names: "Araneda"
+        given-names: "G."
+      - family-names: "Lucas"
+        given-names: "D. M."
+      - family-names: "Ballance"
+        given-names: "C. J."
+      - family-names: "Srinivas"
+        given-names: "R."
+    date-published: 2026-05-01
+    journal: "Nature Physics"
+    doi: "10.1038/s41567-026-03222-6"
+    url: "https://www.nature.com/articles/s41567-026-03222-6"
+    notes: |
+      Demonstrates that higher-order nonlinear oscillator interactions (n=2 squeezing, n=3 trisqueezing, n=4 quadsqueezing)
+      can be synthesized from pairs of linear spin-dependent interactions by using noncommuting spin bases and detuning-ratio
+      selection (m = 1-n). Relevance to PIST: provides architectural analogy for generating high-order semantic/spectral
+      compression operators from compact low-order generators without storing explicit high-order lookup tables.
+
+# Topological Invariance in Encoding/Decoding — Physical Analogy
+  - type: article
+    title: "Frozen-In Gravitational Fields"
+    authors:
+      - family-names: "Asenjo"
+        given-names: "Felipe A."
+      - family-names: "Comisso"
+        given-names: "Luca"
+      - family-names: "Winkler"
+        given-names: "Maricarmen A."
+    date-published: 2026-04
+    journal: "Physical Review Letters"
+    doi: "10.1103/6c4q-kx6f"
+    url: "https://phys.org/news/2026-04-frozen-gravity-evolution-spacetime-dynamics.html"
+    notes: |
+      Rewrites Einstein field equations as electrically conducting fluid analogs. Proves gravitational
+      field structures remain "frozen" into spacetime dynamics under ideal conditions, preserving
+      topological invariants (e.g., gravitational helicity). Relevance to PIST: provides physical
+      analogy for why deterministic coordinate structures (n = k² + t, composite address) remain
+      invariant under encoding/decoding dynamics, ensuring lossless roundtrip without search.
 
 # Primary genetic code data sources
   - type: dataset
@@ -107,7 +176,7 @@ references:
     date-published: "ongoing"
     url: "https://www.kazusa.or.jp/codon/"
     notes: "Species-specific codon frequency data for 6+ organisms used in RSCU theorems"
-    
+
   - type: software
     title: "Lean 4 Theorem Prover"
     authors:

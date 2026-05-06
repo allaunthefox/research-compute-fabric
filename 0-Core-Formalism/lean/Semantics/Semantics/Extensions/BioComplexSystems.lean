@@ -4,8 +4,8 @@ Authors: Research Stack Team
 
 BioComplexSystems.lean — Information theory and complexity in biological manifolds.
 
-This module formalizes the high-level informational and structural laws that 
-govern biological complexity, from the error threshold of RNA to the stability 
+This module formalizes the high-level informational and structural laws that
+govern biological complexity, from the error threshold of RNA to the stability
 of ecosystems.
 -/
 
@@ -16,7 +16,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.ComplexSystems
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Evolutionary Information Theory -/
 
@@ -46,7 +46,7 @@ def mayStabilityMeasure (s_strength : Q16_16) (n_species : Nat) (c_connectance :
   let complexity := Q16_16.mul n_f c_connectance
   -- Return the product s * sqrt(complexity)
   -- Placeholder for sqrt(complexity)
-  Q16_16.mul s_strength complexity 
+  Q16_16.mul s_strength complexity
 
 /-- Maximum Entropy Production (MEP) Principle.
     Maximize entropy production σ = Σ J_k * X_k subject to constraints. -/

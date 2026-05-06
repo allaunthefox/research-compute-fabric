@@ -17,7 +17,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.Subterranean
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Soil Base Saturation (Albrecht) -/
 
@@ -47,7 +47,7 @@ def hyphalTipUpdate (n v grad_n b dt : Q16_16) : Q16_16 :=
     Unifies Liebig and Monod into a sequential physical constraint law. -/
 def terracedBarrelGrowth (constraints : List Q16_16) (resource_limit : Q16_16) : Q16_16 :=
   -- Returns the minimum of all internal and external constraints
-  let internal_min := constraints.foldl (fun acc c => 
+  let internal_min := constraints.foldl (fun acc c =>
     if c.val.toNat < acc.val.toNat then c else acc
   ) (Q16_16.mk 0xFFFFFFFF)
   if resource_limit.val.toNat < internal_min.val.toNat then resource_limit

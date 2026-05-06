@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIST Extended Encoding — Workflow Diagram</title>
+<style>
+  body {
+    margin: 0;
+    background: #0a0a0a;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #ccc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  h1 {
+    color: #fff;
+    margin-top: 20px;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+  }
+  .subtitle {
+    color: #888;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+  }
+  .controls {
+    margin-bottom: 15px;
+  }
+  .controls button {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #ccc;
+    padding: 6px 14px;
+    margin: 0 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+  }
+  .controls button:hover {
+    border-color: #00ffcc;
+    color: #00ffcc;
+  }
+  .controls button.active {
+    border-color: #00ffcc;
+    background: #002222;
+    color: #00ffcc;
+  }
+  svg {
+    max-width: 1200px;
+    width: 95%;
+    height: auto;
+  }
+  .node {
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .node rect, .node circle, .node path {
+    transition: all 0.3s;
+  }
+  .node:hover rect, .node:hover circle, .node:hover path {
+    filter: brightness(1.3);
+    stroke-width: 2.5;
+  }
+  .node text {
+    pointer-events: none;
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+  }
+  .edge {
+    fill: none;
+    stroke: #333;
+    stroke-width: 1.5;
+    marker-end: url(#arrow);
+    transition: all 0.5s;
+  }
+  .edge.active {
+    stroke: #00ffcc;
+    stroke-width: 2.5;
+    filter: drop-shadow(0 0 4px rgba(0,255,204,0.6));
+  }
+  .label-bg {
+    fill: #0a0a0a;
+    stroke: #333;
+    stroke-width: 1;
+  }
+  .group-box {
+    fill: none;
+    stroke: #333;
+    stroke-width: 1;
+    stroke-dasharray: 4,4;
+    rx: 8;
+  }
+  .group-label {
+    fill: #666;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+    font-size: 0.8rem;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+  .info-panel {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(10,10,10,0.95);
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 15px;
+    max-width: 320px;
+    display: none;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .info-panel h3 {
+    margin: 0 0 8px 0;
+    color: #00ffcc;
+    font-size: 1rem;
+  }
+  .info-panel code {
+    background: #1a1a1a;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+  }
+</style>
+</head>
+<body>
+
+<h1>PIST EXTENDED ENCODING WORKFLOW</h1>
+<div class="subtitle">Deterministic maps from natural numbers to structured tuples</div>
+
+<div class="controls">
+  <button class="active" onclick="showFlow('encode')">Encoding Pipeline</button>
+  <button onclick="showFlow('decode')">Decoding Pipeline</button>
+  <button onclick="showFlow('basis')">Basis Operations</button>
+  <button onclick="showFlow('coordinate')">Coordinate Mapping</button>
+</div>
+
+<svg viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
+      markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#333"/>
+    </marker>
+    <marker id="arrow-active" viewBox="0 0 10 10" refX="9" refY="5"
+      markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#00ffcc"/>
+    </marker>
+
+    <!-- Gradients -->
+    <linearGradient id="grad-input" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2a2a2a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a1a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad-process" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a2a2a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0a1a1a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad-output" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2a1a2a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a0a1a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- ENCODING PIPELINE -->
+  <g id="flow-encode">
+    <!-- Group: Input -->
+    <rect class="group-box" x="20" y="50" width="1160" height="120" rx="8"/>
+    <text class="group-label" x="40" y="70">Input Layer</text>
+
+    <g class="node" data-info="Raw byte sequence of arbitrary length. Each byte is a value b ∈ [0, 255] at position n ∈ ℕ.">
+      <rect x="50" y="85" width="140" height="60" rx="6" fill="url(#grad-input)" stroke="#555" stroke-width="1.5"/>
+      <text x="120" y="110" fill="#fff" text-anchor="middle" font-weight="bold">Raw Bytes</text>
+      <text x="120" y="128" fill="#888" text-anchor="middle">b ∈ [0, 255]</text>
+    </g>
+
+    <g class="node" data-info="Byte-frequency histogram. Top 16 most frequent bytes form the initial basis for prediction.">
+      <rect x="230" y="85" width="140" height="60" rx="6" fill="url(#grad-input)" stroke="#555" stroke-width="1.5"/>
+      <text x="300" y="110" fill="#fff" text-anchor="middle" font-weight="bold">Byte Histogram</text>
+      <text x="300" y="128" fill="#888" text-anchor="middle">Top-16 Basis</text>
+    </g>
+
+    <!-- Group: Coordinate Mapping -->
+    <rect class="group-box" x="20" y="190" width="1160" height="140" rx="8"/>
+    <text class="group-label" x="40" y="210">Coordinate Mapping</text>
+
+    <g class="node" data-info="Number-theoretic decomposition: n = k² + t where k = ⌊√n⌋ and 0 ≤ t ≤ 2k.">
+      <rect x="50" y="225" width="140" height="80" rx="6" fill="url(#grad-process)" stroke="#00ffcc" stroke-width="1.5"/>
+      <text x="120" y="250" fill="#00ffcc" text-anchor="middle" font-weight="bold">PIST Decompose</text>
+      <text x="120" y="268" fill="#aaa" text-anchor="middle">n = k² + t</text>
+      <text x="120" y="286" fill="#888" text-anchor="middle">k = ⌊√n⌋</text>
+    </g>
+
+    <g class="node" data-info="Recursive base-20 tree traversal. Each level selects branch = n % 20, then descends with n // 20.">
+      <rect x="230" y="225" width="140" height="80" rx="6" fill="url(#grad-process)" stroke="#00ffcc" stroke-width="1.5"/>
+      <text x="300" y="250" fill="#00ffcc" text-anchor="middle" font-weight="bold">Tree Address</text>
+      <text x="300" y="268" fill="#aaa" text-anchor="middle">Base-20 Path</text>
+      <text x="300" y="286" fill="#888" text-anchor="middle">depth = 3</text>
+    </g>
+
+    <g class="node" data-info="Surface of revolution mapping: x = 1 + (n % 255), y = 1/x, θ = (n·Φ) mod 2π.">
+      <rect x="410" y="225" width="140" height="80" rx="6" fill="url(#grad-process)" stroke="#00ffcc" stroke-width="1.5"/>
+      <text x="480" y="250" fill="#00ffcc" text-anchor="middle" font-weight="bold">Surface Coord</text>
+      <text x="480" y="268" fill="#aaa" text-anchor="middle">y = 1/x</text>
+      <text x="480" y="286" fill="#888" text-anchor="middle">θ = n·Φ mod 2π</text>
+    </g>
+
+    <g class="node" data-info="Three irrational angular coordinates on the 3-torus. Φ, Φ², Φ³ are linearly independent over ℚ.">
+      <rect x="590" y="225" width="140" height="80" rx="6" fill="url(#grad-process)" stroke="#00ffcc" stroke-width="1.5"/>
+      <text x="660" y="250" fill="#00ffcc" text-anchor="middle" font-weight="bold">Torus Angles</text>
+      <text x="660" y="268" fill="#aaa" text-anchor="middle">(θ, φ, ψ)</text>
+      <text x="660" y="286" fill="#888" text-anchor="middle">Φ, Φ², Φ³ mod 2π</text>
+    </g>
+
+    <g class="node" data-info="Composite address = (tree, surface, torus, pist). Structured tuple from a single integer.">
+      <rect x="770" y="225" width="140" height="80" rx="6" fill="url(#grad-process)" stroke="#ffaa00" stroke-width="2"/>
+      <text x="840" y="250" fill="#ffaa00" text-anchor="middle" font-weight="bold">Composite Address</text>
+      <text x="840" y="268" fill="#aaa" text-anchor="middle">9D+ Tuple</text>
+      <text x="840" y="286" fill="#888" text-anchor="middle">O(1) per position</text>
+    </g>
+
+    <!-- Group: Basis Operations -->
+    <rect class="group-box" x="20" y="350" width="1160" height="140" rx="8"/>
+    <text class="group-label" x="40" y="370">Basis Operations</text>
+
+    <g class="node" data-info="Set intersection of two parent bases. Common vectors = highest priority. Left/Right overflow fills remainder.">
+      <rect x="50" y="385" width="140" height="80" rx="6" fill="url(#grad-process)" stroke="#4488ff" stroke-width="1.5"/>
+      <text x="120" y="410" fill="#4488ff" text-anchor="middle" font-weight="bold">Basis Fusion</text>
+      <text x="120" y="428" fill="#aaa" text-anchor="middle">A ∩ B = Intersection</text>
+      <text x="120" y="446" fill="#888" text-anchor="middle">Bilinear Operators</text>
+    </g>
+
+    <g class="node" data-info="Adaptive basis selection with compatibility screening, memory buffer, and fitness threshold. Transfers vectors between pools.">
+      <rect x="230" y="385" width="140" height="80" rx="6" fill="url(#grad-process)" stroke="#4488ff" stroke-width="1.5"/>
+      <text x="300" y="410" fill="#4488ff" text-anchor="middle" font-weight="bold">Adaptive Selection</text>
+      <text x="300" y="428" fill="#aaa" text-anchor="middle">Compatibility Metric</text>
+      <text x="300" y="446" fill="#888" text-anchor="middle">Pool Exchange</text>
+    </g>
+
+    <g class="node" data-info="Expands data onto a high-dimensional PIST shell, extracts a basis, then reduces. Unfold → Etch → Refold.">
+      <rect x="410" y="385" width="140" height="80" rx="6" fill="url(#grad-process)" stroke="#4488ff" stroke-width="1.5"/>
+      <text x="480" y="410" fill="#4488ff" text-anchor="middle" font-weight="bold">Basis Expansion</text>
+      <text x="480" y="428" fill="#aaa" text-anchor="middle">Unfold → Extract →</text>
+      <text x="480" y="446" fill="#888" text-anchor="middle">Reduce</text>
+    </g>
+
+    <g class="node" data-info="Mutual simulation between two basis representations. Converges on a shared basis through iterative exchange.">
+      <rect x="590" y="385" width="140" height="80" rx="6" fill="url(#grad-process)" stroke="#4488ff" stroke-width="1.5"/>
+      <text x="660" y="410" fill="#4488ff" text-anchor="middle" font-weight="bold">Mutual Simulation</text>
+      <text x="660" y="428" fill="#aaa" text-anchor="middle">Iterative Convergence</text>
+      <text x="660" y="446" fill="#888" text-anchor="middle">Shared Basis</text>
+    </g>
+
+    <g class="node" data-info="Substrate-independent basis remapping. Translates data between symbol sets while preserving structure.">
+      <rect x="770" y="385" width="140" height="80" rx="6" fill="url(#grad-process)" stroke="#4488ff" stroke-width="1.5"/>
+      <text x="840" y="410" fill="#4488ff" text-anchor="middle" font-weight="bold">Substrate Basis</text>
+      <text x="840" y="428" fill="#aaa" text-anchor="middle">Symbol Remapping</text>
+      <text x="840" y="446" fill="#888" text-anchor="middle">O-AVMR Preserve</text>
+    </g>
+
+    <!-- Group: Shifter Pipeline -->
+    <rect class="group-box" x="20" y="510" width="1160" height="120" rx="8"/>
+    <text class="group-label" x="40" y="530">Shifter Pipeline</text>
+
+    <g class="node" data-info="Constraint block shifter: encodes with simultaneous shell-level constraints. Metadata tracks coverage and confidence.">
+      <rect x="50" y="545" width="140" height="60" rx="6" fill="url(#grad-process)" stroke="#ff6644" stroke-width="1.5"/>
+      <text x="120" y="565" fill="#ff6644" text-anchor="middle" font-weight="bold">ConstraintBlock</text>
+      <text x="120" y="583" fill="#888" text-anchor="middle">Shell Constraints</text>
+    </g>
+
+    <g class="node" data-info="Adaptive basis shifter: pool exchange with fitness screening. Dynamically adjusts basis dimension per shell.">
+      <rect x="230" y="545" width="140" height="60" rx="6" fill="url(#grad-process)" stroke="#ff6644" stroke-width="1.5"/>
+      <text x="300" y="565" fill="#ff6644" text-anchor="middle" font-weight="bold">AdaptiveBasis</text>
+      <text x="300" y="583" fill="#888" text-anchor="middle">Pool + Screening</text>
+    </g>
+
+    <g class="node" data-info="Basis fusion shifter: combines parent bases through set intersection and bilinear operators (Hadamard, XOR, Wedge, Mean).">
+      <rect x="410" y="545" width="140" height="60" rx="6" fill="url(#grad-process)" stroke="#ff6644" stroke-width="1.5"/>
+      <text x="480" y="565" fill="#ff6644" text-anchor="middle" font-weight="bold">BasisFusion</text>
+      <text x="480" y="583" fill="#888" text-anchor="middle">Set + Bilinear</text>
+    </g>
+
+    <g class="node" data-info="Composite coordinate shifter: full manifold traversal with tree, surface, torus, and PIST coordinates.">
+      <rect x="590" y="545" width="140" height="60" rx="6" fill="url(#grad-process)" stroke="#ff6644" stroke-width="1.5"/>
+      <text x="660" y="565" fill="#ff6644" text-anchor="middle" font-weight="bold">CompositeCoord</text>
+      <text x="660" y="583" fill="#888" text-anchor="middle">9D+ Address</text>
+    </g>
+
+    <g class="node" data-info="Programmable decoder shifter: data as instruction stream. Each byte = (opcode, operand) with manifold address.">
+      <rect x="770" y="545" width="140" height="60" rx="6" fill="url(#grad-process)" stroke="#ff6644" stroke-width="1.5"/>
+      <text x="840" y="565" fill="#ff6644" text-anchor="middle" font-weight="bold">Programmable</text>
+      <text x="840" y="583" fill="#888" text-anchor="middle">Data = Program</text>
+    </g>
+
+    <g class="node" data-info="Final compressed output: bootstrap basis (16 bytes) + instruction program (variable length). No separate payload.">
+      <rect x="950" y="545" width="140" height="60" rx="6" fill="url(#grad-output)" stroke="#ff00ff" stroke-width="2"/>
+      <text x="1020" y="565" fill="#ff00ff" text-anchor="middle" font-weight="bold">Compressed</text>
+      <text x="1020" y="583" fill="#888" text-anchor="middle">Basis + Program</text>
+    </g>
+
+    <!-- Arrows: Input → Coordinate -->
+    <path class="edge" d="M 120 145 L 120 225"/>
+    <path class="edge" d="M 300 145 L 300 225"/>
+
+    <!-- Arrows: Coordinate → Coordinate -->
+    <path class="edge" d="M 190 265 L 230 265"/>
+    <path class="edge" d="M 370 265 L 410 265"/>
+    <path class="edge" d="M 550 265 L 590 265"/>
+    <path class="edge" d="M 730 265 L 770 265"/>
+
+    <!-- Arrows: Coordinate → Basis -->
+    <path class="edge" d="M 840 305 L 840 350 L 120 350 L 120 385"/>
+    <path class="edge" d="M 840 305 L 840 350 L 300 350 L 300 385"/>
+    <path class="edge" d="M 840 305 L 840 350 L 480 350 L 480 385"/>
+    <path class="edge" d="M 840 305 L 840 350 L 660 350 L 660 385"/>
+    <path class="edge" d="M 840 305 L 840 350 L 840 385"/>
+
+    <!-- Arrows: Basis → Shifter -->
+    <path class="edge" d="M 120 465 L 120 510 L 120 510 L 120 545"/>
+    <path class="edge" d="M 300 465 L 300 510 L 300 510 L 300 545"/>
+    <path class="edge" d="M 480 465 L 480 510 L 480 510 L 480 545"/>
+    <path class="edge" d="M 660 465 L 660 510 L 660 510 L 660 545"/>
+    <path class="edge" d="M 840 465 L 840 510 L 840 510 L 840 545"/>
+
+    <!-- Arrows: Shifter → Output -->
+    <path class="edge" d="M 910 575 L 950 575"/>
+  </g>
+
+  <!-- DECODING PIPELINE (hidden by default) -->
+  <g id="flow-decode" style="display:none">
+    <rect class="group-box" x="20" y="50" width="1160" height="120" rx="8"/>
+    <text class="group-label" x="40" y="70">Input: Compressed Stream</text>
+
+    <g class="node" data-info="Compressed stream format: [bootstrap basis (16 bytes)] [program (variable length)].">
+      <rect x="50" y="85" width="180" height="60" rx="6" fill="url(#grad-input)" stroke="#ff00ff" stroke-width="2"/>
+      <text x="140" y="110" fill="#ff00ff" text-anchor="middle" font-weight="bold">Compressed Stream</text>
+      <text x="140" y="128" fill="#888" text-anchor="middle">Basis + Program</text>
+    </g>
+
+    <g class="node" data-info="Parse bootstrap basis into initial decoder state. Top-16 byte histogram becomes the starting basis.">
+      <rect x="290" y="85" width="140" height="60" rx="6" fill="url(#grad-process)" stroke="#555" stroke-width="1.5"/>
+      <text x="360" y="110" fill="#fff" text-anchor="middle" font-weight="bold">Parse Basis</text>
+      <text x="360" y="128" fill="#888" text-anchor="middle">Initial State</text>
+    </g>
+
+    <g class="node" data-info="Initialize decoder registers: acc, pc, sp, flags, entropy, depth. Program counter starts at 0.">
+      <rect x="490" y="85" width="140" height="60" rx="6" fill="url(#grad-process)" stroke="#555" stroke-width="1.5"/>
+      <text x="560" y="110" fill="#fff" text-anchor="middle" font-weight="bold">Init Registers</text>
+      <text x="560" y="128" fill="#888" text-anchor="middle">pc = 0, sp = 0</text>
+    </g>
+
+    <rect class="group-box" x="20" y="190" width="1160" height="280" rx="8"/>
+    <text class="group-label" x="40" y="210">Execution Loop (per byte)</text>
+
+    <g class="node" data-info="Fetch next byte from program stream at position pc. Increment pc.">
+      <rect x="50" y="225" width="120" height="60" rx="6" fill="url(#grad-process)" stroke="#00ffcc" stroke-width="1.5"/>
+      <text x="110" y="250" fill="#00ffcc" text-anchor="middle" font-weight="bold">FETCH</text>
+      <text x="110" y="268" fill="#888" text-anchor="middle">b = program[pc]</text>
+    </g>
+
+    <g class="node" data-info="Decode byte into (opcode, operand): opcode = b % 8, operand = b // 8.">
+      <rect x="210" y="225" width="120" height="60" rx="6" fill="url(#grad-process)" stroke="#00ffcc" stroke-width="1.5"/>
+      <text x="270" y="250" fill="#00ffcc" text-anchor="middle" font-weight="bold">DECODE</text>
+      <text x="270" y="268" fill="#888" text-anchor="middle">(op, arg) = split(b)</text>
+    </g>
+
+    <g class="node" data-info="Compute composite address for current position: tree, surface, torus, PIST coordinates.">
+      <rect x="370" y="225" width="140" height="60" rx="6" fill="url(#grad-process)" stroke="#00ffcc" stroke-width="1.5"/>
+      <text x="440" y="250" fill="#00ffcc" text-anchor="middle" font-weight="bold">ADDRESS</text>
+      <text x="440" y="268" fill="#888" text-anchor="middle">composite(pc)</text>
+    </g>
+
+    <g class="node" data-info="Execute instruction using mass(k,t) and mirror(k,t) as operands. Update registers and metadata.">
+      <rect x="550" y="225" width="120" height="60" rx="6" fill="url(#grad-process)" stroke="#00ffcc" stroke-width="1.5"/>
+      <text x="610" y="250" fill="#00ffcc" text-anchor="middle" font-weight="bold">EXECUTE</text>
+      <text x="610" y="268" fill="#888" text-anchor="middle">Apply operation</text>
+    </g>
+
+    <g class="node" data-info="Check if accumulator should be emitted. If HALT or condition met, append to output buffer.">
+      <rect x="710" y="225" width="120" height="60" rx="6" fill="url(#grad-process)" stroke="#ffaa00" stroke-width="1.5"/>
+      <text x="770" y="250" fill="#ffaa00" text-anchor="middle" font-weight="bold">EMIT?</text>
+      <text x="770" y="268" fill="#888" text-anchor="middle">should_emit()</text>
+    </g>
+
+    <g class="node" data-info="Loop back to FETCH if more bytes remain. Terminate when program exhausted.">
+      <rect x="870" y="225" width="120" height="60" rx="6" fill="url(#grad-process)" stroke="#555" stroke-width="1.5"/>
+      <text x="930" y="250" fill="#fff" text-anchor="middle" font-weight="bold">LOOP</text>
+      <text x="930" y="268" fill="#888" text-anchor="middle">pc < len</text>
+    </g>
+
+    <!-- Instruction set detail -->
+    <text x="60" y="320" fill="#666" font-size="10px">Instruction Set:</text>
+    <text x="60" y="340" fill="#888" font-size="9px">0=NOOP  1=LOAD  2=STORE  3=ADD  4=XOR  5=BRANCH  6=FUSE  7=HALT</text>
+
+    <g class="node" data-info="NOOP: No operation. Advances pc.">
+      <rect x="50" y="360" width="80" height="30" rx="4" fill="#1a1a1a" stroke="#333"/>
+      <text x="90" y="380" fill="#666" text-anchor="middle" font-size="9px">NOOP</text>
+    </g>
+    <g class="node" data-info="LOAD: Read from basis vector at address. Store in accumulator.">
+      <rect x="150" y="360" width="80" height="30" rx="4" fill="#1a1a1a" stroke="#333"/>
+      <text x="190" y="380" fill="#666" text-anchor="middle" font-size="9px">LOAD</text>
+    </g>
+    <g class="node" data-info="STORE: Push accumulator to data stack. Increment sp.">
+      <rect x="250" y="360" width="80" height="30" rx="4" fill="#1a1a1a" stroke="#333"/>
+      <text x="290" y="380" fill="#666" text-anchor="middle" font-size="9px">STORE</text>
+    </g>
+    <g class="node" data-info="ADD: Add weighted coordinate value to accumulator.">
+      <rect x="350" y="360" width="80" height="30" rx="4" fill="#1a1a1a" stroke="#333"/>
+      <text x="390" y="380" fill="#666" text-anchor="middle" font-size="9px">ADD</text>
+    </g>
+    <g class="node" data-info="XOR: Bitwise XOR with mirror prediction.">
+      <rect x="450" y="360" width="80" height="30" rx="4" fill="#1a1a1a" stroke="#333"/>
+      <text x="490" y="380" fill="#666" text-anchor="middle" font-size="9px">XOR</text>
+    </g>
+    <g class="node" data-info="BRANCH: Conditional skip based on weight threshold.">
+      <rect x="550" y="360" width="80" height="30" rx="4" fill="#1a1a1a" stroke="#333"/>
+      <text x="590" y="380" fill="#666" text-anchor="middle" font-size="9px">BRANCH</text>
+    </g>
+    <g class="node" data-info="FUSE: Fuse current basis with parent basis via bilinear map.">
+      <rect x="650" y="360" width="80" height="30" rx="4" fill="#1a1a1a" stroke="#333"/>
+      <text x="690" y="380" fill="#666" text-anchor="middle" font-size="9px">FUSE</text>
+    </g>
+    <g class="node" data-info="HALT: Emit accumulator and pause. Resume on next trigger.">
+      <rect x="750" y="360" width="80" height="30" rx="4" fill="#1a1a1a" stroke="#333"/>
+      <text x="790" y="380" fill="#666" text-anchor="middle" font-size="9px">HALT</text>
+    </g>
+
+    <rect class="group-box" x="20" y="500" width="1160" height="120" rx="8"/>
+    <text class="group-label" x="40" y="520">Output</text>
+
+    <g class="node" data-info="Reconstructed byte sequence. Deterministic: same compressed input always produces same output.">
+      <rect x="500" y="535" width="200" height="60" rx="6" fill="url(#grad-output)" stroke="#00ff00" stroke-width="2"/>
+      <text x="600" y="560" fill="#00ff00" text-anchor="middle" font-weight="bold">Reconstructed Bytes</text>
+      <text x="600" y="578" fill="#888" text-anchor="middle">Deterministic Output</text>
+    </g>
+
+    <!-- Arrows -->
+    <path class="edge" d="M 230 115 L 290 115"/>
+    <path class="edge" d="M 430 115 L 490 115"/>
+
+    <path class="edge" d="M 170 255 L 210 255"/>
+    <path class="edge" d="M 330 255 L 370 255"/>
+    <path class="edge" d="M 510 255 L 550 255"/>
+    <path class="edge" d="M 670 255 L 710 255"/>
+    <path class="edge" d="M 830 255 L 870 255"/>
+
+    <path class="edge" d="M 930 255 L 930 190 L 110 190 L 110 225"/>
+    <path class="edge" d="M 930 285 L 930 350 L 600 350 L 600 500 L 500 535"/>
+  </g>
+
+  <!-- BASIS OPERATIONS (hidden by default) -->
+  <g id="flow-basis" style="display:none">
+    <text x="600" y="40" fill="#fff" text-anchor="middle" font-size="16px" font-weight="bold">BASIS OPERATIONS DETAIL</text>
+
+    <!-- Basis Fusion -->
+    <rect class="group-box" x="20" y="60" width="560" height="280" rx="8"/>
+    <text class="group-label" x="40" y="80">Basis Fusion</text>
+
+    <g class="node" data-info="Parent basis A: set of top-16 frequent bytes from segment A.">
+      <rect x="50" y="100" width="120" height="50" rx="6" fill="url(#grad-input)" stroke="#555"/>
+      <text x="110" y="130" fill="#fff" text-anchor="middle" font-weight="bold">Basis A</text>
+    </g>
+
+    <g class="node" data-info="Parent basis B: set of top-16 frequent bytes from segment B.">
+      <rect x="50" y="170" width="120" height="50" rx="6" fill="url(#grad-input)" stroke="#555"/>
+      <text x="110" y="200" fill="#fff" text-anchor="middle" font-weight="bold">Basis B</text>
+    </g>
+
+    <g class="node" data-info="Set intersection: vectors common to both parents. Highest priority in fused basis.">
+      <rect x="230" y="135" width="120" height="50" rx="6" fill="url(#grad-process)" stroke="#4488ff" stroke-width="1.5"/>
+      <text x="290" y="165" fill="#4488ff" text-anchor="middle" font-weight="bold">A ∩ B</text>
+    </g>
+
+    <g class="node" data-info="Bilinear operators: Hadamard (a*b mod 256), XOR (a^b), Wedge ((a*256+b) mod 256), Mean ((a+b)//2).">
+      <rect x="230" y="210" width="120" height="50" rx="6" fill="url(#grad-process)" stroke="#4488ff" stroke-width="1.5"/>
+      <text x="290" y="240" fill="#4488ff" text-anchor="middle" font-weight="bold">Bilinear Map</text>
+    </g>
+
+    <g class="node" data-info="Priority ordering: 1. Intersection, 2. Bridge (hybrid), 3. Left overflow, 4. Right overflow.">
+      <rect x="410" y="170" width="120" height="60" rx="6" fill="url(#grad-output)" stroke="#ffaa00" stroke-width="2"/>
+      <text x="470" y="195" fill="#ffaa00" text-anchor="middle" font-weight="bold">Fused Basis</text>
+      <text x="470" y="215" fill="#888" text-anchor="middle" font-size="9px">16 vectors</text>
+    </g>
+
+    <!-- Adaptive Selection -->
+    <rect class="group-box" x="20" y="360" width="560" height="280" rx="8"/>
+    <text class="group-label" x="40" y="380">Adaptive Basis Selection</text>
+
+    <g class="node" data-info="Candidate vector a from pool A being evaluated for transfer to pool B.">
+      <rect x="50" y="400" width="120" height="50" rx="6" fill="url(#grad-input)" stroke="#555"/>
+      <text x="110" y="430" fill="#fff" text-anchor="middle" font-weight="bold">Candidate a</text>
+    </g>
+
+    <g class="node" data-info="Compatibility metric: 1 - min_b∈B |a - b| / 256. Must exceed threshold to proceed.">
+      <rect x="230" y="400" width="140" height="50" rx="6" fill="url(#grad-process)" stroke="#4488ff" stroke-width="1.5"/>
+      <text x="300" y="430" fill="#4488ff" text-anchor="middle" font-weight="bold">Compatibility</text>
+    </g>
+
+    <g class="node" data-info="Memory buffer: records prior transfers. Rejects candidates matching memory entries.">
+      <rect x="230" y="470" width="140" height="50" rx="6" fill="url(#grad-process)" stroke="#4488ff" stroke-width="1.5"/>
+      <text x="300" y="500" fill="#4488ff" text-anchor="middle" font-weight="bold">Memory Buffer</text>
+    </g>
+
+    <g class="node" data-info="Fitness screening: improvement > penalty. Improvement = new_coverage/pool_size. Penalty = resistance * old_coverage/pool_size.">
+      <rect x="230" y="540" width="140" height="50" rx="6" fill="url(#grad-process)" stroke="#4488ff" stroke-width="1.5"/>
+      <text x="300" y="570" fill="#4488ff" text-anchor="middle" font-weight="bold">Fitness Screen</text>
+    </g>
+
+    <g class="node" data-info="Accepted vectors join target pool. Rejected vectors are discarded or deferred.">
+      <rect x="430" y="470" width="120" height="50" rx="6" fill="url(#grad-output)" stroke="#00ff00" stroke-width="1.5"/>
+      <text x="490" y="500" fill="#00ff00" text-anchor="middle" font-weight="bold">Integrate</text>
+    </g>
+
+    <!-- Right side: Basis Expansion -->
+    <rect class="group-box" x="620" y="60" width="560" height="280" rx="8"/>
+    <text class="group-label" x="640" y="80">Basis Expansion</text>
+
+    <g class="node" data-info="Unfold: Project data onto high-dimensional PIST shell. Each position gets full coordinate tuple.">
+      <rect x="650" y="100" width="140" height="50" rx="6" fill="url(#grad-process)" stroke="#4488ff" stroke-width="1.5"/>
+      <text x="720" y="130" fill="#4488ff" text-anchor="middle" font-weight="bold">1. Unfold</text>
+    </g>
+
+    <g class="node" data-info="Extract: Identify dominant basis vectors from the unfolded representation. Top-16 by frequency.">
+      <rect x="650" y="170" width="140" height="50" rx="6" fill="url(#grad-process)" stroke="#4488ff" stroke-width="1.5"/>
+      <text x="720" y="200" fill="#4488ff" text-anchor="middle" font-weight="bold">2. Extract</text>
+    </g>
+
+    <g class="node" data-info="Reduce: Refold data using the extracted basis. Project back to compressed representation.">
+      <rect x="650" y="240" width="140" height="50" rx="6" fill="url(#grad-process)" stroke="#4488ff" stroke-width="1.5"/>
+      <text x="720" y="270" fill="#4488ff" text-anchor="middle" font-weight="bold">3. Reduce</text>
+    </g>
+
+    <g class="node" data-info="Output: Compressed representation with extracted basis as side information.">
+      <rect x="860" y="170" width="120" height="60" rx="6" fill="url(#grad-output)" stroke="#ffaa00" stroke-width="2"/>
+      <text x="920" y="200" fill="#ffaa00" text-anchor="middle" font-weight="bold">Reduced</text>
+      <text x="920" y="220" fill="#888" text-anchor="middle" font-size="9px">Basis + Residuals</text>
+    </g>
+
+    <!-- Arrows for basis fusion -->
+    <path class="edge" d="M 170 125 L 230 160"/>
+    <path class="edge" d="M 170 195 L 230 170"/>
+    <path class="edge" d="M 170 220 L 230 235"/>
+    <path class="edge" d="M 350 160 L 410 185"/>
+    <path class="edge" d="M 350 235 L 410 215"/>
+
+    <!-- Arrows for adaptive selection -->
+    <path class="edge" d="M 170 425 L 230 425"/>
+    <path class="edge" d="M 370 425 L 430 470"/>
+    <path class="edge" d="M 300 450 L 300 470"/>
+    <path class="edge" d="M 300 520 L 300 540"/>
+    <path class="edge" d="M 370 565 L 430 510"/>
+
+    <!-- Arrows for basis expansion -->
+    <path class="edge" d="M 720 150 L 720 170"/>
+    <path class="edge" d="M 720 220 L 720 240"/>
+    <path class="edge" d="M 790 270 L 860 215"/>
+    <path class="edge" d="M 790 130 L 860 185"/>
+  </g>
+
+  <!-- COORDINATE MAPPING (hidden by default) -->
+  <g id="flow-coordinate" style="display:none">
+    <text x="600" y="40" fill="#fff" text-anchor="middle" font-size="16px" font-weight="bold">COORDINATE MAPPING DETAIL</text>
+
+    <g class="node" data-info="Input: natural number n (byte position).">
+      <rect x="520" y="60" width="160" height="50" rx="6" fill="url(#grad-input)" stroke="#555" stroke-width="1.5"/>
+      <text x="600" y="90" fill="#fff" text-anchor="middle" font-weight="bold">Position n ∈ ℕ</text>
+    </g>
+
+    <!-- PIST -->
+    <rect class="group-box" x="20" y="130" width="270" height="200" rx="8"/>
+    <text class="group-label" x="40" y="150">PIST Decomposition</text>
+
+    <g class="node" data-info="Compute k = floor(sqrt(n)). This is the shell index.">
+      <rect x="50" y="170" width="100" height="40" rx="4" fill="url(#grad-process)" stroke="#00ffcc"/>
+      <text x="100" y="195" fill="#00ffcc" text-anchor="middle" font-size="10px">k = ⌊√n⌋</text>
+    </g>
+
+    <g class="node" data-info="Compute t = n - k². This is the offset within the shell.">
+      <rect x="170" y="170" width="100" height="40" rx="4" fill="url(#grad-process)" stroke="#00ffcc"/>
+      <text x="220" y="195" fill="#00ffcc" text-anchor="middle" font-size="10px">t = n - k²</text>
+    </g>
+
+    <g class="node" data-info="Mass function: m = min(t, 2k+1-t) * (2k+1 - min(t, 2k+1-t)). Weight for basis selection.">
+      <rect x="50" y="230" width="100" height="50" rx="4" fill="url(#grad-process)" stroke="#00ffcc"/>
+      <text x="100" y="250" fill="#00ffcc" text-anchor="middle" font-size="9px">mass(k,t)</text>
+      <text x="100" y="268" fill="#888" text-anchor="middle" font-size="8px">Information Weight</text>
+    </g>
+
+    <g class="node" data-info="Mirror involution: t' = 2k+1-t. Maps one side of shell to other. Involution: mirror(mirror(t)) = t.">
+      <rect x="170" y="230" width="100" height="50" rx="4" fill="url(#grad-process)" stroke="#00ffcc"/>
+      <text x="220" y="250" fill="#00ffcc" text-anchor="middle" font-size="9px">mirror(k,t)</text>
+      <text x="220" y="268" fill="#888" text-anchor="middle" font-size="8px">t ↦ 2k+1-t</text>
+    </g>
+
+    <!-- Tree -->
+    <rect class="group-box" x="320" y="130" width="270" height="200" rx="8"/>
+    <text class="group-label" x="340" y="150">Tree Address</text>
+
+    <g class="node" data-info="Level 0: branch = n % 20. Select one of 20 sub-branches.">
+      <rect x="350" y="170" width="100" height="40" rx="4" fill="url(#grad-process)" stroke="#ff6644"/>
+      <text x="400" y="195" fill="#ff6644" text-anchor="middle" font-size="10px">Level 0: n%20</text>
+    </g>
+
+    <g class="node" data-info="Descend: n = n // 20. Move to next level.">
+      <rect x="470" y="170" width="100" height="40" rx="4" fill="url(#grad-process)" stroke="#ff6644"/>
+      <text x="520" y="195" fill="#ff6644" text-anchor="middle" font-size="10px">n ← n//20</text>
+    </g>
+
+    <g class="node" data-info="Level 1: branch = n % 20.">
+      <rect x="350" y="230" width="100" height="40" rx="4" fill="url(#grad-process)" stroke="#ff6644"/>
+      <text x="400" y="255" fill="#ff6644" text-anchor="middle" font-size="10px">Level 1: n%20</text>
+    </g>
+
+    <g class="node" data-info="Level 2: branch = n % 20. Final level for depth=3.">
+      <rect x="470" y="230" width="100" height="40" rx="4" fill="url(#grad-process)" stroke="#ff6644"/>
+      <text x="520" y="255" fill="#ff6644" text-anchor="middle" font-size="10px">Level 2: n%20</text>
+    </g>
+
+    <!-- Surface -->
+    <rect class="group-box" x="620" y="130" width="270" height="200" rx="8"/>
+    <text class="group-label" x="640" y="150">Surface Coordinates</text>
+
+    <g class="node" data-info="x = 1 + (n % 255). Domain truncation to [1, 256].">
+      <rect x="650" y="170" width="100" height="40" rx="4" fill="url(#grad-process)" stroke="#4488ff"/>
+      <text x="700" y="195" fill="#4488ff" text-anchor="middle" font-size="10px">x = 1 + n%255</text>
+    </g>
+
+    <g class="node" data-info="y = 1/x. Radius at position x.">
+      <rect x="770" y="170" width="100" height="40" rx="4" fill="url(#grad-process)" stroke="#4488ff"/>
+      <text x="820" y="195" fill="#4488ff" text-anchor="middle" font-size="10px">y = 1/x</text>
+    </g>
+
+    <g class="node" data-info="θ = (n · Φ) mod 2π. Azimuthal angle via golden ratio irrational rotation.">
+      <rect x="650" y="230" width="100" height="50" rx="4" fill="url(#grad-process)" stroke="#4488ff"/>
+      <text x="700" y="250" fill="#4488ff" text-anchor="middle" font-size="9px">θ = n·Φ mod 2π</text>
+      <text x="700" y="268" fill="#888" text-anchor="middle" font-size="8px">Irrational</text>
+    </g>
+
+    <!-- Torus -->
+    <rect class="group-box" x="920" y="130" width="260" height="200" rx="8"/>
+    <text class="group-label" x="940" y="150">Torus Angles</text>
+
+    <g class="node" data-info="θ = (n · Φ) mod 2π. First angular coordinate.">
+      <rect x="950" y="170" width="80" height="40" rx="4" fill="url(#grad-process)" stroke="#ffaa00"/>
+      <text x="990" y="195" fill="#ffaa00" text-anchor="middle" font-size="10px">θ = n·Φ</text>
+    </g>
+
+    <g class="node" data-info="φ = (n · Φ²) mod 2π. Second angular coordinate. Φ² linearly independent from Φ.">
+      <rect x="1050" y="170" width="80" height="40" rx="4" fill="url(#grad-process)" stroke="#ffaa00"/>
+      <text x="1090" y="195" fill="#ffaa00" text-anchor="middle" font-size="10px">φ = n·Φ²</text>
+    </g>
+
+    <g class="node" data-info="ψ = (n · Φ³) mod 2π. Third angular coordinate. Φ³ linearly independent from Φ, Φ².">
+      <rect x="950" y="230" width="80" height="50" rx="4" fill="url(#grad-process)" stroke="#ffaa00"/>
+      <text x="990" y="250" fill="#ffaa00" text-anchor="middle" font-size="9px">ψ = n·Φ³</text>
+      <text x="990" y="268" fill="#888" text-anchor="middle" font-size="8px">mod 2π</text>
+    </g>
+
+    <g class="node" data-info="Density property: (n·Φ, n·Φ², n·Φ³) mod 2π is dense in T³.">
+      <rect x="1050" y="230" width="80" height="50" rx="4" fill="url(#grad-process)" stroke="#ffaa00"/>
+      <text x="1090" y="250" fill="#ffaa00" text-anchor="middle" font-size="9px">Dense in T³</text>
+      <text x="1090" y="268" fill="#888" text-anchor="middle" font-size="8px">Unique per n</text>
+    </g>
+
+    <!-- Output -->
+    <g class="node" data-info="Composite Address = (tree, surface, torus, pist). Structured tuple from single integer n.">
+      <rect x="420" y="380" width="360" height="60" rx="8" fill="url(#grad-output)" stroke="#ff00ff" stroke-width="2"/>
+      <text x="600" y="405" fill="#ff00ff" text-anchor="middle" font-weight="bold">Composite Address(n)</text>
+      <text x="600" y="425" fill="#888" text-anchor="middle">(tree_path, surface_coord, torus_angles, pist_shell)</text>
+    </g>
+
+    <!-- Arrows -->
+    <path class="edge" d="M 600 110 L 155 130 L 155 170"/>
+    <path class="edge" d="M 600 110 L 450 130 L 450 170"/>
+    <path class="edge" d="M 600 110 L 750 130 L 750 170"/>
+    <path class="edge" d="M 600 110 L 1050 130 L 1050 170"/>
+
+    <path class="edge" d="M 100 210 L 100 230"/>
+    <path class="edge" d="M 220 210 L 220 230"/>
+    <path class="edge" d="M 400 210 L 400 230"/>
+    <path class="edge" d="M 520 210 L 520 230"/>
+    <path class="edge" d="M 700 210 L 700 230"/>
+    <path class="edge" d="M 820 210 L 820 230"/>
+    <path class="edge" d="M 990 210 L 990 230"/>
+    <path class="edge" d="M 1090 210 L 1090 230"/>
+
+    <path class="edge" d="M 155 330 L 155 360 L 600 360 L 600 380"/>
+    <path class="edge" d="M 450 330 L 450 360 L 600 360"/>
+    <path class="edge" d="M 750 330 L 750 360 L 600 360"/>
+    <path class="edge" d="M 1050 330 L 1050 360 L 600 360"/>
+  </g>
+
+</svg>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#555"></div>Input/Output</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#00ffcc"></div>Coordinate Mapping</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#4488ff"></div>Basis Operations</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ff6644"></div>Shifter Pipeline</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ff00ff"></div>Compressed Data</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ffaa00"></div>Composite Structure</div>
+</div>
+
+<div class="info-panel" id="infoPanel">
+  <h3 id="infoTitle">Node Info</h3>
+  <p id="infoText">Hover over a node to see details.</p>
+</div>
+
+<script>
+function showFlow(flow) {
+  document.querySelectorAll('.controls button').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  ['encode', 'decode', 'basis', 'coordinate'].forEach(id => {
+    document.getElementById('flow-' + id).style.display = id === flow ? 'block' : 'none';
+  });
+}
+
+// Hover info panel
+const infoPanel = document.getElementById('infoPanel');
+const infoTitle = document.getElementById('infoTitle');
+const infoText = document.getElementById('infoText');
+
+document.querySelectorAll('.node').forEach(node => {
+  node.addEventListener('mouseenter', () => {
+    const info = node.getAttribute('data-info');
+    if (info) {
+      const title = node.querySelector('text').textContent;
+      infoTitle.textContent = title;
+      infoText.textContent = info;
+      infoPanel.style.display = 'block';
+    }
+  });
+  node.addEventListener('mouseleave', () => {
+    infoPanel.style.display = 'none';
+  });
+});
+</script>
+
+</body>
+</html>

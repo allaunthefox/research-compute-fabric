@@ -7,9 +7,13 @@ import { notion, notionDatabaseId, validateNotionConfig } from "./notion.js";
 import { pkgIngest } from "./ene.js";
 import { createLinearIssue } from "./linear.js";
 import { z } from "zod";
+import workspaceRouter from "./workspace.js";
+
 
 const app = express();
 app.use(express.json());
+app.use(express.static("public"));
+
 
 const PORT = process.env.PORT || 3000;
 
@@ -248,14 +252,14 @@ app.post("/ingest", async (req, res) => {
 
     // 2. Primary Target Action
     if (target === "ene") {
-      const result = pkgIngest({ 
-        title, 
-        body, 
-        kind, 
-        tags, 
-        sessionId: linearIssue ? linearIssue.url : null, 
+      const result = pkgIngest({
+        title,
+        body,
+        kind,
+        tags,
+        sessionId: linearIssue ? linearIssue.url : null,
         notionId: notionPage ? notionPage.id : null,
-        metric: lean.metric, 
+        metric: lean.metric,
         witness: lean.witness,
         sigma: req.body.sigma // Pass sigma from request
       });
@@ -282,6 +286,10 @@ app.post("/ingest", async (req, res) => {
   }
 });
 
+// Workspace Routes
+app.use("/workspace", workspaceRouter);
+
 app.listen(PORT, () => {
+
   console.log(`Research Stack server running on http://localhost:${PORT}`);
 });

@@ -17,7 +17,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.RhythmStructure
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Biological Rhythms (Winfree) -/
 
@@ -53,7 +53,7 @@ def isAssembled (conc cmc : Q16_16) : Bool :=
 /-- DNA Tile Matching Logic (Erik Winfree).
     Two tiles (A, B) assemble if their sticky-end glues (G_a, G_b) match and exceed a temperature threshold. -/
 def tileAssemblyStrength (glue_a glue_b threshold : Q16_16) : Q16_16 :=
-  if glue_a == glue_b then 
+  if glue_a == glue_b then
     if glue_a.val.toNat > threshold.val.toNat then Q16_16.one else Q16_16.zero
   else Q16_16.zero
 

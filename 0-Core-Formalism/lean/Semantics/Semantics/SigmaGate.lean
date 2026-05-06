@@ -24,7 +24,7 @@ import Semantics.Bind
 namespace Semantics.SigmaGate
 
 open Semantics
-open Semantics.Q0_16
+open Semantics.Q16_16
 open Semantics.Q16_16
 
 -- ═══════════════════════════════════════════════════════════════════════════

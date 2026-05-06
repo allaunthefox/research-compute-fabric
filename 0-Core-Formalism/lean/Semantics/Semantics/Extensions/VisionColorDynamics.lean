@@ -18,7 +18,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.Vision
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Opponent Process Theory -/
 
@@ -66,10 +66,10 @@ def inhibitedResponse (excitation neighbor_responses : List Q16_16) (k_inhibit :
     f(t) = t^(1/3) if t > delta^3 else linear_approx. -/
 def cielabMapping (t : Q16_16) : Q16_16 :=
   -- Threshold delta^3 ≈ (6/29)^3 ≈ 0.008856 in Q16.16 is 0x00000245
-  if t.val.toNat > 0x00000245 then 
+  if t.val.toNat > 0x00000245 then
     -- Placeholder for cubic root
-    t 
-  else 
+    t
+  else
     -- Linear approximation: (1/3)*(29/6)^2 * t + 4/29
     Q16_16.add (Q16_16.mul (Q16_16.ofInt 7) t) (Q16_16.mk 0x00002330) -- approx coefficients
 

@@ -1,3 +1,5 @@
+> **NOTE:** This roadmap has been superseded by [ROADMAP.md](../../6-Documentation/docs/roadmaps/ROADMAP.md). Retained for historical reference.
+
 # Research Stack Forest Map Waterfall
 
 ```yaml

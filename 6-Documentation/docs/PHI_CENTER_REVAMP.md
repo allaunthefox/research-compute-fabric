@@ -1,7 +1,7 @@
 # Phi Center Revamp
 
-**Status:** active local setup upgrade  
-**Source context:** `/home/allaun/Documents/DeleteMe/ChatGPT-Filling_in_Help.json`  
+**Status:** active local setup upgrade
+**Source context:** `/home/allaun/Documents/DeleteMe/ChatGPT-Filling_in_Help.json`
 **Core move:** promote Phi from a paper/module family to the organizing center of the Research Stack cockpit.
 
 ## Center Claim
@@ -22,7 +22,7 @@ There are three different Phi roles that must stay separate:
 | Role | Meaning | Main anchors |
 |---|---|---|
 | `Phi_field` | Universal field / cost-efficiency root | `docs/papers/EQUATION_00_PHI_UNIVERSAL.md`, `0-Core-Formalism/lean/Semantics/Semantics/UniversalField.lean` |
-| `phi_ratio` | Golden-ratio spacing, phinary indexing, shell weights | `PhiShellEncoding.lean`, `PhinaryNumberSystem.lean`, `MATH_MODEL_MAP_phinary.tsv` |
+| `phi_ratio` | Golden-ratio spacing, phinary indexing, shell weights | `PhiShellEncoding.lean`, `PhinaryNumberSystem.lean`, `MATH_MODEL_MAP.tsv` |
 | `Phi_scheduler` | Deterministic traversal and signal/LUT scheduling | `docs/semantics/PBACS_CANONICAL_SIGNAL_ARCHITECTURE.md`, `docs/semantics/LUT_AS_DSP_EQUATION.md` |
 
 The revamp works because these are coupled but not identical. `Phi_field`
@@ -44,7 +44,7 @@ First files:
 - `0-Core-Formalism/lean/Semantics/Semantics/PhiUniversalMetaprobe.lean`
 - `0-Core-Formalism/lean/Semantics/Semantics/PhinaryNumberSystem.lean`
 - `0-Core-Formalism/lean/Semantics/Semantics/PhiShellEncoding.lean`
-- `MATH_MODEL_MAP_phinary.tsv`
+- `MATH_MODEL_MAP.tsv`
 
 ### 1. Foundation Trunk
 
@@ -124,7 +124,7 @@ Generated files:
 | Queue | Target | Done when |
 |---|---|---|
 | Phi correction boundary | Separate corrected `UniversalField.lean` from older reciprocal-log wording | docs and maps point to corrected cost/efficiency distinction |
-| Phinary map | Make `MATH_MODEL_MAP_phinary.tsv` the equation-index companion | every active equation has a phinary ID or explicit exclusion |
+| Phinary map | Make `MATH_MODEL_MAP.tsv` the equation-index companion with phinary indexing | every active equation has a phinary ID or explicit exclusion |
 | Phi-S3C bridge | Connect Phi shell hierarchy to S3C open/closed shell mass | S3C docs say where Phi weighting enters and where it does not |
 | Phi-PIST bridge | Use PIST as witness transport for Phi-centered transforms | proof attempts route through typed state, not scalar-only sketches |
 | Phi graph descent | Reclassify GraphML nodes by Phi lineage role | graph can be read as a descent tree from Phi center |
@@ -159,7 +159,7 @@ When resuming work, open in this order:
 docs/PHI_CENTER_REVAMP.md
 docs/LOCAL_SETUP_REFLOW.md
 data/reflow/phi_center_manifest.json
-MATH_MODEL_MAP_phinary.tsv
+MATH_MODEL_MAP.tsv
 0-Core-Formalism/lean/Semantics/Semantics/UniversalField.lean
 0-Core-Formalism/lean/Semantics/Semantics/S3C.lean
 ```

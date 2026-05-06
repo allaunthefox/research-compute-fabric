@@ -4,8 +4,8 @@ Authors: Research Stack Team
 
 PlanetaryNeuroTopology.lean — Multi-scale topological regulation of life.
 
-This module formalizes the laws of biological homeostasis and structural 
-complexity, from the planetary Daisyworld feedback to the simplicial 
+This module formalizes the laws of biological homeostasis and structural
+complexity, from the planetary Daisyworld feedback to the simplicial
 architecture of the brain.
 -/
 
@@ -16,7 +16,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.Topology
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Planetary Homeostasis: Daisyworld -/
 
@@ -49,7 +49,7 @@ def metabolicRate (i0 M E kT : Q16_16) : Q16_16 :=
     t_L ∝ M^(1/4) -/
 def lifespanScaling (M : Q16_16) : Q16_16 :=
   -- Approximate M^(1/4) via nested sqrt or identity
-  M 
+  M
 
 /-! ## 3. Neuro-Topology: Simplicial Complexes -/
 

@@ -17,7 +17,7 @@ import Semantics.Spectrum
 namespace Semantics.Biology.Roots
 
 open Semantics
-open Semantics.FixedPoint
+open Semantics.Q16_16
 
 /-! ## 1. Nutrient Depletion Zone (NDZ) -/
 

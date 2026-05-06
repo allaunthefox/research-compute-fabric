@@ -183,7 +183,7 @@ def sub (a b : Q16_16) : Q16_16 :=
 
 @[inline]
 def mul (a b : Q16_16) : Q16_16 :=
-  ⟨(a.val.toUInt64 * b.val.toUInt64 >>> 16).toUInt32⟩
+  ⟨((a.val.toUInt64 * b.val.toUInt64) >>> 16).toUInt32⟩
 
 @[inline]
 def div (a b : Q16_16) : Q16_16 :=
@@ -277,39 +277,109 @@ theorem epsilon_toInt : toInt epsilon = 1 := rfl
 /-- epsilon.toInt > 0 -/
 theorem epsilon_toInt_pos : toInt epsilon > 0 := by decide
 
--- TODO(lean-port): Proofs in this section use bit-vector lemma paths
--- (UInt32.toUInt64_toNat, UInt64.toNat_ofNat_of_lt) that are unavailable
--- in Lean v4.30.0-rc2. Theorems are admitted via `sorry` to preserve
--- theorem signatures for importing modules. All definitions and
--- computations above are verified to work correctly; the admitted lemmas
--- are purely algebraic and do not affect computational semantics.
+private theorem u64_zero_mul (x : UInt64) : UInt64.mul 0 x = 0 := by
+  cases x
+  simp [UInt64.mul, BitVec.zero_mul]
+
+private theorem u64_mul_zero (x : UInt64) : UInt64.mul x 0 = 0 := by
+  cases x
+  simp [UInt64.mul, BitVec.mul_zero]
+
+private theorem u64_scale_left_toNat (x : UInt32) :
+    (UInt64.mul 65536 x.toUInt64).toNat = 65536 * x.toNat := by
+  simp [UInt64.mul, UInt64.toNat_ofNat]
+  have hlt := UInt32.toNat_lt x
+  omega
+
+private theorem u64_scale_right_toNat (x : UInt32) :
+    (UInt64.mul x.toUInt64 65536).toNat = x.toNat * 65536 := by
+  simp [UInt64.mul, UInt64.toNat_ofNat]
+  have hlt := UInt32.toNat_lt x
+  omega
 
 /-- zero * a = zero -/
 theorem zero_mul (a : Q16_16) : zero * a = zero := by
-  apply ext; apply UInt32.ext; sorry
+  cases a with
+  | mk av =>
+    apply congrArg Q16_16.mk
+    cases av
+    simp [HMul.hMul, Mul.mul, zero, u64_zero_mul]
 
 /-- a * zero = zero -/
 theorem mul_zero (a : Q16_16) : a * zero = zero := by
-  apply ext; apply UInt32.ext; sorry
+  cases a with
+  | mk av =>
+    apply congrArg Q16_16.mk
+    cases av
+    simp [HMul.hMul, Mul.mul, zero, u64_mul_zero]
 
 /-- one * a = a -/
 theorem one_mul (a : Q16_16) : one * a = a := by
-  apply ext; apply UInt32.ext; sorry
+  cases a with
+  | mk av =>
+    apply congrArg Q16_16.mk
+    apply UInt32.ext
+    have hlt := UInt32.toNat_lt av
+    change (Q16_16.mul one { val := av }).val.toNat = av.toNat
+    simp [Q16_16.mul, one, UInt64.toNat_toUInt32, UInt64.toNat_shiftRight,
+      UInt64.toNat_ofNat, Nat.shiftRight_eq_div_pow]
+    omega
 
 /-- a * one = a -/
 theorem mul_one (a : Q16_16) : a * one = a := by
-  apply ext; apply UInt32.ext; sorry
+  cases a with
+  | mk av =>
+    apply congrArg Q16_16.mk
+    apply UInt32.ext
+    have hlt := UInt32.toNat_lt av
+    change (Q16_16.mul { val := av } one).val.toNat = av.toNat
+    simp [Q16_16.mul, one, UInt64.toNat_toUInt32, UInt64.toNat_shiftRight,
+      UInt64.toNat_ofNat, Nat.shiftRight_eq_div_pow]
+    omega
 
 /-- toInt = 0 iff the value is zero -/
 theorem toInt_eq_zero_iff {a : Q16_16} : a.toInt = 0 ↔ a = zero := by
   constructor
-  · intro h; sorry
+  · intro h
+    cases a with
+    | mk av =>
+      apply congrArg Q16_16.mk
+      apply UInt32.ext
+      have hlt := UInt32.toNat_lt av
+      simp [toInt] at h ⊢
+      split at h
+      · omega
+      · omega
   · intro h; subst h; rfl
 
 /-- Non-negative addition: adding epsilon to a non-negative value yields a positive result. -/
 theorem epsilon_add_pos {r : Q16_16} (hr : r.toInt ≥ 0) :
     (r + epsilon).toInt > 0 := by
-  sorry
+  change toInt (add r epsilon) > 0
+  cases r with
+  | mk rv =>
+    have hlt := UInt32.toNat_lt rv
+    simp [add, epsilon, toInt] at hr ⊢
+    split
+    · native_decide
+    · rename_i hhi
+      split
+      · rename_i hlo
+        omega
+      · rename_i hlo
+        have hrvadd : (rv + 1).toNat = rv.toNat + 1 := by
+          rw [UInt32.toNat_add, UInt32.toNat_ofNat]
+          norm_num
+          omega
+        have hpos : 0 < (rv + 1).toNat := by
+          rw [hrvadd]
+          omega
+        have hnosign : ¬2147483648 ≤ rv + 1 := by
+          change ¬(2147483648 : UInt32).toNat ≤ (rv + 1).toNat
+          simp [UInt32.toNat_ofNat, hrvadd]
+          omega
+        simp [hnosign]
+        exact_mod_cast hpos
 
 def sat01 (q : Q16_16) : Q16_16 :=
   if q.toInt < 0 then zero

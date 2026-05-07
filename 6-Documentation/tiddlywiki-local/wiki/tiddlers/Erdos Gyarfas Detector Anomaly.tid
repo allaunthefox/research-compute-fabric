@@ -1,0 +1,77 @@
+created: 20260507101500000
+modified: 20260507101500000
+tags: ResearchStack Erdos Gyarfas GraphTheory DetectorAnomaly FourPrimitives
+title: Erdos Gyarfas Detector Anomaly
+type: text/vnd.tiddlywiki
+
+! Erdos Gyarfas Detector Anomaly
+
+The local Erdős-Gyárfás run must be treated as a detector/generator anomaly, not as a mathematical counterexample.
+
+!! What The Local Run Claimed
+
+`4-Infrastructure/shim/test_erdos_gyarfas_4primitive_results.json` reports:
+
+* `total_min_degree_3`: 9
+* `has_power_of_two_cycle`: 0
+* `conjecture_holds`: false
+* tested `n_values`: 10, 15, 20
+* samples per `n`: 3
+
+That is suspect because the conjecture is still open, and known searches rule out very small counterexamples. Any claimed failure at `n = 10` or `n = 15` should be classified as a detector anomaly until independently certified.
+
+!! Likely Failure Modes
+
+* Cycle detector misses simple cycles.
+* Detector accidentally searches only induced or chordless cycles.
+* Detector does not check every power-of-two length `4, 8, 16, ... <= n`.
+* Generated graph does not actually satisfy simple-graph assumptions.
+* Graph has invalid artifacts such as multiedges, self-loops, disconnected fragments, or bad adjacency.
+* Result variable is inverted or over-promoted from a diagnostic boolean.
+
+!! Required Γ_fail Packet
+
+Any claimed counterexample must emit:
+
+```
+Gamma_fail = {
+  graph_id,
+  n,
+  edge_list,
+  adjacency_list,
+  degree_sequence,
+  min_degree,
+  checked_lengths: [4, 8, 16, ... <= n],
+  cycles_found_by_length,
+  independent_verifier_result,
+  sha256(edge_list)
+}
+```
+
+!! Promotion Rule
+
+`Conjecture holds: false` is allowed only if:
+
+* `min_degree >= 3`
+* the graph is a valid simple graph
+* no simple cycle has length `2^k`
+* the checked lengths cover all `2^k <= n`
+* an independent verifier confirms the cycle absence
+* the edge list and verifier output have receipt hashes
+
+Until then, the correct status is:
+
+> Detector anomaly: claimed counterexample requires verification.
+
+!! Four-Primitive Interpretation
+
+* `ρ(x)` = edge and minimum-degree density.
+* `C = UΛU^T` = adjacency spectral structure.
+* `G = A^T A` = graph rigidity / degree deformation.
+* `Γ_i` = cycle packet plus missing-cycle residual.
+
+Keeper conclusion: the four-primitives model found the right obstruction shape, but the Gyárfás packet must carry a verifiable cycle certificate before the result can be trusted.
+
+!! External Status
+
+The Erdős-Gyárfás conjecture remains open. Reference status checked against the public Erdős-Gyárfás summaries and graph-theory references on 2026-05-07.

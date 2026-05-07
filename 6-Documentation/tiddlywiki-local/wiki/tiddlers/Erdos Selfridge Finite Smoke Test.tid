@@ -1,0 +1,61 @@
+created: 20260507101500000
+modified: 20260507101500000
+tags: ResearchStack Erdos Selfridge CoveringSystems SmokeTest FourPrimitives
+title: Erdos Selfridge Finite Smoke Test
+type: text/vnd.tiddlywiki
+
+! Erdos Selfridge Finite Smoke Test
+
+The local Erdős-Selfridge run is a valid finite smoke test, not a proof of the full odd covering-system conjecture.
+
+!! What The Local Run Claimed
+
+`4-Infrastructure/shim/test_erdos_selfridge_4primitive_results.json` reports:
+
+* `total_tests`: 12
+* `conjecture_violations`: 0
+* `conjecture_holds`: true
+* `n_moduli_values`: 3, 4, 5, 6
+* `max_modulus`: 100
+* samples per `n_moduli`: 3
+
+This should be classified as:
+
+> PASS: finite generated samples produced no odd-moduli counterexample.
+
+and not as:
+
+> PROOF: the Erdős-Selfridge conjecture is solved.
+
+!! Four-Primitive Interpretation
+
+* `ρ(x)` = residue/modulus coverage density.
+* `C = UΛU^T` = covering overlap spectrum.
+* `G = A^T A` = even/odd modulus balance.
+* `Γ_i` = covering-system packet plus violation witness.
+
+!! Required Violation Packet
+
+A stronger future smoke test should emit a packet for every candidate covering:
+
+```
+Gamma_cover = {
+  candidate_id,
+  moduli,
+  residues,
+  all_moduli_odd,
+  moduli_distinct,
+  coverage_window,
+  uncovered_residues,
+  independent_verifier_result,
+  sha256(candidate)
+}
+```
+
+!! Status
+
+The odd covering-system problem remains open in general. Known restricted results rule out important cases, including square-free moduli under strong conditions, but that does not promote this finite sample to a proof.
+
+!! Keeper Conclusion
+
+The run is useful because it makes the packet shape explicit: covering density, overlap spectrum, parity shear, and witness receipts. Keep it as a smoke test and require Γ packets before promoting any result claim.

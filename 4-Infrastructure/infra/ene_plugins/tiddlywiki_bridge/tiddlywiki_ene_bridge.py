@@ -84,7 +84,12 @@ def slugify(title: str) -> str:
     slug = title.strip().lower()
     slug = re.sub(r"[^a-z0-9._ -]+", "", slug)
     slug = re.sub(r"\s+", "_", slug).strip("_")
-    return slug or hashlib.sha256(title.encode("utf-8")).hexdigest()[:16]
+    title_hash = hashlib.sha256(title.encode("utf-8")).hexdigest()[:12]
+    if not slug:
+        return title_hash
+    if slug != title.strip().lower().replace(" ", "_") or len(slug) < 8:
+        return f"{slug.rstrip('-_.')}_{title_hash}"
+    return slug
 
 
 def split_tags(raw: str) -> list[str]:
@@ -271,7 +276,7 @@ def scan_tiddlers(
 ) -> tuple[list[ENEPackagePlan], list[dict[str, str]]]:
     plans: list[ENEPackagePlan] = []
     errors: list[dict[str, str]] = []
-    for path in sorted(tiddler_dir.glob("*.tid")):
+    for path in sorted(tiddler_dir.rglob("*.tid")):
         try:
             record = parse_tid_file(path)
             if record.title.startswith("$:/") and not include_system:

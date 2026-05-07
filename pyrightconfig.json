@@ -1,0 +1,25 @@
+{
+  "exclude": [
+    "**/__pycache__",
+    "**/.mypy_cache",
+    "**/.pytest_cache",
+    "**/.ruff_cache",
+    "**/.venv",
+    "**/venv",
+    "**/build",
+    "**/dist",
+    ".changes",
+    ".git",
+    "API KEYS",
+    "Security & Passwords",
+    "artifacts",
+    "data",
+    "logs",
+    "node_modules",
+    "out",
+    "scratch",
+    "shared-data",
+    "4-Infrastructure/ComfyUI",
+    "ai-math-discovery-systems"
+  ]
+}

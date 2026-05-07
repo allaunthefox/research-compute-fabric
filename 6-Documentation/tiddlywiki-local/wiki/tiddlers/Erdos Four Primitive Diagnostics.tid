@@ -1,0 +1,44 @@
+created: 20260507101500000
+modified: 20260507101500000
+tags: ResearchStack Erdos Diagnostics FourPrimitives ConjectureAudit
+title: Erdos Four Primitive Diagnostics
+type: text/vnd.tiddlywiki
+
+! Erdos Four Primitive Diagnostics
+
+This index records Erdős-style conjecture experiments as diagnostic packets, not theorem claims.
+
+!! Active Cards
+
+* [[Erdos Gyarfas Detector Anomaly]] — power-of-two cycle test must emit a verified Γ_fail packet before any counterexample claim is trusted.
+* [[Erdos Selfridge Finite Smoke Test]] — finite generated covering-system samples found no odd-moduli violation, but this is not a proof of the full conjecture.
+
+!! Four-Primitive Reading
+
+The accurate framework claim is:
+
+> The four primitives provide a diagnostic coordinate system over Erdős-style objects: field density, spectral structure, shear balance, and packetized obstruction witnesses.
+
+For graph-cycle problems:
+
+* `ρ(x)` = edge and degree density.
+* `C = UΛU^T` = adjacency spectral structure.
+* `G = A^T A` = graph rigidity or degree deformation.
+* `Γ_i` = cycle packet, missing-cycle residual, and counterexample certificate.
+
+For covering-system problems:
+
+* `ρ(x)` = residue/modulus coverage density.
+* `C = UΛU^T` = covering overlap spectrum.
+* `G = A^T A` = even/odd modulus balance.
+* `Γ_i` = covering-system packet plus violation witness.
+
+!! Local Evidence
+
+* `4-Infrastructure/shim/test_erdos_gyarfas_4primitive_results.json`
+* `4-Infrastructure/shim/test_erdos_selfridge_4primitive_results.json`
+* `4-Infrastructure/shim/investigate_erdos_gyarfas_refined.py`
+
+!! Rule
+
+Do not promote an Erdős experiment from diagnostic to result unless the packet primitive carries a reproducible witness, a receipt hash, and an independent verifier result.

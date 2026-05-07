@@ -1,3 +1,45 @@
 {
-    "cmake.sourceDirectory": "/home/allaun/Documents/Research Stack/2-Search-Space/simulations/heat-2D"
+    "cmake.sourceDirectory": "/home/allaun/Documents/Research Stack/2-Search-Space/simulations/heat-2D",
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/.ipynb_checkpoints/**": true,
+        "**/.mypy_cache/**": true,
+        "**/.pytest_cache/**": true,
+        "**/.ruff_cache/**": true,
+        "**/.venv/**": true,
+        "**/__pycache__/**": true,
+        "**/node_modules/**": true,
+        ".changes/**": true,
+        "4-Infrastructure/ComfyUI/**": true,
+        "API KEYS/**": true,
+        "Security & Passwords/**": true,
+        "ai-math-discovery-systems/**": true,
+        "artifacts/**": true,
+        "data/**": true,
+        "logs/**": true,
+        "out/**": true,
+        "scratch/**": true,
+        "shared-data/**": true
+    },
+    "search.exclude": {
+        "**/.ipynb_checkpoints": true,
+        "**/.mypy_cache": true,
+        "**/.pytest_cache": true,
+        "**/.ruff_cache": true,
+        "**/.venv": true,
+        "**/__pycache__": true,
+        "**/node_modules": true,
+        ".changes": true,
+        "4-Infrastructure/ComfyUI": true,
+        "API KEYS": true,
+        "Security & Passwords": true,
+        "ai-math-discovery-systems": true,
+        "artifacts": true,
+        "data": true,
+        "logs": true,
+        "out": true,
+        "scratch": true,
+        "shared-data": true
+    }
 }

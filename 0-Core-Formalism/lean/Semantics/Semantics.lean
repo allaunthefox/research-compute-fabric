@@ -120,6 +120,7 @@ import Semantics.CrossDimensionalFilter
 import Semantics.TopologyResilience
 import Semantics.GeneticGroundUp
 import Semantics.Testing.GeneticGroundUpBenchmark
+import Semantics.Testing.ErdosHarness
 import Semantics.OTOMOntology
 import Semantics.Connectors
 import Semantics.SLUG3

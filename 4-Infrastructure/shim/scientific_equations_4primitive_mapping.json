@@ -1,0 +1,225 @@
+{
+  "primitives": {
+    "field": {
+      "equation": "\u03c1(x\u20d7)",
+      "role": "tells you what exists (field / substrate / scalar manifold state)",
+      "keywords": [
+        "field",
+        "density",
+        "distribution",
+        "potential",
+        "energy",
+        "manifold",
+        "state",
+        "landscape"
+      ]
+    },
+    "shear": {
+      "equation": "G = A\u1d40A",
+      "role": "tells you how it deforms (shear / metric deformation / lawful geometry)",
+      "keywords": [
+        "distance",
+        "metric",
+        "gradient",
+        "force",
+        "transform",
+        "deformation",
+        "geometry",
+        "rate"
+      ]
+    },
+    "packet": {
+      "equation": "\u0393\u1d62",
+      "role": "tells you what is emitted/witnessed (packet / executable typed glyph-witness / codec event)",
+      "keywords": [
+        "descriptor",
+        "vector",
+        "map",
+        "kernel",
+        "similarity",
+        "representation",
+        "encoding"
+      ]
+    },
+    "spectral": {
+      "equation": "C = U\u039bU\u1d40",
+      "role": "tells you what basis survives (spectral / eigenbasis / pruning-correlation structure)",
+      "keywords": [
+        "eigen",
+        "basis",
+        "hamiltonian",
+        "variational",
+        "optimization",
+        "decomposition",
+        "energy"
+      ]
+    }
+  },
+  "scientific_equations": {
+    "chemistry_physics_nspace_spine": {
+      "source": "chemistry_physics_nspace_spine_v0.json",
+      "equations": [
+        {
+          "name": "Chemical_Descriptor_Vector",
+          "domain": "Chemistry / N-Space",
+          "equation": "x_mol = (d1,d2,...,dn) \u2208 R^n",
+          "primitive": "packet",
+          "mapping": "Molecule as point in descriptor space = packet representation"
+        },
+        {
+          "name": "Chemical_Space_Distance",
+          "domain": "Chemistry / Geometry",
+          "equation": "D(i,j) = ||x_i-x_j||_2",
+          "primitive": "shear",
+          "mapping": "Chemical similarity as geometric distance = shear metric"
+        },
+        {
+          "name": "Weighted_Chemical_Space_Distance",
+          "domain": "Chemistry / Geometry",
+          "equation": "D_w(i,j) = sqrt(sum_k w_k(x_ik-x_jk)^2)",
+          "primitive": "shear",
+          "mapping": "Weighted semantic distance = weighted shear metric"
+        },
+        {
+          "name": "Chemical_Structure_Property_Map",
+          "domain": "Chemistry / ML",
+          "equation": "y = f(x_mol)",
+          "primitive": "packet",
+          "mapping": "Property prediction over chemical space = packet transform"
+        },
+        {
+          "name": "Molecular_Configuration_Space",
+          "domain": "Chemistry / Physics",
+          "equation": "R = (r1,...,rN) \u2208 R^{3N}",
+          "primitive": "field",
+          "mapping": "N-atom molecular configuration space = field manifold"
+        },
+        {
+          "name": "Potential_Energy_Surface",
+          "domain": "Chemistry / Physics",
+          "equation": "E = V(R)",
+          "primitive": "field",
+          "mapping": "Energy as scalar field over configuration space = field state"
+        },
+        {
+          "name": "Molecular_Force",
+          "domain": "Chemistry / Physics",
+          "equation": "F_i = -\u2207_{r_i}V(R)",
+          "primitive": "shear",
+          "mapping": "Force as gradient of potential energy = shear deformation"
+        },
+        {
+          "name": "Molecular_Dynamics_Newtonian",
+          "domain": "Chemistry / Physics",
+          "equation": "m_i d\u00b2r_i/dt\u00b2 = -\u2207_{r_i}V(R)",
+          "primitive": "shear",
+          "mapping": "Classical molecular dynamics = shear dynamics (force-driven deformation)"
+        },
+        {
+          "name": "Molecular_Force_Field_Energy",
+          "domain": "Chemistry / Physics",
+          "equation": "V(R) = \u03a3_bonds k_b(r-r0)^2 + \u03a3_angles k\u03b8(\u03b8-\u03b80)^2 + \u03a3_dihedrals Vn[1+cos(n\u03c6-\u03b3)] + \u03a3_{i<j} 4\u03b5ij[(\u03c3ij/rij)^12-(\u03c3ij/rij)^6] + \u03a3_{i<j} qiqj/(4\u03c0\u03b50rij)",
+          "primitive": "field",
+          "mapping": "Generic molecular mechanics force field = field energy surface"
+        },
+        {
+          "name": "Coulomb_Matrix_Descriptor",
+          "domain": "Chemistry / Descriptor",
+          "equation": "Cij = 0.5Zi^2.4 if i=j; ZiZj/||Ri-Rj|| if i\u2260j",
+          "primitive": "packet",
+          "mapping": "Molecular descriptor based on charge and geometry = packet encoding"
+        },
+        {
+          "name": "Pair_Distribution_Function",
+          "domain": "Materials / Geometry",
+          "equation": "g(r) = 1/(4\u03c0r\u00b2\u03c1N) < \u03a3_i \u03a3_{j\u2260i} \u03b4(r-rij) >",
+          "primitive": "field",
+          "mapping": "Pair-distance distribution = field correlation function"
+        },
+        {
+          "name": "Local_Atomic_Density_Kernel",
+          "domain": "Materials / Descriptor",
+          "equation": "\u03c1_i(r) = \u03a3_j exp(-||r-rij||\u00b2/2\u03c3\u00b2); K(i,j) = (\u222b\u03c1_i(r)\u03c1_j(r)dr)^\u03b6",
+          "primitive": "packet",
+          "mapping": "Local atomic density and similarity kernel = packet similarity metric"
+        },
+        {
+          "name": "Arrhenius_Rate",
+          "domain": "Chemistry / Thermodynamics",
+          "equation": "k = A exp(-Ea/RT)",
+          "primitive": "shear",
+          "mapping": "Reaction rate over activation barrier = shear rate (temperature-driven deformation)"
+        },
+        {
+          "name": "Eyring_Transition_State_Rate",
+          "domain": "Chemistry / Thermodynamics",
+          "equation": "k = (kBT/h) exp(-\u0394G\u2021/RT)",
+          "primitive": "shear",
+          "mapping": "Transition-state rate equation = shear rate (free energy-driven deformation)"
+        },
+        {
+          "name": "Boltzmann_Distribution",
+          "domain": "Statistical Mechanics",
+          "equation": "p_i = exp(-Ei/kBT)/Z; Z = \u03a3_i exp(-Ei/kBT)",
+          "primitive": "field",
+          "mapping": "Energy landscape to probability distribution = field state (probability field)"
+        },
+        {
+          "name": "Quantum_Hamiltonian_Eigenproblem",
+          "domain": "Quantum Chemistry",
+          "equation": "\u0124\u03c8 = E\u03c8",
+          "primitive": "spectral",
+          "mapping": "Quantum energy eigenproblem = spectral decomposition (Hamiltonian eigenbasis)"
+        },
+        {
+          "name": "Quantum_Hamiltonian_Variational_Energy",
+          "domain": "Quantum Chemistry",
+          "equation": "E(\u03b8) = <\u03c8(\u03b8)|\u0124|\u03c8(\u03b8)>; \u03b8* = argmin_\u03b8 E(\u03b8)",
+          "primitive": "spectral",
+          "mapping": "Variational quantum energy optimization = spectral optimization (basis optimization)"
+        },
+        {
+          "name": "DFT_Energy_Functional",
+          "domain": "Quantum Chemistry",
+          "equation": "E[n] = Ts[n] + \u222bvext(r)n(r)dr + 1/2\u222b\u222bn(r)n(r')/|r-r'|drdr' + Exc[n]",
+          "primitive": "field",
+          "mapping": "Electron density to energy functional = field state (density field \u2192 energy field)"
+        },
+        {
+          "name": "Bayesian_Optimization_Chemical_Space",
+          "domain": "Chemistry / Optimization",
+          "equation": "f(x) ~ GP(\u03bc(x), k(x,x')); x_next = argmax_x \u03b1(x); EI(x) = E[max(f(x)-f_best, 0)]",
+          "primitive": "spectral",
+          "mapping": "Search policy over chemical/material space = spectral optimization (Gaussian process basis)"
+        }
+      ]
+    }
+  },
+  "primitive_distribution": {
+    "field": 6,
+    "shear": 6,
+    "packet": 4,
+    "spectral": 3
+  },
+  "domain_distribution": {
+    "Chemistry / N-Space": 1,
+    "Chemistry / Geometry": 2,
+    "Chemistry / ML": 1,
+    "Chemistry / Physics": 5,
+    "Chemistry / Descriptor": 1,
+    "Materials / Geometry": 1,
+    "Materials / Descriptor": 1,
+    "Chemistry / Thermodynamics": 2,
+    "Statistical Mechanics": 1,
+    "Quantum Chemistry": 3,
+    "Chemistry / Optimization": 1
+  },
+  "insights": {
+    "field_core": "energy landscapes, density fields, probability distributions",
+    "shear_core": "gradients, forces, rates, geometric deformations",
+    "packet_core": "descriptors, encodings, similarity metrics, representations",
+    "spectral_core": "eigenproblems, basis optimization, variational methods",
+    "cross_domain_consistency": "Each primitive appears across multiple scientific domains",
+    "no_gaps": "Each primitive well-represented across chemistry, physics, thermodynamics, quantum chemistry"
+  }
+}

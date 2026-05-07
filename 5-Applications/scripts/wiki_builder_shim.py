@@ -155,6 +155,19 @@ def scan_sources(limit: int = 200) -> list[SourceEntry]:
     return sorted(entries, key=lambda e: e.size_kb, reverse=True)
 
 
+def _load_skip_patterns() -> set[str]:
+    """Load source basenames to skip from wbs_skip.txt."""
+    patterns: set[str] = set()
+    if not SKIP_FILE.exists():
+        return patterns
+    for line in SKIP_FILE.read_text(encoding="utf-8", errors="replace").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        patterns.add(line)
+    return patterns
+
+
 def _classify_source(fpath: Path, tiddlers: dict[str, TiddlerInfo]) -> SourceEntry | None:
     basename = fpath.name
     suffix = fpath.suffix.lower()
@@ -164,9 +177,19 @@ def _classify_source(fpath: Path, tiddlers: dict[str, TiddlerInfo]) -> SourceEnt
                  ".ipynb", ".tgz", ".gz", ".bz2", ".xz", ".lock", ".toml", ".cfg",
                  ".ini", ".cff", ".lean", ".scad", ".asm", ".v", ".c", ".rs",
                  ".jsonl"}
-    SKIP_NAMES = {"CITATION", "metadata", "categories", "build manifest",
-                  "manifest", "articles", "package.json", ".gitignore"}
+    SKIP_NAMES = {"citation", "metadata", "categories", "build manifest",
+                  "manifest", "articles", "articles md", "tasks", "tasks md",
+                  "task", "the ending", "readme", "package.json", ".gitignore"}
     if suffix in SKIP_EXTS or basename in SKIP_NAMES or basename.startswith("."):
+        return None
+    lower_base = basename.lower().rstrip(suffix).strip()
+    # Also check basename without extension against SKIP_NAMES
+    if suffix and lower_base in SKIP_NAMES:
+        return None
+
+    skip_patterns = _load_skip_patterns()
+    normalized = basename.lower().replace("_", " ").replace("-", " ").replace("%20", " ")
+    if any(p.lower().replace("_", " ").replace("-", " ") in normalized for p in skip_patterns):
         return None
 
     size_kb = fpath.stat().st_size // 1024
@@ -222,11 +245,11 @@ def _classify_source(fpath: Path, tiddlers: dict[str, TiddlerInfo]) -> SourceEnt
 
     for tid_title, info in tiddlers.items():
         score = _overlap(title, tid_title)
-        if score >= 0.5:
+        if score >= 0.25:
             matched.append(tid_title)
-        elif score >= 0.3:
+        elif score >= 0.15:
             tag_text = " ".join(info.tags)
-            if _overlap(title, tag_text) >= 0.3 or _overlap(basename, tag_text) >= 0.3:
+            if _overlap(title, tag_text) >= 0.15 or _overlap(basename, tag_text) >= 0.15:
                 matched.append(tid_title)
 
     return SourceEntry(fpath, basename, kind, title, url, size_kb, msg_count, sha, matched)

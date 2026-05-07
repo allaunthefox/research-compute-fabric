@@ -1,0 +1,30 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Article Research Papers
+title: Research Papers Index
+type: text/vnd.tiddlywiki
+
+! Research Papers Index
+
+Research papers and articles referenced in or relevant to the Research Stack,
+found in `/home/allaun/Documents/ingest/` and `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/`.
+
+!! Ingested Papers
+
+* [[Paper s41378-025-00875-w]] — Microsystems & Nanoengineering article (2616KB)
+* [[Paper Yu 2025 ApJ 995 205]] — Astrophysical Journal article (2063KB)
+* [[Paper rsif 2022 0562]] — J. R. Soc. Interface article (1258KB)
+* [[Malicious AI Swarms Democracy]] — AI swarm safety paper (248KB PDF)
+* [[Abelian Sandpile Model Article]] — [[Hybrid Abelian Non-Abelian Sandpile]] reference
+
+!! Durable Sources
+
+* `/home/allaun/Documents/ingest/s41378-025-00875-w`
+* `/home/allaun/Documents/ingest/Yu 2025 ApJ 995 205`
+* `/home/allaun/Documents/ingest/rsif.2022.0562`
+
+!! Maintenance Log
+
+| Date | Action |
+|------|--------|
+| 2026-05-07 | Index created from `wiki_builder_shim` scan |

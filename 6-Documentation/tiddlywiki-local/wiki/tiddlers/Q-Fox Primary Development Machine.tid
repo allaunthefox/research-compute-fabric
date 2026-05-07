@@ -1,0 +1,101 @@
+title: Q-Fox (Primary Development Machine)
+tags: infrastructure hardware workstation
+created: 20260507
+modified: 20260507
+
+# Q-Fox — Primary Development Machine
+
+## Overview
+
+| Field | Value |
+|-------|-------|
+| **Hostname** | Q-Fox |
+| **Role** | Primary development, compilation, simulation, and orchestration host |
+| **OS** | CachyOS Linux (Arch-based) |
+| **Kernel** | 7.0.3-1-cachyos |
+| **Architecture** | x86_64 |
+
+---
+
+## CPU
+
+| Field | Value |
+|-------|-------|
+| **Model** | AMD Ryzen 5 9600X (Granite Ridge) |
+| **Cores** | 6 physical / 12 logical (SMT) |
+| **Base Clock** | 628 MHz (min) |
+| **Boost Clock** | 5,486 MHz (max) |
+| **L1d Cache** | 288 KiB (6 × 48 KiB) |
+| **L1i Cache** | 192 KiB (6 × 32 KiB) |
+| **L2 Cache** | 6 MiB (6 × 1 MiB) |
+| **L3 Cache** | 32 MiB (unified) |
+| **ISA Extensions** | AVX-512 (F, DQ, IFMA, CD, BW, VL, BF16, VBMI, VBMI2, VNNI, BITALG, VPOPCNTDQ, VP2INTERSECT), AVX2, AVX-VNNI, SHA-NI, AES |
+| **Virtualization** | AMD-V |
+| **TDP** | 65W (nominal) |
+
+---
+
+## Memory
+
+| Field | Value |
+|-------|-------|
+| **Total** | 31.1 GiB (DDR5) |
+| **Type** | DDR5 (AM5 platform) |
+| **Swap** | 30.4 GiB (zram) |
+
+---
+
+## Storage
+
+| Device | Size | Type | Model |
+|--------|------|------|-------|
+| `/dev/nvme0n1` | 1.8 TB | NVMe PCIe 4.0 | MSI M480 PRO 2TB |
+
+| Partition | Size | Usage |
+|-----------|------|-------|
+| `/dev/nvme0n1p2` (/) | 1.9 TB | 98% used (45G free) |
+
+---
+
+## GPU
+
+| Field | Value |
+|-------|-------|
+| **Model** | AMD Radeon Graphics (Granite Ridge iGPU) |
+| **Architecture** | RDNA 2 (integrated) |
+| **VRAM** | Shared system memory |
+| **PCI ID** | `12:00.0 VGA compatible controller: AMD/ATI Granite Ridge [Radeon Graphics] (rev c6)` |
+
+---
+
+## Networking
+
+| Interface | Type | Address |
+|-----------|------|---------|
+| `enp14s0` | Ethernet (Realtek) | IPv6 only |
+| `wlan0` | WiFi | 192.168.1.118/24 |
+| `tailscale0` | Tailscale VPN | Mesh overlay |
+
+---
+
+## Research Stack Relevance
+
+| Capability | Stack Use |
+|-----------|-----------|
+| AVX-512 (full suite) | Q16.16 fixed-point vectorization, PIST encode/decode, FAMM delay computation |
+| 12 threads | 11-agent swarm + 1 orchestrator thread |
+| 32 MiB L3 cache | Fits full topological device plan in cache-resident state |
+| 31 GiB RAM | Virtual FPGA cluster (5× Tang Nano 9K) fits in memory |
+| NVMe 4.0 | Fast Lean 4 lake builds, Verilator simulation traces |
+| AVX-512 BF16 | bf4prover bfloat16 proof search acceleration |
+| SHA-NI / AES | Receipt hashing, invariant witness compression |
+| AMD-V | Nested virtualization for sandboxed prover execution |
+
+---
+
+## Notes
+
+- 98% disk usage — cleanup recommended before large builds
+- No discrete GPU — all compute on CPU (sufficient for current stack)
+- CachyOS provides optimized kernel with BORE scheduler and LTO builds
+- zram swap at 30.4 GiB matches physical RAM (1:1 ratio)

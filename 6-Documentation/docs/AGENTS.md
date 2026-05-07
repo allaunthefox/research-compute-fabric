@@ -72,6 +72,12 @@ Every agent state transition ($S_{t+1}$) must follow the **Master Equation** for
 $$S_{t+1} = \text{MLGRU}(\text{Gossip}(\text{Prune}(\text{Stabilize}(\text{Score}_{\Sigma+NK}(\text{Expand}(S_t))))))$$
 Do not implement ad-hoc updates. Use the **Unified Manifold-Blit Equation** for manifold-space shortcuts.
 
+### 1.10 Never Assume Any Instruction Set
+Do not write code that depends on AVX-512, AVX2, NEON, or any SIMD extension. All hot paths must have a scalar fallback. SIMD is **opportunistic, never structural**. If the hardware happens to support it, great — but the algorithm must be correct and complete without it. The shrub data structure, PIST encode/decode, and FAMM delay computation must all function on plain scalar operations.
+
+### 1.11 Never Incorporate Unlicensed Code
+No code enters the stack without a compatible open-source license. Algorithmic ideas from unlicensed repositories (math, data structures, entropy coding techniques) may be noted as design references, but zero lines of implementation may be copied. Reference-only material lives in `shared-data/data/germane/research/`, never in the source tree. When in doubt: note the idea, write the implementation from scratch.
+
 ---
 
 ## 2. Naming Conventions (Zero Exceptions)

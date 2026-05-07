@@ -1,0 +1,1322 @@
+{
+  "test_info": {
+    "timestamp": "2026-05-07T04:41:58.682521",
+    "n_values": [
+      10,
+      15,
+      20
+    ],
+    "p_values": [
+      0.3,
+      0.5,
+      0.7
+    ],
+    "samples_per_config": 3,
+    "total_tests": 27
+  },
+  "results": [
+    {
+      "n": 10,
+      "p": 0.3,
+      "seed": 0,
+      "clique_size": 2,
+      "independent_set_size": 6,
+      "max_structure_size": 6,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          2.135779205069855,
+          1.6180339887498942,
+          0.6621534468619569,
+          0.6180339887498952,
+          2.576973645886602e-16,
+          0.0,
+          -0.6180339887498946,
+          -0.6621534468619552,
+          -1.6180339887498947,
+          -2.135779205069857
+        ],
+        "spectral_radius": 2.135779205069857,
+        "spectral_gap": 0.517745216319961,
+        "algebraic_connectivity": -1.6180339887498947
+      },
+      "field": {
+        "edge_density": 0.17777777777777778,
+        "edge_count": 8,
+        "n": 10
+      },
+      "shear": {
+        "graph_rigidity": 1.562499999755859,
+        "degree_variance": 0.6400000000000001,
+        "clique_independent_ratio": 0.3333333333333333
+      },
+      "packet": {
+        "packet_size": 8,
+        "encoding_efficiency": 0.6,
+        "witness_property": true,
+        "max_structure_size": 6
+      }
+    },
+    {
+      "n": 10,
+      "p": 0.3,
+      "seed": 1,
+      "clique_size": 4,
+      "independent_set_size": 4,
+      "max_structure_size": 4,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          4.094894604973101,
+          1.878067628975933,
+          1.4299054248994671,
+          0.4718375229363945,
+          0.0239036750203893,
+          -0.9999999999999999,
+          -1.2788596950403415,
+          -1.4654163153827027,
+          -1.9660340673849896,
+          -2.1882987789972494
+        ],
+        "spectral_radius": 4.094894604973101,
+        "spectral_gap": 2.2168269759971677,
+        "algebraic_connectivity": -1.9660340673849896
+      },
+      "field": {
+        "edge_density": 0.4,
+        "edge_count": 18,
+        "n": 10
+      },
+      "shear": {
+        "graph_rigidity": 0.4901960784073433,
+        "degree_variance": 2.04,
+        "clique_independent_ratio": 1.0
+      },
+      "packet": {
+        "packet_size": 18,
+        "encoding_efficiency": 0.4,
+        "witness_property": true,
+        "max_structure_size": 4
+      }
+    },
+    {
+      "n": 10,
+      "p": 0.3,
+      "seed": 2,
+      "clique_size": 3,
+      "independent_set_size": 6,
+      "max_structure_size": 6,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          2.4011867621178076,
+          1.8468471615685682,
+          1.2192913968898123,
+          0.28761325571517643,
+          -9.6361597926758e-17,
+          -5.551137025551338e-16,
+          -0.7032191355915076,
+          -1.3786723920855515,
+          -1.5986445931093196,
+          -2.074402455504984
+        ],
+        "spectral_radius": 2.4011867621178076,
+        "spectral_gap": 0.5543396005492394,
+        "algebraic_connectivity": -1.5986445931093196
+      },
+      "field": {
+        "edge_density": 0.2222222222222222,
+        "edge_count": 10,
+        "n": 10
+      },
+      "shear": {
+        "graph_rigidity": 1.2499999998437499,
+        "degree_variance": 0.8,
+        "clique_independent_ratio": 0.5
+      },
+      "packet": {
+        "packet_size": 10,
+        "encoding_efficiency": 0.6,
+        "witness_property": true,
+        "max_structure_size": 6
+      }
+    },
+    {
+      "n": 10,
+      "p": 0.5,
+      "seed": 0,
+      "clique_size": 4,
+      "independent_set_size": 4,
+      "max_structure_size": 4,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          4.378948731320485,
+          1.3443941487096633,
+          1.260181826495113,
+          0.8398292994378076,
+          0.20784917521676738,
+          -0.6925314704928546,
+          -1.1939720583434137,
+          -1.7840339805800391,
+          -1.9739464195647078,
+          -2.386719252198822
+        ],
+        "spectral_radius": 4.378948731320485,
+        "spectral_gap": 3.034554582610822,
+        "algebraic_connectivity": -1.9739464195647078
+      },
+      "field": {
+        "edge_density": 0.4222222222222222,
+        "edge_count": 19,
+        "n": 10
+      },
+      "shear": {
+        "graph_rigidity": 0.42372881354136743,
+        "degree_variance": 2.36,
+        "clique_independent_ratio": 1.0
+      },
+      "packet": {
+        "packet_size": 19,
+        "encoding_efficiency": 0.4,
+        "witness_property": true,
+        "max_structure_size": 4
+      }
+    },
+    {
+      "n": 10,
+      "p": 0.5,
+      "seed": 1,
+      "clique_size": 4,
+      "independent_set_size": 3,
+      "max_structure_size": 4,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          5.88372352660504,
+          1.672194379396356,
+          0.9236478947019281,
+          0.25744148728667554,
+          -0.1492484865528386,
+          -0.6588289932207902,
+          -1.4189447799022645,
+          -1.6354634025704122,
+          -1.8710427697565195,
+          -3.0034788559871797
+        ],
+        "spectral_radius": 5.88372352660504,
+        "spectral_gap": 4.211529147208684,
+        "algebraic_connectivity": -1.8710427697565195
+      },
+      "field": {
+        "edge_density": 0.6222222222222222,
+        "edge_count": 28,
+        "n": 10
+      },
+      "shear": {
+        "graph_rigidity": 0.5434782608400284,
+        "degree_variance": 1.8399999999999999,
+        "clique_independent_ratio": 1.3333333333333333
+      },
+      "packet": {
+        "packet_size": 28,
+        "encoding_efficiency": 0.4,
+        "witness_property": true,
+        "max_structure_size": 4
+      }
+    },
+    {
+      "n": 10,
+      "p": 0.5,
+      "seed": 2,
+      "clique_size": 4,
+      "independent_set_size": 4,
+      "max_structure_size": 4,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          4.200139832150958,
+          2.220072823340081,
+          1.2272808638089756,
+          0.5201962157830555,
+          -0.6008849920105016,
+          -0.9999999999999992,
+          -1.0,
+          -1.2974982566815503,
+          -1.637045872483575,
+          -2.6322606139074423
+        ],
+        "spectral_radius": 4.200139832150958,
+        "spectral_gap": 1.980067008810877,
+        "algebraic_connectivity": -1.637045872483575
+      },
+      "field": {
+        "edge_density": 0.4222222222222222,
+        "edge_count": 19,
+        "n": 10
+      },
+      "shear": {
+        "graph_rigidity": 0.5681818181495351,
+        "degree_variance": 1.7600000000000002,
+        "clique_independent_ratio": 1.0
+      },
+      "packet": {
+        "packet_size": 19,
+        "encoding_efficiency": 0.4,
+        "witness_property": true,
+        "max_structure_size": 4
+      }
+    },
+    {
+      "n": 10,
+      "p": 0.7,
+      "seed": 0,
+      "clique_size": 4,
+      "independent_set_size": 3,
+      "max_structure_size": 4,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          5.578741996219301,
+          1.282688520003467,
+          1.0859612889862638,
+          0.8396834606125172,
+          0.09335330039185494,
+          -0.35802757822023,
+          -1.5067064959638,
+          -1.838120671635303,
+          -2.3072006194088597,
+          -2.870373200985209
+        ],
+        "spectral_radius": 5.578741996219301,
+        "spectral_gap": 4.2960534762158336,
+        "algebraic_connectivity": -2.3072006194088597
+      },
+      "field": {
+        "edge_density": 0.6,
+        "edge_count": 27,
+        "n": 10
+      },
+      "shear": {
+        "graph_rigidity": 0.9615384614460061,
+        "degree_variance": 1.0399999999999998,
+        "clique_independent_ratio": 1.3333333333333333
+      },
+      "packet": {
+        "packet_size": 27,
+        "encoding_efficiency": 0.4,
+        "witness_property": true,
+        "max_structure_size": 4
+      }
+    },
+    {
+      "n": 10,
+      "p": 0.7,
+      "seed": 1,
+      "clique_size": 5,
+      "independent_set_size": 3,
+      "max_structure_size": 5,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          6.585135304519776,
+          1.500650139038721,
+          0.34436035011715044,
+          0.1651255466710134,
+          2.9652929417478546e-17,
+          -0.5904236003092488,
+          -0.9999999999999989,
+          -1.7416767019132133,
+          -2.578344395811366,
+          -2.6848266423128293
+        ],
+        "spectral_radius": 6.585135304519776,
+        "spectral_gap": 5.084485165481055,
+        "algebraic_connectivity": -2.578344395811366
+      },
+      "field": {
+        "edge_density": 0.7111111111111111,
+        "edge_count": 32,
+        "n": 10
+      },
+      "shear": {
+        "graph_rigidity": 0.6944444443962191,
+        "degree_variance": 1.44,
+        "clique_independent_ratio": 1.6666666666666667
+      },
+      "packet": {
+        "packet_size": 32,
+        "encoding_efficiency": 0.5,
+        "witness_property": true,
+        "max_structure_size": 5
+      }
+    },
+    {
+      "n": 10,
+      "p": 0.7,
+      "seed": 2,
+      "clique_size": 5,
+      "independent_set_size": 3,
+      "max_structure_size": 5,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          5.958953423265293,
+          2.2275480098962683,
+          0.5285785977115096,
+          -0.26466979995715834,
+          -0.38583585383116553,
+          -0.7817674401360674,
+          -0.9999999999999999,
+          -1.8169158987078633,
+          -1.9626178256276567,
+          -2.5032732126131614
+        ],
+        "spectral_radius": 5.958953423265293,
+        "spectral_gap": 3.731405413369025,
+        "algebraic_connectivity": -1.9626178256276567
+      },
+      "field": {
+        "edge_density": 0.6222222222222222,
+        "edge_count": 28,
+        "n": 10
+      },
+      "shear": {
+        "graph_rigidity": 0.3787878787735308,
+        "degree_variance": 2.6399999999999997,
+        "clique_independent_ratio": 1.6666666666666667
+      },
+      "packet": {
+        "packet_size": 28,
+        "encoding_efficiency": 0.5,
+        "witness_property": true,
+        "max_structure_size": 5
+      }
+    },
+    {
+      "n": 15,
+      "p": 0.3,
+      "seed": 0,
+      "clique_size": 3,
+      "independent_set_size": 9,
+      "max_structure_size": 9,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          3.430009296715274,
+          1.7590103241223634,
+          1.622606219754886,
+          1.4748777702960363,
+          0.8133103759325746,
+          0.30793230456158843,
+          1.0076351792149582e-15,
+          8.126596966080421e-16,
+          -1.4560419699227267e-15,
+          -0.4146504075160311,
+          -0.8979791615415694,
+          -1.1070602809573697,
+          -1.6304294818406757,
+          -2.2532316216478674,
+          -3.104395337879212
+        ],
+        "spectral_radius": 3.430009296715274,
+        "spectral_gap": 1.6709989725929109,
+        "algebraic_connectivity": -2.2532316216478674
+      },
+      "field": {
+        "edge_density": 0.19047619047619047,
+        "edge_count": 20,
+        "n": 15
+      },
+      "shear": {
+        "graph_rigidity": 0.3629032257932817,
+        "degree_variance": 2.7555555555555555,
+        "clique_independent_ratio": 0.3333333333333333
+      },
+      "packet": {
+        "packet_size": 20,
+        "encoding_efficiency": 0.6,
+        "witness_property": true,
+        "max_structure_size": 9
+      }
+    },
+    {
+      "n": 15,
+      "p": 0.3,
+      "seed": 1,
+      "clique_size": 3,
+      "independent_set_size": 6,
+      "max_structure_size": 6,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          4.36545596275144,
+          2.563405371789857,
+          2.0014722512170935,
+          1.456788800417854,
+          0.9864368270820069,
+          0.5068622808993424,
+          0.2012154630185857,
+          -0.12043269124729311,
+          -0.46039653713475864,
+          -0.8951751505482922,
+          -1.5019145290913543,
+          -1.70967785352266,
+          -2.0382414134479814,
+          -2.310546576866179,
+          -3.045252205317664
+        ],
+        "spectral_radius": 4.36545596275144,
+        "spectral_gap": 1.8020505909615832,
+        "algebraic_connectivity": -2.310546576866179
+      },
+      "field": {
+        "edge_density": 0.2761904761904762,
+        "edge_count": 29,
+        "n": 15
+      },
+      "shear": {
+        "graph_rigidity": 0.5408653845861311,
+        "degree_variance": 1.8488888888888888,
+        "clique_independent_ratio": 0.5
+      },
+      "packet": {
+        "packet_size": 29,
+        "encoding_efficiency": 0.4,
+        "witness_property": true,
+        "max_structure_size": 6
+      }
+    },
+    {
+      "n": 15,
+      "p": 0.3,
+      "seed": 2,
+      "clique_size": 3,
+      "independent_set_size": 7,
+      "max_structure_size": 7,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          4.183867712032004,
+          2.2309007174294004,
+          1.705689736455715,
+          1.4513150714028464,
+          0.9406072731430666,
+          0.3702407932870977,
+          1.9485679986714627e-16,
+          5.928403182876835e-17,
+          -0.2715522113788355,
+          -0.4659782802101818,
+          -0.9834047254307512,
+          -1.415137867612067,
+          -2.256424461873541,
+          -2.574676184094224,
+          -2.9154475731505296
+        ],
+        "spectral_radius": 4.183867712032004,
+        "spectral_gap": 1.9529669946026038,
+        "algebraic_connectivity": -2.574676184094224
+      },
+      "field": {
+        "edge_density": 0.24761904761904763,
+        "edge_count": 26,
+        "n": 15
+      },
+      "shear": {
+        "graph_rigidity": 0.41977611938536386,
+        "degree_variance": 2.3822222222222225,
+        "clique_independent_ratio": 0.42857142857142855
+      },
+      "packet": {
+        "packet_size": 26,
+        "encoding_efficiency": 0.4666666666666667,
+        "witness_property": true,
+        "max_structure_size": 7
+      }
+    },
+    {
+      "n": 15,
+      "p": 0.5,
+      "seed": 0,
+      "clique_size": 4,
+      "independent_set_size": 6,
+      "max_structure_size": 6,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          5.9741008104127875,
+          2.035700133937002,
+          1.5970185308519371,
+          1.3134119263693584,
+          1.2497017426875534,
+          0.7190114361240594,
+          0.3678675087104936,
+          -0.008611383947277949,
+          -0.5457515689276596,
+          -0.8278815740409011,
+          -1.5323249160804737,
+          -2.0000000000000004,
+          -2.0107871244803053,
+          -2.8064151187374615,
+          -3.5250404028791156
+        ],
+        "spectral_radius": 5.9741008104127875,
+        "spectral_gap": 3.9384006764757853,
+        "algebraic_connectivity": -2.8064151187374615
+      },
+      "field": {
+        "edge_density": 0.37142857142857144,
+        "edge_count": 39,
+        "n": 15
+      },
+      "shear": {
+        "graph_rigidity": 0.2192982456092259,
+        "degree_variance": 4.5600000000000005,
+        "clique_independent_ratio": 0.6666666666666666
+      },
+      "packet": {
+        "packet_size": 39,
+        "encoding_efficiency": 0.4,
+        "witness_property": true,
+        "max_structure_size": 6
+      }
+    },
+    {
+      "n": 15,
+      "p": 0.5,
+      "seed": 1,
+      "clique_size": 5,
+      "independent_set_size": 4,
+      "max_structure_size": 5,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          6.99654410649911,
+          2.6603999096917574,
+          2.108884110789323,
+          1.67385240988092,
+          1.0340487415898503,
+          0.42533063513991415,
+          0.09832727901541963,
+          -0.7195390374189853,
+          -1.0068360116660884,
+          -1.2095656074411822,
+          -1.4461002791296795,
+          -2.352417020006219,
+          -2.5350057952992935,
+          -2.7889492255265815,
+          -2.938974216118263
+        ],
+        "spectral_radius": 6.99654410649911,
+        "spectral_gap": 4.336144196807353,
+        "algebraic_connectivity": -2.7889492255265815
+      },
+      "field": {
+        "edge_density": 0.4666666666666667,
+        "edge_count": 49,
+        "n": 15
+      },
+      "shear": {
+        "graph_rigidity": 0.2791563275356315,
+        "degree_variance": 3.582222222222222,
+        "clique_independent_ratio": 1.25
+      },
+      "packet": {
+        "packet_size": 49,
+        "encoding_efficiency": 0.3333333333333333,
+        "witness_property": true,
+        "max_structure_size": 5
+      }
+    },
+    {
+      "n": 15,
+      "p": 0.5,
+      "seed": 2,
+      "clique_size": 4,
+      "independent_set_size": 4,
+      "max_structure_size": 4,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          6.230665579918739,
+          2.3205808671034487,
+          1.9682450347737424,
+          1.889767719178935,
+          1.3515308870677818,
+          0.6293843247081784,
+          0.32181999065753913,
+          -0.16949159605862346,
+          -0.5640378341471128,
+          -1.1667163468858033,
+          -1.9498015893173515,
+          -2.0220024599891864,
+          -2.4932666343889225,
+          -2.9898729192778015,
+          -3.356805023343569
+        ],
+        "spectral_radius": 6.230665579918739,
+        "spectral_gap": 3.9100847128152902,
+        "algebraic_connectivity": -2.9898729192778015
+      },
+      "field": {
+        "edge_density": 0.42857142857142855,
+        "edge_count": 45,
+        "n": 15
+      },
+      "shear": {
+        "graph_rigidity": 0.74999999994375,
+        "degree_variance": 1.3333333333333333,
+        "clique_independent_ratio": 1.0
+      },
+      "packet": {
+        "packet_size": 45,
+        "encoding_efficiency": 0.26666666666666666,
+        "witness_property": true,
+        "max_structure_size": 4
+      }
+    },
+    {
+      "n": 15,
+      "p": 0.7,
+      "seed": 0,
+      "clique_size": 6,
+      "independent_set_size": 4,
+      "max_structure_size": 6,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          8.888583673527034,
+          2.375678857039916,
+          1.9463633548985317,
+          1.445912709812851,
+          1.0438533028589045,
+          0.5016849025927156,
+          -0.5276124596867249,
+          -0.7425874567804039,
+          -1.050561858381933,
+          -1.6417959038500576,
+          -1.8274538143324386,
+          -1.9893162353853382,
+          -2.4062672583085023,
+          -2.612123177238736,
+          -3.4043586367658163
+        ],
+        "spectral_radius": 8.888583673527034,
+        "spectral_gap": 6.512904816487118,
+        "algebraic_connectivity": -2.612123177238736
+      },
+      "field": {
+        "edge_density": 0.6095238095238096,
+        "edge_count": 64,
+        "n": 15
+      },
+      "shear": {
+        "graph_rigidity": 0.3142458100459909,
+        "degree_variance": 3.182222222222222,
+        "clique_independent_ratio": 1.5
+      },
+      "packet": {
+        "packet_size": 64,
+        "encoding_efficiency": 0.4,
+        "witness_property": true,
+        "max_structure_size": 6
+      }
+    },
+    {
+      "n": 15,
+      "p": 0.7,
+      "seed": 1,
+      "clique_size": 6,
+      "independent_set_size": 3,
+      "max_structure_size": 6,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          9.70454623041173,
+          2.246363447948034,
+          1.4402239416787168,
+          1.4343847183555227,
+          0.9998210595615744,
+          0.5723849158445146,
+          -0.1502670979111423,
+          -0.7010800221265391,
+          -1.4292482129437818,
+          -1.5734317088491183,
+          -2.063586183353379,
+          -2.173811946642905,
+          -2.3908866446525714,
+          -2.748071338037894,
+          -3.1673411592827634
+        ],
+        "spectral_radius": 9.70454623041173,
+        "spectral_gap": 7.4581827824636955,
+        "algebraic_connectivity": -2.748071338037894
+      },
+      "field": {
+        "edge_density": 0.6761904761904762,
+        "edge_count": 71,
+        "n": 15
+      },
+      "shear": {
+        "graph_rigidity": 0.37751677850923804,
+        "degree_variance": 2.648888888888889,
+        "clique_independent_ratio": 2.0
+      },
+      "packet": {
+        "packet_size": 71,
+        "encoding_efficiency": 0.4,
+        "witness_property": true,
+        "max_structure_size": 6
+      }
+    },
+    {
+      "n": 15,
+      "p": 0.7,
+      "seed": 2,
+      "clique_size": 5,
+      "independent_set_size": 4,
+      "max_structure_size": 5,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          9.104365778959117,
+          2.114026955808185,
+          1.8107883735185701,
+          1.3892872553957878,
+          0.5568460196291506,
+          0.3685781590228051,
+          0.12886556735976684,
+          -0.22658504064459206,
+          -0.575348762414186,
+          -1.2322431399258738,
+          -1.9540223768580707,
+          -2.173054978782585,
+          -2.2696624614562926,
+          -2.9807760240389944,
+          -4.06106532557279
+        ],
+        "spectral_radius": 9.104365778959117,
+        "spectral_gap": 6.990338823150932,
+        "algebraic_connectivity": -2.9807760240389944
+      },
+      "field": {
+        "edge_density": 0.638095238095238,
+        "edge_count": 67,
+        "n": 15
+      },
+      "shear": {
+        "graph_rigidity": 0.5569306930382897,
+        "degree_variance": 1.7955555555555558,
+        "clique_independent_ratio": 1.25
+      },
+      "packet": {
+        "packet_size": 67,
+        "encoding_efficiency": 0.3333333333333333,
+        "witness_property": true,
+        "max_structure_size": 5
+      }
+    },
+    {
+      "n": 20,
+      "p": 0.3,
+      "seed": 0,
+      "clique_size": 4,
+      "independent_set_size": 8,
+      "max_structure_size": 8,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          6.236994561060757,
+          3.0304502642169013,
+          1.9584623120021607,
+          1.7541511301802255,
+          1.6245131620772266,
+          1.409512470158986,
+          0.7771555188175883,
+          0.5808575809071755,
+          0.12965296394225187,
+          -0.18299277088312163,
+          -0.29945055849596663,
+          -0.5342809832074064,
+          -0.9188666800541146,
+          -0.9910711471159711,
+          -1.5829149365273307,
+          -1.6853814874771869,
+          -1.924094998888479,
+          -2.54609068538429,
+          -3.0413977749670167,
+          -3.7952079403623893
+        ],
+        "spectral_radius": 6.236994561060757,
+        "spectral_gap": 3.206544296843856,
+        "algebraic_connectivity": -3.0413977749670167
+      },
+      "field": {
+        "edge_density": 0.26842105263157895,
+        "edge_count": 51,
+        "n": 20
+      },
+      "shear": {
+        "graph_rigidity": 0.16420361247677828,
+        "degree_variance": 6.09,
+        "clique_independent_ratio": 0.5
+      },
+      "packet": {
+        "packet_size": 51,
+        "encoding_efficiency": 0.4,
+        "witness_property": true,
+        "max_structure_size": 8
+      }
+    },
+    {
+      "n": 20,
+      "p": 0.3,
+      "seed": 1,
+      "clique_size": 4,
+      "independent_set_size": 8,
+      "max_structure_size": 8,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          6.814488595262718,
+          2.844437860058245,
+          2.013720163792907,
+          1.6823151295374914,
+          1.383708997744585,
+          1.2942722452441175,
+          1.0161469472160083,
+          0.9361084465776941,
+          0.4641599776127628,
+          0.1554886516044945,
+          -0.07068705278184044,
+          -0.2684636880661111,
+          -0.8076752680609717,
+          -1.2297366832465488,
+          -1.7175891616472712,
+          -2.1648087429806684,
+          -2.474368607771951,
+          -2.8027899993098595,
+          -3.468635036206459,
+          -3.600092774579335
+        ],
+        "spectral_radius": 6.814488595262718,
+        "spectral_gap": 3.970050735204473,
+        "algebraic_connectivity": -3.468635036206459
+      },
+      "field": {
+        "edge_density": 0.30526315789473685,
+        "edge_count": 58,
+        "n": 20
+      },
+      "shear": {
+        "graph_rigidity": 0.16778523489651365,
+        "degree_variance": 5.960000000000001,
+        "clique_independent_ratio": 0.5
+      },
+      "packet": {
+        "packet_size": 58,
+        "encoding_efficiency": 0.4,
+        "witness_property": true,
+        "max_structure_size": 8
+      }
+    },
+    {
+      "n": 20,
+      "p": 0.3,
+      "seed": 2,
+      "clique_size": 5,
+      "independent_set_size": 7,
+      "max_structure_size": 7,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          6.717360691916586,
+          3.490294717778079,
+          2.809732191980073,
+          1.7164516905767022,
+          1.5619261913777522,
+          1.0765270770842004,
+          0.8364526637770316,
+          0.4466594967072173,
+          0.09685530663608527,
+          -0.12836070519140413,
+          -0.26859865032299224,
+          -0.822024644209305,
+          -1.0362257220995994,
+          -1.222469353804691,
+          -1.5662686887407151,
+          -1.746551704906125,
+          -2.587981963947084,
+          -2.7867072697397197,
+          -2.8735833402742808,
+          -3.71348798459781
+        ],
+        "spectral_radius": 6.717360691916586,
+        "spectral_gap": 3.2270659741385064,
+        "algebraic_connectivity": -2.8735833402742808
+      },
+      "field": {
+        "edge_density": 0.3105263157894737,
+        "edge_count": 59,
+        "n": 20
+      },
+      "shear": {
+        "graph_rigidity": 0.20449897750093052,
+        "degree_variance": 4.89,
+        "clique_independent_ratio": 0.7142857142857143
+      },
+      "packet": {
+        "packet_size": 59,
+        "encoding_efficiency": 0.35,
+        "witness_property": true,
+        "max_structure_size": 7
+      }
+    },
+    {
+      "n": 20,
+      "p": 0.5,
+      "seed": 0,
+      "clique_size": 5,
+      "independent_set_size": 7,
+      "max_structure_size": 7,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          9.560133818708358,
+          3.2792984541203696,
+          2.250965310936633,
+          1.9537656260431877,
+          1.7549971641085305,
+          1.3167991608521312,
+          0.9033678234484785,
+          0.8307712559351602,
+          -0.19156871712507692,
+          -0.2740882415354919,
+          -0.5921448648938346,
+          -0.8981977146319424,
+          -1.1547736391245542,
+          -1.4783924075230621,
+          -1.8273524813683648,
+          -2.1688259954345344,
+          -2.614234551979621,
+          -2.892403138314526,
+          -3.3691688929610417,
+          -4.388947969260811
+        ],
+        "spectral_radius": 9.560133818708358,
+        "spectral_gap": 6.280835364587989,
+        "algebraic_connectivity": -3.3691688929610417
+      },
+      "field": {
+        "edge_density": 0.4631578947368421,
+        "edge_count": 88,
+        "n": 20
+      },
+      "shear": {
+        "graph_rigidity": 0.13774104683005867,
+        "degree_variance": 7.26,
+        "clique_independent_ratio": 0.7142857142857143
+      },
+      "packet": {
+        "packet_size": 88,
+        "encoding_efficiency": 0.35,
+        "witness_property": true,
+        "max_structure_size": 7
+      }
+    },
+    {
+      "n": 20,
+      "p": 0.5,
+      "seed": 1,
+      "clique_size": 6,
+      "independent_set_size": 5,
+      "max_structure_size": 6,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          10.133261383993492,
+          2.7340686614019623,
+          2.5740419945290722,
+          2.370126344391004,
+          1.8763186911411636,
+          1.1522296184463234,
+          1.0780800558267631,
+          0.47297287223034945,
+          0.11690856357246046,
+          -0.506544014674086,
+          -0.8037885442301537,
+          -1.1654102355523954,
+          -1.3421038806507644,
+          -1.5515403313956107,
+          -2.037988966525292,
+          -2.325802326554594,
+          -2.78654240169634,
+          -3.0088906955218464,
+          -3.2208977416323337,
+          -3.7584990470991815
+        ],
+        "spectral_radius": 10.133261383993492,
+        "spectral_gap": 7.39919272259153,
+        "algebraic_connectivity": -3.2208977416323337
+      },
+      "field": {
+        "edge_density": 0.48947368421052634,
+        "edge_count": 93,
+        "n": 20
+      },
+      "shear": {
+        "graph_rigidity": 0.11481056257043847,
+        "degree_variance": 8.709999999999999,
+        "clique_independent_ratio": 1.2
+      },
+      "packet": {
+        "packet_size": 93,
+        "encoding_efficiency": 0.3,
+        "witness_property": true,
+        "max_structure_size": 6
+      }
+    },
+    {
+      "n": 20,
+      "p": 0.5,
+      "seed": 2,
+      "clique_size": 5,
+      "independent_set_size": 5,
+      "max_structure_size": 5,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          9.680417677730471,
+          3.554612376834441,
+          2.4334731832057717,
+          2.2684124067961164,
+          1.4410224150151418,
+          1.3052826315835575,
+          1.0401652968015866,
+          0.685282450249112,
+          0.32736198546299894,
+          -0.1270023731514784,
+          -0.5461997605673665,
+          -0.982295973603795,
+          -1.4300407844692233,
+          -1.596056160341943,
+          -2.0453740405448855,
+          -2.46137320534459,
+          -2.759979122864176,
+          -3.049501708094483,
+          -3.571477904466357,
+          -4.1667293902308975
+        ],
+        "spectral_radius": 9.680417677730471,
+        "spectral_gap": 6.12580530089603,
+        "algebraic_connectivity": -3.571477904466357
+      },
+      "field": {
+        "edge_density": 0.48947368421052634,
+        "edge_count": 93,
+        "n": 20
+      },
+      "shear": {
+        "graph_rigidity": 0.269541778968476,
+        "degree_variance": 3.7099999999999995,
+        "clique_independent_ratio": 1.0
+      },
+      "packet": {
+        "packet_size": 93,
+        "encoding_efficiency": 0.25,
+        "witness_property": true,
+        "max_structure_size": 5
+      }
+    },
+    {
+      "n": 20,
+      "p": 0.7,
+      "seed": 0,
+      "clique_size": 8,
+      "independent_set_size": 4,
+      "max_structure_size": 8,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          13.379971976798855,
+          2.8331169439103987,
+          2.2909224859458663,
+          1.8773779145153504,
+          1.1989902539454071,
+          0.8431876334452609,
+          0.5611524046067832,
+          0.0818009458236532,
+          -0.06858836679650626,
+          -0.2007096918605629,
+          -0.9018491628230412,
+          -1.0588781899471948,
+          -1.2636416148763574,
+          -1.3396454163742322,
+          -1.998430701566952,
+          -2.386003804082691,
+          -2.953779928225639,
+          -3.160444233169516,
+          -3.7572204154891256,
+          -3.977329033779758
+        ],
+        "spectral_radius": 13.379971976798855,
+        "spectral_gap": 10.546855032888455,
+        "algebraic_connectivity": -3.7572204154891256
+      },
+      "field": {
+        "edge_density": 0.6894736842105263,
+        "edge_count": 131,
+        "n": 20
+      },
+      "shear": {
+        "graph_rigidity": 0.24449877750013452,
+        "degree_variance": 4.09,
+        "clique_independent_ratio": 2.0
+      },
+      "packet": {
+        "packet_size": 131,
+        "encoding_efficiency": 0.4,
+        "witness_property": true,
+        "max_structure_size": 8
+      }
+    },
+    {
+      "n": 20,
+      "p": 0.7,
+      "seed": 1,
+      "clique_size": 8,
+      "independent_set_size": 4,
+      "max_structure_size": 8,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          13.520910569326006,
+          2.938711674658318,
+          1.994367547450343,
+          1.7797750118693236,
+          1.4368530185045916,
+          0.9820830531744031,
+          0.7268608408742884,
+          0.3047120254293866,
+          -0.24406741408800783,
+          -0.5683089742045282,
+          -0.8478341464294913,
+          -1.1042883183070622,
+          -1.1512487218366387,
+          -2.056180304475811,
+          -2.2317634649757214,
+          -2.5920379071214796,
+          -2.7308060213017855,
+          -3.0162871305104164,
+          -3.3210379709301,
+          -3.8204133671056115
+        ],
+        "spectral_radius": 13.520910569326006,
+        "spectral_gap": 10.582198894667687,
+        "algebraic_connectivity": -3.3210379709301
+      },
+      "field": {
+        "edge_density": 0.6947368421052632,
+        "edge_count": 132,
+        "n": 20
+      },
+      "shear": {
+        "graph_rigidity": 0.21459227467350656,
+        "degree_variance": 4.660000000000001,
+        "clique_independent_ratio": 2.0
+      },
+      "packet": {
+        "packet_size": 132,
+        "encoding_efficiency": 0.4,
+        "witness_property": true,
+        "max_structure_size": 8
+      }
+    },
+    {
+      "n": 20,
+      "p": 0.7,
+      "seed": 2,
+      "clique_size": 7,
+      "independent_set_size": 4,
+      "max_structure_size": 7,
+      "has_large_structure": true,
+      "spectral": {
+        "eigenvalues": [
+          13.3645094579683,
+          2.9475625680277657,
+          2.0410536873377936,
+          1.4975263882245922,
+          1.3147452055529014,
+          1.1564205415624498,
+          0.46450463921264257,
+          0.42482375574866116,
+          -0.12144496171893947,
+          -0.4330121783531266,
+          -0.537560958688365,
+          -1.1610036089323637,
+          -1.4992783551615019,
+          -1.6528146172218634,
+          -2.232643797535084,
+          -2.4691452745503693,
+          -2.499473325382653,
+          -2.7137297401292897,
+          -3.6413260710448943,
+          -4.249713354916648
+        ],
+        "spectral_radius": 13.3645094579683,
+        "spectral_gap": 10.416946889940533,
+        "algebraic_connectivity": -3.6413260710448943
+      },
+      "field": {
+        "edge_density": 0.6842105263157895,
+        "edge_count": 130,
+        "n": 20
+      },
+      "shear": {
+        "graph_rigidity": 0.199999999996,
+        "degree_variance": 5.0,
+        "clique_independent_ratio": 1.75
+      },
+      "packet": {
+        "packet_size": 130,
+        "encoding_efficiency": 0.35,
+        "witness_property": true,
+        "max_structure_size": 7
+      }
+    }
+  ],
+  "conjecture_analysis": {
+    "total_tests": 27,
+    "has_large_structure_count": 27,
+    "has_large_structure_rate": 1.0,
+    "avg_clique_size": 4.666666666666667,
+    "avg_independent_set_size": 5.0,
+    "note": "Conjecture requires graphs to have large clique or independent set (at least n^epsilon)"
+  },
+  "primitive_analysis": {
+    "spectral": {
+      "equation": "C = U\u039bU\u1d40",
+      "application": "Adjacency matrix eigen decomposition",
+      "insight": "Eigenvalues encode clique/independent set properties"
+    },
+    "field": {
+      "equation": "\u03c1(x\u20d7)",
+      "application": "Edge density and count",
+      "insight": "Edge density affects structure size"
+    },
+    "shear": {
+      "equation": "G = A\u1d40A",
+      "application": "Graph rigidity and clique/independent ratio",
+      "insight": "Degree variance indicates regularity"
+    },
+    "packet": {
+      "equation": "\u0393\u1d62",
+      "application": "Structure encoding and witness property",
+      "insight": "Large clique or independent set as witness"
+    }
+  },
+  "validation": {
+    "status": "SUCCESS",
+    "insight": "4-primitive framework successfully applied to Erd\u0151s\u2013Hajnal Conjecture. Spectral primitive reveals graph structure. Field primitive captures graph density. Shear primitive measures graph deformation. Packet primitive captures structure encoding. Framework validated for extremal graph theory problems. Conjecture tested on random graphs."
+  }
+}

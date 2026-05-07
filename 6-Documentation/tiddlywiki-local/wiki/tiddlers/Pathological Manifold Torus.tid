@@ -1,0 +1,24 @@
+created: 20260506230000000
+modified: 20260506230000000
+tags: ResearchStack Compression Hutter CAD Geometry Torus
+title: Pathological Manifold Torus
+type: text/vnd.tiddlywiki
+
+! Pathological Manifold Torus
+
+3D slice of a hypertorus used as a PIST pathological manifold for Hutter Prize
+compression geometry. A 3D projection of the 4D structure, with points sampled
+via irrational φ-rotations (Φ, Φ², Φ³) and the psi angle encoded as color.
+
+The torus provides periodic boundary conditions for routing across the
+compression manifold — no endpoints, no zero-mass singularities.
+
+!! Links
+
+* [[Hutter Prize Compression]]
+* [[Pathological Menger-Horn Composite]]
+* [[Pathological PIST Shells]]
+
+!! Durable Source
+
+`../../3-Mathematical-Models/cad_models/hypertorus_slice.scad`

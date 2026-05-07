@@ -1,0 +1,30 @@
+created: 20260506230000000
+modified: 20260506230000000
+tags: ResearchStack Compression Hutter CAD Geometry PIST Shells
+title: Pathological PIST Shells
+type: text/vnd.tiddlywiki
+
+! Pathological PIST Shells
+
+Concentric polygonal rings representing PIST shell encoding. Each shell k is
+drawn as a regular (2k+1)-gon with radius proportional to k. Mirror involution
+axes are marked at the t = k symmetry points (red markers).
+
+Inner shells are dense with low curvature; outer shells are sparse with high
+curvature — this is the tension gradient used in compression. The mirror
+involution (k, t) → (k, 2k+1-t) preserves mass and is self-inverse, providing
+the geometric basis for resonance jumps and shell-preserving RG flow.
+
+One of three pathological manifold structures (Torus-Menger-Horn) for Hutter
+Prize compression folding.
+
+!! Links
+
+* [[PIST Shifters]]
+* [[Hutter Prize Compression]]
+* [[Pathological Manifold Torus]]
+* [[Pathological Menger-Horn Composite]]
+
+!! Durable Source
+
+`../../3-Mathematical-Models/cad_models/pist_shells.scad`

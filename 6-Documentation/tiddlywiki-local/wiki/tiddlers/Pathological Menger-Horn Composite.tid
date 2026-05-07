@@ -1,0 +1,29 @@
+created: 20260506230000000
+modified: 20260506230000000
+tags: ResearchStack Compression Hutter CAD Geometry MengerSponge GabrielHorn
+title: Pathological Menger-Horn Composite
+type: text/vnd.tiddlywiki
+
+! Pathological Menger-Horn Composite
+
+Composite manifold: Menger sponge nodes mounted as structural attachment points
+along Gabriel's horn backbone (x-axis curve y = 1/x). PIST shell coordinates are
+nested inside each sponge node.
+
+The horn provides infinite surface area with finite volume — the byte container
+surface. The Menger sponge provides fractal addressing (Hausdorff dimension
+~2.7268) for routing between shells. Together they form one of three pathological
+manifolds for Hutter Prize compression-geometry folding.
+
+Composite structure is Torus-Menger-Horn, as referenced in
+[[04_Hutter_Prize_Equation.md|Hutter Prize Equation §Torus-Menger-Horn folding]].
+
+!! Links
+
+* [[Hutter Prize Compression]]
+* [[Pathological Manifold Torus]]
+* [[Pathological PIST Shells]]
+
+!! Durable Source
+
+`../../3-Mathematical-Models/cad_models/composite_manifold.scad`

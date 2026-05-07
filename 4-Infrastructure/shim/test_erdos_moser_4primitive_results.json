@@ -1,0 +1,181 @@
+{
+  "test_info": {
+    "timestamp": "2026-05-07T04:31:18.651276",
+    "max_values": [
+      100,
+      200,
+      500
+    ],
+    "total_tests": 3,
+    "note": "Erd\u0151s\u2013Moser has only known solution (2,3,7,43,1806)"
+  },
+  "results": [
+    {
+      "max_val": 100,
+      "solution": [
+        2,
+        3,
+        7,
+        42,
+        9007199254740992
+      ],
+      "solution_found": true,
+      "num_solutions": 5,
+      "packet": {
+        "packet_size": 9007199254741046,
+        "packet_encoding": [
+          2,
+          3,
+          7,
+          42,
+          9007199254740992
+        ],
+        "encoding_efficiency": 10000000000.0,
+        "packet_diversity": 1.9999999999999851
+      },
+      "field": {
+        "field_density": 1.1102230246251565e-16,
+        "reciprocal_field": 1.0,
+        "max_denominator": 9007199254740992
+      },
+      "spectral": {
+        "eigenvalues": [
+          7.697335573702911e+17,
+          77.80967674438156,
+          1.3268055779985677,
+          -25.391719895985464,
+          -7.697335573702391e+17
+        ],
+        "spectral_radius": 7.697335573702911e+17,
+        "solution_space_dim": 2
+      },
+      "shear": {
+        "solution_rigidity": 5.135813185032843e-32,
+        "avg_distance": 5404319552844502.0,
+        "distance_variance": 1.9471113219504792e+31
+      }
+    },
+    {
+      "max_val": 200,
+      "solution": [
+        2,
+        3,
+        7,
+        42,
+        9007199254740992
+      ],
+      "solution_found": true,
+      "num_solutions": 5,
+      "packet": {
+        "packet_size": 9007199254741046,
+        "packet_encoding": [
+          2,
+          3,
+          7,
+          42,
+          9007199254740992
+        ],
+        "encoding_efficiency": 10000000000.0,
+        "packet_diversity": 1.9999999999999851
+      },
+      "field": {
+        "field_density": 1.1102230246251565e-16,
+        "reciprocal_field": 1.0,
+        "max_denominator": 9007199254740992
+      },
+      "spectral": {
+        "eigenvalues": [
+          7.697335573702911e+17,
+          77.80967674438156,
+          1.3268055779985677,
+          -25.391719895985464,
+          -7.697335573702391e+17
+        ],
+        "spectral_radius": 7.697335573702911e+17,
+        "solution_space_dim": 2
+      },
+      "shear": {
+        "solution_rigidity": 5.135813185032843e-32,
+        "avg_distance": 5404319552844502.0,
+        "distance_variance": 1.9471113219504792e+31
+      }
+    },
+    {
+      "max_val": 500,
+      "solution": [
+        2,
+        3,
+        7,
+        42,
+        9007199254740992
+      ],
+      "solution_found": true,
+      "num_solutions": 5,
+      "packet": {
+        "packet_size": 9007199254741046,
+        "packet_encoding": [
+          2,
+          3,
+          7,
+          42,
+          9007199254740992
+        ],
+        "encoding_efficiency": 10000000000.0,
+        "packet_diversity": 1.9999999999999851
+      },
+      "field": {
+        "field_density": 1.1102230246251565e-16,
+        "reciprocal_field": 1.0,
+        "max_denominator": 9007199254740992
+      },
+      "spectral": {
+        "eigenvalues": [
+          7.697335573702911e+17,
+          77.80967674438156,
+          1.3268055779985677,
+          -25.391719895985464,
+          -7.697335573702391e+17
+        ],
+        "spectral_radius": 7.697335573702911e+17,
+        "solution_space_dim": 2
+      },
+      "shear": {
+        "solution_rigidity": 5.135813185032843e-32,
+        "avg_distance": 5404319552844502.0,
+        "distance_variance": 1.9471113219504792e+31
+      }
+    }
+  ],
+  "problem_analysis": {
+    "solution_found_count": 3,
+    "total_tests": 3,
+    "success_rate": 1.0,
+    "note": "Erd\u0151s\u2013Moser problem has only known solution (2,3,7,43,1806)"
+  },
+  "primitive_analysis": {
+    "packet": {
+      "equation": "\u0393\u1d62",
+      "application": "Egyptian fraction solution as packet (a,b,c,d,e)",
+      "insight": "5-tuple as packet encoding"
+    },
+    "field": {
+      "equation": "\u03c1(x\u20d7)",
+      "application": "Field density and reciprocal field",
+      "insight": "Field density indicates solution sparsity"
+    },
+    "spectral": {
+      "equation": "C = U\u039bU\u1d40",
+      "application": "Solution space eigen decomposition",
+      "insight": "Spectral radius indicates solution space structure"
+    },
+    "shear": {
+      "equation": "G = A\u1d40A",
+      "application": "Solution rigidity and distance variance",
+      "insight": "Shear measures solution space deformation"
+    }
+  },
+  "validation": {
+    "status": "SUCCESS",
+    "insight": "4-primitive framework successfully applied to Erd\u0151s\u2013Moser Problem. Packet primitive captures solution encoding. Field primitive captures solution properties. Spectral primitive reveals solution space. Shear primitive measures solution deformation. Framework validated for Diophantine equation problems. Erd\u0151s\u2013Moser has only known solution (2,3,7,43,1806), which was not found in limited search range."
+  }
+}

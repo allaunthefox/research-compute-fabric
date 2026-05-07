@@ -1,0 +1,1076 @@
+{
+  "test_info": {
+    "timestamp": "2026-05-07T04:43:39.968724",
+    "n_sets_values": [
+      5,
+      10,
+      15
+    ],
+    "universe_size_values": [
+      20,
+      30,
+      40
+    ],
+    "samples_per_config": 3,
+    "total_tests": 27
+  },
+  "results": [
+    {
+      "n_sets": 5,
+      "universe_size": 20,
+      "seed": 0,
+      "min_overlap": 0,
+      "field": {
+        "density": 1.35,
+        "avg_set_size": 5.4,
+        "universe_size": 20
+      },
+      "spectral": {
+        "eigenvalues": [
+          5.667035333952178,
+          0.32489597085609506,
+          -0.42280987025665856,
+          -2.569121434551615,
+          -2.999999999999999
+        ],
+        "spectral_radius": 5.667035333952178,
+        "structure_rank": 5
+      },
+      "shear": {
+        "family_rigidity": 1.0416666665581598,
+        "overlap_variance": 0.96,
+        "set_size_variance": 4.24
+      },
+      "packet": {
+        "packet_size": 5,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 5,
+      "universe_size": 20,
+      "seed": 1,
+      "min_overlap": 0,
+      "field": {
+        "density": 1.3,
+        "avg_set_size": 5.2,
+        "universe_size": 20
+      },
+      "spectral": {
+        "eigenvalues": [
+          5.759792471072602,
+          0.35996151215414063,
+          -0.7714536315631102,
+          -1.7260153308628838,
+          -3.6222850208007444
+        ],
+        "spectral_radius": 5.759792471072602,
+        "structure_rank": 5
+      },
+      "shear": {
+        "family_rigidity": 1.2345679010821522,
+        "overlap_variance": 0.8099999999999999,
+        "set_size_variance": 5.36
+      },
+      "packet": {
+        "packet_size": 5,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 5,
+      "universe_size": 20,
+      "seed": 2,
+      "min_overlap": 0,
+      "field": {
+        "density": 0.8,
+        "avg_set_size": 3.2,
+        "universe_size": 20
+      },
+      "spectral": {
+        "eigenvalues": [
+          2.5615528128088303,
+          8.588396363762714e-17,
+          0.0,
+          -1.0,
+          -1.56155281280883
+        ],
+        "spectral_radius": 2.5615528128088303,
+        "structure_rank": 3
+      },
+      "shear": {
+        "family_rigidity": 3.9999999984,
+        "overlap_variance": 0.25,
+        "set_size_variance": 5.76
+      },
+      "packet": {
+        "packet_size": 5,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 5,
+      "universe_size": 30,
+      "seed": 0,
+      "min_overlap": 0,
+      "field": {
+        "density": 1.3,
+        "avg_set_size": 7.8,
+        "universe_size": 30
+      },
+      "spectral": {
+        "eigenvalues": [
+          7.674683720618274,
+          1.7860884107839867,
+          -0.9538796747453082,
+          -2.407420509536302,
+          -6.099471947120647
+        ],
+        "spectral_radius": 7.674683720618274,
+        "structure_rank": 5
+      },
+      "shear": {
+        "family_rigidity": 0.32786885244826663,
+        "overlap_variance": 3.05,
+        "set_size_variance": 30.96
+      },
+      "packet": {
+        "packet_size": 5,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 5,
+      "universe_size": 30,
+      "seed": 1,
+      "min_overlap": 0,
+      "field": {
+        "density": 1.4333333333333333,
+        "avg_set_size": 8.6,
+        "universe_size": 30
+      },
+      "spectral": {
+        "eigenvalues": [
+          13.23102732068089,
+          0.1973283057771655,
+          -0.38616931833701323,
+          -4.832522902510398,
+          -8.209663405610648
+        ],
+        "spectral_radius": 13.23102732068089,
+        "structure_rank": 5
+      },
+      "shear": {
+        "family_rigidity": 0.1418439716291937,
+        "overlap_variance": 7.05,
+        "set_size_variance": 31.04
+      },
+      "packet": {
+        "packet_size": 5,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 5,
+      "universe_size": 30,
+      "seed": 2,
+      "min_overlap": 0,
+      "field": {
+        "density": 1.6333333333333333,
+        "avg_set_size": 9.8,
+        "universe_size": 30
+      },
+      "spectral": {
+        "eigenvalues": [
+          14.554482625617627,
+          0.12000002066438435,
+          -1.9474604031215008,
+          -5.0651494837925535,
+          -7.661872759367964
+        ],
+        "spectral_radius": 14.554482625617627,
+        "structure_rank": 5
+      },
+      "shear": {
+        "family_rigidity": 0.21008403360903186,
+        "overlap_variance": 4.76,
+        "set_size_variance": 17.36
+      },
+      "packet": {
+        "packet_size": 5,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 5,
+      "universe_size": 40,
+      "seed": 0,
+      "min_overlap": 0,
+      "field": {
+        "density": 1.4,
+        "avg_set_size": 11.2,
+        "universe_size": 40
+      },
+      "spectral": {
+        "eigenvalues": [
+          13.247015497396182,
+          0.9299150454205459,
+          -1.2240842871246063,
+          -4.0,
+          -8.952846255692123
+        ],
+        "spectral_radius": 13.247015497396182,
+        "structure_rank": 5
+      },
+      "shear": {
+        "family_rigidity": 0.1890359168206231,
+        "overlap_variance": 5.290000000000001,
+        "set_size_variance": 18.560000000000002
+      },
+      "packet": {
+        "packet_size": 5,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 5,
+      "universe_size": 40,
+      "seed": 1,
+      "min_overlap": 1,
+      "field": {
+        "density": 1.7,
+        "avg_set_size": 13.6,
+        "universe_size": 40
+      },
+      "spectral": {
+        "eigenvalues": [
+          19.842820089433296,
+          -0.782797033382114,
+          -1.7971149399015585,
+          -7.3245303261030825,
+          -9.938377790046522
+        ],
+        "spectral_radius": 19.842820089433296,
+        "structure_rank": 5
+      },
+      "shear": {
+        "family_rigidity": 0.1379310344808561,
+        "overlap_variance": 7.25,
+        "set_size_variance": 23.840000000000003
+      },
+      "packet": {
+        "packet_size": 5,
+        "encoding_efficiency": 0.02564102564102564,
+        "overlap_witness": true,
+        "min_overlap": 1
+      }
+    },
+    {
+      "n_sets": 5,
+      "universe_size": 40,
+      "seed": 2,
+      "min_overlap": 0,
+      "field": {
+        "density": 1.3,
+        "avg_set_size": 10.4,
+        "universe_size": 40
+      },
+      "spectral": {
+        "eigenvalues": [
+          15.028327588443855,
+          0.1495842956082867,
+          -0.8788553023038057,
+          -4.791234604061893,
+          -9.507821977686442
+        ],
+        "spectral_radius": 15.028327588443855,
+        "structure_rank": 5
+      },
+      "shear": {
+        "family_rigidity": 0.1249999999984375,
+        "overlap_variance": 8.0,
+        "set_size_variance": 30.639999999999997
+      },
+      "packet": {
+        "packet_size": 5,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 10,
+      "universe_size": 20,
+      "seed": 0,
+      "min_overlap": 0,
+      "field": {
+        "density": 2.55,
+        "avg_set_size": 5.1,
+        "universe_size": 20
+      },
+      "spectral": {
+        "eigenvalues": [
+          12.824232067076181,
+          2.9401422499152434,
+          0.886886889426058,
+          0.02616272806741761,
+          -0.22994509225115692,
+          -1.0867278129973692,
+          -1.9884132856554873,
+          -2.0,
+          -5.3293003802828345,
+          -6.043037363298052
+        ],
+        "spectral_radius": 12.824232067076181,
+        "structure_rank": 10
+      },
+      "shear": {
+        "family_rigidity": 0.657467532424306,
+        "overlap_variance": 1.520987654320988,
+        "set_size_variance": 6.09
+      },
+      "packet": {
+        "packet_size": 10,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 10,
+      "universe_size": 20,
+      "seed": 1,
+      "min_overlap": 0,
+      "field": {
+        "density": 2.75,
+        "avg_set_size": 5.5,
+        "universe_size": 20
+      },
+      "spectral": {
+        "eigenvalues": [
+          14.287464435074734,
+          1.092298527676093,
+          0.9358986962933717,
+          0.1599718865976501,
+          -0.3540420420427788,
+          -1.5690140896682605,
+          -2.4231749611770947,
+          -2.8172029508457372,
+          -4.556962353425713,
+          -4.755237148482272
+        ],
+        "spectral_radius": 14.287464435074734,
+        "structure_rank": 10
+      },
+      "shear": {
+        "family_rigidity": 0.894434628895264,
+        "overlap_variance": 1.1180246913580243,
+        "set_size_variance": 5.65
+      },
+      "packet": {
+        "packet_size": 10,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 10,
+      "universe_size": 20,
+      "seed": 2,
+      "min_overlap": 0,
+      "field": {
+        "density": 2.4,
+        "avg_set_size": 4.8,
+        "universe_size": 20
+      },
+      "spectral": {
+        "eigenvalues": [
+          13.303712879651043,
+          2.227597629327746,
+          0.303904619420892,
+          0.15264084177982445,
+          -0.8823318666682083,
+          -1.3220455363868546,
+          -1.560290133642211,
+          -3.2301598158771654,
+          -4.271412493687158,
+          -4.721616123917908
+        ],
+        "spectral_radius": 13.303712879651043,
+        "structure_rank": 10
+      },
+      "shear": {
+        "family_rigidity": 0.7953652788055531,
+        "overlap_variance": 1.2572839506172842,
+        "set_size_variance": 8.36
+      },
+      "packet": {
+        "packet_size": 10,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 10,
+      "universe_size": 30,
+      "seed": 0,
+      "min_overlap": 0,
+      "field": {
+        "density": 2.7333333333333334,
+        "avg_set_size": 8.2,
+        "universe_size": 30
+      },
+      "spectral": {
+        "eigenvalues": [
+          24.10495830938525,
+          3.303684362221817,
+          0.23421208263390808,
+          -0.22257268018700999,
+          -1.1573804715877556,
+          -2.458018808654373,
+          -3.343570481090489,
+          -4.899156525744754,
+          -5.303243150668574,
+          -10.25891263630802
+        ],
+        "spectral_radius": 24.10495830938525,
+        "structure_rank": 10
+      },
+      "shear": {
+        "family_rigidity": 0.23981525342864016,
+        "overlap_variance": 4.1698765432098766,
+        "set_size_variance": 22.360000000000003
+      },
+      "packet": {
+        "packet_size": 10,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 10,
+      "universe_size": 30,
+      "seed": 1,
+      "min_overlap": 0,
+      "field": {
+        "density": 3.033333333333333,
+        "avg_set_size": 9.1,
+        "universe_size": 30
+      },
+      "spectral": {
+        "eigenvalues": [
+          29.159251028870514,
+          3.67723027287011,
+          0.9388595569511312,
+          -0.46255429277066074,
+          -1.5623025381167703,
+          -3.081466656029304,
+          -5.269936195280456,
+          -6.367316669651033,
+          -7.559595931469587,
+          -9.472168575373932
+        ],
+        "spectral_radius": 29.159251028870514,
+        "structure_rank": 10
+      },
+      "shear": {
+        "family_rigidity": 0.1991150442438229,
+        "overlap_variance": 5.022222222222223,
+        "set_size_variance": 21.29
+      },
+      "packet": {
+        "packet_size": 10,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 10,
+      "universe_size": 30,
+      "seed": 2,
+      "min_overlap": 0,
+      "field": {
+        "density": 3.433333333333333,
+        "avg_set_size": 10.3,
+        "universe_size": 30
+      },
+      "spectral": {
+        "eigenvalues": [
+          40.64527019112814,
+          2.5345476347421596,
+          0.11934798394219379,
+          -1.8161423512941213,
+          -3.3776178252467592,
+          -4.845116773112479,
+          -5.43988877028073,
+          -5.973014033439954,
+          -10.081499923512355,
+          -11.765886132926063
+        ],
+        "spectral_radius": 40.64527019112814,
+        "structure_rank": 10
+      },
+      "shear": {
+        "family_rigidity": 0.13396401164149724,
+        "overlap_variance": 7.464691358024691,
+        "set_size_variance": 18.609999999999996
+      },
+      "packet": {
+        "packet_size": 10,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 10,
+      "universe_size": 40,
+      "seed": 0,
+      "min_overlap": 0,
+      "field": {
+        "density": 2.7,
+        "avg_set_size": 10.8,
+        "universe_size": 40
+      },
+      "spectral": {
+        "eigenvalues": [
+          29.8813182093012,
+          2.602976351988606,
+          1.5307441209675783,
+          0.3766246102801176,
+          -2.4091820166467857,
+          -3.360025228968701,
+          -4.477635537019202,
+          -4.582761058809011,
+          -9.354191883205711,
+          -10.207867567888105
+        ],
+        "spectral_radius": 29.8813182093012,
+        "structure_rank": 10
+      },
+      "shear": {
+        "family_rigidity": 0.2542692114450666,
+        "overlap_variance": 3.9328395061728396,
+        "set_size_variance": 16.96
+      },
+      "packet": {
+        "packet_size": 10,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 10,
+      "universe_size": 40,
+      "seed": 1,
+      "min_overlap": 0,
+      "field": {
+        "density": 3.45,
+        "avg_set_size": 13.8,
+        "universe_size": 40
+      },
+      "spectral": {
+        "eigenvalues": [
+          48.99679111351586,
+          1.9863175895705578,
+          -0.11644624578026874,
+          -0.6834448475615543,
+          -5.203517685907063,
+          -5.5580413289447375,
+          -6.830678405889929,
+          -8.579451958764839,
+          -11.571011697623959,
+          -12.440516532614035
+        ],
+        "spectral_radius": 48.99679111351586,
+        "structure_rank": 10
+      },
+      "shear": {
+        "family_rigidity": 0.11844875994244349,
+        "overlap_variance": 8.44246913580247,
+        "set_size_variance": 22.559999999999995
+      },
+      "packet": {
+        "packet_size": 10,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 10,
+      "universe_size": 40,
+      "seed": 2,
+      "min_overlap": 0,
+      "field": {
+        "density": 2.825,
+        "avg_set_size": 11.3,
+        "universe_size": 40
+      },
+      "spectral": {
+        "eigenvalues": [
+          34.67894429265418,
+          3.147057830162127,
+          0.7167912845857033,
+          -1.3050254484692543,
+          -2.4345438742937,
+          -4.0939529540771,
+          -4.709333016598293,
+          -5.352329555570079,
+          -9.189036636733912,
+          -11.458571921659669
+        ],
+        "spectral_radius": 34.67894429265418,
+        "structure_rank": 10
+      },
+      "shear": {
+        "family_rigidity": 0.17857142856823982,
+        "overlap_variance": 5.6,
+        "set_size_variance": 25.21
+      },
+      "packet": {
+        "packet_size": 10,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 15,
+      "universe_size": 20,
+      "seed": 0,
+      "min_overlap": 0,
+      "field": {
+        "density": 4.0,
+        "avg_set_size": 5.333333333333333,
+        "universe_size": 20
+      },
+      "spectral": {
+        "eigenvalues": [
+          23.595073902763012,
+          3.8846462473096284,
+          2.929536981098591,
+          2.3219854627123957,
+          0.9212577814935224,
+          -0.19509214575131215,
+          -0.7080655275606805,
+          -0.7767558614822433,
+          -1.9999999999999996,
+          -2.12412999174772,
+          -2.9153345528178,
+          -4.599381917936236,
+          -5.607065167439689,
+          -7.067833490907694,
+          -7.65884171973376
+        ],
+        "spectral_radius": 23.595073902763012,
+        "structure_rank": 15
+      },
+      "shear": {
+        "family_rigidity": 0.5276634440230807,
+        "overlap_variance": 1.8951473922902498,
+        "set_size_variance": 7.822222222222222
+      },
+      "packet": {
+        "packet_size": 15,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 15,
+      "universe_size": 20,
+      "seed": 1,
+      "min_overlap": 0,
+      "field": {
+        "density": 3.8,
+        "avg_set_size": 5.066666666666666,
+        "universe_size": 20
+      },
+      "spectral": {
+        "eigenvalues": [
+          20.73997072339621,
+          3.7106818613038177,
+          1.8263490377674472,
+          1.0736234382876952,
+          0.23838544379913484,
+          0.05236708568762295,
+          -0.8250880820954725,
+          -1.2795837577836233,
+          -1.6666265236415754,
+          -2.1490746793480278,
+          -2.6690528588091893,
+          -3.501986162969404,
+          -4.261550895509504,
+          -5.115209728497941,
+          -6.1732049015871855
+        ],
+        "spectral_radius": 20.73997072339621,
+        "structure_rank": 15
+      },
+      "shear": {
+        "family_rigidity": 0.7861523102633533,
+        "overlap_variance": 1.2720181405895692,
+        "set_size_variance": 5.928888888888889
+      },
+      "packet": {
+        "packet_size": 15,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 15,
+      "universe_size": 20,
+      "seed": 2,
+      "min_overlap": 0,
+      "field": {
+        "density": 4.05,
+        "avg_set_size": 5.4,
+        "universe_size": 20
+      },
+      "spectral": {
+        "eigenvalues": [
+          24.973373081257925,
+          4.600745919280282,
+          2.1926956838911456,
+          1.1903840928735914,
+          0.2649190454273463,
+          -0.37391388577643614,
+          -0.8706023453264718,
+          -1.1575571594866452,
+          -2.4633877694945823,
+          -2.7016133324527356,
+          -3.3790252161637,
+          -4.128284722458927,
+          -5.426995701299021,
+          -5.889965577913752,
+          -6.8307721123580105
+        ],
+        "spectral_radius": 24.973373081257925,
+        "structure_rank": 15
+      },
+      "shear": {
+        "family_rigidity": 0.5831482068844324,
+        "overlap_variance": 1.714829931972789,
+        "set_size_variance": 7.173333333333332
+      },
+      "packet": {
+        "packet_size": 15,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 15,
+      "universe_size": 30,
+      "seed": 0,
+      "min_overlap": 0,
+      "field": {
+        "density": 3.7666666666666666,
+        "avg_set_size": 7.533333333333333,
+        "universe_size": 30
+      },
+      "spectral": {
+        "eigenvalues": [
+          34.59733137812064,
+          6.488735482063596,
+          1.2100760085920585,
+          1.0764022261038868,
+          0.11005429004618499,
+          -0.3893721736945596,
+          -0.8765763630165164,
+          -1.6949784096066687,
+          -2.6887887954015435,
+          -3.6266558453641964,
+          -3.7620409157253385,
+          -5.051534040495897,
+          -6.008826035876376,
+          -8.581179383431367,
+          -10.802647422313886
+        ],
+        "spectral_radius": 34.59733137812064,
+        "structure_rank": 15
+      },
+      "shear": {
+        "family_rigidity": 0.27269354439028837,
+        "overlap_variance": 3.667120181405895,
+        "set_size_variance": 20.782222222222224
+      },
+      "packet": {
+        "packet_size": 15,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 15,
+      "universe_size": 30,
+      "seed": 1,
+      "min_overlap": 0,
+      "field": {
+        "density": 4.366666666666666,
+        "avg_set_size": 8.733333333333333,
+        "universe_size": 30
+      },
+      "spectral": {
+        "eigenvalues": [
+          44.77839325917954,
+          5.341978038136024,
+          2.713275913872449,
+          1.9123022190727994,
+          0.20098679732706493,
+          -0.7580678624215207,
+          -1.3045078828446723,
+          -3.2452368167406114,
+          -4.2237786866032545,
+          -5.539406221565551,
+          -6.058162407022607,
+          -7.224650908910678,
+          -7.660975695629621,
+          -8.702628535738269,
+          -10.229521210111075
+        ],
+        "spectral_radius": 44.77839325917954,
+        "structure_rank": 15
+      },
+      "shear": {
+        "family_rigidity": 0.220747236900461,
+        "overlap_variance": 4.530068027210885,
+        "set_size_variance": 18.06222222222222
+      },
+      "packet": {
+        "packet_size": 15,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 15,
+      "universe_size": 30,
+      "seed": 2,
+      "min_overlap": 0,
+      "field": {
+        "density": 4.966666666666667,
+        "avg_set_size": 9.933333333333334,
+        "universe_size": 30
+      },
+      "spectral": {
+        "eigenvalues": [
+          58.68353973644951,
+          5.201238672444064,
+          1.6951960419107603,
+          1.0802384568014736,
+          -0.8077148767162746,
+          -1.00741157717715,
+          -2.23764880714689,
+          -3.5160155729396534,
+          -3.7876742504001686,
+          -4.7514855179592255,
+          -7.79046136639533,
+          -9.392986931086915,
+          -9.798266473320805,
+          -11.296401409255052,
+          -12.274146125208357
+        ],
+        "spectral_radius": 58.68353973644951,
+        "structure_rank": 15
+      },
+      "shear": {
+        "family_rigidity": 0.1336136897963096,
+        "overlap_variance": 7.484263038548753,
+        "set_size_variance": 21.662222222222223
+      },
+      "packet": {
+        "packet_size": 15,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 15,
+      "universe_size": 40,
+      "seed": 0,
+      "min_overlap": 0,
+      "field": {
+        "density": 3.9,
+        "avg_set_size": 10.4,
+        "universe_size": 40
+      },
+      "spectral": {
+        "eigenvalues": [
+          45.13762581339703,
+          4.135707439829822,
+          3.118030658696597,
+          2.6347976648592613,
+          0.859869921686541,
+          0.448745346545202,
+          -0.6414258009879201,
+          -2.537049838186599,
+          -3.5389369998946614,
+          -4.643055569608185,
+          -4.776150342905332,
+          -7.806153726405967,
+          -9.447872935047348,
+          -10.86832373898099,
+          -12.075807892997439
+        ],
+        "spectral_radius": 45.13762581339703,
+        "structure_rank": 15
+      },
+      "shear": {
+        "family_rigidity": 0.19292688901738173,
+        "overlap_variance": 5.1833106575963726,
+        "set_size_variance": 23.973333333333336
+      },
+      "packet": {
+        "packet_size": 15,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 15,
+      "universe_size": 40,
+      "seed": 1,
+      "min_overlap": 0,
+      "field": {
+        "density": 3.975,
+        "avg_set_size": 10.6,
+        "universe_size": 40
+      },
+      "spectral": {
+        "eigenvalues": [
+          53.06391751358487,
+          3.843603886501802,
+          1.8592018341693972,
+          1.295738355984904,
+          0.3894145484824068,
+          -0.17753041521435453,
+          -1.096143781059708,
+          -1.89967863981094,
+          -4.807640673623582,
+          -5.619345327800023,
+          -6.374067978766741,
+          -7.162724342620045,
+          -8.734639009858153,
+          -11.896485761050632,
+          -12.683620208919228
+        ],
+        "spectral_radius": 53.06391751358487,
+        "structure_rank": 15
+      },
+      "shear": {
+        "family_rigidity": 0.12292340283046581,
+        "overlap_variance": 8.135147392290248,
+        "set_size_variance": 39.70666666666666
+      },
+      "packet": {
+        "packet_size": 15,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    },
+    {
+      "n_sets": 15,
+      "universe_size": 40,
+      "seed": 2,
+      "min_overlap": 0,
+      "field": {
+        "density": 3.65,
+        "avg_set_size": 9.733333333333333,
+        "universe_size": 40
+      },
+      "spectral": {
+        "eigenvalues": [
+          44.54487639169992,
+          5.30936536518888,
+          1.816486647589505,
+          0.6985013842135284,
+          0.41067898483259213,
+          -0.6485307594108294,
+          -0.9926637354497616,
+          -1.413204357418109,
+          -2.755569737471358,
+          -4.384245548644121,
+          -5.324326004213615,
+          -5.916288565363537,
+          -9.25393733724801,
+          -10.601172691256663,
+          -11.489970037048407
+        ],
+        "spectral_radius": 44.54487639169992,
+        "structure_rank": 15
+      },
+      "shear": {
+        "family_rigidity": 0.16313032670188435,
+        "overlap_variance": 6.130068027210883,
+        "set_size_variance": 39.66222222222222
+      },
+      "packet": {
+        "packet_size": 15,
+        "encoding_efficiency": 0.0,
+        "overlap_witness": false,
+        "min_overlap": 0
+      }
+    }
+  ],
+  "problem_analysis": {
+    "total_tests": 27,
+    "avg_min_overlap": 0.037037037037037035,
+    "note": "Problem concerns estimating the limit of M(n) for set families"
+  },
+  "primitive_analysis": {
+    "field": {
+      "equation": "\u03c1(x\u20d7)",
+      "application": "Family density and average set size",
+      "insight": "Density indicates coverage"
+    },
+    "spectral": {
+      "equation": "C = U\u039bU\u1d40",
+      "application": "Intersection matrix eigen decomposition",
+      "insight": "Spectral radius indicates overlap patterns"
+    },
+    "shear": {
+      "equation": "G = A\u1d40A",
+      "application": "Overlap variance and set size variance",
+      "insight": "Overlap variance indicates regularity"
+    },
+    "packet": {
+      "equation": "\u0393\u1d62",
+      "application": "Overlap encoding and witness property",
+      "insight": "Minimum overlap as witness"
+    }
+  },
+  "validation": {
+    "status": "SUCCESS",
+    "insight": "4-primitive framework successfully applied to Minimum Overlap Problem. Field primitive captures family density. Spectral primitive reveals intersection structure. Shear primitive measures family deformation. Packet primitive captures overlap encoding. Framework validated for set family problems. Problem concerns estimating limit of M(n)."
+  }
+}

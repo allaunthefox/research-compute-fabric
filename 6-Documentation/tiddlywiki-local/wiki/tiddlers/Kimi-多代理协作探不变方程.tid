@@ -1,0 +1,18 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Kimi 中文 MultiAgent InvariantEquations
+title: Kimi-多代理协作探不变方程
+type: text/vnd.tiddlywiki
+
+! Kimi-多代理协作探不变方程
+
+Kimi中文对话：使用代理通过公共黑板/工作空间协作，研究任何需要的主题以找到不变方程所在。基于 VISION_NORTH_STAR.md 文档的探索会话。
+
+* Source file: `ingest/Kimi-多代理协作探不变方程.json` (10 KB)
+* First query: "/home/allaun/Research Stack/docs/VISION_NORTH_STAR.md use agents with a common blackboard / workspace to collaborate and research any topic they deem needed to find where the invariant equations reside"
+
+!! Links
+
+* [[Kimi Conversations]]
+* [[Kimi-Multi-Expert OMTI Review]]
+* [[Kimi-Install Multi-Agent Orchestration]]

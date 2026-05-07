@@ -1,0 +1,17 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Infrastructure ENE Security
+title: ENE API Hook
+type: text/vnd.tiddlywiki
+
+! ENE API Hook
+
+The ENE API Hook (`4-Infrastructure/infra/ene_api.py`, 350 lines) provides AES-256-GCM encryption for all sensitive data, PBKDF2 key derivation from semantic manifold coordinates, access control with 4 clearance levels (PUBLIC/INTERNAL/RESTRICTED/SECRET), and SHA-256 integrity verification. Integrates Metafoam compression + Delta GCL encoding for stored payloads. The `ENESecurityManager` handles key management and `ENEAPIHook` exposes store/retrieve operations with full audit trails.
+
+!! Links
+
+* [[ENE Wiki Layer]]
+* [[Swarm ENE Middleware]]
+* [[Delta GCL Compression]]
+* [[Semantic Engine Binding Derivation]]
+* [[Concept Vector 14]]

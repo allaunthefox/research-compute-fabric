@@ -1,0 +1,20 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Kimi Thermodynamics EquationDerivation NBody
+title: Kimi-N-Body Thermodynamic Equation
+type: text/vnd.tiddlywiki
+
+! Kimi-N-Body Thermodynamic Equation
+
+Kimi conversation deriving the core equation for an N-body thermodynamic system. Focused on identifying and formalizing the central equation governing multi-body thermal dynamics.
+
+* Source file: `ingest/Kimi-N-Body_Thermodynamic_Equation.json` (91 KB, 100 messages)
+* First query: "what is the core equation after that"
+
+Covers: N-body thermodynamics, core equation derivation, multi-body thermal systems, thermodynamic invariants.
+
+!! Links
+
+* [[Kimi Conversations]]
+* [[Kimi-Attention Center Equation Derivation]]
+* [[Thermodynamic Trinary Watchdog PLC]]

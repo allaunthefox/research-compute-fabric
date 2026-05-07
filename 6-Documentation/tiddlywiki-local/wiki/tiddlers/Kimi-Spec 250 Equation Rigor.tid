@@ -1,0 +1,18 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Kimi Specification EquationRigor Physics
+title: Kimi-Spec 250 Equation Rigor
+type: text/vnd.tiddlywiki
+
+! Kimi-Spec 250 Equation Rigor
+
+Kimi conversation examining the core Spec 250 Functional Equation stripped to mathematical essentials, designed for REPL/Jupyter verification. Focused on rigorous verification of the physics underlying the Spec 250 equation.
+
+* Source file: `ingest/Kimi-Spec_250_Equation_Rigor.json` (25 KB)
+* First query: provided "core Spec 250 Functional Equation stripped down to its mathematical essentials" for verification
+
+!! Links
+
+* [[Kimi Conversations]]
+* [[Kimi-Theory Cleanup via Review]]
+* [[Kimi-Framework Re-Review]]

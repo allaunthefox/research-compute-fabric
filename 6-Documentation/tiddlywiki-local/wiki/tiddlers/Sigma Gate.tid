@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Lean Entropy Gate Compression
+title: Sigma Gate
+type: text/vnd.tiddlywiki
+
+! Sigma Gate
+
+Sigma Gate (`0-Core-Formalism/lean/Semantics/Semantics/SigmaGate.lean`) provides entropy-based gating for all semantic operations. Computes information-theoretic thresholds for admissibility decisions. The `SigmaGateEntropy.lean` extends with entropy measures, and `SigmaGateBenchmark.lean` provides performance validation. Used by the [[Mass Number Theory]] for admissibility checks, the [[Hutter Prize Compression]] pipeline for compression decision gating, and the [[AVMR Adaptive Vector Manifold Representation]] for vector routing decisions. The sigma gate forms the "yes/no" decision boundary for whether a transformation is lawful within information bounds.

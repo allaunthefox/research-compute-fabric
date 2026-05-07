@@ -1,30 +1,9 @@
-created: 20260506134000000
-modified: 20260506134000000
-tags: ResearchStack Mining SemanticGraph Glossary
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Search Graph Mining Semantic
 title: Semantic Graph Mining
 type: text/vnd.tiddlywiki
 
 ! Semantic Graph Mining
 
-Lane for mined conversation cards about semantic graph routing, glossary
-surface, weird concept aliases, semantic eigenvectors, ENE capture, and internal
-search.
-
-!! Seed Links
-
-* [[Semantic Eigenvector Bundle]]
-* [[Internal Semantic Search]]
-* [[HELLO Transform]]
-* [[Monster Filter Family]]
-* [[COUCH Family]]
-* [[Reactive Semantic Perturbation]]
-
-!! Mined Cards
-
-* [[Semantic Prime Refraction]]
-* [[Chirality Destabilizer]]
-* [[Hybrid Abelian Non-Abelian Sandpile]]
-* [[LNMF Loch-Nessie-Monster Filter]]
-* [[Tree Fiddy Monster Assignment]]
-* [[F-Number COUCH]]
-* [[Route-Pressure COUCH Gate]]
+Semantic graph mining pipeline extracts concept graphs from the research corpus. Includes `5-Applications/scripts/build_graphml.py` (GraphML export), `build_manifold_graphml.py` (manifold-aware graphs), `compute_distance_matrix.py` (semantic distances), `cluster_supernodes.py` (community detection), and `build_unified_forest.py` (equation forest construction). The [[Graph-Evolving RAG]] system uses these graphs for retrieval-augmented generation. Mining outputs connect to [[HNSW Vector Search]] for ANN queries and [[Semantic Search]] (internal tool at `5-Applications/tools-scripts/search/`) for full-text retrieval. The [[Semantic Prime Refraction]] and [[Address-First Search Protocol]] provide specialized mining strategies.

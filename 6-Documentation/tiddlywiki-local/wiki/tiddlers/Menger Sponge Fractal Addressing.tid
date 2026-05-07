@@ -1,0 +1,14 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Topology MengerSponge Fractal Compression
+title: Menger Sponge Fractal Addressing
+type: text/vnd.tiddlywiki
+
+! Menger Sponge Fractal Addressing
+
+Menger sponge fractal addressing (`0-Core-Formalism/lean/Semantics/Semantics/MengerSpongeFractalAddressing.lean`, Python: `5-Applications/scripts/menger_sponge_fractal_addressing.py`) provides hierarchical void-based routing. Each iteration removes center cubes (7 per 3x3x3 block), creating addressable voids with Hausdorff dimension ~2.7268. Used by [[Networked Self Solving Space]] for distributed quine addressing, the [[Meta Manifold Language Merging]] framework for torus-void routing channels, and the composite manifold (sponge nodes mounted on Gabriel's horn). OpenSCAD model at `3-Mathematical-Models/cad_models/menger_sponge.scad` visualizes level-2 sponge with 20 remaining subcubes and 7 removed voids. One of three pathological manifold structures for [[Hutter Prize Compression]].
+
+* [[Pathological Menger-Horn Composite]]
+* [[FiveD Torus Topology]]
+* [[Hutter Prize Compression]]
+* [[Lean Semantics Overview]]

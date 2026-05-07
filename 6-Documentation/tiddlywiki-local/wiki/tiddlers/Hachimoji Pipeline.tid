@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Biology Genetics Compression Codon
+title: Hachimoji Pipeline
+type: text/vnd.tiddlywiki
+
+! Hachimoji Pipeline
+
+Hachimoji (8-letter) genetic alphabet pipeline extends standard 4-letter DNA encoding to 8 nucleotides (4 natural + 4 synthetic), doubling information density per base. Lean modules: `HachimojiPipeline.lean`, `HachimojiCostRefinement.lean`, `HachimojiEquationMetaprobe.lean`. Provides cost-refined encoding and equation-level metaprobe validation. Referenced in [[Hutter Prize ISA]] as opcode 0x0E (`hachimojiEncode`) and the `HutterGeometricParameters` structure. Used by the [[Genetic Code Pipeline]] for high-density storage and the [[Synthetic Genetic Coding]] framework. The 8-letter encoding maps to geometric compression primitives (throatSurface, basePairEnergy opcodes).

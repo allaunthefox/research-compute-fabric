@@ -1,0 +1,21 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Kimi Hardware ASIC Tapeout
+title: Kimi-Tiny Tapeout Cost and Core
+type: text/vnd.tiddlywiki
+
+! Kimi-Tiny Tapeout Cost and Core
+
+Kimi conversation exploring the costs of using the Tiny Tapeout service and core design considerations. Investigated budget-friendly ASIC fabrication options through the Tiny Tapeout platform.
+
+* Source file: `ingest/Kimi-Tiny_Tapeout_Cost_&_Core_Design.json` (47 KB)
+* First query: "How much does it cost to use tiny tape out"
+
+Covers: Tiny Tapeout pricing, ASIC fabrication, core design, budget IC manufacturing.
+
+!! Links
+
+* [[Kimi Conversations]]
+* [[ASIC Topology]]
+* [[FPGA Warden]]
+* [[Materials and Hardware Mining]]

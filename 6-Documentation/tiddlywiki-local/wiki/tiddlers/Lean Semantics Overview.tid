@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Lean FormalVerification
+title: Lean Semantics Overview
+type: text/vnd.tiddlywiki
+
+! Lean Semantics Overview
+
+The Lean 4 formalization ecosystem is the formal workhorse of the Research Stack, containing ~421 .lean files in `0-Core-Formalism/lean/Semantics/Semantics/` organized into 31 subdirectories. Major subsystems include: [[Fixed Point Algebra]] (Q16_16 fixed-point arithmetic), [[FiveD Torus Topology]] (torus distance and routing), [[PIST Shell Encoding]] (shell partition and mirror involution), [[AMMR Adaptive Meshless Methods]] (meshless PDE solving), [[AVMR Adaptive Vector Manifold Representation]] (vector manifold representation), [[SLUQ Routing]] (quaternion-based routing), [[Sigma Gate]] (entropy gating), [[Mass Number Theory]] (admissibility gates), [[Hutter Prize ISA]] (compression-optimized instruction set), [[Yang-Mills Compression]] (field-theoretic compression bounds), and [[NIICore Architecture]] (morphic field core with 20+ submodules). Built with Lake package manager; external OTOM formalizations at `0-Core-Formalism/lean/external/OTOM/`.

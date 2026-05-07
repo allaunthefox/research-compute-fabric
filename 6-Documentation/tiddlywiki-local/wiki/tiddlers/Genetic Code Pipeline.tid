@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Biology Genetics Compression Codon
+title: Genetic Code Pipeline
+type: text/vnd.tiddlywiki
+
+! Genetic Code Pipeline
+
+The genetic code and codon-based compression pipeline spans the stack. Lean formalizations include `GeneticCode.lean`, `Codons.lean`, `CodonOTOM.lean`, `CodonPeptideConsistency.lean`, and `GeneBytecodeJIT.lean` (just-in-time bytecode generation from genetic sequences). Python tools at `0-Core-Formalism/otom/tools/genetics/` (selection_metrics.py, emit_selection_receipt.py). Integration scripts: `5-Applications/scripts/codon_peptide_pipeline.py`, `5-Applications/scripts/rna_to_peptide_shifter.py`. The codon RL pipeline (`6-Documentation/docs/codon_rl_v2_summary.md`) uses reinforcement learning for codon optimization. [[Hachimoji Pipeline]] adds 8-letter genetic alphabet encoding. The [[Genome18]] module provides 18-gene model families. Genetic ground-up testing at `Testing/GeneticGroundUpTest.lean`. Links to [[Hutter Prize Compression]] via genetic compression strategies.

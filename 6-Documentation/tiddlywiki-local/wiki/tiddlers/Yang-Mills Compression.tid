@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Lean Compression Physics YangMills
+title: Yang-Mills Compression
+type: text/vnd.tiddlywiki
+
+! Yang-Mills Compression
+
+Yang-Mills field-theoretic compression formalized across 5 Lean modules: `YangMillsCompression.lean`, `YangMillsCompressionBounds.lean`, `YangMillsLattice.lean`, `YangMillsLatticeSizing.lean`, `YangMillsPerformance.lean`. Applies gauge theory to compression — field strength tensors as compression operators, lattice regularization for discrete encoding, and theoretical bounds on achievable compression ratios. Uses the [[Mass Number Theory]] for admissibility gating of compression claims. Integrated with the [[Hutter Prize Compression]] pipeline for field-compression approaches to the enwik9 dataset. Complements the [[Delta GCL Compression]] pipeline for geometric encoding.

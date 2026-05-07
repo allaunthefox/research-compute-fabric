@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Lean Manifold PDE Flow
+title: Manifold Flow
+type: text/vnd.tiddlywiki
+
+! Manifold Flow
+
+Manifold flow dynamics (`0-Core-Formalism/lean/Semantics/Semantics/ManifoldFlow.lean`) — gradient descent on manifold surfaces, flow field computation, and anisotropic torsion flow (foldback-lock dynamics preventing manifold drift). `ManifoldPotential.lean` defines potential energy surfaces for flow computation. `ManifoldStructures.lean` catalogs manifold types (Euclidean, hyperbolic, toroidal, projective, Klein, Möbius, fractal). `ManifoldTopology.lean` maps topological invariants across flows. The flow framework integrates with the [[Topological State Machine]] for geometric evolution, [[FAMM Fast Approximate Manifold Map]] for cached flow states, and hardware acceleration via [[Manifold Blit]] operations in WGSL.

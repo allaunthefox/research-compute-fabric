@@ -1,0 +1,16 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Kimi Languages ISO Linguistics
+title: Kimi-ISO Language Comparison
+type: text/vnd.tiddlywiki
+
+! Kimi-ISO Language Comparison
+
+Kimi conversation comparing every fully-documented language against ISO standards to find the invariant root common to all languages. A large-scale linguistic analysis session seeking core conceptual primitives shared across human languages.
+
+* Source file: `ingest/Kimi-ISO_Language_Comparison.json` (34 KB)
+* First query: "find every language that has a full documentation set and compare them to verified languages in the ISO standards, the idea is to find the invariant root of all the languages together"
+
+!! Links
+
+* [[Kimi Conversations]]

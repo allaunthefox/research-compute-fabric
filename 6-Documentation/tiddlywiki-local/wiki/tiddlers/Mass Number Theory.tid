@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Lean Math Admissibility Gate
+title: Mass Number Theory
+type: text/vnd.tiddlywiki
+
+! Mass Number Theory
+
+Mass Number admissibility gate formalized in `0-Core-Formalism/lean/Semantics/Semantics/Core/MassNumber.lean` — three-layer gate structure: Admissible (A), Residual (R), Boundary (ε guard). Core rule: A ≤ τ · (R + ε). If the rule fails, the operation is rejected to the Underverse. The `MassNumberAdapter.lean` bridges to the broader semantics system. Python implementations at `0-Core-Formalism/core/formalize_mass_number.py` and Lean proof data at `3-Mathematical-Models/mass_number_proofs.json`. The `MassNumberLinter.lean` provides static analysis for Lawful transitions. Integrates with the [[Hutter Prize Compression]] gate (`hutterCompressionGate` in Core/MassNumber.lean) and the [[Reality Contract Mass Number]] for commitment enforcement. The Erdos Mass Number Map (`ErdosMentalModelMassNumberMap.md`) documents forced-pattern relationships.

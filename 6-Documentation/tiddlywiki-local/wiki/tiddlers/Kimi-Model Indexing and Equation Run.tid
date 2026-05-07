@@ -1,0 +1,18 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Kimi Indexing Model Equations
+title: Kimi-Model Indexing and Equation Run
+type: text/vnd.tiddlywiki
+
+! Kimi-Model Indexing and Equation Run
+
+Kimi conversation indexing an entire model's revision history and running/re-verifying all equations. The latest revision appeared at the bottom of the conversation, with the full history needing systematic indexing.
+
+* Source file: `ingest/Kimi-Model_Indexing_&_Equation_Run.json` (8 KB)
+* First query: "the latest revision of my model is at the bottom, but the entire thing needs indexing"
+
+!! Links
+
+* [[Kimi Conversations]]
+* [[Kimi-Math Queries]]
+* [[Equation Forest Index]]

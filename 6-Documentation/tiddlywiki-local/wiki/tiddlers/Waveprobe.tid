@@ -1,23 +1,14 @@
-created: 20260506134500000
-modified: 20260506134500000
-tags: ResearchStack Control Verification
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Waveprobe FAMM Manifold
 title: Waveprobe
 type: text/vnd.tiddlywiki
 
 ! Waveprobe
 
-Hysteretic local selection and risk kernel. In this local wiki, Waveprobe is
-the shared handle for choosing between candidate routes, material states, or
-contact modes under explicit warn, lock, and recover barriers.
+WaveProbe is a manifold-probing system that emits and measures wavefronts across topological spaces. `4-Infrastructure/shim/waveprobe_manifold_famm_preshaper.py` pre-shapes FAMM banks for wavefront propagation. `5-Applications/scripts/waveform_waveprobe_coarse_grained.py` handles coarse-grained waveform analysis. Integration with Google Drive/ENE at `shared-data/data/swarm_waveprobe_gdrive_result.json` and `shared-data/data/swarm_waveprobe_gdrive_ene_result.json`. The WaveProbe pipeline feeds into [[FAMM Fast Approximate Manifold Map]] for pre-computed manifold transitions and the [[Topological State Machine]] for state evolution. WaveProbe+FAMM integration is documented at `4-Infrastructure/shim/WAVEPROBE_FAMM_INTEGRATION_SUMMARY.md`.
 
-!! Links
-
-* [[Structural eFuse Surface]]
-* [[Speculative Materials]]
-* [[Materials and Hardware Mining]]
-* [[Compression and Soliton Mining]]
-
-!! Durable Sources
-
-* `../docs/GLOSSARY.md`
-* `../docs/specs/waveprobe_qubo_spec.tex`
+* [[FAMM Fast Approximate Manifold Map]]
+* [[Topological State Machine]]
+* [[Manifold Flow]]
+* [[Semantic RG Flow]]

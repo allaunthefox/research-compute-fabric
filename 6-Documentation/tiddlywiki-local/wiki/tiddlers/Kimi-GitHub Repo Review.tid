@@ -1,0 +1,20 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Kimi GitHub Infrastructure RepoReview
+title: Kimi-GitHub Repo Review
+type: text/vnd.tiddlywiki
+
+! Kimi-GitHub Repo Review
+
+Kimi conversation reviewing multiple GitHub repositories in the Research Stack ecosystem: Ontological-Manifold-Theory-Implementation, Research-Stack, braid-field-papers, and others. Cross-repository audit and review session.
+
+* Source file: `ingest/Kimi-GitHub_Repo_Review.json` (71 KB)
+* First query: review links to allaunthefox GitHub repositories (OMTI, Research-Stack, braid-field-papers, etc.)
+
+Covers: GitHub repository review, cross-repo audit, Research Stack codebase review.
+
+!! Links
+
+* [[Kimi Conversations]]
+* [[Kimi-Project Issue Update]]
+* [[Research Stack Architecture]]

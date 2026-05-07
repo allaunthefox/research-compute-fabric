@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Biology Physics Constraints PDE
+title: Extremophile Constraint Layer
+type: text/vnd.tiddlywiki
+
+! Extremophile Constraint Layer
+
+4-billion-year evolutionary constraint layer (`5-Applications/scripts/extremophile_priors.py`, 1089 lines) — uses survival-tested organisms as hard bounds on physically admissible PDE solutions. 12-tier unified check system (`DeepExtremophilePrior.unified_check()`). Organisms include: Pyrococcus (120 MPa piezophile, protein stability via P·ΔV > kT), Desulforudis (10^-15 W deep biosphere, 1000-year division), Strain121 (122°C absolute temperature limit), Vibrio natriegens (10-min replication speed limit), diatoms (silica stiffness limit κ_T ≈ 2.7×10^-11), Thermus aquaticus (Taq polymerase source, 50-80°C). Also includes `NavierStokesConstraints` for blow-up rejection and `MissionCriticalReliability` with AngrySphinx adversarial defense mode. Tested in `test_extremophile_constraints.py`. Wired into [[ENE API Hook]] per [[ENE Cognitive Refactor Plan]] Phase 7. Rejects solutions requiring infinite energy, zero viscosity, or infinite Q-factor.

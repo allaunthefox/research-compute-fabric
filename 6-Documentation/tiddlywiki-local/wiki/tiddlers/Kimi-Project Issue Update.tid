@@ -1,0 +1,18 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Kimi GitHub Issues ProjectManagement
+title: Kimi-Project Issue Update
+type: text/vnd.tiddlywiki
+
+! Kimi-Project Issue Update
+
+Kimi conversation reviewing and updating GitHub project issues. Tracked issue statuses and fix applications across the Research Stack repositories, serving as a project management checkpoint.
+
+* Source file: `ingest/Kimi-Project_Issue_Update.json` (32 KB)
+* First query: provided a table of issues with status and fix columns
+
+!! Links
+
+* [[Kimi Conversations]]
+* [[Kimi-GitHub Repo Review]]
+* [[Research Stack Architecture]]

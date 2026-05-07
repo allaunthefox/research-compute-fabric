@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Infrastructure Planning
+title: ENe Cognitive Refactor Plan
+type: text/vnd.tiddlywiki
+
+! ENe Cognitive Refactor Plan
+
+The ENE Cognitive Refactoring Plan (`4-Infrastructure/infra/ene_cognitive_refactor_plan.md`) is a 14-week implementation roadmap to integrate Cognitive Physics equations into the ENE infrastructure. Phases: (1) Instrumentation — ENELoadMonitor with 8-component load tracking, (2) Adaptive Cache — gap-based TTL replacing fixed expiry, (3) Semantic Compression — fidelity-gated Metafoam+GCL compression, (4) Prime Concept Vectors — learned 64×14 matrix replacing heuristic keyword vectors, (5) Security Invariants — severity-gated invariant checking, (6) HNSW + Shell Partition — O(log N) vector search + PIST-based page bucketing, (7) Extremophile Constraints + Multi-Language — constraint gating + language-aware compression. Full file map and guardrails included in the plan document.

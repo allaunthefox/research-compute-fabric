@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Lean Q16_16 FixedPoint
+title: Fixed Point Algebra
+type: text/vnd.tiddlywiki
+
+! Fixed Point Algebra
+
+Q16_16 fixed-point arithmetic formalized in `0-Core-Formalism/lean/Semantics/Semantics/FixedPoint.lean` — provides 16-bit integer + 16-bit fractional representation with formal proofs of algebraic properties. All physics computations in the stack use Q16_16 (per AGENTS.md §1.4). Includes arithmetic operations (add, sub, mul, div), comparison operators, conversion to/from floats, and formal theorems proving non-overflow bounds, associativity, and distributivity. The `FixedPointBridge.lean` connects Q16_16 to hardware extraction targets. Q32_32 variant under development with formal verification tools (`4-Infrastructure/shim/use_provers_to_fix_q32_32.py`). Related to the [[Lean Semantics Overview]] and hardware extraction pipeline.

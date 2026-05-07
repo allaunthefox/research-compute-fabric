@@ -1,0 +1,14 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Lean Quaternion Routing
+title: SLUQ Routing
+type: text/vnd.tiddlywiki
+
+! SLUQ Routing
+
+SLUQ (Semantic Latent Unified Quaternion) routing (`0-Core-Formalism/lean/Semantics/Semantics/SLUQ.lean`) uses quaternion algebra for semantic routing decisions. Quaternions provide 4D representations that avoid gimbal lock, making them suitable for manifold navigation. `SLUQQuaternionIntegration.lean` bridges quaternion ops to the broader semantics system. `SLUQTriage.lean` provides triage routing for emergency/manifold-critical paths. `SLUG3.lean` extends to 3rd-gen SLUQ with improved convergence properties. Related to the [[Quaternion Scalar]] module and the [[MNLOG Quaternion Bridge]] for multi-nodal logic integration.
+
+* [[Lean Semantics Overview]]
+* [[AVMR Adaptive Vector Manifold Representation]]
+* [[Quaternion Scalar]]
+* [[Semantic Graph Mining]]

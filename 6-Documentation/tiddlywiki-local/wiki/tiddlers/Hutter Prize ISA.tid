@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Compression Hutter ISA Hardware
+title: Hutter Prize ISA
+type: text/vnd.tiddlywiki
+
+! Hutter Prize ISA
+
+Hutter Prize ISA (`0-Core-Formalism/lean/Semantics/Semantics/HutterPrizeISA.lean`) — an instruction set architecture specifically optimized for Hutter Prize compression. 15 opcodes spanning: Gabor bifurcation, spectral transform, soliton box, fractal seed, Jupiter residual, φ-ratio summation (using pandigital π + golden φ), adaptive thresholding, entropy encoding, manifold decoding, hachimoji encoding (8-letter genetic alphabet), anisotropic mapping, codon LUT, throat surface (horn geometry), and base pair energy. 128-bit register layout (64+32+16+16). Target: beat the 11.4% record (114MB/1GB) on enwik9. Analyzed via `runHutterSwarmAnalysis()` with opcode utilization and register efficiency metrics.

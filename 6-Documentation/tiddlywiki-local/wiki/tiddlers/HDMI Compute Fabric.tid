@@ -1,23 +1,14 @@
-created: 20260506134500000
-modified: 20260506134500000
-tags: ResearchStack Hardware Display Candidate
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Hardware HDMI GPU Compute
 title: HDMI Compute Fabric
 type: text/vnd.tiddlywiki
 
 ! HDMI Compute Fabric
 
-Candidate surface where display timing, raster cells, and HDMI/DVI-style
-transport become a deterministic compute or witness fabric rather than only a
-video path.
-
-!! Links
+The HDMI compute fabric (`5-Applications/scripts/hdmi_computational_shell.py`) turns display interfaces into general-purpose computation channels. Includes `score_route_damage` for damage scoring along routes, DSB cluster detection for broken invariant grouping, and the computational shell architecture that treats HDMI as a data bus. Integrates with [[FPGA Warden]] for hardware-level compute offload and the [[Virtual Display Blitter Compute Surface]] for blitter-based rendering computation. Part of the broader hardware-as-compute strategy alongside DisplayPort computational controller (`5-Applications/scripts/displayport_computational.py`), voltage computational substrate, and PCIe computational controller. This strategy treats every physical interface as a computational resource.
 
 * [[FPGA Warden]]
-* [[Morphic DSP]]
-* [[Semantic Graph Mining]]
-* [[Materials and Hardware Mining]]
-
-!! Durable Sources
-
-* `../docs/WEIRD_CONCEPTS_GLOSSARY.md`
-* `../../5-Applications/scripts/hdmi_computational_shell.py`
+* [[Virtual Display Blitter Compute Surface]]
+* [[ASIC Topology]]
+* [[Motherboard Computational Substrate]]

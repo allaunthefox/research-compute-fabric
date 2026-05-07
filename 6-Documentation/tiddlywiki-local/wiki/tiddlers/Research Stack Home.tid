@@ -7,13 +7,101 @@ type: text/vnd.tiddlywiki
 ! Research Stack Local TiddlyWiki
 
 This is the local nonlinear note surface for the Research Stack.
+Use it for fast concept cards, cross-links between ideas and formal surfaces,
+and temporary maps before promotion into the durable doc layer.
 
-Use it for:
+!! Architecture & Infrastructure
 
-* fast concept cards
-* cross-links between weird ideas and formal surfaces
-* temporary working maps before promotion into `6-Documentation/wiki/`
-* local-only trails that should not yet become canonical docs
+* [[Research Stack Architecture]] — 6-layer system overview
+* [[ENe Cognitive Refactor Plan]] — 14-week infrastructure roadmap
+* [[ENE API Hook]] — AES-256-GCM encryption + secure storage
+* [[Swarm ENE Middleware]] — query caching + audit + semantic search
+* [[ENE Wiki Layer]] — revisioned wiki with 14D concept vectors
+* [[TiddlyWiki ENE Bridge Plugin]] — wiki-to-swarm bridge
+
+!! Compression Pipeline
+
+* [[Hutter Prize Compression]] — enwik9 static target
+* [[Hutter Prize ISA]] — compression-optimized instruction set
+* [[Hutter Critical Analysis]] — claim-boundary audit rail
+* [[Delta GCL Compression]] — Metafoam → GCL → AES pipeline
+* [[GCL Nanokernel]] — self-hosting compression execution
+* [[Compression and Soliton Mining]] — compression discovery
+* [[Engram Decompressor]] — decode path
+
+!! Lean Formal Verification
+
+* [[Lean Semantics Overview]] — 421 .lean files, 31 subdirectories
+* [[Fixed Point Algebra]] — Q16_16 arithmetic proofs
+* [[Mass Number Theory]] — admissibility gate (A ≤ τ·(R + ε))
+* [[Sigma Gate]] — entropy-based operation gating
+* [[Yang-Mills Compression]] — gauge-theoretic encoding bounds
+* [[PIST Shell Encoding]] — (k, t) coordinate system
+* [[FiveD Torus Topology]] — periodic boundary routing
+* [[AVMR Adaptive Vector Manifold Representation]] — 7-module framework
+* [[AMMR Adaptive Meshless Methods]] — mesh-free PDE solving
+
+!! Topology, TSM & Manifolds
+
+* [[Topological State Machine]] — geometric state evolution
+* [[Manifold Flow]] — gradient descent on manifold surfaces
+* [[Semantic RG Flow]] — scale-invariant semantic operations
+* [[Unified Hypersurface]] — multi-manifold computation
+* [[Menger Sponge Fractal Addressing]] — void-based routing
+* [[FAMM Fast Approximate Manifold Map]] — binary state cache
+* [[Waveprobe]] — manifold probing + wavefront propagation
+* [[Semantic Eigenvector Bundle]] — equation→eigenvector mapping
+* [[Equation Forest Index]] — structured equation catalog
+
+!! Pathological Manifolds (CAD)
+
+* [[Pathological Manifold Torus]] — 3D hypertorus slice
+* [[Pathological Menger-Horn Composite]] — sponge on horn
+* [[Pathological PIST Shells]] — concentric shell rings
+* [[Manifold Viewer]] — WebGL 3D visualizations
+
+!! Search & Graph Mining
+
+* [[HNSW Vector Search]] — O(log N) ANN over concept vectors
+* [[Semantic Graph Mining]] — graph extraction + community detection
+* [[Graph-Evolving RAG]] — retrieval-augmented generation
+* [[Internal Semantic Search]] — local search surface
+* [[Address-First Search Protocol]] — coordinate-prior search
+
+!! Biology & Genetics
+
+* [[Genetic Code Pipeline]] — codon→gene→chromosome→genome
+* [[Hachimoji Pipeline]] — 8-letter genetic alphabet
+* [[Synthetic Genetic Coding]] — DNA as programmable storage
+* [[Peptide MoE]] — mixture-of-experts for peptides
+* [[Extremophile Constraint Layer]] — 4Gyr survival bounds
+* [[RNA to Peptide Shifter]] — ribosomal encoding
+
+!! Hardware & GPU
+
+* [[FPGA Warden]] — hardware security + compute offload
+* [[ASIC Topology]] — topological die layout
+* [[HDMI Compute Fabric]] — display-as-compute
+* [[Morphic DSP]] — reconfigurable signal processing
+* [[Virtual Display Blitter Compute Surface]] — WGSL rendering
+
+!! Data & Ingestion
+
+* [[Data Ingestion Pipeline]] — multi-source knowledge feed
+* [[Mined Conversation Concepts]] — mined concept index
+* [[Conversation Mining Source Map]] — source tracking
+* [[Full Chat Log Dumps]] — raw conversation archives
+* [[Speculative Materials]] — hypothesis sandbox
+
+!! Concepts & Tools
+
+* [[Concept Vector 14]] — 14D semantic vector spec
+* [[Semantic Prime Refraction]] — prime-based concept routing
+* [[Golden Angle Encoding]] — φ-irrational rotations
+* [[Gray-Code Golden-Spiral Fold]] — spiral compression
+* [[COUCH Family]] — constraint unification
+* [[Monster Filter Family]] — anomaly detection
+* [[Triumvirate Enforcer]] — 3-party consensus
 
 !! Durable Markdown Surfaces
 
@@ -22,12 +110,3 @@ Use it for:
 * `../wiki/Concept-Archive.md`
 * `../docs/GLOSSARY.md`
 * `../docs/WEIRD_CONCEPTS_GLOSSARY.md`
-
-!! Good First Tiddlers
-
-* [[Mined Conversation Concepts]]
-* [[Conversation Mining Source Map]]
-* [[Speculative Materials]]
-* [[Monster Filter Family]]
-* [[COUCH Family]]
-* [[Local Setup Notes]]

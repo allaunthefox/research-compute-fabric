@@ -1,0 +1,17 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Kimi EquationDerivation Zenodo
+title: Kimi-Equation Derivation from Zenodo
+type: text/vnd.tiddlywiki
+
+! Kimi-Equation Derivation from Zenodo
+
+Kimi conversation deriving a provable equation from a Zenodo record (https://zenodo.org/records/19645628). Focused on rigorous mathematical derivation from published research materials.
+
+* Source file: `ingest/Kimi-Equation_Derivation_from_Zenodo.json` (9 KB)
+* First query: "derive the provable equation from this [Zenodo link]"
+
+!! Links
+
+* [[Kimi Conversations]]
+* [[Kimi-Attention Center Equation Derivation]]

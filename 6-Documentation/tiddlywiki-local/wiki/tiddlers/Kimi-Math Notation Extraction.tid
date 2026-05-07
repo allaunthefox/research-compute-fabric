@@ -1,0 +1,18 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Kimi Math Notation Extraction
+title: Kimi-Math Notation Extraction
+type: text/vnd.tiddlywiki
+
+! Kimi-Math Notation Extraction
+
+Kimi conversation extracting complete mathematical theorems from research materials. Focused on notation extraction, theorem identification, and formalization of mathematical content.
+
+* Source file: `ingest/Kimi-Math_Notation_Extraction.json` (27 KB)
+* First query: "look for the complete math theorems from this"
+
+!! Links
+
+* [[Kimi Conversations]]
+* [[Kimi-Lean Proof Completion]]
+* [[Kimi-Algebraic Bracket Chat Room]]

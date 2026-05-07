@@ -1,0 +1,20 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Kimi Math GraphML
+title: Kimi-Math Queries
+type: text/vnd.tiddlywiki
+
+! Kimi-Math Queries
+
+Kimi conversation about parsing mathematical content and updating GraphML representations. Involved structured extraction of math from research materials and representation in graph format.
+
+* Source file: `ingest/Kimi-Math_Queries.json` (140 KB, 100 messages)
+* First query: "parse this and update the graphml"
+
+Covers: math parsing, GraphML updates, structured math extraction, graph representation of equations.
+
+!! Links
+
+* [[Kimi Conversations]]
+* [[Kimi-GraphML Manifold Model Improvement]]
+* [[Equation Forest Index]]

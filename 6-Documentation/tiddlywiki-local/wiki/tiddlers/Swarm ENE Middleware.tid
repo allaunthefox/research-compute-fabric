@@ -1,0 +1,17 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Infrastructure Swarm Caching
+title: Swarm ENE Middleware
+type: text/vnd.tiddlywiki
+
+! Swarm ENE Middleware
+
+`4-Infrastructure/infra/swarm_ene_middleware.py` (427 lines) — middleware that hooks the Research Swarm API into the ENE database for query result caching, audit logging, and semantic retrieval. Maintains three SQLite tables: swarm_query_cache (TTL-based cache with hit counters), swarm_api_audit (operation log with timing), and swarm_semantic_index (14D concept vector index). Currently uses O(N) brute-force cosine similarity search. The cache stores 14D semantic vectors derived from query subjects via MD5 hashing. Part of the planned HNSW-based ANN upgrade (see [[HNSW Vector Search]] and the [[ENE Cognitive Refactor Plan]]).
+
+!! Links
+
+* [[ENE API Hook]]
+* [[ENE Wiki Layer]]
+* [[HNSW Vector Search]]
+* [[Semantic Graph Mining]]
+* [[Concept Vector 14]]

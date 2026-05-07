@@ -1,0 +1,14 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Lean MorphicField Core Architecture
+title: NIICore Architecture
+type: text/vnd.tiddlywiki
+
+! NIICore Architecture
+
+NIICore (`0-Core-Formalism/lean/Semantics/Semantics/NIICore.lean`) is the morphic field core with 20+ submodules providing: semantic analysis, semantic RG flow, morphing triggers, morphing tests, predictive resource allocation, uncertainty quantification, meta-predictive differential processing, differential attention morphing, hierarchical control, translation engine, surface driver, verification, and sheaf-persistent RG hybrids (bridging persistent homology with renormalization group flow). The `NIICore/` subdirectory contains dedicated modules for each capability. Integrates with the [[Semantic Engine Binding Derivation]] for semantic state morphisms and the [[Morphic DSP]] for signal processing in morphic field space.
+
+* [[Lean Semantics Overview]]
+* [[Morphic DSP]]
+* [[Semantic Engine Binding Derivation]]
+* [[Semantic RG Flow]]

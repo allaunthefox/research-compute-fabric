@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Biology AI Peptide MoE
+title: Peptide MoE
+type: text/vnd.tiddlywiki
+
+! Peptide MoE
+
+Peptide Mixture-of-Experts model for protein/peptide prediction. Lean modules: `PeptideMoE.lean`, `PeptideMoEExamples.lean`, `PeptideMoEFailure.lean`, `PeptideMoERepair.lean`. Part of the [[Swarm MoE Rewiring]] system for dynamic expert routing. The peptide pipeline connects codon sequences to protein structures through a learned mixture-of-experts architecture with repair/recovery mechanisms for prediction failures. Test data and review at `shared-data/data/swarm_peptide_moe_*`. Integrates with the [[Genetic Code Pipeline]] for codon-to-peptide translation and the [[RNA to Peptide Shifter]] for ribosomal modeling.

@@ -1,0 +1,15 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack TSM Topology Manifold
+title: Topological State Machine
+type: text/vnd.tiddlywiki
+
+! Topological State Machine
+
+The Topological State Machine (TSM) is a geometric state-evolution framework that models manifold transitions as discrete steps through topological space. Core implementation: `5-Applications/scripts/topological_state_machine.py`. Extended variants: eigenvector TSM (`eigenvector_tsm_hyperfluid.py`), Hutter TSM (`hutter_eigenvector/`), and unified hypersurface TSM (`3-Mathematical-Models/unified_surface/`). State data stored in `3-Mathematical-Models/topological_state_machine/` with `tsm_report_*.json` outputs. Uses [[FAMM Fast Approximate Manifold Map]] for caching state transitions. Integration with Lean via `TopologicalStateMachine.lean`. The TSM cache directories (eigenvector_tsm, hutter_eigenvector) contain FAMM banks for fast manifold lookup. Referenced in the [[ENE Cognitive Refactor Plan]] Phase 6 for shell-partitioned cache eviction.
+
+* [[FAMM Fast Approximate Manifold Map]]
+* [[Lean Semantics Overview]]
+* [[Manifold Flow]]
+* [[Semantic Eigenvector Bundle]]
+* [[Unified Hypersurface]]

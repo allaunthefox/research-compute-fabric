@@ -1,0 +1,21 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Kimi OMTI Review MultiAgent Swarm
+title: Kimi-Multi-Expert OMTI Review
+type: text/vnd.tiddlywiki
+
+! Kimi-Multi-Expert OMTI Review
+
+Kimi conversation coordinating a maximum-size agent swarm via workspace/blackboard to review the OMTI paper. Agents were configured not to trust each other, themselves, or the data — only accepting conclusions backed by mathematical proof. Goal: firm up the paper through adversarial multi-expert review.
+
+* Source file: `ingest/Kimi-Multi-Expert_OMTI_Review.json` (85 KB, 100 messages)
+* First query: "assign the maximum amount of agents in a swarm to coordinate via workspace/blackboard, they do not believe each other, themselves or the data they review but they do after they find the math that proves their choices. the goal is firm up the paper"
+
+Covers: multi-agent orchestration, adversarial expert review, blackboard architecture, OMTI paper verification.
+
+!! Links
+
+* [[Kimi Conversations]]
+* [[Kimi-Ontological Manifold Theory Overview]]
+* [[Kimi-Theory Cleanup via Review]]
+* [[Kimi-Framework Re-Review]]

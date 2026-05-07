@@ -1,0 +1,20 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Kimi Infrastructure MultiAgent Orchestration
+title: Kimi-Install Multi-Agent Orchestration
+type: text/vnd.tiddlywiki
+
+! Kimi-Install Multi-Agent Orchestration
+
+Kimi conversation about installing and setting up a lightweight multi-agent orchestration system based on the approach from juanpabloaj.com/2026/04/16 for making agents talk without paying for API usage. Focused on practical deployment of agent communication infrastructure.
+
+* Source file: `ingest/Kimi-Install_Multi-Agent_Orchestration.json` (56 KB)
+* First query: "https://juanpabloaj.com/2026/04/16/a-lightweight-way-to-make-agents-talk-without-paying-for-api-usage/ lets set this up"
+
+Covers: multi-agent orchestration setup, zero-cost agent communication, lightweight agent infrastructure.
+
+!! Links
+
+* [[Kimi Conversations]]
+* [[Kimi-Multi-Expert OMTI Review]]
+* [[Swarm ENE Middleware]]

@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack TSM Manifold Geometry
+title: Unified Hypersurface
+type: text/vnd.tiddlywiki
+
+! Unified Hypersurface
+
+Unified hypersurface (`3-Mathematical-Models/unified_surface/`) models computation as movement across a higher-dimensional surface combining multiple manifold structures. State stored as `uhs_state_*.json` with cached manifold data. The hypersurface folds together [[FiveD Torus Topology]], [[Menger Sponge Fractal Addressing]], Gabriel's Horn, and [[PIST Shell Encoding]] into a single geometric computation framework. Used by the [[Topological State Machine]] for multi-manifold state transitions and the [[Hutter Prize Compression]] pipeline for unified compression geometry (Torus-Menger-Horn folding). Related to the composite manifold CAD model.

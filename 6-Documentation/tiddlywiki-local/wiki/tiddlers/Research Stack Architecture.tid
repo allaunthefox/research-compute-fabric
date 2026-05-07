@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Meta Architecture
+title: Research Stack Architecture
+type: text/vnd.tiddlywiki
+
+! Research Stack Architecture
+
+The Research Stack is organized into 6 layers: 0-Core-Formalism (Lean proofs, Q16_16 fixed-point, Rust crates, C/LL/WGSL sources), 1-Notation-Layer (notation encoding), 2-Search-Space (search topology), 3-Mathematical-Models (equation extraction, CAD models, TSM caches, manifold compression), 4-Infrastructure (ENE swarm, GCL compression, hardware/FPGA, GPU/WebGPU, embedded/VMs, nano-kernel, servo-fetch), 5-Applications (scripts, text-to-CAD, Rust compressors, Tauri native apps, tools), 6-Documentation (papers, docs, wiki, tiddlywiki). Cross-cutting concerns include [[Lean Semantics Overview]] (formal verification), [[Delta GCL Compression]] (data encoding), [[Topological State Machine]] (geometric computation), [[Hutter Prize Compression]] (compression target), and [[Swarm ENE Middleware]] (orchestration). The [[ENe Cognitive Refactor Plan]] guides near-term infrastructure evolution.

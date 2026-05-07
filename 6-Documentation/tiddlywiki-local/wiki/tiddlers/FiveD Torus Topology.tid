@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Lean Topology Torus Compression
+title: FiveD Torus Topology
+type: text/vnd.tiddlywiki
+
+! FiveD Torus Topology
+
+5D torus topology formalized in `0-Core-Formalism/lean/Semantics/Semantics/FiveDTorusTopology.lean` — provides periodic boundary routing for distributed manifold computation. Each dimension has size k_i; torus distance is the sum of wrapped Manhattan distances. Each node has 10 neighbors (2 per dimension). Bisection bandwidth is the product of all but the largest dimension size. Used by [[Hybrid TSM PIST Torus]], [[Networked Self Solving Space]], and the [[Meta Manifold Language Merging]] framework. The Python script `5-Applications/scripts/five_d_torus_topology.py` provides runtime access. The hypertorus CAD model at `3-Mathematical-Models/cad_models/hypertorus_slice.scad` visualizes the 3D slice with φ-irrational rotation sampling. One of three pathological manifold structures for [[Hutter Prize Compression]].

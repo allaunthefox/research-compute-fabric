@@ -1,0 +1,17 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Compression GCL Infrastructure
+title: Delta GCL Compression
+type: text/vnd.tiddlywiki
+
+! Delta GCL Compression
+
+Delta GCL (General Compression Language) is the primary compression pipeline in the stack. Core components: `4-Infrastructure/infra/delta_gcl_compression_service.py`, `4-Infrastructure/infra/adaptive_delta_gcl.py`, `4-Infrastructure/infra/neural_delta_gcl_compressor.py`, `4-Infrastructure/infra/topological_storage_delta_gcl.py`. The pipeline: raw data → Metafoam compression → Delta GCL encoding → AES-256-GCM encryption → SQLite storage. Includes GCL sequence generation, manifest encoding, and RG-flow-lawful compression verification. The `DeltaGCLEncoder` produces compact GCL sequences that can be stored instead of full payloads (used by [[ENE API Hook]]). Related to the GCCL theory (ΔφγKλ compression law) and the genetic coding infrastructure.
+
+!! Links
+
+* [[ENE API Hook]]
+* [[Compression and Soliton Mining]]
+* [[Hutter Prize Compression]]
+* [[Genomic Data Compression Anchor]]
+* [[GCL Nanokernel]]

@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Lean AVMR Vector Manifold
+title: AVMR Adaptive Vector Manifold Representation
+type: text/vnd.tiddlywiki
+
+! AVMR Adaptive Vector Manifold Representation
+
+AVMR (Adaptive Vector Manifold Representation) is a core mathematical framework formalized across 7 Lean modules: `AVMR.lean`, `AVMRCore.lean`, `AVMRClassification.lean`, `AVMRProofs.lean`, `AVMRTheorems.lean`, `AVMRInformation.lean`, `AVMRFrameworkMetaprobe.lean`. Provides vector manifold representation with adaptive dimensionality, classification into manifold types, formal proofs of representation theorems, and information-theoretic bounds. Used by the [[AMMR Adaptive Meshless Methods]] for meshless PDE solving, [[SLUQ Routing]] for quaternion manifold navigation, and the [[Equation Forest Index]] for semantic vector mapping. The paper source is at `6-Documentation/papers/braid-field-papers/papers/AVMR.tex`. Part of the layered mountain model.

@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Visualization Manifold HTML WebGL
+title: Manifold Viewer
+type: text/vnd.tiddlywiki
+
+! Manifold Viewer
+
+Interactive 3D manifold visualizations in the browser: `6-Documentation/docs/semantics/manifold_viewer.html` (full 3D manifold viewer with torus, sponge, and shell projections), `obelisk_manifold.html` (obelisk-style manifold with composite addressing), `pist_workflow_diagram.html` (PIST encoding workflow visualization). The manifold viewer uses Three.js/WebGL for real-time 3D rendering of: hypertorus projections, Menger sponge levels, PIST shell coordinates, and composite manifold structures. The [[Text-to-CAD Viewer]] (`5-Applications/text-to-cad/viewer/`) provides a React-based alternative for CAD model visualization with glTF/STL export. All viewer assets reference the [[Cad Models]] collection at `3-Mathematical-Models/cad_models/`.

@@ -1,0 +1,84 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Kimi Conversations Index
+title: Kimi Conversations
+type: text/vnd.tiddlywiki
+
+! Kimi Conversations
+
+Master index of 38 Kimi AI conversation dumps, organized by topic. These are conversation histories exported from Kimi (kimi.moonshot.cn) covering the Research Stack's development across multiple domains. Source directory: `/home/allaun/Documents/ingest/Kimi-*.json`.
+
+!! Architecture & Infrastructure
+
+* [[Kimi-Install Multi-Agent Orchestration]]
+* [[Kimi-GitHub Repo Review]]
+* [[Kimi-Project Issue Update]]
+
+!! Lean & Formal Math
+
+* [[Kimi-Lean Proof Completion]]
+* [[Kimi-Math Notation Extraction]]
+* [[Kimi-Math Queries]]
+* [[Kimi-Cross Domain Math Analysis]]
+* [[Kimi-Universal Cross-Domain Math]]
+* [[Kimi-Review of Your Formula]]
+
+!! Equation Derivation
+
+* [[Kimi-Attention Center Equation Derivation]]
+* [[Kimi-N-Body Thermodynamic Equation]]
+* [[Kimi-Equation Derivation from Zenodo]]
+* [[Kimi-Spacetime from Fundamental Forces]]
+
+!! Topology & Manifolds
+
+* [[Kimi-Ontological Manifold Theory Overview]]
+* [[Kimi-Topological Genome Tractability Pipeline]]
+* [[Kimi-GraphML Manifold Model Improvement]]
+* [[Kimi-Attention-Driven Canonical Action]]
+
+!! Biology & Genetics
+
+* [[Kimi-Hachimoji DNA RNA Spectrum]]
+* [[Kimi-DNA Computing Options]]
+* [[Kimi-Protein Geometry and N-Fold]]
+* [[Kimi-Protein Structures and Invariant Roots]]
+* [[Kimi-Carbon-11 Eta Prime State]]
+* [[Kimi-N-State Models for Organic Systems]]
+
+!! Hardware & Physics
+
+* [[Kimi-Tiny Tapeout Cost and Core]]
+* [[Kimi-θ-TaN Thermal Model]]
+* [[Kimi-Emergent Stability Power Networks]]
+
+!! Review & Audit
+
+* [[Kimi-Framework Re-Review]]
+* [[Kimi-Multi-Expert OMTI Review]]
+* [[Kimi-Theory Cleanup via Review]]
+* [[Kimi-Spec 250 Equation Rigor]]
+* [[Kimi-review stablity]]
+
+!! Unsolved & Speculative
+
+* [[Kimi-Unsolved Geometry Problems]]
+* [[Kimi-Algebraic Bracket Chat Room]]
+* [[Kimi-PBACS Final Version]]
+
+!! Multi-Language
+
+* [[Kimi-ISO Language Comparison]]
+* [[Kimi-Model Indexing and Equation Run]]
+
+!! 中文 (Chinese)
+
+* [[Kimi-四力几何推导]]
+* [[Kimi-多代理协作探不变方程]]
+
+!! Related
+
+* [[Conversation Mining Source Map]]
+* [[Mined Conversation Concepts]]
+* [[Full Chat Log Dumps]]
+* [[Kimi-More Conversations]]

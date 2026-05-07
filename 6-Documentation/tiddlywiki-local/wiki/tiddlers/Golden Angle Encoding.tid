@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Lean Math Encoding Geometry
+title: Golden Angle Encoding
+type: text/vnd.tiddlywiki
+
+! Golden Angle Encoding
+
+Golden angle (φ ≈ 137.5°) encoding uses irrational rotations for non-repeating coordinate systems. Lean modules: `GoldenAngleEncoding.lean`, `GoldenSpiralManifold.lean`, `GoldenSpiralNavigation.lean`. The golden angle ensures that no two positions ever exactly repeat, providing optimal packing in angular coordinates — used by phyllotaxis (plant leaf arrangement) and the [[Gray-Code Golden-Spiral Fold]] for spiral-based compression. Python: `5-Applications/scripts/golden_spiral_navigation.py`. Connected to [[Phi Shell Encoding]] and [[Phinary Number System]] for φ-based mathematical representations. The golden spiral manifold provides dense traversal of 2D/3D coordinate spaces without collision.

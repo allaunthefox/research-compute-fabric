@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Lean PIST Compression Math
+title: PIST Shell Encoding
+type: text/vnd.tiddlywiki
+
+! PIST Shell Encoding
+
+PIST (Prime Integer Shell Transform) encodes integers as (k, t) coordinates where n = k² + t, k = floor(sqrt(n)), 0 ≤ t ≤ 2k. Formalized in `0-Core-Formalism/lean/Semantics/Semantics/PIST.lean` with bridges to hardware blitter via `PistBridge.lean`. Mass is t·(2k+1-t) — zero at shell edges, max at center. Mirror involution (k, t) → (k, 2k+1-t) preserves mass and is self-inverse. Extensions: n-dimensional bundle shifting (`PistNDBundleShifter`), phi-shell golden ratio encoding (`PhiShellEncoding.lean`), torsional PIST variants. The Python implementations span 5 files at `3-Mathematical-Models/pist_biological_polymorphic_shifter_v3*.py` and `5-Applications/pist-scripts/`. Visualizable via `3-Mathematical-Models/cad_models/pist_shells.scad`. One of three pathological manifold structures.

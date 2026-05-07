@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Math AMMR PDE
+title: AMMR Adaptive Meshless Methods
+type: text/vnd.tiddlywiki
+
+! AMMR Adaptive Meshless Methods
+
+Adaptive Meshless Methods Repository (`3-Mathematical-Models/AMMR/`) provides mesh-free PDE solving with formal Lean proofs (`AMMRLUT.lean`). Covers heat equation (2D), wave equation overhangs, and adaptive resolution refinement. The `WAVE_OVERHANGS_HEAT2D.md` cross-documents both solvers. Formal paper at `paper/AMMR.pdf`. Related to the [[Orthogonal AMMR]] Lean module and O-AMMR CRC pattern memory (`6-Documentation/docs/semantics/O_AMMR_CRC_PATTERN_MEMORY.md`). The adaptive meshless approach feeds into the [[Topological State Machine]] for geometric PDE evolution without grid constraints. Part of the layered mountain model (NUVMAP → AVMR → AMMR → O-AMMR → GCCL).

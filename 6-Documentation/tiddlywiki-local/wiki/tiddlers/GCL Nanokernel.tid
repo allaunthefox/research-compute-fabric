@@ -1,0 +1,16 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Infrastructure NanoKernel Compression
+title: GCL Nanokernel
+type: text/vnd.tiddlywiki
+
+! GCL Nanokernel
+
+The GCL-based nanokernel (`4-Infrastructure/nano-kernel/`) provides a self-hosting execution environment for compression operations. Features include: GCL-native instruction set, self-hosting toolchain, socket server for inter-process communication, kexec-based boot chain, and neuromorphic kernel primitives. Integrates with the ASIC nanokernel stream adapter (`5-Applications/scripts/asic_nanokernel_stream_adapter.py`) and the nanocartridge UART stack. Designed to run compression/decompression at the hardware level with minimal overhead. The architecture supports hot-swap cartridge loading and voltage-computational substrate integration.
+
+!! Links
+
+* [[Delta GCL Compression]]
+* [[FPGA Warden]]
+* [[HDMI Compute Fabric]]
+* [[Compression and Soliton Mining]]

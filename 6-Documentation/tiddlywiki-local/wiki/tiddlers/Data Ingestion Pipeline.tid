@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Data Ingestion Pipeline
+title: Data Ingestion Pipeline
+type: text/vnd.tiddlywiki
+
+! Data Ingestion Pipeline
+
+Multi-source data ingestion pipeline that feeds the Research Stack knowledge base. Scripts include: `5-Applications/scripts/ingest_chatgpt_session.mjs` (ChatGPT conversations), `ingest_research.js`, `md_to_jsonl_converter.py`, `strip_tags_to_raw.py`, `text_container_to_jsonl.py`. External connectors: Notion and Linear via `notion-native-tauri/` and `linear-native-tauri/` Rust applications, plus `dump_notion_full.js` and `dump_linear_full.js`. Language corpora via `download_multilingual_corpora.py`, CommonCrawl via `commoncrawl_waveprobe_ingestion.py`, ArXiv via `arxiv_miner.py`, and mathlib via `mathlib_ingestion_pipeline.py`. The ingest pipeline feeds into the [[ENE Wiki Layer]] for structured storage, the [[Swarm ENE Middleware]] for caching, and the [[Equation Forest Index]] for mathematical extraction. [[Mined Conversation Concepts]] and [[Full Chat Log Dumps]] provide the conversation mining surface.

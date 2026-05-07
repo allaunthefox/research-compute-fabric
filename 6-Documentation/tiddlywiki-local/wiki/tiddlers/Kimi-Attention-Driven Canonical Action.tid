@@ -1,0 +1,18 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Kimi Attention CanonicalAction
+title: Kimi-Attention-Driven Canonical Action
+type: text/vnd.tiddlywiki
+
+! Kimi-Attention-Driven Canonical Action
+
+Kimi conversation about attention-driven canonical action formalism: Attn(c | σ) as a triage score over convergence/contradiction/degraded-state penalty, and C*(x, σ) as the original canonical action. Explored decision-theoretic formalisms for attention-based action selection.
+
+* Source file: `ingest/Kimi-Attention-Driven_Canonical_Action.json` (4 KB)
+* First query: provided formal definitions for Attn(c|σ) and C*(x, σ) attention/canonical action framework
+
+!! Links
+
+* [[Kimi Conversations]]
+* [[Kimi-Attention Center Equation Derivation]]
+* [[Semantic Engine Binding Derivation]]

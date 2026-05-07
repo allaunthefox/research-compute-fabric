@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Lean RGFlow Semantics Manifold
+title: Semantic RG Flow
+type: text/vnd.tiddlywiki
+
+! Semantic RG Flow
+
+Semantic Renormalization Group (RG) flow applies renormalization group theory to semantic manifolds. Lean modules: `SemanticRGFlow.lean` (core), `SwarmRGFlow.lean` (swarm-distributed), `BitcoinRGFlow.lean` (financial/commitment applications). The RG flow enables scale-invariant semantic operations — coarse-graining of concept vectors preserves structural relationships. Energy scale β controls the flow; fixed points represent stable semantic configurations. Used by the [[Topological State Machine]] for scale-invariant state transitions, [[NIICore Architecture]] for morphic field RG, and [[Hutter Prize RG Flow]] for compression-optimized renormalization. The `TopologyRGFlow.lean` (likely in Extensions/) connects to topological persistence.

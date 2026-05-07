@@ -1,0 +1,16 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Compression Manifold TSM
+title: FAMM Fast Approximate Manifold Map
+type: text/vnd.tiddlywiki
+
+! FAMM Fast Approximate Manifold Map
+
+FAMM (Fast Approximate Manifold Map) is the binary cache layer for topological state machines (TSM). Appears as `famm_bank.bin` files in multiple TSM caches: `3-Mathematical-Models/eigenvector_tsm/tsm_cache/famm_bank.bin`, `3-Mathematical-Models/hutter_eigenvector/tsm_cache/famm_bank.bin`, and Lean formalizations at `4-Infrastructure/hardware/verilog/morphic_scalar_famm.v`. Provides low-latency manifold lookup from pre-computed topological state transitions. Used by WaveProbe + FAMM pre-shaping (`4-Infrastructure/shim/waveprobe_manifold_famm_preshaper.py`). Integrates with the [[Topological State Machine]] and [[Waveprobe]] systems. Binary format optimized for FPGA/ASIC deployment.
+
+!! Links
+
+* [[Topological State Machine]]
+* [[Waveprobe]]
+* [[Manifold Flow]]
+* [[FPGA Warden]]

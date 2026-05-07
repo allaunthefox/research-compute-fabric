@@ -1,22 +1,16 @@
-created: 20260506134500000
-modified: 20260506134500000
-tags: ResearchStack SemanticGraph Search Candidate
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack TSM Eigenvector Math
 title: Semantic Eigenvector Bundle
 type: text/vnd.tiddlywiki
 
 ! Semantic Eigenvector Bundle
 
-Gestalt-like cluster of concepts treated as a principal direction over a typed
-evidence graph instead of as isolated keywords.
+The eigenvector pipeline maps mathematical equations and manifold states to topological eigenvectors. Key scripts: `5-Applications/scripts/find_equation_eigenvectors.py` (discovers equation eigenvectors), `5-Applications/scripts/neural_type_eigenvector_coverage.py` (coverage analysis of neural-type eigenvectors), `5-Applications/scripts/eigenvector_tsm_hyperfluid.py` (hyperfluid TSM eigenvector evolution). Output data includes `3-Mathematical-Models/eigenvector_tsm/eigenvector_hyperfluid_150_steps.json` and `3-Mathematical-Models/hutter_eigenvector/hutter_eigenvector_150_steps.json`. Integrates with the [[Topological State Machine]] and [[FAMM Fast Approximate Manifold Map]] for caching eigenvector trajectories. The Hutter eigenvector variant applies this to compression-oriented manifold analysis, feeding into the [[Hutter Prize Compression]] pipeline.
 
 !! Links
 
-* [[Internal Semantic Search]]
-* [[HELLO Transform]]
-* [[Semantic Graph Mining]]
-* [[Tensor Compass]]
-
-!! Durable Sources
-
-* `../wiki/Concept-Archive.md`
-* `../docs/research/NEURAL_TYPE_EIGENVECTOR_COVERAGE.md`
+* [[Topological State Machine]]
+* [[FAMM Fast Approximate Manifold Map]]
+* [[Hutter Prize Compression]]
+* [[Morphic DSP]]

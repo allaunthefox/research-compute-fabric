@@ -1,0 +1,14 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Math Equations Forest Search
+title: Equation Forest Index
+type: text/vnd.tiddlywiki
+
+! Equation Forest Index
+
+The Equation Forest is a structured index of mathematical equations discovered, extracted, and mapped across the research stack. Key files: `6-Documentation/docs/EQUATION_FOREST_INDEX.md` (master index), `6-Documentation/docs/FOREST_TOPOLOGY_MAP.md` (topological organization), and `5-Applications/scripts/generate_equation_forest.py` (generator). The forest organizes equations into families (chain, coupling, entropy, feedback, gradient, mass, scaling) with parquet-tagged clustering at `3-Mathematical-Models/equations_parquet_tagged/` (26 files). The `EquationForestActiveKernels.md` and `EquationForestGenome18Encoder.py` extend to genetic encoding of equation families. Searchable via [[HNSW Vector Search]] and the [[Semantic Graph Mining]] pipeline.
+
+* [[HNSW Vector Search]]
+* [[Semantic Graph Mining]]
+* [[AVMR Adaptive Vector Manifold Representation]]
+* [[Canonical Formula Index]]

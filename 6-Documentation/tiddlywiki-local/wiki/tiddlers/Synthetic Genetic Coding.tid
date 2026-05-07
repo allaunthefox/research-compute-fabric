@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Biology Genetics Compression
+title: Synthetic Genetic Coding
+type: text/vnd.tiddlywiki
+
+! Synthetic Genetic Coding
+
+Synthetic genetic coding research (`6-Documentation/docs/SYNTHETIC_GENETIC_CODING_RESEARCH.md`) and Lean module `SyntheticGeneticCoding.lean`. Explores DNA as a programmable storage medium with codon→gene→chromosome→genome hierarchical encoding. The genetic coding infrastructure includes [[Genetic Code Optimization]], [[LaviGen]] (genetic language variant generation), and the [[Peptide MoE]] (mixture-of-experts model for peptide prediction). Connected to the [[Hutter Prize Compression]] strategy through genome-as-compressor models. The [[Genomic Data Compression Anchor]] provides the compression target. See also `6-Documentation/wiki/Obsidian-connector/Manifold/Modules/SyntheticGeneticCoding.md`.

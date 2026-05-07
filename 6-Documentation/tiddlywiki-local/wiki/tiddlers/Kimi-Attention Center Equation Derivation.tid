@@ -1,0 +1,19 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Kimi EquationDerivation AttentionMechanism
+title: Kimi-Attention Center Equation Derivation
+type: text/vnd.tiddlywiki
+
+! Kimi-Attention Center Equation Derivation
+
+Kimi conversation exploring the derivation of equations that describe attention mechanism centers. The session searched for papers related to attention mechanisms since 2020 using academic data sources.
+
+* Source file: `ingest/Kimi-Attention_Center_Equation_Derivation.json` (1190 KB, 60 messages)
+* First query: "try to find the equation that describes the center in this. Search for papers related to the attention mechanism since 2020. Use some academic data"
+
+Covers: attention mechanism mathematics, center-of-attention equation derivation, literature review of post-2020 attention papers.
+
+!! Links
+
+* [[Kimi Conversations]]
+* [[Attention-Driven Canonical Action]]

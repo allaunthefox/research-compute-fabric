@@ -1,0 +1,17 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Tracing Specification Provenance
+title: Single-State Trace Spec
+type: text/vnd.tiddlywiki
+
+! Single-State Trace Spec
+
+Single-State Trace Specification v0.1 (11KB). Defines a tracing format for capturing single-state transitions in the topological state machine with full provenance metadata.
+
+Durable Source: `/home/allaun/Documents/ingest/Single-State Trace Spec v0.1`
+
+!! Links
+
+* [[Topological State Machine]]
+* [[FAMM Fast Approximate Manifold Map]]
+* [[Invariant Receipt Core]]

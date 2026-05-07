@@ -1,0 +1,18 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Compression Gossip MKV
+title: N-Folded MMR Gossip Compression
+type: text/vnd.tiddlywiki
+
+! N-Folded MMR Gossip Compression
+
+N-Folded MMR (Merkle Mountain Range) Gossip protocol for generative compression via MKV containers. Source directory: `/home/allaun/Documents/ingest/extraction required/` contains multiple markdown specs and experiment Python scripts. Key documents: `N-Folded_MMR_Gossip_as_a_Generative_Compression_Mo.md`, `The_N-Folded_MMR_Gossip_Surface_as_an_LLM_KV_Cache.md`, `The_Video_File_as_a_Self-Instantiating_Weird_Machi.md`. Includes Lean formalizations (MMR Gossip + NUVMAP) and acceleration profiles.
+
+Durable Source: `/home/allaun/Documents/ingest/extraction required/`
+
+!! Links
+
+* [[Delta GCL Compression]]
+* [[Compression and Soliton Mining]]
+* [[Hutter Prize Compression]]
+* [[Weird Machine Video]]

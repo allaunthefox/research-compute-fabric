@@ -1,0 +1,18 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack ChatGPT Security NIICore
+title: Chat Log 414-1200 NII Core Security
+type: text/vnd.tiddlywiki
+
+! Chat Log 414-1200 NII Core Security
+
+ChatGPT session (240KB) unpacking and analyzing a `securityforNIIcore.zip` archive with ~100+ files. Reviews security posture of the NII Core architecture.
+
+Durable Source: `/home/allaun/Documents/ingest/chagpt-414-1200.md`
+
+!! Links
+
+* [[NIICore Architecture]]
+* [[ENE API Hook]]
+* [[ENESecurity]]
+* [[Sigma Gate]]

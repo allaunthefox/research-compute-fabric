@@ -1,0 +1,18 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack ChatGPT Hardware FPGA DIAT
+title: Chat Log 415-1130 DIAT Hardware
+type: text/vnd.tiddlywiki
+
+! Chat Log 415-1130 DIAT Hardware
+
+ChatGPT session (383KB) working with DIAT (Diatom) hardware tables: `diat_inv_table(3).mem`, `diat_sqrt_table(3).mem`, `diat_phonon_node(1).v` - Verilog hardware definitions for phonon-mediated computation. Part of the DIAT framework for biological-stiffness-aware hardware.
+
+Durable Source: `/home/allaun/Documents/ingest/chatgpt_conversation_415_1130am.md`
+
+!! Links
+
+* [[FPGA Warden]]
+* [[ASIC Topology]]
+* [[Extremophile Constraint Layer]]
+* [[Phonon Mediated Languages]]

@@ -1,0 +1,38 @@
+# Duplicate chat logs (same content, different filenames)
+chagpt-414-1202.md
+possible_duplicate_chatgpt_414_1210.md
+possible_duplicate_chatgpt_414_1212.md
+possible_duplicate_chatgpt_414_1214.md
+possible_duplicate_chatgpt_414_1215.md
+possible_duplicate_chatgpt_414_1220.md
+possible_duplicate_pbacs_chatgpt_414_1218.md
+kimik2.5_possible_dupe_220pm_41426.md
+
+# Empty/stub files
+Tasks
+The Ending
+Articles
+metadata
+categories
+
+# Binary/image-only (no extractable text)
+50bdae1f-9d35-4028-b786-407d28523f06.png
+36fa31d0-3aa4-11f1-bcea-c1819e584bd6.png
+files.zip
+braid-field-papers.zip
+
+# Large database dumps (not human-readable, need dedicated ingestion)
+SOVEREIGN MATH MODEL DATABASE V2
+deletemelater
+LEAN4 STATIC TOOLCHAIN V4.30.0
+ScienceDirect articles 15Apr2026 06 46 46.627
+ChatGPT Batch 2026 05 03
+
+# Manifest/export metadata (auto-generated)
+CHATGPT_LATEST_EXPORT_MANIFEST.md
+LATEST_EXPORT_MANIFEST.md
+BridgeModel_Module_Guide.md
+InvariantSurfaceConstitution_v2.md
+walkthrough_4_13_2026.md
+chatgpt_conversation.md
+freakingpaste.md

@@ -1,0 +1,17 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack KDA BFT Consensus Hardware
+title: Session Record KDA-18 BFT Judge
+type: text/vnd.tiddlywiki
+
+! Session Record KDA-18 BFT Judge
+
+Session record covering KDA-18 C20-C31 with BFT (Byzantine Fault Tolerance) Judge wiring. 9KB document discussing the intersection of the KDA framework with BFT consensus mechanisms and hardware wiring for judge nodes.
+
+Durable Source: `/home/allaun/Documents/ingest/Session Record: KDA-18 C20-C31 + BFT Judge Wiring`
+
+!! Links
+
+* [[MoonRF ECP5 Hardware BFT Oracle]]
+* [[Triumvirate Enforcer]]
+* [[FPGA Warden]]

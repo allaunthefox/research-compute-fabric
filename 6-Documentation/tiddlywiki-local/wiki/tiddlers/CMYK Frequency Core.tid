@@ -1,0 +1,17 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Lean Encoding Compression
+title: CMYK Frequency Core
+type: text/vnd.tiddlywiki
+
+! CMYK Frequency Core
+
+CMYK Frequency Core is a frequency-domain encoding scheme using CMYK color space primitives for compression. Lean formalization at `CMYKFrequencyCore.lean` in `/home/allaun/Documents/ingest/extraction required/`. Integrates with NUVMAP compression and the N-Folded MMR Gossip framework.
+
+Durable Source: `/home/allaun/Documents/ingest/extraction required/CMYKFrequencyCore.lean`
+
+!! Links
+
+* [[N-Folded MMR Gossip Compression]]
+* [[Delta GCL Compression]]
+* [[Golden Angle Encoding]]

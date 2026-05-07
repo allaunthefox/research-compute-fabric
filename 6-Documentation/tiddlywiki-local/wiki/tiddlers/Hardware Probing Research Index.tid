@@ -1,0 +1,27 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Hardware Probing Security
+title: Hardware Probing Research Index
+type: text/vnd.tiddlywiki
+
+! Hardware Probing Research Index
+
+Index of hardware probing and reverse engineering research documents:
+
+* Finer Hardware Probing Methods - Research Summary (15KB)
+* SSD PCIe Side Channel Probing (11KB)
+* HDMI Cleanroom Reverse Engineering Research (10KB)
+* SSD Comprehensive Analysis (9KB)
+* RAM Addressing Scheme and Circuit Wiring Analysis (9KB)
+* Realtek RTL8126 MMIO Security Analysis (8KB)
+* Mesa Drivers for AMD GPU - HDMI/DisplayPort Support Research (14KB)
+* Keyboard, Mouse, and Monitor Device Research (10KB)
+
+All located in `/home/allaun/Documents/ingest/`.
+
+!! Links
+
+* [[HDMI Compute Fabric]]
+* [[FPGA Warden]]
+* [[ASIC Topology]]
+* [[Motherboard Computational Substrate]]

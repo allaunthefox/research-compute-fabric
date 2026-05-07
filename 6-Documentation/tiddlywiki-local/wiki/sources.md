@@ -1,0 +1,330 @@
+# Research Stack — Source Provenance Spine
+
+Generated: 2026-05-07 00:38
+
+Sources scanned: 312
+Tiddlers compiled: 167
+
+## Covered Sources (have matching tiddlers)
+
+- **Session: Tardygrada + Lambda_B + Patent Setup — 2026-04-04** (chatgpt_md, 2726KB) → [[Local Setup Notes]]
+- **Abelian_Sandpile_Model1** (article, 1460KB) → [[Hybrid Abelian Non-Abelian Sandpile]]
+- **Attention Center Equation Derivation** (kimi_json, 1190KB) → [[Kimi-Attention Center Equation Derivation]], [[Kimi-Equation Derivation from Zenodo]]
+- **chatgpt 4 10 2026** (chatgpt_md, 634KB) → [[Deep Mining Pass 2026-05-06]]
+- **chatgpt 4 11 2026** (chatgpt_md, 535KB) → [[Deep Mining Pass 2026-05-06]]
+- **conversations qwen** (chatgpt_md, 442KB) → [[Kimi Conversations]], [[Kimi-More Conversations]]
+- **Unsolved Geometry Problems** (kimi_json, 407KB) → [[Kimi-Unsolved Geometry Problems]], [[Kimi-Protein Geometry and N-Fold]]
+- **MOIM_Architecture** (article, 374KB) → [[Research Stack Architecture]], [[NIICore Architecture]]
+- **Algebraic Bracket Chat Room** (kimi_json, 364KB) → [[Kimi-Algebraic Bracket Chat Room]]
+- **moim ene catalog** (research_article, 315KB) → [[ENE Memory Atom]], [[ENE Substrate Mining]], [[ENE Wiki Layer]], [[TiddlyWiki ENE Bridge Plugin]], [[ENE API Hook]]
+- **chatgpt conversation** (chatgpt_md, 285KB) → [[Conversation Mining Source Map]], [[Mined Conversation Backlog]], [[Mined Conversation Concepts]]
+- **Ontological Manifold Theory Overview** (kimi_json, 186KB) → [[Manifold Flow]], [[Manifold Viewer]], [[Kimi-Ontological Manifold Theory Overview]]
+- **morphic topology graphml** (chatgpt_md, 153KB) → [[Morphic DSP]], [[FiveD Torus Topology]], [[ASIC Topology]], [[Kimi-GraphML Manifold Model Improvement]]
+- **Math Queries** (kimi_json, 140KB) → [[Kimi-Math Queries]], [[Kimi-Math Notation Extraction]], [[Kimi-Cross Domain Math Analysis]], [[Kimi-Universal Cross-Domain Math]]
+- **Lean Proof Completion** (kimi_json, 99KB) → [[Lean Semantics Overview]], [[Kimi-Lean Proof Completion]]
+- **θ-TaN Thermal Model** (kimi_json, 98KB) → [[Kimi-θ-TaN Thermal Model]], [[Kimi-Model Indexing and Equation Run]]
+- **N-Body Thermodynamic Equation** (kimi_json, 91KB) → [[Kimi-N-Body Thermodynamic Equation]]
+- **Multi-Expert OMTI Review** (kimi_json, 85KB) → [[Kimi-Multi-Expert OMTI Review]], [[Kimi-review stablity]], [[Kimi-Framework Re-Review]]
+- **Topological Genome Tractability Pipeline** (kimi_json, 76KB) → [[Hachimoji Pipeline]], [[Kimi-Topological Genome Tractability Pipeline]]
+- **GitHub Repo Review** (kimi_json, 69KB) → [[Kimi-Multi-Expert OMTI Review]], [[Kimi-GitHub Repo Review]], [[Kimi-Theory Cleanup via Review]], [[Kimi-review stablity]], [[Kimi-Framework Re-Review]], [[Kimi-Review of Your Formula]]
+- **DNA Computing Off‑Shelf Options** (kimi_json, 58KB) → [[Kimi-DNA Computing Options]]
+- **Install Multi-Agent Orchestration** (kimi_json, 55KB) → [[Kimi-Install Multi-Agent Orchestration]]
+- **Tiny Tapeout Cost & Core Design** (kimi_json, 46KB) → [[Kimi-Tiny Tapeout Cost and Core]]
+- **ene ingestion engine** (unknown, 39KB) → [[ENE Memory Atom]], [[ENE Substrate Mining]], [[ENE Wiki Layer]], [[Semantic Engine Binding Derivation]], [[TiddlyWiki ENE Bridge Plugin]], [[Data Ingestion Pipeline]], [[ENE API Hook]]
+- **post** (unknown, 37KB) → [[Mullins Skin-Effect Post Processing]]
+- **Theory Cleanup via Review** (kimi_json, 36KB) → [[Kimi-Theory Cleanup via Review]], [[Kimi-review stablity]], [[Kimi-Framework Re-Review]]
+- **query report** (research_article, 36KB) → [[Substrate FTS Query Surface]]
+- **ISO Language Comparison** (kimi_json, 33KB) → [[Kimi-ISO Language Comparison]]
+- **Project Issue Update** (kimi_json, 31KB) → [[Kimi-Project Issue Update]]
+- **Framework Re-Review** (kimi_json, 30KB) → [[Kimi-Multi-Expert OMTI Review]], [[Kimi-GitHub Repo Review]], [[Kimi-Theory Cleanup via Review]], [[Kimi-review stablity]], [[Kimi-Framework Re-Review]], [[Kimi-Review of Your Formula]]
+- **Hachimoji DNA/RNA Spectrum** (kimi_json, 28KB) → [[Hachimoji Pipeline]], [[Kimi-Hachimoji DNA RNA Spectrum]]
+- **Review of Your Formula** (kimi_json, 28KB) → [[Kimi-Multi-Expert OMTI Review]], [[Kimi-Theory Cleanup via Review]], [[Kimi-review stablity]], [[Kimi-Framework Re-Review]], [[Kimi-Review of Your Formula]]
+- **MOIM Architecture** (unknown, 27KB) → [[Research Stack Architecture]], [[NIICore Architecture]]
+- **Session: Organoid Encoding → LAMBDA_B Calibration** (chatgpt_md, 27KB) → [[Organoid Lambda Calibration]]
+- **Math Notation Extraction** (kimi_json, 26KB) → [[Kimi-Math Queries]], [[Kimi-Math Notation Extraction]], [[Kimi-Cross Domain Math Analysis]], [[Kimi-Universal Cross-Domain Math]]
+- **Spec 250 Equation Rigor** (kimi_json, 24KB) → [[Kimi-Spec 250 Equation Rigor]]
+- **ene query api** (unknown, 24KB) → [[ENE Memory Atom]], [[ENE Substrate Mining]], [[ENE Wiki Layer]], [[Substrate FTS Query Surface]], [[TiddlyWiki ENE Bridge Plugin]], [[ENE API Hook]]
+- **weird machine** (unknown, 21KB) → [[Topological State Machine]]
+- **weird machine (1)** (unknown, 21KB) → [[Topological State Machine]]
+- **Tensor Field Analysis DAG - Formal Defense** (chatgpt_md, 20KB) → [[Hutter Tensor Field Analysis DAG]], [[Tensor Compass]]
+- **weird machine v2** (unknown, 18KB) → [[Topological State Machine]]
+- **weird machine v2 (1)** (unknown, 18KB) → [[Topological State Machine]]
+- **Cross-Domain Analogies: Flow, Memory, and Constraints** (chatgpt_md, 17KB) → [[Manifold Flow]], [[Semantic RG Flow]]
+- **UCE_Constraint_Satisfaction_Neuromorphic_Architecture_2026** (article, 17KB) → [[Research Stack Architecture]], [[NIICore Architecture]]
+- **Hardware Schematics and Datasheets Reference** (chatgpt_md, 17KB) → [[Materials and Hardware Mining]]
+- **Mathematical Extraction from waveprobe_icmp_coordinator.py** (chatgpt_md, 15KB) → [[Waveprobe]]
+- **CMYKFrequencyCore.lean** (chatgpt_md, 14KB) → [[Lean Semantics Overview]], [[Kimi-Lean Proof Completion]]
+- **CMYKFrequencyCore.lean (1)** (chatgpt_md, 14KB) → [[Lean Semantics Overview]], [[Kimi-Lean Proof Completion]]
+- **manifold chain map** (chatgpt_md, 14KB) → [[Manifold Flow]], [[FAMM Fast Approximate Manifold Map]], [[AVMR Adaptive Vector Manifold Representation]], [[Manifold Viewer]]
+- **ENE SYSTEM MANIFEST v1.0** (chatgpt_md, 14KB) → [[ENE Memory Atom]], [[ENE Substrate Mining]], [[ENE Wiki Layer]], [[TiddlyWiki ENE Bridge Plugin]], [[ENE API Hook]]
+- **manifold chain map** (chatgpt_md, 14KB) → [[Manifold Flow]], [[FAMM Fast Approximate Manifold Map]], [[AVMR Adaptive Vector Manifold Representation]], [[Manifold Viewer]]
+- **The Story of a Tensor Field: A Critical Self-Attack** (chatgpt_md, 12KB) → [[Tensor Compass]]
+- **post** (unknown, 12KB) → [[Mullins Skin-Effect Post Processing]]
+- **Metaprobe Collective Manifold Math vs Morphic DSP Design Comparison** (chatgpt_md, 11KB) → [[Morphic DSP]], [[Manifold Flow]], [[Manifold Viewer]]
+- **Gowin DSP IP Manifold Shape Extraction** (chatgpt_md, 11KB) → [[Morphic DSP]], [[Manifold Flow]], [[Manifold Viewer]]
+- **Soliton Map — N-Space Path Trace for Replayable Actions** (chatgpt_md, 11KB) → [[Soliton N-Space Path]]
+- **WiFi, Bluetooth, and Ethernet Hardware Research** (chatgpt_md, 11KB) → [[Materials and Hardware Mining]]
+- **Gowin DSP IP Math vs Morphic DSP Design Comparison** (chatgpt_md, 10KB) → [[Morphic DSP]]
+- **[ARCHIVED - DEPRECATED TERMINOLOGY] Engram Codon Optical Decompressor** (chatgpt_md, 10KB) → [[Engram Decompressor]], [[Optical Codon Decoder]]
+- **Engram Codon Optical Decompressor** (chatgpt_md, 9KB) → [[Engram Decompressor]], [[Optical Codon Decoder]]
+- **chat moe corpus specific compression 20260325** (research_article, 9KB) → [[Hutter Prize Compression]], [[Peptide MoE]]
+- **Hardware Foreign Manifold Mapping Results** (chatgpt_md, 8KB) → [[Manifold Flow]], [[Manifold Viewer]]
+- **chat gemini hutter zk containment 20260318** (research_article, 8KB) → [[Hutter Prize Compression]]
+- **chat corpus analysis research stack 20260325** (research_article, 8KB) → [[Research Stack Home]], [[Research Stack Architecture]]
+- **Connection Machine Hypercube → Engram Voxel Topology** (chatgpt_md, 7KB) → [[Engram Decompressor]], [[ASIC Topology]]
+- **sovereign knowledge genome** (chatgpt_md, 7KB) → [[Kimi-Topological Genome Tractability Pipeline]]
+- **Janus Number Systems / Piet / Connectors Thread** (chatgpt_md, 7KB) → [[F-Number COUCH]]
+- **S3C Lean Code Manual Review** (chatgpt_md, 6KB) → [[Lean Semantics Overview]]
+- **Anisotropic Feature Genome** (chatgpt_md, 6KB) → [[Kimi-Topological Genome Tractability Pipeline]]
+- **prior art semantic infrastructure talisman 20260401** (research_article, 5KB) → [[Semantic RG Flow]]
+- **WaveProbe / Spoiler / Math Ingestion Thread** (chatgpt_md, 5KB) → [[Waveprobe]]
+- **Hutter Archive Format Specification — v1** (chatgpt_md, 5KB) → [[Hutter Prize Compression]]
+- **Chat Log Dump Manifest Summary** (chatgpt_md, 4KB) → [[Full Chat Log Dumps]]
+- **120-Cell / Hachimoji / Twist Thread** (chatgpt_md, 3KB) → [[Hachimoji Pipeline]]
+- **GeomTREE — The Semi-Jack Accountability Protocol (5-Minute Pitch)** (chatgpt_md, 3KB) → [[GeomTREE Semi-Jack Physical Witness]]
+- **Fractal Fork Decompressor** (chatgpt_md, 3KB) → [[Engram Decompressor]], [[Menger Sponge Fractal Addressing]]
+- **Collective Substrate ISA: Official v2.9 Specification** (chatgpt_md, 3KB) → [[Hutter Prize ISA]]
+- **Adversarial MoE Audit: Resonant v5-N "Power Bridge"** (chatgpt_md, 2KB) → [[Peptide MoE]]
+- **Longevity Audit: Avalanche Manifold vs. Wear & Tear** (chatgpt_md, 2KB) → [[Manifold Flow]], [[Manifold Viewer]]
+- **Adversarial MoE Report: Resonant Power Bridge (v5-N++)** (chatgpt_md, 2KB) → [[Peptide MoE]]
+- **Spec: The Unified Integration Controller (UN-C)** (chatgpt_md, 2KB) → [[Unified Hypersurface]]
+- **chat gemini hutter physics blender 20260318** (research_article, 2KB) → [[Hutter Prize Compression]]
+- **Spec: DAG Isomorphism (The Unified Scaling Law)** (chatgpt_md, 2KB) → [[Unified Hypersurface]]
+- **Final Concept Audit: The Perpetual Passive Manifold (v5.0)** (chatgpt_md, 2KB) → [[Concept Vector 14]], [[Manifold Flow]], [[Manifold Viewer]]
+- **Spec: The VRT Rust Engine (Topological State Unity)** (chatgpt_md, 2KB) → [[Topological State Machine]]
+- **MoE Audit: Cheapest Full-Spectrum EM on a Chip** (chatgpt_md, 2KB) → [[Peptide MoE]]
+- **Audit: VRT Software Resilience (MoE & Wolfram)** (chatgpt_md, 2KB) → [[Peptide MoE]]
+- **PCBWay Trace Routing Guide: TSM-VDP Wire-Centric Logic** (chatgpt_md, 2KB) → [[SLUQ Routing]]
+- **Spec: Sovereign Jenga (Discrete N-Space Manifold)** (chatgpt_md, 2KB) → [[Manifold Flow]], [[Manifold Viewer]]
+- **Audit: Topological State Unity (The Integration Capstone)** (chatgpt_md, 2KB) → [[Topological State Machine]]
+- **Spec: Resonant Topological State Unity Virtual Radio Telescope (VRT)** (chatgpt_md, 2KB) → [[Topological State Machine]]
+- **CANONICAL MATH MODELS** (research_article, 2KB) → [[Kimi-Math Queries]], [[Kimi-Math Notation Extraction]], [[Kimi-Cross Domain Math Analysis]], [[Kimi-Universal Cross-Domain Math]]
+- **Specification: Graph-Based State-Propagation VM (v1.1)** (chatgpt_md, 2KB) → [[Topological State Machine]]
+- **TSM-VDP CPU & Hardware Architecture Review** (chatgpt_md, 1KB) → [[Research Stack Architecture]], [[NIICore Architecture]], [[Kimi-review stablity]], [[Kimi-Framework Re-Review]]
+- **TSM-VDP v5: Virtual Verilog Architecture** (chatgpt_md, 1KB) → [[Research Stack Architecture]], [[NIICore Architecture]]
+- **Audit: High-Density Manifold Computation (v5-G)** (chatgpt_md, 1KB) → [[Manifold Flow]], [[Manifold Viewer]]
+- **Virtual Radio Network & Custom Substrate Review** (chatgpt_md, 1KB) → [[Kimi-review stablity]], [[Kimi-Framework Re-Review]]
+- **Tech Note: Symbolic Calibration (The Math/Metaphor Bridge)** (chatgpt_md, 1KB) → [[Organoid Lambda Calibration]]
+- **Audit: Resonant v5-H "Hardened" Manifold** (chatgpt_md, 1KB) → [[Manifold Flow]], [[Manifold Viewer]]
+- **Audit: Sovereign Lattice Resilience (MoE)** (chatgpt_md, 1KB) → [[Peptide MoE]]
+- **Synthesis: Passive Logic Manifold (R-L-C)** (chatgpt_md, 1KB) → [[Manifold Flow]], [[Manifold Viewer]]
+- **bodega map** (research_article, 1KB) → [[Conversation Mining Source Map]], [[FAMM Fast Approximate Manifold Map]]
+- **Specification: Resonant Stack v5 Unified Field** (chatgpt_md, 1KB) → [[Unified Hypersurface]]
+- **Audit: Silent Manifold Phase-Filter (v5-G)** (chatgpt_md, 1KB) → [[Manifold Flow]], [[Manifold Viewer]]
+- **Audit: v5-G "Virtual ASIC" (Final Hardware Verification)** (chatgpt_md, 1KB) → [[ASIC Topology]]
+- **Plan: Categorize and Find Invariant Roots** (chatgpt_md, 1KB) → [[Kimi-Protein Structures and Invariant Roots]]
+- **Chat Log Dumps** (chatgpt_md, 1KB) → [[Full Chat Log Dumps]]
+- **research ingestion index** (research_article, 0KB) → [[Data Ingestion Pipeline]]
+
+## Uncovered Sources (no tiddlers yet)
+
+- SOVEREIGN MATH MODEL DATABASE V2 (research_article, 107613KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/SOVEREIGN_MATH_MODEL_DATABASE_V2.json`
+- HY_World_2_0 (article, 33418KB) — `/home/allaun/Documents/ingest/HY_World_2_0.pdf`
+- Agentic_Design_Patterns (article, 19626KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/Agentic_Design_Patterns.pdf`
+- s41378-025-00875-w (article, 2616KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/s41378-025-00875-w.pdf`
+- Yu 2025 ApJ 995 205 (unknown, 2063KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/Yu_2025_ApJ_995_205.epub`
+- rsif.2022.0562 (article, 1258KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/rsif.2022.0562.pdf`
+- possible duplicate chatgpt 414 1212 (chatgpt_md, 521KB) — `/home/allaun/Documents/ingest/possible_duplicate_chatgpt_414_1212.md`
+- kimik2.5 possible dupe 220pm 41426 (chatgpt_md, 443KB) — `/home/allaun/Documents/ingest/kimik2.5_possible_dupe_220pm_41426.md`
+- chagpt 414 1043 (chatgpt_md, 415KB) — `/home/allaun/Documents/ingest/chagpt-414-1043.md`
+- chagpt 414 1202 (chatgpt_md, 415KB) — `/home/allaun/Documents/ingest/chagpt-414-1202.md`
+- chatgpt conversation 415 1130am (chatgpt_md, 388KB) — `/home/allaun/Documents/ingest/chatgpt_conversation_415_1130am.md`
+- chatgpt ingest1 (chatgpt_md, 388KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/chatgpt_ingest1.md`
+- possible duplicate pbacs chatgpt 414 1218 (chatgpt_md, 315KB) — `/home/allaun/Documents/ingest/possible_duplicate_pbacs_chatgpt_414_1218.md`
+- chagpt 414 1205 (chatgpt_md, 310KB) — `/home/allaun/Documents/ingest/chagpt-414-1205.md`
+- possible duplicate chatgpt 414 1210 (chatgpt_md, 310KB) — `/home/allaun/Documents/ingest/possible_duplicate_chatgpt_414_1210.md`
+- How_Malicious_AI_Swarms_Can_Threaten_Democracy%20%281%29 (article, 248KB) — `/home/allaun/Documents/ingest/How_Malicious_AI_Swarms_Can_Threaten_Democracy%20%281%29.pdf`
+- ChatGPT Evolution and Acoustic Inference (research_article, 243KB) — `/home/allaun/Documents/ingest/ChatGPT-Evolution_and_Acoustic_Inference.json`
+- chagpt 414 1200 (chatgpt_md, 238KB) — `/home/allaun/Documents/ingest/chagpt-414-1200.md`
+- post 196596937 20260506T000632Z (research_article, 228KB) — `/home/allaun/Documents/Research Stack/6-Documentation/articles/babbage-to-babcock/substack_bundle/substack_backups/post_196596937_20260506T000632Z.json`
+- possible duplicate chatgpt 414 1214 (chatgpt_md, 199KB) — `/home/allaun/Documents/ingest/possible_duplicate_chatgpt_414_1214.md`
+- post 196596937 20260506T000639Z (research_article, 198KB) — `/home/allaun/Documents/Research Stack/6-Documentation/articles/babbage-to-babcock/substack_bundle/substack_backups/post_196596937_20260506T000639Z.json`
+- manifest 20260318T231339Z (research_article, 172KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/vault/manifest_20260318T231339Z.json`
+- possible duplicate chatgpt 414 1215 (chatgpt_md, 131KB) — `/home/allaun/Documents/ingest/possible_duplicate_chatgpt_414_1215.md`
+- attestestion file (chatgpt_md, 121KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/attestestion_file.md`
+- ChatGPT TopologicalStateMachine Debugging (research_article, 74KB) — `/home/allaun/Documents/ingest/ChatGPT-TopologicalStateMachine_Debugging.json`
+- chagpt 414 1043 attestation index (research_article, 67KB) — `/home/allaun/Documents/ingest/chagpt-414-1043_attestation_index.json`
+- crown analogy (chatgpt_md, 58KB) — `/home/allaun/Documents/ingest/extraction required/crown analogy.md`
+- Autocatalysis Before Enzymes (chatgpt_md, 41KB) — `/home/allaun/Documents/ingest/Autocatalysis Before Enzymes.md`
+- freakingpaste (chatgpt_md, 41KB) — `/home/allaun/Documents/ingest/freakingpaste.md`
+- Comprehensive Physics and Engineering Learning Guide for Swarm (chatgpt_md, 38KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/comprehensive_physics_engineering_guide.md`
+- OMT paper (unknown, 36KB) — `/home/allaun/Documents/ingest/extraction required/OMT_paper.docx`
+- From Babbage to Babcock (chatgpt_md, 33KB) — `/home/allaun/Documents/Research Stack/6-Documentation/articles/babbage-to-babcock/substack_bundle/post.md`
+- From Babbage to Babcock (chatgpt_md, 33KB) — `/home/allaun/Documents/Research Stack/6-Documentation/articles/babbage-to-babcock/article.md`
+- manifest 20260318T231057Z (research_article, 28KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/vault/manifest_20260318T231057Z.json`
+- Comprehensive Technical Standards Learning Resource for Swarm Agents (chatgpt_md, 27KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/comprehensive_technical_standards_resource.md`
+- experiment (unknown, 26KB) — `/home/allaun/Documents/ingest/extraction required/experiment.py`
+- experiment (1) (unknown, 26KB) — `/home/allaun/Documents/ingest/extraction required/experiment (1).py`
+- simulate omt (unknown, 24KB) — `/home/allaun/Documents/ingest/extraction required/simulate_omt.py`
+- simulate omt (1) (unknown, 24KB) — `/home/allaun/Documents/ingest/extraction required/simulate_omt (1).py`
+- Digital Platforms Learning Resource for Swarm Agents (chatgpt_md, 24KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/digital_platforms_learning_resource.md`
+- Internet Protocols Learning Resource for Swarm Agents (chatgpt_md, 23KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/internet_protocols_learning_resource.md`
+- simulate qubo (unknown, 20KB) — `/home/allaun/Documents/ingest/extraction required/simulate_qubo.py`
+- simulate qubo (1) (unknown, 20KB) — `/home/allaun/Documents/ingest/extraction required/simulate_qubo (1).py`
+- simulate qubo (2) (unknown, 20KB) — `/home/allaun/Documents/ingest/extraction required/simulate_qubo (2).py`
+- cmyk adapter experiment (unknown, 19KB) — `/home/allaun/Documents/ingest/extraction required/cmyk_adapter_experiment.py`
+- cmyk adapter experiment (1) (unknown, 19KB) — `/home/allaun/Documents/ingest/extraction required/cmyk_adapter_experiment (1).py`
+- simulate (unknown, 18KB) — `/home/allaun/Documents/ingest/extraction required/simulate.py`
+- simulate (1) (unknown, 18KB) — `/home/allaun/Documents/ingest/extraction required/simulate (1).py`
+- Mathematical Basis of the Meta-Ontological Inversion Machine (chatgpt_md, 17KB) — `/home/allaun/Documents/ingest/moim/docs/architecture/MOIM_MathematicalBasis.md`
+- TotalSignal AcceleratingLoop (chatgpt_md, 16KB) — `/home/allaun/Documents/ingest/moim/formal/lean/core/TotalSignal_AcceleratingLoop.txt`
+- nuvmap compress (unknown, 16KB) — `/home/allaun/Documents/ingest/extraction required/nuvmap_compress.py`
+- nuvmap compress (1) (unknown, 16KB) — `/home/allaun/Documents/ingest/extraction required/nuvmap_compress (1).py`
+- MOIM PROJECT INDEX v4.0 (chatgpt_md, 16KB) — `/home/allaun/Documents/ingest/moim/PROJECT_INDEX.md`
+- MOIM System Manifest v3.0 (chatgpt_md, 16KB) — `/home/allaun/Documents/ingest/moim/manifest/MOIM_SYSTEM_MANIFEST_v3.md`
+- nuvmap freq experiment (unknown, 15KB) — `/home/allaun/Documents/ingest/extraction required/nuvmap_freq_experiment.py`
+- nuvmap freq experiment (1) (unknown, 15KB) — `/home/allaun/Documents/ingest/extraction required/nuvmap_freq_experiment (1).py`
+- nuvmap freq experiment (2) (unknown, 15KB) — `/home/allaun/Documents/ingest/extraction required/nuvmap_freq_experiment (2).py`
+- nuvmap freq experiment (3) (unknown, 15KB) — `/home/allaun/Documents/ingest/extraction required/nuvmap_freq_experiment (3).py`
+- Finer Hardware Probing Methods - Research Summary (chatgpt_md, 15KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/finer_probing_methods_research.md`
+- CMYKFrequencyCore (unknown, 14KB) — `/home/allaun/Documents/ingest/extraction required/CMYKFrequencyCore`
+- Mesa Drivers for AMD GPU - HDMI/DisplayPort Support Research (chatgpt_md, 14KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/mesa_driver_hdmi_displayport_research.md`
+- AMMR AVMR TruthTest test vectors (research_article, 14KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/REVISED_EQUATIONS/AMMR_AVMR_TruthTest_test_vectors.json`
+- SovereignMathModel test vectors (research_article, 14KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/REVISED_EQUATIONS/SovereignMathModel_test_vectors.json`
+- Bridge Model Module Guide (chatgpt_md, 13KB) — `/home/allaun/Documents/ingest/BridgeModel_Module_Guide.md`
+- Bridge Model Module Guide (chatgpt_md, 13KB) — `/home/allaun/Documents/ingest/Chatgpt_415508PM_latest_model_exports_bundle/BridgeModel_Module_Guide.md`
+- 四力几何推导 (kimi_json, 13KB) — `/home/allaun/Documents/ingest/Kimi-四力几何推导.json`
+- GPU Optimization Guide for Swarm Learning (chatgpt_md, 13KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/gpu_optimization_guide.md`
+- MOIM System Manifest v2.0 (chatgpt_md, 12KB) — `/home/allaun/Documents/ingest/moim/manifest/MOIM_SYSTEM_MANIFEST_v2.md`
+- Makefile (unknown, 11KB) — `/home/allaun/Documents/ingest/moim/build/Makefile`
+- ISO Standards Learning Resource for Swarm Agents (chatgpt_md, 11KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/iso_standards_learning_resource.md`
+- Single-State Trace Spec v0.1 (chatgpt_md, 11KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/hutter/single_state_trace_spec.md`
+- SSD PCIe Side Channel Probing (chatgpt_md, 11KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/ssd_pcie_side_channel_probing.md`
+- omt pruning experiment (unknown, 10KB) — `/home/allaun/Documents/ingest/extraction required/omt_pruning_experiment.py`
+- Tasks (chatgpt_md, 10KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/task.md`
+- HDMI Cleanroom Reverse Engineering Research (chatgpt_md, 10KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/hdmi_cleanroom_reverse_engineering_research.md`
+- The Ending (chatgpt_md, 10KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/hutter/THE_ENDING.md`
+- Keyboard, Mouse, and Monitor Device Research (chatgpt_md, 10KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/keyboard_mouse_monitor_research.md`
+- Meme Math That Pays Rent (chatgpt_md, 10KB) — `/home/allaun/Documents/Research Stack/6-Documentation/articles/meme-math-that-pays-rent/article.md`
+- Meme Math That Pays Rent (chatgpt_md, 10KB) — `/home/allaun/Documents/Research Stack/6-Documentation/articles/meme-math-that-pays-rent/substack_bundle/post.md`
+- SSD Comprehensive Analysis (chatgpt_md, 9KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/ssd_comprehensive_analysis.md`
+- RAM Addressing Scheme and Circuit Wiring Analysis (chatgpt_md, 9KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/ram_addressing_circuit_wiring_analysis.md`
+- S3C Sparkle Integration Plan (chatgpt_md, 9KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/s3c_sparkle_integration_plan.md`
+- behavioral taxonomy merkle (research_article, 9KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/REVISED_EQUATIONS/behavioral_taxonomy_merkle.json`
+- Session Record: KDA-18 C20-C31 + BFT Judge Wiring (chatgpt_md, 9KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/session-kda18-c20-c31-bft-wiring-20260405.md`
+- Biological Systems Learning Guide for Swarm (chatgpt_md, 9KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/biological_systems_guide.md`
+- Realtek RTL8126 MMIO Security Analysis (chatgpt_md, 8KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/realtek_rtl8126_mmio_security_analysis.md`
+- behavioral taxonomy merkle (chatgpt_md, 8KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/REVISED_EQUATIONS/behavioral_taxonomy_merkle.txt`
+- DisplayPort Cable Length and Travel Path Estimation (chatgpt_md, 8KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/displayport_cable_length_timing_estimation.md`
+- sovereign invariant analysis (research_article, 8KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/REVISED_EQUATIONS/sovereign_invariant_analysis.json`
+- DisplayPort Cable Inference Research (chatgpt_md, 8KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/displayport_cable_inference_research.md`
+- SAE Feature Scraper — Design Record (chatgpt_md, 7KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/design-sae-feature-scraper-20260405.md`
+- Walkthrough: The Sovereign Stack (Integration Validated) (chatgpt_md, 7KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/walkthrough.md`
+- W3C Standards Learning Resource for Swarm Agents (chatgpt_md, 7KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/w3c_standards_learning_resource.md`
+- The Approach — Feature-Byte Mirror v3 (chatgpt_md, 7KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/hutter/APPROACH.md`
+- HDMI Cable Inference Research (chatgpt_md, 7KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/hdmi_cable_inference_research.md`
+- Tang Nano 9K Design Comparison (chatgpt_md, 6KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/tang_nano_9k_design_comparison.md`
+- TSM-VDP Physics Audit & Unification Equation (chatgpt_md, 5KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/physics_audit.md`
+- chat bigbang coulomb decompression 20260325 (research_article, 5KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/chat-bigbang-coulomb-decompression-20260325.json`
+- Universal Power Interface (UPI) Spec (chatgpt_md, 5KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/universal_power_interface.md`
+- SAE Feature Frequency Analysis — 2026-04-05 (chatgpt_md, 5KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/chat-sae-feature-frequency-analysis-20260405.md`
+- build manifest (unknown, 5KB) — `/home/allaun/Documents/Research Stack/6-Documentation/chat-log-dumps/build_manifest.py`
+- Implementation Plan: Resonant Power Bridge (v5-N++) (chatgpt_md, 4KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/implementation_plan.md`
+- universal early warning signals (unknown, 4KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/universal_early_warning_signals.html`
+- chat operator fingerprint 20260325 (research_article, 4KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/chat-operator-fingerprint-20260325.json`
+- chat iso as neural filter 20260325 (research_article, 4KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/chat-iso-as-neural-filter-20260325.json`
+- dair agentic engineering wiki (research_article, 4KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/dair_agentic_engineering_wiki.json`
+- phase_transport_full_preprint (article, 4KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/phase_transport_full_preprint.pdf`
+- Audit: Infrastructure Power Stage (The "Power Bridge" Platform) (chatgpt_md, 3KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/infrastructure_alchemy_audit.md`
+- SOVEREIGN MATH MODEL DATABASE (research_article, 3KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/SOVEREIGN_MATH_MODEL_DATABASE.json`
+- Energy-Aware Non-Linear Decompression (chatgpt_md, 3KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/hutter/ENERGY_AWARE_DECOMPRESSION.md`
+- Cognitive Thermo — Thermodynamic Path Exploration (chatgpt_md, 3KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/hutter/COGNITIVE_THERMO_README.md`
+- Physical Audit: Sovereign Cement (Adversarial Review) (chatgpt_md, 3KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/sovereign_cement_physics_audit.md`
+- Technical Specification: AAS Soliton Sorting (chatgpt_md, 3KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/aas_soliton_sorting_spec.md`
+- Training mRNA Language Models Across 25 Species for $165 (chatgpt_md, 3KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/training-mrna-language-models-across-25-species-for-165.md`
+- Evidence of the pair-instability gap from black-hole masses - Nature (chatgpt_md, 3KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/evidence-of-the-pair-instability-gap-from-black-hole-masses-nature.md`
+- Sparse Autoencoders on Codon Language Models (chatgpt_md, 3KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/sparse-autoencoders-on-codon-language-models.md`
+- Session Saga: Infohazard Containment Protocol (ICP) (chatgpt_md, 3KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/SESSION_SAGA_INFOHAZARD_CONTAINMENT.md`
+- behavioral merkle map (research_article, 3KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/REVISED_EQUATIONS/behavioral_merkle_map.json`
+- An ultra-high-resolution map of (dark) matter (chatgpt_md, 3KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/scognamiglio-an-ultra-high-resolution-map-of-dark-matter-2026.md`
+- Expert Audit: Cheap MEMS as Signal Waveguides (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/mems_waveguide_audit.md`
+- Spec: N-Space Resilience Strain Gauge (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/n_space_strain_gauge_spec.md`
+- Technical Specification: AAS-Enhanced VM Substrate (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/aas_vm_substrate_integration.md`
+- Spec: The Sovereign Lattice (N-Space Structural Synthesis) (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/sovereign_lattice_spec.md`
+- Technical Specification: AAS-Optimized Quantum Annealing (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/aas_quantum_annealing_optimization.md`
+- google doc sources (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/google_doc_sources.txt`
+- Technical Specification: AAS-Enhanced SHA256 Encoding (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/aas_sha256_encoding_enhancement.md`
+- Spec: N-Space Structural Synthesis (Topological 3D) (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/n_space_structural_spec.md`
+- Physicists Found Something That Can Move Faster Than Light: The Darkness Inside It (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/physicists-found-something-that-can-move-faster-than-light-the-darkness-inside-it.md`
+- Technical Specification: AAS-Enhanced Pi Computation (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/aas_pi_computation_enhancement.md`
+- Deep Dive: The Metanarrative Harness (v5-N++) (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/metanarrative_harness_deep_dive.md`
+- chat iso precompression 20260325 (research_article, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/chat-iso-precompression-20260325.json`
+- Chaos-First Test Rig Design (Resonant Power Bridge) (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/test_rig_design.md`
+- Spec: Sovereign Cement (DAG-Enhanced 3DCP) (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/sovereign_cement_spec.md`
+- Technical Report: Multi-Variable Sensitivity & Entropy Breakdown (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/material_sensitivity_analysis_v1.md`
+- Wormhole Mechanism Specification (Resonant Power Bridge) (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/wormhole_mechanism_spec.md`
+- tunnel Mechanism Specification (Resonant Power Bridge) (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/tunnel_mechanism_spec.md`
+- Competitive Analysis: Resonant v5-G vs. Modern Silicon (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/competitive_analysis.md`
+- Sovereign Stack: Overview & Immediate Integration (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/sovereign_stack_overview.md`
+- TSM-VDP: Failure Mode Simulation (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/failure_mode_simulation.md`
+- Superluminal Correlations in Ensembles of Optical Phase Singularities (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/bucher-superluminal-correlations-in-ensembles-of-optical-phase-singularities-2025.md`
+- TSM-VDP (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/planck_clock_audit.md`
+- ms myelin glucose signaling 2026 05 04 (research_article, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/ms_myelin_glucose_signaling_2026-05-04.json`
+- Spec: The Sovereign Tower (N-Space Structural Prototype) (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/sovereign_tower_spec.md`
+- Superluminal Correlations in Ensembles of Optical Phase Singularities (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/superluminal-correlations-in-ensembles-of-optical-phase-singularities.md`
+- Proof & Directive: Sovereign Jenga Manufacturing (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/sovereign_jenga_gcode_proof.md`
+- PTOS Security Mapping (Hardware Hardening) (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/ptos_security_mapping.md`
+- Bridge Protocol Specification: Bitcoin L2/L3 Integration (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/bridge_protocol_spec.md`
+- Metanarrative Goal Spec: The Target Function (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/metanarrative_goal_spec.md`
+- Long-Term Roadmap: Resonant Power Bridge (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/long_term_roadmap.md`
+- Tech Note: N->3 Projection Logic (The Streamline Algorithm) (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/n_space_projection_logic.md`
+- Geometry from quantum temporal correlations (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/geometry-from-quantum-temporal-correlations.md`
+- Spec: 20 THz Quasicrystalline NEMS Array (MOCVD) (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/nems_fracking_array_spec.md`
+- Exploratory Audit: Ambient EM Harvesting (v5-H Expansion) (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/ambient_em_harvesting_audit.md`
+- chat substrate design 20260325 (research_article, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/chat-substrate-design-20260325.json`
+- Report: VRT Software Stability & Resilience (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/vrt_stability_report.md`
+- Audit: Power Miser Optimization (v5-J) (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/power_miser_optimization.md`
+- Tang Nano 9K Pinout Information (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/tang_nano_9k_pinout.md`
+- Model: Atmospheric Fracking Cycle (Londetite & Regolith) (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/fracking_cycle_model.md`
+- Geometry from quantum temporal correlations (chatgpt_md, 2KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/fullwood-geometry-from-quantum-temporal-correlations-2025.md`
+- categories (unknown, 2KB) — `/home/allaun/Documents/Research Stack/6-Documentation/articles/categories.yml`
+- BOM: Resonant Power Bridge Platform (v5-N++) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/hardware_bom_v5n.md`
+- Spec: Londetite Energy Storage (Solid-State Fuel) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/londetite_storage_spec.md`
+- Tech Note: Projective Interlock (The Jenga Proof) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/projective_interlock_logic.md`
+- Audit: Pentagonal Phased Array (v5-M) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/phased_array_audit.md`
+- Pre-SME Adversarial Audit: Persona Gene Drive Pass (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/pre_sme_adversarial_audit.md`
+- Graph-Based SQL Substrate: Technical Specification (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/graph_sql_deep_dive.md`
+- Wolfram Alpha Analytical Input Sheet (AAS-Integration) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/wolfram_alpha_input_sheet.md`
+- TSM-VDP: System Reliability & Stability Audit (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/grey_goo_safety_audit.md`
+- Sovereign Math Model Database: Instance Report (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/SOVEREIGN_MATH_DATABASE_INSTANCE.md`
+- Audit: Thermodynamic Power Computation (Power-as-Logic) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/wire_centric_computing_audit.md`
+- Tech Note: Mechanical Merkle Tree (Proof-of-State) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/mechanical_merkle_tree_logic.md`
+- PCB Design Specification: Graph VM Logic Substrate (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/substrate_pcb_spec.md`
+- Audit: Plasma Gasification (Waste-Free NEMS Mode) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/plasma_gasification_audit.md`
+- Audit: Closed-Loop Regolith Fixation (Fertility Cycle) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/regolith_fixation_audit.md`
+- Audit: Quantum Evolution & Self-Organization (v5-K) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/quantum_evolution_audit.md`
+- Audit: Sovereign Jenga Efficiency & Stability (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/jenga_efficiency_audit.md`
+- adversarial rebuttal (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/adversarial_rebuttal.md`
+- Cognitive Load + Trinary Clock Integration (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/hutter/COGNITIVE_LOAD_INTEGRATION.md`
+- Audit: IR Rayleigh Entropy Sensing (v5-N) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/rayleigh_entropy_audit.md`
+- Audit: Holographic Fractal Connectome (Budget Edition) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/fractal_connectome_audit.md`
+- Technical Specification: Verifiable Data Provenance (VDP) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/verifiable_provenance_spec.md`
+- Audit: Passive R-L-C-P Field Computation (v5.0 Final) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/passive_field_audit.md`
+- Retrieval Comparison: NoSQL vs Collective Substrate (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/retrieval_comparison.md`
+- Downloads Batch 2026-04-02 (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/downloads-batch-20260402.md`
+- Audit: 1000-Hour Extreme Stress Test (v5-B) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/village_stabilizer_audit.md`
+- Audit: Resonant v5-K "Resonant Echo" (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/resonant_echo_v5k_audit.md`
+- Audit: STARK AIR Constraints (v5-L) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/stark_air_audit.md`
+- Spec: Qutrit State-Space (Sovereign Signal Tier) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/qutrit_state_spec.md`
+- Deployment Guide: Resonant v5-B Village Power Stabilizer (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/village_deployment_guide.md`
+- Audit: Memistor-Adaptive Logic (The Widrow Approach) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/memistor_logic_audit.md`
+- Audit: Phase-Change Thermopile (v5-H) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/thermopile_synthesis_audit.md`
+- Audit: n-ZK-STARK Attestation (v5-L) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/zk_stark_attestation_audit.md`
+- Audit: ISO-Standard Grid-Mesh (v5-F) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/grid_mesh_audit.md`
+- Audit: Topological Memistor Emulation (The Filament Approach) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/topological_memistor_audit.md`
+- Audit: Cascading Voltage Wave Resilience (v5-E) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/cascade_resilience_audit.md`
+- Audit: 100,000-Hour "Nightmare Grid" Endurance (Steroid Level) (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/longevity_audit_100k.md`
+- The House, The Player, and Zero (chatgpt_md, 1KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/hutter/COGNITIVE_WHEEL_README.md`
+- session sovereign stack rev a boot 20260401 (research_article, 0KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/session-sovereign-stack-rev-a-boot-20260401.json`
+- manifest 20260318T231040Z (research_article, 0KB) — `/home/allaun/Documents/Research Stack/shared-data/data/germane/research/vault/manifest_20260318T231040Z.json`
+- manifest (research_article, 0KB) — `/home/allaun/Documents/Research Stack/6-Documentation/articles/babbage-to-babcock/substack_bundle/manifest.json`
+- metadata (unknown, 0KB) — `/home/allaun/Documents/Research Stack/6-Documentation/articles/babbage-to-babcock/metadata.yml`
+- Articles (chatgpt_md, 0KB) — `/home/allaun/Documents/Research Stack/6-Documentation/articles/README.md`
+- manifest (research_article, 0KB) — `/home/allaun/Documents/Research Stack/6-Documentation/articles/meme-math-that-pays-rent/substack_bundle/manifest.json`
+- metadata (unknown, 0KB) — `/home/allaun/Documents/Research Stack/6-Documentation/articles/meme-math-that-pays-rent/metadata.yml`
+
+## Maintenance Log
+
+| Date | Action | Detail |
+|------|--------|--------|
+| 2026-05-07 | sources.md generated | 108 covered, 204 uncovered |

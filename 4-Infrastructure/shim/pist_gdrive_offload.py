@@ -111,42 +111,65 @@ class StreamingOffloadEngine:
         self.stats = {"files": 0, "bytes": 0, "errors": 0}
     
     def stream_file(self, filepath: Path, gd_base: str) -> Dict:
-        """Compress in memory, stream to Gdrive via rclone"""
+        """Compress in chunks, stream to Gdrive via rclone rcat"""
         try:
             size = filepath.stat().st_size
             self.shaper.acquire(size)
             
             t0 = time.time()
-            
-            # Read + PIST compress
-            with open(filepath, 'rb') as f:
-                raw = f.read()
-            compressed = pist_compress(raw, level=3)  # level 3 = speed/ratio balance
-            
-            # Stream to Gdrive via rclone rcat
             rel = filepath.relative_to(RESEARCH_STACK)
             gd_path = f"{gd_base}/{rel}.pist"
             
-            proc = subprocess.run(
+            # Pre-calculate shell header
+            s = s3c_split(size)
+            header = struct.pack(">HHB", s["k"] & 0xFFFF, s["a"] & 0xFFFF, 0x01)
+            
+            # Start rclone rcat process
+            proc = subprocess.Popen(
                 ["rclone", "rcat", gd_path],
-                input=compressed, capture_output=True, timeout=300
+                stdin=subprocess.PIPE,
+                stderr=subprocess.PIPE
             )
+            
+            compressor = zlib.compressobj(3, zlib.DEFLATED, -zlib.MAX_WBITS, 9, zlib.Z_DEFAULT_STRATEGY)
+            compressed_len = 0
+            
+            # Write header
+            proc.stdin.write(header)
+            compressed_len += len(header)
+            
+            # Stream file in 1MB chunks
+            with open(filepath, 'rb') as f:
+                while True:
+                    chunk = f.read(1024 * 1024)
+                    if not chunk:
+                        break
+                    out = compressor.compress(chunk)
+                    if out:
+                        proc.stdin.write(out)
+                        compressed_len += len(out)
+                
+                final = compressor.flush()
+                if final:
+                    proc.stdin.write(final)
+                    compressed_len += len(final)
+            
+            proc.stdin.close()
+            stdout, stderr = proc.communicate(timeout=3600) # Long timeout for huge files
             
             latency = (time.time() - t0) * 1000
             self.shaper.release(latency)
             
             if proc.returncode != 0:
-                raise RuntimeError(proc.stderr.decode())
-            
-            shell = s3c_split(size)
+                raise RuntimeError(stderr.decode())
             
             with self.lock:
-                self.manifest.record(str(rel), size, len(compressed), gd_path, shell)
+                self.manifest.record(str(rel), size, compressed_len, gd_path, s)
                 self.stats["files"] += 1
                 self.stats["bytes"] += size
             
-            return {"path": str(rel), "size": size, "compressed": len(compressed),
-                    "latency_ms": latency, "shell": shell["k"], "ok": True}
+            return {"path": str(rel), "size": size, "compressed": compressed_len,
+                    "latency_ms": latency, "shell": s["k"], "ok": True}
         
         except Exception as e:
             with self.lock:
@@ -178,11 +201,14 @@ class StreamingOffloadEngine:
             for future in as_completed(futures):
                 result = future.result()
                 done += 1
-                if done % 100 == 0 or done == total:
+                
+                # Print every 10 files or if the file was large (>1GB)
+                if done % 10 == 0 or result.get("size", 0) > 1e9 or done == total:
                     pct = done / total * 100
-                    print(f"  [{done}/{total}] {pct:.0f}% — "
+                    status = f"Done: {result['path']} ({result.get('size', 0)/1e9:.1f}GB)" if result.get("size", 0) > 1e9 else "..."
+                    print(f"  [{done}/{total}] {pct:.1f}% — "
                           f"{self.stats['bytes']/1e9:.1f}GB streamed, "
-                          f"{self.stats['errors']} errors")
+                          f"{self.stats['errors']} errors. {status}")
         
         return self.stats
 

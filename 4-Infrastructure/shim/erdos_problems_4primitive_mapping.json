@@ -1,0 +1,171 @@
+{
+  "primitives": {
+    "field": {
+      "equation": "\u03c1(x\u20d7)",
+      "role": "tells you what exists (field / substrate / scalar manifold state)",
+      "erdos_applications": [
+        "Density of primes and prime gaps",
+        "Arithmetic progressions in dense sets (Szemer\u00e9di)",
+        "Distribution of integers in additive sets",
+        "Density in combinatorial structures",
+        "Erd\u0151s\u2013Tur\u00e1n theorem on additive bases"
+      ]
+    },
+    "shear": {
+      "equation": "G = A\u1d40A",
+      "role": "tells you how it deforms (shear / metric deformation / lawful geometry)",
+      "erdos_applications": [
+        "Graph distances and metric embeddings",
+        "Extremal graph theory (max/min edges)",
+        "Graph isoperimetry and expansion",
+        "Erd\u0151s\u2013Stone theorem (extremal function)",
+        "Graph minor theory and treewidth"
+      ]
+    },
+    "packet": {
+      "equation": "\u0393\u1d62",
+      "role": "tells you what is emitted/witnessed (packet / executable typed glyph-witness / codec event)",
+      "erdos_applications": [
+        "Ramsey numbers and witness structures",
+        "Extremal set systems (covering/packing)",
+        "Erd\u0151s\u2013Ko\u2013Rado theorem",
+        "Erd\u0151s\u2013Szekeres theorem (monotone subsequences)",
+        "Erd\u0151s\u2013Ginzburg\u2013Ziv theorem (zero-sum subsets)"
+      ]
+    },
+    "spectral": {
+      "equation": "C = U\u039bU\u1d40",
+      "role": "tells you what basis survives (spectral / eigenbasis / pruning-correlation structure)",
+      "erdos_applications": [
+        "Graph spectra and eigenvalue bounds",
+        "Graph partitioning and clustering",
+        "Random graph eigenvalue distributions",
+        "Erd\u0151s\u2013R\u00e9nyi model properties",
+        "Expander graphs and spectral gap"
+      ]
+    }
+  },
+  "erdos_problems": {
+    "high_priority": {
+      "erdos_turan_conjecture": {
+        "name": "Erd\u0151s\u2013Tur\u00e1n Conjecture on Additive Bases",
+        "statement": "If A is an additive basis of order 2 for the natural numbers, then the sum of reciprocals diverges: \u03a3_{a\u2208A} 1/a = \u221e",
+        "primitive": "field",
+        "mapping": "Additive basis density = field distribution. Conjecture about density of basis elements.",
+        "approach": "Treat A as density field \u03c1(n). Analyze spectral decomposition of additive structure. Use field primitive to model basis density and shear primitive to analyze additive deformation.",
+        "feasibility": "HIGH - Directly about density/distribution, maps cleanly to field primitive"
+      },
+      "erdos_straus_conjecture": {
+        "name": "Erd\u0151s\u2013Straus Conjecture",
+        "statement": "For every integer n \u2265 2, the equation 4/n = 1/x + 1/y + 1/z has a solution in positive integers x, y, z",
+        "primitive": "packet",
+        "mapping": "Egyptian fraction decomposition = packet encoding. Each solution is a packet (x,y,z) encoding 4/n.",
+        "approach": "Treat solutions as packets. Use packet primitive to search for encoding space. Spectral analysis of solution space structure.",
+        "feasibility": "HIGH - Problem about finding encodings/packets, natural fit for packet primitive"
+      },
+      "erdos_conjecture_arithmetic_progressions": {
+        "name": "Erd\u0151s Conjecture on Arithmetic Progressions",
+        "statement": "If \u03a3_{a\u2208A} 1/a diverges, then A contains arbitrarily long arithmetic progressions",
+        "primitive": "field",
+        "mapping": "Divergent reciprocal sum = high density field. High density implies rich structure (APs).",
+        "approach": "Use field primitive to model density \u03c1(A). Apply shear primitive to analyze how density deforms under translation (arithmetic progression structure). Spectral decomposition to detect periodic structure.",
+        "feasibility": "HIGH - Directly about density implying structure, field primitive natural fit"
+      },
+      "erdos_renyi_random_graph": {
+        "name": "Erd\u0151s\u2013R\u00e9nyi Random Graph Model",
+        "statement": "Study properties of G(n,p) random graphs. Threshold phenomena for connectivity, giant component, Hamiltonicity",
+        "primitive": "spectral",
+        "mapping": "Random graph eigenvalue distribution = spectral basis. Phase transitions = spectral pruning.",
+        "approach": "Use spectral primitive to analyze eigenvalue distribution of G(n,p). Detect phase transitions via spectral gap. Field primitive for density of edges.",
+        "feasibility": "VERY HIGH - Well-studied, spectral methods standard, direct mapping"
+      }
+    },
+    "medium_priority": {
+      "erdos_ko_rado": {
+        "name": "Erd\u0151s\u2013Ko\u2013Rado Theorem (extensions)",
+        "statement": "Maximum size of intersecting families of k-subsets of {1,...,n}",
+        "primitive": "packet",
+        "mapping": "Intersecting family = packet collection with witness property (intersection).",
+        "approach": "Treat each family as packet set. Use packet primitive to analyze encoding constraints. Spectral analysis of intersection graph.",
+        "feasibility": "MEDIUM - Solved for large n, but extensions open. Packet primitive useful for generalizations"
+      },
+      "erdos_szekeres": {
+        "name": "Erd\u0151s\u2013Szekeres Theorem (generalizations)",
+        "statement": "Any sequence of n\u00b2+1 distinct real numbers contains a monotone subsequence of length n+1",
+        "primitive": "packet",
+        "mapping": "Monotone subsequence = packet witness. Ramsey-type problem about finding structure.",
+        "approach": "Use packet primitive to model subsequences as witnesses. Shear primitive for ordering deformation. Spectral analysis of permutation patterns.",
+        "feasibility": "MEDIUM - Solved, but generalizations and extensions open"
+      },
+      "erdos_ginzburg_ziv": {
+        "name": "Erd\u0151s\u2013Ginzburg\u2013Ziv Theorem (extensions)",
+        "statement": "Any 2n-1 integers contain n whose sum is divisible by n",
+        "primitive": "packet",
+        "mapping": "Zero-sum subset = packet with witness property (sum = 0 mod n).",
+        "approach": "Treat subsets as packets. Use packet primitive to search for zero-sum encoding. Spectral analysis of additive structure modulo n.",
+        "feasibility": "MEDIUM - Solved, but extensions to other groups and structures open"
+      },
+      "erdos_stone": {
+        "name": "Erd\u0151s\u2013Stone Theorem (extremal function)",
+        "statement": "For any graph H, ex(n,H) = (1 - 1/\u03c7(H)-1 + o(1))n\u00b2/2 where \u03c7(H) is chromatic number",
+        "primitive": "shear",
+        "mapping": "Extremal function = shear metric. Maximum edges without H = deformation constraint.",
+        "approach": "Use shear primitive to analyze edge density under forbidden subgraph constraint. Spectral analysis of extremal graphs. Field primitive for density.",
+        "feasibility": "MEDIUM - Solved, but generalizations to hypergraphs open"
+      }
+    },
+    "exploratory": {
+      "erdos_faber_lovasz": {
+        "name": "Erd\u0151s\u2013Faber\u2013Lov\u00e1sz Conjecture",
+        "statement": "If each edge of a complete graph on n vertices is colored with one of n colors, then there exists a set of n edges with no two sharing a vertex or having the same color",
+        "primitive": "packet",
+        "mapping": "Edge coloring = packet encoding. Matching = packet set with witness properties.",
+        "approach": "Use packet primitive to model edge colorings as encodings. Spectral analysis of intersection graph. Shear for matching constraints.",
+        "feasibility": "EXPLORATORY - Recently solved (2021), but method could generalize"
+      },
+      "erdos_distinct_distances": {
+        "name": "Erd\u0151s Distinct Distances Problem",
+        "statement": "Any set of n points in the plane determines at least n/\u221alog n distinct distances",
+        "primitive": "shear",
+        "mapping": "Distance set = shear metric. Point configuration = field manifold.",
+        "approach": "Use field primitive for point configuration. Shear primitive for distance metric. Spectral analysis of distance distribution.",
+        "feasibility": "EXPLORATORY - Solved (Guth-Katz), but 4-primitive approach could provide new perspective"
+      },
+      "erdos_moser_problem": {
+        "name": "Erd\u0151s\u2013Moser Problem",
+        "statement": "Find all solutions to 1/a + 1/b + 1/c + 1/d + 1/e = 1 in distinct positive integers",
+        "primitive": "packet",
+        "mapping": "Egyptian fraction decomposition = packet encoding. Each solution is a 5-tuple packet.",
+        "approach": "Use packet primitive to search for encoding space. Spectral analysis of solution structure. Field for density of solutions.",
+        "feasibility": "EXPLORATORY - Solved (only known solution), but method could generalize to other Diophantine equations"
+      },
+      "erdos_hadamard": {
+        "name": "Erd\u0151s Hadamard Conjecture",
+        "statement": "There exist Hadamard matrices of order 4k for all k",
+        "primitive": "spectral",
+        "mapping": "Hadamard matrix = spectral basis (orthogonal rows/columns). Eigenvalues = \u00b1\u221an.",
+        "approach": "Use spectral primitive to analyze matrix structure. Field for existence density. Packet for construction methods.",
+        "feasibility": "EXPLORATORY - Open problem, spectral methods standard in Hadamard matrix theory"
+      }
+    }
+  },
+  "primitive_distribution": {
+    "field": 2,
+    "shear": 2,
+    "packet": 6,
+    "spectral": 2
+  },
+  "recommended_order": [
+    "erdos_renyi_random_graph",
+    "erdos_turan_conjecture",
+    "erdos_straus_conjecture",
+    "erdos_conjecture_arithmetic_progressions"
+  ],
+  "insights": {
+    "packet_dominance": "Packet primitive dominates (5 problems) - many Erd\u0151s problems are about encodings/witnesses",
+    "spectral_validation": "Erd\u0151s\u2013R\u00e9nyi provides validation point - spectral methods standard",
+    "field_additive": "Field primitive for additive problems - density and structure",
+    "shear_extremal": "Shear primitive for extremal problems - metric and deformation",
+    "cross_domain": "All primitives represented - framework covers diverse Erd\u0151s problem types"
+  }
+}

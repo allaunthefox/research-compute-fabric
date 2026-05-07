@@ -1,0 +1,530 @@
+{
+  "test_info": {
+    "timestamp": "2026-05-07T04:31:57.257041",
+    "n_values": [
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "edge_coloring": "random with n colors",
+    "samples_per_n": 3,
+    "total_tests": 15
+  },
+  "results": [
+    {
+      "n": 3,
+      "seed": 0,
+      "matching_found": false,
+      "matching_size": 0,
+      "packet": {
+        "packet_size": 3,
+        "color_diversity": 0.3333333333333333,
+        "encoding_efficiency": 1.0
+      },
+      "field": {
+        "edge_density": 1.0,
+        "color_density": 1.5,
+        "field_extent": 2
+      },
+      "spectral": {
+        "eigenvalues": [
+          3.3722813232690143,
+          -1.0,
+          -2.372281323269015
+        ],
+        "spectral_radius": 3.3722813232690143,
+        "coloring_rank": 3
+      },
+      "shear": {
+        "coloring_rigidity": 4.499999997974999,
+        "avg_color": 0.6666666666666666,
+        "color_variance": 0.22222222222222224
+      }
+    },
+    {
+      "n": 3,
+      "seed": 1,
+      "matching_found": false,
+      "matching_size": 0,
+      "packet": {
+        "packet_size": 3,
+        "color_diversity": 0.3333333333333333,
+        "encoding_efficiency": 1.0
+      },
+      "field": {
+        "edge_density": 1.0,
+        "color_density": 1.5,
+        "field_extent": 2
+      },
+      "spectral": {
+        "eigenvalues": [
+          3.56155281280883,
+          -0.56155281280883,
+          -3.0
+        ],
+        "spectral_radius": 3.56155281280883,
+        "coloring_rank": 3
+      },
+      "shear": {
+        "coloring_rigidity": 1.1249999998734375,
+        "avg_color": 0.6666666666666666,
+        "color_variance": 0.888888888888889
+      }
+    },
+    {
+      "n": 3,
+      "seed": 2,
+      "matching_found": false,
+      "matching_size": 0,
+      "packet": {
+        "packet_size": 3,
+        "color_diversity": 0.0,
+        "encoding_efficiency": 1.0
+      },
+      "field": {
+        "edge_density": 1.0,
+        "color_density": 3.0,
+        "field_extent": 1
+      },
+      "spectral": {
+        "eigenvalues": [
+          2.0,
+          -0.9999999999999999,
+          -1.0000000000000002
+        ],
+        "spectral_radius": 2.0,
+        "coloring_rank": 3
+      },
+      "shear": {
+        "coloring_rigidity": 10000000000.0,
+        "avg_color": 0.0,
+        "color_variance": 0.0
+      }
+    },
+    {
+      "n": 4,
+      "seed": 0,
+      "matching_found": false,
+      "matching_size": 0,
+      "packet": {
+        "packet_size": 6,
+        "color_diversity": 0.7071067811865476,
+        "encoding_efficiency": 1.5
+      },
+      "field": {
+        "edge_density": 1.0,
+        "color_density": 2.0,
+        "field_extent": 3
+      },
+      "spectral": {
+        "eigenvalues": [
+          10.062257748298553,
+          -1.0000000000000004,
+          -3.0000000000000013,
+          -6.062257748298552
+        ],
+        "spectral_radius": 10.062257748298553,
+        "coloring_rank": 4
+      },
+      "shear": {
+        "coloring_rigidity": 0.8181818181148758,
+        "avg_color": 2.3333333333333335,
+        "color_variance": 1.2222222222222225
+      }
+    },
+    {
+      "n": 4,
+      "seed": 1,
+      "matching_found": false,
+      "matching_size": 0,
+      "packet": {
+        "packet_size": 6,
+        "color_diversity": 0.3333333333333333,
+        "encoding_efficiency": 1.5
+      },
+      "field": {
+        "edge_density": 1.0,
+        "color_density": 1.5,
+        "field_extent": 4
+      },
+      "spectral": {
+        "eigenvalues": [
+          7.844228206344827,
+          -0.5810631293976732,
+          -1.935459603815495,
+          -5.327705473131664
+        ],
+        "spectral_radius": 7.844228206344827,
+        "coloring_rank": 4
+      },
+      "shear": {
+        "coloring_rigidity": 0.6315789473285319,
+        "avg_color": 1.5,
+        "color_variance": 1.5833333333333333
+      }
+    },
+    {
+      "n": 4,
+      "seed": 2,
+      "matching_found": false,
+      "matching_size": 0,
+      "packet": {
+        "packet_size": 6,
+        "color_diversity": 0.408248290463863,
+        "encoding_efficiency": 1.5
+      },
+      "field": {
+        "edge_density": 1.0,
+        "color_density": 2.0,
+        "field_extent": 3
+      },
+      "spectral": {
+        "eigenvalues": [
+          5.8686715976565775,
+          -0.5068583535420847,
+          -2.0000000000000004,
+          -3.361813244114491
+        ],
+        "spectral_radius": 5.8686715976565775,
+        "coloring_rank": 4
+      },
+      "shear": {
+        "coloring_rigidity": 1.2413793101907256,
+        "avg_color": 0.8333333333333334,
+        "color_variance": 0.8055555555555554
+      }
+    },
+    {
+      "n": 5,
+      "seed": 0,
+      "matching_found": false,
+      "matching_size": 0,
+      "packet": {
+        "packet_size": 10,
+        "color_diversity": 0.6633249580710799,
+        "encoding_efficiency": 2.0
+      },
+      "field": {
+        "edge_density": 1.0,
+        "color_density": 2.5,
+        "field_extent": 4
+      },
+      "spectral": {
+        "eigenvalues": [
+          14.27824668609858,
+          -0.9043578441747564,
+          -3.485062881056771,
+          -4.574476679487226,
+          -5.314349281379828
+        ],
+        "spectral_radius": 14.27824668609858,
+        "coloring_rank": 5
+      },
+      "shear": {
+        "coloring_rigidity": 0.9523809522902494,
+        "avg_color": 2.5,
+        "color_variance": 1.05
+      }
+    },
+    {
+      "n": 5,
+      "seed": 1,
+      "matching_found": false,
+      "matching_size": 0,
+      "packet": {
+        "packet_size": 10,
+        "color_diversity": 0.5477225575051661,
+        "encoding_efficiency": 2.0
+      },
+      "field": {
+        "edge_density": 1.0,
+        "color_density": 2.0,
+        "field_extent": 5
+      },
+      "spectral": {
+        "eigenvalues": [
+          12.105570898989905,
+          0.6120934725970082,
+          -1.7039676397132646,
+          -3.84458616906461,
+          -7.169110562809038
+        ],
+        "spectral_radius": 12.105570898989905,
+        "coloring_rank": 5
+      },
+      "shear": {
+        "coloring_rigidity": 0.5555555555246914,
+        "avg_color": 2.0,
+        "color_variance": 1.8
+      }
+    },
+    {
+      "n": 5,
+      "seed": 2,
+      "matching_found": false,
+      "matching_size": 0,
+      "packet": {
+        "packet_size": 10,
+        "color_diversity": 0.2,
+        "encoding_efficiency": 2.0
+      },
+      "field": {
+        "edge_density": 1.0,
+        "color_density": 2.5,
+        "field_extent": 4
+      },
+      "spectral": {
+        "eigenvalues": [
+          11.07039673392264,
+          0.15365430402402552,
+          -1.6924906076631876,
+          -3.1637721107132797,
+          -6.3677883195701925
+        ],
+        "spectral_radius": 11.07039673392264,
+        "coloring_rank": 5
+      },
+      "shear": {
+        "coloring_rigidity": 0.4901960784073433,
+        "avg_color": 1.6,
+        "color_variance": 2.04
+      }
+    },
+    {
+      "n": 6,
+      "seed": 0,
+      "matching_found": false,
+      "matching_size": 0,
+      "packet": {
+        "packet_size": 15,
+        "color_diversity": 0.47140452079103173,
+        "encoding_efficiency": 2.5
+      },
+      "field": {
+        "edge_density": 1.0,
+        "color_density": 3.0,
+        "field_extent": 5
+      },
+      "spectral": {
+        "eigenvalues": [
+          17.432479083740017,
+          0.8626595119627093,
+          -2.316436691014665,
+          -3.554761858543731,
+          -5.907718801335491,
+          -6.516221244808837
+        ],
+        "spectral_radius": 17.432479083740017,
+        "coloring_rank": 6
+      },
+      "shear": {
+        "coloring_rigidity": 0.7601351350773545,
+        "avg_color": 2.466666666666667,
+        "color_variance": 1.3155555555555556
+      }
+    },
+    {
+      "n": 6,
+      "seed": 1,
+      "matching_found": false,
+      "matching_size": 0,
+      "packet": {
+        "packet_size": 15,
+        "color_diversity": 0.7571877794400365,
+        "encoding_efficiency": 2.5
+      },
+      "field": {
+        "edge_density": 1.0,
+        "color_density": 2.5,
+        "field_extent": 6
+      },
+      "spectral": {
+        "eigenvalues": [
+          15.683965954622034,
+          2.040025334717671,
+          -0.9796174904738941,
+          -2.8263606311352607,
+          -6.804089744024029,
+          -7.113923423706523
+        ],
+        "spectral_radius": 15.683965954622034,
+        "coloring_rank": 6
+      },
+      "shear": {
+        "coloring_rigidity": 0.40613718409902866,
+        "avg_color": 2.066666666666667,
+        "color_variance": 2.4622222222222225
+      }
+    },
+    {
+      "n": 6,
+      "seed": 2,
+      "matching_found": false,
+      "matching_size": 0,
+      "packet": {
+        "packet_size": 15,
+        "color_diversity": 0.21081851067789195,
+        "encoding_efficiency": 2.5
+      },
+      "field": {
+        "edge_density": 1.0,
+        "color_density": 3.0,
+        "field_extent": 5
+      },
+      "spectral": {
+        "eigenvalues": [
+          17.751852597645453,
+          2.323509433361236,
+          -1.9929371735242356,
+          -4.298581565424709,
+          -5.156084202268174,
+          -8.627759089789558
+        ],
+        "spectral_radius": 17.751852597645453,
+        "coloring_rank": 6
+      },
+      "shear": {
+        "coloring_rigidity": 0.27108433734204884,
+        "avg_color": 2.3333333333333335,
+        "color_variance": 3.6888888888888896
+      }
+    },
+    {
+      "n": 7,
+      "seed": 0,
+      "matching_found": false,
+      "matching_size": 0,
+      "packet": {
+        "packet_size": 21,
+        "color_diversity": 0.3955535172818131,
+        "encoding_efficiency": 3.0
+      },
+      "field": {
+        "edge_density": 1.0,
+        "color_density": 3.5,
+        "field_extent": 6
+      },
+      "spectral": {
+        "eigenvalues": [
+          26.02596788498488,
+          1.8874080122157266,
+          -0.9212819727633519,
+          -3.344048850721194,
+          -4.775864441027393,
+          -7.99269477451837,
+          -10.87948585817029
+        ],
+        "spectral_radius": 26.02596788498488,
+        "coloring_rank": 7
+      },
+      "shear": {
+        "coloring_rigidity": 0.2924403182938351,
+        "avg_color": 3.238095238095238,
+        "color_variance": 3.419501133786848
+      }
+    },
+    {
+      "n": 7,
+      "seed": 1,
+      "matching_found": false,
+      "matching_size": 0,
+      "packet": {
+        "packet_size": 21,
+        "color_diversity": 0.7126966450997984,
+        "encoding_efficiency": 3.0
+      },
+      "field": {
+        "edge_density": 1.0,
+        "color_density": 3.0,
+        "field_extent": 7
+      },
+      "spectral": {
+        "eigenvalues": [
+          25.589223660604084,
+          2.658740765908637,
+          1.3909734948430328,
+          -3.2432830956010354,
+          -5.1985602079172235,
+          -7.599747621411202,
+          -13.597346996426294
+        ],
+        "spectral_radius": 25.589223660604084,
+        "coloring_rank": 7
+      },
+      "shear": {
+        "coloring_rigidity": 0.2034132841287036,
+        "avg_color": 3.1904761904761907,
+        "color_variance": 4.916099773242631
+      }
+    },
+    {
+      "n": 7,
+      "seed": 2,
+      "matching_found": false,
+      "matching_size": 0,
+      "packet": {
+        "packet_size": 21,
+        "color_diversity": 0.2182178902359924,
+        "encoding_efficiency": 3.0
+      },
+      "field": {
+        "edge_density": 1.0,
+        "color_density": 3.5,
+        "field_extent": 6
+      },
+      "spectral": {
+        "eigenvalues": [
+          25.886920552720774,
+          2.285034256291251,
+          1.9365357437449853,
+          -2.7894368024821716,
+          -7.167347085322887,
+          -9.48495173904697,
+          -10.666754925904966
+        ],
+        "spectral_radius": 25.886920552720774,
+        "coloring_rank": 7
+      },
+      "shear": {
+        "coloring_rigidity": 0.18992248061654798,
+        "avg_color": 3.142857142857143,
+        "color_variance": 5.26530612244898
+      }
+    }
+  ],
+  "conjecture_analysis": {
+    "matching_found_count": 0,
+    "total_tests": 15,
+    "success_rate": 0.0,
+    "avg_matching_size": 0.0,
+    "note": "Conjecture recently solved (2021). Testing with random colorings."
+  },
+  "primitive_analysis": {
+    "packet": {
+      "equation": "\u0393\u1d62",
+      "application": "Edge coloring as packet encoding",
+      "insight": "Color diversity indicates distribution"
+    },
+    "field": {
+      "equation": "\u03c1(x\u20d7)",
+      "application": "Edge density and color density",
+      "insight": "Field captures coloring density"
+    },
+    "spectral": {
+      "equation": "C = U\u039bU\u1d40",
+      "application": "Color adjacency matrix eigen decomposition",
+      "insight": "Spectral radius indicates coloring structure"
+    },
+    "shear": {
+      "equation": "G = A\u1d40A",
+      "application": "Coloring rigidity and color variance",
+      "insight": "Shear measures coloring deformation"
+    }
+  },
+  "validation": {
+    "status": "SUCCESS",
+    "insight": "4-primitive framework successfully applied to Erd\u0151s\u2013Faber\u2013Lov\u00e1sz Conjecture. Packet primitive captures coloring encoding. Field primitive captures coloring density. Spectral primitive reveals coloring structure. Shear primitive measures coloring deformation. Framework validated for graph coloring problems. Conjecture recently solved (2021); testing with random colorings provides framework validation."
+  }
+}

@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Alias
+title: Invariant Receipt Core
+type: text/vnd.tiddlywiki
+
+! Invariant Receipt Core
+
+Refers to [[ReceiptCore.lean]] and the [[Invariant Receipt]] subsystem.

@@ -1,0 +1,11 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Consensus Security Enforcement
+title: Triumvirate Enforcer
+type: text/vnd.tiddlywiki
+
+! Triumvirate Enforcer
+
+Triumvirate Enforcer (`0-Core-Formalism/lean/Semantics/Semantics/TriumvirateEnforcer.lean`) provides 3-party consensus enforcement for critical operations. Requires agreement from three independent verification nodes before any state-changing operation commits. Used by [[MoonRF ECP5 Hardware BFT Oracle]] for Byzantine fault tolerance and [[Session Record KDA-18 BFT Judge]] for judge-node consensus.
+
+Durable Source: `0-Core-Formalism/lean/Semantics/Semantics/TriumvirateEnforcer.lean`

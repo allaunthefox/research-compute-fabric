@@ -1,0 +1,11 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Lean Language Manifold
+title: Meta Manifold Language Merging
+type: text/vnd.tiddlywiki
+
+! Meta Manifold Language Merging
+
+Meta-Manifold Language Merging (`0-Core-Formalism/lean/Semantics/MetaManifoldLanguageMerging.lean`) constructs a meta-manifold from language manifolds, embedding each language in 5D torus topology with Menger sponge routing. Fold dynamics minimize cross-manifold energy. Includes Mass Number gates for admissibility and fold points between torus, Menger, and Gabriel's Horn structures. Paper: `6-Documentation/papers/OTOM/17_Meta_Manifold_Language_Merging.md`.
+
+Durable Source: `0-Core-Formalism/lean/Semantics/MetaManifoldLanguageMerging.lean`

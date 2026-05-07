@@ -1,0 +1,11 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Lean Distributed Quine
+title: Networked Self Solving Space
+type: text/vnd.tiddlywiki
+
+! Networked Self Solving Space
+
+Networked Self Solving Space (`0-Core-Formalism/lean/Semantics/Semantics/NetworkedSelfSolvingSpace.lean`) formalizes a distributed quine where the PIST manifold transitions across a 5D torus using Menger sponge fractal addressing. Key equations: distributed quine axiom, networked Lyapunov with communication cost, and Gossip(Prune(Expand(S_t))) master equation. The [[GlobalConsistency]] theorem proves invariance under torus hops.
+
+Durable Source: `0-Core-Formalism/lean/Semantics/Semantics/NetworkedSelfSolvingSpace.lean`

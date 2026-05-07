@@ -394,17 +394,33 @@ def lint_wiki() -> LintResult:
     no_sources = [t for t, i in tiddlers.items() if not i.sources and not t.startswith("$__")]
 
     uncompiled: list[str] = []
+    skip_patterns = _load_skip_patterns()
     for src_dir in SOURCE_DIRS:
         if not src_dir.exists():
             continue
         for fpath in src_dir.rglob("*"):
             if fpath.is_dir() or fpath.name.startswith("."):
                 continue
+            basename = fpath.name
+            suffix = fpath.suffix.lower()
+            SKIP_EXTS = {".zip", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".pyc", ".pkl",
+                         ".parquet", ".csv", ".tsv", ".log", ".bin", ".o", ".so", ".dll",
+                         ".ipynb", ".tgz", ".gz", ".bz2", ".xz", ".lock", ".toml", ".cfg",
+                         ".ini", ".cff", ".lean", ".scad", ".asm", ".v", ".c", ".rs",
+                         ".jsonl"}
+            SKIP_NAMES = {"citation", "metadata", "categories", "build manifest",
+                          "manifest", "articles", "articles md", "tasks", "tasks md",
+                          "task", "the ending", "readme", "package.json", ".gitignore"}
+            if suffix in SKIP_EXTS or basename in SKIP_NAMES or basename.startswith("."):
+                continue
+            normalized = basename.lower().replace("_", " ").replace("-", " ").replace("%20", " ")
+            if any(p.lower().replace("_", " ").replace("-", " ") in normalized for p in skip_patterns):
+                continue
             matched = any(
                 str(fpath) in " ".join(i.sources) or fpath.name in " ".join(i.sources)
                 for i in tiddlers.values()
             )
-            if not matched and fpath.suffix in (".json", ".md", ".txt", ".pdf"):
+            if not matched and suffix in (".json", ".md", ".txt", ".pdf"):
                 uncompiled.append(str(fpath))
 
     dead_links: list[tuple[str, str]] = []

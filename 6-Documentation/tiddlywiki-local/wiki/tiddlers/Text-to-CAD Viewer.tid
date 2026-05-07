@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Alias
+title: Text-to-CAD Viewer
+type: text/vnd.tiddlywiki
+
+! Text-to-CAD Viewer
+
+React-based 3D CAD viewer at `5-Applications/text-to-cad/viewer/`. See [[Manifold Viewer]] for WebGL alternatives.

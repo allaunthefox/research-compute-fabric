@@ -1,0 +1,116 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Materials Photonics MXene Polaritons Terahertz
+title: MXene Scroll PbI2 THz Cavity
+type: text/vnd.tiddlywiki
+
+! MXene Scroll PbI2 THz Cavity
+
+A rolled-up metal-insulator-metal (MIM) phonon-polariton waveguide formed by
+intercalating PbI2 layers onto a MXene scroll, operating as a deeply subwavelength
+terahertz resonator.
+
+!! Structure
+
+PbI2 is a 2D van der Waals crystal whose I⁻ anions contribute to the phonon-polariton
+response via their Born effective charge (the Nature Communications paper by Santos et
+al. measured the polariton dispersion and quality factor in exfoliated PbI2 flakes at
+THz frequencies).
+
+A MXene (e.g. Ti₃C₂T_x) is metallic. Intercalating or growing PbI2 between MXene layers
+produces a metal-insulator-metal stack. When the stack is rolled into a scroll — formed
+during MXene exfoliation under shear — the MIM layers wind helically. Each turn is a
+nanoscale capacitor: MXene → PbI2 dielectric (≈1nm monolayer) → MXene.
+
+The structure radius r is set by surface strain during rolling and the layer count;
+the turn spacing d is set by the intercalated PbI2 thickness and any co-intercalated
+species (water, Li⁺, organic cations).
+
+!! Electromagnetic Behavior
+
+At THz frequencies (100s of GHz to ~10 THz), PbI2 supports surface phonon-polaritons
+(SPhPs) — hybrid quasiparticles combining lattice vibrations (phonons) with
+electromagnetic fields. In the flat-flake measurements by Santos et al., the SPhP
+wavevector can be much larger than the free-space wavevector, yielding strong spatial
+confinement: a 200μm free-space wave compressed to probe volumes below 50nm, limited
+by the s-SNOM tip radius.
+
+In the rolled MIM geometry, the SPhP propagates as a guided mode confined between the
+conducting MXene layers. The mode is slow (phase velocity << c) and deeply subwavelength.
+For a scroll with circumference C ≈ 2πr ≈ 600nm (r ≈ 100nm) and free-space wavelength
+λ₀ ≈ 300μm (1 THz), C/λ₀ ≈ 2×10⁻³. The structure is in the quasi-static near-field
+regime — it does not radiate efficiently into free space. It is a waveguide or cavity,
+not a classical antenna.
+
+!! Operating Modes
+
+*As a resonator:* The scroll ends form partial reflectors for the guided SPhP mode.
+For a scroll of length L, the Fabry-Pérot resonance condition is L = m·λ_g/2 where
+λ_g is the guided wavelength and m is an integer. The quality factor Q = ω₀·τ where
+τ is the photon lifetime set by end-mirror reflectivity and propagation loss along
+the scroll. Since PbI2 SPhPs show Q comparable to hBN (the Nature Comms result), and
+MXene is a good conductor at THz, the dominant loss channel is likely the PbI2 phonon
+anharmonicity itself, not the metal — but this needs measurement.
+
+*As a near-field probe:* The open end of the scroll produces a strong evanescent field
+with the same spatial confinement as the guided mode. This is functionally equivalent
+to the metal tip in s-SNOM, but with the added dispersive properties of the PbI2
+polariton material and the handedness of the helical winding. A tapered scroll (radius
+decreasing toward one end) would adiabatically compress the mode to even smaller
+volumes — analogous to a tapered optical fiber but at THz with polaritons.
+
+*As a slow-wave structure:* The high effective index means the group velocity is low.
+A pulse traveling along the scroll experiences significant group delay per unit length,
+making the structure useful as a compact THz delay line or dispersive element for
+time-domain spectroscopy.
+
+!! Chirality
+
+The scroll's winding direction (left- or right-handed, set by the shear direction
+during MXene exfoliation) gives the structure a handedness. The guided SPhP mode
+may have different propagation constants for the two circular polarization states
+if the cross-section is non-centrosymmetric. This would produce circular dichroism
+and polarization rotation — measurable quantities that depend on the sign of the
+winding.
+
+!! Bounds
+
+The Santos et al. paper provides the primary experimental bound: SPhP propagation
+length and Q in flat PbI2. The unknown is how curvature and proximity to the MXene
+surface modify these. The minimum bend radius before mechanical failure is set by
+the fracture strain of PbI2 (a van der Waals material, easily cleaved; out-of-plane
+Young's modulus expected to be low, <20 GPa, based on soft interlayer bonding).
+Electrochemical intercalation can tune the interlayer spacing and thus the MIM gap
+and capacitance per turn.
+
+!! Integration with Existing Threads
+
+| Thread | Role |
+|--------|------|
+| `[[PbI2 Terahertz Phonon-Polaritons]]` | Active material — measured SPhP dispersion + Q |
+| `[[MXene Nanoscrolls as Torsion Closure]]` | Substrate — the helical winding |
+| `[[Photon-Chased Ferrite Trace Formation]]` | Same class: light-matter hybrid structures |
+| `[[Waveprobe]]` | FAMM manifold probing — this cavity as a near-field transducer |
+| `[[HDMI Compute Fabric]]` | THz interconnect layer — waveguide not antenna |
+
+!! Open Questions
+
+1. What is the SPhP dispersion in curved (non-flat) PbI2? Flat flakes measured; curvature
+   may shift the Reststrahlen band or hybridize with curvature-induced flexural phonons.
+2. Does the MXene boundary increase propagation loss? Metal-insulator SPhP waveguides
+   are well studied in the IR (e.g. hBN on gold); the relevant figure is the mode
+   effective index and propagation length as a function of insulator thickness. At
+   1nm monolayer thickness, the mode may be overdamped.
+3. Can the interlayer spacing be tuned post-synthesis? Electrochemical intercalation
+   (Li⁺, TMA⁺, etc.) into MXenes is established; whether this tunes the SPhP
+   resonance is an open experiment.
+4. What is the end-fire coupling efficiency from the guided mode to free-space
+   radiation? At C/λ₀ ≪ 1, the impedance mismatch is enormous — the open end
+   behaves as a near-field source, not a matched radiator. Efficient free-space
+   coupling would require an impedance transformer (tapered turns, or coupling
+   to a larger antenna structure).
+
+!! Durable Sources
+
+* Santos et al., Nature Communications (2026) — `[[PbI2 Terahertz Phonon-Polaritons]]`
+* `[[MXene Nanoscrolls as Torsion Closure]]`

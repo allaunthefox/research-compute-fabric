@@ -6,7 +6,7 @@ type: text/vnd.tiddlywiki
 
 ! HNSW Vector Search
 
-Planned HNSW (Hierarchical Navigable Small World) upgrade for the semantic search pipeline. Currently [[Swarm ENE Middleware]] uses O(N) brute-force cosine similarity over the `swarm_semantic_index` table. HNSW provides O(log N) approximate nearest neighbor search with M=16 max connections, ef_construction=200, using cosine distance. Will index all 14D concept vectors from cached queries. Cold-start fallback to brute force. Target: <1ms search on 10k+ vectors with >95% recall at k=10. Referenced in the [[ENE Cognitive Refactor Plan]], Phase 6. Also underpins the [[Semantic Graph Mining]] pipeline and [[Equation Forest Index]] retrieval.
+Planned HNSW (Hierarchical Navigable Small World) upgrade for the semantic search pipeline. Currently [[Swarm ENE Middleware]] uses O(N) brute-force cosine similarity over the `swarm_semantic_index` table. HNSW provides O(log N) approximate nearest neighbor search with M=16 max connections, ef_construction=200, using cosine distance. Will index all 14D concept vectors from cached queries. Cold-start fallback to brute force. Target: <1ms search on 10k+ vectors with >95% recall at k=10. Referenced in the [[ENe Cognitive Refactor Plan]], Phase 6. Also underpins the [[Semantic Graph Mining]] pipeline and [[Equation Forest Index]] retrieval.
 
 !! Links
 

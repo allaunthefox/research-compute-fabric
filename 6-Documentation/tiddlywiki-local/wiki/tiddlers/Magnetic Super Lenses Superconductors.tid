@@ -1,0 +1,50 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Physics Superconductivity Imaging Microscopy
+title: Magnetic Super Lenses Superconductors
+type: text/vnd.tiddlywiki
+
+! Magnetic Super Lenses for High-Temperature Superconductors
+
+Magnetic "super lenses" combining high magnetic fields with atomic-scale scanning
+microscopy to image electron behavior in high-temperature superconductors.
+Published in PNAS (2026). Team led by physicist J.C. Séamus Davis.
+
+!! Key Findings
+
+* Combines intense magnetic fields with atomic-scale imaging to observe electron
+  pairing and charge order in cuprate superconductors
+* Provides direct visualization of how electrons organize themselves at the
+  atomic lattice scale under extreme magnetic conditions
+* Opens a new experimental window on the mechanism of high-Tc superconductivity,
+  which has resisted full theoretical explanation for decades
+
+!! Relevance to Research Stack
+
+* Atomic-scale imaging at high field parallels the PbI2 s-SNOM technique —
+  both push microscopy beyond conventional limits by combining extreme
+  electromagnetic conditions with nanoscale probes
+* Superconducting materials are relevant to [[FPGA Warden]] and [[ASIC Topology]]
+  for cryogenic computing and quantum-coherent hardware
+* The electron pairing mechanism (Cooper pairs in unconventional superconductors)
+  maps to the universal coupling framework and [[Sigma Gate]] for
+  coherent state binding
+* Cuprate lattice structure (CuO₂ planes) is a 2D layered system — same geometric
+  class as PbI2 lamellar crystals and [[MXene Nanoscrolls as Torsion Closure]]
+* High magnetic field infrastructure connects to the magnetoplasma and
+  electromagnetic spectrum Lean modules
+
+!! Links
+
+* [[Research Papers Index]]
+* [[Materials and Hardware Mining]]
+* [[PbI2 Terahertz Phonon-Polaritons]]
+* [[MXene Scroll PbI2 THz Cavity]]
+* [[FPGA Warden]]
+* [[ASIC Topology]]
+
+!! Durable Source
+
+* Phys.org: "Magnetic 'super lenses' open new window on high-temperature superconductors"
+  (May 6, 2026)
+* Primary publication in PNAS (2026)

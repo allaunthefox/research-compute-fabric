@@ -16,6 +16,8 @@ found in `/home/allaun/Documents/ingest/` and `/home/allaun/Documents/Research S
 * [[Paper rsif 2022 0562]] — J. R. Soc. Interface article (1258KB)
 * [[Malicious AI Swarms Democracy]] — AI swarm safety paper (248KB PDF)
 * [[Abelian Sandpile Model Article]] — [[Hybrid Abelian Non-Abelian Sandpile]] reference
+* [[PbI2 Terahertz Phonon-Polaritons]] — Nature Communications 2026, terahertz photonics via lead iodide
+* [[Magnetic Super Lenses Superconductors]] — PNAS 2026, atomic-scale imaging of cuprate superconductors
 
 !! Durable Sources
 
@@ -28,3 +30,4 @@ found in `/home/allaun/Documents/ingest/` and `/home/allaun/Documents/Research S
 | Date | Action |
 |------|--------|
 | 2026-05-07 | Index created from `wiki_builder_shim` scan |
+| 2026-05-07 | Added PbI2 terahertz phonon-polariton paper |

@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Alias
+title: Quaternion Scalar
+type: text/vnd.tiddlywiki
+
+! Quaternion Scalar
+
+Refers to [[QuaternionScalar.lean]]. Quaternion-based scalar field representation.

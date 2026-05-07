@@ -1,0 +1,11 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Hardware Compute Motherboard
+title: Motherboard Computational Substrate
+type: text/vnd.tiddlywiki
+
+! Motherboard Computational Substrate
+
+The motherboard computational substrate concept (`5-Applications/scripts/motherboard_computational.py`) treats the motherboard itself as a programmable computational fabric. Every bus, trace, and interface becomes an addressable compute resource. Integrates with the [[HDMI Compute Fabric]] for display-as-compute, the [[ASIC Topology]] for die-level routing, and PCIe computational controller for bus-level computation. Part of the hardware-as-compute strategy.
+
+Durable Source: `5-Applications/scripts/motherboard_computational.py`

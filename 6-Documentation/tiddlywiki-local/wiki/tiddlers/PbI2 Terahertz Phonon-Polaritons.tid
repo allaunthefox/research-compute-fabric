@@ -1,0 +1,52 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Materials Photonics Terahertz PbI2 Polaritons
+title: PbI2 Terahertz Phonon-Polaritons
+type: text/vnd.tiddlywiki
+
+! PbI2 Terahertz Phonon-Polaritons
+
+Lead iodide (PbI2) as a 2D lamellar crystal for terahertz-range photonic circuits.
+Published in Nature Communications (2026), DOI: `10.1038/s41467-026-69027-6`.
+
+!! Key Findings
+
+* PbI2 supports high-quality-factor phonon-polaritons — hybrid light + lattice-vibration
+  quasiparticles that confine terahertz light into sub-wavelength volumes (<50nm from
+  a 200μm wave)
+* Comparable quality factor to hexagonal boron nitride (hBN), the infrared reference
+  material, but in the terahertz regime where hBN cannot operate
+* Synthesized by simple supersaturated aqueous solution + 80°C heating — no extreme
+  pressure/temperature conditions needed (unlike hBN)
+* Enables operation beyond the diffraction limit via scattering-type near-field optical
+  microscopy (s-SNOM) with nanoscale metal tips acting as antennas
+* Electric field density in s-SNOM probes up to 10^5× higher than free waves
+
+!! Relevance to Research Stack
+
+* `PbI2` is a perovskite precursor (ABX3 structure with I⁻ anion) — connects to perovskite
+  solar cell and optoelectronic degradation research
+* Phonon-polariton confinement maps to the `[[Photon-Chased Ferrite Trace Formation]]`
+  concept of light-matter hybrid encoding
+* Terahertz regime (100s GHz → THz) aligns with the `[[HDMI Compute Fabric]]` thesis
+  of using physical interfaces as high-bandwidth compute channels
+* The Imbuia beamline at CNPEM (LNLS) is referenced in existing `shared-data` germane
+  research materials — PbI2 work extends this to the new Tatu terahertz line
+* Simple crystallization method parallels the `[[MXene Nanoscrolls as Torsion Closure]]`
+  work on scalable 2D material synthesis
+
+!! Durable Source
+
+* Phys.org article: "Inexpensive material compresses light, paving the way for photonic
+  microcircuits in the terahertz range" (May 5, 2026)
+* Original paper: `Nature Communications (2026)`, DOI: `10.1038/s41467-026-69027-6`
+
+!! Links
+
+* [[Materials and Hardware Mining]]
+* [[Research Papers Index]]
+* [[Photon-Chased Ferrite Trace Formation]]
+* [[Optical Codon Decoder]]
+* [[HDMI Compute Fabric]]
+* [[MXene Nanoscrolls as Torsion Closure]]
+* [[MXene Scroll PbI2 THz Cavity]]

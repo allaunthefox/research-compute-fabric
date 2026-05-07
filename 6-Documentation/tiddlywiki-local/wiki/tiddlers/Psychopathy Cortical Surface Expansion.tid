@@ -1,0 +1,102 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Neuroscience Psychopathy CorticalSurface Empathy Morphometrics
+title: Psychopathy Cortical Surface Expansion
+type: text/vnd.tiddlywiki
+
+! Psychopathy and Cortical Surface Expansion
+
+Large-sample (n=804) structural MRI study linking psychopathy to expanded cortical
+surface area and compressed structural brain gradients in incarcerated men.
+Published in *Biological Psychiatry: Global Open Science* (2026).
+
+!! Key Findings
+
+* High psychopathy scores associated with increased total cortical surface area,
+  particularly in superior temporal, auditory, and paralimbic regions — areas
+  involved in social and emotional processing
+* Surface area expansion was specific to psychopathy scores; not correlated with
+  self-reported empathy (Interpersonal Reactivity Index)
+* Disentangled cortical thickness from surface area — two properties with different
+  developmental mechanisms (neuronal migration/folding vs laminar depth)
+* Structural gradient compression: the continuous topographical map from primary
+  sensory to associative processing regions showed reduced differentiation
+* The interpersonal/affective psychopathy factor linked to lower empathic concern;
+  the antisocial/lifestyle factor linked to impaired perspective-taking
+
+!! Method
+
+Mobile MRI scanner brought to correctional facilities in US Southwest and Midwest.
+Psychopathy assessed via Psychopathy Checklist-Revised (PCL-R). Empathy via
+Interpersonal Reactivity Index (IRI). Cortical parcellation into hundreds of regions
+with separate thickness and surface area measurements. Structural gradient analysis
+via diffusion map embedding of cortical morphology.
+
+!! Relevance to Research Stack
+
+*Surface area as a structural invariant:* The paper disentangles two anatomical
+properties that develop under different constraints — surface area (set by
+progenitor cell division and gyrification during fetal development) vs cortical
+thickness (set by laminar differentiation and synaptic pruning through adolescence).
+This is a biological example of a two-axis structural invariant where one axis can
+be independently disturbed, directly analogous to the `[[AVMR Adaptive Vector Manifold Representation]]`
+separation of manifold dimensions and the `[[Mass Number Theory]]` admissible/residual
+tensor decomposition.
+
+*Gradient compression:* The compressed structural gradient — less differentiation
+between the extremes of the sensory-to-associative axis — is a loss of manifold
+resolution. In Research Stack terms, this is a reduction in the effective
+dimensionality of the cortical manifold. Same mathematical structure as
+`[[Semantic RG Flow]]` coarse-graining and `[[Manifold Flow]]` gradient collapse.
+The measurement via diffusion map embedding of the structural covariance matrix
+is the same technique underlying the `[[Semantic Eigenvector Bundle]]` pipeline.
+
+*Developmental folding constraints:* Cortical surface area is set by the number
+of radial glial progenitor divisions during neurogenesis. Each division adds a
+columnar unit to the cortical sheet. The expansion seen in psychopathy implies either
+more progenitor divisions or reduced apoptosis during early development. This is a
+growth-bounded structural invariant — same constraint class as the `[[Turing Pattern Prior]]`
+in `[[Extremophile Constraint Layer]]` (finite nutrient flux bounds growth) and the
+`[[Menger Sponge Fractal Addressing]]` volume-surface area relationship.
+
+*Paralimbic bridge:* The paralimbic system connects emotional processing (limbic)
+to cognitive processing (neocortical). In psychopathy, this bridge region shows
+structural expansion. This maps to the `[[Semantic Engine Binding Derivation]]`
+concept of bridging between semantic domains, and the `[[NIICore Architecture]]`
+hierarchical controller bridging morphic field layers.
+
+*Empathy decomposition:* The finding that different psychopathy factors dissociate
+different empathy types (affective traits → empathic concern; behavioral traits →
+perspective-taking) shows that empathy is not a unitary manifold. This supports the
+Research Stack's approach of decomposing complex psychological constructs into
+separable axes — same methodological principle as `[[Concept Vector 14]]` and
+`[[AVMRClassification.lean]]`.
+
+*Self-report limitation:* The null correlation between brain structure and
+self-reported empathy is notable. Self-report requires metacognitive access to
+one's own empathic deficits — a capacity that psychopathy itself impairs. This is
+an instance of a measurement system whose accuracy depends on the property being
+measured, a self-referential problem familiar from the `[[Sigma Gate]]` and
+`[[EpistemicHonesty.lean]]` frameworks.
+
+!! Integration with Existing Threads
+
+| Thread | Connection |
+|--------|------------|
+| `[[Brain as Manifold]]` | Cortical surface as a 2D manifold with measurable geometric properties |
+| `[[AVMR Adaptive Vector Manifold Representation]]` | Surface area vs thickness as separable manifold axes |
+| `[[Semantic RG Flow]]` | Gradient compression as coarse-graining of the cortical manifold |
+| `[[Semantic Eigenvector Bundle]]` | Diffusion map embedding used for gradient analysis |
+| `[[Extremophile Constraint Layer]]` | Turing Pattern Prior for growth-bounded structural development |
+| `[[Mass Number Theory]]` | Surface area expansion as an admissible/residual tensor decomposition |
+| `[[Menger Sponge Fractal Addressing]]` | Volume-surface area relationship in folded structures |
+| `[[Semantic Engine Binding Derivation]]` | Paralimbic bridge as domain-binding architecture |
+| `[[Sigma Gate]]` | Self-referential measurement problem in metacognitive assessment |
+| `[[Concept Vector 14]]` | Empathy decomposition into separable psychological axes |
+| `[[CognitiveLoad.lean]]` | Cortical structural constraints on cognitive capacity |
+
+!! Durable Source
+
+* Radecki et al. (2026), Biological Psychiatry: Global Open Science
+  DOI: `10.1016/j.bpsgos.2026.100695`
+* PsyPost article by Karina Petrova, May 2, 2026

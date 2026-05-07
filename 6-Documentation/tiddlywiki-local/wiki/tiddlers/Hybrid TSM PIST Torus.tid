@@ -1,0 +1,9 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack Alias
+title: Hybrid TSM PIST Torus
+type: text/vnd.tiddlywiki
+
+! Hybrid TSM PIST Torus
+
+Refers to [[HybridTSMPISTTorus.lean]]. Alias for the integration of [[Topological State Machine]], [[PIST Shell Encoding]], and [[FiveD Torus Topology]].

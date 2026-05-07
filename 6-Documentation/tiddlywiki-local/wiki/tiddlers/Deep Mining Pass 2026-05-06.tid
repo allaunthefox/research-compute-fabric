@@ -1,0 +1,62 @@
+created: 20260506151000000
+modified: 20260506151000000
+tags: ResearchStack Mining ChatLogs ENE Index
+title: Deep Mining Pass 2026-05-06
+type: text/vnd.tiddlywiki
+
+! Deep Mining Pass 2026-05-06
+
+Longer mining wave over conversation dumps, ENE rows, wiki sources, and
+research corpora.
+
+!! Coverage Notes
+
+* Full dump manifest indexed 369 files across the obvious chat/session pools.
+* One semantic/ENE miner sampled 1,316 focused files and 6,853 SQLite package rows.
+* One hardware/materials miner sampled 421 readable files, about 97.7M characters, and 6,853 SQLite package rows.
+* The deep pass confirmed the first TiddlyWiki pass covered only a small fraction of the conversation surface.
+
+!! Imported From This Pass
+
+* [[TMDS Timing-Plane Invariants]]
+* [[Virtual Display Blitter Compute Surface]]
+* [[Raster Lookup Unit]]
+* [[Wrinkle-Scale Rule]]
+* [[FNWH Hyperfluid Claim Boundary]]
+* [[Unknown Surface Hint]]
+* [[ENE Wiki Layer]]
+* [[OmniHash Header Shell]]
+* [[Mass Number Recursion Warning]]
+* [[Photon-Chased Ferrite Trace Formation]]
+* [[Ferrite-Lined Waveguide Wall]]
+* [[Thermodynamic Trinary Watchdog PLC]]
+* [[Hutter Critical Analysis]]
+* [[Hutter Tensor Field Analysis DAG]]
+* [[S3C MassPlus PIST Hyperbola]]
+* [[Mass Number Sidecar Rule]]
+* [[Witness-Regularized Burgers GPE]]
+* [[Braid Rope Fusion Shifter]]
+* [[RNA to Peptide Shifter]]
+* [[Master Equation Hole]]
+
+!! Taxonomy Gaps
+
+Add or normalize tags for:
+
+* `ClaimBoundary`
+* `Quarantine`
+* `ReleaseBoundary`
+* `ImportCandidate`
+* `ProofTarget`
+* `BridgeSurface`
+* `ConnectorOps`
+* `SearchProtocol`
+* `AbandonedHeld`
+* `KnowledgeCapture`
+* `ExternalTracker`
+
+!! Links
+
+* [[Full Chat Log Dumps]]
+* [[Mined Conversation Backlog]]
+* [[ENE Substrate Mining]]

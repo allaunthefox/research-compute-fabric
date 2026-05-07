@@ -1,0 +1,23 @@
+created: 20260506135500000
+modified: 20260506135500000
+tags: ResearchStack SemanticGraph Routing Candidate
+title: Semantic Prime Refraction
+type: text/vnd.tiddlywiki
+
+! Semantic Prime Refraction
+
+Route law where concept eigenvectors bend through domains according to
+semantic-prime alignment and MassNumber/admissibility gradients.
+
+!! Links
+
+* [[Semantic Eigenvector Bundle]]
+* [[Internal Semantic Search]]
+* [[Semantic Graph Mining]]
+* [[MassNumber]]
+
+!! Sources
+
+* `shared-data/data/ingested/chatgpt/hdmi_as_computation_fabric_ene_brief.md`
+* `shared-data/data/ingested/chatgpt/hdmi_as_computation_fabric_graph_edges.jsonl`
+* `../docs/WEIRD_CONCEPTS_GLOSSARY.md`

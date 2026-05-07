@@ -1,0 +1,244 @@
+#!/usr/bin/env python3
+"""Native wrapper for the repo-local Substack connector scripts."""
+
+from __future__ import annotations
+
+import argparse
+import http.server
+import json
+import os
+import shutil
+import socketserver
+import subprocess
+import sys
+from pathlib import Path
+from urllib.parse import quote
+
+REPO_ROOT = Path(os.environ.get("RESEARCH_STACK_ROOT", "/home/allaun/Documents/Research Stack"))
+CONNECTOR_DIR = Path(os.environ.get("SUBSTACK_CONNECTOR_DIR", REPO_ROOT / "plugins/substack-connector"))
+PREPARE_SCRIPT = CONNECTOR_DIR / "scripts/prepare_substack_post.py"
+UPDATE_SCRIPT = CONNECTOR_DIR / "scripts/update_existing_post.py"
+SUBSTACK_PYTHON = Path(os.environ.get("SUBSTACK_PYTHON", "/home/allaun/.local/share/substack-env/bin/python"))
+
+
+def read_metadata(path: Path) -> dict[str, object]:
+    metadata: dict[str, object] = {}
+    current_list: str | None = None
+    if not path.exists():
+        return metadata
+
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.rstrip()
+        if not line or line.lstrip().startswith("#"):
+            continue
+        if line.startswith("  - ") and current_list:
+            metadata.setdefault(current_list, []).append(line[4:].strip().strip('"'))
+            continue
+        if ":" not in line or line.startswith(" "):
+            continue
+        key, value = line.split(":", 1)
+        key = key.strip()
+        value = value.strip()
+        if value:
+            metadata[key] = value.strip('"')
+            current_list = None
+        else:
+            metadata[key] = []
+            current_list = key
+    return metadata
+
+
+def article_dir(path: str) -> Path:
+    target = Path(path).expanduser().resolve()
+    if target.is_file():
+        return target.parent
+    return target
+
+
+def source_markdown(root: Path) -> Path:
+    article = root / "article.md"
+    if article.exists():
+        return article
+    bundled = root / "substack_bundle" / "post.md"
+    if bundled.exists():
+        return bundled
+    meta = read_metadata(root / "metadata.yml")
+    source = meta.get("source")
+    if isinstance(source, str):
+        return root / source
+    return article
+
+
+def build(root: Path) -> dict[str, object]:
+    src = source_markdown(root)
+    if not src.exists():
+        raise SystemExit(f"source markdown not found: {src}")
+    if not PREPARE_SCRIPT.exists():
+        raise SystemExit(f"prepare script not found: {PREPARE_SCRIPT}")
+    proc = subprocess.run(
+        [sys.executable, str(PREPARE_SCRIPT), str(src)],
+        check=False,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if proc.returncode != 0:
+        if proc.stdout:
+            print(proc.stdout, end="")
+        if proc.stderr:
+            print(proc.stderr, end="", file=sys.stderr)
+        raise SystemExit(proc.returncode)
+    try:
+        manifest = json.loads(proc.stdout)
+    except json.JSONDecodeError as exc:
+        raise SystemExit(f"prepare script did not emit JSON: {exc}") from exc
+    return manifest
+
+
+def run_check(root: Path) -> int:
+    manifest = build(root)
+    post_md = Path(str(manifest["post_md"]))
+    status = 0
+    print(f"==> {post_md}")
+    if shutil.which("harper-cli"):
+        print("\n-- Harper --")
+        status |= subprocess.call(["harper-cli", "lint", "--no-color", "--format", "compact", str(post_md)])
+    if shutil.which("vale"):
+        print("\n-- Vale --")
+        config = find_vale_config(root)
+        cmd = ["vale", "--no-wrap", str(post_md)]
+        if config:
+            cmd.insert(1, f"--config={config}")
+        status |= subprocess.call(cmd)
+    return status
+
+
+def find_vale_config(root: Path) -> str | None:
+    current = root
+    for candidate in [current, *current.parents]:
+        config = candidate / ".vale.ini"
+        if config.exists():
+            return str(config)
+    fallback = Path("/usr/share/substack-local-preview/vale.ini")
+    if fallback.exists():
+        return str(fallback)
+    return None
+
+
+def preview(root: Path, port: int, open_browser: bool) -> int:
+    manifest = build(root)
+    bundle = Path(str(manifest["bundle_dir"]))
+    post_html = Path(str(manifest["post_html"]))
+    url = f"http://127.0.0.1:{port}/{quote(post_html.name)}"
+    if open_browser and shutil.which("xdg-open"):
+        subprocess.Popen(["xdg-open", url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    print(f"Serving {bundle}")
+    print(f"Preview: {url}")
+    os.chdir(bundle)
+    with socketserver.TCPServer(("127.0.0.1", port), http.server.SimpleHTTPRequestHandler) as httpd:
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            print("\nStopped preview server.")
+    return 0
+
+
+def open_preview(root: Path) -> int:
+    manifest = build(root)
+    html_path = Path(str(manifest["post_html"]))
+    if not shutil.which("xdg-open"):
+        print(html_path)
+        return 0
+    return subprocess.call(["xdg-open", str(html_path)])
+
+
+def publish_prep(root: Path) -> int:
+    status = run_check(root)
+    manifest = build(root)
+    post_md = Path(str(manifest["post_md"]))
+    print("\n==> Publish prep")
+    print(f"Title: {manifest['title']}")
+    print(f"Markdown: {post_md}")
+    print(f"Preview: {manifest['post_html']}")
+    copied = copy_to_clipboard(post_md.read_text(encoding="utf-8"))
+    if copied:
+        print("Copied post Markdown to clipboard.")
+    else:
+        print("Clipboard helper not found; open post_md manually.")
+    print("Open Substack editor, paste Markdown, upload assets if any, then publish manually.")
+    return status
+
+
+def update_remote(root: Path, post_id: int, env_path: Path, publication_url: str, publish: bool) -> int:
+    manifest = build(root)
+    post_md = Path(str(manifest["post_md"]))
+    if not UPDATE_SCRIPT.exists():
+        print(f"update script not found: {UPDATE_SCRIPT}", file=sys.stderr)
+        return 2
+    if not SUBSTACK_PYTHON.exists():
+        print(f"Substack Python env not found: {SUBSTACK_PYTHON}", file=sys.stderr)
+        return 2
+    cmd = [
+        str(SUBSTACK_PYTHON),
+        str(UPDATE_SCRIPT),
+        str(post_md),
+        "--post-id",
+        str(post_id),
+        "--env-path",
+        str(env_path),
+        "--publication-url",
+        publication_url,
+    ]
+    if publish:
+        cmd.append("--publish")
+    return subprocess.call(cmd)
+
+
+def copy_to_clipboard(text: str) -> bool:
+    if shutil.which("wl-copy"):
+        subprocess.run(["wl-copy"], input=text.encode("utf-8"), check=False)
+        return True
+    if shutil.which("xclip"):
+        subprocess.run(["xclip", "-selection", "clipboard"], input=text.encode("utf-8"), check=False)
+        return True
+    return False
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    sub = parser.add_subparsers(dest="command", required=True)
+    for name in ["build", "check", "open", "publish-prep"]:
+        p = sub.add_parser(name)
+        p.add_argument("article")
+    for name in ["update", "publish"]:
+        p = sub.add_parser(name)
+        p.add_argument("article")
+        p.add_argument("--post-id", type=int, required=True)
+        p.add_argument("--env-path", type=Path, default=Path.home() / ".substack.env")
+        p.add_argument("--publication-url", default="https://froginnponds.substack.com")
+    p = sub.add_parser("preview")
+    p.add_argument("article")
+    p.add_argument("--port", type=int, default=8765)
+    p.add_argument("--open", action="store_true")
+    args = parser.parse_args()
+    root = article_dir(args.article)
+    if args.command == "build":
+        print(json.dumps(build(root), indent=2))
+        return 0
+    if args.command == "check":
+        return run_check(root)
+    if args.command == "open":
+        return open_preview(root)
+    if args.command == "publish-prep":
+        return publish_prep(root)
+    if args.command == "update":
+        return update_remote(root, args.post_id, args.env_path, args.publication_url, publish=False)
+    if args.command == "publish":
+        return update_remote(root, args.post_id, args.env_path, args.publication_url, publish=True)
+    if args.command == "preview":
+        return preview(root, args.port, args.open)
+    return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

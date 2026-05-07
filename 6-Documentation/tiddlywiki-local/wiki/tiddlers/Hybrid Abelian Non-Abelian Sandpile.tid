@@ -1,0 +1,27 @@
+created: 20260506135500000
+modified: 20260506135500000
+tags: ResearchStack SemanticGraph Routing Candidate
+title: Hybrid Abelian Non-Abelian Sandpile
+type: text/vnd.tiddlywiki
+
+! Hybrid Abelian Non-Abelian Sandpile
+
+Candidate routing split: Abelian redistribution handles safe, order-insensitive
+relaxation, while non-Abelian routing preserves path-sensitive novelty.
+
+!! Role
+
+This gives [[Chirality Destabilizer]] a bounded mechanism instead of turning
+novelty into a free-for-all.
+
+!! Links
+
+* [[Chirality Destabilizer]]
+* [[FAMM]]
+* [[COUCH Family]]
+* [[Semantic Graph Mining]]
+
+!! Sources
+
+* `shared-data/data/ingested/chatgpt/hdmi_as_computation_fabric_ene_brief.md`
+* `shared-data/data/ingested/chatgpt/hdmi_as_computation_fabric_graph_edges.jsonl`

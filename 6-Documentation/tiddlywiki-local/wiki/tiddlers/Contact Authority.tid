@@ -1,0 +1,25 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack Materials Robotics Control Candidate
+title: Contact Authority
+type: text/vnd.tiddlywiki
+
+! Contact Authority
+
+The controllable impulse a surface patch can apply before slip, detachment,
+overheating, or damage.
+
+!! Why It Matters
+
+It gives robot skin, feet, clamps, and adaptive material surfaces a shared
+score instead of a purely visual metaphor.
+
+!! Evidence
+
+* Source: `6-Documentation/docs/speculative-materials/LocallyAdaptiveContactMaterials.md:34-60`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[Fractal Extendable Hair Field]]
+* [[Gecko Dry Adhesion Anchor]]

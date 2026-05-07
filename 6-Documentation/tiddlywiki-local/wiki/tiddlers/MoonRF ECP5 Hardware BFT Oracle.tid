@@ -1,0 +1,22 @@
+created: 20260506135500000
+modified: 20260506135500000
+tags: ResearchStack Hardware FPGA Verification
+title: MoonRF ECP5 Hardware BFT Oracle
+type: text/vnd.tiddlywiki
+
+! MoonRF ECP5 Hardware BFT Oracle
+
+ECP5 FPGA as a third BFT party with MMR append, optional signatures, IoC regime
+detection, and PUF-style identity. The useful local role is hardware judge with
+minimal OS attack surface.
+
+!! Links
+
+* [[FPGA Warden]]
+* [[Structural eFuse Surface]]
+* [[Materials and Hardware Mining]]
+* [[SDR Void Hash Verification]]
+
+!! Sources
+
+* `5-Applications/audit/exploit-audit/sessions/research-note-moonrf-fpga-ecp5-bft-20260406.json`

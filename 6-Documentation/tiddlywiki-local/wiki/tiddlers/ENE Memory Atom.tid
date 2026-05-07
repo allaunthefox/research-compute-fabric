@@ -1,0 +1,27 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack ENE Substrate Schema Candidate
+title: ENE Memory Atom
+type: text/vnd.tiddlywiki
+
+! ENE Memory Atom
+
+An address-first ENE record carrying voxel/manifold address, hashes, scalar
+lanes, settlement state, body references, and quorum metadata.
+
+!! Why It Matters
+
+This is the smallest useful unit for making ENE more than a loose semantic
+archive: every stored idea can have address, integrity, provenance, and
+settlement state.
+
+!! Evidence
+
+* Source: `docs/specs/ENE_MEMORY_ATLAS_SPEC.md:27-88`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[Fractal Hash Triplet]]
+* [[Concept Vector 14]]
+* [[Concept Anchor Settlement State]]

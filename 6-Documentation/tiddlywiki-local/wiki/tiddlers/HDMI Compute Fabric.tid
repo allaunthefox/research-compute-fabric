@@ -1,0 +1,23 @@
+created: 20260506134500000
+modified: 20260506134500000
+tags: ResearchStack Hardware Display Candidate
+title: HDMI Compute Fabric
+type: text/vnd.tiddlywiki
+
+! HDMI Compute Fabric
+
+Candidate surface where display timing, raster cells, and HDMI/DVI-style
+transport become a deterministic compute or witness fabric rather than only a
+video path.
+
+!! Links
+
+* [[FPGA Warden]]
+* [[Morphic DSP]]
+* [[Semantic Graph Mining]]
+* [[Materials and Hardware Mining]]
+
+!! Durable Sources
+
+* `../docs/WEIRD_CONCEPTS_GLOSSARY.md`
+* `../../5-Applications/scripts/hdmi_computational_shell.py`

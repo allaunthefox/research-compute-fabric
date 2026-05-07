@@ -1,0 +1,26 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack RAG SemanticGraph Search Literature External
+title: Graph-Evolving RAG
+type: text/vnd.tiddlywiki
+
+! Graph-Evolving RAG
+
+A local-PDF literature anchor for retrieval systems whose knowledge graph
+evolves through feedback-driven updates.
+
+!! Why It Matters
+
+This is a useful external reference point for ENE search, TiddlyWiki indexing,
+and semantic graph maintenance.
+
+!! Evidence
+
+* ENE source: `data/substrate_index.db`, `local_pdfs` arXiv `2604.09588`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[Internal Semantic Search]]
+* [[Semantic Graph Mining]]
+* [[Substrate FTS Query Surface]]

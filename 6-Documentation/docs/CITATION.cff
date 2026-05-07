@@ -168,6 +168,42 @@ references:
       analogy for why deterministic coordinate structures (n = k² + t, composite address) remain
       invariant under encoding/decoding dynamics, ensuring lossless roundtrip without search.
 
+# External spectral-shape reference; cited only as prior art / search anchor, not vendored or reimplemented.
+  - type: software
+    title: "Harmonic Shape Transform (HST)"
+    authors:
+      - family-names: "Krahulik"
+        given-names: "Pavel"
+    date-released: 2026
+    url: "https://github.com/sel8888/harmonic-shape-transform-2026-koncept"
+    repository-code: "https://github.com/sel8888/harmonic-shape-transform-2026-koncept"
+    license: GPL-3.0
+    notes: |
+      External reference for normalized Laplace-eigenfunction / scalar-field shape coordinates.
+      Kept as citation and concept-search anchor only; no HST code or implementation is vendored here.
+      License preservation note: upstream LICENSE states GNU GPL v3; upstream README also states
+      non-commercial CC BY-NC 4.0/free research terms plus commercial licensing contact, and Legal.md
+      states GPL-3.0 obligations for derivative use. Treat as external reference unless separate
+      permission is obtained.
+
+  - type: software
+    title: "WebGPU Geant4-DNA"
+    authors:
+      - family-names: "Gunaydin"
+        given-names: "Ahmet Baris"
+    date-released: 2026
+    url: "https://github.com/abgnydn/webgpu-dna"
+    repository-code: "https://github.com/abgnydn/webgpu-dna"
+    license: MIT
+    notes: |
+      External reference for browser/WebGPU Monte Carlo track-structure simulation,
+      Independent-Reaction-Time chemistry, and B-DNA SSB/DSB scoring.
+      Kept as citation and concept-search anchor only; no WebGPU Geant4-DNA code or
+      generated cross-section data is vendored here. License preservation note:
+      upstream LICENSE states MIT for simulation code only; upstream README states
+      referenced Geant4-DNA/G4EMLOW cross-section data is distributed separately
+      under the Geant4 Software License.
+
 # Primary genetic code data sources
   - type: dataset
     title: "Codon Usage Tables from Kazusa DNA Research Institute (CUTG)"

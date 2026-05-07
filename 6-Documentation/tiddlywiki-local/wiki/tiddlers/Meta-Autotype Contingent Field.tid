@@ -1,0 +1,26 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack ENE Ingestion Schema Candidate
+title: Meta-Autotype Contingent Field
+type: text/vnd.tiddlywiki
+
+! Meta-Autotype Contingent Field
+
+A deterministic fallback field emitted when an ingestion surface is unknown,
+keeping the data inspectable without treating it as authoritative.
+
+!! Why It Matters
+
+It is the repo's answer to weird incoming artifacts: preserve the thing,
+label uncertainty, and avoid silently flattening it into a false schema.
+
+!! Evidence
+
+* Source: `infra/ene_meta_autotype.py:1-7`
+* Source: `infra/ene_meta_autotype.py:145-195`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[Concept Anchor Settlement State]]
+* [[ENE Memory Atom]]

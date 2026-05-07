@@ -1,0 +1,28 @@
+created: 20260506151000000
+modified: 20260506151000000
+tags: ResearchStack Hardware HDMI GPU FPGA Candidate
+title: Virtual Display Blitter Compute Surface
+type: text/vnd.tiddlywiki
+
+! Virtual Display Blitter Compute Surface
+
+A display-style blitter interface repurposed as a compute surface whose raster
+operations become command or state packets.
+
+!! Why It Matters
+
+It gives the GPU/FPGA fabric a software-facing shape: the GPU can write like it
+is painting, while the verification side decodes the raster stream as state.
+
+!! Evidence
+
+* Source: `shared-data/data/ingested/chatgpt/hdmi_as_computation_fabric_transcript.md:1479`
+* Source: `shared-data/data/ingested/chatgpt/hdmi_as_computation_fabric_transcript.md:1483`
+* Source: `shared-data/data/ingested/chatgpt/hdmi_as_computation_fabric_transcript.md:1520`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Links
+
+* [[HDMI Compute Fabric]]
+* [[TMDS Timing-Plane Invariants]]
+* [[Raster Lookup Unit]]

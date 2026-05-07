@@ -1,6 +1,7 @@
-import Database from "better-sqlite3";
+import Database from "./sqlite.js";
 import { join } from "path";
 import { spawn } from "child_process";
+import { existsSync } from "fs";
 
 const dbPath = join(process.cwd(), "data", "substrate_index.db");
 const db = new Database(dbPath);
@@ -76,6 +77,16 @@ export async function hybridSearch(query, limit = 10) {
 
   const keywordIds = keywordResults.map(r => `${r.pkg}@${r.version}`);
 
+  if (!existsSync(SEARCHSERVER)) {
+    return keywordResults.slice(0, limit).map(r => ({
+      pkg: r.pkg,
+      version: r.version,
+      description: r.description ? r.description.substring(0, 200).replace(/\n/g, " ") + "..." : "No description available.",
+      score: 1.0,
+      ranker: "keyword-fallback"
+    }));
+  }
+
   // 2. Semantic Recall (Dense) — read records, delegate similarity to Lean
   const allRecords = db.prepare("SELECT pkg, version, description, concept_vector FROM packages").all();
   const records = allRecords.map(r => {
@@ -97,7 +108,8 @@ export async function hybridSearch(query, limit = 10) {
         pkg: r.id.split("@")[0],
         version: r.id.split("@")[1],
         description: record && record.description ? record.description.substring(0, 200).replace(/\n/g, " ") + "..." : "No description available.",
-        score: r.score / 65536
+        score: r.score / 65536,
+        ranker: "lean-searchserver"
       };
     })
     .slice(0, limit);

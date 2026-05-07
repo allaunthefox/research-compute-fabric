@@ -1,0 +1,32 @@
+created: 20260506152500000
+modified: 20260506152500000
+tags: ResearchStack S3C PIST Lean ProofTarget Candidate
+title: S3C MassPlus PIST Hyperbola
+type: text/vnd.tiddlywiki
+
+! S3C MassPlus PIST Hyperbola
+
+A theorem-target bridge between S3C MassPlus structure and PIST hyperbola
+geometry.
+
+!! Why It Matters
+
+This is one of the clearest places to turn project language into a proof
+surface: bridge the primitive-set shell to PIST geometry, then require Lean or
+executable witness checks.
+
+!! Evidence
+
+* Source: `shared-data/data/ingested/chatgpt/filling_in_help_ene_brief.md:41`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Status
+
+ProofTarget. Do not promote as established until the theorem statement and
+targeted build are checked.
+
+!! Links
+
+* [[PIST Shifters]]
+* [[Mass Number Sidecar Rule]]
+* [[ENE Memory Atom]]

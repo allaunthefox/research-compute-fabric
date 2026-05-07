@@ -1,0 +1,21 @@
+created: 20260506135500000
+modified: 20260506135500000
+tags: ResearchStack Materials Fabrication Candidate
+title: Bio-Damascene GaN Nanolithography
+type: text/vnd.tiddlywiki
+
+! Bio-Damascene GaN Nanolithography
+
+Candidate fabrication thread: controlled microbial cathodic depolarization
+etches GaN trenches and deposits conductive EPS biofilm as a trace. The notes
+also include chemical-bait depletion as a containment mechanism.
+
+!! Links
+
+* [[Mullins Skin-Effect Post Processing]]
+* [[Materials and Hardware Mining]]
+* [[Structural eFuse Surface]]
+
+!! Sources
+
+* `5-Applications/audit/exploit-audit/sessions/conception-botp-qubo-bio-damascene-20260402.json`

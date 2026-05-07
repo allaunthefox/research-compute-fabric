@@ -1,0 +1,49 @@
+created: 20260506161000000
+modified: 20260506161000000
+tags: ResearchStack ENE SemanticEngine Derivation BridgeSurface Candidate
+title: Semantic Engine Binding Derivation
+type: text/vnd.tiddlywiki
+
+! Semantic Engine Binding Derivation
+
+A workbench method for inspecting MIT-licensed semantic engines, extracting
+their conceptual bindings, and rederiving those bindings from the Research
+Stack theory base before anything is adapted.
+
+!! Rule
+
+Do not copy the engine. Inspect the binding law.
+
+```text
+external engine -> conceptual binding observation -> local primitive -> ENE plugin/substrate law
+```
+
+!! Binding Classes
+
+* Lexical binding: terms, symbols, paths, and exact names into candidate records.
+* Vector binding: text into route coordinates.
+* Graph binding: concepts into typed traversal edges.
+* Temporal binding: old fact plus new fact into revised memory state.
+* Connector binding: external workspace into normalized local record.
+* Claim binding: retrieved evidence into promoted claim.
+
+!! Local Re-Derivation Primitives
+
+* `bind`
+* [[ENE Memory Atom]]
+* [[Concept Vector 14]]
+* [[Semantic Eigenvector Bundle]]
+* [[Substrate FTS Query Surface]]
+* [[Mass Number Sidecar Rule]]
+* [[Concept Anchor Settlement State]]
+* [[TiddlyWiki ENE Bridge Plugin]]
+
+!! Local Artifact
+
+* Spec: `6-Documentation/docs/specs/SEMANTIC_ENGINE_BINDING_DERIVATION_WORKBENCH.md`
+
+!! Links
+
+* [[Internal Semantic Search]]
+* [[ENE Substrate Mining]]
+* [[TiddlyWiki ENE Bridge Plugin]]

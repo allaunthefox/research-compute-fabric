@@ -1,0 +1,27 @@
+created: 20260506152500000
+modified: 20260506152500000
+tags: ResearchStack PIST Compression Shifter Candidate
+title: Braid Rope Fusion Shifter
+type: text/vnd.tiddlywiki
+
+! Braid Rope Fusion Shifter
+
+A PIST shifter variant combining braid-group crossing structure with
+multicolor rope geometry.
+
+!! Why It Matters
+
+This is the most compression-promising shifter family from the braid/rope pass
+and deserves its own benchmark-and-receipt card instead of living only inside
+the monolithic shifter script.
+
+!! Evidence
+
+* Source: `3-Mathematical-Models/pist_biological_polymorphic_shifter_v3_complete.py:492`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Links
+
+* [[PIST Shifters]]
+* [[Hutter Prize Compression]]
+* [[Genomic Data Compression Anchor]]

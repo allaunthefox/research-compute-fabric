@@ -1,0 +1,26 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack ENE Search SQLite Candidate
+title: Substrate FTS Query Surface
+type: text/vnd.tiddlywiki
+
+! Substrate FTS Query Surface
+
+A SQLite FTS5 layer over package identifiers, descriptions, tags, and domains.
+
+!! Why It Matters
+
+This is the boring useful bridge between the future graph search dream and a
+local search engine that can be smoked, diffed, and rebuilt.
+
+!! Evidence
+
+* Source: `substrate_git_index.py:302-307`
+* Source: `substrate_git_index.py:341-358`
+* Source: `substrate_git_index.py:732-747`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[Internal Semantic Search]]
+* [[Address-First Search Protocol]]

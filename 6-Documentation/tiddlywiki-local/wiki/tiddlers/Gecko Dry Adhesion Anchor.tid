@@ -1,0 +1,25 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack Materials Adhesion Robotics Candidate
+title: Gecko Dry Adhesion Anchor
+type: text/vnd.tiddlywiki
+
+! Gecko Dry Adhesion Anchor
+
+A reversible dry-adhesion contact model based on hierarchical micro/nano tip
+contact rather than glue, suction, or hooks.
+
+!! Why It Matters
+
+This gives the flip-tile or hair-field material a real-world adhesion anchor
+and a clear set of failure surfaces.
+
+!! Evidence
+
+* Source: `6-Documentation/docs/speculative-materials/LocallyAdaptiveContactMaterials.md:62-113`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[Fractal Extendable Hair Field]]
+* [[Contact Authority]]

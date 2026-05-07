@@ -1,0 +1,28 @@
+created: 20260506130000000
+modified: 20260506130000000
+tags: ResearchStack Setup
+title: Local Setup Notes
+type: text/vnd.tiddlywiki
+
+! Local Setup Notes
+
+Run from this directory:
+
+```
+npm start
+```
+
+Then open:
+
+```
+http://127.0.0.1:8081/
+```
+
+Build a standalone HTML export:
+
+```
+npm run build
+```
+
+The local Markdown wiki remains the durable canonical surface until an export
+path is promoted.

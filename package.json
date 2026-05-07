@@ -1,0 +1,8 @@
+{
+  "name": "research-stack",
+  "private": true,
+  "description": "Local Research Stack tooling dependencies.",
+  "dependencies": {
+    "better-sqlite3": "^12.4.1"
+  }
+}

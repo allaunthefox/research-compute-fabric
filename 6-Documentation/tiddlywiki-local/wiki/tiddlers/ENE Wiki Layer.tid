@@ -1,0 +1,29 @@
+created: 20260506151000000
+modified: 20260506151000000
+tags: ResearchStack ENE KnowledgeCapture TiddlyWiki Candidate
+title: ENE Wiki Layer
+type: text/vnd.tiddlywiki
+
+! ENE Wiki Layer
+
+A SQLite-backed wiki layer for revisions, links, categories, backlinks, and
+deterministic write receipts.
+
+!! Why It Matters
+
+This is the bridge between full chat dumps, TiddlyWiki cards, and ENE-style
+provenance. It lets wiki edits become inspectable records instead of loose
+page changes.
+
+!! Evidence
+
+* Source: `4-Infrastructure/infra/ene_wiki_layer.py:113`
+* Source: `4-Infrastructure/infra/ene_wiki_layer.py:185`
+* Source: `4-Infrastructure/infra/ene_wiki_layer.py:391`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Links
+
+* [[Full Chat Log Dumps]]
+* [[Concept Vector 14]]
+* [[Substrate FTS Query Surface]]

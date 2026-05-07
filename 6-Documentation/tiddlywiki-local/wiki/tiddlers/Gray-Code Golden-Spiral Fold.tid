@@ -1,0 +1,26 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack ENE Geometry Retrieval Candidate
+title: Gray-Code Golden-Spiral Fold
+type: text/vnd.tiddlywiki
+
+! Gray-Code Golden-Spiral Fold
+
+A deterministic fold codec using Gray-code addresses and golden-spiral chart
+positions for navigable ENE storage.
+
+!! Why It Matters
+
+It gives the wiki and graph layers a concrete geometry for addressable concept
+retrieval instead of an unbounded keyword pile.
+
+!! Evidence
+
+* Source: `infra/ene_fractal_fold.py:52-83`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[Address-First Search Protocol]]
+* [[Fractal Hash Triplet]]
+* [[Internal Semantic Search]]

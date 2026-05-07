@@ -1,0 +1,14 @@
+{
+  "source": "/home/allaun/Documents/Research Stack/0-Core-Formalism/lean/Semantics/Semantics/ThermodynamicSort.lean",
+  "type": "lean",
+  "compressed_hash": 1.0,
+  "lawful": false,
+  "compression_layers": [
+    "pist",
+    "cognitive",
+    "delta",
+    "vle",
+    "huffman"
+  ],
+  "thermodynamic_valid": false
+}

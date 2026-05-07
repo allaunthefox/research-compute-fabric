@@ -32,7 +32,19 @@ const KEY_TERMS = [
   "emission gate",
   "ENE",
   "Linear",
-  "Notion"
+  "Notion",
+  "HDMI",
+  "DVI",
+  "TMDS",
+  "sRGB",
+  "CE-sRGB",
+  "NIICore",
+  "Virtual HDMI Blitter",
+  "DynamicCanal",
+  "FAMM",
+  "SemanticMass",
+  "MassNumber",
+  "Hutter"
 ];
 
 function usage() {
@@ -91,8 +103,23 @@ function buildBrief({ title, sourcePath, json, body, tags }) {
     lower.includes("wrinkle-in-time scale rule") ||
     lower.includes("operator first, scale later") ||
     lower.includes("atomized math problem with mass numbers");
+  const isHdmiFabricSession =
+    lower.includes("hdmi as computation fabric") ||
+    lower.includes("virtual hdmi blitter") ||
+    lower.includes("tmds") ||
+    lower.includes("ce-srgb") ||
+    lower.includes("srgb niicore");
 
-  const bullets = isScaleRuleSession
+  const bullets = isHdmiFabricSession
+    ? [
+        "Raw session converted to ENE package provenance.",
+        "Working concept: HDMI/DVI-style display machinery as deterministic compute/witness fabric, not display-only output.",
+        "Virtual HDMI/Display Blitter maps raster pixels or cells into command/state packets.",
+        "TMDS/DVI timing acts as a timing-law plane; sRGB and CE-sRGB-NIICore act as payload and compute-packet surfaces.",
+        "DynamicCanal plus Hot/Cold FAMM route admissible paths, scars, and recovery through the fabric.",
+        "Semantic Prime Refraction, Chirality Destabilizer, and hybrid sandpile sections are search-graph targets, not Hutter-safe compression claims by default."
+      ]
+    : isScaleRuleSession
     ? [
         "Raw session converted to ENE package provenance.",
         "Canonical rule: `operator first, scale later`; do not bind physical constants until the operator class is stable.",
@@ -110,7 +137,13 @@ function buildBrief({ title, sourcePath, json, body, tags }) {
         "Immediate theorem target: prove `S3C.massPlus n = PIST_Hyperbola_Index n`, then formalize the S3C emission gate as geometric admissibility on the PIST shell manifold."
       ];
 
-  const trackerSeeds = isScaleRuleSession
+  const trackerSeeds = isHdmiFabricSession
+    ? [
+        "Linear: update RES-2377 with graph/search seeds from the HDMI computation-fabric session.",
+        "Wiki: preserve Virtual HDMI Blitter, TMDS Timing Plane, CE-sRGB-NIICore, and Hot/Cold FAMM in the Concept Archive.",
+        "ENE: retain transcript, HDMI brief, GraphML edge list, and local graph export as provenance artifacts."
+      ]
+    : isScaleRuleSession
     ? [
         "Linear: create implementation issue for a Lean/FPGA `RenormalizedMassNumberFractureAutomaton` primitive.",
         "Notion: create knowledge-capture page for the Wrinkle-in-Time scale rule and no-CFD solid-wave atomization path.",
@@ -165,6 +198,12 @@ const isScaleRuleSession =
   lowerSession.includes("wrinkle-in-time scale rule") ||
   lowerSession.includes("operator first, scale later") ||
   lowerSession.includes("atomized math problem with mass numbers");
+const isHdmiFabricSession =
+  lowerSession.includes("hdmi as computation fabric") ||
+  lowerSession.includes("virtual hdmi blitter") ||
+  lowerSession.includes("tmds") ||
+  lowerSession.includes("ce-srgb") ||
+  lowerSession.includes("srgb niicore");
 const slug = slugify(title);
 const outDir = join(process.cwd(), "data", "ingested", "chatgpt");
 mkdirSync(outDir, { recursive: true });
@@ -184,7 +223,15 @@ const fullResult = pkgIngest({
   notionId: null,
   metric: null,
   witness: { trace_hash: createHash("sha256").update(body).digest("hex") },
-  sigma: isScaleRuleSession
+  sigma: isHdmiFabricSession
+    ? {
+        sigma_codon: "HDMI-COMPUTE-FABRIC",
+        classify: "FORMING",
+        observe: "ChatGPT session captures virtual HDMI/display blitter routing, TMDS timing plane, CE-sRGB-NIICore payload semantics, DynamicCanal, and Hot/Cold FAMM compute-fabric recovery.",
+        prove: "Next formal target is a minimal graph/search-backed spec and hardware smoke path for the DVI/TMDS texel transmitter surface.",
+        tags
+      }
+    : isScaleRuleSession
     ? {
         sigma_codon: "WRINKLE-SCALE-RULE",
         classify: "FORMING",
@@ -206,12 +253,26 @@ const briefResult = pkgIngest({
   title: `${title} ENE Brief`,
   body: brief,
   kind: "research_brief",
-  tags: [...new Set([...tags, "brief", "s3c-pist-bridge"])],
+  tags: [
+    ...new Set([
+      ...tags,
+      "brief",
+      isHdmiFabricSession ? "hdmi-compute-fabric" : isScaleRuleSession ? "scale-rule" : "s3c-pist-bridge"
+    ])
+  ],
   sessionId: json.url || inputPath,
   notionId: null,
   metric: null,
   witness: { trace_hash: createHash("sha256").update(brief).digest("hex") },
-  sigma: isScaleRuleSession
+  sigma: isHdmiFabricSession
+    ? {
+        sigma_codon: "HDMI-COMPUTE-BRIEF",
+        classify: "FORMING",
+        observe: "Distilled HDMI compute-fabric object for wiki, ENE, Linear, and semantic graph/search tracking.",
+        prove: "Formalize TMDS timing-plane invariants, virtual blitter packet shape, and graph evidence paths before attaching compression claims.",
+        tags: [...new Set([...tags, "brief", "hdmi", "tmds", "virtual-blitter", "ce-srgb-niicore", "compute-fabric"])]
+      }
+    : isScaleRuleSession
     ? {
         sigma_codon: "WRINKLE-SCALE-BRIEF",
         classify: "FORMING",

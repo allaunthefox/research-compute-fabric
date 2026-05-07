@@ -1,0 +1,218 @@
+#!/usr/bin/env bash
+set -u
+
+usage() {
+  cat <<'USAGE'
+Usage: abiword-local-proofread [--no-harper] [--no-vale] [--keep-tmp] FILE...
+
+Local proofreading bridge for AbiWord, LibreOffice, and word-processor files.
+
+The wrapper:
+  1. Converts word-processor documents to plain text.
+     - .abw prefers AbiWord.
+     - .odt/.docx/.doc/.rtf and other office files prefer LibreOffice.
+  2. Runs harper-cli for local grammar checks.
+  3. Runs vale for local prose/style checks.
+
+If a .vale.ini is found in the current directory or a parent directory, it is
+used. Otherwise, the bundled conservative Vale config is used.
+USAGE
+}
+
+find_vale_config() {
+  local dir="${PWD}"
+  while [[ "${dir}" != "/" ]]; do
+    if [[ -f "${dir}/.vale.ini" ]]; then
+      printf '%s\n' "${dir}/.vale.ini"
+      return 0
+    fi
+    dir="$(dirname "${dir}")"
+  done
+
+  if [[ -f "/usr/share/abiword-local-proofread/vale.ini" ]]; then
+    printf '%s\n' "/usr/share/abiword-local-proofread/vale.ini"
+    return 0
+  fi
+
+  return 1
+}
+
+needs_conversion() {
+  case "${1,,}" in
+    *.txt|*.text|*.md|*.markdown|*.rst|*.adoc|*.html|*.htm)
+      return 1
+      ;;
+    *)
+      return 0
+      ;;
+  esac
+}
+
+prefers_abiword() {
+  case "${1,,}" in
+    *.abw|*.zabw)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+convert_with_abiword() {
+  local input="$1"
+  local output="$2"
+  abiword --to=txt --to-name "${output}" "${input}" >/dev/null 2>&1
+}
+
+convert_with_libreoffice() {
+  local input="$1"
+  local tmpdir="$2"
+  local base stem output
+  base="$(basename "${input}")"
+  stem="${base%.*}"
+  output="${tmpdir}/${stem}.txt"
+
+  rm -f "${output}"
+  if ! libreoffice --headless --nologo --nofirststartwizard \
+      --convert-to txt:Text --outdir "${tmpdir}" "${input}" >/dev/null 2>&1; then
+    return 1
+  fi
+  if [[ ! -f "${output}" ]]; then
+    return 1
+  fi
+  printf '%s\n' "${output}"
+}
+
+convert_document() {
+  local input="$1"
+  local tmpdir="$2"
+  local base output converted
+  base="$(basename "${input}")"
+  output="${tmpdir}/${base}.txt"
+
+  if prefers_abiword "${input}"; then
+    if convert_with_abiword "${input}" "${output}"; then
+      printf '%s\n' "${output}"
+      return 0
+    fi
+    if converted="$(convert_with_libreoffice "${input}" "${tmpdir}")"; then
+      printf '%s\n' "${converted}"
+      return 0
+    fi
+    return 1
+  fi
+
+  if converted="$(convert_with_libreoffice "${input}" "${tmpdir}")"; then
+    printf '%s\n' "${converted}"
+    return 0
+  fi
+  if convert_with_abiword "${input}" "${output}"; then
+    printf '%s\n' "${output}"
+    return 0
+  fi
+  return 1
+}
+
+run_one() {
+  local file="$1"
+  local tmpdir="$2"
+  local text_file="$file"
+  local status=0
+
+  if [[ ! -f "${file}" ]]; then
+    printf 'abiword-local-proofread: not a file: %s\n' "${file}" >&2
+    return 2
+  fi
+
+  if needs_conversion "${file}"; then
+    if ! text_file="$(convert_document "${file}" "${tmpdir}")"; then
+      printf 'abiword-local-proofread: could not export %s to text with LibreOffice or AbiWord\n' "${file}" >&2
+      return 3
+    fi
+  fi
+
+  printf '\n==> %s\n' "${file}"
+
+  if [[ "${RUN_HARPER}" == "1" ]]; then
+    printf '\n-- Harper --\n'
+    if ! harper-cli lint --no-color --format compact "${text_file}"; then
+      status=1
+    fi
+  fi
+
+  if [[ "${RUN_VALE}" == "1" ]]; then
+    printf '\n-- Vale --\n'
+    local vale_config
+    if vale_config="$(find_vale_config)"; then
+      if ! vale --config="${vale_config}" --no-wrap "${text_file}"; then
+        status=1
+      fi
+    else
+      printf 'abiword-local-proofread: no Vale config found; skipped\n' >&2
+    fi
+  fi
+
+  return "${status}"
+}
+
+RUN_HARPER=1
+RUN_VALE=1
+KEEP_TMP=0
+files=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    --no-harper)
+      RUN_HARPER=0
+      ;;
+    --no-vale)
+      RUN_VALE=0
+      ;;
+    --keep-tmp)
+      KEEP_TMP=1
+      ;;
+    --)
+      shift
+      while [[ $# -gt 0 ]]; do
+        files+=("$1")
+        shift
+      done
+      break
+      ;;
+    -*)
+      printf 'abiword-local-proofread: unknown option: %s\n' "$1" >&2
+      usage >&2
+      exit 2
+      ;;
+    *)
+      files+=("$1")
+      ;;
+  esac
+  shift
+done
+
+if [[ ${#files[@]} -eq 0 ]]; then
+  usage >&2
+  exit 2
+fi
+
+tmpdir="$(mktemp -d)"
+if [[ "${KEEP_TMP}" != "1" ]]; then
+  trap 'rm -rf "${tmpdir}"' EXIT
+else
+  printf 'abiword-local-proofread: keeping temp dir %s\n' "${tmpdir}" >&2
+fi
+
+overall=0
+for file in "${files[@]}"; do
+  if ! run_one "${file}" "${tmpdir}"; then
+    overall=1
+  fi
+done
+
+exit "${overall}"

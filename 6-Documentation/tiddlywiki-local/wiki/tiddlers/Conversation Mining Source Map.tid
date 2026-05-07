@@ -1,0 +1,45 @@
+created: 20260506134000000
+modified: 20260506134000000
+tags: ResearchStack Mining Sources
+title: Conversation Mining Source Map
+type: text/vnd.tiddlywiki
+
+! Conversation Mining Source Map
+
+This tiddler tracks where local conversation evidence lives before it is
+promoted into durable concept cards.
+
+!! Primary Pools
+
+* `5-Applications/audit/exploit-audit/sessions/`
+* `shared-data/data/germane/research/`
+* `shared-data/data/ingested/chatgpt/`
+* `shared-data/data/ingested/llm_research/`
+* `6-Documentation/archive/sessions/chatgpt-logs/`
+* `data/substrate_index.db`
+* `docs/specs/ENE_MEMORY_ATLAS_SPEC.md`
+* `infra/ene_fractal_fold.py`
+* `infra/ene_meta_autotype.py`
+* `infra/ene_wiki_layer.py`
+* `6-Documentation/docs/speculative-materials/`
+* `6-Documentation/chat-log-dumps/manifest.jsonl`
+
+!! Mining Lanes
+
+* [[Materials and Hardware Mining]]
+* [[Compression and Soliton Mining]]
+* [[Semantic Graph Mining]]
+* [[ENE Substrate Mining]]
+* [[Full Chat Log Dumps]]
+
+!! Promotion Rule
+
+A mined tiddler should include:
+
+* source path
+* neutral mechanism
+* status
+* outgoing links
+* failure mode or receipt when available
+
+Anything without a source path stays in the mining inbox.

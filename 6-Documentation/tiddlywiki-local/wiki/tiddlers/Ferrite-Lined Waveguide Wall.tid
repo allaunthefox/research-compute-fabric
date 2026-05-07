@@ -1,0 +1,29 @@
+created: 20260506151000000
+modified: 20260506151000000
+tags: ResearchStack Materials Ferrite Hardware Candidate
+title: Ferrite-Lined Waveguide Wall
+type: text/vnd.tiddlywiki
+
+! Ferrite-Lined Waveguide Wall
+
+A channel or wall region whose ferrite-like lining changes magnetic,
+electrical, or waveguide behavior.
+
+!! Why It Matters
+
+This is the device-level child of [[Photon-Chased Ferrite Trace Formation]]:
+the fabrication idea becomes a readable or steerable boundary surface.
+
+!! Evidence
+
+* Source: `6-Documentation/docs/speculative-materials/PhotonChasedFerriteTraceFormation.md:95`
+* Source: `6-Documentation/docs/speculative-materials/PhotonChasedFerriteTraceFormation.md:122`
+* Source: `6-Documentation/docs/speculative-materials/PhotonChasedFerriteTraceFormation.md:136`
+* Source: `6-Documentation/docs/speculative-materials/PhotonChasedFerriteTraceFormation.md:154`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Links
+
+* [[Photon-Chased Ferrite Trace Formation]]
+* [[SLS Resonant Tubule Lattice]]
+* [[SDR Void Hash Verification]]

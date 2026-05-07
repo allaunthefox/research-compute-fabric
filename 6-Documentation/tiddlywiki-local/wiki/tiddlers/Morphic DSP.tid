@@ -1,0 +1,22 @@
+created: 20260506134500000
+modified: 20260506134500000
+tags: ResearchStack Hardware FPGA
+title: Morphic DSP
+type: text/vnd.tiddlywiki
+
+! Morphic DSP
+
+Reconfigurable DSP surface where fixed hardware cells can change local mode
+under receipt gates. Useful bridge between adaptive material cells and FPGA
+execution cells: finite local modes, explicit boundaries, and verified collapse.
+
+!! Links
+
+* [[FPGA Warden]]
+* [[Materials and Hardware Mining]]
+* [[Waveprobe]]
+* [[Speculative Materials]]
+
+!! Durable Source
+
+`../docs/MORPHIC_DSP_CONCEPT.md`

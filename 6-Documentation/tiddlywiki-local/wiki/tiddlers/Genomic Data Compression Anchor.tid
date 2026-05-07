@@ -1,0 +1,27 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack Compression Genomics Literature External
+title: Genomic Data Compression Anchor
+type: text/vnd.tiddlywiki
+
+! Genomic Data Compression Anchor
+
+A literature-backed anchor for genomic data compression and genetic algorithm
+search in the stack's biological compression lane.
+
+!! Why It Matters
+
+It gives [[PIST Shifters]], codon work, and Hutter-facing compression ideas a
+concrete bibliography row rather than only an internal analogy.
+
+!! Evidence
+
+* ENE source: `data/substrate_index.db`, `zotero_items` key `5V6OZSRC`
+* DOI: `10.1101/2025.10.23.684090`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[PIST Shifters]]
+* [[Optical Codon Decoder]]
+* [[Hutter Prize Compression]]

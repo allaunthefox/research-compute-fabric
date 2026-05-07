@@ -2,8 +2,113 @@
 
 **Authority:** `docs/VOCABULARY_LOCK.md`, `CONCEPTS.md`, `docs/gcl/GLOSSARY.md`
 **Ground Truth:** Lean 4 (`0-Core-Formalism/lean/Semantics/`)
+**Companion:** `docs/WEIRD_CONCEPTS_GLOSSARY.md`
 
 ---
+
+## Acronym Surface Index
+
+This index surfaces acronym-like tokens currently used across the Research Stack.
+Definitions defer to the detailed glossary entries below when present. Scope
+excludes vendored corpora, package locks, virtualenvs, generated dependency
+vocabularies, and raw build artifacts unless the acronym is part of a project
+surface.
+
+| Acronym | Expansion / role | Primary surface |
+|---|---|---|
+| **AI** | Artificial intelligence; generic operator/tooling context. | Infrastructure and docs |
+| **AMMR** | Algebraic Merkle Mountain Range. | Core Formalism |
+| **API** | Application programming interface. | Infrastructure shims |
+| **ASIC** | Application-specific integrated circuit. | `ASICTopology`, hardware topology |
+| **AVM** | Adaptive Virtual Machine; universal math-language adapter and shim boundary. | `Semantics.AVM`, `docs/AGENTS.md` |
+| **AVMR** | Adaptive Vector Manifest Roll-up. | Core Formalism |
+| **BLS** | BLS aggregate signature scheme. | Meta / attestation |
+| **BRAM** | Block RAM; FPGA memory segmentation surface. | `MORE_FAMM`, hardware |
+| **CAD** | Computer-aided design. | Patent / hardware docs |
+| **CAI** | Codon Adaptation Index. | Codon Optimization |
+| **CFF** | Citation/invariant entry surface; expansion not locked in this glossary yet. | `HermesAgentIntegration`, hardware CFF files |
+| **CFL** | Courant-Friedrichs-Lewy stability condition. | Burgers / PDE roadmap |
+| **CLI** | Command-line interface. | Tools and scripts |
+| **CMYK** | Cyan/magenta/yellow/key classifier vocabulary used by SLUQ routing. | `Hardware/AdaptiveFabric.lean` |
+| **DAG** | Directed acyclic graph. | `DAG-LUT`, AMMR/O-AMMR |
+| **DAG-LUT** | Directed-acyclic-graph Look-Up Table. | FPGA Warden |
+| **DB** | Database. | ENE / SQLite artifacts |
+| **DIAT** | Dynamic Integer-Address Transform. | Geometry |
+| **DNA** | Deoxyribonucleic acid. | Biology / genetics |
+| **DSP** | Digital signal processing / FPGA DSP slice context. | Hardware docs |
+| **ENE** | Endless Node Edges. | Infrastructure |
+| **FAMM** | Frustration-Aware Manifold Mesh. | Security / memory |
+| **FNWH** | Formal Non-Wave Harmonic. | Meta / Burgers |
+| **FPGA** | Field-programmable gate array. | FPGA Warden, hardware verification |
+| **GC** | Guanine-cytosine content constraint. | Codon Optimization |
+| **GCCL** | Geometric-Coded Compression Language. | Compression |
+| **GCCL-Rep** | GCCL representation format. | Compression |
+| **GCL** | Geometric Compression Language shorthand surface. | Delta GCL / GCL docs |
+| **GCLang** | Executable notation / compiler substrate for GCL. | Compression |
+| **GENSIS** | Genetic-Natured N-Space universal encoding substrate. | Compression / biology |
+| **GPU** | Graphics processing unit. | Hardware execution surface |
+| **GR** | General relativity. | Physics docs |
+| **GWL** | Gravitational-Wave-Like topology. | Geometry |
+| **IA** | Internet Archive. | Ingest tooling |
+| **IRP** | Invariant Receipt Protocol. | Meta / receipts |
+| **ISA** | Instruction set architecture. | Native Integer ISA |
+| **KDA** | KDA Physics / KDA Control domain label; expansion not locked in this glossary yet. | `UnifiedFunctionLayer.lean` |
+| **KL** | Kullback-Leibler divergence. | Information manifold taxonomy |
+| **KOT** | Kinetic Optical Transform. | Compression / PTOS |
+| **KOTC** | Kinetic Operation Token Completion Daemon. | `tools/kotc/` |
+| **LFS** | Git Large File Storage. | Repository hygiene |
+| **LLM** | Large language model. | Evidence standards |
+| **LUT** | Look-Up Table. | FPGA Warden, `DAG-LUT` |
+| **MCP** | Model Context Protocol / connector routing surface. | Infrastructure tools |
+| **MISC** | Manifold-Invariant Shell Compression. | Compression |
+| **MLGRU** | MasterEquation update kernel weights stage. | MasterEquation |
+| **MMR** | Merkle Mountain Range. | AMMR |
+| **MOE / MoE** | Mixture of Experts. | Routing / model surfaces |
+| **MOIM** | Meta-Ontological Inversion Machine; behavioral/discrete manifold surface. | `MOIMMetaprobe`, manifold taxonomy |
+| **MORE_FAMM** | Capability-based FAMM memory isolation surface. | Infrastructure |
+| **MS3C-RG** | Matroska S3C Nested Reduction Gear. | NUVMAP address space |
+| **NaN** | Not-a-Number boundary marker. | AngrySphinx / fixed-point safety |
+| **NES** | Project token used in legacy/emulation surfaces; expansion not locked here. | Apps / recovered docs |
+| **NII** | Native Integer ISA. | Infrastructure |
+| **NMR** | Nuclear magnetic resonance. | Physics references |
+| **NTP** | Network Time Protocol. | Infrastructure |
+| **NUVMAP** | Non-Uniform Variable Mapping. | Geometry |
+| **O-AMMR** | Ordered AMMR. | Core Formalism |
+| **OEPI** | Operator Escalation Percentage Index. | `Semantics.OEPI` |
+| **OISC** | One-instruction-set computer. | Hardware / blitter |
+| **OTOM** | Ordered Transformation & Orchestration Model. | Infrastructure |
+| **PDE** | Partial differential equation. | Burgers / HyperFlow |
+| **PIST** | Perfectly Imperfect Square Theory. | Geometry / witness surface |
+| **PQC** | Post-quantum cryptography. | AngrySphinx |
+| **PTOS** | Photonic Topological Optical Storage. | Compression |
+| **Q0_16** | 16-bit fixed-point fraction format. | FixedPoint |
+| **Q0_64** | 64-bit scalar `[0, 1)` interface. | FixedPoint / USTSM |
+| **Q16_16** | 32-bit fixed-point mixed integer/fraction format. | FixedPoint |
+| **QUBO** | Quadratic unconstrained binary optimization. | `RotationQUBO` |
+| **RGFlow** | Renormalization-group-flow lawfulness / scale-coherence surface. | `SemanticRGFlow`, formal verification |
+| **SAE** | Sparse autoencoder. | Biology / neural proxy |
+| **S3C** | Shell/Topological Codec; also surfaced as Shell-3 Codec in metaprobes. | Geometry |
+| **SI** | International System of Units. | Evidence standards |
+| **SIM** | Sovereign Informatic Manifold. | Information manifold taxonomy |
+| **SLUQ** | SLUQ routing accumulator/state-machine surface; expansion not locked here. | `Hardware/AdaptiveFabric.lean`, taxonomy |
+| **SNR** | Signal-to-noise ratio. | Signal / hardware docs |
+| **SSD** | Solid-state drive. | Infrastructure |
+| **SSMS_nD** | Nested self-similar manifold shell. | Geometry |
+| **STARK / ZK-STARK** | Scalable transparent argument of knowledge / zero-knowledge STARK. | Warden validation |
+| **STDP** | Spike-Timing-Dependent Plasticity. | Biology / neural |
+| **SVQF** | Spherical Quaternion Vector Field. | Infrastructure |
+| **TQFT** | Topological quantum field theory. | Roadmap |
+| **TSM** | Thermal State Machine. | Thermodynamics |
+| **TTM** | TTM layer taxonomy surface; expansion not locked in this glossary yet. | `ManifoldTopology`, OTOM papers |
+| **UI** | User interface. | Application surfaces |
+| **UMUP-λ** | Universal Manifold Update Protocol. | Meta |
+| **USTSM** | Universal Substrate Topological State Machine. | Roadmap / substrate census |
+| **VLB** | Nibble-delta witness substrate label; expansion not locked in this glossary yet. | `docs/research/VLB_*` |
+| **VLE** | Variable-Length Encoding. | Compression |
+| **VLSI** | Very-large-scale integration. | Spatial/VLSI domain |
+| **VM** | Virtual machine. | AVM / substrate state |
+| **XNA** | Xenonucleic acid. | Biology references |
+| **ZK** | Zero knowledge. | STARK / Warden validation |
 
 ## Core Formalism
 
@@ -65,6 +170,11 @@
 | **DNAmethylation** | Epigenetic mark — methyl group addition to cytosine, altering expression without changing sequence. |
 | **HistoneMod** | Histone tail modification (acetylation, methylation, phosphorylation) — encodes regulatory state on chromatin. |
 | **Prion** | Misfolded protein acting as conformational template — a physical instantiation of the Reverse-Sisyphus structural-memory principle. |
+| **Neural Type Eigenvector Coverage** | Coverage-driven morphology/evidence graph where broad neuron-type features become a principal vector used to rank biological analogues by measured efficiency gain, provenance, and residual risk. |
+| **Locally Adaptive Contact Materials** | Cooperative anisotropic layered flip-tile material/control patches held near a bounded critical phase boundary so local charge/field inputs can alter stiffness, adhesion, damping, friction, texture, or shape while preserving contact authority. |
+| **Fractal Extendable Hair Field** | Nested active micron-scale hair/fibril field over a tensioned material skin; branches extend, orient, stiffen, and retract to multiply dry adhesion or microhook contact while preserving detachability. |
+| **Recovered Session Material Concepts** | Material-primitives bundle mined from a recovered local chat: MXene nanoscrolls, resonant SLS tubules, conductive valence matrices, magnetic labyrinths, magnetoelectric laminate capsules, piezo receipts, ferrite/carbon doping, and SDR void hashes. |
+| **Structural eFuse Surface** | Passive load-bearing geometry/material state that trips a measurable signal under unsafe strain, misalignment, flux imbalance, conductivity jump, or RF-signature drift. |
 | **Genome18** | 18-bit genome address space: 6 bins × 3 bits per bin. |
 | **r_vs_SAE** | Pearson correlation between codon bias and SAE neural feature alignment — a project-specific manifold-capacity proxy. |
 
@@ -77,6 +187,14 @@
 | **DynamicCanal** | Adaptive canal that deforms under pressure: `λ(p, pressure)` with width ≥ 0. Substrate #27. |
 | **Landauer** | Landauer's principle: minimum energy `kT·ln2` per bit erasure. Grounds AngrySphinx thermodynamic asymmetry. |
 | **HyperFlow** | Navier-Stokes on the manifold: `∂F/∂t = ν∇²F - (F·∇)F + ∇p`. Fixed-point convergence with bounded pressure. Substrate #10. |
+| **F-Number COUCH** | Finite COUCH route-pressure proxy: `F_COUCH(κ) = avg_curvature_milli(κ) + max_curvature_milli(κ) + FAMM_frustration_milli`; current high-F threshold `18500`. |
+| **U-Rotated COUCH Value** | Finite COUCH projection along curvature and coupling: `U_rot(κ) = C_avg_milli(κ) + κ_milli * U_norm_milli(κ) / 1000`. |
+| **Y-Axis O-Step COUCH Container** | Finite COUCH packet `{O_steps, U_value, R_value}` where `U_value = U_rot(κ)` and `R_value = 1000` is constant. |
+| **Route-Pressure COUCH Gate** | Operational COUCH pressure `P_COUCH(κ) = F_COUCH(κ) + U_rot(κ) - R_value`, mapped to `local`, `atlas`, or `reject` routing actions. |
+| **LNMF / Loch-Nessie-Monster Filter** | Hidden-basin routing filter: `Loch(L) = internal/(1+leakage) * A_L`; `nE_i(L) = A_{L,i} * rho_{L,i} * Scar_i(L)`; `M(L) = |Aut(L)| * Loch(L) * sum nE_i(L)`. Candidate, not a Monster-group proof. |
+| **Monster Filter Assignment** | Assignment layer over LNMF outputs: Tree Fiddy/BHOCS owns archive commit monsters, Loc Nes owns hidden recurrence witnesses, and quarantine remains explicit. |
+| **English Word Bonding Equations** | Speculative-materials bridge where words such as `CAGE`, `BRIDGE`, `CHAIN`, `SCAR`, `SALT`, and `RING` name finite bonding/routing operators. Mnemonic only; not a chemistry claim. |
+| **Reactive Semantic Perturbation / Fluorinated Semantics** | Discovery method that permits highly reactive or absurd semantic inputs, then admits only outputs that survive typed gates, receipts, failure modes, and quarantine. |
 | **TSM** | Thermal State Machine — Builder (ADD), Judge (PAUSE), Warden (SUBTRACT) clock triad. |
 | **Reverse-Sisyphus** | Property: `dC/dt = f(W, C)` AND `E[W(t+Δ)] < E[W(t)]` — work persistently reduces future work on the same pattern class. |
 | **CognitiveLoad** | 5-component load model: `(L_I, L_E, L_G, L_R, L_M)` with efficiency `η = Î/(total+ε)`. Substrate #14. |

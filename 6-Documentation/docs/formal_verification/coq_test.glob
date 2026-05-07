@@ -1,0 +1,34 @@
+DIGEST 986c5dc009d8a3fbef8067ecdd20b85a
+Fcoq_test
+ind 95:97 <> nat
+constr 112:112 <> O
+constr 124:124 <> S
+R116:118 coq_test <> nat:1 ind
+R131:134 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R128:130 coq_test <> nat:1 ind
+R135:137 coq_test <> nat:1 ind
+scheme 95:97 <> nat_rect
+scheme 95:97 <> nat_ind
+scheme 95:97 <> nat_rec
+scheme 95:97 <> nat_sind
+prf 179:186 <> nat_refl
+R201:203 coq_test <> nat ind
+binder 197:197 <> n:3
+R207:209 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R206:206 coq_test <> n:3 var
+R210:210 coq_test <> n:3 var
+prf 286:291 <> O_or_S
+R306:308 coq_test <> nat ind
+binder 302:302 <> n:4
+R316:319 Corelib.Init.Logic <> ::type_scope:x_'\/'_x not
+R312:314 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R311:311 coq_test <> n:4 var
+R315:315 coq_test <> O constr
+R320:326 Corelib.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R334:335 Corelib.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R331:333 coq_test <> nat ind
+binder 327:327 <> m:5
+R337:339 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R336:336 coq_test <> n:4 var
+R340:340 coq_test <> S constr
+R342:342 coq_test <> m:5 var

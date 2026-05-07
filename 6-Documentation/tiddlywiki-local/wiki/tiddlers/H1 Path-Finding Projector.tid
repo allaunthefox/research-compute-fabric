@@ -1,0 +1,28 @@
+created: 20260506135500000
+modified: 20260506135500000
+tags: ResearchStack Soliton Geometry Candidate
+title: H1 Path-Finding Projector
+type: text/vnd.tiddlywiki
+
+! H1 Path-Finding Projector
+
+H1 maps complex velocity and chirp information into N-space for path tracing.
+The mined conversations separate it from M2: H1 is the route projector, while
+M2 remains a separate aliasing fix.
+
+!! Why It Matters
+
+Periodic or chirp-like data can be highly compressible but poorly classified if
+the discriminant was calibrated before H1 existed.
+
+!! Links
+
+* [[Soliton N-Space Path]]
+* [[Tensor Compass]]
+* [[Organoid Lambda Calibration]]
+* [[Compression and Soliton Mining]]
+
+!! Sources
+
+* `shared-data/data/germane/research/chat-soliton-nspace-path-trace-20260404.md`
+* `shared-data/data/germane/research/chat-organoid-lambda-calibration-20260404.md`

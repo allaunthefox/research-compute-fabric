@@ -1,0 +1,29 @@
+created: 20260506151000000
+modified: 20260506151000000
+tags: ResearchStack Hardware Thermodynamics Verification Candidate
+title: Thermodynamic Trinary Watchdog PLC
+type: text/vnd.tiddlywiki
+
+! Thermodynamic Trinary Watchdog PLC
+
+A watchdog/control concept where system state is monitored through trinary
+energy or thermodynamic regimes rather than only binary pass/fail logic.
+
+!! Why It Matters
+
+It gives hardware verification a physical audit clock: safe, degraded, and
+fault states can be routed differently before a hard failure.
+
+!! Evidence
+
+* Source: `5-Applications/audit/exploit-audit/sessions/conception-trinary-watchdog-thermodynamic-plc-20260405.json:18`
+* Source: `5-Applications/audit/exploit-audit/sessions/conception-trinary-watchdog-thermodynamic-plc-20260405.json:28`
+* Source: `5-Applications/audit/exploit-audit/sessions/conception-trinary-watchdog-thermodynamic-plc-20260405.json:60`
+* Source: `5-Applications/audit/exploit-audit/sessions/conception-trinary-watchdog-thermodynamic-plc-20260405.json:62`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Links
+
+* [[FPGA Warden]]
+* [[Percolation Gate]]
+* [[Structural eFuse Surface]]

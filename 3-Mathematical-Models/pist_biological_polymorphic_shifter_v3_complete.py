@@ -139,6 +139,16 @@ SHIFTER_BASES = {
     'holographic_connectome_blocklocal': 5.0,
     'holographic_connectome_shadow': 4.8,
     'holographic_connectome_parity': 4.5,
+    'pist_scalar_mass': 1.0,       # 0D scalar mass (low entropy)
+    'pist_scalar_tension': 1.5,    # 0D scalar tension
+    'pist_0d_degenerate': 0.5,     # 0D degenerate (maximum compression)
+    'pist_nd_cartesian': 3.0,      # nD Cartesian (additive capacity)
+    'pist_nd_radial': 2.5,         # nD Radial (angular coupling)
+    'pist_nd_bundle': 3.5,         # nD Bundle (fiber dimension)
+    'braid': 2.5,                  # Artin braid group B_n
+    'multicolor_rope': 3.0,        # Colored strand bundles
+    'braid_rope_fusion': 4.0,      # Braid-rope fusion
+    'symbology_substitution': 3.5,  # Symbolic substitution for pattern groups
 }
 
 
@@ -178,6 +188,475 @@ def intrinsic_load(data):
     c = Counter(data)
     n = len(data)
     return -sum((cnt / n) * math.log2(cnt / n) for cnt in c.values())
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# 0D SCALAR PIST FUNCTIONS (Degenerate limit)
+# ═══════════════════════════════════════════════════════════════════════
+
+def pist_scalar_mass(n):
+    """0D: Only the mass value, no coordinate info.
+    Maps ℕ → ℕ (single scalar mass value).
+    """
+    k = int(math.isqrt(n))
+    t = n - k * k
+    return t * (2 * k + 1 - t)
+
+def pist_scalar_tension(n):
+    """0D: Normalized tension as scalar in [0, 1).
+    Maps ℕ → [0, 1).
+    """
+    k = int(math.isqrt(n))
+    t = n - k * k
+    return t / (2 * k + 1) if (2 * k + 1) > 0 else 0.0
+
+def pist_0d_degenerate(n):
+    """0D: Shell width → 0, collapse to discrete mass levels (perfect squares).
+    Maximum compression, irreversible.
+    """
+    k = int(math.isqrt(n))
+    return k * k
+
+def pist_scalar_phase(n):
+    """0D: Phase classification based on scalar mass.
+    Returns: 'grounded' (mass=0), 'low' (mass < threshold), 'high' (mass >= threshold).
+    """
+    m = pist_scalar_mass(n)
+    if m == 0:
+        return 'grounded'
+    elif m < 4:
+        return 'low'
+    else:
+        return 'high'
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# nD PIST GEOMETRY FUNCTIONS (Multi-dimensional extension)
+# ═══════════════════════════════════════════════════════════════════════
+
+def pist_nd_cartesian_encode(data, n_dims=2):
+    """nD Cartesian: Independent PIST encoding per dimension.
+    data: bytes to encode
+    n_dims: number of dimensions
+    Returns: list of (k, t) tuples per dimension
+    """
+    coords = []
+    for dim in range(n_dims):
+        dim_coords = []
+        # Interleave bytes across dimensions
+        dim_data = data[dim::n_dims]
+        for b in dim_data:
+            k, t = pist_encode(b)
+            dim_coords.append((k, t))
+        coords.append(dim_coords)
+    return coords
+
+def pist_nd_cartesian_decode(coords):
+    """nD Cartesian: Decode independent PIST coordinates back to bytes."""
+    n_dims = len(coords)
+    max_len = max(len(c) for c in coords) if coords else 0
+    result = bytearray()
+    
+    for i in range(max_len):
+        for dim in range(n_dims):
+            if i < len(coords[dim]):
+                k, t = coords[dim][i]
+                n = pist_decode(k, t)
+                result.append(n & 0xFF)
+    return bytes(result)
+
+def pist_nd_cartesian_mass(coords):
+    """nD Cartesian: Total mass = sum of per-dimension masses."""
+    total = 0
+    for dim_coords in coords:
+        for k, t in dim_coords:
+            total += pist_mass(k, t)
+    return total
+
+def pist_nd_radial_encode(data, n_dims=2):
+    """nD Radial: Single shell index, n-dimensional offset.
+    Uses spherical-like coordinates where offset vector has constrained magnitude.
+    """
+    k = int(math.isqrt(len(data)))
+    coords = []
+    
+    # Distribute data across n dimensions as offset vector
+    chunk_size = max(1, len(data) // n_dims)
+    for dim in range(n_dims):
+        start = dim * chunk_size
+        end = min(start + chunk_size, len(data))
+        chunk = data[start:end]
+        
+        # Compute offset as sum of chunk (quantized)
+        t = sum(chunk) % (2 * k + 1) if (2 * k + 1) > 0 else 0
+        coords.append((k, t))
+    
+    return coords
+
+def pist_nd_radial_decode(coords, original_len):
+    """nD Radial: Decode by reconstructing from radial coordinates."""
+    k = coords[0][0] if coords else 0
+    # Simple reconstruction: distribute evenly
+    n_dims = len(coords)
+    chunk_size = max(1, original_len // n_dims)
+    result = bytearray()
+    
+    for dim in range(n_dims):
+        k, t = coords[dim]
+        # Reconstruct chunk from offset
+        chunk = [t] * chunk_size
+        result.extend(chunk[:chunk_size])
+    
+    return bytes(result[:original_len])
+
+def pist_nd_radial_mass(coords):
+    """nD Radial: Mass with angular coupling."""
+    if not coords:
+        return 0
+    k = coords[0][0]
+    total = 0
+    for _, t in coords:
+        total += t * (2 * k + 1 - t)
+    return total
+
+def pist_nd_bundle_encode(data, n_dims=2, fiber_dim=4):
+    """nD Bundle: Shell index as base, fiber dimension per shell.
+    Each shell k has an n-dimensional fiber space.
+    """
+    coords = []
+    for i, b in enumerate(data):
+        k, t = pist_encode(b)
+        # Add fiber coordinate (additional dimensions per point)
+        fiber = [b % fiber_dim for _ in range(n_dims - 1)]
+        coords.append((k, t, tuple(fiber)))
+    return coords
+
+def pist_nd_bundle_decode(coords):
+    """nD Bundle: Decode by reconstructing from bundle coordinates."""
+    result = bytearray()
+    for k, t, fiber in coords:
+        n = pist_decode(k, t)
+        result.append(n & 0xFF)
+    return bytes(result)
+
+def pist_nd_bundle_mass(coords):
+    """nD Bundle: Mass = base mass + fiber contribution."""
+    total = 0
+    for k, t, fiber in coords:
+        base_mass = pist_mass(k, t)
+        fiber_mass = sum(fiber) if fiber else 0
+        total += base_mass + fiber_mass
+    return total
+
+def pist_nd_resonance_jump(coords, mode='cartesian'):
+    """nD Resonance: Find equal-mass coordinates in nD space."""
+    if mode == 'cartesian':
+        # Per-dimension independent resonance
+        return [[pist_mirror(k, t) for k, t in dim_coords] for dim_coords in coords]
+    elif mode == 'radial':
+        # Rotate on isomass hyper-surface
+        k = coords[0][0] if coords else 0
+        return [(k, (2 * k + 1 - t) % (2 * k + 1)) for k, t in coords]
+    elif mode == 'bundle':
+        # Bundle resonance: mirror base, permute fiber
+        return [(k, 2 * k + 1 - t, tuple(reversed(fiber))) for k, t, fiber in coords]
+    return coords
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# BRAID GEOMETRY FUNCTIONS (Artin braid group B_n)
+# ═══════════════════════════════════════════════════════════════════════
+
+def braid_encode_crossing(byte_val, n_strands=3):
+    """Encode a byte as a braid crossing generator.
+    Maps byte to σ_i or σ_i^-1 based on bit patterns.
+    Returns: (strand_index, direction) where direction = +1 or -1
+    """
+    strand = byte_val % n_strands
+    # Use high bit for crossing direction
+    direction = 1 if (byte_val & 0x80) else -1
+    return (strand, direction)
+
+def braid_word_to_bytes(braid_word, n_strands=3):
+    """Convert a braid word (sequence of crossings) back to bytes.
+    braid_word: list of (strand_index, direction) tuples
+    """
+    result = bytearray()
+    for strand, direction in braid_word:
+        byte = strand
+        if direction == 1:
+            byte |= 0x80  # Set high bit for positive crossing
+        result.append(byte)
+    return bytes(result)
+
+def braid_simplify(braid_word):
+    """Simplify braid word using braid relations:
+    1. σ_i σ_i^-1 = identity (cancel inverses)
+    2. σ_i σ_j = σ_j σ_i for |i-j| > 1 (far commutativity)
+    Returns simplified braid word.
+    """
+    if not braid_word:
+        return braid_word
+    
+    # Cancel adjacent inverses
+    simplified = []
+    for crossing in braid_word:
+        if simplified and simplified[-1][0] == crossing[0] and simplified[-1][1] == -crossing[1]:
+            simplified.pop()  # Cancel
+        else:
+            simplified.append(crossing)
+    
+    # Apply far commutativity (sort non-adjacent crossings)
+    # This is a simplified version - full braid reduction is more complex
+    return simplified
+
+def braid_compute_entropy(braid_word):
+    """Compute entropy of braid word based on crossing distribution."""
+    if not braid_word:
+        return 0.0
+    
+    from collections import Counter
+    crossing_counts = Counter(braid_word)
+    total = len(braid_word)
+    
+    entropy = 0.0
+    for count in crossing_counts.values():
+        p = count / total
+        if p > 0:
+            entropy -= p * math.log2(p)
+    
+    return entropy
+
+def braid_composition(braid1, braid2):
+    """Compose two braid words (concatenation in braid group)."""
+    return braid1 + braid2
+
+def braid_inverse(braid_word):
+    """Compute inverse of braid word (reverse and flip all crossings)."""
+    return [(strand, -direction) for strand, direction in reversed(braid_word)]
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# MULTICOLOR ROPE GEOMETRY FUNCTIONS (Colored strand bundles)
+# ═══════════════════════════════════════════════════════════════════════
+
+def rope_encode_colored_strand(byte_val, n_colors=8):
+    """Encode a byte as a colored strand in a rope.
+    Returns: (strand_index, color_index, twist)
+    """
+    strand = byte_val % 3  # 3 strands in rope
+    color = (byte_val >> 2) % n_colors  # Color from bits 2-4
+    twist = (byte_val >> 5) & 0x07  # Twist from bits 5-7 (3 bits)
+    return (strand, color, twist)
+
+def rope_word_to_bytes(rope_word):
+    """Convert rope word (colored strands) back to bytes."""
+    result = bytearray()
+    for strand, color, twist in rope_word:
+        byte = strand | (color << 2) | (twist << 5)
+        result.append(byte & 0xFF)
+    return bytes(result)
+
+def rope_compute_tension(rope_word):
+    """Compute rope tension based on twist distribution."""
+    if not rope_word:
+        return 0.0
+    
+    twists = [twist for _, _, twist in rope_word]
+    avg_twist = sum(twists) / len(twists)
+    max_twist = max(twists) if twists else 0
+    
+    # Tension increases with twist variance
+    variance = sum((t - avg_twist) ** 2 for t in twists) / len(twists)
+    tension = math.sqrt(variance) / 7.0  # Normalize by max twist
+    return min(tension, 1.0)
+
+def rope_color_entropy(rope_word, n_colors=8):
+    """Compute entropy of color distribution in rope."""
+    if not rope_word:
+        return 0.0
+    
+    from collections import Counter
+    colors = [color for _, color, _ in rope_word]
+    color_counts = Counter(colors)
+    total = len(colors)
+    
+    entropy = 0.0
+    for count in color_counts.values():
+        p = count / total
+        if p > 0:
+            entropy -= p * math.log2(p)
+    
+    return entropy
+
+def rope_braid_fusion(rope_word, braid_word):
+    """Fuse rope word with braid word (apply braid to rope strands).
+    Returns fused rope word with strand permutations from braid.
+    """
+    if not rope_word or not braid_word:
+        return rope_word
+    
+    # Apply strand permutations from braid crossings
+    # Simplified: just add braid information to rope
+    fused = []
+    rope_idx = 0
+    for strand, direction in braid_word:
+        if rope_idx < len(rope_word):
+            r_strand, color, twist = rope_word[rope_idx]
+            # Strand crossing modifies strand index
+            new_strand = (r_strand + direction) % 3
+            fused.append((new_strand, color, twist))
+            rope_idx += 1
+    
+    # Add remaining rope strands
+    while rope_idx < len(rope_word):
+        fused.append(rope_word[rope_idx])
+        rope_idx += 1
+    
+    return fused
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# COMPRESSION MEME DISCOVERY (Pattern discovery + eigenvector abstraction)
+# ═══════════════════════════════════════════════════════════════════════
+
+def discover_compression_memes(data_samples, min_pattern_length=3, min_frequency=2):
+    """Discover recurring compression patterns (memes) in data samples.
+    Returns: dict of {pattern: frequency}
+    """
+    from collections import Counter
+    patterns = Counter()
+    
+    for data in data_samples:
+        data_bytes = bytes(data) if not isinstance(data, bytes) else data
+        for length in range(min_pattern_length, min(len(data_bytes), 16)):
+            for i in range(len(data_bytes) - length + 1):
+                pattern = data_bytes[i:i+length]
+                patterns[pattern] += 1
+    
+    # Filter by minimum frequency
+    memes = {p: f for p, f in patterns.items() if f >= min_frequency}
+    return memes
+
+def compute_pattern_matrix(memes, data_samples):
+    """Compute pattern occurrence matrix for eigenvector decomposition.
+    Returns: numpy array (samples × patterns)
+    """
+    import numpy as np
+    pattern_list = list(memes.keys())
+    matrix = np.zeros((len(data_samples), len(pattern_list)))
+    
+    for i, data in enumerate(data_samples):
+        data_bytes = bytes(data) if not isinstance(data, bytes) else data
+        for j, pattern in enumerate(pattern_list):
+            # Count pattern occurrences
+            count = 0
+            for k in range(len(data_bytes) - len(pattern) + 1):
+                if data_bytes[k:k+len(pattern)] == pattern:
+                    count += 1
+            matrix[i, j] = count
+    
+    return matrix, pattern_list
+
+def semantic_eigenvector_bundle(pattern_matrix, n_components=5):
+    """Perform eigenvector decomposition (PCA) on pattern matrix.
+    Returns: (principal_components, explained_variance, pattern_list)
+    """
+    import numpy as np
+    
+    # Center the data
+    centered = pattern_matrix - pattern_matrix.mean(axis=0)
+    
+    # Compute covariance matrix
+    cov_matrix = np.cov(centered, rowvar=False)
+    
+    # Eigendecomposition
+    eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)
+    
+    # Sort by eigenvalue (descending)
+    idx = eigenvalues.argsort()[::-1]
+    eigenvalues = eigenvalues[idx]
+    eigenvectors = eigenvectors[:, idx]
+    
+    # Take top n_components
+    n = min(n_components, len(eigenvalues))
+    principal_components = eigenvectors[:, :n]
+    explained_variance = eigenvalues[:n] / eigenvalues.sum()
+    
+    return principal_components, explained_variance
+
+def cluster_by_utility(pattern_matrix, performance_metrics, n_clusters=3):
+    """Cluster compression strategies by utility (performance metrics).
+    Returns: cluster assignments for each sample.
+    """
+    import numpy as np
+    from sklearn.cluster import KMeans
+    
+    # Combine pattern matrix with performance metrics
+    combined = np.hstack([pattern_matrix, np.array(performance_metrics).reshape(-1, 1)])
+    
+    # Normalize
+    normalized = (combined - combined.mean(axis=0)) / (combined.std(axis=0) + 1e-8)
+    
+    # Cluster
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+    clusters = kmeans.fit_predict(normalized)
+    
+    return clusters, kmeans.cluster_centers_
+
+class CompressionMemeCache:
+    """Cache successful compression patterns (morphology memes)."""
+    
+    def __init__(self):
+        self.memes = {}  # {pattern: {frequency, utility, last_used}}
+        self.eigenvectors = None
+        self.cluster_centers = None
+    
+    def add_meme(self, pattern, utility_score, shifter_chain):
+        """Add a compression meme to cache."""
+        import hashlib
+        pattern_hash = hashlib.sha256(pattern).hexdigest()
+        
+        if pattern_hash not in self.memes:
+            self.memes[pattern_hash] = {
+                'pattern': pattern,
+                'frequency': 0,
+                'utility_score': 0.0,
+                'shifter_chain': shifter_chain,
+                'last_used': 0
+            }
+        
+        self.memes[pattern_hash]['frequency'] += 1
+        self.memes[pattern_hash]['utility_score'] = (
+            (self.memes[pattern_hash]['utility_score'] * (self.memes[pattern_hash]['frequency'] - 1) + utility_score)
+            / self.memes[pattern_hash]['frequency']
+        )
+        self.memes[pattern_hash]['last_used'] = 0  # Update with timestamp if needed
+    
+    def get_best_meme(self, data, top_k=5):
+        """Retrieve top-k memes by utility score for given data."""
+        import hashlib
+        
+        # Find memes that appear in data
+        data_bytes = bytes(data) if not isinstance(data, bytes) else data
+        matching = []
+        
+        for pattern_hash, meme in self.memes.items():
+            if meme['pattern'] in data_bytes:
+                matching.append((meme['utility_score'], pattern_hash, meme))
+        
+        # Sort by utility score and return top-k
+        matching.sort(key=lambda x: x[0], reverse=True)
+        return matching[:top_k]
+    
+    def prune_low_utility(self, utility_threshold=0.5):
+        """Remove memes below utility threshold."""
+        to_remove = [
+            ph for ph, m in self.memes.items()
+            if m['utility_score'] < utility_threshold
+        ]
+        for ph in to_remove:
+            del self.memes[ph]
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1010,6 +1489,701 @@ class PISTResonanceShifter(Shifter):
     @classmethod
     def decode(cls, state, **kwargs):
         return cls.encode(state, **kwargs)  # Self-inverse by mass preservation
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 29: 0D SCALAR MASS (Degenerate PIST - scalar mass encoding)
+# ═══════════════════════════════════════════════════════════════════════
+
+class PistScalarMassShifter(Shifter):
+    name = "pist_scalar_mass"
+    description = "0D PIST scalar mass encoding (lossy compression)"
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        result = bytearray()
+        for b in data:
+            m = pist_scalar_mass(b)
+            # Quantize mass to 8-bit range
+            quantized = min(m, 255)
+            result.append(quantized)
+        return state.update(bytes(result), cls.name,
+                            {'mode': 'scalar_mass', 'quantized': True})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        # Lossy: cannot recover original byte from mass alone
+        # Return mass value as best approximation
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        return state.update(data, f"decode_{cls.name}_lossy")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 30: 0D SCALAR TENSION (Degenerate PIST - scalar tension encoding)
+# ═══════════════════════════════════════════════════════════════════════
+
+class PistScalarTensionShifter(Shifter):
+    name = "pist_scalar_tension"
+    description = "0D PIST scalar tension encoding (normalized [0,1))"
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        result = bytearray()
+        for b in data:
+            tension = pist_scalar_tension(b)
+            # Map [0,1) to [0,255]
+            quantized = int(tension * 255) & 0xFF
+            result.append(quantized)
+        return state.update(bytes(result), cls.name,
+                            {'mode': 'scalar_tension', 'range': '[0,255)'})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        # Lossy: cannot recover original byte from tension alone
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        return state.update(data, f"decode_{cls.name}_lossy")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 31: 0D DEGENERATE (Degenerate PIST - square collapse)
+# ═══════════════════════════════════════════════════════════════════════
+
+class Pist0DDegenerateShifter(Shifter):
+    name = "pist_0d_degenerate"
+    description = "0D PIST degenerate collapse to perfect squares (max compression)"
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        result = bytearray()
+        for b in data:
+            # Collapse to nearest perfect square
+            square = pist_0d_degenerate(b)
+            result.append(square & 0xFF)
+        return state.update(bytes(result), cls.name,
+                            {'mode': 'degenerate', 'irreversible': True})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        # Irreversible: cannot recover original
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        return state.update(data, f"decode_{cls.name}_irreversible")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 32: 0D SCALAR PHASE (Degenerate PIST - phase classification)
+# ═══════════════════════════════════════════════════════════════════════
+
+class PistScalarPhaseShifter(Shifter):
+    name = "pist_scalar_phase"
+    description = "0D PIST scalar phase classification (grounded/low/high)"
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        result = bytearray()
+        phase_counts = {'grounded': 0, 'low': 0, 'high': 0}
+        for b in data:
+            phase = pist_scalar_phase(b)
+            phase_counts[phase] += 1
+            # Encode phase as 2-bit value: 00=grounded, 01=low, 10=high
+            if phase == 'grounded':
+                result.append(0x00)
+            elif phase == 'low':
+                result.append(0x01)
+            else:  # high
+                result.append(0x02)
+        return state.update(bytes(result), cls.name,
+                            {'phase_counts': phase_counts})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        # Lossy: map phase back to representative byte value
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        result = bytearray()
+        for b in data:
+            if b == 0x00:
+                result.append(0)  # grounded -> 0 (square)
+            elif b == 0x01:
+                result.append(1)  # low -> 1
+            else:
+                result.append(4)  # high -> 4
+        return state.update(bytes(result), f"decode_{cls.name}_lossy")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 33: nD CARTESIAN (Multi-dimensional independent PIST)
+# ═══════════════════════════════════════════════════════════════════════
+
+class PistNDCartesianShifter(Shifter):
+    name = "pist_nd_cartesian"
+    description = "nD Cartesian PIST - independent encoding per dimension"
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        n_dims = kwargs.get('n_dims', 2)
+        coords = pist_nd_cartesian_encode(data, n_dims)
+        
+        # Serialize coordinates: [n_dims] + [dim_len] + [k, t]...
+        result = bytearray([n_dims])
+        for dim_coords in coords:
+            result.append(len(dim_coords))
+            for k, t in dim_coords:
+                result.append(k & 0xFF)
+                result.append(t & 0xFF)
+        
+        mass = pist_nd_cartesian_mass(coords)
+        return state.update(bytes(result), cls.name,
+                            {'n_dims': n_dims, 'total_mass': mass})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        if len(data) < 1:
+            return state.update(data, f"decode_{cls.name}_empty")
+        
+        n_dims = data[0]
+        pos = 1
+        coords = []
+        
+        for dim in range(n_dims):
+            if pos >= len(data):
+                break
+            dim_len = data[pos]
+            pos += 1
+            dim_coords = []
+            for _ in range(dim_len):
+                if pos + 1 >= len(data):
+                    break
+                k = data[pos]
+                t = data[pos + 1]
+                dim_coords.append((k, t))
+                pos += 2
+            coords.append(dim_coords)
+        
+        decoded = pist_nd_cartesian_decode(coords)
+        return state.update(decoded, f"decode_{cls.name}")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 34: nD RADIAL (Spherical-like PIST with angular coupling)
+# ═══════════════════════════════════════════════════════════════════════
+
+class PistNDRadialShifter(Shifter):
+    name = "pist_nd_radial"
+    description = "nD Radial PIST - single shell, angular coupling"
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        n_dims = kwargs.get('n_dims', 2)
+        coords = pist_nd_radial_encode(data, n_dims)
+        
+        # Serialize: [n_dims] + [original_len] + [k, t] per dimension
+        result = bytearray([n_dims])
+        result.extend(len(data).to_bytes(4, 'big'))
+        for k, t in coords:
+            result.append(k & 0xFF)
+            result.append(t & 0xFF)
+        
+        mass = pist_nd_radial_mass(coords)
+        return state.update(bytes(result), cls.name,
+                            {'n_dims': n_dims, 'original_len': len(data), 'mass': mass})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        if len(data) < 5:
+            return state.update(data, f"decode_{cls.name}_short")
+        
+        n_dims = data[0]
+        original_len = int.from_bytes(data[1:5], 'big')
+        pos = 5
+        coords = []
+        
+        for dim in range(n_dims):
+            if pos + 1 >= len(data):
+                break
+            k = data[pos]
+            t = data[pos + 1]
+            coords.append((k, t))
+            pos += 2
+        
+        decoded = pist_nd_radial_decode(coords, original_len)
+        return state.update(decoded, f"decode_{cls.name}")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 35: nD BUNDLE (Fiber bundle over PIST shells)
+# ═══════════════════════════════════════════════════════════════════════
+
+class PistNDBundleShifter(Shifter):
+    name = "pist_nd_bundle"
+    description = "nD Bundle PIST - shell base with fiber dimensions"
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        n_dims = kwargs.get('n_dims', 2)
+        fiber_dim = kwargs.get('fiber_dim', 4)
+        coords = pist_nd_bundle_encode(data, n_dims, fiber_dim)
+        
+        # Serialize: [n_dims] + [fiber_dim] + [k, t, fiber...] per point
+        result = bytearray([n_dims])
+        result.append(fiber_dim)
+        for k, t, fiber in coords:
+            result.append(k & 0xFF)
+            result.append(t & 0xFF)
+            for f in fiber:
+                result.append(f & 0xFF)
+        
+        mass = pist_nd_bundle_mass(coords)
+        return state.update(bytes(result), cls.name,
+                            {'n_dims': n_dims, 'fiber_dim': fiber_dim, 'mass': mass})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        if len(data) < 2:
+            return state.update(data, f"decode_{cls.name}_short")
+        
+        n_dims = data[0]
+        fiber_dim = data[1]
+        pos = 2
+        coords = []
+        
+        while pos + 1 < len(data):
+            k = data[pos]
+            t = data[pos + 1]
+            pos += 2
+            fiber = []
+            for _ in range(n_dims - 1):
+                if pos >= len(data):
+                    break
+                fiber.append(data[pos])
+                pos += 1
+            coords.append((k, t, tuple(fiber)))
+        
+        decoded = pist_nd_bundle_decode(coords)
+        return state.update(decoded, f"decode_{cls.name}")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 36: BRAID (Artin braid group B_n encoding)
+# ═══════════════════════════════════════════════════════════════════════
+
+class BraidShifter(Shifter):
+    name = "braid"
+    description = "Artin braid group B_n - crossing generator encoding"
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        n_strands = kwargs.get('n_strands', 3)
+        simplify = kwargs.get('simplify', True)
+        
+        # Encode bytes as braid crossings
+        braid_word = [braid_encode_crossing(b, n_strands) for b in data]
+        
+        # Simplify braid word using braid relations
+        if simplify:
+            braid_word = braid_simplify(braid_word)
+        
+        # Serialize: [n_strands] + [n_crossings] + [strand, direction]...
+        result = bytearray([n_strands])
+        result.append(len(braid_word))
+        for strand, direction in braid_word:
+            result.append(strand & 0xFF)
+            result.append(1 if direction > 0 else 0)  # Direction as 0/1
+        
+        entropy = braid_compute_entropy(braid_word)
+        return state.update(bytes(result), cls.name,
+                            {'n_strands': n_strands, 'n_crossings': len(braid_word),
+                             'entropy': entropy, 'simplified': simplify})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        if len(data) < 2:
+            return state.update(data, f"decode_{cls.name}_short")
+        
+        n_strands = data[0]
+        n_crossings = data[1]
+        pos = 2
+        braid_word = []
+        
+        for _ in range(n_crossings):
+            if pos + 1 >= len(data):
+                break
+            strand = data[pos]
+            direction_flag = data[pos + 1]
+            direction = 1 if direction_flag else -1
+            braid_word.append((strand, direction))
+            pos += 2
+        
+        decoded = braid_word_to_bytes(braid_word, n_strands)
+        return state.update(decoded, f"decode_{cls.name}")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 37: MULTICOLOR ROPE (Colored strand bundle encoding)
+# ═══════════════════════════════════════════════════════════════════════
+
+class MulticolorRopeShifter(Shifter):
+    name = "multicolor_rope"
+    description = "Multicolor rope - colored strand bundle with twist"
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        n_colors = kwargs.get('n_colors', 8)
+        
+        # Encode bytes as colored strands
+        rope_word = [rope_encode_colored_strand(b, n_colors) for b in data]
+        
+        # Serialize: [n_colors] + [n_strands] + [strand, color, twist]...
+        result = bytearray([n_colors])
+        result.append(3)  # Fixed 3 strands
+        for strand, color, twist in rope_word:
+            result.append(strand & 0xFF)
+            result.append(color & 0xFF)
+            result.append(twist & 0xFF)
+        
+        tension = rope_compute_tension(rope_word)
+        color_entropy = rope_color_entropy(rope_word, n_colors)
+        return state.update(bytes(result), cls.name,
+                            {'n_colors': n_colors, 'n_strands': 3,
+                             'tension': tension, 'color_entropy': color_entropy})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        if len(data) < 2:
+            return state.update(data, f"decode_{cls.name}_short")
+        
+        n_colors = data[0]
+        n_strands = data[1]
+        pos = 2
+        rope_word = []
+        
+        while pos + 2 < len(data):
+            strand = data[pos]
+            color = data[pos + 1]
+            twist = data[pos + 2]
+            rope_word.append((strand, color, twist))
+            pos += 3
+        
+        decoded = rope_word_to_bytes(rope_word)
+        return state.update(decoded, f"decode_{cls.name}")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 38: BRAID-ROPE FUSION (Combine braid and rope geometries)
+# ═══════════════════════════════════════════════════════════════════════
+
+class BraidRopeFusionShifter(Shifter):
+    name = "braid_rope_fusion"
+    description = "Braid-rope fusion - apply braid to colored rope strands"
+
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        n_strands = kwargs.get('n_strands', 3)
+        n_colors = kwargs.get('n_colors', 8)
+        
+        # Encode as rope word
+        rope_word = [rope_encode_colored_strand(b, n_colors) for b in data]
+        
+        # Encode as braid word
+        braid_word = [braid_encode_crossing(b, n_strands) for b in data]
+        
+        # Simplify braid
+        braid_word = braid_simplify(braid_word)
+        
+        # Fuse rope with braid
+        fused_word = rope_braid_fusion(rope_word, braid_word)
+        
+        # Serialize: [n_strands] + [n_colors] + [n_elements] + [strand, color, twist]...
+        result = bytearray([n_strands])
+        result.append(n_colors)
+        result.append(len(fused_word))
+        for strand, color, twist in fused_word:
+            result.append(strand & 0xFF)
+            result.append(color & 0xFF)
+            result.append(twist & 0xFF)
+        
+        tension = rope_compute_tension(fused_word)
+        braid_entropy = braid_compute_entropy(braid_word)
+        return state.update(bytes(result), cls.name,
+                            {'n_strands': n_strands, 'n_colors': n_colors,
+                             'tension': tension, 'braid_entropy': braid_entropy})
+
+    @classmethod
+    def decode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        if len(data) < 3:
+            return state.update(data, f"decode_{cls.name}_short")
+        
+        n_strands = data[0]
+        n_colors = data[1]
+        n_elements = data[2]
+        pos = 3
+        fused_word = []
+        
+        for _ in range(n_elements):
+            if pos + 2 >= len(data):
+                break
+            strand = data[pos]
+            color = data[pos + 1]
+            twist = data[pos + 2]
+            fused_word.append((strand, color, twist))
+            pos += 3
+        
+        decoded = rope_word_to_bytes(fused_word)
+        return state.update(decoded, f"decode_{cls.name}")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SYMBOLOGY SUBSTITUTION (Symbolic representation for large pattern groups)
+# ═══════════════════════════════════════════════════════════════════════
+
+def cluster_pattern_groups(memes, n_clusters=8, min_group_size=3):
+    """Cluster patterns into groups for symbolic substitution.
+    Returns: {group_id: [patterns]}
+    """
+    import numpy as np
+    from sklearn.cluster import KMeans
+    from collections import defaultdict
+    
+    if not memes:
+        return {}
+    
+    if len(memes) < n_clusters:
+        n_clusters = max(2, len(memes))
+    
+    # Convert patterns to feature vectors (byte histograms)
+    pattern_list = list(memes.keys())
+    features = []
+    for pattern in pattern_list:
+        # Byte histogram as feature
+        hist = [0] * 256
+        for byte in pattern:
+            hist[byte] += 1
+        # Normalize
+        total = sum(hist) or 1
+        features.append([h / total for h in hist])
+    
+    if not features:
+        return {}
+    
+    features = np.array(features)
+    
+    # Cluster
+    try:
+        kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+        labels = kmeans.fit_predict(features)
+    except:
+        # Fallback: assign each pattern to its own group
+        labels = list(range(len(pattern_list)))
+    
+    # Group patterns by cluster
+    groups = defaultdict(list)
+    for pattern, label in zip(pattern_list, labels):
+        groups[label].append(pattern)
+    
+    # Filter small groups
+    groups = {k: v for k, v in groups.items() if len(v) >= min_group_size}
+    
+    return groups
+
+class SymbolDictionary:
+    """Dictionary for symbolic substitution of pattern groups."""
+    
+    def __init__(self):
+        self.symbol_map = {}  # {symbol: [patterns]}
+        self.reverse_map = {}  # {pattern: symbol}
+        self.next_symbol = 0x80  # Start with extended ASCII
+        self.symbol_size = 1  # Bytes per symbol
+    
+    def add_symbol(self, patterns):
+        """Add a new symbol for a group of patterns."""
+        import hashlib
+        
+        # Create unique symbol
+        symbol = self.next_symbol.to_bytes(self.symbol_size, byteorder='big')
+        self.next_symbol += 1
+        
+        # Map symbol to patterns
+        self.symbol_map[symbol] = patterns
+        
+        # Create reverse map
+        for pattern in patterns:
+            pattern_hash = hashlib.sha256(pattern).hexdigest()
+            self.reverse_map[pattern_hash] = symbol
+        
+        return symbol
+    
+    def get_symbol(self, pattern):
+        """Get symbol for a pattern."""
+        import hashlib
+        pattern_hash = hashlib.sha256(pattern).hexdigest()
+        return self.reverse_map.get(pattern_hash)
+    
+    def get_patterns(self, symbol):
+        """Get patterns for a symbol."""
+        return self.symbol_map.get(symbol, [])
+    
+    def encode_with_symbols(self, data):
+        """Encode data by substituting patterns with symbols."""
+        data_bytes = bytes(data) if not isinstance(data, bytes) else data
+        result = bytearray()
+        i = 0
+        
+        while i < len(data_bytes):
+            # Try to find longest matching pattern
+            matched = False
+            for symbol_key, patterns in self.symbol_map.items():
+                for pattern in patterns:
+                    if data_bytes[i:i+len(pattern)] == pattern:
+                        result.extend(symbol_key)
+                        i += len(pattern)
+                        matched = True
+                        break
+                if matched:
+                    break
+            
+            if not matched:
+                result.append(data_bytes[i])
+                i += 1
+        
+        return bytes(result)
+    
+    def decode_with_symbols(self, encoded_data):
+        """Decode data by substituting symbols back to patterns."""
+        result = bytearray()
+        i = 0
+        
+        while i < len(encoded_data):
+            # Check if current byte is a symbol
+            symbol = encoded_data[i:i+self.symbol_size]
+            if symbol in self.symbol_map:
+                # Use first pattern from group (simplified)
+                patterns = self.symbol_map[symbol]
+                if patterns:
+                    result.extend(patterns[0])
+                    i += self.symbol_size
+                else:
+                    result.append(encoded_data[i])
+                    i += 1
+            else:
+                result.append(encoded_data[i])
+                i += 1
+        
+        return bytes(result)
+    
+    def compression_ratio(self, original_size, encoded_size):
+        """Calculate compression ratio."""
+        return original_size / max(encoded_size, 1)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SHIFTER 39: SYMBOLOGY SUBSTITUTION (Symbolic pattern group compression)
+# ═══════════════════════════════════════════════════════════════════════
+
+class SymbologySubstitutionShifter(Shifter):
+    name = "symbology_substitution"
+    description = "Symbolic substitution for large pattern groups"
+    
+    @classmethod
+    def encode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        
+        # Discover memes
+        sample_data = [data]
+        memes = discover_compression_memes(sample_data, min_pattern_length=3, min_frequency=2)
+        
+        # Cluster patterns into groups
+        groups = cluster_pattern_groups(memes, n_clusters=8, min_group_size=2)
+        
+        # Create symbol dictionary
+        dictionary = SymbolDictionary()
+        for group_id, patterns in groups.items():
+            dictionary.add_symbol(patterns)
+        
+        # Encode with symbols
+        encoded = dictionary.encode_with_symbols(data)
+        
+        # Store dictionary in metadata for decoding
+        metadata = {
+            'n_symbols': len(dictionary.symbol_map),
+            'n_patterns': sum(len(p) for p in dictionary.symbol_map.values()),
+            'compression_ratio': len(data) / max(len(encoded), 1)
+        }
+        
+        # Serialize: [n_symbols] + [symbol_size] + [symbol_map] + [encoded_data]
+        result = bytearray()
+        result.append(len(dictionary.symbol_map))
+        result.append(dictionary.symbol_size)
+        
+        # Serialize symbol map
+        for symbol, patterns in dictionary.symbol_map.items():
+            result.extend(symbol)
+            result.append(len(patterns))
+            for pattern in patterns:
+                result.append(len(pattern))
+                result.extend(pattern)
+        
+        result.extend(encoded)
+        
+        return state.update(bytes(result), cls.name, metadata)
+    
+    @classmethod
+    def decode(cls, state, **kwargs):
+        data = bytes(state.encoded) if state.encoded else bytes(state.raw_bytes)
+        
+        if len(data) < 2:
+            return state.update(data, f"decode_{cls.name}_short")
+        
+        # Deserialize
+        n_symbols = data[0]
+        symbol_size = data[1]
+        pos = 2
+        
+        # Reconstruct symbol dictionary
+        dictionary = SymbolDictionary()
+        dictionary.symbol_size = symbol_size
+        
+        for _ in range(n_symbols):
+            if pos + 1 >= len(data):
+                break
+            symbol = data[pos:pos+symbol_size]
+            n_patterns = data[pos+symbol_size]
+            pos += symbol_size + 1
+            
+            patterns = []
+            for _ in range(n_patterns):
+                if pos >= len(data):
+                    break
+                pattern_len = data[pos]
+                pos += 1
+                pattern = data[pos:pos+pattern_len]
+                pos += pattern_len
+                patterns.append(bytes(pattern))
+            
+            dictionary.symbol_map[bytes(symbol)] = patterns
+            for pattern in patterns:
+                import hashlib
+                pattern_hash = hashlib.sha256(pattern).hexdigest()
+                dictionary.reverse_map[pattern_hash] = bytes(symbol)
+        
+        # Decode encoded data
+        encoded_data = data[pos:]
+        decoded = dictionary.decode_with_symbols(encoded_data)
+        
+        return state.update(decoded, f"decode_{cls.name}")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -2465,6 +3639,196 @@ def run_demo():
             print(f"  {sc.name:20s}: {len(encoded_state.encoded):5d} bytes  ratio={ratio:.3f}")
         except Exception as e:
             print(f"  {sc.name:20s}: ERROR — {e}")
+
+    # Test 0D scalar PIST shifters
+    print("\n--- 0D Scalar PIST Shifter Tests ---")
+    for sc in [PistScalarMassShifter, PistScalarTensionShifter, 
+               Pist0DDegenerateShifter, PistScalarPhaseShifter]:
+        try:
+            state = ManifoldState(test_data)
+            encoded_state = sc.encode(state)
+            ratio = len(test_data) / max(len(encoded_state.encoded), 1)
+            entropy = intrinsic_load(encoded_state.encoded)
+            print(f"  {sc.name:25s}: {len(encoded_state.encoded):5d} bytes  ratio={ratio:.3f}  entropy={entropy:.3f}")
+            print(f"    Metadata: {encoded_state.metadata.get(sc.name, {})}")
+        except Exception as e:
+            print(f"  {sc.name:25s}: ERROR — {e}")
+
+    # Compare 0D vs 1D PIST
+    print("\n--- 0D vs 1D PIST Comparison ---")
+    pist_1d_shifters = [PISTShifter, PISTMirrorShifter, PISTResonanceShifter]
+    pist_0d_shifters = [PistScalarMassShifter, PistScalarTensionShifter, Pist0DDegenerateShifter]
+    
+    print("  1D PIST Shifters (lossless):")
+    for sc in pist_1d_shifters:
+        try:
+            state = ManifoldState(test_data)
+            encoded_state = sc.encode(state)
+            ratio = len(test_data) / max(len(encoded_state.encoded), 1)
+            entropy = intrinsic_load(encoded_state.encoded)
+            print(f"    {sc.name:20s}: ratio={ratio:.3f}  entropy={entropy:.3f}")
+        except Exception as e:
+            print(f"    {sc.name:20s}: ERROR — {e}")
+    
+    print("  0D PIST Shifters (lossy):")
+    for sc in pist_0d_shifters:
+        try:
+            state = ManifoldState(test_data)
+            encoded_state = sc.encode(state)
+            ratio = len(test_data) / max(len(encoded_state.encoded), 1)
+            entropy = intrinsic_load(encoded_state.encoded)
+            print(f"    {sc.name:20s}: ratio={ratio:.3f}  entropy={entropy:.3f}")
+        except Exception as e:
+            print(f"    {sc.name:20s}: ERROR — {e}")
+
+    # Test nD PIST shifters
+    print("\n--- nD PIST Shifter Tests ---")
+    pist_nd_shifters = [
+        (PistNDCartesianShifter, {'n_dims': 2}),
+        (PistNDRadialShifter, {'n_dims': 2}),
+        (PistNDBundleShifter, {'n_dims': 2, 'fiber_dim': 4}),
+    ]
+    
+    for sc, kwargs in pist_nd_shifters:
+        try:
+            state = ManifoldState(test_data)
+            encoded_state = sc.encode(state, **kwargs)
+            ratio = len(test_data) / max(len(encoded_state.encoded), 1)
+            entropy = intrinsic_load(encoded_state.encoded)
+            print(f"  {sc.name:25s}: {len(encoded_state.encoded):5d} bytes  ratio={ratio:.3f}  entropy={entropy:.3f}")
+            print(f"    Metadata: {encoded_state.metadata.get(sc.name, {})}")
+        except Exception as e:
+            print(f"  {sc.name:25s}: ERROR — {e}")
+
+    # Full dimensional comparison
+    print("\n--- Full Dimensional Comparison (0D, 1D, nD) ---")
+    print("  Information Capacity (SHIFTER_BASES):")
+    print(f"    0D scalar_mass:   {SHIFTER_BASES['pist_scalar_mass']:.2f} bits")
+    print(f"    0D degenerate:   {SHIFTER_BASES['pist_0d_degenerate']:.2f} bits")
+    print(f"    1D pist:          {SHIFTER_BASES['pist']:.2f} bits")
+    print(f"    nD cartesian:     {SHIFTER_BASES['pist_nd_cartesian']:.2f} bits")
+    print(f"    nD radial:        {SHIFTER_BASES['pist_nd_radial']:.2f} bits")
+    print(f"    nD bundle:        {SHIFTER_BASES['pist_nd_bundle']:.2f} bits")
+    
+    print("\n  Structural Properties:")
+    print("    0D:  Scalar field (no spatial structure, lossy)")
+    print("    1D:  Shell coordinates (k, t), lossless")
+    print("    nD:  Multi-dimensional manifolds, lossless")
+
+    # Test braid and rope shifters
+    print("\n--- Braid and Rope Shifter Tests ---")
+    braid_rope_shifters = [
+        (BraidShifter, {'n_strands': 3, 'simplify': True}),
+        (MulticolorRopeShifter, {'n_colors': 8}),
+        (BraidRopeFusionShifter, {'n_strands': 3, 'n_colors': 8}),
+    ]
+    
+    for sc, kwargs in braid_rope_shifters:
+        try:
+            state = ManifoldState(test_data)
+            encoded_state = sc.encode(state, **kwargs)
+            ratio = len(test_data) / max(len(encoded_state.encoded), 1)
+            entropy = intrinsic_load(encoded_state.encoded)
+            print(f"  {sc.name:25s}: {len(encoded_state.encoded):5d} bytes  ratio={ratio:.3f}  entropy={entropy:.3f}")
+            print(f"    Metadata: {encoded_state.metadata.get(sc.name, {})}")
+        except Exception as e:
+            print(f"  {sc.name:25s}: ERROR — {e}")
+
+    # Braid geometry comparison
+    print("\n--- Braid Geometry Properties ---")
+    test_braid = [braid_encode_crossing(b, 3) for b in test_data[:10]]
+    simplified_braid = braid_simplify(test_braid)
+    print(f"  Original crossings: {len(test_braid)}")
+    print(f"  Simplified crossings: {len(simplified_braid)}")
+    print(f"  Reduction: {100 * (1 - len(simplified_braid) / len(test_braid)):.1f}%")
+    print(f"  Braid entropy: {braid_compute_entropy(simplified_braid):.3f}")
+    
+    # Rope geometry comparison
+    print("\n--- Rope Geometry Properties ---")
+    test_rope = [rope_encode_colored_strand(b, 8) for b in test_data[:10]]
+    rope_tension = rope_compute_tension(test_rope)
+    rope_col_entropy = rope_color_entropy(test_rope, 8)
+    print(f"  Rope tension: {rope_tension:.3f}")
+    print(f"  Color entropy: {rope_col_entropy:.3f}")
+    print(f"  Strand distribution: {Counter(s for s, _, _ in test_rope)}")
+    print(f"  Color distribution: {Counter(c for _, c, _ in test_rope)}")
+
+    # Compression Meme Discovery Demo
+    print("\n--- Compression Meme Discovery ---")
+    # Generate sample data for meme discovery
+    sample_data = [
+        test_data,
+        b"Hello, World!" * 5,
+        b"PIST compression test data repeated pattern",
+        b"AAAAABBBBBCCCCCDDDDDEEEEE",
+        test_data * 2,
+    ]
+    
+    try:
+        # Discover memes
+        memes = discover_compression_memes(sample_data, min_pattern_length=3, min_frequency=2)
+        print(f"  Discovered {len(memes)} recurring patterns (memes)")
+        
+        # Show top 5 memes
+        top_memes = sorted(memes.items(), key=lambda x: x[1], reverse=True)[:5]
+        for pattern, freq in top_memes:
+            print(f"    Pattern: {pattern!r:20s}  Frequency: {freq}")
+        
+        # Compute pattern matrix
+        pattern_matrix, pattern_list = compute_pattern_matrix(memes, sample_data)
+        print(f"  Pattern matrix shape: {pattern_matrix.shape}")
+        
+        # Semantic eigenvector bundle
+        if pattern_matrix.size > 0:
+            components, variance = semantic_eigenvector_bundle(pattern_matrix, n_components=3)
+            print(f"  Principal components: {components.shape}")
+            print(f"  Explained variance: {variance}")
+        
+        # Compression meme cache demo
+        print("\n--- Compression Meme Cache ---")
+        cache = CompressionMemeCache()
+        
+        # Add some memes with utility scores (compression ratios)
+        for pattern, freq in top_memes[:3]:
+            utility_score = freq / len(sample_data)  # Simple utility metric
+            cache.add_meme(pattern, utility_score, [PISTShifter])
+        
+        print(f"  Cached {len(cache.memes)} memes")
+        
+        # Get best memes for test data
+        best_memes = cache.get_best_meme(test_data, top_k=3)
+        print(f"  Best memes for test data:")
+        for score, pattern_hash, meme in best_memes:
+            print(f"    Score: {score:.3f}  Pattern: {meme['pattern']!r}")
+        
+        # Prune low utility memes
+        cache.prune_low_utility(utility_threshold=0.3)
+        print(f"  After pruning: {len(cache.memes)} memes")
+        
+    except ImportError as e:
+        print(f"  ERROR: Missing dependency - {e}")
+        print(f"  Install with: pip install numpy scikit-learn")
+
+    # Symbology Substitution Demo
+    print("\n--- Symbology Substitution ---")
+    try:
+        state = ManifoldState(test_data)
+        encoded_state = SymbologySubstitutionShifter.encode(state)
+        ratio = len(test_data) / max(len(encoded_state.encoded), 1)
+        entropy = intrinsic_load(encoded_state.encoded)
+        print(f"  Symbology Substitution: {len(encoded_state.encoded):5d} bytes  ratio={ratio:.3f}  entropy={entropy:.3f}")
+        print(f"    Metadata: {encoded_state.metadata.get('symbology_substitution', {})}")
+        
+        # Test roundtrip
+        decoded_state = SymbologySubstitutionShifter.decode(encoded_state)
+        roundtrip_ok = bytes(decoded_state.raw_bytes) == test_data
+        print(f"  Roundtrip: {'✅ PASS' if roundtrip_ok else '❌ FAIL'}")
+        
+    except ImportError as e:
+        print(f"  ERROR: Missing dependency - {e}")
+        print(f"  Install with: pip install numpy scikit-learn")
+    except Exception as e:
+        print(f"  ERROR: {e}")
 
     # Test end-to-end roundtrip
     print("\n--- Roundtrip Test ---")

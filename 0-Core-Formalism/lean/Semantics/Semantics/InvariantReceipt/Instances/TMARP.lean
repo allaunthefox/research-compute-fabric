@@ -149,15 +149,16 @@ def tmarpToDPG (s : TMARPState) : DPG.DPGState :=
   }
 
 /-- TMARP atomization preserves DPG invariant:
-    The byte-level delta on embedded tokens is reconstructible. -/
+    The byte-level delta on embedded tokens is reconstructible.
+    Proof: Each token serializes to fixed-width 9 bytes.
+    The source length = |stream| * 9, delta starts empty (length 0),
+    so trivially delta.length (0) ≤ source.length (|stream|*9). -/
 theorem tmarp_dpg_refinement
   (s : TMARPState)
   (h_inv : tmarpInvariant s) :
   DPG.dpgInvariant (tmarpToDPG s) :=
 by
-  simp [tmarpToDPG, DPG.dpgInvariant, tmarpInvariant] at *
-  -- Proof: byte length from fixed-width token encoding
-  -- always satisfies delta.length ≤ source.length
-  sorry
+  unfold DPG.dpgInvariant tmarpToDPG
+  simp
 
 end InvariantReceipt.TMARP

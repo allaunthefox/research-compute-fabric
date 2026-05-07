@@ -1,0 +1,27 @@
+created: 20260506135500000
+modified: 20260506135500000
+tags: ResearchStack COUCH Gate Candidate
+title: Route-Pressure COUCH Gate
+type: text/vnd.tiddlywiki
+
+! Route-Pressure COUCH Gate
+
+Operational COUCH payoff gate that maps finite pressure into routing actions:
+local, atlas, or reject.
+
+```
+P_COUCH(kappa) = F_COUCH(kappa) + U_rot(kappa) - R_value
+```
+
+!! Links
+
+* [[COUCH Family]]
+* [[F-Number COUCH]]
+* [[Waveprobe]]
+* [[Semantic Graph Mining]]
+
+!! Durable Sources
+
+* `../docs/geometry/COUCH_EQUATION.md`
+* `../docs/WEIRD_CONCEPTS_GLOSSARY.md`
+* `../wiki/Concept-Archive.md`

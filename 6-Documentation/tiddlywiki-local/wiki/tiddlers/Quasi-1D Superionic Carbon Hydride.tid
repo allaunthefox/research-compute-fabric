@@ -1,0 +1,26 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack Materials Superionic Literature External
+title: Quasi-1D Superionic Carbon Hydride
+type: text/vnd.tiddlywiki
+
+! Quasi-1D Superionic Carbon Hydride
+
+A literature-indexed material anchor for thermally driven quasi-1D superionic
+states in carbon hydride.
+
+!! Why It Matters
+
+This is not yet an integrated Research Stack mechanism, but it is a strong
+external lead for 1D transport, channel, and phase-transition analogies.
+
+!! Evidence
+
+* ENE source: `data/substrate_index.db`, `zotero_items` key `V8TKOHAR`
+* DOI: `10.1038/s41467-026-70603-z`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[Speculative Materials]]
+* [[Percolation Gate]]

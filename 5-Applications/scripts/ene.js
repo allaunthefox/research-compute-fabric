@@ -1,4 +1,4 @@
-import Database from "better-sqlite3";
+import Database from "./sqlite.js";
 import { join } from "path";
 import { createHash } from "crypto";
 
@@ -47,7 +47,7 @@ export function pkgIngest({ title, body, kind, tags, sessionId, notionId, metric
       version,
       "RESEARCH",
       "neural_manifold",
-      "chat_session",
+      kind || "chat_session",
       description,
       JSON.stringify(tags || []),
       "YourAIScroll",

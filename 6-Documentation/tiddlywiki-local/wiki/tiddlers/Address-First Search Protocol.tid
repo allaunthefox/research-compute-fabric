@@ -1,0 +1,26 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack ENE Search Routing Candidate
+title: Address-First Search Protocol
+type: text/vnd.tiddlywiki
+
+! Address-First Search Protocol
+
+A retrieval route that starts with Bloom/regime/index/spiral traversal before
+edge expansion and hash verification.
+
+!! Why It Matters
+
+It turns [[Internal Semantic Search]] into an executable order of operations:
+address candidates first, graph expansion second, integrity receipts always.
+
+!! Evidence
+
+* Source: `docs/specs/ENE_MEMORY_ATLAS_SPEC.md:176-206`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[Internal Semantic Search]]
+* [[Gray-Code Golden-Spiral Fold]]
+* [[Fractal Hash Triplet]]

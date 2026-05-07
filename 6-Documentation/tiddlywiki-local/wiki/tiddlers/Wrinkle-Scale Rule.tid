@@ -1,0 +1,26 @@
+created: 20260506151000000
+modified: 20260506151000000
+tags: ResearchStack ENE SemanticGraph ProofTarget Candidate
+title: Wrinkle-Scale Rule
+type: text/vnd.tiddlywiki
+
+! Wrinkle-Scale Rule
+
+A scale-selection rule from the ENE/semantic surface that treats local detail
+as meaningful only when it survives the current operator and evidence scale.
+
+!! Why It Matters
+
+This is a claim-boundary primitive: it says which surface features deserve
+promotion and which are wrinkles until a stronger bridge exists.
+
+!! Evidence
+
+* ENE source: `data/substrate_index.db`, package rows around `6861-6864`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Links
+
+* [[Concept Anchor Settlement State]]
+* [[Semantic Eigenvector Bundle]]
+* [[Mass Number Recursion Warning]]

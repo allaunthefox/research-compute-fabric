@@ -1,0 +1,39 @@
+created: 20260506154500000
+modified: 20260506154500000
+tags: ResearchStack ENE TiddlyWiki Plugin BridgeSurface Candidate
+title: TiddlyWiki ENE Bridge Plugin
+type: text/vnd.tiddlywiki
+
+! TiddlyWiki ENE Bridge Plugin
+
+A hotswappable ENE plugin module that scans local TiddlyWiki `.tid` files and
+upserts them into ENE packages with deterministic receipts.
+
+!! Why It Matters
+
+This makes TiddlyWiki a frontline ENE surface instead of a detached local wiki.
+New cards can be promoted into ENE, indexed by the substrate, and tracked by
+plugin state while the future ENE revamp grows around a concrete reference
+plugin.
+
+!! Local Artifacts
+
+* Spec: `6-Documentation/docs/specs/ENE_HOTSWAP_PLUGIN_ARCHITECTURE.md`
+* Plugin manifest: `4-Infrastructure/infra/ene_plugins/tiddlywiki_bridge/plugin.json`
+* Plugin module: `4-Infrastructure/infra/ene_plugins/tiddlywiki_bridge/tiddlywiki_ene_bridge.py`
+
+!! Contract
+
+* Dry-run before commit.
+* One package per tiddler.
+* Receipt per write.
+* Incremental plugin state in SQLite.
+* Refuse active script content.
+* Treat imported cards as `FORMING` unless a stronger settlement receipt exists.
+
+!! Links
+
+* [[ENE Wiki Layer]]
+* [[Full Chat Log Dumps]]
+* [[Substrate FTS Query Surface]]
+* [[Concept Anchor Settlement State]]

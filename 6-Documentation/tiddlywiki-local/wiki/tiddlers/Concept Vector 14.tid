@@ -1,0 +1,27 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack ENE SemanticGraph Schema Candidate
+title: Concept Vector 14
+type: text/vnd.tiddlywiki
+
+! Concept Vector 14
+
+A phi-weighted fourteen-axis semantic coordinate system for ENE packages and
+wiki pages.
+
+!! Why It Matters
+
+This is a clean home for [[Semantic Eigenvector Bundle]] to become measurable:
+concepts get coordinates before they get clustered, routed, or compressed.
+
+!! Evidence
+
+* Source: `docs/ENE_SCHEMA.md:44-62`
+* Source: `infra/ene_wiki_layer.py:113-131`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[Semantic Eigenvector Bundle]]
+* [[Internal Semantic Search]]
+* [[ENE Memory Atom]]

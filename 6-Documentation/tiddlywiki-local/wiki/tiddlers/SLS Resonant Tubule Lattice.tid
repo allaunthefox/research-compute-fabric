@@ -1,0 +1,26 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack Materials Hardware SDR Candidate
+title: SLS Resonant Tubule Lattice
+type: text/vnd.tiddlywiki
+
+! SLS Resonant Tubule Lattice
+
+Hollow printed tubules that carry load while acting as RF cavities or
+waveguides.
+
+!! Why It Matters
+
+It converts structure into a measurable state witness: damage, fill, strain,
+or phase drift can be read as a physical receipt.
+
+!! Evidence
+
+* Source: `6-Documentation/docs/speculative-materials/RecoveredSessionMaterialConcepts.md:32`
+* Source: `6-Documentation/docs/speculative-materials/RecoveredSessionMaterialConcepts.md:142-170`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[SDR Void Hash Verification]]
+* [[Structural eFuse Surface]]

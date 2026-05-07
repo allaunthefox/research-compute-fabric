@@ -1,0 +1,25 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack Materials Percolation Candidate
+title: Conductive Valence Matrix
+type: text/vnd.tiddlywiki
+
+! Conductive Valence Matrix
+
+A carbon/ferrite-doped print body held near a percolation threshold.
+
+!! Why It Matters
+
+This gives strain-to-conductivity trip behavior for structural eFuses and
+material witnesses.
+
+!! Evidence
+
+* Source: `6-Documentation/docs/speculative-materials/RecoveredSessionMaterialConcepts.md:33`
+* Source: `6-Documentation/docs/speculative-materials/RecoveredSessionMaterialConcepts.md:117-140`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[Percolation Gate]]
+* [[Structural eFuse Surface]]

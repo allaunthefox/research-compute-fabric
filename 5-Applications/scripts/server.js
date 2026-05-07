@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import { exec, spawn } from "child_process";
-import Database from "better-sqlite3";
+import Database from "./sqlite.js";
 import { join } from "path";
 import { notion, notionDatabaseId, validateNotionConfig } from "./notion.js";
 import { pkgIngest } from "./ene.js";

@@ -1,0 +1,126 @@
+{
+  "timestamp": 1778128116.6836188,
+  "all_passed": true,
+  "tests": [
+    {
+      "test": "Normal Operation",
+      "result": {
+        "passed": true,
+        "transitions": 1000,
+        "violations": 0,
+        "mean_latency_ms": 0.007375240325927734,
+        "p50_latency_ms": 0.0069141387939453125,
+        "p99_latency_ms": 0.010728836059570312,
+        "max_latency_ms": 0.07867813110351562,
+        "throughput_ops_s": 135588.80196547488
+      }
+    },
+    {
+      "test": "Invariant Violations",
+      "result": {
+        "passed": true,
+        "violations_detected": 5,
+        "expected": 5,
+        "details": [
+          "Q16_16_overflow",
+          "PDN_impedance",
+          "trace_skew",
+          "FAMM_delay",
+          "topology_disconnected"
+        ]
+      }
+    },
+    {
+      "test": "Agent Drift Detection",
+      "result": {
+        "passed": true,
+        "drift_detected": true
+      }
+    },
+    {
+      "test": "Invalid Manifold Reshape",
+      "result": {
+        "passed": true,
+        "negative_ev_blocked": true,
+        "zero_dim_blocked": true
+      }
+    },
+    {
+      "test": "Sustained Load Test",
+      "result": {
+        "passed": true,
+        "total_ops": 10000,
+        "mean_latency_ms": 0.007434391975402832,
+        "p50_latency_ms": 0.0069141387939453125,
+        "p99_latency_ms": 0.010967254638671875,
+        "throughput_ops_s": 134509.99130911645
+      }
+    },
+    {
+      "test": "Recovery After Violation",
+      "result": {
+        "passed": true,
+        "bad_blocked": true,
+        "good_allowed": true,
+        "recovered": true
+      }
+    }
+  ],
+  "final_metrics": {
+    "watchdog": {
+      "mean_ms": 0.000943475864789064,
+      "max_ms": 0.0069141387939453125,
+      "calls": 11011
+    },
+    "swarm": {
+      "mean_ms": 0.002709110993138772,
+      "max_ms": 0.053882598876953125,
+      "calls": 11005
+    },
+    "topology": {
+      "mean_ms": 0.0,
+      "max_ms": 0,
+      "calls": 11005
+    },
+    "watchdog_violations": 6,
+    "swarm_drift": true,
+    "topology_adaptations": 1,
+    "proved_configs": 1
+  },
+  "fpgas": [
+    {
+      "id": 0,
+      "healthy": true,
+      "utilization": 0.0
+    },
+    {
+      "id": 1,
+      "healthy": true,
+      "utilization": 0.0
+    },
+    {
+      "id": 2,
+      "healthy": true,
+      "utilization": 0.0
+    },
+    {
+      "id": 3,
+      "healthy": true,
+      "utilization": 0.0
+    },
+    {
+      "id": 4,
+      "healthy": true,
+      "utilization": 0.0
+    }
+  ],
+  "summary": {
+    "total_tests": 6,
+    "passed": 6,
+    "total_transitions": 11000,
+    "watchdog_violations": 6,
+    "swarm_drift_events": true,
+    "topology_adaptations": 1,
+    "proved_configs": 1
+  }
+}

@@ -1,0 +1,25 @@
+# Maintainer: Allaun <local>
+pkgname=substack-local-preview
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Local Substack bundle builder, preview server, and publish-prep helper"
+arch=('any')
+url="https://example.invalid/local/substack-local-preview"
+license=('MIT')
+depends=('python' 'harper' 'vale')
+optdepends=('xdg-utils: open generated previews in the desktop browser'
+            'wl-clipboard: copy post markdown on Wayland'
+            'xclip: copy post markdown on X11')
+source=('substack-local-preview' 'vale.ini' 'LICENSE' 'README.md')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP')
+
+package() {
+  install -Dm755 "${srcdir}/substack-local-preview" \
+    "${pkgdir}/usr/bin/substack-local-preview"
+  install -Dm644 "${srcdir}/vale.ini" \
+    "${pkgdir}/usr/share/substack-local-preview/vale.ini"
+  install -Dm644 "${srcdir}/README.md" \
+    "${pkgdir}/usr/share/doc/${pkgname}/README.md"
+  install -Dm644 "${srcdir}/LICENSE" \
+    "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

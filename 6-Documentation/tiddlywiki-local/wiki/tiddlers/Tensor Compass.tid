@@ -1,0 +1,22 @@
+created: 20260506134500000
+modified: 20260506134500000
+tags: ResearchStack Geometry Compression Candidate
+title: Tensor Compass
+type: text/vnd.tiddlywiki
+
+! Tensor Compass
+
+Visual and computational handle for local direction fields over a curved
+concept or soliton manifold: instead of storing every route, evaluate the local
+arrow and step.
+
+!! Links
+
+* [[Soliton N-Space Path]]
+* [[Compression and Soliton Mining]]
+* [[Semantic Eigenvector Bundle]]
+* [[Waveprobe]]
+
+!! Status
+
+Candidate/metaphorical scaffold until tied to a finite route evaluator.

@@ -1,0 +1,30 @@
+created: 20260506152500000
+modified: 20260506152500000
+tags: ResearchStack AbandonedHeld ProofTarget Backlog
+title: Master Equation Hole
+type: text/vnd.tiddlywiki
+
+! Master Equation Hole
+
+An explicit missing-module/gap card for master-equation work in the concept
+archive.
+
+!! Why It Matters
+
+Gap cards are useful because they stop abandoned or unimplemented concepts
+from disappearing. This one should point future proof/model work at the exact
+hole instead of relying on memory.
+
+!! Evidence
+
+* Source: `6-Documentation/wiki/Obsidian-connector/Manifold/Hole Registry.md:2931`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Status
+
+Backlog / AbandonedHeld until the missing module is scoped.
+
+!! Links
+
+* [[Mined Conversation Backlog]]
+* [[Witness-Regularized Burgers GPE]]

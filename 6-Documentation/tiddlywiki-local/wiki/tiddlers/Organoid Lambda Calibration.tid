@@ -1,0 +1,24 @@
+created: 20260506135500000
+modified: 20260506135500000
+tags: ResearchStack Compression Calibration Biology
+title: Organoid Lambda Calibration
+type: text/vnd.tiddlywiki
+
+! Organoid Lambda Calibration
+
+Concrete calibration finding from the compression lane: `LAMBDA_B = 0.08` was
+structurally too weak to affect compression selection, while `0.50` was proposed
+from break-even analysis. The same thread links organoid three-state behavior to
+K=3 encoding and identifies ROT_R recalibration as a measurement gap.
+
+!! Links
+
+* [[K3 Ternary Boundary]]
+* [[H1 Path-Finding Projector]]
+* [[Engram Decompressor]]
+* [[Hutter Prize Compression]]
+
+!! Sources
+
+* `shared-data/data/germane/research/chat-organoid-lambda-calibration-20260404.md`
+* `5-Applications/audit/exploit-audit/sessions/chat-organoid-lambda-calibration-20260404.json`

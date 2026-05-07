@@ -1,0 +1,26 @@
+title: Meme Math That Pays Rent
+subtitle: "Fuck Your Couch, Loc Nes Monster, Tree Fiddy, and the weird dignity of receipt-bearing jokes"
+slug: meme-math-that-pays-rent
+status: draft
+publication: Frog in (n) Ponds
+canonical_url: TBD
+created_at: 2026-05-06T00:00:00Z
+updated_at: 2026-05-06T00:00:00Z
+primary_category: formal-systems
+subcategories:
+  - semantics
+  - verification
+topics:
+  - COUCH
+  - F-Number COUCH
+  - Loch-Nessie-Monster Filter
+  - Tree Fiddy
+  - BHOCS
+  - Lean
+  - monster filter
+  - route pressure
+  - semantic systems
+artifacts:
+  source: article.md
+  substack_markdown: substack_bundle/post.md
+  bundle_manifest: substack_bundle/manifest.json

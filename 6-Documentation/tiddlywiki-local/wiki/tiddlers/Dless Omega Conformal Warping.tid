@@ -1,0 +1,26 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack ENE Search Compression Governance Candidate
+title: Dless Omega Conformal Warping
+type: text/vnd.tiddlywiki
+
+! Dless Omega Conformal Warping
+
+A governance scalar that changes effective search distance without deleting
+low-priority atoms.
+
+!! Why It Matters
+
+This gives compression and retrieval a reversible pressure knob: route away
+from weak or risky material without pretending it vanished.
+
+!! Evidence
+
+* Source: `docs/specs/ENE_MEMORY_ATLAS_SPEC.md:134-162`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[Internal Semantic Search]]
+* [[Semantic Eigenvector Bundle]]
+* [[Mass Number]]

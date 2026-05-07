@@ -1,0 +1,26 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack ENE Provenance Compression Candidate
+title: Concept Anchor Settlement State
+type: text/vnd.tiddlywiki
+
+! Concept Anchor Settlement State
+
+A lineage tag preserving what an idea meant and whether it is `SEED`,
+`FORMING`, `STABLE`, `CRYSTALLIZED`, or `COMPRESSED`.
+
+!! Why It Matters
+
+It keeps compressed research artifacts from losing their epistemic status.
+That matters when half the stack is exploration and the other half wants proof.
+
+!! Evidence
+
+* Source: `substrate_git_index.py:279-296`
+* Source: `docs/ENE_SCHEMA.md:29-38`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[ENE Memory Atom]]
+* [[Meta-Autotype Contingent Field]]

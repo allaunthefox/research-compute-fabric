@@ -1,0 +1,22 @@
+created: 20260506134500000
+modified: 20260506134500000
+tags: ResearchStack SemanticGraph Search
+title: Internal Semantic Search
+type: text/vnd.tiddlywiki
+
+! Internal Semantic Search
+
+Planned local search engine that ranks concepts by semantic structure,
+eigenvector bundles, graph relations, receipts, and source evidence instead of
+plain keyword matching alone.
+
+!! Links
+
+* [[Semantic Eigenvector Bundle]]
+* [[Semantic Graph Mining]]
+* [[Conversation Mining Source Map]]
+* [[Mined Conversation Concepts]]
+
+!! Status
+
+Target document item; implementation not yet promoted.

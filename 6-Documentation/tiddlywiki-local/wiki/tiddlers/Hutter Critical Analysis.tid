@@ -1,0 +1,31 @@
+created: 20260506152500000
+modified: 20260506152500000
+tags: ResearchStack Hutter Compression ClaimBoundary Candidate
+title: Hutter Critical Analysis
+type: text/vnd.tiddlywiki
+
+! Hutter Critical Analysis
+
+A claim-boundary card for Hutter/Kolmogorov compression work, preserving
+useful mechanisms while blocking false prize claims from hardening.
+
+!! Why It Matters
+
+The Hutter Prize gives the stack a static target, but that also creates a
+temptation to overinterpret toy wins. This card is the audit rail.
+
+!! Evidence
+
+* Source: `shared-data/data/germane/research/hutter/CRITICAL_ANALYSIS.md:47`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Status
+
+HOLD as an anti-overclaim guard. Promote only claims with reproducible byte
+counts, decompressor cost, and comparison baselines.
+
+!! Links
+
+* [[Hutter Prize Compression]]
+* [[Hutter Tensor Field Analysis DAG]]
+* [[Mass Number Sidecar Rule]]

@@ -198,6 +198,130 @@ When analyzing COUCH systems, chaotic trajectories can be described as:
 - High Φ indicates "super freak" regime
 - Active control required for stability
 
+### 6.1.1 F-Number COUCH Witness
+
+The continuous COUCH equation is intentionally not promoted directly from a
+floating trajectory. The Lean surface records a finite F-number proxy over the
+normalized evidence artifacts:
+
+```
+F_COUCH(κ) = avg_curvature_milli(κ)
+           + max_curvature_milli(κ)
+           + FAMM_frustration_milli
+```
+
+Current finite witnesses:
+
+| Coupling regime | F-number milli | High-F? |
+|---|---:|---|
+| `κ = 0.50` | `18085` | no |
+| `κ = 1.00` | `18163` | no |
+| `κ = 1.50` | `18274` | no |
+| `κ = 2.00` | `18419` | no |
+| `κ = 2.50` | `18596` | yes |
+
+The high-F threshold is `18500` in the current witness module. This makes the
+F-number a route-pressure indicator for COUCH, not a proof about the continuous
+chaotic trajectory.
+
+Anti-overfit check: the Lean module now verifies every coupling bucket in the
+stored sweep, not only the endpoints. It also proves the finite F-number rises
+strictly across adjacent buckets:
+
+```
+0.50 < 1.00 < 1.50 < 2.00 < 2.50
+```
+
+This does not prove a continuous monotonic law. It proves that the stored finite
+evidence surface is not being justified by cherry-picked endpoint values.
+
+### 6.1.2 U-Rotated COUCH Value
+
+The same finite Lean witness also records a U-rotated value along the curvature
+`C` and coupling `κ` channels:
+
+```
+U_rot(κ) = C_avg_milli(κ) + κ_milli * U_norm_milli(κ) / 1000
+```
+
+This is a fixed-point-safe projection, not a continuous rotation theorem. It
+keeps the COUCH sweep sortable by "how much normalized U has rotated into the
+curvature channel" as coupling increases.
+
+Current finite witnesses:
+
+| Coupling regime | `U_rot` milli |
+|---|---:|
+| `κ = 0.50` | `8785` |
+| `κ = 1.00` | `9552` |
+| `κ = 1.50` | `10322` |
+| `κ = 2.00` | `11093` |
+| `κ = 2.50` | `11867` |
+
+The Lean witness proves `U_rot` also rises strictly across the full stored
+coupling sweep.
+
+### 6.1.3 Y-Axis O-Step Container
+
+The finite COUCH witness also packages the Y-axis sweep as an O-step/U/R
+container:
+
+```
+Y_COUCH(κ) = {
+  O_steps: trajectory_steps(κ),
+  U_value: U_rot(κ),
+  R_value: 1000
+}
+```
+
+`R_value` is intentionally constant so changes in the container are carried by
+the observed step count and rotated U value, not by a moving residual baseline.
+
+Current finite witnesses:
+
+| Coupling regime | `O_steps` | `U_value` milli | `R_value` milli |
+|---|---:|---:|---:|
+| `κ = 0.50` | `10` | `8785` | `1000` |
+| `κ = 1.00` | `10` | `9552` | `1000` |
+| `κ = 1.50` | `10` | `10322` | `1000` |
+| `κ = 2.00` | `10` | `11093` | `1000` |
+| `κ = 2.50` | `10` | `11867` | `1000` |
+
+The container is intentionally boring: `R_value` remains fixed, and every
+regime uses the same observed step count from the artifact. If a later sweep
+changes either of those, the Lean witness must be updated rather than silently
+absorbing a nicer-looking curve.
+
+### 6.1.4 Route-Pressure Gate
+
+The COUCH witnesses pay their bill by becoming a finite routing gate:
+
+```
+P_COUCH(κ) = F_COUCH(κ) + U_rot(κ) - R_value
+```
+
+Current thresholds:
+
+| Pressure band | Routing mode | Action |
+|---|---|---|
+| `< 27000` | `exploitLocal` | `local` |
+| `27000..28999` | `exploreAtlas` | `atlas` |
+| `>= 29000` | `rejectDivergent` | `reject` |
+
+Current finite routing sweep:
+
+| Coupling regime | Pressure milli | Mode | Action |
+|---|---:|---|---|
+| `κ = 0.50` | `25870` | `exploitLocal` | `local` |
+| `κ = 1.00` | `26715` | `exploitLocal` | `local` |
+| `κ = 1.50` | `27596` | `exploreAtlas` | `atlas` |
+| `κ = 2.00` | `28512` | `exploreAtlas` | `atlas` |
+| `κ = 2.50` | `29463` | `rejectDivergent` | `reject` |
+
+This is the operational value of COUCH: it is a compact witness surface for
+deciding when a chaotic/hysteretic route remains cheap enough to run locally,
+when it needs atlas evidence, and when it should be blocked.
+
 ### 6.2 Connection to PIST
 - PIST state space pruning applies to COUCH phase space
 - Shell coordinates: (k, t, H) where H = hysteresis
@@ -255,9 +379,9 @@ When analyzing COUCH systems, chaotic trajectories can be described as:
 
 ## 10. Status
 
-**Implementation:** Documented  
-**Validation:** Theoretical  
-**Integration:** MATH_MODEL_MAP.tsv entry #0  
+**Implementation:** Documented plus finite Lean witness
+**Validation:** Theoretical continuous model; finite F-number/Genome18/PIST route witness in Lean
+**Integration:** MATH_MODEL_MAP.tsv entry #0; `Semantics.CouchFilterNormalization`
 **Cross-Refs:** FAMM, PIST, Quaternion Counter-Rotation  
 **Domain:** LAYER_E_VERIFICATION  
 **Bind Class:** thermodynamic_bind

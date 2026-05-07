@@ -1,5 +1,5 @@
 import express from "express";
-import Database from "better-sqlite3";
+import Database from "./sqlite.js";
 import { join } from "path";
 import fs from "fs";
 

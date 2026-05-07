@@ -1,0 +1,22 @@
+created: 20260506134500000
+modified: 20260506134500000
+tags: ResearchStack Compression Biology Candidate
+title: K3 Ternary Boundary
+type: text/vnd.tiddlywiki
+
+! K3 Ternary Boundary
+
+Three-state alphabet boundary used in the organoid/codon/compression threads:
+quiescent, subthreshold, and burst-like states as a compact biological analogue
+for routing or compression decisions.
+
+!! Links
+
+* [[Engram Decompressor]]
+* [[Hutter Prize Compression]]
+* [[Compression and Soliton Mining]]
+
+!! Conversation Sources
+
+* `shared-data/data/germane/research/chat-organoid-lambda-calibration-20260404.md`
+* `5-Applications/audit/exploit-audit/sessions/chat-organoid-lambda-calibration-20260404.json`

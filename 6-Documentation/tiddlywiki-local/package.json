@@ -1,0 +1,13 @@
+{
+  "name": "research-stack-tiddlywiki-local",
+  "private": true,
+  "description": "Local TiddlyWiki surface for Research Stack notes.",
+  "scripts": {
+    "start": "tiddlywiki wiki --listen host=127.0.0.1 port=8081",
+    "build": "tiddlywiki wiki --build index",
+    "version": "tiddlywiki --version"
+  },
+  "dependencies": {
+    "tiddlywiki": "^5.3.8"
+  }
+}

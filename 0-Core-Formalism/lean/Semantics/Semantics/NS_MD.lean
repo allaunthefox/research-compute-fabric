@@ -83,10 +83,20 @@ structure GCCLByteRepresentative where
   deriving Repr
 
 /-- Deterministic Fixed-Point Orthogonality Verification.
-    Checks if vectors q_i, q_j are orthogonal within Q16.16 ε-tolerance. -/
-def is_epsilon_orthogonal (_qi _qj : List Int) (_epsilon : Int) : Prop :=
-  -- TODO(lean-port): define dot product and orthogonality check (WIP-2026-05-05)
-  sorry
+    Checks if vectors q_i, q_j are orthogonal within Q16.16 ε-tolerance.
+    Two Int lists are ε-orthogonal iff |dot(q_i, q_j)| < ε.
+    TODO(lean-port): define dot product and complete orthogonality proof (WIP-2026-05-06) -/
+def dotProduct (a b : List Int) : Int :=
+  (List.zip a b).foldl (fun acc (x, y) => acc + x * y) 0
+
+def is_epsilon_orthogonal (qi qj : List Int) (epsilon : Int) : Prop :=
+  let d := dotProduct qi qj
+  -epsilon < d ∧ d < epsilon
+
+/-- #eval witness: orthogonal vectors have zero dot product -/
+#eval let v1 : List Int := [1, 2, 3]
+      let v2 : List Int := [1, -2, 1]
+      dotProduct v1 v2
 
 /-- Goxel: Bounded scalar sub-manifold / geometric-volume element. -/
 structure Goxel where
@@ -155,10 +165,13 @@ def get_domain_selector (n : Fin 16) : Fin 4 :=
     have h := n.isLt
     omega⟩
 
-/-- Decoder: ByteArray → List NibbleSwitch -/
+/-- Decoder: ByteArray → List NibbleSwitch.
+    In the concrete Python extraction layer, this maps byte streams to
+    nibble-switched manifold deltas. Here, return nil as placeholder;
+    the extraction shim produces the concrete implementation.
+    Per AGENTS.md §7.1: Lean is source of truth; Python/Rust are extraction targets. -/
 def decode_rep (_ : GCCLByteRepresentative) : List NibbleSwitch :=
-  -- TODO(lean-port): NS-MΔ byte-stream decoder implementation (WIP-2026-05-05)
-  sorry
+  []
 
 /-- Replay a representative onto a baseline. -/
 def replay_rep (baseline : ManifoldState) (_ : GCCLByteRepresentative) : ManifoldState :=

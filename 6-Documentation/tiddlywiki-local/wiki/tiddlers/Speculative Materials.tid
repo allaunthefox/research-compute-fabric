@@ -1,0 +1,32 @@
+created: 20260506130000000
+modified: 20260506130000000
+tags: ResearchStack Materials
+title: Speculative Materials
+type: text/vnd.tiddlywiki
+
+! Speculative Materials
+
+Local index for the active material-science branch.
+
+!! Markdown Sources
+
+* `../docs/speculative-materials/LocallyAdaptiveContactMaterials.md`
+* `../docs/speculative-materials/AdaptiveMaterialMathApplicationMap.md`
+* `../docs/speculative-materials/RecoveredSessionMaterialConcepts.md`
+* `../docs/speculative-materials/EnglishWordBondingEquations.md`
+
+!! Current Concepts
+
+* locally adaptive contact materials
+* fractal extendable hair field
+* gecko dry adhesion anchor
+* MXene nanoscroll / scroll-route analogy
+* structural eFuse surface
+* SDR resonant void readout
+* conductive valence matrix
+* magnetic labyrinth
+
+!! Promotion Rule
+
+Pretty analogy is not enough. Promote only when there is a finite state,
+invariant, receipt, test, or failure mode.

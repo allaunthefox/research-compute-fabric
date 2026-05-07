@@ -1,5 +1,5 @@
 import fs from 'fs';
-import Database from 'better-sqlite3';
+import Database from './sqlite.js';
 import { join } from 'path';
 import { createHash } from 'crypto';
 

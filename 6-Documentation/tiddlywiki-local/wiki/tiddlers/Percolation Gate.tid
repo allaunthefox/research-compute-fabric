@@ -1,0 +1,26 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack Materials Gate Verification Candidate
+title: Percolation Gate
+type: text/vnd.tiddlywiki
+
+! Percolation Gate
+
+A finite material gate where strain, temperature, variance, and fatigue
+determine route conduction.
+
+!! Why It Matters
+
+It is a clean bridge from speculative material behavior to thresholds an FPGA
+or verification shell can check.
+
+!! Evidence
+
+* Source: `6-Documentation/docs/speculative-materials/RecoveredSessionMaterialConcepts.md:117-140`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[FPGA Warden]]
+* [[Conductive Valence Matrix]]
+* [[Structural eFuse Surface]]

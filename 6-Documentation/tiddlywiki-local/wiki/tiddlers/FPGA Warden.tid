@@ -1,0 +1,23 @@
+created: 20260506134500000
+modified: 20260506134500000
+tags: ResearchStack Hardware Verification
+title: FPGA Warden
+type: text/vnd.tiddlywiki
+
+! FPGA Warden
+
+Verification authority mapped onto FPGA-friendly finite checks. In the current
+hardware framing, the GPU can propose expensive candidate work while the FPGA
+checks receipts, thresholds, DAG-LUT constraints, and route safety.
+
+!! Links
+
+* [[Morphic DSP]]
+* [[Waveprobe]]
+* [[Structural eFuse Surface]]
+* [[HDMI Compute Fabric]]
+
+!! Durable Sources
+
+* `../docs/GLOSSARY.md`
+* `../../0-Core-Formalism/lean/Semantics/Semantics/Hardware/AdaptiveFabric.lean`

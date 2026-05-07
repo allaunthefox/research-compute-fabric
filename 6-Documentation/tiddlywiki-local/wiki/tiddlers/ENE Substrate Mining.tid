@@ -1,0 +1,51 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack Mining ENE Index
+title: ENE Substrate Mining
+type: text/vnd.tiddlywiki
+
+! ENE Substrate Mining
+
+Concepts mined from the local ENE substrate and ENE-adjacent repo docs.
+
+!! Current Substrate Shape
+
+The live `data/substrate_index.db` currently behaves as a literature/provenance index:
+
+* `zotero_items`: 66 rows
+* `local_pdfs`: 172 rows
+* `need_log`: 11 rows
+* `arxiv_meta`, `paper_reviews`, and `reconciler_log`: empty at time of mining
+
+!! Core Cards
+
+* [[ENE Memory Atom]]
+* [[Address-First Search Protocol]]
+* [[Dless Omega Conformal Warping]]
+* [[Fractal Hash Triplet]]
+* [[Gray-Code Golden-Spiral Fold]]
+* [[Concept Vector 14]]
+* [[Meta-Autotype Contingent Field]]
+* [[Substrate FTS Query Surface]]
+* [[TiddlyWiki ENE Bridge Plugin]]
+* [[Semantic Engine Binding Derivation]]
+
+!! Materials / Hardware Cards
+
+* [[SLS Resonant Tubule Lattice]]
+* [[Conductive Valence Matrix]]
+* [[Percolation Gate]]
+* [[Fractal Extendable Hair Field]]
+* [[Gecko Dry Adhesion Anchor]]
+* [[Contact Authority]]
+
+!! Literature Anchors
+
+* [[Quasi-1D Superionic Carbon Hydride]]
+* [[Genomic Data Compression Anchor]]
+* [[Graph-Evolving RAG]]
+
+!! Mining Rule
+
+Treat ENE rows as provenance-backed stubs unless a repo document, source line,
+or review layer provides mechanism details.

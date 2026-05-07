@@ -1,0 +1,70 @@
+Derive 12 equations. The numbers have values. Formalize them in Lean 4.
+
+F01: 7 numbers — 121.567, 102.572, 97.254, 94.974, 93.780, 93.074, 93.622
+- Encode as Q16.16 fixed-point
+- Define: encode(x) = floor(x * 65536 + 0.5) / 65536
+- Verify with Wolfram Alpha
+- File: F01.lean
+
+F02: 8-level constraint hierarchy
+- Define compression operator C: (input, constraint) → output
+- Information rate: R(D) = I(input; output) given distortion D
+- 8 levels with cumulative compression ratio
+- File: F02.lean
+
+F03: Continuous information metric
+- Fisher-Rao metric: g_ij(θ) = E[∂log p(x;θ)/∂θ_i · ∂log p(x;θ)/∂θ_j]
+- Differential entropy: h(X) = -∫ p(x) log p(x) dx
+- File: F03.lean
+
+F04: Game-theoretic strategy encoding
+- Policy function: π: State → Action
+- ESS condition: π* = argmax E[payoff | π*, population]
+- File: F04.lean
+
+F05: Rate-distortion for biological encoding
+- R(D) = min_{p(x̂|x)} I(X;X̂) subject to E[d(X,X̂)] ≤ D
+- File: F05.lean
+
+F06: Evolutionary dynamics on manifold
+- Replicator: dx_i/dt = x_i((Ax)_i - x^TAx)
+- Lyapunov: dV/dt ≤ 0
+- File: F06.lean
+
+F07: Cancer as compression failure
+- Entropy increase: H_cancer > H_healthy
+- Threshold: H > H_critical → failure mode
+- File: F07.lean
+
+F08: Robustness-compression relation
+- R = f(C) where R = error correction capacity, C = compression ratio
+- Trade-off: dR/dC < 0
+- File: F08.lean
+
+F09: Compression dynamics
+- dC/dt = -∇_C L(total) where L = loss function
+- Fixed point: dC/dt = 0
+- File: F09.lean
+
+F10: Possibility space cardinality
+- |G| = 4^L for genome length L
+- Viable subset |V| << |G|
+- Ratio: |V|/|G| ≈ 10^(-6×10^8)
+- File: F10.lean
+
+F11: Adjacent possible expansion
+- d(AP)/dt = α · diversity + β · innovation
+- α, β = coupling constants
+- File: F11.lean
+
+F12: Master unification equation
+- S_{t+1} = Master(S_t, environment, constraints)
+- Integrate F01-F11
+- File: F12.lean
+
+Requirements:
+- Q16.16 fixed-point arithmetic only
+- #eval example for every def
+- Wolfram Alpha verification in comments
+- Theorem proving totality for every operation
+- lake build must pass

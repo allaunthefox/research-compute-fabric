@@ -1,0 +1,31 @@
+created: 20260506152500000
+modified: 20260506152500000
+tags: ResearchStack Burgers GPE ProofTarget Candidate
+title: Witness-Regularized Burgers GPE
+type: text/vnd.tiddlywiki
+
+! Witness-Regularized Burgers GPE
+
+A toy-formal equation surface combining Burgers/GPE-style dynamics with
+explicit witness regularization and claim boundaries.
+
+!! Why It Matters
+
+This is the sane way to keep the hyperfluid/mathholes thread: formal toy
+module first, physical interpretation later, and only after receipts.
+
+!! Evidence
+
+* Source: `shared-data/data/ingested/chatgpt/mathholes_ene_brief.md:41`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Status
+
+HOLD as a toy formal target. Needs equation inventory, assumptions, and
+validation surfaces before physical claims.
+
+!! Links
+
+* [[FNWH Hyperfluid Claim Boundary]]
+* [[Mass Number Recursion Warning]]
+* [[Soliton N-Space Path]]

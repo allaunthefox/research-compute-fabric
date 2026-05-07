@@ -2,6 +2,8 @@ import Mathlib.Data.Real.Basic
 import Semantics.CodonOTOM
 import Semantics.PeptideMoE
 
+noncomputable section
+
 namespace CodonPeptideConsistency
 
 open CodonOTOM
@@ -53,6 +55,15 @@ noncomputable def phiCDSCodon
   | 0 => 0
   | n => (s.map (fun c => phiCodon w (fs c) c)).sum / n
 
+-- Forward-declare empty values for opaque types
+-- (needed because `noncomputable def` in this section requires Nonempty instances)
+private noncomputable def emptyPeptideState : PeptideState :=
+  { phi := (0 : ℝ), psi := (0 : ℝ), internalEnergy := (0 : ℝ),
+    conformationalEntropy := (0 : ℝ), structuralCoherence := (0 : ℝ),
+    stericEnergy := (0 : ℝ), bondEnergy := (0 : ℝ) }
+
+noncomputable instance : Nonempty PeptideState := ⟨emptyPeptideState⟩
+
 /-- Abstract peptide state induced by a translated coding sequence with codon dynamics.
   TODO(lean-port): external biological model — replace with concrete folding simulator. -/
 opaque buildPeptideStateWithDynamics :
@@ -62,6 +73,12 @@ opaque buildPeptideStateWithDynamics :
   TODO(lean-port): external biological model — replace with concrete folding simulator. -/
 opaque buildPeptideState :
   List AminoAcid → PeptideState
+
+noncomputable instance : Nonempty (List AminoAcid → (Codon → ℝ) → (Codon → ℝ) → (Codon → ℝ) → PeptideState) :=
+  ⟨buildPeptideStateWithDynamics⟩
+
+noncomputable instance : Nonempty (List AminoAcid → PeptideState) :=
+  ⟨buildPeptideState⟩
 
 /-- Peptide-level score induced by the translated coding sequence with dynamics. -/
 noncomputable def phiCDSPeptideWithDynamics
@@ -279,10 +296,12 @@ theorem phiCDS_bounded
   have h_p : |phiCDSPeptide tp ap s| ≤ M_peptide := h_peptide s
   calc
     |α * phiCDSCodon w fs s + β * phiCDSPeptide tp ap s|
-        ≤ |α * phiCDSCodon w fs s| + |β * phiCDSPeptide tp ap s| := abs_add _ _ _
+        ≤ |α * phiCDSCodon w fs s| + |β * phiCDSPeptide tp ap s| := abs_add_le _ _
     _ = |α| * |phiCDSCodon w fs s| + |β| * |phiCDSPeptide tp ap s| := by
       rw [abs_mul, abs_mul]
     _ ≤ |α| * M_codon + |β| * M_peptide := by
+      have h_nonneg_alpha : 0 ≤ |α| := abs_nonneg _
+      have h_nonneg_beta : 0 ≤ |β| := abs_nonneg _
       nlinarith
 
 end CodonPeptideConsistency

@@ -1,0 +1,29 @@
+created: 20260506134000000
+modified: 20260506134000000
+tags: ResearchStack Mining Materials Hardware
+title: Materials and Hardware Mining
+type: text/vnd.tiddlywiki
+
+! Materials and Hardware Mining
+
+Lane for mined conversation cards about materials, physical substrates, FPGA/GPU
+verification, display/HDMI compute surfaces, structural eFuses, and SDR-readable
+geometry.
+
+!! Seed Links
+
+* [[Speculative Materials]]
+* [[Structural eFuse Surface]]
+* [[Waveprobe]]
+* [[Morphic DSP]]
+* [[FPGA Warden]]
+* [[HDMI Compute Fabric]]
+
+!! Mined Cards
+
+* [[MXene Nanoscrolls as Torsion Closure]]
+* [[SDR Void Hash Verification]]
+* [[GeomTREE Semi-Jack Physical Witness]]
+* [[Bio-Damascene GaN Nanolithography]]
+* [[Mullins Skin-Effect Post Processing]]
+* [[MoonRF ECP5 Hardware BFT Oracle]]

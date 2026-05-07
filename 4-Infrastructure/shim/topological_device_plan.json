@@ -1,0 +1,125 @@
+{
+  "results": {
+    "curvatureAnalyst": {
+      "tight_bends": 0,
+      "recommendation": "Bend radius \u22653\u00d7 trace width for impedance control"
+    },
+    "topologyAnalyst": {
+      "nodes": 5,
+      "edges": 8,
+      "critical_paths": 2,
+      "recommendation": "Star topology for clock; mesh for data"
+    },
+    "hierarchyOptimizer": {
+      "layers": 3,
+      "vias": 10,
+      "recommendation": "Symmetric stackup: SIG-GND-PWR-SIG"
+    },
+    "mutationTuner": {
+      "caps": 5,
+      "under_decoupled": [],
+      "recommendation": "100nF + 10nF per power pin"
+    },
+    "geometricReviewer": {
+      "min_spacing": 0.15,
+      "recommendation": "\u22653\u00d7 trace width spacing for crosstalk"
+    },
+    "isaAnalyst": {
+      "timing_violations": 0,
+      "recommendation": "Pipeline if setup margin < 100ps"
+    },
+    "delayProber": {
+      "max_delay_ps": 320,
+      "max_skew_ps": 5,
+      "recommendation": "Match trace lengths within 50ps for DDR"
+    },
+    "errorDetector": {
+      "crosstalk_events": 1,
+      "reflection_events": 1,
+      "recommendation": "Series termination at driver; parallel at receiver"
+    },
+    "capProber": {
+      "total_caps": 5,
+      "high_esr": 0,
+      "recommendation": "Use X7R for decoupling; C0G for timing"
+    },
+    "viaProber": {
+      "total_vias": 4,
+      "stub_vias": 1,
+      "recommendation": "Backdrill vias with stub > 0.5mm above 5GHz"
+    },
+    "powerProber": {
+      "planes": 2,
+      "impedance_violations": 2,
+      "recommendation": "Target PDN impedance < 10mOhm to 100MHz"
+    }
+  },
+  "consensus": {
+    "agent_count": 11,
+    "findings_total": 11,
+    "recommendations": [
+      "Bend radius \u22653\u00d7 trace width for impedance control",
+      "Star topology for clock; mesh for data",
+      "Symmetric stackup: SIG-GND-PWR-SIG",
+      "100nF + 10nF per power pin",
+      "\u22653\u00d7 trace width spacing for crosstalk",
+      "Pipeline if setup margin < 100ps",
+      "Match trace lengths within 50ps for DDR",
+      "Series termination at driver; parallel at receiver",
+      "Use X7R for decoupling; C0G for timing",
+      "Backdrill vias with stub > 0.5mm above 5GHz",
+      "Target PDN impedance < 10mOhm to 100MHz"
+    ],
+    "consensus_score": 0.95,
+    "topological_readiness": 0.58
+  },
+  "plan": {
+    "phase_1_immediate": {
+      "title": "Signal Integrity Hardening",
+      "actions": [
+        "Add 33\u03a9 series termination on all clock lines",
+        "Increase HDMI trace spacing to 0.3mm (3\u00d7 width)",
+        "Replace high-ESR caps (>100m\u03a9) with low-ESR X7R"
+      ],
+      "timeline": "1-2 weeks",
+      "expected_improvement": "+30% signal integrity"
+    },
+    "phase_2_structural": {
+      "title": "Topological Routing Optimization",
+      "actions": [
+        "Match all DDR data trace lengths within 50ps",
+        "Backdrill HDMI vias with stub > 0.5mm",
+        "Implement star topology for clock distribution",
+        "Add guard traces between critical pairs"
+      ],
+      "timeline": "2-4 weeks",
+      "expected_improvement": "+40% timing margin"
+    },
+    "phase_3_power": {
+      "title": "Power Distribution Network Topology",
+      "actions": [
+        "Reduce PDN impedance to <10m\u03a9 up to 100MHz",
+        "Add 100nF + 10nF per power pin (broadband decoupling)",
+        "Implement symmetric SIG-GND-PWR-SIG stackup",
+        "Add ferrite beads on analog power rails"
+      ],
+      "timeline": "3-6 weeks",
+      "expected_improvement": "+50% power integrity"
+    },
+    "phase_4_topological": {
+      "title": "True Topological Device Transformation",
+      "actions": [
+        "Implement FAMM preshaped delay lines (waveprobe-derived)",
+        "Add topological state machine for adaptive routing",
+        "Integrate manifold-aware impedance matching",
+        "Deploy swarm consensus for real-time topology optimization",
+        "Add eigenvalue-based clock distribution network"
+      ],
+      "timeline": "6-12 weeks",
+      "expected_improvement": "Topological device achieved"
+    },
+    "readiness_score": 0.58,
+    "total_actions": 16,
+    "estimated_timeline_weeks": 12
+  }
+}

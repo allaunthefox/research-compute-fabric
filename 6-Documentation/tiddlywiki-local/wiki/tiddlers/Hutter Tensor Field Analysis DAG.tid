@@ -1,0 +1,26 @@
+created: 20260506152500000
+modified: 20260506152500000
+tags: ResearchStack Hutter Compression DAG Candidate
+title: Hutter Tensor Field Analysis DAG
+type: text/vnd.tiddlywiki
+
+! Hutter Tensor Field Analysis DAG
+
+A compression-analysis graph for tensor-field or manifold-coded Hutter work,
+intended to keep dependencies and audit hooks explicit.
+
+!! Why It Matters
+
+It gives the Hutter lane structure: claims become nodes with evidence,
+baselines, and failure modes instead of one giant compression fog.
+
+!! Evidence
+
+* Source: `shared-data/data/germane/research/hutter/TENSOR_FIELD_ANALYSIS_DAG.md:40`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Links
+
+* [[Hutter Prize Compression]]
+* [[Hutter Critical Analysis]]
+* [[Tensor Compass]]

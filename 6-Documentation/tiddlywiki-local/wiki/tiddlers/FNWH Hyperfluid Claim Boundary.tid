@@ -1,0 +1,32 @@
+created: 20260506151000000
+modified: 20260506151000000
+tags: ResearchStack ClaimBoundary Quarantine ProofTarget Candidate
+title: FNWH Hyperfluid Claim Boundary
+type: text/vnd.tiddlywiki
+
+! FNWH Hyperfluid Claim Boundary
+
+A quarantine card for the FNWH/hyperfluid equation family, preserving the toy
+formalism while marking unsupported physical claims as held.
+
+!! Why It Matters
+
+This keeps experimental math useful without letting it over-promote itself.
+The card should collect equations, witnesses, and refusal boundaries together.
+
+!! Evidence
+
+* ENE source: `data/substrate_index.db`, package rows around `6865-6866`
+* Source: `shared-data/data/ingested/chatgpt/mathholes.md`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Status
+
+HOLD until the toy equations are separated from physical claims and given
+explicit validation targets.
+
+!! Links
+
+* [[Mass Number Recursion Warning]]
+* [[Witness-Regularized Burgers/GPE]]
+* [[Concept Anchor Settlement State]]

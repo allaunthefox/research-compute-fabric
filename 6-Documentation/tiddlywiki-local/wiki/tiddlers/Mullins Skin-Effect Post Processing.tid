@@ -1,0 +1,20 @@
+created: 20260506135500000
+modified: 20260506135500000
+tags: ResearchStack Materials RF Candidate
+title: Mullins Skin-Effect Post Processing
+type: text/vnd.tiddlywiki
+
+! Mullins Skin-Effect Post Processing
+
+Pulsed induction smoothing of bio-deposited conductive traces so roughness falls
+below skin depth at a target RF frequency.
+
+!! Links
+
+* [[Bio-Damascene GaN Nanolithography]]
+* [[Materials and Hardware Mining]]
+* [[SDR Void Hash Verification]]
+
+!! Sources
+
+* `5-Applications/audit/exploit-audit/sessions/conception-botp-qubo-bio-damascene-20260402.json`

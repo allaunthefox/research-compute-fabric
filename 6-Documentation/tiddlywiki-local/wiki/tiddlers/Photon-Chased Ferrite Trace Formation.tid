@@ -1,0 +1,29 @@
+created: 20260506151000000
+modified: 20260506151000000
+tags: ResearchStack Materials Ferrite Fabrication Candidate
+title: Photon-Chased Ferrite Trace Formation
+type: text/vnd.tiddlywiki
+
+! Photon-Chased Ferrite Trace Formation
+
+Guided activation-front fabrication where light biases redox or mineral
+deposition along a confined channel to form anisotropic ferrite-like traces.
+
+!! Why It Matters
+
+It gives the materials lane a controllable route from bio-templating or
+chemistry into embedded magnetic/electrical trace geometry.
+
+!! Evidence
+
+* Source: `6-Documentation/docs/speculative-materials/PhotonChasedFerriteTraceFormation.md:1`
+* Source: `6-Documentation/docs/speculative-materials/PhotonChasedFerriteTraceFormation.md:12`
+* Source: `6-Documentation/docs/speculative-materials/PhotonChasedFerriteTraceFormation.md:78`
+* Source: `6-Documentation/docs/speculative-materials/PhotonChasedFerriteTraceFormation.md:184`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Links
+
+* [[Ferrite-Lined Waveguide Wall]]
+* [[Conductive Valence Matrix]]
+* [[Speculative Materials]]

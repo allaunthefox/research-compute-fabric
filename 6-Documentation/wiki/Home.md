@@ -7,6 +7,7 @@
 | `docs/AGENTS.md` | Strict LLM operating rules — the one file every agent must read first |
 | `docs/VOCABULARY_LOCK.md` | Fixed terminology — Lean references, PIST/FAMM/GWL signatures |
 | `docs/GLOSSARY.md` | Project-wide glossary — all terms across all domains |
+| `wiki/Concept-Archive.md` | Concept archive — canonical, speculative, held, lossy, retired, and abandoned terms |
 | `docs/BEGINNERS_MAP.md` | Narrative onboarding — what this stack is and why it exists |
 | `docs/VISION_NORTH_STAR.md` | Long-term vision — where the stack converges |
 | `docs/PHI_CENTER_REVAMP.md` | Phi-centered cockpit architecture — cost/efficiency comparison root |
@@ -58,6 +59,7 @@
 | Document | Summary |
 |---|---|
 | `CONCEPTS.md` | Core concepts — FAMM, OTOM, PIST, ENE, Charged-Mass Braid Sieve |
+| `wiki/Concept-Archive.md` | Full concept archive — includes abandoned/held/speculative surfaces |
 | `CITATION.cff` | Terminology neutrality map — technical terms vs cultural aliases |
 | `PROJECT_MAP.md` | Repository-wide directory structure and module map |
 | `MATH_MODEL_MAP.tsv` | Full equation registry indexed by phinary ID |

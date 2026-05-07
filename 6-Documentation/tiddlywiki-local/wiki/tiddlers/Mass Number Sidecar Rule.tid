@@ -1,0 +1,26 @@
+created: 20260506152500000
+modified: 20260506152500000
+tags: ResearchStack MassNumber ClaimBoundary Candidate
+title: Mass Number Sidecar Rule
+type: text/vnd.tiddlywiki
+
+! Mass Number Sidecar Rule
+
+A rule that Mass Number metadata must travel beside implementation surfaces
+as a receipt, not mutate the implementation into a self-justifying gate.
+
+!! Why It Matters
+
+It keeps semantic mass useful while preventing routing metadata from corrupting
+the code, proof, or artifact it is supposed to evaluate.
+
+!! Evidence
+
+* Source: `shared-data/data/ingested/chatgpt/project_status_314_42926_transcript.md:2578`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Links
+
+* [[Mass Number Recursion Warning]]
+* [[S3C MassPlus PIST Hyperbola]]
+* [[Concept Anchor Settlement State]]

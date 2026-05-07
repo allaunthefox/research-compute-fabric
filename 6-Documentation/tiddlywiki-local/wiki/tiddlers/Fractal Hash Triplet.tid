@@ -1,0 +1,27 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack ENE Integrity Graph Candidate
+title: Fractal Hash Triplet
+type: text/vnd.tiddlywiki
+
+! Fractal Hash Triplet
+
+An ENE integrity layer using direct, subtree, and parent folds to detect
+corruption, prune branches, and support recovery.
+
+!! Why It Matters
+
+This is where semantic storage stops being vibes and starts acting like a
+verifiable graph object.
+
+!! Evidence
+
+* Source: `docs/specs/ENE_MEMORY_ATLAS_SPEC.md:122-130`
+* Source: `infra/ene_fractal_fold.py:1-14`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[ENE Memory Atom]]
+* [[Gray-Code Golden-Spiral Fold]]
+* [[SDR Void Hash Verification]]

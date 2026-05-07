@@ -1,0 +1,29 @@
+created: 20260506134500000
+modified: 20260506134500000
+tags: ResearchStack Materials Hardware Candidate
+title: Structural eFuse Surface
+type: text/vnd.tiddlywiki
+
+! Structural eFuse Surface
+
+Passive load-bearing geometry or material state that trips a measurable signal
+under unsafe strain, misalignment, flux imbalance, conductivity jump, or
+RF-signature drift.
+
+!! Mechanism
+
+```
+healthy_geometry -> baseline RF/flux/conductivity -> no alert
+failure_geometry -> shifted RF/flux/conductivity -> piezo or ME receipt
+```
+
+!! Links
+
+* [[Speculative Materials]]
+* [[Materials and Hardware Mining]]
+* [[Waveprobe]]
+* [[FPGA Warden]]
+
+!! Durable Source
+
+`../docs/speculative-materials/RecoveredSessionMaterialConcepts.md`

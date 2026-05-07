@@ -1,0 +1,26 @@
+created: 20260506152500000
+modified: 20260506152500000
+tags: ResearchStack PIST Genomics Compression Candidate
+title: RNA to Peptide Shifter
+type: text/vnd.tiddlywiki
+
+! RNA to Peptide Shifter
+
+A code-backed biological shifter that maps RNA/codon structure toward peptide
+encoding surfaces.
+
+!! Why It Matters
+
+It gives the biological compression lane a concrete transformation primitive
+that can be tested independently of the broader PIST stack.
+
+!! Evidence
+
+* Source: `3-Mathematical-Models/pist_biological_polymorphic_shifter_v3_part2.py:253`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Links
+
+* [[PIST Shifters]]
+* [[Optical Codon Decoder]]
+* [[Genomic Data Compression Anchor]]

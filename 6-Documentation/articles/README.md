@@ -30,3 +30,4 @@ Required fields:
 | Article | Category | Status |
 | --- | --- | --- |
 | `babbage-to-babcock` | Computational Infrastructure | Published |
+| `meme-math-that-pays-rent` | Formal Systems | Draft |

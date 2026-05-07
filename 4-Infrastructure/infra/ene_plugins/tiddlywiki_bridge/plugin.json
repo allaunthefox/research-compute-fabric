@@ -1,0 +1,28 @@
+{
+  "plugin_id": "ene.tiddlywiki.bridge",
+  "name": "TiddlyWiki ENE Bridge",
+  "version": "0.1.0",
+  "interface_version": "ene-plugin-v0",
+  "entrypoint": "tiddlywiki_ene_bridge.py",
+  "description": "Hotswappable ENE plugin module that scans TiddlyWiki .tid files and upserts them into ENE packages with receipts.",
+  "surfaces": {
+    "reads": [
+      "6-Documentation/tiddlywiki-local/wiki/tiddlers"
+    ],
+    "writes": [
+      "data/substrate_index.db"
+    ]
+  },
+  "capabilities": [
+    "scan",
+    "dry_run",
+    "ingest",
+    "receipt",
+    "incremental_state"
+  ],
+  "settlement_policy": {
+    "default_resolution": "FORMING",
+    "quarantine_resolution": "SEED",
+    "active_script_policy": "refuse"
+  }
+}

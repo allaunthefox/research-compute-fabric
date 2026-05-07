@@ -1,0 +1,26 @@
+created: 20260506143000000
+modified: 20260506143000000
+tags: ResearchStack Materials Robotics Contact Candidate
+title: Fractal Extendable Hair Field
+type: text/vnd.tiddlywiki
+
+! Fractal Extendable Hair Field
+
+A nested active fibril surface that changes extension, stiffness, tip mode,
+and orientation for contact.
+
+!! Why It Matters
+
+It makes locally adaptive material contact concrete enough to score: extension
+depth, attachment mode, failure limits, and response latency.
+
+!! Evidence
+
+* Source: `6-Documentation/docs/speculative-materials/LocallyAdaptiveContactMaterials.md:151-220`
+* Lane: [[ENE Substrate Mining]]
+
+!! Links
+
+* [[Speculative Materials]]
+* [[Gecko Dry Adhesion Anchor]]
+* [[Contact Authority]]

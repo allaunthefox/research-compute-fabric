@@ -1,0 +1,28 @@
+created: 20260506135500000
+modified: 20260506135500000
+tags: ResearchStack Hardware Materials Verification Candidate
+title: SDR Void Hash Verification
+type: text/vnd.tiddlywiki
+
+! SDR Void Hash Verification
+
+Nondestructive readout idea: sweep internal void or tubule geometry with SDR/RF
+and compare the analog signature against a baseline physical hash.
+
+!! Risks
+
+Scanner integrity, calibration drift, temperature, and field usability remain
+open receipts.
+
+!! Links
+
+* [[Structural eFuse Surface]]
+* [[GeomTREE Semi-Jack Physical Witness]]
+* [[Materials and Hardware Mining]]
+* [[FPGA Warden]]
+
+!! Sources
+
+* `shared-data/data/germane/research/chat-tardygrada-patent-session-20260404.md`
+* `shared-data/data/germane/research/hutter/GEOMTREE_PITCH.md`
+* `../docs/speculative-materials/RecoveredSessionMaterialConcepts.md`

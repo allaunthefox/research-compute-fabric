@@ -1,0 +1,23 @@
+created: 20260506135500000
+modified: 20260506135500000
+tags: ResearchStack Hardware Patent Materials
+title: GeomTREE Semi-Jack Physical Witness
+type: text/vnd.tiddlywiki
+
+! GeomTREE Semi-Jack Physical Witness
+
+Branching reinforcement method where a structural part becomes its own
+integrity witness. The core claim is identity and integrity through load-bearing
+geometry; MMR history is downstream support rather than the central device.
+
+!! Links
+
+* [[SDR Void Hash Verification]]
+* [[Structural eFuse Surface]]
+* [[Materials and Hardware Mining]]
+* [[FPGA Warden]]
+
+!! Sources
+
+* `shared-data/data/germane/research/hutter/GEOMTREE_PITCH.md`
+* `shared-data/data/germane/research/chat-tardygrada-patent-session-20260404.md`

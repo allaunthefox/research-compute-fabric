@@ -1,0 +1,22 @@
+created: 20260506134500000
+modified: 20260506134500000
+tags: ResearchStack SemanticGraph Search Candidate
+title: Semantic Eigenvector Bundle
+type: text/vnd.tiddlywiki
+
+! Semantic Eigenvector Bundle
+
+Gestalt-like cluster of concepts treated as a principal direction over a typed
+evidence graph instead of as isolated keywords.
+
+!! Links
+
+* [[Internal Semantic Search]]
+* [[HELLO Transform]]
+* [[Semantic Graph Mining]]
+* [[Tensor Compass]]
+
+!! Durable Sources
+
+* `../wiki/Concept-Archive.md`
+* `../docs/research/NEURAL_TYPE_EIGENVECTOR_COVERAGE.md`

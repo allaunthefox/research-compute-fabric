@@ -1,0 +1,348 @@
+{
+  "results": {
+    "curvatureAnalyst": {
+      "tight_bends": 0,
+      "recommendation": "Bend radius \u22653\u00d7 trace width for impedance control"
+    },
+    "topologyAnalyst": {
+      "nodes": 5,
+      "edges": 8,
+      "critical_paths": 2,
+      "recommendation": "Star topology for clock; mesh for data"
+    },
+    "hierarchyOptimizer": {
+      "layers": 3,
+      "vias": 10,
+      "recommendation": "Symmetric stackup: SIG-GND-PWR-SIG"
+    },
+    "mutationTuner": {
+      "caps": 5,
+      "under_decoupled": [],
+      "recommendation": "100nF + 10nF per power pin"
+    },
+    "geometricReviewer": {
+      "min_spacing": 0.15,
+      "recommendation": "\u22653\u00d7 trace width spacing for crosstalk"
+    },
+    "isaAnalyst": {
+      "timing_violations": 0,
+      "recommendation": "Pipeline if setup margin < 100ps"
+    },
+    "delayProber": {
+      "max_delay_ps": 320,
+      "max_skew_ps": 5,
+      "recommendation": "Match trace lengths within 50ps for DDR"
+    },
+    "errorDetector": {
+      "crosstalk_events": 1,
+      "reflection_events": 1,
+      "recommendation": "Series termination at driver; parallel at receiver"
+    },
+    "capProber": {
+      "total_caps": 5,
+      "high_esr": 0,
+      "recommendation": "Use X7R for decoupling; C0G for timing"
+    },
+    "viaProber": {
+      "total_vias": 4,
+      "stub_vias": 1,
+      "recommendation": "Backdrill vias with stub > 0.5mm above 5GHz"
+    },
+    "powerProber": {
+      "planes": 2,
+      "impedance_violations": 2,
+      "recommendation": "Target PDN impedance < 10mOhm to 100MHz"
+    }
+  },
+  "consensus": {
+    "agent_count": 11,
+    "findings_total": 11,
+    "recommendations": [
+      "Bend radius \u22653\u00d7 trace width for impedance control",
+      "Star topology for clock; mesh for data",
+      "Symmetric stackup: SIG-GND-PWR-SIG",
+      "100nF + 10nF per power pin",
+      "\u22653\u00d7 trace width spacing for crosstalk",
+      "Pipeline if setup margin < 100ps",
+      "Match trace lengths within 50ps for DDR",
+      "Series termination at driver; parallel at receiver",
+      "Use X7R for decoupling; C0G for timing",
+      "Backdrill vias with stub > 0.5mm above 5GHz",
+      "Target PDN impedance < 10mOhm to 100MHz"
+    ],
+    "consensus_score": 0.95,
+    "topological_readiness": 0.58
+  },
+  "plan": {
+    "phase_1_immediate": {
+      "title": "Signal Integrity Hardening",
+      "actions": [
+        "Add 33\u03a9 series termination on all clock lines",
+        "Increase HDMI trace spacing to 0.3mm (3\u00d7 width)",
+        "Replace high-ESR caps (>100m\u03a9) with low-ESR X7R"
+      ],
+      "timeline": "1-2 weeks",
+      "expected_improvement": "+30% signal integrity",
+      "spec_driven": true
+    },
+    "phase_2_structural": {
+      "title": "Topological Routing Optimization",
+      "actions": [
+        "Match all DDR data trace lengths within 50ps",
+        "Backdrill HDMI vias with stub > 0.5mm",
+        "Implement star topology for clock distribution",
+        "Add guard traces between critical pairs"
+      ],
+      "timeline": "2-4 weeks",
+      "expected_improvement": "+40% timing margin",
+      "spec_driven": true
+    },
+    "phase_3_power": {
+      "title": "Power Distribution Network Topology",
+      "actions": [
+        "Reduce PDN impedance to <10m\u03a9 up to 100MHz",
+        "Add 100nF + 10nF per power pin (broadband decoupling)",
+        "Implement symmetric SIG-GND-PWR-SIG stackup",
+        "Add ferrite beads on analog power rails"
+      ],
+      "timeline": "3-6 weeks",
+      "expected_improvement": "+50% power integrity",
+      "spec_driven": true
+    },
+    "phase_4_topological": {
+      "title": "True Topological Device Transformation",
+      "actions": [
+        "Implement FAMM preshaped delay lines (waveprobe-derived)",
+        "Add topological state machine for adaptive routing",
+        "Integrate manifold-aware impedance matching",
+        "Deploy swarm consensus for real-time topology optimization",
+        "Add eigenvalue-based clock distribution network"
+      ],
+      "timeline": "6-12 weeks",
+      "expected_improvement": "Topological device achieved",
+      "spec_driven": true
+    },
+    "readiness_score": 0.58,
+    "total_actions": 16,
+    "estimated_timeline_weeks": 12
+  },
+  "spec_sheets": {
+    "U1_FPGA": {
+      "part_number": "GW1NR-LV9QN88PC6/I5",
+      "manufacturer": "Gowin Semiconductor",
+      "key_params": {
+        "LUTs": "8640",
+        "FFs": "6480",
+        "BRAM": "468Kb (26 \u00d7 18Kb blocks)",
+        "DSP": "20 multipliers (16\u00d716)",
+        "PLLs": "2",
+        "IO": "68 user I/O",
+        "Package": "QFN88 (10\u00d710mm)",
+        "Core voltage": "1.2V",
+        "IO voltage": "3.3V / 2.5V / 1.8V",
+        "Max frequency": "~200MHz (fabric), 400MHz (PLL out)",
+        "Flash": "Embedded 64Mbit SPI",
+        "Programming": "JTAG + SPI + UART"
+      },
+      "topological_relevance": [
+        "8640 LUTs \u2192 partition into 11 agent compute units (785 LUTs each)",
+        "20 DSP blocks \u2192 20 parallel Q16.16 multiply-accumulate pipelines",
+        "468Kb BRAM \u2192 256 FAMM cells \u00d7 64-bit = 16Kb (fits in 1 BRAM block)",
+        "2 PLLs \u2192 eigenvalue-derived clock distribution (\u03c4 \u221d 1/\u221a\u03bb)",
+        "68 I/O \u2192 8 HDMI + 32 DDR + 8 UART + 20 GPIO for topology sensing"
+      ]
+    },
+    "U2_DDR": {
+      "part_number": "MT41K128M16JT-125 (typical)",
+      "manufacturer": "Micron",
+      "key_params": {
+        "Density": "2Gb (128M\u00d716)",
+        "Speed": "DDR3-1600 (800MHz clock)",
+        "Data rate": "1600 MT/s",
+        "Burst length": "8",
+        "CAS latency": "CL=11",
+        "tRCD": "13.75ns",
+        "tRP": "13.75ns",
+        "tRC": "48.75ns",
+        "Voltage": "1.5V (1.35V DDR3L)",
+        "Package": "96-ball FBGA",
+        "Row/Column": "14/10 addressing"
+      },
+      "topological_relevance": [
+        "800MHz clock \u2192 1250ps period \u2192 trace matching within 50ps = 4% tolerance",
+        "CL=11 \u2192 13.75ns read latency \u2192 pipeline 11 stages in FPGA",
+        "Burst=8 \u2192 8\u00d716-bit = 128-bit FAMM data bus width",
+        "1.5V \u2192 separate power plane with <5m\u03a9 target impedance",
+        "tRC=48.75ns \u2192 20.5M random accesses/sec \u2192 FAMM preshaping critical"
+      ]
+    },
+    "U3_OSC": {
+      "part_number": "SG-210STF 100.0000ML3 (typical)",
+      "manufacturer": "Epson",
+      "key_params": {
+        "Frequency": "100.000 MHz",
+        "Stability": "\u00b150ppm",
+        "Jitter": "<1ps RMS (12kHz-20MHz)",
+        "Rise/fall": "<3ns",
+        "Output": "LVCMOS",
+        "Voltage": "3.3V",
+        "Package": "2.5\u00d72.0mm ceramic",
+        "Phase noise": "-135dBc/Hz @ 10kHz offset"
+      },
+      "topological_relevance": [
+        "100MHz \u2192 10ns period \u2192 eigenvalue clock: \u03bb_1\u219275ns, \u03bb_16\u219245ns",
+        "\u00b150ppm \u2192 5ns drift over 100k cycles \u2192 PLL lock required",
+        "<1ps jitter \u2192 suitable for Q16.16 timing precision (15ps LSB)",
+        "Phase noise -135dBc \u2192 clean enough for manifold clock distribution"
+      ]
+    },
+    "U4_REG": {
+      "part_number": "AMS1117-3.3 (typical)",
+      "manufacturer": "Advanced Monolithic Systems",
+      "key_params": {
+        "Output": "3.3V \u00b11.5%",
+        "Dropout": "1.1V @ 1A",
+        "Max current": "1A",
+        "Line regulation": "0.2% max",
+        "Load regulation": "0.4% max",
+        "Ripple rejection": "60dB @ 120Hz",
+        "Thermal shutdown": "165\u00b0C",
+        "Package": "SOT-223"
+      },
+      "topological_relevance": [
+        "1A max \u2192 3.3W total \u2192 thermal topology: place near board edge",
+        "60dB ripple rejection \u2192 1000\u00d7 noise reduction \u2192 clean analog rails",
+        "165\u00b0C shutdown \u2192 thermal vias needed under package",
+        "1.1V dropout \u2192 input must be >4.4V \u2192 5V USB sufficient"
+      ]
+    },
+    "J1_HDMI": {
+      "part_number": "HDMI-A-19P-SMT (typical)",
+      "manufacturer": "Various (Molex, TE, Amphenol)",
+      "key_params": {
+        "Pins": "19",
+        "TMDS pairs": "4 (3 data + 1 clock)",
+        "Impedance": "100\u03a9 differential",
+        "Data rate": "Up to 3.4Gbps per lane (HDMI 1.4)",
+        "Bandwidth": "10.2 Gbps total",
+        "DDC": "I\u00b2C @ 100kHz",
+        "HPD": "Hot plug detect (5V tolerant)",
+        "CEC": "Consumer Electronics Control",
+        "Voltage": "5V @ 50mA (pin 18)"
+      },
+      "topological_relevance": [
+        "100\u03a9 differential \u2192 trace impedance must match within \u00b110%",
+        "3.4Gbps \u2192 294ps bit period \u2192 15ps trace matching (5%)",
+        "4 TMDS pairs \u2192 4 parallel FAMM delay lines for video stream",
+        "DDC I\u00b2C \u2192 topology-aware EDID emulation for manifold display",
+        "HPD \u2192 topological hot-plug detection for swarm reconfiguration"
+      ]
+    },
+    "C1_C2_C4_100nF": {
+      "part_number": "GRM188R71H104KA93 (typical)",
+      "manufacturer": "Murata",
+      "key_params": {
+        "Capacitance": "100nF \u00b110%",
+        "Dielectric": "X7R",
+        "Voltage": "50V",
+        "ESR": "<50m\u03a9 @ 100MHz",
+        "ESL": "~0.5nH (0603)",
+        "SRF": "~22MHz",
+        "Package": "0603 (1.6\u00d70.8mm)",
+        "Temp range": "-55\u00b0C to +125\u00b0C"
+      },
+      "topological_relevance": [
+        "SRF 22MHz \u2192 effective decoupling to ~50MHz \u2192 covers FPGA core",
+        "ESL 0.5nH \u2192 via inductance dominates \u2192 minimize via length",
+        "X7R \u2192 \u00b115% over temp \u2192 account for in PDN impedance budget"
+      ]
+    },
+    "C3_10uF": {
+      "part_number": "GRM21BR61A106KE19 (typical)",
+      "manufacturer": "Murata",
+      "key_params": {
+        "Capacitance": "10\u00b5F \u00b110%",
+        "Dielectric": "X5R",
+        "Voltage": "10V",
+        "ESR": "<10m\u03a9 @ 1MHz",
+        "ESL": "~0.8nH (0805)",
+        "SRF": "~1.8MHz",
+        "Package": "0805 (2.0\u00d71.25mm)",
+        "DC bias derating": "-70% at 3.3V (effective ~3\u00b5F)"
+      },
+      "topological_relevance": [
+        "DC bias derating critical \u2192 effective 3\u00b5F not 10\u00b5F at 3.3V",
+        "SRF 1.8MHz \u2192 bulk decoupling below 10MHz \u2192 complements 100nF",
+        "ESR 10m\u03a9 \u2192 low enough for PDN target <10m\u03a9 with parallel caps"
+      ]
+    },
+    "C5_4u7": {
+      "part_number": "GRM21BR61C475KA88 (typical)",
+      "manufacturer": "Murata",
+      "key_params": {
+        "Capacitance": "4.7\u00b5F \u00b110%",
+        "Dielectric": "X5R",
+        "Voltage": "16V",
+        "ESR": "<20m\u03a9 @ 1MHz",
+        "ESL": "~0.8nH (0805)",
+        "SRF": "~2.6MHz",
+        "Package": "0805"
+      },
+      "topological_relevance": [
+        "LDO output cap \u2192 stability requirement: 4.7\u00b5F min for AMS1117",
+        "ESR 20m\u03a9 \u2192 within LDO stable region (0.1-10\u03a9 for most LDOs)"
+      ]
+    },
+    "PCB_TRACE": {
+      "part_number": "Standard 1oz Cu, 0.15mm width",
+      "manufacturer": "Generic",
+      "key_params": {
+        "Dielectric": "FR-4 (\u03b5r=4.5 @ 1GHz)",
+        "Copper": "1oz (35\u00b5m)",
+        "Trace width": "0.15mm (6 mil)",
+        "Impedance": "~50\u03a9 (microstrip, layer 1)",
+        "Delay": "~150ps/inch (6ps/mm)",
+        "Capacitance": "~1.1pF/cm",
+        "Inductance": "~3nH/cm",
+        "DC resistance": "~0.3\u03a9/cm (0.15mm, 1oz)",
+        "Min spacing": "0.15mm (6 mil)"
+      },
+      "topological_relevance": [
+        "6ps/mm delay \u2192 25mm trace = 150ps \u2192 matches DDR skew budget",
+        "\u03b5r=4.5 \u2192 impedance varies \u00b110% with manufacturing \u2192 calibrate per board",
+        "0.3\u03a9/cm \u2192 60mm power trace = 1.8\u03a9 \u2192 unacceptable for PDN \u2192 use planes",
+        "FR-4 loss: ~0.02dB/mm @ 1GHz \u2192 50mm = 1dB \u2192 negligible for <500MHz"
+      ]
+    },
+    "VIA": {
+      "part_number": "Standard IPC-2221 Type III",
+      "manufacturer": "Generic",
+      "key_params": {
+        "Drill": "0.3mm",
+        "Pad": "0.6mm",
+        "Antipad": "0.8mm",
+        "Inductance": "~0.8nH (1.6mm board)",
+        "Capacitance": "~0.5pF",
+        "Impedance": "~40\u03a9",
+        "Stub resonance": "\u03bb/4 @ ~25GHz for 1.6mm stub",
+        "Current capacity": "~1A (0.3mm, 1oz plating)"
+      },
+      "topological_relevance": [
+        "0.8nH per via \u2192 4 vias in PDN path = 3.2nH \u2192 limits decoupling above 100MHz",
+        "Stub at 1.6mm \u2192 resonance at 25GHz \u2192 safe below 5GHz \u2192 backdrill for HDMI",
+        "0.5pF per via \u2192 negligible for <1GHz signals"
+      ]
+    }
+  },
+  "accelerated_timeline": {
+    "original_weeks": 12,
+    "accelerated_weeks": 8,
+    "acceleration_factors": [
+      "Known FPGA LUT count \u2192 pre-partition agent compute units (save 1 week)",
+      "Known DDR timing \u2192 pre-compute trace matching targets (save 1 week)",
+      "Known capacitor SRF \u2192 skip PDN characterization (save 1 week)",
+      "Known via inductance \u2192 pre-calculate PDN impedance (save 1 week)",
+      "Known PCB \u03b5r \u2192 pre-compute impedance profiles (save 1 week)"
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+created: 20260506130000000
+modified: 20260506130000000
+tags: ResearchStack Home
+title: Research Stack Home
+type: text/vnd.tiddlywiki
+
+! Research Stack Local TiddlyWiki
+
+This is the local nonlinear note surface for the Research Stack.
+
+Use it for:
+
+* fast concept cards
+* cross-links between weird ideas and formal surfaces
+* temporary working maps before promotion into `6-Documentation/wiki/`
+* local-only trails that should not yet become canonical docs
+
+!! Durable Markdown Surfaces
+
+* `../wiki/Home.md`
+* `../wiki/Glossary.md`
+* `../wiki/Concept-Archive.md`
+* `../docs/GLOSSARY.md`
+* `../docs/WEIRD_CONCEPTS_GLOSSARY.md`
+
+!! Good First Tiddlers
+
+* [[Mined Conversation Concepts]]
+* [[Conversation Mining Source Map]]
+* [[Speculative Materials]]
+* [[Monster Filter Family]]
+* [[COUCH Family]]
+* [[Local Setup Notes]]

@@ -1,0 +1,25 @@
+# Maintainer: Allaun <local>
+pkgname=abiword-local-proofread
+pkgver=0.1.0
+pkgrel=2
+pkgdesc="Local Harper/Vale proofreading bridge for AbiWord and LibreOffice documents"
+arch=('any')
+url="https://example.invalid/local/abiword-local-proofread"
+license=('MIT')
+depends=('abiword' 'harper' 'vale' 'libreoffice-fresh')
+optdepends=('unoconv: alternate LibreOffice document conversion path'
+            'libreoffice-extension-texmaths: LibreOffice LaTeX equation editing'
+            'libreoffice-extension-writer2latex: LibreOffice Writer to LaTeX export')
+source=('abiword-local-proofread' 'vale.ini' 'LICENSE' 'README.md')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP')
+
+package() {
+  install -Dm755 "${srcdir}/abiword-local-proofread" \
+    "${pkgdir}/usr/bin/abiword-local-proofread"
+  install -Dm644 "${srcdir}/vale.ini" \
+    "${pkgdir}/usr/share/abiword-local-proofread/vale.ini"
+  install -Dm644 "${srcdir}/LICENSE" \
+    "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+  install -Dm644 "${srcdir}/README.md" \
+    "${pkgdir}/usr/share/doc/${pkgname}/README.md"
+}

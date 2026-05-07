@@ -1,0 +1,30 @@
+created: 20260506151000000
+modified: 20260506151000000
+tags: ResearchStack GCL Compression Candidate
+title: OmniHash Header Shell
+type: text/vnd.tiddlywiki
+
+! OmniHash Header Shell
+
+A proposed header shell for carrying compact hash/provenance metadata across
+GCL or Omnitoken-style routes.
+
+!! Why It Matters
+
+It is a candidate receipt primitive for compression and semantic routing:
+small enough to carry, explicit enough to audit.
+
+!! Evidence
+
+* Source: `shared-data/data/ingested/llm_research/ChatGPT-Turbulant_Juice.json`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Status
+
+HOLD until field layout and collision behavior are specified.
+
+!! Links
+
+* [[Fractal Hash Triplet]]
+* [[Substrate FTS Query Surface]]
+* [[Hutter Prize Compression]]

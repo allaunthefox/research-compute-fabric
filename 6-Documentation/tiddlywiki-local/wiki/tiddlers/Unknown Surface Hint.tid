@@ -1,0 +1,26 @@
+created: 20260506151000000
+modified: 20260506151000000
+tags: ResearchStack ENE Ingestion Candidate
+title: Unknown Surface Hint
+type: text/vnd.tiddlywiki
+
+! Unknown Surface Hint
+
+A low-authority schema hint emitted when ENE ingestion recognizes that an
+artifact has structure but lacks a defined surface.
+
+!! Why It Matters
+
+It is the practical companion to [[Meta-Autotype Contingent Field]]: preserve
+the artifact, expose the uncertainty, and avoid pretending the type is known.
+
+!! Evidence
+
+* Source: `4-Infrastructure/infra/ene_meta_autotype.py:98`
+* Source: `4-Infrastructure/infra/ene_meta_autotype.py:154`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Links
+
+* [[Meta-Autotype Contingent Field]]
+* [[ENE Memory Atom]]

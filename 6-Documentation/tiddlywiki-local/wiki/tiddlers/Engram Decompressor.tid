@@ -1,0 +1,23 @@
+created: 20260506134500000
+modified: 20260506134500000
+tags: ResearchStack Compression Neural
+title: Engram Decompressor
+type: text/vnd.tiddlywiki
+
+! Engram Decompressor
+
+Compression idea where memory traces act as cooperative decompressors: stored
+route/context fragments help reconstruct or select candidate structures instead
+of carrying every byte directly.
+
+!! Links
+
+* [[Hutter Prize Compression]]
+* [[K3 Ternary Boundary]]
+* [[Soliton N-Space Path]]
+* [[Compression and Soliton Mining]]
+
+!! Conversation Sources
+
+* `shared-data/data/germane/research/chat-engram-codon-optical-decompressor-20260404.md`
+* `5-Applications/audit/exploit-audit/sessions/chat-engram-codon-optical-decompressor-20260404.json`

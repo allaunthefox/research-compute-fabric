@@ -1,0 +1,30 @@
+created: 20260506135500000
+modified: 20260506135500000
+tags: ResearchStack COUCH Routing Candidate
+title: F-Number COUCH
+type: text/vnd.tiddlywiki
+
+! F-Number COUCH
+
+Finite integer-scaled route-pressure proxy combining average curvature, maximum
+curvature, and FAMM frustration.
+
+```
+F_COUCH(kappa) =
+  avg_curvature_milli(kappa)
+  + max_curvature_milli(kappa)
+  + FAMM_frustration_milli
+```
+
+!! Links
+
+* [[COUCH Family]]
+* [[Route-Pressure COUCH Gate]]
+* [[FAMM]]
+* [[Semantic Graph Mining]]
+
+!! Durable Sources
+
+* `../docs/geometry/COUCH_EQUATION.md`
+* `../docs/WEIRD_CONCEPTS_GLOSSARY.md`
+* `../wiki/Concept-Archive.md`

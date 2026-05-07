@@ -1,0 +1,24 @@
+created: 20260506135500000
+modified: 20260506135500000
+tags: ResearchStack Compression Codon Candidate
+title: Optical Codon Decoder
+type: text/vnd.tiddlywiki
+
+! Optical Codon Decoder
+
+Three blink-level or symbol-level states interpreted as codon addresses into
+engram and activation space. The notes distinguish K=2 live binary codons, K=3
+ternary Hutter target codons, and K=4 redundancy analogous to genetic-code
+slack.
+
+!! Links
+
+* [[Engram Decompressor]]
+* [[K3 Ternary Boundary]]
+* [[Hutter Prize Compression]]
+* [[Soliton N-Space Path]]
+
+!! Sources
+
+* `shared-data/data/germane/research/chat-engram-codon-optical-decompressor-20260404.md`
+* `5-Applications/audit/exploit-audit/sessions/chat-engram-codon-optical-decompressor-20260404.json`

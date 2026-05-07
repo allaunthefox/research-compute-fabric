@@ -1,0 +1,26 @@
+created: 20260506151000000
+modified: 20260506151000000
+tags: ResearchStack GCL ClaimBoundary Quarantine Candidate
+title: Mass Number Recursion Warning
+type: text/vnd.tiddlywiki
+
+! Mass Number Recursion Warning
+
+A claim-boundary rule for preventing Mass Number style gates from recursively
+promoting themselves without receipts.
+
+!! Why It Matters
+
+This is a safety rail for the whole semantic-mass family: a gate cannot become
+its own evidence just because it compressed the evidence surface.
+
+!! Evidence
+
+* Source: `0-Core-Formalism/otom/docs/gcl/MassNumberRecursionWarning.md`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Links
+
+* [[Concept Anchor Settlement State]]
+* [[FNWH Hyperfluid Claim Boundary]]
+* [[Dless Omega Conformal Warping]]

@@ -1,6 +1,6 @@
 # Glossary
 
-> **Source:** [[../docs/GLOSSARY.md|Main Glossary]] · [[../docs/VOCABULARY_LOCK.md|Vocabulary Lock]] · [[../CONCEPTS.md|Core Concepts]]
+> **Source:** [[../docs/GLOSSARY.md|Main Glossary]] · [[../docs/WEIRD_CONCEPTS_GLOSSARY.md|Weird Concepts]] · [[Concept-Archive|Concept Archive]] · [[../docs/VOCABULARY_LOCK.md|Vocabulary Lock]] · [[../CONCEPTS.md|Core Concepts]]
 
 ---
 
@@ -63,6 +63,11 @@
 | **DNAmethylation** | Epigenetic mark — methyl group addition to cytosine. |
 | **HistoneMod** | Histone tail modification encoding regulatory state. |
 | **Prion** | Misfolded protein acting as conformational template — Reverse-Sisyphus structural memory. |
+| **Neural Type Eigenvector Coverage** | Coverage-driven morphology/evidence graph where broad neuron-type features become a principal vector used to rank biological analogues by measured efficiency gain, provenance, and residual risk. |
+| **Locally Adaptive Contact Materials** | Cooperative anisotropic layered flip-tile material/control patches held near a bounded critical phase boundary so local charge/field inputs can alter stiffness, adhesion, damping, friction, texture, or shape while preserving contact authority. |
+| **Fractal Extendable Hair Field** | Nested active micron-scale hair/fibril field over a tensioned material skin; branches extend, orient, stiffen, and retract to multiply dry adhesion or microhook contact while preserving detachability. |
+| **Recovered Session Material Concepts** | Material-primitives bundle mined from a recovered local chat: MXene nanoscrolls, resonant SLS tubules, conductive valence matrices, magnetic labyrinths, magnetoelectric laminate capsules, piezo receipts, ferrite/carbon doping, and SDR void hashes. |
+| **Structural eFuse Surface** | Passive load-bearing geometry/material state that trips a measurable signal under unsafe strain, misalignment, flux imbalance, conductivity jump, or RF-signature drift. |
 
 ---
 
@@ -75,6 +80,14 @@
 | **DynamicCanal** | Adaptive canal that deforms under pressure. |
 | **Landauer** | Principle: minimum energy `kT·ln2` per bit erasure. |
 | **HyperFlow** | Navier-Stokes on the manifold: `∂F/∂t = ν∇²F - (F·∇)F + ∇p`. |
+| **F-Number COUCH** | Finite COUCH route-pressure proxy: `F_COUCH(κ) = avg_curvature_milli(κ) + max_curvature_milli(κ) + FAMM_frustration_milli`; current high-F threshold `18500`. |
+| **U-Rotated COUCH Value** | Finite COUCH projection along curvature and coupling: `U_rot(κ) = C_avg_milli(κ) + κ_milli * U_norm_milli(κ) / 1000`. |
+| **Y-Axis O-Step COUCH Container** | Finite COUCH packet `{O_steps, U_value, R_value}` where `U_value = U_rot(κ)` and `R_value = 1000` is constant. |
+| **Route-Pressure COUCH Gate** | Operational COUCH pressure `P_COUCH(κ) = F_COUCH(κ) + U_rot(κ) - R_value`, mapped to `local`, `atlas`, or `reject` routing actions. |
+| **LNMF / Loch-Nessie-Monster Filter** | Hidden-basin routing filter: `Loch(L) = internal/(1+leakage) * A_L`, `nE_i(L) = A_{L,i} * rho_{L,i} * Scar_i(L)`, `M(L) = |Aut(L)| * Loch(L) * sum nE_i(L)`. Candidate, not a Monster-group proof. |
+| **Monster Filter Assignment** | Assignment layer over LNMF outputs: Tree Fiddy/BHOCS owns archive commit monsters, Loc Nes owns hidden recurrence witnesses, and quarantine remains explicit. |
+| **English Word Bonding Equations** | Speculative-materials bridge where words such as `CAGE`, `BRIDGE`, `CHAIN`, `SCAR`, `SALT`, and `RING` name finite bonding/routing operators. Mnemonic only; not a chemistry claim. |
+| **Reactive Semantic Perturbation / Fluorinated Semantics** | Discovery method that permits highly reactive or absurd semantic inputs, then admits only outputs that survive typed gates, receipts, failure modes, and quarantine. |
 | **CognitiveLoad** | 5-component load model: `(L_I, L_E, L_G, L_R, L_M)`. |
 | **Reverse-Sisyphus** | Property: `dC/dt = f(W, C)` AND `E[W(t+Δ)] < E[W(t)]` — work reduces future work. |
 

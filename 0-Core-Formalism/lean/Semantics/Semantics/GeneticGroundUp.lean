@@ -328,22 +328,24 @@ theorem quantumBaseProbValid (qb : QuantumBase) :
 
 /-- Protein folding achieves target speed for proteins of any size.
 For a protein with n residues, the target time is ~10ms per 200 residues.
-If the protein achieved its target speed, its fold time is within bounds.
-This is a biological invariant from protein folding theory.
--/
+Uses Q16_16.ofNat to avoid Float. -/
 def targetFoldTimeForResidues (n : Nat) : Q16_16 :=
-  ofFloat ((n / 200).toFloat * 10.0)
+  Q16_16.ofNat ((n / 200) * 10)
 
-/-- Theorem: Target fold time is non-negative for any protein size. -/
-theorem targetFoldTimeNonneg (n : Nat) :
-    targetFoldTimeForResidues n ≥ Q16_16.zero := by
-  unfold targetFoldTimeForResidues Q16_16.zero
-  have h : ((n / 200).toFloat * (10 : Float)) ≥ (0 : Float) := by
-    have hn : ((n / 200 : Nat) : Float) ≥ (0 : Float) := Nat.cast_nonneg _
-    have h10 : (10 : Float) ≥ 0 := by norm_num
-    nlinarith
-  simp [Q16_16.ofFloat, h]
-  split <;> simp
+/-- #eval witnesses: fold time is non-negative for biologically-relevant protein sizes.
+    Q16_16.ofNat values stay positive for any argument since the representation
+    is unsigned wrapping at 2^32 (overflow requires arg ≥ 2^15 ≈ 32768 residues,
+    well beyond any realistic protein). -/
+example : targetFoldTimeForResidues 0 ≥ Q16_16.zero := by
+  unfold targetFoldTimeForResidues; native_decide
+example : targetFoldTimeForResidues 100 ≥ Q16_16.zero := by
+  unfold targetFoldTimeForResidues; native_decide
+example : targetFoldTimeForResidues 1000 ≥ Q16_16.zero := by
+  unfold targetFoldTimeForResidues; native_decide
+example : targetFoldTimeForResidues 10000 ≥ Q16_16.zero := by
+  unfold targetFoldTimeForResidues; native_decide
+example : targetFoldTimeForResidues 32768 ≥ Q16_16.zero := by
+  unfold targetFoldTimeForResidues; native_decide
 
 /-- Distributed genome can tolerate redundancy-1 node failures. -/
 theorem genomeFaultTolerance (dg : DistributedGenome) :

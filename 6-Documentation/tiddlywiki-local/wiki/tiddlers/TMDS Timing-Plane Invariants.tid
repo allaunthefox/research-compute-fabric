@@ -1,0 +1,29 @@
+created: 20260506151000000
+modified: 20260506151000000
+tags: ResearchStack Hardware HDMI SearchProtocol Candidate
+title: TMDS Timing-Plane Invariants
+type: text/vnd.tiddlywiki
+
+! TMDS Timing-Plane Invariants
+
+The HDMI/TMDS timing layer treated as a deterministic clock-law plane for
+state packets and witness routing.
+
+!! Why It Matters
+
+This splits [[HDMI Compute Fabric]] into a concrete timing primitive: the
+transport is not just pixels, it is ordered symbols with cadence, blanking,
+and synchronization structure.
+
+!! Evidence
+
+* Source: `shared-data/data/ingested/chatgpt/hdmi_as_computation_fabric.graphml:8`
+* Source: `shared-data/data/ingested/chatgpt/hdmi_as_computation_fabric_graph_edges.jsonl:2`
+* Source: `shared-data/data/ingested/chatgpt/hdmi_as_computation_fabric_graph_edges.jsonl:8`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Links
+
+* [[HDMI Compute Fabric]]
+* [[Virtual Display Blitter Compute Surface]]
+* [[Raster Lookup Unit]]

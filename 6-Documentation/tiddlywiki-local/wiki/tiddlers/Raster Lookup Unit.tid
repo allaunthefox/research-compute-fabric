@@ -1,0 +1,28 @@
+created: 20260506151000000
+modified: 20260506151000000
+tags: ResearchStack Hardware FPGA HDL Candidate
+title: Raster Lookup Unit
+type: text/vnd.tiddlywiki
+
+! Raster Lookup Unit
+
+A LUT/BRAM-backed FPGA primitive that interprets raster coordinates or pixel
+symbols as state lookup addresses.
+
+!! Why It Matters
+
+This is a small buildable bridge between display output and verification
+logic: pixels become indexable command cells instead of decorative output.
+
+!! Evidence
+
+* Source: `shared-data/data/ingested/chatgpt/hdmi_as_computation_fabric_transcript.md:2534`
+* Source: `shared-data/data/ingested/chatgpt/hdmi_as_computation_fabric_transcript.md:2540`
+* Source: `shared-data/data/ingested/chatgpt/hdmi_as_computation_fabric_transcript.md:2671`
+* Lane: [[Deep Mining Pass 2026-05-06]]
+
+!! Links
+
+* [[Virtual Display Blitter Compute Surface]]
+* [[FPGA Warden]]
+* [[HDMI Compute Fabric]]

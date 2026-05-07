@@ -1,0 +1,23 @@
+created: 20260506134500000
+modified: 20260506134500000
+tags: ResearchStack Control Verification
+title: Waveprobe
+type: text/vnd.tiddlywiki
+
+! Waveprobe
+
+Hysteretic local selection and risk kernel. In this local wiki, Waveprobe is
+the shared handle for choosing between candidate routes, material states, or
+contact modes under explicit warn, lock, and recover barriers.
+
+!! Links
+
+* [[Structural eFuse Surface]]
+* [[Speculative Materials]]
+* [[Materials and Hardware Mining]]
+* [[Compression and Soliton Mining]]
+
+!! Durable Sources
+
+* `../docs/GLOSSARY.md`
+* `../docs/specs/waveprobe_qubo_spec.tex`

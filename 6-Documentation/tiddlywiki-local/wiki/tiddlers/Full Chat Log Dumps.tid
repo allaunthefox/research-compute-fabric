@@ -1,0 +1,49 @@
+created: 20260506145500000
+modified: 20260506145500000
+tags: ResearchStack Mining ChatLogs Index
+title: Full Chat Log Dumps
+type: text/vnd.tiddlywiki
+
+! Full Chat Log Dumps
+
+Parse-friendly section for full conversation exports, session captures, and
+large chat-derived research dumps.
+
+!! Purpose
+
+Concept tiddlers should stay small and linked. Full chat logs belong in a
+manifested dump lane where they can be parsed, sampled, hashed, and mined
+without turning the wiki into a transcript warehouse.
+
+!! Local Files
+
+* Directory: `6-Documentation/chat-log-dumps/`
+* Manifest: `6-Documentation/chat-log-dumps/manifest.jsonl`
+* Summary: `6-Documentation/chat-log-dumps/summary.md`
+* Builder: `6-Documentation/chat-log-dumps/build_manifest.py`
+
+!! Current Inventory
+
+* Files indexed: 369
+* Total bytes indexed: 2578057565
+* Largest lane counts: ENE 304, governance 255, compression 217, semantic graph 206, hardware 175, materials 108
+
+!! Source Pools
+
+* `5-Applications/audit/exploit-audit/sessions/`
+* `shared-data/data/germane/research/`
+* `shared-data/data/ingested/chatgpt/`
+* `shared-data/data/ingested/llm_research/`
+* `6-Documentation/archive/sessions/chatgpt-logs/`
+
+!! Parsing Rule
+
+Full dumps are source artifacts. Promote only extracted concepts, receipts,
+equations, and provenance-backed summaries into normal concept tiddlers.
+
+!! Links
+
+* [[Conversation Mining Source Map]]
+* [[Mined Conversation Concepts]]
+* [[ENE Substrate Mining]]
+* [[Deep Mining Pass 2026-05-06]]

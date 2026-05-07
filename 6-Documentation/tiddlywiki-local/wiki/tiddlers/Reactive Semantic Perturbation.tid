@@ -1,0 +1,23 @@
+created: 20260506134500000
+modified: 20260506134500000
+tags: ResearchStack SemanticGraph Method
+title: Reactive Semantic Perturbation
+type: text/vnd.tiddlywiki
+
+! Reactive Semantic Perturbation
+
+Discovery method that permits highly reactive, informal, or absurd semantic
+inputs, then admits only outputs that survive typed gates, receipts, failure
+modes, and quarantine.
+
+!! Links
+
+* [[Semantic Graph Mining]]
+* [[Monster Filter Family]]
+* [[COUCH Family]]
+* [[Internal Semantic Search]]
+
+!! Durable Sources
+
+* `../docs/WEIRD_CONCEPTS_GLOSSARY.md`
+* `../wiki/Concept-Archive.md`

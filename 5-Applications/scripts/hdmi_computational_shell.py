@@ -3,6 +3,12 @@
 HDMI Computational Shell Implementation
 Tricks HDMI controller into thinking it's delivering video while actually computing.
 Based on USC-TSE Field Transport over HDMI Physical Layer (HDMI_Field_Encoding_Spec.md)
+
+External-reference pattern:
+WebGPU Geant4-DNA suggests a useful architecture shape for this shell:
+many GPU/browser-resident candidate events, explicit scoring, and a separate
+validation/caveat surface. No WebGPU Geant4-DNA code or cross-section data is
+vendored or used here.
 """
 
 import json
@@ -58,6 +64,23 @@ class HDMIComputationalShell:
             "pause": "50-150ms (temporal gate)",
             "add": "> 150ms (time expansion)",
             "separator": "5ms"
+        }
+
+        self.external_reference_patterns = {
+            "webgpu_geant4_dna": {
+                "source": "https://github.com/abgnydn/webgpu-dna",
+                "license_boundary": (
+                    "MIT simulation code; Geant4-DNA/G4EMLOW data separately "
+                    "licensed. Reference pattern only; no code/data imported."
+                ),
+                "adapted_shape": [
+                    "one worker/thread per primary candidate",
+                    "fused hot-path dispatch for candidate evolution",
+                    "cold-path worker for long-tail recovery/audit",
+                    "explicit SSB/DSB-style damage scoring",
+                    "validation table with known gaps"
+                ]
+            }
         }
     
     def probe_hdmi_controller(self) -> Dict:
@@ -209,6 +232,7 @@ class HDMIComputationalShell:
                     "power": "10-50 mW"
                 }
             },
+            "webgpu_witness_kernel_pattern": self.design_witness_kernel_pattern(),
             "video_fakeout": {
                 "pseudo_frame_generation": "Generate 1920×1080 frames with computational data",
                 "standard_hdmi_compatibility": "Appears as 1080p@60Hz to standard HDMI sink",
@@ -218,6 +242,96 @@ class HDMIComputationalShell:
         }
         
         return shell_design
+
+    def design_witness_kernel_pattern(self) -> Dict:
+        """Adapt WebGPU-DNA's validation shape without importing its code/data."""
+        return {
+            "status": "design_pattern_only",
+            "external_reference": "WebGPU Geant4-DNA",
+            "license_boundary": self.external_reference_patterns["webgpu_geant4_dna"]["license_boundary"],
+            "hot_path": {
+                "executor": "GPU/WebGPU/CUDA-style candidate kernel",
+                "unit_of_parallelism": "one thread per concept route, shifter trial, or MassNumber packet",
+                "responsibility": [
+                    "generate candidate route states",
+                    "evolve pseudo-frame / TMDS packet state",
+                    "emit compact witness candidates"
+                ]
+            },
+            "cold_path": {
+                "executor": "CPU worker / verifier / FPGA witness path",
+                "responsibility": [
+                    "repair long-tail or clustered failures",
+                    "update FAMM scars and Underverse packets",
+                    "verify admissibility receipts before promotion"
+                ]
+            },
+            "damage_scoring": {
+                "ssb_analogue": "single local invariant or route break",
+                "dsb_analogue": "paired or clustered break that threatens recovery",
+                "cluster_window": "same frame, route, or evidence neighborhood",
+                "promotion_rule": "DSB-like clusters require receipt-gated recovery or quarantine"
+            },
+            "validation_contract": [
+                "record reference metric",
+                "record this-build metric",
+                "compute ratio",
+                "state caveat before promotion"
+            ]
+        }
+
+    def score_route_damage(self, route_events: List[Dict], cluster_window: int = 10) -> Dict:
+        """Score route damage using an SSB/DSB-inspired validation analogue.
+
+        A single broken invariant is treated like an SSB. Two broken invariants
+        close together in route/evidence coordinates form a DSB-like cluster.
+        """
+        breaks = []
+        for event in route_events:
+            if event.get("invariant_ok", True):
+                continue
+            breaks.append({
+                "route_id": event.get("route_id", "unknown"),
+                "position": int(event.get("position", 0)),
+                "kind": event.get("kind", "invariant_break"),
+                "severity": float(event.get("severity", 1.0))
+            })
+
+        dsb_clusters = []
+        for i, left in enumerate(breaks):
+            for right in breaks[i + 1:]:
+                same_route = left["route_id"] == right["route_id"]
+                close = abs(left["position"] - right["position"]) <= cluster_window
+                if same_route and close:
+                    dsb_clusters.append({
+                        "route_id": left["route_id"],
+                        "positions": [left["position"], right["position"]],
+                        "severity": left["severity"] + right["severity"]
+                    })
+
+        return {
+            "ssb_count": len(breaks),
+            "dsb_count": len(dsb_clusters),
+            "breaks": breaks,
+            "clusters": dsb_clusters,
+            "promotion_blocked": bool(dsb_clusters)
+        }
+
+    def build_validation_table(self, metrics: List[Dict]) -> List[Dict]:
+        """Build explicit this-build/reference/caveat validation rows."""
+        rows = []
+        for metric in metrics:
+            observed = float(metric["observed"])
+            reference = float(metric["reference"])
+            ratio = observed / reference if reference else None
+            rows.append({
+                "metric": metric["metric"],
+                "this_build": observed,
+                "reference": reference,
+                "ratio": ratio,
+                "caveat": metric.get("caveat", "none recorded")
+            })
+        return rows
     
     def run_analysis(self) -> Dict:
         """Run complete HDMI computational shell analysis."""
@@ -226,14 +340,14 @@ class HDMIComputationalShell:
         print("=" * 60)
         
         # Step 1: Probe HDMI controller
-        print("\n[1/5] Probing HDMI controller...")
+        print("\n[1/7] Probing HDMI controller...")
         controller_info = self.probe_hdmi_controller()
         print(f"  GPU: {controller_info['gpu']}")
         print(f"  HDMI Status: {controller_info['hdmi_status']}")
         print(f"  HDMI Version: {controller_info['hdmi_version']}")
         
         # Step 2: Generate pseudo-frame
-        print("[2/5] Generating pseudo-frame...")
+        print("[2/7] Generating pseudo-frame...")
         soliton_data = [
             {"parameters": [0.5, 0.25, 0.75, 0.125, 0.875, 0.0625, 0.9375, 0.03125, 0.96875, 0.015625, 0.984375]}
         ]
@@ -241,7 +355,7 @@ class HDMIComputationalShell:
         print(f"  Pseudo-frame size: {len(pseudo_frame)} bytes")
         
         # Step 3: Encode TVI samples
-        print("[3/5] Encoding TVI samples...")
+        print("[3/7] Encoding TVI samples...")
         temporal_variants = [
             {"time_op": 0, "cost": 0.5, "timestamp": 1.0},
             {"time_op": 1, "cost": 0.25, "timestamp": 1.5}
@@ -250,7 +364,7 @@ class HDMIComputationalShell:
         print(f"  TVI data size: {len(tvi_data)} bytes")
         
         # Step 4: Generate EDID block
-        print("[4/5] Generating EDID block...")
+        print("[4/7] Generating EDID block...")
         soliton_metadata = {
             "manifold_hash": "abc123",
             "phi_threshold": 0.5,
@@ -262,10 +376,45 @@ class HDMIComputationalShell:
         print(f"  EDID block size: {len(edid_block)} bytes")
         
         # Step 5: Design computational shell
-        print("[5/5] Designing computational shell...")
+        print("[5/7] Designing computational shell...")
         shell_design = self.design_computational_shell()
         print(f"  Computation modes: {len(shell_design['computation_modes'])}")
         print(f"  Video fakeout: Enabled")
+
+        # Step 6: Adapt witness-kernel scoring pattern
+        print("[6/7] Scoring route damage...")
+        route_events = [
+            {"route_id": "hdmi-demo", "position": 12, "invariant_ok": False, "kind": "phase_mismatch", "severity": 0.5},
+            {"route_id": "hdmi-demo", "position": 18, "invariant_ok": False, "kind": "witness_gap", "severity": 0.75},
+            {"route_id": "hdmi-demo", "position": 64, "invariant_ok": True, "kind": "ok", "severity": 0.0}
+        ]
+        damage_score = self.score_route_damage(route_events)
+        print(f"  SSB-like breaks: {damage_score['ssb_count']}")
+        print(f"  DSB-like clusters: {damage_score['dsb_count']}")
+
+        # Step 7: Build validation table
+        print("[7/7] Building validation table...")
+        validation_table = self.build_validation_table([
+            {
+                "metric": "pseudo_frame_payload_bytes",
+                "observed": len(pseudo_frame),
+                "reference": 11 * 3,
+                "caveat": "single demo soliton with 11 Q16.16-like parameters"
+            },
+            {
+                "metric": "tvi_payload_bytes",
+                "observed": len(tvi_data),
+                "reference": 2 * 5,
+                "caveat": "two temporal-variant samples, five bytes each"
+            },
+            {
+                "metric": "route_damage_dsb_clusters",
+                "observed": damage_score["dsb_count"],
+                "reference": 0,
+                "caveat": "reference zero means no paired recovery-threatening break is acceptable"
+            }
+        ])
+        print(f"  Validation rows: {len(validation_table)}")
         
         print("\n" + "=" * 60)
         print("HDMI COMPUTATIONAL SHELL ANALYSIS COMPLETE")
@@ -276,7 +425,9 @@ class HDMIComputationalShell:
             "pseudo_frame_size": len(pseudo_frame),
             "tvi_data_size": len(tvi_data),
             "edid_block_size": len(edid_block),
-            "shell_design": shell_design
+            "shell_design": shell_design,
+            "route_damage_score": damage_score,
+            "validation_table": validation_table
         }
 
 if __name__ == '__main__':

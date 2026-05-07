@@ -1,4 +1,6 @@
 # Research-Stack (OTOM)
+![Heretical Science Engineering](.github/assets/social-preview.png)
+
 **Ultra-low power, zero-decimal data routing and compression.**
 
 If you just stumbled across this repository, you might see words like "Topological State Machine" and "Manifold Points" and assume this is dense, academic magic. **It isn't.**

@@ -1,1 +1,0 @@
-{"type":"new","contents":"import Lake\nopen Lake DSL\n\npackage «Semantics» where\n  -- FORMING: bootstrap scaffold for OTOM canonical Lean surface.\n\nlean_lib «Semantics» where\n  srcDir := \"Semantics\"\n","mtime":1777846606452}

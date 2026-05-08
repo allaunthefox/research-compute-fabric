@@ -1,0 +1,706 @@
+{
+  "aggregate": {
+    "H_field": {
+      "max": 4.12275542453363,
+      "mean": 3.663922436343822,
+      "min": 2.625224223489669
+    },
+    "chi_susceptibility": {
+      "max": 0.6559699607250777,
+      "mean": 0.5687781936238817,
+      "min": 0.4674253202753167
+    },
+    "chunk_count": 22,
+    "coercive_loss": {
+      "max": 1.52275542453363,
+      "mean": 1.063922436343822,
+      "min": 0.02522422348966913
+    },
+    "domain_wall_pressure": {
+      "max": 0.88542903739581,
+      "mean": 0.2211525927012195,
+      "min": 0.01624238887859697
+    },
+    "heat_loss": {
+      "max": 0.6130637527468008,
+      "mean": 0.23921198455929052,
+      "min": 0.0
+    },
+    "information_load": {
+      "max": 4.12275542453363,
+      "mean": 3.663922436343822,
+      "min": 2.625224223489669
+    },
+    "magnetization_M": {
+      "max": 0.9088953824801266,
+      "mean": 0.7907252340455144,
+      "min": 0.6772340194825643
+    },
+    "overflow": {
+      "max": 0.8727554245336302,
+      "mean": 0.4432264419344858,
+      "min": 0.0
+    },
+    "overflow_chunk_count": 20,
+    "overflow_gate": {
+      "max": 1.0,
+      "mean": 0.5737709098179441,
+      "min": 0.2975537756475126
+    },
+    "remanence": {
+      "max": 0.9229270037943339,
+      "mean": 0.8886250883537214,
+      "min": 0.8358662613981762
+    },
+    "within_capacity_chunk_count": 2
+  },
+  "chunk_projections": [
+    {
+      "bytes": 4096,
+      "chunk_index": 0,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 4.515217487762456,
+        "normalized_entropy": 0.564402185970307,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.5890544832641095,
+        "transition_rate": 0.747008547008547
+      },
+      "magnetic_domain": {
+        "H_field": 4.0460288783964815,
+        "chi_susceptibility": 0.6484690907416222,
+        "coercive_loss": 1.4460288783964814,
+        "domain_wall_pressure": 0.3159081274888751,
+        "heat_loss": 0.5325324534986238,
+        "information_load": 4.0460288783964815,
+        "magnetization_M": 0.7151632863963729,
+        "overflow": 0.7960288783964815,
+        "overflow_gate": 0.3310136504452505,
+        "remanence": 0.880428273031361
+      },
+      "sha256": "716f4068ceb2ce9bebe0f8880acd1762ed2c0058b887d062e7f3cefa9e395c17",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 1,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.762570448852831,
+        "normalized_entropy": 0.4703213061066039,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.6357195211336428,
+        "transition_rate": 0.6075702075702075
+      },
+      "magnetic_domain": {
+        "H_field": 3.686189211397359,
+        "chi_susceptibility": 0.5496109542506414,
+        "coercive_loss": 1.0861892113973588,
+        "domain_wall_pressure": 0.056298627126870615,
+        "heat_loss": 0.19819228217940285,
+        "information_load": 3.686189211397359,
+        "magnetization_M": 0.7847791728466375,
+        "overflow": 0.4361892113973589,
+        "overflow_gate": 0.5456277298916181,
+        "remanence": 0.8882243705281556
+      },
+      "sha256": "7f6e2b9d8ea484968930b60c2e84f3820559f94d2ac402ed86bc2ba6f9b968f0",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 2,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.7845901362429712,
+        "normalized_entropy": 0.4730737670303714,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.636696799413633,
+        "transition_rate": 0.6136752136752137
+      },
+      "magnetic_domain": {
+        "H_field": 3.694728213253477,
+        "chi_susceptibility": 0.5545557104880643,
+        "coercive_loss": 1.094728213253477,
+        "domain_wall_pressure": 0.04604317147683856,
+        "heat_loss": 0.20493300386095387,
+        "information_load": 3.694728213253477,
+        "magnetization_M": 0.783917999671064,
+        "overflow": 0.4447282132534771,
+        "overflow_gate": 0.539194956034529,
+        "remanence": 0.8883767862986801
+      },
+      "sha256": "d536e56501195263d837c49dca24db946d7f355975ab6492bc567845422fea26",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 3,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.9192941635240146,
+        "normalized_entropy": 0.4899117704405018,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.5414121671145858,
+        "transition_rate": 0.6595848595848596
+      },
+      "magnetic_domain": {
+        "H_field": 3.9254662428692697,
+        "chi_susceptibility": 0.5898595308447867,
+        "coercive_loss": 1.3254662428692696,
+        "domain_wall_pressure": 0.23634538494054746,
+        "heat_loss": 0.4111210961895186,
+        "information_load": 3.9254662428692697,
+        "magnetization_M": 0.7286478929001449,
+        "overflow": 0.6754662428692697,
+        "overflow_gate": 0.39135212080600257,
+        "remanence": 0.871260969395779
+      },
+      "sha256": "b98ac2776d21ae11af23816b6faaacef2716afdfae60409d1f680e8e0e85fef5",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 4,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.775016753491557,
+        "normalized_entropy": 0.47187709418644463,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.6408502321035915,
+        "transition_rate": 0.6100122100122101
+      },
+      "magnetic_domain": {
+        "H_field": 3.682005610616378,
+        "chi_susceptibility": 0.5515960266658718,
+        "coercive_loss": 1.082005610616378,
+        "domain_wall_pressure": 0.061676044182762846,
+        "heat_loss": 0.19491775217193316,
+        "information_load": 3.682005610616378,
+        "magnetization_M": 0.7867777827656341,
+        "overflow": 0.4320056106163781,
+        "overflow_gate": 0.548807359483531,
+        "remanence": 0.8890199427881944
+      },
+      "sha256": "0174504bbbb28b14c79f560a2a35b001738741e4819270c674b5dca178b018ef",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 5,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.793545940363185,
+        "normalized_entropy": 0.47419324254539813,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.6281456144637185,
+        "transition_rate": 0.62002442002442
+      },
+      "magnetic_domain": {
+        "H_field": 3.7170957317025026,
+        "chi_susceptibility": 0.5596350777086616,
+        "coercive_loss": 1.1170957317025025,
+        "domain_wall_pressure": 0.01624238887859697,
+        "heat_loss": 0.22294393297373405,
+        "information_load": 3.7170957317025026,
+        "magnetization_M": 0.7788592497128283,
+        "overflow": 0.4670957317025026,
+        "overflow_gate": 0.5227018406673667,
+        "remanence": 0.8870288845033881
+      },
+      "sha256": "673db0ee3ae2bd336f00a0cd9c269781503091a0e427edafd6917bd2e56c2641",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 6,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.9079104949984367,
+        "normalized_entropy": 0.4884888118748046,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.5580258978744197,
+        "transition_rate": 0.6503052503052503
+      },
+      "magnetic_domain": {
+        "H_field": 3.888724447109567,
+        "chi_susceptibility": 0.5829869244627877,
+        "coercive_loss": 1.288724447109567,
+        "domain_wall_pressure": 0.18455870486166126,
+        "heat_loss": 0.3756713640498602,
+        "information_load": 3.888724447109567,
+        "magnetization_M": 0.7366253954244888,
+        "overflow": 0.638724447109567,
+        "overflow_gate": 0.41184126308317526,
+        "remanence": 0.8746132402046382
+      },
+      "sha256": "db4d6d67e0b61db05dab8476fba960ecf9ffdd3b76583d8a0ea0c629be09bf0e",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 7,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.7823189215189053,
+        "normalized_entropy": 0.47278986518986316,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.632299047153677,
+        "transition_rate": 0.6078144078144078
+      },
+      "magnetic_domain": {
+        "H_field": 3.6975931841291265,
+        "chi_susceptibility": 0.549809892465398,
+        "coercive_loss": 1.0975931841291264,
+        "domain_wall_pressure": 0.04896927867853851,
+        "heat_loss": 0.20721161107141992,
+        "information_load": 3.6975931841291265,
+        "magnetization_M": 0.7813957124564133,
+        "overflow": 0.4475931841291265,
+        "overflow_gate": 0.5370536942500865,
+        "remanence": 0.8876876217654969
+      },
+      "sha256": "15532640bf41406a811e52ee22a7fa0f89c8771ded863590c5860e865c95146b",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 8,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.7807000331724905,
+        "normalized_entropy": 0.4725875041465613,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.5802589787441974,
+        "transition_rate": 0.629059829059829
+      },
+      "magnetic_domain": {
+        "H_field": 3.8037388509447965,
+        "chi_susceptibility": 0.5667531485138051,
+        "coercive_loss": 1.2037388509447964,
+        "domain_wall_pressure": 0.09760170063126328,
+        "heat_loss": 0.29711498659510177,
+        "information_load": 3.8037388509447965,
+        "magnetization_M": 0.75536401424735,
+        "overflow": 0.5537388509447965,
+        "overflow_gate": 0.46343843115186817,
+        "remanence": 0.8788354228030966
+      },
+      "sha256": "308dce97307f597ee4683b1cbc178067d83dd58eb743c37ad8bf3fa68b65841a",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 9,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.892752991758305,
+        "normalized_entropy": 0.48659412396978813,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.6071341314439287,
+        "transition_rate": 0.6339438339438339
+      },
+      "magnetic_domain": {
+        "H_field": 3.7896431523951617,
+        "chi_susceptibility": 0.5705472255852978,
+        "coercive_loss": 1.1896431523951616,
+        "domain_wall_pressure": 0.05361940499981044,
+        "heat_loss": 0.28460740686341485,
+        "information_load": 3.7896431523951617,
+        "magnetization_M": 0.761025150186743,
+        "overflow": 0.5396431523951617,
+        "overflow_gate": 0.4726007258681811,
+        "remanence": 0.8835744051428653
+      },
+      "sha256": "56af9911df0842f4afe3212d86d6f3a921f4f358b52c9e1d9f573bd06c6d365c",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 10,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.7835703357326675,
+        "normalized_entropy": 0.47294629196658344,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.6379183972636208,
+        "transition_rate": 0.6092796092796092
+      },
+      "magnetic_domain": {
+        "H_field": 3.688938401677902,
+        "chi_susceptibility": 0.5510015100976623,
+        "coercive_loss": 1.0889384016779018,
+        "domain_wall_pressure": 0.057277575968023076,
+        "heat_loss": 0.20035417035377123,
+        "information_load": 3.688938401677902,
+        "magnetization_M": 0.7844611243769493,
+        "overflow": 0.4389384016779019,
+        "overflow_gate": 0.5435483211587546,
+        "remanence": 0.8885667224785941
+      },
+      "sha256": "610244ce0502fb41e126b2cebca906c7ba5ab8161a524cb049436c5cef50a368",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 11,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.8997165339230393,
+        "normalized_entropy": 0.4874645667403799,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.5433667236745663,
+        "transition_rate": 0.6568986568986569
+      },
+      "magnetic_domain": {
+        "H_field": 3.915459605146814,
+        "chi_susceptibility": 0.5878835560823316,
+        "coercive_loss": 1.3154596051468137,
+        "domain_wall_pressure": 0.22706386644818122,
+        "heat_loss": 0.4013858377961909,
+        "information_load": 3.915459605146814,
+        "magnetization_M": 0.7307302128143967,
+        "overflow": 0.6654596051468138,
+        "overflow_gate": 0.3968291468155499,
+        "remanence": 0.8716646286018876
+      },
+      "sha256": "7613994817678f4d20afffb5b223dfd729364a45dcd2713aeeb014e69c869e5c",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 12,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.7624317419324544,
+        "normalized_entropy": 0.4703039677415568,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.6408502321035915,
+        "transition_rate": 0.6043956043956044
+      },
+      "magnetic_domain": {
+        "H_field": 3.674474611038505,
+        "chi_susceptibility": 0.5470160275696078,
+        "coercive_loss": 1.074474611038505,
+        "domain_wall_pressure": 0.07290925541597426,
+        "heat_loss": 0.18907039047800517,
+        "information_load": 3.674474611038505,
+        "magnetization_M": 0.7874780830847334,
+        "overflow": 0.42447461103850515,
+        "overflow_gate": 0.5545778579891222,
+        "remanence": 0.8890199427881944
+      },
+      "sha256": "f10dd2c80d8bfbd9bcb4984d195ab07a6edc8fe95d5bb2f34409e22f77c92ab9",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 13,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.7908404920438286,
+        "normalized_entropy": 0.47385506150547857,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.6359638407036403,
+        "transition_rate": 0.609035409035409
+      },
+      "magnetic_domain": {
+        "H_field": 3.6941373386318035,
+        "chi_susceptibility": 0.5508031465355304,
+        "coercive_loss": 1.0941373386318034,
+        "domain_wall_pressure": 0.05385686333646267,
+        "heat_loss": 0.20446411650664853,
+        "information_load": 3.6941373386318035,
+        "magnetization_M": 0.7828146219057122,
+        "overflow": 0.4441373386318035,
+        "overflow_gate": 0.5396376329526477,
+        "remanence": 0.8882625134792045
+      },
+      "sha256": "4c64ec2ef1bc6e39beb8a733dbc8d2172482a21526a66ae5ce68473f5f235842",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 14,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 4.096175150184791,
+        "normalized_entropy": 0.5120218937730989,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.5406792084045932,
+        "transition_rate": 0.6803418803418804
+      },
+      "magnetic_domain": {
+        "H_field": 3.984814750875623,
+        "chi_susceptibility": 0.6047637784659995,
+        "coercive_loss": 1.384814750875623,
+        "domain_wall_pressure": 0.2793253438745744,
+        "heat_loss": 0.46999686015161396,
+        "information_load": 3.984814750875623,
+        "magnetization_M": 0.7176610041052233,
+        "overflow": 0.7348147508756231,
+        "overflow_gate": 0.36038728184000896,
+        "remanence": 0.8711089417581207
+      },
+      "sha256": "a0c9cf0968e7d84370ba92ca9a582675e3a80c280e25a66008626b4a5301f472",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 15,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.751515589868446,
+        "normalized_entropy": 0.46893944873355575,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.7908624480820914,
+        "transition_rate": 0.6351648351648351
+      },
+      "magnetic_domain": {
+        "H_field": 3.394795537134441,
+        "chi_susceptibility": 0.5714899092816818,
+        "coercive_loss": 0.7947955371344411,
+        "domain_wall_pressure": 0.3113952258345125,
+        "heat_loss": 0.026377891443743036,
+        "information_load": 3.394795537134441,
+        "magnetization_M": 0.8812535230649288,
+        "overflow": 0.14479553713444115,
+        "overflow_gate": 0.8178266266642498,
+        "remanence": 0.908137042564891
+      },
+      "sha256": "8172a2dbfa59c3db61b4e146825d550e442be8bc174f9fa11c49bd4ee15afb8a",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 16,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.057542585119999,
+        "normalized_entropy": 0.38219282313999986,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.9579770339604202,
+        "transition_rate": 0.5152625152625152
+      },
+      "magnetic_domain": {
+        "H_field": 2.625224223489669,
+        "chi_susceptibility": 0.4674253202753167,
+        "coercive_loss": 0.02522422348966913,
+        "domain_wall_pressure": 0.88542903739581,
+        "heat_loss": 0.0,
+        "information_load": 2.625224223489669,
+        "magnetization_M": 0.8944865247011483,
+        "overflow": 0.0,
+        "overflow_gate": 1.0,
+        "remanence": 0.9229270037943339
+      },
+      "sha256": "5bb26d8fbcedca37266043cd24bede9fefa8c5f72ae9e7307001f9af35885e4d",
+      "status": "within_capacity"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 17,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.569433522454973,
+        "normalized_entropy": 0.44617919030687164,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.8223796726117762,
+        "transition_rate": 0.5775335775335775
+      },
+      "magnetic_domain": {
+        "H_field": 3.230087653515728,
+        "chi_susceptibility": 0.5244047446008503,
+        "coercive_loss": 0.6300876535157278,
+        "domain_wall_pressure": 0.48969219015639753,
+        "heat_loss": 0.0,
+        "information_load": 3.230087653515728,
+        "magnetization_M": 0.908060060076767,
+        "overflow": 0.0,
+        "overflow_gate": 1.0,
+        "remanence": 0.9113455207069833
+      },
+      "sha256": "eb1aea8ab20e8e3a6eb116cc32ef68a33462dac90bff253809a355d68f202ec8",
+      "status": "within_capacity"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 18,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 4.577131696323823,
+        "normalized_entropy": 0.5721414620404779,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.778402150012216,
+        "transition_rate": 0.7594627594627594
+      },
+      "magnetic_domain": {
+        "H_field": 3.7044586283009746,
+        "chi_susceptibility": 0.6559699607250777,
+        "coercive_loss": 1.1044586283009745,
+        "domain_wall_pressure": 0.03787878109891318,
+        "heat_loss": 0.21270616026420122,
+        "information_load": 3.7044586283009746,
+        "magnetization_M": 0.8147660085184342,
+        "overflow": 0.4544586283009746,
+        "overflow_gate": 0.531957042911875,
+        "remanence": 0.9068035885058519
+      },
+      "sha256": "dd5921d80c33db13dcf0239bea0078664c08ee5c44854452644c72ee2e6464a0",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 19,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.875680133246034,
+        "normalized_entropy": 0.4844600166557543,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.8463229904715368,
+        "transition_rate": 0.6212454212454213
+      },
+      "magnetic_domain": {
+        "H_field": 3.28436896224073,
+        "chi_susceptibility": 0.5606045272695585,
+        "coercive_loss": 0.6843689622407299,
+        "domain_wall_pressure": 0.4501551384522311,
+        "heat_loss": 0.001602050203575482,
+        "information_load": 3.28436896224073,
+        "magnetization_M": 0.9088953824801266,
+        "overflow": 0.03436896224072994,
+        "overflow_gate": 0.9533867158294083,
+        "remanence": 0.9136370350051696
+      },
+      "sha256": "3ca585641a2fd4d50c2459dee5c3fdb287de530c25cbaa0a68d3c8d26acc55df",
+      "status": "overflow"
+    },
+    {
+      "bytes": 4096,
+      "chunk_index": 20,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 4.050346311288002,
+        "normalized_entropy": 0.5062932889110002,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.8433911556315661,
+        "transition_rate": 0.6488400488400489
+      },
+      "magnetic_domain": {
+        "H_field": 3.355564940164145,
+        "chi_susceptibility": 0.5818897639620626,
+        "coercive_loss": 0.7555649401641449,
+        "domain_wall_pressure": 0.38910221358303443,
+        "heat_loss": 0.01439654090587793,
+        "information_load": 3.355564940164145,
+        "magnetization_M": 0.895558927782656,
+        "overflow": 0.10556494016414497,
+        "overflow_gate": 0.8636238425040315,
+        "remanence": 0.9133628262388079
+      },
+      "sha256": "427c383c3ba1b982ceb8fea3a11848dc82bc7d1dab4b6f95270ab5909a0fd036",
+      "status": "overflow"
+    },
+    {
+      "bytes": 273,
+      "chunk_index": 21,
+      "equation_instance": "M_i = sigmoid(((chi_i * H_i) + R_i - 0.5 * C_loss_i) * G_over_i); H_i = L_info_i; L_info_i = phi^D_f * (log(1+2H_entropy_i) + MM(T_i;1,0.35) + P(1-R4_i;0.6))",
+      "features": {
+        "entropy_bits_per_byte": 3.8898598319952375,
+        "normalized_entropy": 0.4862324789994047,
+        "printable_ratio": 1.0,
+        "repetition_rate_4gram": 0.4074074074074074,
+        "transition_rate": 0.6544117647058824
+      },
+      "magnetic_domain": {
+        "H_field": 4.12275542453363,
+        "chi_susceptibility": 0.5860444331327814,
+        "coercive_loss": 1.52275542453363,
+        "domain_wall_pressure": 0.49400871459694995,
+        "heat_loss": 0.6130637527468008,
+        "information_load": 4.12275542453363,
+        "magnetization_M": 0.6772340194825643,
+        "overflow": 0.8727554245336302,
+        "overflow_gate": 0.2975537756475126,
+        "remanence": 0.8358662613981762
+      },
+      "sha256": "d99fdfa531cb4019966e7abd696486f478790578119971c0de03e96ebbffc6ac",
+      "status": "overflow"
+    }
+  ],
+  "claim_boundary": "This receipt maps byte-signal statistics into a magnetic-domain analogue. It is a stress-test and routing prior, not a claim that text data is a literal magnetic material.",
+  "parameters": {
+    "D_f": 1.4404200904125564,
+    "capacity_threshold": 3.25,
+    "chunk_size": 4096,
+    "coercive_threshold": 2.6,
+    "lambda_phi": 1.618033988749895,
+    "max_chunks": 22,
+    "phi_gain": 2.0,
+    "slice_bytes_requested": 86289
+  },
+  "purpose": "Stress-test the transfold adaptation framework by converting a byte slice into magnetic-domain equation instances with response-family selection and threshold overflow.",
+  "receipt_hash": "cad08a03b9bce19475676a69e96d9a532511409ba6213fd7a9ba864d0215f64f",
+  "runner": "4-Infrastructure/shim/transfold_enwiki8_magnetic_domain_generator.py",
+  "schema": "transfold_enwiki8_magnetic_domain_generator_v1",
+  "source": {
+    "available_bytes": 86878,
+    "path": "shared-data/corpora/couch_data_bundle.jsonl",
+    "sha256": "c2942362dad67c94801b9463b439352916e10fbba91c913baa91ad9d218f0e71",
+    "slice_bytes": 86289,
+    "source_mode": "real_file"
+  },
+  "stress_sweep": [
+    {
+      "capacity_threshold": 2.5,
+      "mean_heat_loss": 0.9473216166491661,
+      "mean_overflow": 1.163922436343822,
+      "mean_overflow_gate": 0.22507297397763984,
+      "overflow_chunk_count": 22
+    },
+    {
+      "capacity_threshold": 3.25,
+      "mean_heat_loss": 0.23921198455929052,
+      "mean_overflow": 0.4432264419344858,
+      "mean_overflow_gate": 0.5737709098179441,
+      "overflow_chunk_count": 20
+    },
+    {
+      "capacity_threshold": 4.0,
+      "mean_heat_loss": 0.0010042089982083586,
+      "mean_overflow": 0.007672013769550532,
+      "mean_overflow_gate": 0.9900600023017341,
+      "overflow_chunk_count": 2
+    },
+    {
+      "capacity_threshold": 4.5,
+      "mean_heat_loss": 0.0,
+      "mean_overflow": 0.0,
+      "mean_overflow_gate": 1.0,
+      "overflow_chunk_count": 0
+    },
+    {
+      "capacity_threshold": 5.25,
+      "mean_heat_loss": 0.0,
+      "mean_overflow": 0.0,
+      "mean_overflow_gate": 1.0,
+      "overflow_chunk_count": 0
+    }
+  ],
+  "transfold_map": {
+    "core_equations": {
+      "heat_loss": "Q_i = max(0, L_info_i - L_threshold) * (1 - G_over_i)",
+      "magnetic_projection": "M_i = sigmoid(((chi_i H_i) + R_i - 0.5 C_loss_i) * G_over_i)",
+      "overflow_gate": "G_over_i = 1 if L_info_i <= L_threshold else exp(-1.25 * (L_info_i - L_threshold) / 0.9)",
+      "signal_load": "L_info_i = phi^D_f * (log(1 + 2 h_i) + MM(t_i;1,0.35) + (1 - r_i)^0.6)"
+    },
+    "field_mapping": {
+      "byte_transition_rate": "domain agitation / susceptibility driver",
+      "capacity_overflow": "hysteresis heat-loss channel",
+      "entropy": "field demand / information pressure",
+      "repeated_4grams": "remanence / memory channel"
+    },
+    "source_domain": "byte_stream_signal",
+    "target_domain": "magnetic_domain_equation"
+  }
+}

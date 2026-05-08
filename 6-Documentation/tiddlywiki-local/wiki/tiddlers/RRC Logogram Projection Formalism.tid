@@ -1,0 +1,86 @@
+created: 20260508000000000
+modified: 20260508000000000
+tags: ResearchStack RRC Lean Logogram Projection Formalism Axiom Receipt
+title: RRC Logogram Projection Formalism
+type: text/vnd.tiddlywiki
+
+! RRC Logogram Projection Formalism
+
+Durable note:
+
+```
+docs/rrc_logogram_projection_formalism.md
+```
+
+Lean module:
+
+```
+0-Core-Formalism/lean/Semantics/Semantics/RRCLogogramProjection.lean
+```
+
+Bridge receipt:
+
+```
+4-Infrastructure/shim/rrc_logogram_projection_bridge_receipt.json
+```
+
+Bridge receipt hash:
+
+```
+83f44e8341788f6cbb2013704af2622f95f140b5a98402d69cd4ddde5ea88826
+```
+
+!! Core Claim
+
+```
+type admission != projection admission != merge admission
+```
+
+The repaired tear theorem proves:
+
+```
+type-admissible torn logogram
+  + contradiction witness
+  + tear boundary
+  + detached mass
+  + residual lane
+  -> projection admissible
+  -> not merge admissible
+  -> quarantine projection lane
+```
+
+!! Lean Theorems
+
+```
+semantic_tear_projects_after_repair
+semantic_tear_does_not_merge
+semantic_tear_uses_quarantine_lane
+unrepaired_tear_does_not_project
+ordinary_logogram_projects_and_merges
+merge_implies_projection
+repaired_tear_separates_projection_from_merge
+```
+
+!! Build Witness
+
+```
+lake build Semantics.RRCLogogramProjection
+
+true
+false
+Semantics.RRCLogogramProjection.ProjectionLane.quarantineProjection
+false
+true
+```
+
+!! Boundary
+
+This proves the routing invariant. It does not prove the source math, semantic
+truth, physical manifold reality, or compression gain.
+
+!! Links
+
+* [[RRC Logogram Projection Bridge]]
+* [[Rainbow Raccoon Compiler]]
+* [[Math Logogram Surface Compiler]]
+* [[Semantic Topology Compression Regimes]]

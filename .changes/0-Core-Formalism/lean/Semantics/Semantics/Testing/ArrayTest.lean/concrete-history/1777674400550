@@ -1,1 +1,0 @@
-{"type":"new","contents":"import Std\n\ndef a1 : Array Nat := #[0,0,0]\ndef a2 : Array Nat := List.replicate 10 0 |>.toArray\n","mtime":1777674400550}

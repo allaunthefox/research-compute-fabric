@@ -1,1 +1,0 @@
-{"type":"new","contents":"import Semantics.GenerateLUT\n\ndef main (args : List String) : IO Unit := do\n  let output := if args.length > 0 then args[0]! else \"/home/allaun/Documents/Research Stack/data/swarm/adaptation_surface.bin\"\n  Semantics.GenerateLUT.runGeneration output\n","mtime":1777756724891}

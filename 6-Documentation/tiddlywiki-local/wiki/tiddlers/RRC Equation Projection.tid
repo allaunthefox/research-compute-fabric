@@ -1,0 +1,107 @@
+created: 20260508000000000
+modified: 20260508000000000
+tags: ResearchStack RRC Equation Projection Receipt Roadmap
+title: RRC Equation Projection
+type: text/vnd.tiddlywiki
+
+! RRC Equation Projection
+
+Durable note:
+
+```
+docs/rrc_equation_classification.md
+```
+
+Runner:
+
+```
+4-Infrastructure/shim/rrc_equation_classifier.py
+```
+
+Receipt:
+
+```
+4-Infrastructure/shim/rrc_equation_classifier_receipt.json
+```
+
+Curriculum:
+
+```
+4-Infrastructure/shim/rrc_equation_classifier_curriculum.jsonl
+```
+
+Table:
+
+```
+4-Infrastructure/shim/rrc_equation_classifier_table.csv
+```
+
+Receipt hash:
+
+```
+c758aadb2bf11922a805d695d5b7bafa477ad426e60ea8e925490f14ccba497c
+```
+
+!! Boundary
+
+This pass is a projection/admissibility surface, not a labeling system.
+
+```
+human labels != lawful shape
+route hints != ontology
+CANDIDATE != proof
+HOLD != failure
+```
+
+The output records nearest lawful RRC shape, projection signature, top axes,
+weak axes, and HOLD causes. Labels are retained only as non-authoritative route
+hints for choosing an initial compiler prior.
+
+!! Projection Counts
+
+```
+equation_count: 278
+CANDIDATE: 29
+HOLD: 249
+```
+
+Nearest lawful shapes:
+
+```
+CadForceProbeReceipt: 2
+CognitiveLoadField: 77
+HoldForUnlawfulOrUnderspecifiedShape: 125
+LogogramProjection: 1
+ProjectableGeometryTopology: 37
+SignalShapedRouteCompiler: 36
+```
+
+!! Exposed Tears
+
+```
+scale_band_declared: 249
+negative_control_strength: 39
+```
+
+The immediate repair path is therefore not to rename the equations. It is to add
+missing scale-band witnesses and negative-control strength witnesses so the
+projection can separate lawful surface shape from under-specified residue.
+
+!! Roadmap Update
+
+```
+1. add scale-band witness schema for equation records
+2. add negative-control witness strength field
+3. rerun projection receipt and compare HOLD deltas
+4. mirror RRCShape into Lean
+5. connect projection CANDIDATE rows to Lean proof targets
+```
+
+!! Links
+
+* [[Rainbow Raccoon Compiler]]
+* [[RRC Logogram Projection Bridge]]
+* [[RRC Logogram Projection Formalism]]
+* [[Equation Forest Index]]
+* [[Connectome Protective Cognitive Load Reweighting]]
+* [[Compression Signal Shaping Synthesis]]

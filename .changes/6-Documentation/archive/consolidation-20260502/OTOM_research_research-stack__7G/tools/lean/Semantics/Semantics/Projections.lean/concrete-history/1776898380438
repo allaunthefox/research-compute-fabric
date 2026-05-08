@@ -1,1 +1,0 @@
-{"type":"new","contents":"namespace Semantics\n\n/-- \nCognitive Load metrics.\nMirrors `docs/cognitive/COGNITIVE_LOAD_FUNCTIONS_SPEC.md`.\n-/\nstructure CognitiveLoad where\n  intrinsic  : Float\n  extraneous : Float\n  germane    : Float\n  routing    : Float\n  memory     : Float\n  total      : Float\nderiving Repr, BEq\n\nend Semantics\n","mtime":1776898380438}

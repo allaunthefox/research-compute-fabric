@@ -1,0 +1,577 @@
+equation_id,name,rrc_shape,status,distance,top_axes,missing_or_weak_axes,source_path,domain_type,bind_class,equation
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:bandwidth_adjusted_threshold,bandwidth_adjusted_threshold,CognitiveLoadField,CANDIDATE,0.193428,projection_declared;shape_closure;witness_declared;semantic_entropy,,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,L_threshold_hist = L_threshold_eff * exp(-rho_B * B_overflow)
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:bandwidth_overflow,bandwidth_overflow,CognitiveLoadField,HOLD,0.230737,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,"B_overflow = max(0, transfer_bandwidth - assimilation_bandwidth) / assimilation_bandwidth"
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:effective_cognitive_load,effective_cognitive_load,CognitiveLoadField,HOLD,0.231976,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,L_cog_eff = L_cog_raw * G_over
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:emotional_gate,emotional_gate,CognitiveLoadField,HOLD,0.229561,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,B_gate_emotional = exp(-gamma_emotional * DeltaE_emotional_hist / kT_emotional_hist)
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:emotional_load,emotional_load,CognitiveLoadField,CANDIDATE,0.21865,projection_declared;shape_closure;witness_declared;semantic_entropy,,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,"L_emotional = C_emotional,d * emotional_response_d(L_emotional_offload; theta_emotional,d) * lambda_phi^D_f * B_gate_emotional,d"
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:emotional_offload,emotional_offload,CognitiveLoadField,CANDIDATE,0.193428,projection_declared;shape_closure;witness_declared;semantic_entropy,,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,"L_emotional_offload = max(0, L_cog_raw - L_threshold_hist) * eta_offload_hist"
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:historical_emotional_barrier,historical_emotional_barrier,CognitiveLoadField,HOLD,0.230737,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,DeltaE_emotional_hist = DeltaE_emotional_eff + chi_B * B_overflow
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:historical_emotional_temperature,historical_emotional_temperature,CognitiveLoadField,HOLD,0.230141,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,kT_emotional_hist = kT_emotional_eff / (1 + psi_B * B_overflow)
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:historical_offload_efficiency,historical_offload_efficiency,CognitiveLoadField,HOLD,0.231349,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,eta_offload_hist = eta_offload_eff * exp(-omega_B * B_overflow)
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:overflow_gate,overflow_gate,CognitiveLoadField,CANDIDATE,0.192135,projection_declared;shape_closure;witness_declared;semantic_entropy,,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,G_over(d) = 1 if L_cog_raw <= L_threshold_hist; else exp(-gamma_d * (L_cog_raw - L_threshold_hist) / kT_emotional_hist)
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:raw_cognitive_load,raw_cognitive_load,CognitiveLoadField,CANDIDATE,0.21865,projection_declared;shape_closure;witness_declared;semantic_entropy,,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,"L_cog_raw(d,x) = C_d * response_family_d(x; theta_d) * lambda_phi^D_f * B_gate(d,constraints)"
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:residual_stress,residual_stress,CognitiveLoadField,CANDIDATE,0.200253,projection_declared;shape_closure;decoder_declared;witness_declared,,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,"L_residual_stress = max(0, L_cog_raw - L_threshold_hist) * (1 - eta_offload_hist)"
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:threshold,threshold,CognitiveLoadField,CANDIDATE,0.188871,projection_declared;shape_closure;witness_declared;scale_band_declared,,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,L_threshold = C_threshold * lambda_phi^D_f * B_gate_threshold
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:total_protective_load,total_protective_load,CognitiveLoadField,HOLD,0.238088,projection_declared;shape_closure;decoder_declared;witness_declared,scale_band_declared,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,L_total = L_cog_eff + L_emotional + L_residual_stress
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:trauma_adjusted_emotional_barrier,trauma_adjusted_emotional_barrier,CognitiveLoadField,HOLD,0.231349,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,DeltaE_emotional_eff = DeltaE_emotional + chi_T * T_trauma
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:trauma_adjusted_emotional_temperature,trauma_adjusted_emotional_temperature,CognitiveLoadField,HOLD,0.230737,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,kT_emotional_eff = kT_emotional / (1 + psi_T * T_trauma)
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:trauma_adjusted_offload_efficiency,trauma_adjusted_offload_efficiency,CognitiveLoadField,HOLD,0.231976,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,eta_offload_eff = eta_offload * exp(-omega_T * T_trauma)
+connectome_protective_cognitive_load_reweighting_receipt:core_equations:trauma_adjusted_threshold,trauma_adjusted_threshold,CognitiveLoadField,CANDIDATE,0.194101,projection_declared;shape_closure;witness_declared;residual_risk,,4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json,,,L_threshold_eff = L_threshold * exp(-rho_T * T_trauma)
+transfold_enwiki8_magnetic_domain_generator_receipt:transfold_map:core_equations,core_equations,SignalShapedRouteCompiler,CANDIDATE,0.172075,projection_declared;semantic_entropy;shape_closure;witness_declared,,4-Infrastructure/shim/transfold_enwiki8_magnetic_domain_generator_receipt.json,,,"{""heat_loss"":""Q_i = max(0, L_info_i - L_threshold) * (1 - G_over_i)"",""magnetic_projection"":""M_i = sigmoid(((chi_i H_i) + R_i - 0.5 C_loss_i) * G_over_i)"",""overflow_gate"":""G_over_i = 1 if L_info_i <= L_threshold else exp(-1.25 * (L_info_i - L_threshold) / 0.9)"",""signal_load"":""L_info_i = phi^D_f * (log(1 + 2 h_i) + MM(t_i;1,0.35) + (1 - r_i)^0.6)""}"
+transfold_enwiki8_magnetic_domain_generator_receipt:transfold_map:field_mapping,field_mapping,SignalShapedRouteCompiler,CANDIDATE,0.166855,projection_declared;shape_closure;witness_declared;compression_pressure,,4-Infrastructure/shim/transfold_enwiki8_magnetic_domain_generator_receipt.json,,,"{""byte_transition_rate"":""domain agitation / susceptibility driver"",""capacity_overflow"":""hysteresis heat-loss channel"",""entropy"":""field demand / information pressure"",""repeated_4grams"":""remanence / memory channel""}"
+transfold_enwiki8_magnetic_domain_generator_receipt:transfold_map:source_domain,source_domain,SignalShapedRouteCompiler,CANDIDATE,0.188002,projection_declared;shape_closure;witness_declared;compression_pressure,,4-Infrastructure/shim/transfold_enwiki8_magnetic_domain_generator_receipt.json,,,byte_stream_signal
+transfold_enwiki8_magnetic_domain_generator_receipt:transfold_map:target_domain,target_domain,SignalShapedRouteCompiler,CANDIDATE,0.188002,projection_declared;shape_closure;witness_declared;compression_pressure,,4-Infrastructure/shim/transfold_enwiki8_magnetic_domain_generator_receipt.json,,,magnetic_domain_equation
+transfold_enwiki8_magnetic_domain_generator_receipt:transfold_core_equations:heat_loss,heat_loss,SignalShapedRouteCompiler,CANDIDATE,0.18598,projection_declared;shape_closure;witness_declared;compression_pressure,,4-Infrastructure/shim/transfold_enwiki8_magnetic_domain_generator_receipt.json,,,"Q_i = max(0, L_info_i - L_threshold) * (1 - G_over_i)"
+transfold_enwiki8_magnetic_domain_generator_receipt:transfold_core_equations:magnetic_projection,magnetic_projection,SignalShapedRouteCompiler,CANDIDATE,0.18541,projection_declared;shape_closure;witness_declared;compression_pressure,,4-Infrastructure/shim/transfold_enwiki8_magnetic_domain_generator_receipt.json,,,M_i = sigmoid(((chi_i H_i) + R_i - 0.5 C_loss_i) * G_over_i)
+transfold_enwiki8_magnetic_domain_generator_receipt:transfold_core_equations:overflow_gate,overflow_gate,CognitiveLoadField,CANDIDATE,0.197713,projection_declared;shape_closure;witness_declared;semantic_entropy,,4-Infrastructure/shim/transfold_enwiki8_magnetic_domain_generator_receipt.json,,,G_over_i = 1 if L_info_i <= L_threshold else exp(-1.25 * (L_info_i - L_threshold) / 0.9)
+transfold_enwiki8_magnetic_domain_generator_receipt:transfold_core_equations:signal_load,signal_load,CognitiveLoadField,CANDIDATE,0.191669,projection_declared;shape_closure;witness_declared;semantic_entropy,,4-Infrastructure/shim/transfold_enwiki8_magnetic_domain_generator_receipt.json,,,"L_info_i = phi^D_f * (log(1 + 2 h_i) + MM(t_i;1,0.35) + (1 - r_i)^0.6)"
+transfold_couch_data_magnetic_domain_receipt:transfold_map:core_equations,core_equations,SignalShapedRouteCompiler,CANDIDATE,0.172075,projection_declared;semantic_entropy;shape_closure;witness_declared,,4-Infrastructure/shim/transfold_couch_data_magnetic_domain_receipt.json,,,"{""heat_loss"":""Q_i = max(0, L_info_i - L_threshold) * (1 - G_over_i)"",""magnetic_projection"":""M_i = sigmoid(((chi_i H_i) + R_i - 0.5 C_loss_i) * G_over_i)"",""overflow_gate"":""G_over_i = 1 if L_info_i <= L_threshold else exp(-1.25 * (L_info_i - L_threshold) / 0.9)"",""signal_load"":""L_info_i = phi^D_f * (log(1 + 2 h_i) + MM(t_i;1,0.35) + (1 - r_i)^0.6)""}"
+transfold_couch_data_magnetic_domain_receipt:transfold_map:field_mapping,field_mapping,SignalShapedRouteCompiler,CANDIDATE,0.166855,projection_declared;shape_closure;witness_declared;compression_pressure,,4-Infrastructure/shim/transfold_couch_data_magnetic_domain_receipt.json,,,"{""byte_transition_rate"":""domain agitation / susceptibility driver"",""capacity_overflow"":""hysteresis heat-loss channel"",""entropy"":""field demand / information pressure"",""repeated_4grams"":""remanence / memory channel""}"
+transfold_couch_data_magnetic_domain_receipt:transfold_map:source_domain,source_domain,SignalShapedRouteCompiler,CANDIDATE,0.188002,projection_declared;shape_closure;witness_declared;compression_pressure,,4-Infrastructure/shim/transfold_couch_data_magnetic_domain_receipt.json,,,byte_stream_signal
+transfold_couch_data_magnetic_domain_receipt:transfold_map:target_domain,target_domain,SignalShapedRouteCompiler,CANDIDATE,0.188002,projection_declared;shape_closure;witness_declared;compression_pressure,,4-Infrastructure/shim/transfold_couch_data_magnetic_domain_receipt.json,,,magnetic_domain_equation
+transfold_couch_data_magnetic_domain_receipt:transfold_core_equations:heat_loss,heat_loss,SignalShapedRouteCompiler,CANDIDATE,0.18598,projection_declared;shape_closure;witness_declared;compression_pressure,,4-Infrastructure/shim/transfold_couch_data_magnetic_domain_receipt.json,,,"Q_i = max(0, L_info_i - L_threshold) * (1 - G_over_i)"
+transfold_couch_data_magnetic_domain_receipt:transfold_core_equations:magnetic_projection,magnetic_projection,SignalShapedRouteCompiler,CANDIDATE,0.18541,projection_declared;shape_closure;witness_declared;compression_pressure,,4-Infrastructure/shim/transfold_couch_data_magnetic_domain_receipt.json,,,M_i = sigmoid(((chi_i H_i) + R_i - 0.5 C_loss_i) * G_over_i)
+transfold_couch_data_magnetic_domain_receipt:transfold_core_equations:overflow_gate,overflow_gate,CognitiveLoadField,CANDIDATE,0.197713,projection_declared;shape_closure;witness_declared;semantic_entropy,,4-Infrastructure/shim/transfold_couch_data_magnetic_domain_receipt.json,,,G_over_i = 1 if L_info_i <= L_threshold else exp(-1.25 * (L_info_i - L_threshold) / 0.9)
+transfold_couch_data_magnetic_domain_receipt:transfold_core_equations:signal_load,signal_load,CognitiveLoadField,CANDIDATE,0.191669,projection_declared;shape_closure;witness_declared;semantic_entropy,,4-Infrastructure/shim/transfold_couch_data_magnetic_domain_receipt.json,,,"L_info_i = phi^D_f * (log(1 + 2 h_i) + MM(t_i;1,0.35) + (1 - r_i)^0.6)"
+hutter_equation_metastate_transfold_receipt:hutter_transfold_equations:counted_total,counted_total,SignalShapedRouteCompiler,HOLD,0.19942,projection_declared;compression_pressure;decoder_declared;shape_closure,scale_band_declared,4-Infrastructure/shim/hutter_equation_metastate_transfold_receipt.json,,,compressed_total_bytes = payload_bytes + residual_bytes + witness_bytes + decoder_delta_bytes + container_bytes
+hutter_equation_metastate_transfold_receipt:hutter_transfold_equations:hard_target_rule,hard_target_rule,SignalShapedRouteCompiler,HOLD,0.216219,projection_declared;compression_pressure;shape_closure;decoder_declared,scale_band_declared,4-Infrastructure/shim/hutter_equation_metastate_transfold_receipt.json,,,Hutter-hard promotion additionally requires the total contest artifact for enwik9 to beat 109685197 bytes under the applicable prize rules
+hutter_equation_metastate_transfold_receipt:hutter_transfold_equations:hutter_route_metastate,hutter_route_metastate,SignalShapedRouteCompiler,CANDIDATE,0.122715,projection_declared;compression_pressure;decoder_declared;witness_declared,,4-Infrastructure/shim/hutter_equation_metastate_transfold_receipt.json,,,"[""source_corpus_id"",""source_bytes"",""candidate_chart"",""transform_route"",""payload_bytes"",""residual_bytes"",""witness_bytes"",""decoder_delta_bytes"",""container_bytes"",""runtime_budget"",""compressed_total_bytes"",""baseline_bytes"",""hard_target_bytes"",""ratio_schema"",""exact_decode_status"",""source_hash"",""decoded_hash"",""promotion_status"",""failure_code""]"
+hutter_equation_metastate_transfold_receipt:hutter_transfold_equations:lower_bound,lower_bound,SignalShapedRouteCompiler,HOLD,0.210115,projection_declared;compression_pressure;shape_closure;decoder_declared,scale_band_declared,4-Infrastructure/shim/hutter_equation_metastate_transfold_receipt.json,,,LB_route = payload_floor + residual_floor + witness_floor + decoder_delta_floor + container_floor + evaluator_cost_floor
+hutter_equation_metastate_transfold_receipt:hutter_transfold_equations:metastate_transfold,metastate_transfold,SignalShapedRouteCompiler,HOLD,0.238638,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,4-Infrastructure/shim/hutter_equation_metastate_transfold_receipt.json,,,proposal_score -> candidate_route_coordinate -> bounded_exact_route_metastate -> promotion_receipt
+hutter_equation_metastate_transfold_receipt:hutter_transfold_equations:promotion_rule,promotion_rule,SignalShapedRouteCompiler,HOLD,0.196828,projection_declared;compression_pressure;decoder_declared;witness_declared,scale_band_declared,4-Infrastructure/shim/hutter_equation_metastate_transfold_receipt.json,,,"promote iff decoded_hash == source_hash and compressed_total_bytes < incumbent_bytes and ratio_schema is explicit and all witness, residual, decoder, and container bytes are counted"
+hutter_equation_metastate_transfold_receipt:hutter_transfold_equations:prune_rule,prune_rule,SignalShapedRouteCompiler,HOLD,0.218153,projection_declared;compression_pressure;shape_closure;decoder_declared,scale_band_declared,4-Infrastructure/shim/hutter_equation_metastate_transfold_receipt.json,,,prune iff LB_route >= incumbent_bytes
+hutter_equation_metastate_transfold_receipt:hutter_transfold_equations:source_equation_surface,source_equation_surface,SignalShapedRouteCompiler,HOLD,0.224542,projection_declared;compression_pressure;witness_declared;shape_closure,scale_band_declared,4-Infrastructure/shim/hutter_equation_metastate_transfold_receipt.json,,,"C = proposal_score(comp, phys, geom, scaling) or phi_HP = field + compression_gain + decoder/resource penalties"
+math_model_map:0,UQGET_Hubble_Tension,ProjectableGeometryTopology,HOLD,0.292337,projection_declared;semantic_entropy;geometric_mass;witness_declared,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,geometric_bind,,H0 = 73.3 ± 1.5 km s⁻¹ Mpc⁻¹ (68% CL)
+math_model_map:1,UQGET_Structure_Tension,ProjectableGeometryTopology,HOLD,0.261583,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,geometric_bind,,S8 = 0.810 ± 0.008
+math_model_map:2,UQGET_Statistical_Fit,ProjectableGeometryTopology,HOLD,0.288392,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,geometric_bind,,χ²/d.o.f. = 1907.2/1949 (p = 0.78)
+math_model_map:3,LASSO_MOGAT_GAT_Propagation,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.283014,projection_declared;witness_declared;semantic_entropy;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,h_i^(l+1) = σ(Σ_{j∈N(i)} α_ij^(l) W^(l) h_j^(l))
+math_model_map:4,LASSO_MOGAT_Attention_Coefficient,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.282576,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,α_ij^(l) = softmax_j(LeakyReLU(a→^(l)^T [W^(l) h_i^(l) || W^(l) h_j^(l)]))
+math_model_map:5,Multiphasic_Allometry_LogLog_Scaling,CognitiveLoadField,HOLD,0.261553,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,thermodynamic_bind,,Y = b·X + a (log-log space)
+math_model_map:6,Multiphasic_Allometry_Quadratic,CognitiveLoadField,HOLD,0.261553,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,thermodynamic_bind,,Y = a·X² + b·X + c (curvilinear)
+math_model_map:7,Multiphasic_Allometry_Instantaneous_Slope,CognitiveLoadField,HOLD,0.260582,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,thermodynamic_bind,,dY/dX = 2aX + b (where Y = aX² + bX + c)
+math_model_map:8,Affine_Mapping_LTSF_Linear_Layer,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284364,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,Y = X·W + b
+math_model_map:9,Affine_Mapping_Time_Series_Decomposition,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285347,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,x(t) = s(t) + f(t) + ε
+math_model_map:10,Affine_Mapping_Periodic_Theorem,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.290839,projection_declared;witness_declared;shape_closure;proof_readiness,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,x(t) = s(t) = s(t-p) where p ≤ n
+math_model_map:11,Affine_Mapping_Scaled_Periodic,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285347,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,x(t) = a·x(t-p) + c
+math_model_map:12,MOF_CO2_Reduction_2e_Electrochemistry,CognitiveLoadField,HOLD,0.263119,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,thermodynamic_bind,,CO2 + 2H+ + 2e- → CO + H2O
+math_model_map:13,MOF_CO2_Reduction_Formic_Acid,CognitiveLoadField,HOLD,0.262582,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,thermodynamic_bind,,CO2 + 2H+ + 2e- → HCOOH
+math_model_map:14,MOF_CO2_Reduction_6e_Methanol,CognitiveLoadField,HOLD,0.259671,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,thermodynamic_bind,,CO2 + 6H+ + 6e- → CH3OH + H2O
+math_model_map:15,MOF_CO2_Reduction_8e_Methane,CognitiveLoadField,HOLD,0.259671,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,thermodynamic_bind,,CO2 + 8H+ + 8e- → CH4 + 2H2O
+math_model_map:16,COUCH_Equation,SignalShapedRouteCompiler,HOLD,0.257213,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,thermodynamic_bind,,ẍ_i + γẋ_i + ω_i²x_i + Σ_j κ_ij(x_i - x_j) = F(t)
+math_model_map:1,Intrinsic_Load_LI,SignalShapedRouteCompiler,HOLD,0.234956,projection_declared;witness_declared;semantic_entropy;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_A_COMPRESSION,informational_bind,L_I(x) = -Σ_{b=0}^{255} p(b|x) log₂ p(b|x)
+math_model_map:2,NES_GCL_Square_Wave_Compression,SignalShapedRouteCompiler,HOLD,0.245952,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,C_ratio = U_size / C_size = 1.48× (achieved)
+math_model_map:3,NES_OISC_GCL_LUT_Architecture,CognitiveLoadField,HOLD,0.264694,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,JTAG→SUBLEQ→GCL→LUT→APU
+math_model_map:4,Unified_Shader_GCL_Audio_Stack,SignalShapedRouteCompiler,HOLD,0.235728,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,"Shader(x,y,t,θ)→palette + GCL→LUT + SUBLEQ→compute"
+math_model_map:5,Unified_Cartridge_Controller_Stack,CognitiveLoadField,HOLD,0.264694,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,Cartridge_SUBLEQ→GCL→Shader→Audio→ControllerPort→NES
+math_model_map:6,Topological_NanoKernel_UART_Stack,CognitiveLoadField,HOLD,0.235036,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,1-Wire_UART→GCL_Admission→Entropy→Metaprobe→Triumvirate→NES
+math_model_map:7,NES_Sound_Line_DSP_Math,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.278424,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,"Value↔AudioSignal(f,A,D) + APU_Operations→Result"
+math_model_map:8,Unified_Metaprobe_Collapse,CognitiveLoadField,HOLD,0.24112,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,All_Systems→Single_Metaprobe→Unified_Audit
+math_model_map:9,Final_Unified_Math_Collapse,CognitiveLoadField,HOLD,0.225432,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,All_Math→Single_Substrate→Unified_Computation
+math_model_map:10,Voltage_Computational_Substrate,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284065,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,Voltage→Value + Operations→Result
+math_model_map:11,Palette_DSP_Slave,CognitiveLoadField,HOLD,0.276228,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,DSP_Math→Palette_Parameters→Video_Palette
+math_model_map:12,Quad_Sampled_Scanlines,CognitiveLoadField,HOLD,0.267969,projection_declared;witness_declared;semantic_entropy;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,informational_bind,,4×_Vertical→256×960
+math_model_map:13,Microgrid_Voxel_Emulation,CognitiveLoadField,CANDIDATE,0.231194,projection_declared;semantic_entropy;shape_closure;witness_declared,,3-Mathematical-Models/MATH_MODEL_MAP.tsv,,,Microgrid→640×480+Differential_Updates→Effective_640×480
+math_model_map:2,Extraneous_Load_LE,SignalShapedRouteCompiler,HOLD,0.234956,projection_declared;witness_declared;semantic_entropy;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_A_COMPRESSION,informational_bind,"L_E(x) = BPB(x,w_prior) - BPB*(x) = (1/n)Σ_i log₂(P_w*(x_i)/P_wprior(x_i))"
+math_model_map:3,Germane_Load_LG,CognitiveLoadField,HOLD,0.252403,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_B_ROUTING,informational_bind,"L_G(x,t) = Σ_{s=1}^{S} γ^s · ΔL_E(x_s,t+1) ≈ τ·L_E·log(S+1)/log(S_max+1)"
+math_model_map:4,Routing_Load_LR,CognitiveLoadField,HOLD,0.252088,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_B_ROUTING,informational_bind,L_R(x) = Σ_j c_j·1[f_j computed] + Σ_{l=1}^{D(x)} log₂|M_l|
+math_model_map:5,Memory_Load_LM,CognitiveLoadField,HOLD,0.228316,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_B_ROUTING,informational_bind,L_M(x) = log₂|E| + α·1[hit] + β + λ·|E|/|E_max|
+math_model_map:6,Total_Cognitive_Load,SignalShapedRouteCompiler,HOLD,0.228402,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_A_COMPRESSION,informational_bind,"L_total = λI·l̂I + λE·l̂E - λG·l̂G + λR·l̂R + λM·l̂M (Σλ=1, λG≤λE)"
+math_model_map:7,Cognitive_Efficiency,SignalShapedRouteCompiler,HOLD,0.234942,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_A_COMPRESSION,informational_bind,η(x) = l̂I(x) / (l̂I + l̂E + l̂R + l̂M + ε)
+math_model_map:8,Regret_Adjusted_Load,SignalShapedRouteCompiler,HOLD,0.234942,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_A_COMPRESSION,informational_bind,L_ρ(x) = L_total(x) · (1 + ρ(x)/ρ_max)
+math_model_map:9,Basin_Conditional_Load,SignalShapedRouteCompiler,HOLD,0.235052,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_A_COMPRESSION,informational_bind,L(x|B) = L_I(x) + L_E(x|B) + L_R^B(x)
+math_model_map:10,MoE_Predictor_Distribution,SignalShapedRouteCompiler,HOLD,0.234956,projection_declared;witness_declared;semantic_entropy;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_A_COMPRESSION,informational_bind,P_w(x_i|x_{<i}) = Σ_{j=1}^{k} w_j · P_{m_j}(x_i|x_{<i})
+math_model_map:11,Pressure_Piling,CognitiveLoadField,HOLD,0.256022,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_E_VERIFICATION,thermodynamic_bind,P(i) = P₀ · χ^i (χ ≈ 1.63)
+math_model_map:12,Hugoniot_Temperature,CognitiveLoadField,HOLD,0.256318,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,thermodynamic_bind,T_peak = T₀ · (P_peak/P₀)^0.65
+math_model_map:13,Pressure_Ionization,CognitiveLoadField,HOLD,0.259238,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,thermodynamic_bind,α(P) = 1 - exp(-k(P - P_MIT))
+math_model_map:14,Energy_Recovery_Efficiency,CognitiveLoadField,HOLD,0.255475,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_E_VERIFICATION,thermodynamic_bind,η_net = (W_rec - W_erasure) / W_in; W_erasure ≥ k_B·T·ln2 per bit
+math_model_map:15,Q_Factor,CognitiveLoadField,CANDIDATE,0.221733,projection_declared;semantic_entropy;shape_closure;witness_declared,,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_E_VERIFICATION,thermodynamic_bind,Q = (E_flash + E_enthalpy + E_recovered - W_demon) / (E_work + E_loss) > 1.0
+math_model_map:16,Coupling_Weight,ProjectableGeometryTopology,HOLD,0.288723,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,GWL Rotation
+math_model_map:17,Rotational_Alignment,ProjectableGeometryTopology,HOLD,0.290188,projection_declared;geometric_mass;semantic_entropy;witness_declared,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,g = cos(Δθ·2π/16) · cos(Δφ·π/8) · (1 - 2|χ_i - χ_j|)
+math_model_map:18,Spatial_Proximity,ProjectableGeometryTopology,HOLD,0.29059,projection_declared;semantic_entropy;geometric_mass;witness_declared,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,h = exp(-|Δp|²/(2σ²)) · 1_{|Δp|<r_max}
+math_model_map:19,Interaction_Force,ProjectableGeometryTopology,HOLD,0.270688,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_H_ALGEBRA,geometric_bind,F_ij = w_ij · (a_j - a_i) · Δp_ij / |Δp_ij|
+math_model_map:20,Energy_Function,ProjectableGeometryTopology,HOLD,0.281222,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,geometric_bind,"E(f) = -½ Σ_{i,j} w_ij · a_i · a_j + Σ_i V(a_i)"
+math_model_map:21,Frame_Evolution_Discrete,ProjectableGeometryTopology,HOLD,0.288392,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_H_ALGEBRA,geometric_bind,"θ_i(t+1) = θ_i(t) + α_θ·F_{i,θ} + ξ_θ"
+math_model_map:22,Frame_Evolution_Continuous,ProjectableGeometryTopology,HOLD,0.292567,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_H_ALGEBRA,geometric_bind,df_i/dt = -α ∇_{f_i} E(f) + ξ(t)
+math_model_map:23,Energy_Monotonicity_Theorem,ProjectableGeometryTopology,HOLD,0.292854,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_H_ALGEBRA,geometric_bind,dE/dt = -α Σ_i |∇_{f_i} E|² ≤ 0
+math_model_map:24,Temporal_Weight,ProjectableGeometryTopology,HOLD,0.288723,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,w_ij^(τ) = cos(2π(τ_j - τ_i)/16)
+math_model_map:25,Complete_Weight_5Factor,ProjectableGeometryTopology,HOLD,0.291436,projection_declared;semantic_entropy;geometric_mass;witness_declared,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,w_ij = cos(Δθ·22.5°)·cos(Δφ·22.5°)·cos(2πΔτ/16)·(1-2|Δχ|)·exp(-|Δp|²/2σ²)
+math_model_map:26,Temporal_Force,ProjectableGeometryTopology,HOLD,0.271047,projection_declared;geometric_mass;witness_declared;semantic_entropy,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,F_ij^(τ) = w_ij^(τ) · (a_j - a_i) · sgn(τ_j - τ_i)
+math_model_map:27,Temporal_Evolution,ProjectableGeometryTopology,HOLD,0.289068,projection_declared;geometric_mass;witness_declared;semantic_entropy,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,"τ_i(t+1) = τ_i(t) + α_τ·F_{i,τ} + ω₀"
+math_model_map:28,Temporal_Stability,ProjectableGeometryTopology,HOLD,0.289068,projection_declared;geometric_mass;witness_declared;semantic_entropy,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_D_INVARIANTS,geometric_bind,"d/dt(τ_j - τ_i) = 0 for all i,j"
+math_model_map:29,Temporal_Entropy,ProjectableGeometryTopology,HOLD,0.29059,projection_declared;semantic_entropy;geometric_mass;witness_declared,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,H_τ = -Σ_{k=0}^{15} p(τ=k) log₂ p(τ=k)
+math_model_map:30,Mu_Seed_Cardinality,ProjectableGeometryTopology,HOLD,0.291006,projection_declared;semantic_entropy;geometric_mass;witness_declared,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_D_INVARIANTS,geometric_bind,"|S_μ| = 8×8×16×16×8×8×2×16×8×4 = 8,589,934,592 ≈ 2^33"
+math_model_map:31,Fractal_Occupancy,ProjectableGeometryTopology,HOLD,0.292337,projection_declared;semantic_entropy;geometric_mass;witness_declared,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_D_INVARIANTS,geometric_bind,|P_occ| = ρ_occ · N^{d_H} (d_H ≈ 2.7268)
+math_model_map:32,Total_Formal_State_Space,ProjectableGeometryTopology,HOLD,0.289427,projection_declared;geometric_mass;semantic_entropy;witness_declared,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_B_ROUTING,geometric_bind,"|S_total| ≈ 2^{5,900,000}"
+math_model_map:33,Reachable_State_Space,SignalShapedRouteCompiler,HOLD,0.246118,projection_declared;witness_declared;semantic_entropy;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_A_COMPRESSION,geometric_bind,|S_reachable| ≈ |S_total| / 10^{29}
+math_model_map:34,Wave_Packet_State,ProjectableGeometryTopology,HOLD,0.288392,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,"P = (ΔV, Δt, π, τ, χ, C, A)"
+math_model_map:35,Throat_Condition,ProjectableGeometryTopology,HOLD,0.288392,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_BRAID,geometric_bind,"T_throat = {(i,j) | Φ_topo(i,j) >> Φ_metric(i,j)}"
+math_model_map:36,Multi_Factor_Coupling_Weight,ProjectableGeometryTopology,HOLD,0.288076,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_BRAID,geometric_bind,w_ij = w_p · w_π · w_τ · w_χ · w_topo · w_σ
+math_model_map:37,Holonomy_Accumulation,ProjectableGeometryTopology,HOLD,0.288076,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_BRAID,geometric_bind,Hol(γ_loop) = ∮_γ T(p) dp
+math_model_map:38,Non_Euclidean_Distance,ProjectableGeometryTopology,HOLD,0.271543,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,d_N = path_length(γ_ij) + curvature_penalty(κ) + torsion_cost(T); d_T = d_E + λ_N·d_N
+math_model_map:39,Trixal_Axes,CognitiveLoadField,HOLD,0.25882,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,thermodynamic_bind,"TrixalAxes = (thermal, work, irreversibility), each ∈ [0,1]; |axes| = √(th² + w² + ir²)"
+math_model_map:40,Shannon_Entropy,CognitiveLoadField,HOLD,0.259671,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,thermodynamic_bind,"H = -Σ_b p(b) log₂ p(b), where p(b)=count(b)/len"
+math_model_map:41,Kolmogorov_Estimate,CognitiveLoadField,HOLD,0.261553,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,thermodynamic_bind,K_est = (8 - H) / 8
+math_model_map:42,Thermodynamic_Entropy,CognitiveLoadField,HOLD,0.260119,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,thermodynamic_bind,S_thermo = H + K_est · 0.1
+math_model_map:43,Entropy_Gradient,CognitiveLoadField,HOLD,0.260119,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_H_ALGEBRA,thermodynamic_bind,dS/dt = (S_current - S_previous) / Δt
+math_model_map:44,Mutual_Information_Extracted,SignalShapedRouteCompiler,HOLD,0.236532,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_A_COMPRESSION,thermodynamic_bind,MI = H_initial - H_current
+math_model_map:45,Carnot_Efficiency,CognitiveLoadField,HOLD,0.25882,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_B_ROUTING,thermodynamic_bind,η_Carnot = 1 - T_cold / T_hot
+math_model_map:46,Work_Extraction,CognitiveLoadField,HOLD,0.255474,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,thermodynamic_bind,W_actual = Q_absorbed · η_Carnot · 0.7
+math_model_map:47,Irreversibility_Metric,CognitiveLoadField,HOLD,0.26106,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,thermodynamic_bind,score = (entropy_production + path_asymmetry + time_reversal_violation) / 3
+math_model_map:48,Thermodynamic_Length,CognitiveLoadField,HOLD,0.25882,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_B_ROUTING,thermodynamic_bind,L_thermo = Σ_i distance_i · (1 + irreversibility_i)
+math_model_map:49,Thermodynamic_Depth,CognitiveLoadField,HOLD,0.261553,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,thermodynamic_bind,depth = entropy_production · ln(time_steps)
+math_model_map:50,Stamp_Code,LogogramProjection,HOLD,0.202394,projection_declared;witness_declared;shape_closure;proof_readiness,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_B_ROUTING,thermodynamic_bind,SHA256(axes || traj_hash || hardware_entropy || timing_jitter || process_nonce)
+math_model_map:51,Arrhenius_Temperature_Factor,CognitiveLoadField,HOLD,0.251579,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,thermodynamic_bind,AF = exp(E_a / (k_B · T))
+math_model_map:52,Blacks_Equation_EM,CognitiveLoadField,HOLD,0.250302,projection_declared;witness_declared;semantic_entropy;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,thermodynamic_bind,EM_risk = J^n · exp(E_a / (k_B · T)) / 10^{12}
+math_model_map:53,Coffin_Manson_Fatigue,CognitiveLoadField,CANDIDATE,0.221733,projection_declared;semantic_entropy;shape_closure;witness_declared,,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,thermodynamic_bind,"CM_damage = (ΔT / ΔT_threshold)^m · 10^{-8}, m≈1.9"
+math_model_map:54,Landauer_Limit,SignalShapedRouteCompiler,HOLD,0.23706,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_A_COMPRESSION,thermodynamic_bind,W_erasure ≥ k_B · T · ln(2) ≈ 2.87e-21 J/bit at 300K
+math_model_map:55,Entropy_Generation_Rate,CognitiveLoadField,HOLD,0.257657,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_E_VERIFICATION,thermodynamic_bind,dS/dt = power_dissipation / (k_B · T · ln 2) [bits/s]
+math_model_map:56,BitFlip_Gradient_5D,CognitiveLoadField,HOLD,0.250417,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_D_INVARIANTS,thermodynamic_bind,|G| = (D1/120 + D2/5000 + D3/1000 + D4/100 + D5/5000) / 5
+math_model_map:57,SEU_BitFlip_Rate,CognitiveLoadField,HOLD,0.24942,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,thermodynamic_bind,BFR = ε_SEU · 2^{(T-25)/10} · (1 + V_jitter/1000) · 3600 [flips/hr]
+math_model_map:58,Stress_Decay,CognitiveLoadField,HOLD,0.25882,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,thermodynamic_bind,stress(t) = stress_0 · e^{-t/300} + intensity · (1 - e^{-t/300})
+math_model_map:59,Remaining_Useful_Life,CognitiveLoadField,HOLD,0.25078,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,thermodynamic_bind,RUL = MTBF / (AF · (1 + fatigue·0.01 + thermal_fatigue·0.1))
+math_model_map:60,Homeostatic_Stress_Injection,CognitiveLoadField,HOLD,0.25882,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_E_VERIFICATION,thermodynamic_bind,"surprise = -ln(margin), margin = 1 - stress_magnitude; regret = max(0, stress - 0.5)"
+math_model_map:61,Exact_Int_to_FP_Cast,CognitiveLoadField,HOLD,0.259238,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_D_INVARIANTS,thermodynamic_bind,int_bits ≤ fp_mantissa_bits + 1 (signed) or ≤ fp_mantissa_bits + 1 (unsigned)
+math_model_map:62,Safe_Narrowing_Proof,CognitiveLoadField,HOLD,0.26106,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_D_INVARIANTS,thermodynamic_bind,"can_safely_narrow(src_bits, signed, dst_mantissa) → bool"
+math_model_map:63,RISCV_Instruction_Latency,CognitiveLoadField,HOLD,0.258417,projection_declared;witness_declared;semantic_entropy;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_D_INVARIANTS,thermodynamic_bind,"fdiv.d=33, fdiv.s=19 → penalty=0.737; fadd.d=4, fadd.s=4 → penalty=0.0"
+math_model_map:64,Photon_Energy,CognitiveLoadField,HOLD,0.257657,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,physical_bind,E = hc/λ = 1.2398 / λ_μm [eV]
+math_model_map:65,Subband_Spacing,CognitiveLoadField,HOLD,0.260582,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,physical_bind,"ΔE = E_upper - E_lower; E_upper=hc/λ_min, E_lower=hc/λ_max"
+math_model_map:66,Cascade_Gain,CognitiveLoadField,HOLD,0.249496,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,physical_bind,G = photons_per_e⁻ × n_wells; photons_per_e⁻ = ⌊E_electron / ΔE⌋
+math_model_map:67,Temperature_Tuning,CognitiveLoadField,HOLD,0.257657,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,physical_bind,λ(T) = λ₀ + α · (T - T₀); α=5e-6 /K (GaAs/AlGaAs)
+math_model_map:68,Injection_Efficiency,CognitiveLoadField,HOLD,0.257657,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,physical_bind,"η = (0.5 + window_bonus) · spacing_eff · (1 - stress_penalty); clamped to [0,1]"
+math_model_map:69,Atmospheric_Windows,CognitiveLoadField,HOLD,0.258417,projection_declared;witness_declared;semantic_entropy;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,physical_bind,"Windows: (3,5), (8,12), (16,20) μm; transmission=1.0 inside, exp(-dist·0.5) outside"
+math_model_map:70,Tuning_Range,CognitiveLoadField,HOLD,0.257299,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_G_ENERGY,physical_bind,"ν = 10⁴/λ [cm⁻¹]; DFB: ±7.5 cm⁻¹, EC: ±200 cm⁻¹; λ_min=10⁴/ν_max, λ_max=10⁴/ν_min"
+math_model_map:71,Mutual_Information_Signal,SignalShapedRouteCompiler,HOLD,0.222839,projection_declared;witness_declared;shape_closure;compression_pressure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_A_COMPRESSION,informational_bind,MI(x) = baseline_bpb(x) - actual_bpb(x)
+math_model_map:72,kNN_MI_Prediction,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.282379,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_B_ROUTING,informational_bind,MI_pred = Σ_i (w_i · MI_i · S_i) / Σ_i (w_i · S_i); w_i = 1/(d_i + ε)
+math_model_map:73,Surprise_Metric,ProjectableGeometryTopology,HOLD,0.288392,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_B_ROUTING,informational_bind,surprise = log(1 + |MI_actual - MI_predicted|)
+math_model_map:74,Structure_Yield,SignalShapedRouteCompiler,HOLD,0.245865,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_A_COMPRESSION,informational_bind,ρ(x) = MI(x) / (cost(x) + ε)
+math_model_map:75,Weighted_Feature_Distance,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.281874,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_B_ROUTING,informational_bind,"d(z₁,z₂) = √Σ_i w_i · ((z₁_i - z₂_i) / s_i)²"
+math_model_map:76,DAG_Force_Equilibrium,CadForceProbeReceipt,HOLD,0.280052,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_BRAID,geometric_bind,Σ F_in = Σ F_out at every node
+math_model_map:77,Constitutive_Law,CadForceProbeReceipt,HOLD,0.294433,projection_declared;witness_declared;semantic_entropy;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_BRAID,geometric_bind,σ = C : ε; ε = ½(∇u + ∇u^T)
+math_model_map:78,DAG_Global_Validity,ProjectableGeometryTopology,HOLD,0.2697,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_BRAID,geometric_bind,V(G) = ∧_{v∈V} (ΣF_in = ΣF_out)
+math_model_map:79,Cosine_Similarity,ProjectableGeometryTopology,HOLD,0.288723,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_K_SIGNAL,geometric_bind,cos = x · x_ref / (‖x‖ · ‖x_ref‖)
+math_model_map:80,Gradient_Alignment,ProjectableGeometryTopology,HOLD,0.288392,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_K_SIGNAL,geometric_bind,alignment = ∇g_i · ∇g_j / (‖∇g_i‖ · ‖∇g_j‖)
+math_model_map:81,Phase_Accumulation,ProjectableGeometryTopology,HOLD,0.288076,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_K_SIGNAL,geometric_bind,phase += Σ y · dx
+math_model_map:82,Metric_Tensor_From_Circumferences,ProjectableGeometryTopology,HOLD,0.290188,projection_declared;geometric_mass;semantic_entropy;witness_declared,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,"g_tt = M², g_tp = 0, g_pp = (N·cos(θ))²; a=C_eq/(2π), c=C_mer/(2π), f=(a-c)/a, e²=2f-f², N=a/√(1-e²sin²θ), M=a(1-e²)/(1-e²sin²θ)^(3/2)"
+math_model_map:83,Line_Element,ProjectableGeometryTopology,HOLD,0.287773,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,ds² = g_tt·dθ² + 2·g_tp·dθ·dφ + g_pp·dφ²
+math_model_map:84,Christoffel_Symbols_2D,ProjectableGeometryTopology,HOLD,0.289427,projection_declared;geometric_mass;semantic_entropy;witness_declared,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,Gamma^k_ij = ½·g^kl·(∂_i g_jl + ∂_j g_il - ∂_l g_ij)
+math_model_map:85,Geodesic_Step_Symplectic_Euler,ProjectableGeometryTopology,HOLD,0.290188,projection_declared;geometric_mass;semantic_entropy;witness_declared,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,a^θ = -(Gamma^θ_tt·v_θ² + 2·Gamma^θ_tp·v_θ·v_φ + Gamma^θ_pp·v_φ²); v' = v + a·dt; x' = x + v'·dt
+math_model_map:86,Stereographic_Chart_Transition,ProjectableGeometryTopology,HOLD,0.290188,projection_declared;geometric_mass;semantic_entropy;witness_declared,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,"u = 2·tan(θ/2)·cos(φ), v = 2·tan(θ/2)·sin(φ); θ = 2·atan(√(u²+v²)/2), φ = atan2(v,u); select when |cos(θ)| < 0.01"
+math_model_map:87,Chirality_Algebra,ProjectableGeometryTopology,HOLD,0.288392,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,"D+D→D, L+L→L, D+L→W(COLLAPSE→W); chiralityToTernary: D→Active, L→Active, W→Latent"
+math_model_map:88,BLINK_GATE_Ternary_Clock,CognitiveLoadField,CANDIDATE,0.21559,projection_declared;semantic_entropy;shape_closure;witness_declared,,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,control_bind,"φ = (τ mod T)/T, T=942/1000; ternary: φ<1/3→Q, φ<2/3→A, else L; φ' = (φ+1/4) mod 1 if surprise>threshold"
+math_model_map:89,Geodesic_Step_Verlet,ProjectableGeometryTopology,HOLD,0.288076,projection_declared;geometric_mass;witness_declared;shape_closure,scale_band_declared;negative_control_strength,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_C_TOPOLOGY,geometric_bind,Same acceleration as M85 + Verlet velocity update + chart transition check
+math_model_map:90,Waveprobe_Risk_Function,CognitiveLoadField,HOLD,0.273853,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_F_CONTROL,control_bind,"risk(s) = (1 + γ·(1-cos(θ)))/d² + η·h; γ=3, η=0.8"
+math_model_map:91,Waveprobe_Heat_Evolution,CognitiveLoadField,HOLD,0.25882,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/MATH_MODEL_MAP.tsv,LAYER_F_CONTROL,control_bind,"h' = α·h + β·a; α=0.95, β=0.2"
+extracted_md:0,extracted_md_equation_0,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285005,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,a_μ = (|g| - 2) / 2 = 0.001165920705(114)
+extracted_md:1,extracted_md_equation_1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.287699,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,σ = 0.127 ppm    (0.000000114)
+extracted_md:2,extracted_md_equation_2,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.289065,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,a_μ^theory = a_μ^experiment     within 0.5σ
+extracted_md:3,extracted_md_equation_3,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286858,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,g_μ = -2.00233184122(82)
+extracted_md:4,extracted_md_equation_4,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286858,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,μ = g · (eℏ / 2m) · S
+extracted_md:5,extracted_md_equation_5,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285704,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,(D_t^α + (-∇²)^β) Ψ = λ |Ψ|^γ Ψ
+extracted_md:6,extracted_md_equation_6,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285704,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,D^α f(x) = F^{-1}[ |k|^α · F[f](k) ]
+extracted_md:7,extracted_md_equation_7,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.287271,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,"Ψ_observed(x, t) = ∫ K_θ(x - x') Ψ_unified(x', t) dx'"
+extracted_md:8,extracted_md_equation_8,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.287699,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,"w(α, θ) = sin(θ)^α · cos(θ)^{1-α}"
+extracted_md:9,extracted_md_equation_9,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286459,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,g_n(θ_obs) = g_0 · sin(θ_obs)^{1/n} · cos(θ_obs)^{1 - 1/n}
+extracted_md:10,extracted_md_equation_10,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286074,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,Q_n = (1/2π) ∮_C ∇_n φ · dn = m/n   for m ∈ ℤ
+extracted_md:11,extracted_md_equation_11,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285704,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,ds² = -dθ²/ω(θ)² + a(θ)² [dr²/(1-kr²) + r² dΩ²] + ℓ_P² dθ² Γ(θ)
+extracted_md:12,extracted_md_equation_12,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.287699,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,H_eff = ω(θ)
+extracted_md:13,extracted_md_equation_13,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286459,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,ρ_DE(θ) = ρ_foam · (1 - θ/θ_max)²
+extracted_md:14,extracted_md_equation_14,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285005,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,S(R) ≤ C' · R^{D_H} · T^{(D_H - 1)}
+extracted_md:15,extracted_md_equation_15,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286074,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,S ≤ C' · R^{1.44} · T^{0.44}
+extracted_md:16,extracted_md_equation_16,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286074,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,A(r) = 2π (cosh(r) - 1) ≈ π · exp(r)    for r >> 1
+extracted_md:17,extracted_md_equation_17,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286074,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,L_{n+1} / L_n ≈ exp(d_inj) ≈ Φ² ≈ 2.618
+extracted_md:18,extracted_md_equation_18,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.28814,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,D_s = 2 D_H / (1 + D_H)
+extracted_md:19,extracted_md_equation_19,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.287699,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,D_s = 4/3 ≈ 1.333
+extracted_md:20,extracted_md_equation_20,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286459,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,ρ(E) ~ E^{D_s/2 - 1} = E^{-1/3}
+extracted_md:21,extracted_md_equation_21,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.289549,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,E_n ~ n³
+extracted_md:22,extracted_md_equation_22,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285347,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,n_s = 1 - 2/(1 + θ_max/θ_recombination) ≈ 0.965
+extracted_md:23,extracted_md_equation_23,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.287271,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,E_dissipated ≥ k_B T · ln(2)     per bit erased
+extracted_md:24,extracted_md_equation_24,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.287271,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,H(X) = -Σ p(x) log p(x)
+extracted_md:25,extracted_md_equation_25,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285347,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,S ≤ 2π R E / (ℏ c ln 2) = A / (4 G ℏ)
+extracted_md:26,extracted_md_equation_26,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284065,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,C_V = (12π⁴/5) N k_B (T/Θ_D)³ ∝ T³
+extracted_md:27,extracted_md_equation_27,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.288596,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,C_V ∝ T^{D_s}
+extracted_md:28,extracted_md_equation_28,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.288596,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,C_V ∝ T^{1.18}
+extracted_md:29,extracted_md_equation_29,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286459,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,⟨exp(-β W)⟩ = exp(-β ΔF)
+extracted_md:30,extracted_md_equation_30,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286074,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,(ΔJ)² / ⟨J⟩² · σ ≥ 2 k_B
+extracted_md:31,extracted_md_equation_31,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.287699,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,Δx · Δp ≥ ℏ/2
+extracted_md:32,extracted_md_equation_32,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286074,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,Ψ_total = Ψ_A + Ψ_B = A · exp(i ω_Ψ θ) · [exp(i k_Ψ x_A) + exp(i k_Ψ x_B)]
+extracted_md:33,extracted_md_equation_33,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285347,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,|Ψ_total|² = 2|A|² · [1 + cos(k_Ψ (x_A - x_B))]
+extracted_md:34,extracted_md_equation_34,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.287271,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,E = ℏ ω = ω_Ψ     (in natural units ℏ = 1)
+extracted_md:35,extracted_md_equation_35,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.288596,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,p = ℏ k = dθ_0/dx = k_Ψ
+extracted_md:36,extracted_md_equation_36,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.289065,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,λ = 2π / k_Ψ = 2π / p
+extracted_md:37,extracted_md_equation_37,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285704,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,"Phenotype(x, t) = Ψ_E [ Genotype(x) × Regulatory_State(t) ]"
+extracted_md:38,extracted_md_equation_38,SignalShapedRouteCompiler,HOLD,0.232964,projection_declared;shape_closure;decoder_declared;witness_declared,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,"Residual(n) = Ψ_decode [ Basis, Context(n) ] XOR Byte(n)"
+extracted_md:39,extracted_md_equation_39,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286074,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/extracted_equations.md,,,H_Ψ(data) = -Σ_n p(n) log_2 p_Ψ(n) ≤ H_uniform(data) = 8 bits/byte
+eq_21f33f4110064dbd,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284364,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"G = (V, E) represents a quantum state |ψ⟩ through a
+collection of local tensors {Tv }v∈V , one for each vertex"
+eq_14d74623112c018f,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285704,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"injec= CD and Hv ∼
+tive if this map has trivial kernel"
+eq_fcd40dc2de7c7324,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.265908,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"d ≥ D|N (v)| , which generically holds after coarse-graining
+when D = O(1)"
+eq_416bbe45bfd12c68,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.287699,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,min ≥ δ
+eq_290815ff34ff74a2,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286074,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,Z = ⟨ψ|ψ⟩
+eq_5ea587928ed366f5,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284678,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"e = (v, n) of
+the graph, the tensor Tv ⋆ T̄v of the norm network defines
+a superoperator on the virtual space from any set of legs
+to its complement Eq"
+eq_e1646b712978905e,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285347,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"Z = ZBP 1 +
+Zℓ "
+eq_ed91aac060fde4cf,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284364,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"Z = log ZBP +
+ϕ(W)ZW ,
+(7)
+connected W
+
+where a cluster is collection of loops with multiplicities,
+W = {(ℓ1 , α1 ), (ℓ2 , α2 ),"
+eq_9b66cadab83a4e1e,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.280384,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,i ≥ 1 is its multiplicity in the cluster
+eq_6fd0d43c1e1577a1,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284678,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"ZW = i Zℓαii and the
+P
+weight of a cluster is |W| := i αi |ℓi | where |ℓ| for a loop
+ℓ ∈ L denotes the number of edges in ℓ"
+eq_8605b7c5ccdbcf5f,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285347,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"c > c0 =
+O(log ∆)"
+eq_dbd7ee74be207cc7,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.283511,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"Z = ⟨ψ|ψ⟩ to 1/ poly(N ) multiplicative
+error
+(ii) local observables ⟨OA ⟩ = ⟨ψ|OA |ψ⟩/⟨ψ|ψ⟩ to
+1/ poly(N ) multiplicative error, given ⟨OA ⟩ ̸= 0
+(iii) correlation functions ⟨OA OB ⟩ − ⟨OA ⟩ ⟨OB ⟩ to
+Õ(1/ poly(N )) additive error
+where A, B ⊂ V are disjoint local regions"
+eq_9138cc21d6e4da27,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284364,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"e = (v, n) with d(v, A) =
+r, we have
+
+
+∥µ′⋆,⃗e − µ⋆,⃗e ∥1 = O e−r/ξ∗
+(10)
+
+5
+Where 1/ξ∗ = O(log ε∗ /ε)"
+eq_5be87eaf6cffbaae,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286074,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"W = Wnear ∪ Wfar , where clusters in
+Wnear are distance at most a cutoff Rth away from B"
+eq_927277d74e6531cc,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285005,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"t < r and
+starts increasing thereafter, owing to the strict lightcone
+in the message-passing dynamics [see SM for a proof]"
+eq_353043888999f4ac,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284065,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"t = r−1, leading
+to
+
+
+∥µ⋆,⃗e − µ′⋆,e ∥1 = O e−r/ξ∗
+(13)
+establishing locality of the BP fixed-points"
+eq_532f389442891ed2,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286074,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,d = c − c0 = O(1)
+eq_fdfae5689dd4a9a5,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286074,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,R = Θ(1)
+eq_9138aeb942929155,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.287699,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,X = 1}
+eq_0cd087779e7532a9,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.283255,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"i=1
+
+For p = ∞ we have,
+∥x∥∞ := max |xi |
+1≤i≤m
+
+(S3)
+
+For an operator A ∈ B(H), we define the operator Schatten norm in terms of its singular values σ(A) as,
+∥A∥p := ∥σ(A)∥p
+
+(S4)
+
+for any p ∈ [1, ∞]"
+eq_5593e036fe6f7dd7,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285704,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"p ≤ q ≤ ∞ and any operator A, we have,
+∥A∥p ≥ ∥A∥q
+
+(S5)
+
+∥A∥1 ≥ ∥A∥2 ≥ ∥A∥∞
+
+(S6)
+
+In particular,
+
+10
+2"
+eq_ea9b6d38a8a0c1b0,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.283781,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"p ≤ q ≤ ∞ and any non-zero operator A,
+1
+
+1
+
+∥A∥p ≤ rank(A) p − q ∥A∥q
+
+(S7)
+
+p
+rank(A)∥A∥∞
+
+(S8)
+
+∥Ax∥2
+= σmax (A)
+x̸=0 ∥x∥2
+
+(S9)
+
+In particular,
+∥A∥2 ≤
+We also note that, the ∞−norm obeys,
+∥A∥∞ = sup
+
+we will denote ∥ · ∥∞ by just ∥ · ∥ for convenience"
+eq_e0537400fa963370,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284678,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"B = Ac , reshape the tensor into a linear map
+T : HA → HB
+by grouping the indices in A and B into multi-indices a = (ia1 ,"
+eq_23fc8ebaf9c8ae4a,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.287699,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"b = (ib1 ,"
+eq_8b4895ac1c7ebca0,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.283511,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"q = 1 we have,
+
+| tr A† B | ≤ ∥A∥p ∥B∥q
+
+(S12)
+
+Graphs For a graph G = (V, E), we define some useful notation"
+eq_25d49db810143f41,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285704,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"e = {v, w} ∈ E, we will refer to it’s directed versions ⃗e = (v, w) and ←
+e = (w, v)"
+eq_5034975bc936419d,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285347,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"e = {v, w}, we define, for any u ∈ V ,
+d(e, u) := min{d(v, u), d(w, u)}
+and similarly, for any A ⊂ V ,
+d(e, A) := min d(e, u)"
+eq_ab6c35762bc86081,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285005,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"li=1 be finite-dimensional Hilbert spaces (the l virtual legs), and
+let Hphys be the physical Hilbert space"
+eq_60b71803ce04c1ba,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286459,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"i=1
+
+Definition S1"
+eq_7d5beabf91af593e,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.283511,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"i=1 Hi −→ Hphys from
+
+We perform a singular value decomposition
+T = V ΣU † ∈ Cnp ×nv ,
+
+(S14)
+
+where np ≥ nv by injectivity, where U ∈ Cnv ×nv and V :∈ Cnp ×nv satisfy U † U = 1nv (unitarity) and V † V = 1nv
+(isometry), and Σ = diag(λe ) ∈ Cnv ×nv collects the singular values"
+eq_8daf48607920ba7b,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286459,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"e = δ ∈ (0, 1]"
+eq_3b521e5a6156cbc1,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286074,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"e = 1,
+e
+
+e
+
+(S15)
+
+We call δ the injectivity parameter"
+eq_7cf50458351623ec,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285704,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"T = V U † itself is an
+isometry"
+eq_b5bc1ffd90912fb1,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.288596,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,a = 1
+eq_51e4f2d85951d30b,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284678,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"Lc = dim(HLc )1L ,
+Ka,L→Lc Ka,L→L
+(S18)
+c = dim(HL )1Lc ,
+a
+
+a
+
+which follow from the fact that U is a unitary"
+eq_51dad4a7954a91e6,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284065,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"Lc =
+[Ū a ](i′L ),(iLc ) [U a ](iL ),(iLc ) =
+δiL ,i′L = dim(HLc )1L
+a
+
+a,iLc
+
+iLc
+
+Moreover, when T is δ−injective with δ = 1 (i"
+eq_10109834ac3ac602,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285704,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"G = (V, E) with vertex set V and edge set E"
+eq_6c7adf4f4e980afe,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.283255,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"G = (V, E) with uniform virtual
+dimension D and physical dimension dp is specified for each v ∈ V by a tensor
+O
+Tv :
+H(n,v) → Hphys ∼
+= Cdp ,
+n∈N (v)
+
+where N (v) denotes the set of neighbors of v, and each virtual space H(n,v) ∼
+= CD"
+eq_dde05d0258ec36a5,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284678,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"e = (v, w), we define a bond-space H⃗e ∼
+= CD"
+eq_36e95d88ecbda2b0,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285005,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"e = (v, w) is a positive
+operator µ⃗e ∈ Pos(H⃗e ) representing the message from v to w"
+eq_25b43848714b6ceb,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285347,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"e = (v, n) ∈ ⃗
+E,
+
+
+O
+µ(m,v) "
+eq_139255306999d8d8,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284364,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"e > 0 such that
+PEPS if for each directed edge ⃗e ∈ E,
+f⃗e (µ⋆ ) = λ⃗e µ⃗e"
+eq_2a06ffe17253ce3c,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285347,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"Z = ⟨ψ|ψ⟩
+can be formally described as a Taylor series in terms of ‘loops’ on the network as described below"
+eq_e598d78992b57382,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284065,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"Z = ZBP 1 +
+Zl 
+
+(S21)
+
+Γ⊂L
+l∈Γ
+Γ finite, compatible
+
+where the sum runs over all finite sets Γ of mutually compatible loops"
+eq_14f71a50573b7fd0,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286074,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"W = {(ℓ1 , α1 ), (ℓ2 , α2 ),"
+eq_44bf0ed184c8c0f8,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.287271,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,nW = i=1 αi
+eq_4c772de7743acc11,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286459,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"W = {(ℓ1 , α1 ),"
+eq_3fe8c2f5d04f57ff,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285347,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"ZW =
+
+k
+Y
+
+Zℓαii"
+eq_1abc29f7b62428f6,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286459,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"i=1
+
+We call a cluster W connected if the interaction graph GW is connected, meaning there is a path between any two
+vertices in the interaction graph"
+eq_f4bc63354f272a96,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.283781,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"GW =
+Pk
+(VW , EW ) has |VW | = i=1 αi vertices, with loop ℓi corresponding to αi vertices"
+eq_2a47fee92e986d5e,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285704,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"W = {(l1 , α1 ), (l2 , α2 ),"
+eq_4a18868e412a28db,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286858,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"ZW =
+Zlαi i"
+eq_d14e04ca5ba01499,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284364,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"Z = log ZBP +
+ϕ(W)ZW ,
+
+(S25)
+
+connected W
+
+where the sum runs over all connected clusters W"
+eq_405936ddfb9bc98c,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284065,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"c > c0 := log(2e∆) + 12 such that
+|Zl | ≤ e−c|l|
+
+(S27)
+
+then, the series for log Z converges absolutely"
+eq_6a72df8385b3a8fb,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.283014,projection_declared;witness_declared;semantic_entropy;shape_closure,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"Fm = log ZBP +
+
+X
+
+ϕ(W)ZW ,
+
+(S28)
+
+connected W
+|W|≤m
+
+is bounded by
+|log Z − Fm | ≤ N e−d(m+1)
+where d = c − c0 , ∆ is the degree of the graph, and N is the number of vertices"
+eq_52e8897befaf699d,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285005,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,c > c0 = log(2e∆) + 1/2
+eq_f05cdb2173e0a64b,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285704,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"G = (V, E)"
+eq_f93b08fedbc0a5af,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284364,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"T = ⟨ψ|ψ⟩ and
+A
+T = ⟨ψ|OA |ψ⟩ respectively after suitable BP normalization"
+eq_d0869069ce0fee51,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285347,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"Z = ⟨ψ|ψ⟩ and Z A = ⟨ψ|OA |ψ⟩
+for a local observable with ⟨OA ⟩ ̸= 0"
+eq_e2dad9249b00119f,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.283014,projection_declared;witness_declared;semantic_entropy;shape_closure,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"m = ⟨OA ⟩BP · exp
+
+
+
+
+conn W←LA
+
+
+
+
+
+
+
+supp(W)∩A̸=∅
+|W|≤m
+
+leads to a relative error δm = | ⟨OA ⟩ − ⟨OA ⟩m |/| ⟨OA ⟩ | bounded by
+
+
+δm ≤ O |A|e−(c−c0 )(m+1)
+
+(S33)
+
+where d = c − c0 = O(1)"
+eq_2b301ef1b6ca651f,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.283781,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"A = ∂λ log ZλA |λ=0 = ⟨OA ⟩BP +
+ϕW Z W
+αl
+− ⟨OA ⟩BP"
+eq_f4aab7b26b55c832,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285347,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,Z = ⟨ψ|ψ⟩ and Z A = ⟨ψ|OA |ψ⟩
+eq_1a6dee6dca2f084b,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.28814,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,d = c − c0
+eq_0698ebc502ab24cc,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286074,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"c =
+
+X
+
+A
+ϕW ∂λ ZW,λ
+
+conn"
+eq_2edfb68a37ab3d1f,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286858,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"A = (A1 ,"
+eq_7957e0f2cb86a72c,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286858,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,degree ≥ 2 everywhere except in all regions Ai
+eq_10a508b9d741a6f6,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284678,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"c ≤ O e−d(A,B)/ξ
+for a finite correlation length ξ ≤ O((1/(c − c0 ))) and d(A, B) being the graph distance"
+eq_fb10b15989eae47c,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.283511,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"Z = ⟨ψ|ψ⟩ can be computed to 1/ poly(N ) multiplicative error in poly(N ) time
+(ii) local observables ⟨OA ⟩ = ⟨ψ|OA |ψ⟩/⟨ψ|ψ⟩ with ⟨OA ⟩ ̸= 0 can be computed to multiplicative error ϵ in poly(1/ϵ)
+time
+(iii) 2-point correlation functions can be computed to additive error Õ(1/ poly(N )) in poly(N ) time
+
+18
+Proof"
+eq_984644a6b0dbab3e,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.283255,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"m ≤ N e−d(m+1)
+
+(S37)
+
+Hence, to ensure log Z − F̃m < O(1/ poly(N )) we require m = Ω(log N )"
+eq_837e24a6c715af63,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285347,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,m = Ω(log N )
+eq_e54ad45a68cb6a93,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284065,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"m
+≤ O e−d(m+1) ≤ ϵ
+⟨OB ⟩
+
+(S38)
+
+which can be ensured given m = O(log 1/ϵ), again computable in poly 1/ϵ time"
+eq_21f71c6c28c71003,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.282576,projection_declared;semantic_entropy;witness_declared;shape_closure,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"m = d(A, B) + O(log 1/ϵ), leading to an error O m2 (|A| + |B|)e−dm , which is
+(note that (|A| + |B|) = O(1),
+!
+
+2
+
+
+1
+1
+2
+−d[d(A,B)+log 1/ϵ]
+O d(A, B) log
+·e
+= O log N ·
+= Õ(1/ poly(N ))
+(S39)
+ϵ
+poly(N )
+since we already have d(A, B) = O(log N ) and we choose ϵ = 1/ poly(N )"
+eq_717ace3c9565c03b,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285704,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,Ka = D1L̸=i
+eq_ccca83f09f701b34,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.284065,projection_declared;witness_declared;shape_closure;semantic_entropy,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"a ≥ δ 2 > 0 and
+
+†
+a Ka Ka = D
+
+P
+
+(S43)
+
+a
+
+1,
+X
+
+λ2a Ka† Ka ⪰ δ 2
+
+X
+
+a
+
+Ka† Ka = δ 2 D 1,
+
+a
+
+hence
+Tr f (X) ≥ δ 2 D Tr(X) = δ 2 D"
+eq_bc5bda52965ac0f8,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.286459,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,"e = (v, n) ∈ E"
+eq_d4a2926485bb8572,arXiv:2604.21919v1,HoldForUnlawfulOrUnderspecifiedShape,HOLD,0.285704,projection_declared;witness_declared;shape_closure;residual_risk,scale_band_declared,3-Mathematical-Models/equations_100/equations_database.jsonl,,,Ka = dim(HL ) L

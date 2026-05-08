@@ -123,6 +123,19 @@ PCIe FPGA           = future math-hell router (VU9P-class)
 - **Deliverable:** `shared-data/data/equation_distance_matrix.csv` + `shared-data/data/supernodes.json`
 - **Result:** Computed pairwise distances and clustered into 40 supernodes.
 
+### A6. RRC Equation Projection Surface
+- **What:** Project equation records into nearest lawful RRC shapes without treating human labels as ontology.
+- **Deliverables:**
+  - `4-Infrastructure/shim/rrc_equation_classifier.py`
+  - `4-Infrastructure/shim/rrc_equation_classifier_receipt.json`
+  - `4-Infrastructure/shim/rrc_equation_classifier_curriculum.jsonl`
+  - `4-Infrastructure/shim/rrc_equation_classifier_table.csv`
+  - `docs/rrc_equation_classification.md`
+- **Owner:** Python shim / Lean bridge
+- **Status:** 🔄 IN_PROGRESS
+- **Result:** 278 equation surfaces projected; 29 CANDIDATE, 249 HOLD. Labels demoted to non-authoritative route hints.
+- **Next action:** Add `scale_band_declared` witnesses and negative-control strength fields, then rerun the receipt and measure HOLD deltas.
+
 ---
 
 ## Phase B — Formal Core (Lean)
@@ -534,17 +547,19 @@ F1 + F2 + F3 + F5
 | 3 | PCIe FPGA card not acquired | E1–E4 | Source second-hand Alibaba Cloud VU9P card |
 | 4 | No network query runner for P9 | G4 | Run `5-Applications/scripts/p9_followup_query.py` from network-enabled host |
 | 5 | `sorry` in existing Lean files | B10 | Audit `0-Core-Formalism/lean/Semantics/` for `sorry`/`admit`/`axiom`; replace with proofs or `#eval` witnesses |
+| 6 | RRC projection HOLD surface lacks scale-band witnesses | A6, B10, C2 | Add scale-band schema to equation records; rerun RRC receipt; only promote rows whose HOLD clears |
 
 ---
 
 ## Immediate Next Actions (This Session)
 
-1. **Lock vocabulary** — Create `6-Documentation/docs/VOCABULARY_LOCK.md` from §0 above; get human approval
-2. **Audit Lean for `sorry`** — `grep -rn "sorry\|admit\|axiom" 0-Core-Formalism/lean/Semantics/`; file count and locations
-3. **Extract Genome18** — Move from `CooperativeLUT.lean` to standalone `Genome18.lean`
-4. **Design UART packet format** — 1-byte start, 3-byte payload (18-bit state + 6-bit flags), 1-byte checksum
-5. **Create `4-Infrastructure/surface/` skeleton** — FastAPI app with `/health` and `/ws` endpoints
-6. **Flash the board** — Install `openFPGALoader`; program `tangnano9k.fs`; verify LEDs
+1. **Repair RRC projection HOLDs** — Add `scale_band_declared` witnesses for equation records; rerun `4-Infrastructure/shim/rrc_equation_classifier.py`
+2. **Add negative controls** — Add negative-control strength witnesses for the 39 rows exposing weak control evidence
+3. **Audit Lean for `sorry`** — `grep -rn "sorry\|admit\|axiom" 0-Core-Formalism/lean/Semantics/`; file count and locations
+4. **Extract Genome18** — Move from `CooperativeLUT.lean` to standalone `Genome18.lean`
+5. **Design UART packet format** — 1-byte start, 3-byte payload (18-bit state + 6-bit flags), 1-byte checksum
+6. **Create `4-Infrastructure/surface/` skeleton** — FastAPI app with `/health` and `/ws` endpoints
+7. **Flash the board** — Install `openFPGALoader`; program `tangnano9k.fs`; verify LEDs
 
 ---
 

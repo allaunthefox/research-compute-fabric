@@ -24,8 +24,8 @@ The Sovereign Research Stack is a formalized system where Lean 4 is the single s
 | **L2** | Biological | Genetic codes, spiking neurons, STDP | **Speculative** (docs exist, minor Lean) | 30+ Genetic Code Tables, Codon Optimization, SpikingDynamics (Izhikevich), GenomicCompression |
 | **L3** | Thermodynamic | Energy-aware quality, homeostatic governance | **Speculative** (docs migrated) | Trixal Quality (thermal/work/irreversibility), Homeostatic Governor, HyperFlow (Navier-Stokes) |
 | **L4** | Security | Attack-aware gating, frustration memory | **Partial** (AngrySphinx in Lean) | AngrySphinx (exponential PoD), FAMM Frustration, ASICTopology |
-| **L5** | Semantic | Meaning-aware filtering, manifold routing, compression governance | **Speculative** (docs migrated) | CrossDimensionalFilter (12 semantic primes), Manifold Networking, BracketedCalculus, CompressionControl |
-| **L6** | Meta | Self-aware adaptation, cognitive routing, auto-adaptive metatyping | **Speculative** (docs migrated) | Cognitive Load Decomposition (5-factor), Adaptation, DynamicCanal, CompressionMechanics |
+| **L5** | Semantic | Meaning-aware filtering, manifold routing, compression governance | **Partial** (projection receipts exist) | CrossDimensionalFilter (12 semantic primes), Manifold Networking, BracketedCalculus, CompressionControl, RRC Equation Projection |
+| **L6** | Meta | Self-aware adaptation, cognitive routing, auto-adaptive metatyping | **Partial** (cognitive receipts + projection holds) | Cognitive Load Decomposition (5-factor), Adaptation, DynamicCanal, CompressionMechanics, Connectome-Protective Load Reweighting |
 
 **Status legend:** `Implemented` = Lean code with `#eval`/theorems exists. `Partial` = some Lean modules exist, docs are migrated. `Speculative` = documentation and design exist, awaiting Lean formalization.
 
@@ -125,6 +125,17 @@ The full loop adds security gates (AngrySphinx exponential gate #3, FAMM frustra
 - DynamicCanal adaptive canal per substrate
 - SSMS_nD fractal shell hierarchy proof
 - CompressionMechanics physical admissibility proofs
+- RRC equation projection as label-minimized admissibility surface:
+  `278` local equation surfaces projected; `29` CANDIDATE, `249` HOLD;
+  primary repair targets are `scale_band_declared` and
+  `negative_control_strength`
+- Add Lean `RRCShape` mirror for the projection shapes before promoting
+  equation projections into proof targets
+- Root-lift translation table: map classical signal roots to quantum/operator/hardware analogue classes with explicit proof obligations, bounded witnesses, and exact receipt boundaries
+- Root-lift semantic collider: collide source/target vocabularies, equation normal forms, invariants, admissibility constraints, and receipt packets to expose existing roads before declaring gaps
+- Root-lift domain sweep: apply the semantic collider across compression, FPGA/hardware, quantum/signal, biophysics, CAD, genomics, materials, ENE/search, Typst/docs, MCP/tools, Lean/proofs, finance, thermodynamics, remote testing, and LLM compression
+- Stent-physics flow-control table: map porous scaffolds, struts, porosity, apposition, overlap, shear/churn, and residence-time proxies into route-frontier and FPGA packet-flow gates with counted overhead and receipt boundaries
+- Biophysics borrowable-math table: harvest reaction-diffusion, porous transport, membrane curvature, phase separation, excitable-media, fractional-memory, active-matter, and identifiability equations as route-control operators with exact receipt boundaries
 - **Forest Map absorption:** Batch ingest light-source corpus (Forest Phase 7), Neo4j topological traversal (Forest Phase 8)
 
 ### Phase 6 — Compiler (Month 6) | **Status: SPECULATIVE**
@@ -246,18 +257,20 @@ No promotion without domain-appropriate evidence. Compression claims require SI 
 | **L2 Biological** | 📋 Speculative | GENSIS doc, genetic code tables mapped; no Lean |
 | **L3 Thermodynamic** | 📋 Speculative | Trixal, Homeostatic docs; no Lean |
 | **L4 Security** | 🔄 Partial | AngrySphinx Lean exists; FAMM, ASICTopology spec'd |
-| **L5 Semantic** | 📋 Speculative | CrossDimensionalFilter, ManifoldNetworking docs exist |
-| **L6 Meta** | 📋 Speculative | Cognitive load theory complete; awaits Lean |
+| **L5 Semantic** | 🔄 Partial | RRC equation projection receipt exists; 278 surfaces projected, 249 HOLD pending scale-band/negative-control witnesses |
+| **L6 Meta** | 🔄 Partial | Cognitive load receipts exist; connectome-protective overflow needs Lean witness surface |
 | **FPGA Hardware** | ✅ Synthesized | Tang Nano 9K: Yosys pass (614 cells), P&R pass (162 MHz), bitstream (2 MB) |
 | **Surface** | 📋 TODO | FastAPI/WebSocket skeleton spec'd in TODO_MAP Phase F |
 | **Integration** | 📋 TODO | Lean→Verilog extraction, equivalence checking spec'd |
 
 **Immediate next actions** (from `TODO_MAP.md` §Immediate Next Actions):
 1. Audit Lean for `sorry` — `grep -rn "sorry\|admit\|axiom" 0-Core-Formalism/lean/Semantics/`
-2. UART packet format design (start byte + 3-byte payload + checksum)
-3. Create `4-Infrastructure/surface/` FastAPI skeleton
-4. Flash Tang Nano 9K with generated bitstream; verify LED behavior
-5. Execute Burgers Day 1 theorem (Energy Dissipation)
+2. Add RRC scale-band witness schema for equation records; rerun `4-Infrastructure/shim/rrc_equation_classifier.py`
+3. Add negative-control strength witnesses for HOLD rows before promotion
+4. UART packet format design (start byte + 3-byte payload + checksum)
+5. Create `4-Infrastructure/surface/` FastAPI skeleton
+6. Flash Tang Nano 9K with generated bitstream; verify LED behavior
+7. Execute Burgers Day 1 theorem (Energy Dissipation)
 
 ---
 

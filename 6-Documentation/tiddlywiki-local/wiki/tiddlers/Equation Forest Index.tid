@@ -8,7 +8,42 @@ type: text/vnd.tiddlywiki
 
 The Equation Forest is a structured index of mathematical equations discovered, extracted, and mapped across the research stack. Key files: `6-Documentation/docs/EQUATION_FOREST_INDEX.md` (master index), `6-Documentation/docs/FOREST_TOPOLOGY_MAP.md` (topological organization), and `5-Applications/scripts/generate_equation_forest.py` (generator). The forest organizes equations into families (chain, coupling, entropy, feedback, gradient, mass, scaling) with parquet-tagged clustering at `3-Mathematical-Models/equations_parquet_tagged/` (26 files). The `EquationForestActiveKernels.md` and `EquationForestGenome18Encoder.py` extend to genetic encoding of equation families. Searchable via [[HNSW Vector Search]] and the [[Semantic Graph Mining]] pipeline.
 
+!! RRC Projection Update
+
+The Rainbow Raccoon Compiler projection pass now treats family names as
+non-authoritative route hints. The review surface is the projection signature:
+nearest lawful shape, top axes, weak axes, distance, and HOLD cause.
+
+```
+docs/rrc_equation_classification.md
+4-Infrastructure/shim/rrc_equation_classifier_receipt.json
+equation_count: 278
+CANDIDATE: 29
+HOLD: 249
+```
+
+Primary repair targets:
+
+```
+scale_band_declared: 249
+negative_control_strength: 39
+```
+
+This updates the forest rule: do not promote by label. Promote only after a
+receipt-bearing projection has enough scale-band and negative-control evidence
+to survive the next proof or measurement gate.
+
 * [[HNSW Vector Search]]
 * [[Semantic Graph Mining]]
+* [[RRC Equation Projection]]
 * [[AVMR Adaptive Vector Manifold Representation]]
 * [[Canonical Formula Index]]
+* [[T16 Candidate Pipeline Equation Prior]]
+* [[Cross Domain Adaptation Evidence Prior]]
+* [[Nonlinear Compressed Sensing Structural Prior]]
+* [[Generative Compressed Sensing Prior]]
+* [[Invertible Generative Inverse Prior]]
+* [[Connectome Manipulation Self Update Prior]]
+* [[Holographic Fractional Recursive Connectome Prior]]
+* [[Holographic Fractional Recursive Equation Fold]]
+* [[Sigilith Symbolic Resilience Prior]]

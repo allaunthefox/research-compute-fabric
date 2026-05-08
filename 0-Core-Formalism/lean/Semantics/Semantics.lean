@@ -121,6 +121,7 @@ import Semantics.TopologyResilience
 import Semantics.GeneticGroundUp
 import Semantics.Testing.GeneticGroundUpBenchmark
 import Semantics.Testing.ErdosHarness
+import Semantics.Testing.ErdosSurface
 import Semantics.OTOMOntology
 import Semantics.Connectors
 import Semantics.SLUG3
@@ -141,6 +142,7 @@ import Semantics.Burgers3DPDE
 import Semantics.ColeHopfTransform
 import Semantics.LawfulLoss
 import Semantics.Core.MassNumber
+import Semantics.RRCLogogramProjection
 
 namespace Semantics
 

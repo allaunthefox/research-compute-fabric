@@ -1,0 +1,100 @@
+created: 20260508000000000
+modified: 20260508000000000
+tags: ResearchStack RRC Logogram Projection Receipt Compression
+title: RRC Logogram Projection Bridge
+type: text/vnd.tiddlywiki
+
+! RRC Logogram Projection Bridge
+
+Durable note:
+
+```
+docs/rrc_logogram_projection_bridge.md
+```
+
+Runner:
+
+```
+4-Infrastructure/shim/rrc_logogram_projection_bridge.py
+```
+
+Receipt:
+
+```
+4-Infrastructure/shim/rrc_logogram_projection_bridge_receipt.json
+```
+
+Curriculum:
+
+```
+4-Infrastructure/shim/rrc_logogram_projection_bridge_curriculum.jsonl
+```
+
+Receipt hash:
+
+```
+83f44e8341788f6cbb2013704af2622f95f140b5a98402d69cd4ddde5ea88826
+```
+
+!! Projection Equation
+
+```
+P_logogram(source) =
+  (canonical_hash,
+   cell_hash,
+   glyph_payload_16,
+   semantic_regime,
+   substitution_receipt,
+   rrc_type_witness)
+```
+
+!! Results
+
+```
+sample_count: 5
+RRC CANDIDATE witnesses: 5
+RRC HOLD witnesses: 0
+projection_admissible: 5
+merge_admissible: 4
+repaired_tear: 1
+```
+
+!! Repaired Tear
+
+```
+semantic_tear
+  type witness: CANDIDATE
+  projection admissible: true
+  merge admissible: false
+  projection lane: quarantine_projection
+  repair status: isolated_not_merged
+  detached mass: detached_mass:3e2412df1702b180
+```
+
+This is the intended split:
+
+```
+type-shaped enough for RRC
+safe enough to preserve as projection
+not safe enough for tokenbook merge
+```
+
+!! Tear Repair Rule
+
+```
+horrible_manifold_tearing
+  -> contradiction witness
+  -> tear boundary
+  -> detached mass id
+  -> semantic residual lane
+  -> quarantine projection
+```
+
+!! Links
+
+* [[Rainbow Raccoon Compiler]]
+* [[RRC Logogram Projection Formalism]]
+* [[Math Logogram Surface Compiler]]
+* [[Compression Signal Shaping Synthesis]]
+* [[Semantic Topology Compression Regimes]]
+* [[Decision Diagram Compression Tuning Prior]]

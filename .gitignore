@@ -60,8 +60,12 @@ data/*.iso
 # Lean build artifacts
 **/.lake/
 *.trace
+.changes/
+**/_build/
+**/__pycache__/
 
 # Hardware/FPGA build artifacts
+**/obj_dir/
 **/hardware/sparkle/tangnano9k/*.fs
 **/hardware/sparkle/tangnano9k/*.pnr.json
 **/hardware/sparkle/tangnano9k/*.history
@@ -83,6 +87,15 @@ shared-data/
 # Rust build artifacts
 **/target/
 tools/servo-fetch/
+
+# JavaScript build artifacts
+**/node_modules/
+
+# Downloaded external tool caches
+5-Applications/tools-scripts/external/openclaw/
+5-Applications/tools-scripts/external/mcp/
+5-Applications/tools-scripts/external/quantum/
+5-Applications/tools-scripts/external/typst-cli/
 
 # Kernel module build artifacts
 *.ko

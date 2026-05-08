@@ -1,0 +1,82 @@
+created: 20260507000000000
+modified: 20260507000000000
+tags: ResearchStack LLM Compression Metaprobe Logogram RaTeX Tang9K
+title: Math Logogram Surface Compiler
+type: text/vnd.tiddlywiki
+
+! Math Logogram Surface Compiler
+
+The Math Logogram Surface Compiler is Surface-1 for the compression-first LLM pipeline. It turns LaTeX, symbolic logogram strings, and chemistry-style math strings into deterministic canonical cells, fixed-width glyph payloads, substitution receipts, and SFT curriculum rows.
+
+Durable source: `4-Infrastructure/shim/math_logogram_surface_builder.py`
+
+Receipt: `4-Infrastructure/shim/math_logogram_surface_receipt.json`
+
+Curriculum: `4-Infrastructure/shim/math_logogram_surface_curriculum.jsonl`
+
+!! Pipeline
+
+```
+LaTeX / logogram source
+  -> deterministic token cells
+  -> display-list-like canonical cell hash
+  -> 16-byte Tang-compatible glyph payload
+  -> substitution receipt
+  -> semantic topology regime
+```
+
+!! RaTeX Role
+
+RaTeX is the preferred future canonicalizer because it lowers LaTeX/math/chemistry syntax into a Rust-native parse/layout/display-list pipeline. Surface-1 currently uses a deterministic Python canonicalizer so the stack can run today without cloning an external dependency.
+
+!! Regime Output
+
+The compiler tags each sample as `beautiful_topological_folding`, `ugly_asymmetric_pruning`, or `horrible_manifold_tearing` so destructive compression does not get smoothed into prose.
+
+!! RRC Projection Bridge
+
+[[RRC Logogram Projection Bridge]] maps compiled logogram cells into the
+[[Rainbow Raccoon Compiler]] as `LogogramProjection` objects.
+
+```
+canonical cell hash
+  -> bounded glyph payload
+  -> substitution receipt
+  -> semantic regime guard
+  -> RRC type witness
+```
+
+The bridge produces five `LogogramProjection` type candidates. Four are ordinary
+merge-admissible projections. The `semantic_tear` sample is repaired into a
+quarantine projection with detached semantic mass, so it is preserved without
+being merged into ordinary tokenbook space.
+
+!! Typst Omindirection Role
+
+[[Typst Omindirection Plugin Surface]] is the preferred document-side renderer for compiled logograms. It gives each symbolic atom explicit direction, chirality, and tone metadata before dense visual flow.
+
+```
+compiled logogram cell
+  -> omindirection atom
+  -> direction field
+  -> chirality field
+  -> tone/status field
+  -> compiled Typst receipt
+```
+
+[[Epigenetic Go-Tile Meta-Manifold]] supplies the next computation model: each compiled logogram becomes a placed tile whose mutable expression marks can alter local liberties, captures, and semantic territory without changing the underlying symbol payload.
+
+!! Claim Boundary
+
+The compiler canonicalizes and compresses symbolic strings. It does not prove math, chemistry, or PDE claims.
+
+!! Links
+
+* [[LLM Compression Architecture Priors]]
+* [[Semantic Topology Compression Regimes]]
+* [[Rainbow Raccoon Compiler]]
+* [[RRC Logogram Projection Bridge]]
+* [[N-Space LLM Pipeline Tuning]]
+* [[Tang9K 1-Wire Bitpacking Bridge]]
+* [[Typst Omindirection Plugin Surface]]
+* [[Epigenetic Go-Tile Meta-Manifold]]

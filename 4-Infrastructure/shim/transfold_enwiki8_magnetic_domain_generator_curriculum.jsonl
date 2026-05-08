@@ -1,0 +1,3 @@
+{"input": "enwiki8 byte chunk statistics", "target": "H, chi, remanence, magnetization, overflow, heat_loss", "task": "transfold_byte_signal_to_magnetic_domain"}
+{"input": "information_load and capacity_threshold", "target": "overflow_gate plus hysteresis heat-loss channel", "task": "detect_capacity_overflow"}
+{"input": "real_file", "target": "This receipt maps byte-signal statistics into a magnetic-domain analogue. It is a stress-test and routing prior, not a claim that text data is a literal magnetic material.", "task": "preserve_claim_boundary"}

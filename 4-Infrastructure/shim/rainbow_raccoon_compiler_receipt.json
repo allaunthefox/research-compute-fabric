@@ -1,0 +1,760 @@
+{
+  "claim_state": "integration_shim_not_formal_proof",
+  "compiled_objects": [
+    {
+      "field_equation": "r* = argmin_r LB(r | phi_signal(c), semantic_regime(c), history_state); promote iff exact decode hash closes and total bytes beat incumbent",
+      "invariant_receipt": {
+        "object_id": "rrc_obj_signal_route_compiler",
+        "receipt_hash": "3fb2f3b7e3136097a97b5193308be0112e32127ab9c4904aeb99c0044fdac49b",
+        "schema": "rrc.object_receipt.v1",
+        "shape": "SignalShapedRouteCompiler",
+        "status": "HOLD"
+      },
+      "manifold_projection": {
+        "axes": [
+          "semantic_entropy",
+          "geometric_mass",
+          "compression_pressure",
+          "topology_torsion",
+          "receipt_density",
+          "field_energy",
+          "hardware_affinity",
+          "proof_readiness",
+          "residual_risk",
+          "shape_closure",
+          "history_depth",
+          "negative_control_strength",
+          "projection_declared",
+          "decoder_declared",
+          "witness_declared",
+          "scale_band_declared"
+        ],
+        "coordinates": {
+          "compression_pressure": 1.0,
+          "decoder_declared": 0.8,
+          "field_energy": 0.571429,
+          "geometric_mass": 0.714286,
+          "hardware_affinity": 0.166667,
+          "history_depth": 0.8,
+          "negative_control_strength": 1.0,
+          "projection_declared": 1.0,
+          "proof_readiness": 0.525,
+          "receipt_density": 0.444444,
+          "residual_risk": 0.21,
+          "scale_band_declared": 0.2,
+          "semantic_entropy": 0.8125,
+          "shape_closure": 0.74,
+          "topology_torsion": 0.6,
+          "witness_declared": 0.8
+        }
+      },
+      "nearest_lawful_shape": {
+        "alternates": [
+          {
+            "distance": 0.24990781814137925,
+            "kind_prior_bonus": 0.0,
+            "raw_distance": 0.24990781814137925,
+            "shape": "LogogramProjection"
+          },
+          {
+            "distance": 0.315320209049232,
+            "kind_prior_bonus": 0.0,
+            "raw_distance": 0.315320209049232,
+            "shape": "ProjectableGeometryTopology"
+          },
+          {
+            "distance": 0.3183245275968724,
+            "kind_prior_bonus": 0.0,
+            "raw_distance": 0.3183245275968724,
+            "shape": "CognitiveLoadField"
+          }
+        ],
+        "declared_kind": "compression_route_prior",
+        "distance": 0.070321,
+        "kind_prior_shape": "SignalShapedRouteCompiler",
+        "shape": "SignalShapedRouteCompiler"
+      },
+      "object": {
+        "kind": "compression_route_prior",
+        "label": "Compression Signal Shaping Synthesis",
+        "object_id": "rrc_obj_signal_route_compiler",
+        "payload_bytes_sampled": 5795,
+        "payload_sha256": "acf78e129bbd08a5e8c5eaf0245fa6cbddecb277700ec33ad94bb379b5e0f7f7",
+        "source_path": "docs/compression_signal_shaping_synthesis.md"
+      },
+      "pipeline": [
+        "object",
+        "manifold_projection",
+        "nearest_lawful_shape",
+        "type_witness",
+        "field_equation",
+        "invariant_receipt"
+      ],
+      "type_witness": {
+        "conservative_synthesis": true,
+        "lean_boundary": "declared_not_proved",
+        "missing_or_weak_axes": [
+          "scale_band_declared"
+        ],
+        "object_id": "rrc_obj_signal_route_compiler",
+        "required_axes": [
+          "projection_declared",
+          "witness_declared",
+          "scale_band_declared",
+          "decoder_declared"
+        ],
+        "shape": "SignalShapedRouteCompiler",
+        "status": "HOLD",
+        "witness_hash": "66938ad313a0deeb0a7082febda21d561be48d5cf77046057d6053f907f079e9"
+      }
+    },
+    {
+      "field_equation": "close iff mass_delta_q == 0 and horizon_hash matches and nan0_flag == 0",
+      "invariant_receipt": {
+        "object_id": "rrc_obj_projectable_geometry",
+        "receipt_hash": "f8d0fae4e724793e97e221d919795a4a8d54f2ac0942cacefd096b1d3b59e71e",
+        "schema": "rrc.object_receipt.v1",
+        "shape": "ProjectableGeometryTopology",
+        "status": "CANDIDATE"
+      },
+      "manifold_projection": {
+        "axes": [
+          "semantic_entropy",
+          "geometric_mass",
+          "compression_pressure",
+          "topology_torsion",
+          "receipt_density",
+          "field_energy",
+          "hardware_affinity",
+          "proof_readiness",
+          "residual_risk",
+          "shape_closure",
+          "history_depth",
+          "negative_control_strength",
+          "projection_declared",
+          "decoder_declared",
+          "witness_declared",
+          "scale_band_declared"
+        ],
+        "coordinates": {
+          "compression_pressure": 0.833333,
+          "decoder_declared": 0.8,
+          "field_energy": 0.285714,
+          "geometric_mass": 0.914286,
+          "hardware_affinity": 0.166667,
+          "history_depth": 0.2,
+          "negative_control_strength": 0.4,
+          "projection_declared": 1.0,
+          "proof_readiness": 0.625,
+          "receipt_density": 0.611111,
+          "residual_risk": 0.25,
+          "scale_band_declared": 0.4,
+          "semantic_entropy": 0.770833,
+          "shape_closure": 0.83,
+          "topology_torsion": 0.2,
+          "witness_declared": 1.0
+        }
+      },
+      "nearest_lawful_shape": {
+        "alternates": [
+          {
+            "distance": 0.206098395010935,
+            "kind_prior_bonus": 0.0,
+            "raw_distance": 0.206098395010935,
+            "shape": "LogogramProjection"
+          },
+          {
+            "distance": 0.2698413349454287,
+            "kind_prior_bonus": 0.0,
+            "raw_distance": 0.2698413349454287,
+            "shape": "SignalShapedRouteCompiler"
+          },
+          {
+            "distance": 0.3536593156150725,
+            "kind_prior_bonus": 0.0,
+            "raw_distance": 0.3536593156150725,
+            "shape": "CadForceProbeReceipt"
+          }
+        ],
+        "declared_kind": "geometry_topology_receipt",
+        "distance": 0.107275,
+        "kind_prior_shape": "ProjectableGeometryTopology",
+        "shape": "ProjectableGeometryTopology"
+      },
+      "object": {
+        "kind": "geometry_topology_receipt",
+        "label": "Projectable Geometry Topology Receipt",
+        "object_id": "rrc_obj_projectable_geometry",
+        "payload_bytes_sampled": 11265,
+        "payload_sha256": "e89b864560b956dab17a56683cc131374a4dc26347258f5164389d11984f940b",
+        "source_path": "4-Infrastructure/shim/projectable_geometry_topology_model_receipt.json"
+      },
+      "pipeline": [
+        "object",
+        "manifold_projection",
+        "nearest_lawful_shape",
+        "type_witness",
+        "field_equation",
+        "invariant_receipt"
+      ],
+      "type_witness": {
+        "conservative_synthesis": false,
+        "lean_boundary": "declared_not_proved",
+        "missing_or_weak_axes": [],
+        "object_id": "rrc_obj_projectable_geometry",
+        "required_axes": [
+          "projection_declared",
+          "witness_declared",
+          "scale_band_declared",
+          "shape_closure",
+          "negative_control_strength"
+        ],
+        "shape": "ProjectableGeometryTopology",
+        "status": "CANDIDATE",
+        "witness_hash": "2c445584d580ba81c570cdcbaac0fc2f938187c229d7e3e878c1d0f83aa9810e"
+      }
+    },
+    {
+      "field_equation": "L_total = C_domain * response_family(S; theta) * phi_gain * B_gate * overflow_gate",
+      "invariant_receipt": {
+        "object_id": "rrc_obj_cognitive_load",
+        "receipt_hash": "bad3a1070cfd3db7b6db06d2185042d5d25cc55ba2b1ab244519c0d4f7016c7b",
+        "schema": "rrc.object_receipt.v1",
+        "shape": "CognitiveLoadField",
+        "status": "CANDIDATE"
+      },
+      "manifold_projection": {
+        "axes": [
+          "semantic_entropy",
+          "geometric_mass",
+          "compression_pressure",
+          "topology_torsion",
+          "receipt_density",
+          "field_energy",
+          "hardware_affinity",
+          "proof_readiness",
+          "residual_risk",
+          "shape_closure",
+          "history_depth",
+          "negative_control_strength",
+          "projection_declared",
+          "decoder_declared",
+          "witness_declared",
+          "scale_band_declared"
+        ],
+        "coordinates": {
+          "compression_pressure": 0.0,
+          "decoder_declared": 0.2,
+          "field_energy": 0.571429,
+          "geometric_mass": 0.285714,
+          "hardware_affinity": 0.0,
+          "history_depth": 0.8,
+          "negative_control_strength": 0.6,
+          "projection_declared": 1.0,
+          "proof_readiness": 0.425,
+          "receipt_density": 0.166667,
+          "residual_risk": 0.4,
+          "scale_band_declared": 0.6,
+          "semantic_entropy": 0.802083,
+          "shape_closure": 0.62,
+          "topology_torsion": 0.2,
+          "witness_declared": 0.6
+        }
+      },
+      "nearest_lawful_shape": {
+        "alternates": [
+          {
+            "distance": 0.37635520223031216,
+            "kind_prior_bonus": 0.0,
+            "raw_distance": 0.37635520223031216,
+            "shape": "LogogramProjection"
+          },
+          {
+            "distance": 0.384927049561231,
+            "kind_prior_bonus": 0.0,
+            "raw_distance": 0.384927049561231,
+            "shape": "SignalShapedRouteCompiler"
+          },
+          {
+            "distance": 0.4031179744703246,
+            "kind_prior_bonus": 0.0,
+            "raw_distance": 0.4031179744703246,
+            "shape": "HoldForUnlawfulOrUnderspecifiedShape"
+          }
+        ],
+        "declared_kind": "cognitive_field_receipt",
+        "distance": 0.10305,
+        "kind_prior_shape": "CognitiveLoadField",
+        "shape": "CognitiveLoadField"
+      },
+      "object": {
+        "kind": "cognitive_field_receipt",
+        "label": "Connectome Protective Cognitive Load Receipt",
+        "object_id": "rrc_obj_cognitive_load",
+        "payload_bytes_sampled": 8845,
+        "payload_sha256": "fc222e265e70f69ee5e6039dd0cee2665a02e549b6718a7d022f9241849b3cf1",
+        "source_path": "4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json"
+      },
+      "pipeline": [
+        "object",
+        "manifold_projection",
+        "nearest_lawful_shape",
+        "type_witness",
+        "field_equation",
+        "invariant_receipt"
+      ],
+      "type_witness": {
+        "conservative_synthesis": false,
+        "lean_boundary": "declared_not_proved",
+        "missing_or_weak_axes": [],
+        "object_id": "rrc_obj_cognitive_load",
+        "required_axes": [
+          "projection_declared",
+          "witness_declared",
+          "scale_band_declared"
+        ],
+        "shape": "CognitiveLoadField",
+        "status": "CANDIDATE",
+        "witness_hash": "b964fc51027b1b1744bb3e7eddc77ae52657608aac3fa0205859ca40e930196e"
+      }
+    },
+    {
+      "field_equation": "sum_j q_ij * (x_i - x_j) + p_i = 0; residual must stay under declared tolerance",
+      "invariant_receipt": {
+        "object_id": "rrc_obj_cad_force_probe",
+        "receipt_hash": "daa2058fb8f3631fab71d980eea905cdf97cf294787259ba4b116fe975550843",
+        "schema": "rrc.object_receipt.v1",
+        "shape": "CadForceProbeReceipt",
+        "status": "HOLD"
+      },
+      "manifold_projection": {
+        "axes": [
+          "semantic_entropy",
+          "geometric_mass",
+          "compression_pressure",
+          "topology_torsion",
+          "receipt_density",
+          "field_energy",
+          "hardware_affinity",
+          "proof_readiness",
+          "residual_risk",
+          "shape_closure",
+          "history_depth",
+          "negative_control_strength",
+          "projection_declared",
+          "decoder_declared",
+          "witness_declared",
+          "scale_band_declared"
+        ],
+        "coordinates": {
+          "compression_pressure": 0.0,
+          "decoder_declared": 0.2,
+          "field_energy": 0.428571,
+          "geometric_mass": 0.571429,
+          "hardware_affinity": 0.333333,
+          "history_depth": 0.0,
+          "negative_control_strength": 0.8,
+          "projection_declared": 1.0,
+          "proof_readiness": 0.2,
+          "receipt_density": 1.0,
+          "residual_risk": 0.47,
+          "scale_band_declared": 0.2,
+          "semantic_entropy": 0.75,
+          "shape_closure": 0.49,
+          "topology_torsion": 0.2,
+          "witness_declared": 0.4
+        }
+      },
+      "nearest_lawful_shape": {
+        "alternates": [
+          {
+            "distance": 0.3553850990040301,
+            "kind_prior_bonus": 0.0,
+            "raw_distance": 0.3553850990040301,
+            "shape": "LogogramProjection"
+          },
+          {
+            "distance": 0.37821407961983083,
+            "kind_prior_bonus": 0.0,
+            "raw_distance": 0.37821407961983083,
+            "shape": "SignalShapedRouteCompiler"
+          },
+          {
+            "distance": 0.3810977215308549,
+            "kind_prior_bonus": 0.0,
+            "raw_distance": 0.3810977215308549,
+            "shape": "ProjectableGeometryTopology"
+          }
+        ],
+        "declared_kind": "cad_force_receipt",
+        "distance": 0.167641,
+        "kind_prior_shape": "CadForceProbeReceipt",
+        "shape": "CadForceProbeReceipt"
+      },
+      "object": {
+        "kind": "cad_force_receipt",
+        "label": "CAD Force Probe Experiment Matrix Receipt",
+        "object_id": "rrc_obj_cad_force_probe",
+        "payload_bytes_sampled": 12000,
+        "payload_sha256": "aa9973793d7964c7343521715758bef376029a1be8da3ed3dda4b7174e7e1191",
+        "source_path": "4-Infrastructure/shim/cad_force_probe_experiment_matrix_receipt.json"
+      },
+      "pipeline": [
+        "object",
+        "manifold_projection",
+        "nearest_lawful_shape",
+        "type_witness",
+        "field_equation",
+        "invariant_receipt"
+      ],
+      "type_witness": {
+        "conservative_synthesis": true,
+        "lean_boundary": "declared_not_proved",
+        "missing_or_weak_axes": [
+          "scale_band_declared"
+        ],
+        "object_id": "rrc_obj_cad_force_probe",
+        "required_axes": [
+          "projection_declared",
+          "witness_declared",
+          "scale_band_declared",
+          "shape_closure",
+          "negative_control_strength"
+        ],
+        "shape": "CadForceProbeReceipt",
+        "status": "HOLD",
+        "witness_hash": "b4f41cc343d59dac0790fbb87436892ca03e0322089b2a2e57dfce717e178acd"
+      }
+    },
+    {
+      "field_equation": "HOLD iff projection, decoder, witness, scale, or residual accounting is missing",
+      "invariant_receipt": {
+        "object_id": "rrc_obj_underspecified",
+        "receipt_hash": "58fa4044ec2f9ffb848dc2d2152f12bf8b2445e4701c905f2563b2e4d9d8e696",
+        "schema": "rrc.object_receipt.v1",
+        "shape": "HoldForUnlawfulOrUnderspecifiedShape",
+        "status": "HOLD"
+      },
+      "manifold_projection": {
+        "axes": [
+          "semantic_entropy",
+          "geometric_mass",
+          "compression_pressure",
+          "topology_torsion",
+          "receipt_density",
+          "field_energy",
+          "hardware_affinity",
+          "proof_readiness",
+          "residual_risk",
+          "shape_closure",
+          "history_depth",
+          "negative_control_strength",
+          "projection_declared",
+          "decoder_declared",
+          "witness_declared",
+          "scale_band_declared"
+        ],
+        "coordinates": {
+          "compression_pressure": 0.0,
+          "decoder_declared": 0.6,
+          "field_energy": 0.0,
+          "geometric_mass": 0.0,
+          "hardware_affinity": 0.0,
+          "history_depth": 0.0,
+          "negative_control_strength": 0.0,
+          "projection_declared": 0.2,
+          "proof_readiness": 0.1,
+          "receipt_density": 0.0,
+          "residual_risk": 0.76,
+          "scale_band_declared": 0.2,
+          "semantic_entropy": 0.197917,
+          "shape_closure": 0.3,
+          "topology_torsion": 0.0,
+          "witness_declared": 0.2
+        }
+      },
+      "nearest_lawful_shape": {
+        "alternates": [
+          {
+            "distance": 0.5267681143229543,
+            "kind_prior_bonus": 0.0,
+            "raw_distance": 0.5267681143229543,
+            "shape": "LogogramProjection"
+          },
+          {
+            "distance": 0.5273847232024844,
+            "kind_prior_bonus": 0.0,
+            "raw_distance": 0.5273847232024844,
+            "shape": "CognitiveLoadField"
+          },
+          {
+            "distance": 0.5578131224708635,
+            "kind_prior_bonus": 0.0,
+            "raw_distance": 0.5578131224708635,
+            "shape": "SignalShapedRouteCompiler"
+          }
+        ],
+        "declared_kind": "negative_control",
+        "distance": 0.240924,
+        "kind_prior_shape": "HoldForUnlawfulOrUnderspecifiedShape",
+        "shape": "HoldForUnlawfulOrUnderspecifiedShape"
+      },
+      "object": {
+        "kind": "negative_control",
+        "label": "Underspecified raw object negative control",
+        "object_id": "rrc_obj_underspecified",
+        "payload_bytes_sampled": 81,
+        "payload_sha256": "16b533bc42bda8f17ebb1328324e0bd0749c867eccfa28c8c35d19310e553e9a",
+        "source_path": null
+      },
+      "pipeline": [
+        "object",
+        "manifold_projection",
+        "nearest_lawful_shape",
+        "type_witness",
+        "field_equation",
+        "invariant_receipt"
+      ],
+      "type_witness": {
+        "conservative_synthesis": true,
+        "lean_boundary": "declared_not_proved",
+        "missing_or_weak_axes": [
+          "projection_declared",
+          "witness_declared",
+          "scale_band_declared"
+        ],
+        "object_id": "rrc_obj_underspecified",
+        "required_axes": [
+          "projection_declared",
+          "witness_declared",
+          "scale_band_declared"
+        ],
+        "shape": "HoldForUnlawfulOrUnderspecifiedShape",
+        "status": "HOLD",
+        "witness_hash": "6259e606899cdf4987f8c0537d4bb0f9e5ef4e80916f934c2851af4e9a9f3b98"
+      }
+    }
+  ],
+  "compiler_abbrev": "RRC",
+  "compiler_name": "Rainbow Raccoon Compiler",
+  "field_equations": {
+    "CadForceProbeReceipt": "sum_j q_ij * (x_i - x_j) + p_i = 0; residual must stay under declared tolerance",
+    "CognitiveLoadField": "L_total = C_domain * response_family(S; theta) * phi_gain * B_gate * overflow_gate",
+    "HoldForUnlawfulOrUnderspecifiedShape": "HOLD iff projection, decoder, witness, scale, or residual accounting is missing",
+    "LogogramProjection": "logogram_cell -> canonical_hash -> glyph_payload -> projection_lane; admit iff cell hash, payload bound, substitution receipt, and regime guard close",
+    "ProjectableGeometryTopology": "close iff mass_delta_q == 0 and horizon_hash matches and nan0_flag == 0",
+    "SignalShapedRouteCompiler": "r* = argmin_r LB(r | phi_signal(c), semantic_regime(c), history_state); promote iff exact decode hash closes and total bytes beat incumbent"
+  },
+  "lawful_shape_prototypes": {
+    "CadForceProbeReceipt": {
+      "compression_pressure": 0.3,
+      "decoder_declared": 0.46,
+      "field_energy": 0.81,
+      "geometric_mass": 0.91,
+      "hardware_affinity": 0.73,
+      "history_depth": 0.31,
+      "negative_control_strength": 0.88,
+      "projection_declared": 0.92,
+      "proof_readiness": 0.45,
+      "receipt_density": 0.87,
+      "residual_risk": 0.43,
+      "scale_band_declared": 0.79,
+      "semantic_entropy": 0.25,
+      "shape_closure": 0.86,
+      "topology_torsion": 0.64,
+      "witness_declared": 0.89
+    },
+    "CognitiveLoadField": {
+      "compression_pressure": 0.63,
+      "decoder_declared": 0.38,
+      "field_energy": 0.88,
+      "geometric_mass": 0.42,
+      "hardware_affinity": 0.37,
+      "history_depth": 0.91,
+      "negative_control_strength": 0.42,
+      "projection_declared": 0.76,
+      "proof_readiness": 0.28,
+      "receipt_density": 0.55,
+      "residual_risk": 0.71,
+      "scale_band_declared": 0.68,
+      "semantic_entropy": 0.86,
+      "shape_closure": 0.52,
+      "topology_torsion": 0.66,
+      "witness_declared": 0.53
+    },
+    "HoldForUnlawfulOrUnderspecifiedShape": {
+      "compression_pressure": 0.5,
+      "decoder_declared": 0.15,
+      "field_energy": 0.7,
+      "geometric_mass": 0.4,
+      "hardware_affinity": 0.25,
+      "history_depth": 0.74,
+      "negative_control_strength": 0.12,
+      "projection_declared": 0.18,
+      "proof_readiness": 0.1,
+      "receipt_density": 0.24,
+      "residual_risk": 0.91,
+      "scale_band_declared": 0.22,
+      "semantic_entropy": 0.76,
+      "shape_closure": 0.19,
+      "topology_torsion": 0.83,
+      "witness_declared": 0.1
+    },
+    "LogogramProjection": {
+      "compression_pressure": 0.86,
+      "decoder_declared": 0.84,
+      "field_energy": 0.43,
+      "geometric_mass": 0.49,
+      "hardware_affinity": 0.58,
+      "history_depth": 0.34,
+      "negative_control_strength": 0.55,
+      "projection_declared": 0.93,
+      "proof_readiness": 0.36,
+      "receipt_density": 0.72,
+      "residual_risk": 0.34,
+      "scale_band_declared": 0.58,
+      "semantic_entropy": 0.62,
+      "shape_closure": 0.78,
+      "topology_torsion": 0.48,
+      "witness_declared": 0.82
+    },
+    "ProjectableGeometryTopology": {
+      "compression_pressure": 0.56,
+      "decoder_declared": 0.7,
+      "field_energy": 0.76,
+      "geometric_mass": 0.94,
+      "hardware_affinity": 0.68,
+      "history_depth": 0.38,
+      "negative_control_strength": 0.61,
+      "projection_declared": 0.95,
+      "proof_readiness": 0.49,
+      "receipt_density": 0.81,
+      "residual_risk": 0.37,
+      "scale_band_declared": 0.73,
+      "semantic_entropy": 0.34,
+      "shape_closure": 0.9,
+      "topology_torsion": 0.72,
+      "witness_declared": 0.84
+    },
+    "SignalShapedRouteCompiler": {
+      "compression_pressure": 0.92,
+      "decoder_declared": 0.88,
+      "field_energy": 0.52,
+      "geometric_mass": 0.28,
+      "hardware_affinity": 0.61,
+      "history_depth": 0.46,
+      "negative_control_strength": 0.83,
+      "projection_declared": 0.91,
+      "proof_readiness": 0.42,
+      "receipt_density": 0.78,
+      "residual_risk": 0.31,
+      "scale_band_declared": 0.64,
+      "semantic_entropy": 0.58,
+      "shape_closure": 0.76,
+      "topology_torsion": 0.34,
+      "witness_declared": 0.79
+    }
+  },
+  "manifold_axes": [
+    "semantic_entropy",
+    "geometric_mass",
+    "compression_pressure",
+    "topology_torsion",
+    "receipt_density",
+    "field_energy",
+    "hardware_affinity",
+    "proof_readiness",
+    "residual_risk",
+    "shape_closure",
+    "history_depth",
+    "negative_control_strength",
+    "projection_declared",
+    "decoder_declared",
+    "witness_declared",
+    "scale_band_declared"
+  ],
+  "next_integration_steps": [
+    "Add a Lean RRCShape enum and witness-gate theorem surface.",
+    "Wire RRC classifications into the compression route classifier from E1/E2.",
+    "Use RRC HOLD status as a fail-closed gate for semantic tokenbook merges.",
+    "Map CAD force-probe receipts through RRC before four-force geometry claims."
+  ],
+  "pipeline": [
+    {
+      "meaning": "raw object, receipt, source file, model state, or probe record",
+      "step": "object"
+    },
+    {
+      "meaning": "map object into a 16-axis semantic/geometric/compression phase vector",
+      "step": "manifold_projection"
+    },
+    {
+      "meaning": "choose closest declared type-shape prototype under normalized distance",
+      "step": "nearest_lawful_shape"
+    },
+    {
+      "meaning": "emit CANDIDATE or HOLD witness; Lean status is explicit",
+      "step": "type_witness"
+    },
+    {
+      "meaning": "attach behavior equation for the selected shape",
+      "step": "field_equation"
+    },
+    {
+      "meaning": "hash-stable receipt for replay and audit",
+      "step": "invariant_receipt"
+    }
+  ],
+  "primary_read": "RRC becomes the type-checking layer for the signal-shaped route compiler: objects are projected into a named manifold vector, matched to lawful shape prototypes, assigned conservative type witnesses, and emitted as hash-stable invariant receipts.",
+  "promotion_rules": [
+    "CANDIDATE is not a Lean proof; it is only admissible for next-stage proving.",
+    "HOLD is emitted when projection, witness, decoder, residual, or scale is weak.",
+    "No object may be promoted as lawful without a replayable invariant receipt.",
+    "Compression gain must still count residual, witness, decoder, sidecar, and container bytes.",
+    "Geometry or force claims require calibrated physical measurement receipts."
+  ],
+  "receipt_hash": "5edf7a533f7994233f075e171a984760525301e0f66040c8ac882d1172928f2a",
+  "schema": "rainbow_raccoon_compiler_integration_v1",
+  "source_artifacts": [
+    {
+      "bytes": 5795,
+      "path": "docs/compression_signal_shaping_synthesis.md",
+      "sha256": "acf78e129bbd08a5e8c5eaf0245fa6cbddecb277700ec33ad94bb379b5e0f7f7"
+    },
+    {
+      "bytes": 15511,
+      "path": "4-Infrastructure/shim/compression_signal_shaping_synthesis_receipt.json",
+      "sha256": "f89389a1a9cccf06a24d1b6d4102591ab5e6c031f7ce9e1675365724053276f1"
+    },
+    {
+      "bytes": 11265,
+      "path": "4-Infrastructure/shim/projectable_geometry_topology_model_receipt.json",
+      "sha256": "e89b864560b956dab17a56683cc131374a4dc26347258f5164389d11984f940b"
+    },
+    {
+      "bytes": 8441,
+      "path": "4-Infrastructure/shim/holographic_fractional_recursive_equation_fold_receipt.json",
+      "sha256": "7284397eae4a93679e69a1550c76e322bfb28bc47c10af382fb05d8fd16fd74c"
+    },
+    {
+      "bytes": 8845,
+      "path": "4-Infrastructure/shim/connectome_protective_cognitive_load_reweighting_receipt.json",
+      "sha256": "fc222e265e70f69ee5e6039dd0cee2665a02e549b6718a7d022f9241849b3cf1"
+    },
+    {
+      "bytes": 12271,
+      "path": "4-Infrastructure/shim/cad_force_probe_experiment_matrix_receipt.json",
+      "sha256": "846d4d0700ef1ff7c7b879509c2659f127fdea5ef6b28076b2d72907bd7ffea0"
+    },
+    {
+      "bytes": 17288,
+      "path": "docs/research/GCCL_THEORY_INTRO.md",
+      "sha256": "b8b2b44259bca36151165c510bb8bd6b89b4f5b29b3aea90827bae6a90e36aff"
+    },
+    {
+      "bytes": 35234,
+      "path": "0-Core-Formalism/lean/Semantics/Semantics/GeometricCompressionWorkspace.lean",
+      "sha256": "ca26efe8e205c27952a3a23fdbdb5e7ef6cfccd376c3da35c6a997caf92f0078"
+    }
+  ]
+}

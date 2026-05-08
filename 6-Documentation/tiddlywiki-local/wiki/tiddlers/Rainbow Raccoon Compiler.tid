@@ -1,0 +1,146 @@
+created: 20260508000000000
+modified: 20260508000000000
+tags: ResearchStack Compiler Manifold TypeChecker Receipt GCCL Compression
+title: Rainbow Raccoon Compiler
+type: text/vnd.tiddlywiki
+
+! Rainbow Raccoon Compiler
+
+Durable note:
+
+```
+docs/rainbow_raccoon_compiler_integration.md
+```
+
+Runner:
+
+```
+4-Infrastructure/shim/rainbow_raccoon_compiler.py
+```
+
+Receipt:
+
+```
+4-Infrastructure/shim/rainbow_raccoon_compiler_receipt.json
+```
+
+Curriculum:
+
+```
+4-Infrastructure/shim/rainbow_raccoon_compiler_curriculum.jsonl
+```
+
+Receipt hash:
+
+```
+5edf7a533f7994233f075e171a984760525301e0f66040c8ac882d1172928f2a
+```
+
+!! Definition
+
+The Rainbow Raccoon Compiler is represented here as a manifold-indexed type
+checker:
+
+```
+object
+-> manifold projection
+-> nearest lawful shape
+-> type witness
+-> field equation
+-> invariant receipt
+```
+
+It is not yet a Lean proof generator.  It is the receipt-bearing boundary that
+decides whether an object is a `CANDIDATE` for proof or must remain in `HOLD`.
+
+!! Initial Lawful Shapes
+
+```
+SignalShapedRouteCompiler
+ProjectableGeometryTopology
+CognitiveLoadField
+CadForceProbeReceipt
+LogogramProjection
+HoldForUnlawfulOrUnderspecifiedShape
+```
+
+!! Compile Results
+
+```
+Compression Signal Shaping Synthesis
+  -> SignalShapedRouteCompiler
+  -> HOLD
+
+Projectable Geometry Topology Receipt
+  -> ProjectableGeometryTopology
+  -> CANDIDATE
+
+Connectome Protective Cognitive Load Receipt
+  -> CognitiveLoadField
+  -> CANDIDATE
+
+CAD Force Probe Experiment Matrix Receipt
+  -> CadForceProbeReceipt
+  -> HOLD
+
+Underspecified raw object negative control
+  -> HoldForUnlawfulOrUnderspecifiedShape
+  -> HOLD
+```
+
+!! Equation Projection Receipt
+
+The equation projection pass is now explicitly label-minimized:
+
+```
+human labels != lawful shape
+route hints are non-authoritative
+projection signatures are the review surface
+```
+
+Current receipt:
+
+```
+docs/rrc_equation_classification.md
+4-Infrastructure/shim/rrc_equation_classifier_receipt.json
+c758aadb2bf11922a805d695d5b7bafa477ad426e60ea8e925490f14ccba497c
+```
+
+Current exposed tears:
+
+```
+scale_band_declared: 249
+negative_control_strength: 39
+```
+
+!! Important Boundary
+
+```
+CANDIDATE != proof
+HOLD != failure
+HOLD means the compiler found missing or weak admission evidence
+```
+
+!! Next Moves
+
+```
+add Lean RRCShape enum
+wire RRC into E1/E2 compression route classifier
+use HOLD as fail-closed semantic tokenbook gate
+map CAD force-probe receipts through RRC before force claims
+add calibrated scale-band metadata
+repair [[RRC Equation Projection]] HOLD rows by adding scale-band witnesses
+add negative-control witness strength before promoting shape candidates
+integrate [[RRC Logogram Projection Bridge]]
+```
+
+!! Links
+
+* [[Compression Signal Shaping Synthesis]]
+* [[RRC Equation Projection]]
+* [[RRC Logogram Projection Bridge]]
+* [[RRC Logogram Projection Formalism]]
+* [[Decision Diagram Compression Tuning Prior]]
+* [[Merkle Tensegrity Load Equation Harness]]
+* [[CAD Force Probe Experiment Matrix]]
+* [[Four Force Geometry Probe Prior]]

@@ -1,0 +1,162 @@
+created: 20260508000000000
+modified: 20260508000000000
+tags: ResearchStack Compression SignalTheory Hutter DD Receipt Synthesis
+title: Compression Signal Shaping Synthesis
+type: text/vnd.tiddlywiki
+
+! Compression Signal Shaping Synthesis
+
+Durable note:
+
+```
+docs/compression_signal_shaping_synthesis.md
+```
+
+Runner:
+
+```
+4-Infrastructure/shim/compression_signal_shaping_synthesis.py
+```
+
+Receipt:
+
+```
+4-Infrastructure/shim/compression_signal_shaping_synthesis_receipt.json
+```
+
+Curriculum:
+
+```
+4-Infrastructure/shim/compression_signal_shaping_synthesis_curriculum.jsonl
+```
+
+Receipt hash:
+
+```
+fc06057b20dc2281161e7380a63557171ab4d87ee7a82277fe2e8d74b1446f68
+```
+
+!! Primary Read
+
+The new pattern is not another universal compressor.
+
+The new pattern is:
+
+```
+signal-shaped route compiler
+```
+
+Shape the route space before coding, then pay exact residual, witness, decoder,
+and container bytes after coding.
+
+!! What New Pops Up
+
+```
+N1 signal-shaped route compiler
+  chunk -> feature vector -> route family -> codec trial -> exact residual
+
+N2 runtime staticization as compression prepass
+  do not ship branches you can rebuild
+
+N3 witness-budgeted latent route
+  generative / invertible priors propose only; exact residual closes
+
+N4 fractional history route scheduler
+  finite memory of residuals changes route threshold
+
+N5 topology regime guard
+  beautiful folds, ugly prunes, horrible tears / holds
+
+N6 physical signal probe feedback
+  route hypothesis -> perturbation -> negative control -> receipt
+```
+
+!! Unifying Equations
+
+Signal feature vector:
+
+```
+phi_signal(c) =
+  [H(c), tag_density(c), DCT_energy(c), transient(c), autocorr(c), cosine_reuse(c)]
+```
+
+Route selection:
+
+```
+r* =
+  argmin_r LB(r | phi_signal(c), semantic_regime(c), history_state)
+```
+
+Exact cost:
+
+```
+C_total =
+  bytes(payload)
+  + bytes(sidecar)
+  + bytes(residual)
+  + bytes(decoder)
+  + bytes(witness)
+  + bytes(container)
+```
+
+Promotion:
+
+```
+promote iff
+  H(decode(r*)) == H(source)
+  and C_total < incumbent
+  and failure_rules == none
+```
+
+!! Immediate Experiment Ladder
+
+```
+E1 wiki8_signal_feature_baseline
+E2 route_classifier_without_new_codec
+E3 topology_guard_tokenbook
+E4 docmd_static_wiki_slice
+E5 bounded_history_scheduler
+```
+
+!! Strongest Next Move
+
+Start with:
+
+```
+E1 -> E2
+```
+
+Why:
+
+```
+no new codec required
+wiki8 already exists locally
+features are cheap
+route outcomes are measurable
+sidecar bytes can be counted immediately
+negative controls are easy
+```
+
+!! Failure Rules
+
+```
+feature score treated as byte gain                         -> invalid
+sidecar / witness / residual / decoder bytes omitted       -> invalid receipt
+latent or generative prior used as hidden source payload    -> invalid
+semantic merge without round-trip / contradiction check     -> hold
+history kernel unbounded or uncounted                       -> fail closed
+docmd-style staticization reported as Hutter compression    -> overclaim
+negative controls omitted from new route claim              -> weak claim
+```
+
+!! Links
+
+* [[Decision Diagram Compression Tuning Prior]]
+* [[PAQ Style Compression Review]]
+* [[T16 Candidate Pipeline Equation Prior]]
+* [[Phi Scaling Response Model Selection]]
+* [[Classical Signal Roots Quantum Translation Program]]
+* [[Semantic Topology Compression Regimes]]
+* [[LLM Compression Architecture Priors]]
+* [[docmd Size Strategy Prior]]
+* [[Rainbow Raccoon Compiler]]

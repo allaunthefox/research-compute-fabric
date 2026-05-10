@@ -167,6 +167,59 @@ zero-torque equilibrium
 
 If beta-step dissipates energy and receipts replay, ADMIT_LOCAL_CORRECTION. If the residual forms a bounded stable scar, HOLD_AS_SCAR and route to FAMM. If energy grows unbounded, receipt is missing, or an assigned value is treated as derived, QUARANTINE.
 
+## Bernoulli / Vector / Combination Receipt Layer
+
+Bernoulli trials provide the smallest useful stochastic control primitive for semiautonomous routing: a one-bit witness with probability mass attached.
+
+```text
+BMVR = bit-first Bernoulli receipt
+BVMR = vector-first Bernoulli gate receipt
+AVMR = algebraic vector composition receipt
+CMR  = quotient/composition receipt: AVMR / BVMR
+```
+
+Meaning:
+
+```text
+AVMR = algebraic/vector possibility space
+BVMR = Bernoulli-gated vector receipt space
+CMR  = combination receipt after failed branches are divided out
+```
+
+The quotient form is:
+
+```text
+AVMR / BVMR = CMR
+```
+
+The division is not ordinary scalar division. It means quotienting the vector-combination space by failed Bernoulli gates.
+
+Tight definition:
+
+```text
+CMR = { combine(v_i, v_j, ...)
+        | AVMR verifies composition
+        and BVMR(v_k).outcome = 1 for each participating vector }
+```
+
+Short operational form:
+
+```text
+BVMR gates the vectors.
+AVMR combines the survivors.
+CMR receipts the combination.
+```
+
+Safety rule:
+
+```text
+collapse is not permission;
+BVMR gate pass is permission to enter AVMR composition;
+CMR is the replayable result.
+```
+
+This gives semiautonomous routing a bounded combinatorial layer. The system can explore combinations without letting every possible combination become real. Only gated survivors become receipt-bearing state.
+
 ## Equation Sniffer Routing
 
 The phi-prime probe pings the Equation Forest, but the Equation Sniffers decide what kind of trail the ping produced.
@@ -271,4 +324,7 @@ The Equation Sniffers classify the scent.
 The Underverse gets the bill.
 FAMM follows the scar.
 Warden checks the receipt.
+BVMR gates the vectors.
+AVMR combines the survivors.
+CMR receipts the combination.
 ```

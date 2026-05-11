@@ -21,6 +21,36 @@ If you are asked to implement, fix, or refactor anything, the correct output is 
 
 ## 1. What You Must Never Do
 
+### 1.0 Legacy Recovery Requires Explicit Trigger
+
+Archived, quarantined, or cornfielded branches are cold storage. Do not search
+or revive them casually during normal implementation work.
+
+The explicit trigger is:
+
+```text
+RECOVER LEGACY INFORMATION
+```
+
+Accepted aliases:
+
+```text
+Recover Legacy Information
+recover from cornfield
+```
+
+When the user invokes that trigger, recover only the named path, concept,
+commit slice, or receipt. Use read-only inspection first (`git show`, `git log`,
+targeted file reads), then port the requested material onto the current clean
+branch. Never merge a legacy branch wholesale, never reset to it, and never use
+it as a new base unless the user explicitly asks for that branch operation.
+
+Known cornfield ref:
+
+```text
+backup/distilled-with-vcd-history-2026-05-11
+```
+
 ### 1.1 Never Add Dependencies
 Do not add new crates, pip packages, lake packages, or system libraries without explicit human approval. The stack is intentionally minimal. If you think you need a library, you are wrong — write the primitive in Lean.
 

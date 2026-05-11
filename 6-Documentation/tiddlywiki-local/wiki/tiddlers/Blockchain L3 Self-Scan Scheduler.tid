@@ -1,0 +1,91 @@
+created: 20260511000000000
+modified: 20260511000000000
+tags: ResearchStack Blockchain L3 Scheduler Receipts NUVMAP HOLD
+title: Blockchain L3 Self-Scan Scheduler
+type: text/vnd.tiddlywiki
+
+! Blockchain L3 Self-Scan Scheduler
+
+Status: `ADMIT_L3_SELF_SCAN_POLICY`
+
+The blockchain L3 self-scan scheduler treats scan receipts as the control
+surface for the next scan. This reframes L3 from only "bitstream build" into an
+executable scan policy:
+
+```text
+P_{t+1}=L3(R_t,A_t,C_t)
+R_{t+1}=scan(P_{t+1})
+```
+
+Where:
+
+```text
+R_t = current receipt frontier
+A_t = available scan actions
+C_t = cost / completion / claim-boundary constraints
+P_t = next scan policy
+```
+
+!! Runner
+
+```text
+4-Infrastructure/shim/blockchain_l3_self_scan_scheduler.py
+```
+
+Receipt:
+
+```text
+shared-data/data/blockchain_corpus/blockchain_l3_self_scan_scheduler_receipt.json
+```
+
+Current receipt hash:
+
+```text
+d9d8c49369c700e0749e467615bf0ab87fc180b5f0d5a31788d2886a1014632a
+```
+
+!! Storage Channel Awareness
+
+The scheduler now recognizes that blockchains are not just event streams. They
+are also public storage substrates.
+
+Detected storage surfaces include:
+
+| Family | Surfaces |
+|---|---|
+| Bitcoin-like | `op_return`, witness/inscription-like payloads, coinbase tags |
+| EVM | calldata, logs/events, bytecode, blob / DA lanes |
+| Memo/message chains | memo, message, payload fields |
+
+Boundary:
+
+```text
+onchain_payload_surfaces_t -> storage_channel_receipts_t+1
+```
+
+This is for detection, accounting, provenance, and compression-route
+diagnostics. It is not a recommendation to publish payloads on public chains or
+use ledgers as private storage.
+
+!! Actions
+
+The scheduler emits bounded next actions:
+
+* `RETRY_MISSING_OBJECTS`
+* `RUN_HEADER_OR_BLOCK_PATTERN_PROBE`
+* `RUN_PARQUET_LOGOGRAM_EIGENPROBE_SAMPLE`
+* `RUN_ONCHAIN_STORAGE_CHANNEL_PROBE`
+* `REFRESH_SELF_SCAN_SCHEDULER`
+
+!! Claim Boundary
+
+The scheduler does not decode chain semantics, prove market behavior, prove
+compression gain, or fetch additional bytes by itself. It chooses the next
+bounded probe from existing receipts.
+
+Related:
+
+* [[NUVMAP Turbulence Stabilization Index]]
+* [[NUVMAP Chain Protocol Plan]]
+* [[NUVMAP Metadata Blitter]]
+* [[Hyper-Soliton Radix Bins]]

@@ -1,0 +1,147 @@
+{
+  "claim_boundary": "Dry-run command plan only unless --execute is used with authenticated Google Cloud tooling.",
+  "entries": [
+    {
+      "chain": "bitcoin-cash",
+      "commands": [
+        "bq ls bigquery-public-data.crypto_bitcoin_cash",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_bitcoin_cash.blocks' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/bitcoin-cash/blocks/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_bitcoin_cash.transactions' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/bitcoin-cash/transactions/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_bitcoin_cash.inputs' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/bitcoin-cash/inputs/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_bitcoin_cash.outputs' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/bitcoin-cash/outputs/*.parquet'",
+        "gcloud storage cp --recursive 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/bitcoin-cash/' 'shared-data/data/blockchain_corpus/bigquery_exports/bitcoin-cash/'",
+        "rclone copy 'shared-data/data/blockchain_corpus/bigquery_exports/bitcoin-cash/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/bitcoin-cash/'"
+      ],
+      "dataset": "bigquery-public-data.crypto_bitcoin_cash",
+      "drive_destination": "Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/bitcoin-cash",
+      "gcs_prefix": "gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/bitcoin-cash/",
+      "local_root": "shared-data/data/blockchain_corpus/bigquery_exports/bitcoin-cash",
+      "tables": [
+        "blocks",
+        "transactions",
+        "inputs",
+        "outputs"
+      ]
+    },
+    {
+      "chain": "dash",
+      "commands": [
+        "bq ls bigquery-public-data.crypto_dash",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_dash.blocks' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/dash/blocks/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_dash.transactions' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/dash/transactions/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_dash.inputs' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/dash/inputs/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_dash.outputs' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/dash/outputs/*.parquet'",
+        "gcloud storage cp --recursive 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/dash/' 'shared-data/data/blockchain_corpus/bigquery_exports/dash/'",
+        "rclone copy 'shared-data/data/blockchain_corpus/bigquery_exports/dash/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/dash/'"
+      ],
+      "dataset": "bigquery-public-data.crypto_dash",
+      "drive_destination": "Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/dash",
+      "gcs_prefix": "gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/dash/",
+      "local_root": "shared-data/data/blockchain_corpus/bigquery_exports/dash",
+      "tables": [
+        "blocks",
+        "transactions",
+        "inputs",
+        "outputs"
+      ]
+    },
+    {
+      "chain": "dogecoin",
+      "commands": [
+        "bq ls bigquery-public-data.crypto_dogecoin",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_dogecoin.blocks' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/dogecoin/blocks/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_dogecoin.transactions' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/dogecoin/transactions/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_dogecoin.inputs' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/dogecoin/inputs/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_dogecoin.outputs' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/dogecoin/outputs/*.parquet'",
+        "gcloud storage cp --recursive 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/dogecoin/' 'shared-data/data/blockchain_corpus/bigquery_exports/dogecoin/'",
+        "rclone copy 'shared-data/data/blockchain_corpus/bigquery_exports/dogecoin/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/dogecoin/'"
+      ],
+      "dataset": "bigquery-public-data.crypto_dogecoin",
+      "drive_destination": "Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/dogecoin",
+      "gcs_prefix": "gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/dogecoin/",
+      "local_root": "shared-data/data/blockchain_corpus/bigquery_exports/dogecoin",
+      "tables": [
+        "blocks",
+        "transactions",
+        "inputs",
+        "outputs"
+      ]
+    },
+    {
+      "chain": "ethereum-classic",
+      "commands": [
+        "bq ls bigquery-public-data.crypto_ethereum_classic",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_ethereum_classic.blocks' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/ethereum-classic/blocks/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_ethereum_classic.transactions' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/ethereum-classic/transactions/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_ethereum_classic.inputs' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/ethereum-classic/inputs/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_ethereum_classic.outputs' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/ethereum-classic/outputs/*.parquet'",
+        "gcloud storage cp --recursive 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/ethereum-classic/' 'shared-data/data/blockchain_corpus/bigquery_exports/ethereum-classic/'",
+        "rclone copy 'shared-data/data/blockchain_corpus/bigquery_exports/ethereum-classic/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/ethereum-classic/'"
+      ],
+      "dataset": "bigquery-public-data.crypto_ethereum_classic",
+      "drive_destination": "Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/ethereum-classic",
+      "gcs_prefix": "gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/ethereum-classic/",
+      "local_root": "shared-data/data/blockchain_corpus/bigquery_exports/ethereum-classic",
+      "tables": [
+        "blocks",
+        "transactions",
+        "inputs",
+        "outputs"
+      ]
+    },
+    {
+      "chain": "litecoin",
+      "commands": [
+        "bq ls bigquery-public-data.crypto_litecoin",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_litecoin.blocks' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/litecoin/blocks/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_litecoin.transactions' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/litecoin/transactions/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_litecoin.inputs' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/litecoin/inputs/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_litecoin.outputs' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/litecoin/outputs/*.parquet'",
+        "gcloud storage cp --recursive 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/litecoin/' 'shared-data/data/blockchain_corpus/bigquery_exports/litecoin/'",
+        "rclone copy 'shared-data/data/blockchain_corpus/bigquery_exports/litecoin/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/litecoin/'"
+      ],
+      "dataset": "bigquery-public-data.crypto_litecoin",
+      "drive_destination": "Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/litecoin",
+      "gcs_prefix": "gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/litecoin/",
+      "local_root": "shared-data/data/blockchain_corpus/bigquery_exports/litecoin",
+      "tables": [
+        "blocks",
+        "transactions",
+        "inputs",
+        "outputs"
+      ]
+    },
+    {
+      "chain": "zcash",
+      "commands": [
+        "bq ls bigquery-public-data.crypto_zcash",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_zcash.blocks' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/zcash/blocks/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_zcash.transactions' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/zcash/transactions/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_zcash.inputs' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/zcash/inputs/*.parquet'",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_zcash.outputs' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/zcash/outputs/*.parquet'",
+        "gcloud storage cp --recursive 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/zcash/' 'shared-data/data/blockchain_corpus/bigquery_exports/zcash/'",
+        "rclone copy 'shared-data/data/blockchain_corpus/bigquery_exports/zcash/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/zcash/'"
+      ],
+      "dataset": "bigquery-public-data.crypto_zcash",
+      "drive_destination": "Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/zcash",
+      "gcs_prefix": "gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/zcash/",
+      "local_root": "shared-data/data/blockchain_corpus/bigquery_exports/zcash",
+      "tables": [
+        "blocks",
+        "transactions",
+        "inputs",
+        "outputs"
+      ]
+    }
+  ],
+  "schema": "blockchain_bigquery_grabber_plan_v0",
+  "tool_status": {
+    "bq": "/home/allaun/.local/bin/bq",
+    "gcloud": "/home/allaun/.local/bin/gcloud",
+    "gsutil": "/home/allaun/.local/bin/gsutil",
+    "python": "/home/allaun/.local/share/research-stack/blockchain-bigquery-venv/bin/python",
+    "python_bigquery_client": true,
+    "python_google_auth": true,
+    "rclone": "/usr/bin/rclone"
+  }
+}

@@ -1,0 +1,374 @@
+{
+  "bigquery_export_commands": [
+    {
+      "chain": "bitcoin-cash",
+      "commands": [
+        "bq ls bigquery-public-data.crypto_bitcoin_cash",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_bitcoin_cash.{table}' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/bitcoin-cash/{table}/*.parquet'",
+        "gcloud storage cp --recursive 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/bitcoin-cash/' 'shared-data/data/blockchain_corpus/bigquery_exports/bitcoin-cash/'",
+        "rclone copy 'shared-data/data/blockchain_corpus/bigquery_exports/bitcoin-cash/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/bitcoin-cash/'"
+      ],
+      "dataset": "bigquery-public-data.crypto_bitcoin_cash",
+      "drive_destination": "Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/bitcoin-cash",
+      "local_export_pattern": "shared-data/data/blockchain_corpus/bigquery_exports/bitcoin-cash/{table}/*.parquet",
+      "source_id": "bitcoin_cash",
+      "tables_to_try_first": [
+        "blocks",
+        "transactions",
+        "inputs",
+        "outputs"
+      ]
+    },
+    {
+      "chain": "dash",
+      "commands": [
+        "bq ls bigquery-public-data.crypto_dash",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_dash.{table}' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/dash/{table}/*.parquet'",
+        "gcloud storage cp --recursive 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/dash/' 'shared-data/data/blockchain_corpus/bigquery_exports/dash/'",
+        "rclone copy 'shared-data/data/blockchain_corpus/bigquery_exports/dash/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/dash/'"
+      ],
+      "dataset": "bigquery-public-data.crypto_dash",
+      "drive_destination": "Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/dash",
+      "local_export_pattern": "shared-data/data/blockchain_corpus/bigquery_exports/dash/{table}/*.parquet",
+      "source_id": "dash",
+      "tables_to_try_first": [
+        "blocks",
+        "transactions",
+        "inputs",
+        "outputs"
+      ]
+    },
+    {
+      "chain": "dogecoin",
+      "commands": [
+        "bq ls bigquery-public-data.crypto_dogecoin",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_dogecoin.{table}' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/dogecoin/{table}/*.parquet'",
+        "gcloud storage cp --recursive 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/dogecoin/' 'shared-data/data/blockchain_corpus/bigquery_exports/dogecoin/'",
+        "rclone copy 'shared-data/data/blockchain_corpus/bigquery_exports/dogecoin/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/dogecoin/'"
+      ],
+      "dataset": "bigquery-public-data.crypto_dogecoin",
+      "drive_destination": "Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/dogecoin",
+      "local_export_pattern": "shared-data/data/blockchain_corpus/bigquery_exports/dogecoin/{table}/*.parquet",
+      "source_id": "dogecoin",
+      "tables_to_try_first": [
+        "blocks",
+        "transactions",
+        "inputs",
+        "outputs"
+      ]
+    },
+    {
+      "chain": "litecoin",
+      "commands": [
+        "bq ls bigquery-public-data.crypto_litecoin",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_litecoin.{table}' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/litecoin/{table}/*.parquet'",
+        "gcloud storage cp --recursive 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/litecoin/' 'shared-data/data/blockchain_corpus/bigquery_exports/litecoin/'",
+        "rclone copy 'shared-data/data/blockchain_corpus/bigquery_exports/litecoin/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/litecoin/'"
+      ],
+      "dataset": "bigquery-public-data.crypto_litecoin",
+      "drive_destination": "Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/litecoin",
+      "local_export_pattern": "shared-data/data/blockchain_corpus/bigquery_exports/litecoin/{table}/*.parquet",
+      "source_id": "litecoin",
+      "tables_to_try_first": [
+        "blocks",
+        "transactions",
+        "inputs",
+        "outputs"
+      ]
+    },
+    {
+      "chain": "zcash",
+      "commands": [
+        "bq ls bigquery-public-data.crypto_zcash",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_zcash.{table}' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/zcash/{table}/*.parquet'",
+        "gcloud storage cp --recursive 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/zcash/' 'shared-data/data/blockchain_corpus/bigquery_exports/zcash/'",
+        "rclone copy 'shared-data/data/blockchain_corpus/bigquery_exports/zcash/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/zcash/'"
+      ],
+      "dataset": "bigquery-public-data.crypto_zcash",
+      "drive_destination": "Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/zcash",
+      "local_export_pattern": "shared-data/data/blockchain_corpus/bigquery_exports/zcash/{table}/*.parquet",
+      "source_id": "zcash",
+      "tables_to_try_first": [
+        "blocks",
+        "transactions",
+        "inputs",
+        "outputs"
+      ]
+    },
+    {
+      "chain": "ethereum-classic",
+      "commands": [
+        "bq ls bigquery-public-data.crypto_ethereum_classic",
+        "bq extract --destination_format=PARQUET 'bigquery-public-data.crypto_ethereum_classic.{table}' 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/ethereum-classic/{table}/*.parquet'",
+        "gcloud storage cp --recursive 'gs://<YOUR_GCS_BUCKET>/research-stack/blockchain-corpus/ethereum-classic/' 'shared-data/data/blockchain_corpus/bigquery_exports/ethereum-classic/'",
+        "rclone copy 'shared-data/data/blockchain_corpus/bigquery_exports/ethereum-classic/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/ethereum-classic/'"
+      ],
+      "dataset": "bigquery-public-data.crypto_ethereum_classic",
+      "drive_destination": "Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/public-datasets/google-bigquery/ethereum-classic",
+      "local_export_pattern": "shared-data/data/blockchain_corpus/bigquery_exports/ethereum-classic/{table}/*.parquet",
+      "source_id": "ethereum_classic",
+      "tables_to_try_first": [
+        "blocks",
+        "transactions",
+        "inputs",
+        "outputs"
+      ]
+    }
+  ],
+  "claim_boundary": "This receipt identifies alternative public/research sources and tool readiness. It does not prove data was exported from BigQuery, does not bypass source terms, and does not claim decoded chain semantics.",
+  "created_utc": "2026-05-11T17:18:18Z",
+  "decision": "ADMIT_ALTERNATIVE_SOURCE_PLAN_HOLD_TRANSFER",
+  "destination": "Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10",
+  "local_tool_readiness": {
+    "commands": {
+      "bq": {
+        "available": true,
+        "path": "/home/allaun/.local/bin/bq",
+        "version": "This is BigQuery CLI 2.1.31"
+      },
+      "duckdb": {
+        "available": false,
+        "path": null,
+        "version": null
+      },
+      "gcloud": {
+        "available": true,
+        "path": "/home/allaun/.local/bin/gcloud",
+        "version": "Google Cloud SDK 567.0.0"
+      },
+      "gsutil": {
+        "available": true,
+        "path": "/home/allaun/.local/bin/gsutil",
+        "version": "gsutil version: 5.37"
+      },
+      "kaggle": {
+        "available": false,
+        "path": null,
+        "version": null
+      },
+      "rclone": {
+        "available": true,
+        "path": "/usr/bin/rclone",
+        "version": "rclone v1.74.0"
+      }
+    },
+    "python_modules": {
+      "boto3": {
+        "available": false,
+        "error": "ModuleNotFoundError",
+        "module": "boto3"
+      },
+      "duckdb": {
+        "available": false,
+        "error": "ModuleNotFoundError",
+        "module": "duckdb"
+      },
+      "google.cloud.bigquery": {
+        "available": true,
+        "module": "google.cloud.bigquery"
+      },
+      "pandas": {
+        "available": true,
+        "module": "pandas"
+      },
+      "pyarrow": {
+        "available": true,
+        "module": "pyarrow"
+      },
+      "requests": {
+        "available": true,
+        "module": "requests"
+      }
+    }
+  },
+  "next_gate": {
+    "decision": "HOLD_UNTIL_GOOGLE_ADC_AND_GCS_BUCKET",
+    "required": [
+      "Authenticate with a Google Cloud account allowed to query BigQuery public datasets.",
+      "Use either gcloud application-default login or GOOGLE_APPLICATION_CREDENTIALS.",
+      "Provide or create a GCS staging bucket for BigQuery extract jobs.",
+      "Run the Python BigQuery list check against each candidate dataset and emit table inventory receipt.",
+      "Export tables to Parquet, copy locally, then rclone to Drive with SHA receipts."
+    ]
+  },
+  "node_etl_commands": [
+    {
+      "chain": "bitcoin",
+      "commands": [
+        "python3 -m pip install --user bitcoin-etl",
+        "bitcoinetl export_blocks_and_transactions --start-block 0 --end-block <END_BLOCK> --provider-uri http://<rpc_user>:<rpc_pass>@127.0.0.1:<rpc_port> --chain bitcoin --blocks-output shared-data/data/blockchain_corpus/node_etl/bitcoin/blocks.jsonl --transactions-output shared-data/data/blockchain_corpus/node_etl/bitcoin/transactions.jsonl",
+        "rclone copy 'shared-data/data/blockchain_corpus/node_etl/bitcoin/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/node-etl/bitcoin-etl/bitcoin/'"
+      ],
+      "requires": [
+        "running_full_node_or_rpc_snapshot",
+        "bitcoin-etl"
+      ]
+    },
+    {
+      "chain": "bitcoin_cash",
+      "commands": [
+        "python3 -m pip install --user bitcoin-etl",
+        "bitcoinetl export_blocks_and_transactions --start-block 0 --end-block <END_BLOCK> --provider-uri http://<rpc_user>:<rpc_pass>@127.0.0.1:<rpc_port> --chain bitcoin_cash --blocks-output shared-data/data/blockchain_corpus/node_etl/bitcoin_cash/blocks.jsonl --transactions-output shared-data/data/blockchain_corpus/node_etl/bitcoin_cash/transactions.jsonl",
+        "rclone copy 'shared-data/data/blockchain_corpus/node_etl/bitcoin_cash/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/node-etl/bitcoin-etl/bitcoin_cash/'"
+      ],
+      "requires": [
+        "running_full_node_or_rpc_snapshot",
+        "bitcoin-etl"
+      ]
+    },
+    {
+      "chain": "bitcoin_gold",
+      "commands": [
+        "python3 -m pip install --user bitcoin-etl",
+        "bitcoinetl export_blocks_and_transactions --start-block 0 --end-block <END_BLOCK> --provider-uri http://<rpc_user>:<rpc_pass>@127.0.0.1:<rpc_port> --chain bitcoin_gold --blocks-output shared-data/data/blockchain_corpus/node_etl/bitcoin_gold/blocks.jsonl --transactions-output shared-data/data/blockchain_corpus/node_etl/bitcoin_gold/transactions.jsonl",
+        "rclone copy 'shared-data/data/blockchain_corpus/node_etl/bitcoin_gold/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/node-etl/bitcoin-etl/bitcoin_gold/'"
+      ],
+      "requires": [
+        "running_full_node_or_rpc_snapshot",
+        "bitcoin-etl"
+      ]
+    },
+    {
+      "chain": "dogecoin",
+      "commands": [
+        "python3 -m pip install --user bitcoin-etl",
+        "bitcoinetl export_blocks_and_transactions --start-block 0 --end-block <END_BLOCK> --provider-uri http://<rpc_user>:<rpc_pass>@127.0.0.1:<rpc_port> --chain dogecoin --blocks-output shared-data/data/blockchain_corpus/node_etl/dogecoin/blocks.jsonl --transactions-output shared-data/data/blockchain_corpus/node_etl/dogecoin/transactions.jsonl",
+        "rclone copy 'shared-data/data/blockchain_corpus/node_etl/dogecoin/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/node-etl/bitcoin-etl/dogecoin/'"
+      ],
+      "requires": [
+        "running_full_node_or_rpc_snapshot",
+        "bitcoin-etl"
+      ]
+    },
+    {
+      "chain": "litecoin",
+      "commands": [
+        "python3 -m pip install --user bitcoin-etl",
+        "bitcoinetl export_blocks_and_transactions --start-block 0 --end-block <END_BLOCK> --provider-uri http://<rpc_user>:<rpc_pass>@127.0.0.1:<rpc_port> --chain litecoin --blocks-output shared-data/data/blockchain_corpus/node_etl/litecoin/blocks.jsonl --transactions-output shared-data/data/blockchain_corpus/node_etl/litecoin/transactions.jsonl",
+        "rclone copy 'shared-data/data/blockchain_corpus/node_etl/litecoin/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/node-etl/bitcoin-etl/litecoin/'"
+      ],
+      "requires": [
+        "running_full_node_or_rpc_snapshot",
+        "bitcoin-etl"
+      ]
+    },
+    {
+      "chain": "dash",
+      "commands": [
+        "python3 -m pip install --user bitcoin-etl",
+        "bitcoinetl export_blocks_and_transactions --start-block 0 --end-block <END_BLOCK> --provider-uri http://<rpc_user>:<rpc_pass>@127.0.0.1:<rpc_port> --chain dash --blocks-output shared-data/data/blockchain_corpus/node_etl/dash/blocks.jsonl --transactions-output shared-data/data/blockchain_corpus/node_etl/dash/transactions.jsonl",
+        "rclone copy 'shared-data/data/blockchain_corpus/node_etl/dash/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/node-etl/bitcoin-etl/dash/'"
+      ],
+      "requires": [
+        "running_full_node_or_rpc_snapshot",
+        "bitcoin-etl"
+      ]
+    },
+    {
+      "chain": "zcash",
+      "commands": [
+        "python3 -m pip install --user bitcoin-etl",
+        "bitcoinetl export_blocks_and_transactions --start-block 0 --end-block <END_BLOCK> --provider-uri http://<rpc_user>:<rpc_pass>@127.0.0.1:<rpc_port> --chain zcash --blocks-output shared-data/data/blockchain_corpus/node_etl/zcash/blocks.jsonl --transactions-output shared-data/data/blockchain_corpus/node_etl/zcash/transactions.jsonl",
+        "rclone copy 'shared-data/data/blockchain_corpus/node_etl/zcash/' 'Gdrive:topological_storage/research-stack/blockchain-corpus/seed-2026-05-10/node-etl/bitcoin-etl/zcash/'"
+      ],
+      "requires": [
+        "running_full_node_or_rpc_snapshot",
+        "bitcoin-etl"
+      ]
+    }
+  ],
+  "receipt_hash": "3327d7c4e0f98a984522f4f66e0bbe3afc66dc933a86a97b6a3c6a29baf3572f",
+  "schema": "blockchain_alternative_source_plan_v0",
+  "source_candidates": [
+    {
+      "chains": [
+        {
+          "blockchair_status": "PARTIAL_HTTP_402",
+          "chain": "bitcoin-cash",
+          "dataset": "bigquery-public-data.crypto_bitcoin_cash"
+        },
+        {
+          "blockchair_status": "PARTIAL_HTTP_402",
+          "chain": "dash",
+          "dataset": "bigquery-public-data.crypto_dash"
+        },
+        {
+          "blockchair_status": "PARTIAL_HTTP_402",
+          "chain": "dogecoin",
+          "dataset": "bigquery-public-data.crypto_dogecoin"
+        },
+        {
+          "blockchair_status": "PARTIAL_HTTP_402",
+          "chain": "litecoin",
+          "dataset": "bigquery-public-data.crypto_litecoin"
+        },
+        {
+          "blockchair_status": "PARTIAL_HTTP_402",
+          "chain": "zcash",
+          "dataset": "bigquery-public-data.crypto_zcash"
+        },
+        {
+          "blockchair_status": "NOT_ATTEMPTED",
+          "chain": "ethereum-classic",
+          "dataset": "bigquery-public-data.crypto_ethereum_classic"
+        }
+      ],
+      "claim_boundary": "Requires Google Cloud authentication and a GCS staging bucket before local/Drive export.",
+      "decision": "PREFERRED_FOR_BLOCKCHAIR_GAPS",
+      "name": "Google BigQuery Public Cryptocurrency Datasets",
+      "python_client_ready": true,
+      "source_urls": [
+        "https://cloud.google.com/blog/products/data-analytics/introducing-six-new-cryptocurrencies-in-bigquery-public-datasets-and-how-to-analyze-them",
+        "https://www.cloudskillsboost.google/focuses/8486?parent=catalog"
+      ],
+      "why": "Covers Bitcoin-derived chains that Blockchair throttled: Bitcoin Cash, Dash, Dogecoin, Litecoin, and Zcash."
+    },
+    {
+      "chains": [
+        "bitcoin",
+        "bitcoin_cash",
+        "bitcoin_gold",
+        "dogecoin",
+        "litecoin",
+        "dash",
+        "zcash"
+      ],
+      "claim_boundary": "Requires per-chain node data/RPC and enough local storage; slower but self-verifiable.",
+      "decision": "FALLBACK_IF_BIGQUERY_EXPORT_BLOCKED",
+      "name": "Blockchain ETL / bitcoin-etl from full nodes or snapshots",
+      "source_urls": [
+        "https://github.com/blockchain-etl/bitcoin-etl"
+      ],
+      "why": "Can export Bitcoin-like chains from local RPC nodes or grabbed node snapshots without Blockchair dumps."
+    },
+    {
+      "chains": [
+        "bitcoin"
+      ],
+      "claim_boundary": "Coverage and licensing must be checked before mirroring.",
+      "decision": "EVALUATE_LICENSE_AND_COVERAGE",
+      "name": "Bitquery Cloud Data Dumps",
+      "source_urls": [
+        "https://docs.bitquery.io/docs/cloud/bitcoin/"
+      ],
+      "why": "Offers Parquet dump patterns and cloud data products; useful as a schema/tooling reference and possible paid/free lane."
+    },
+    {
+      "chains": [
+        "bitcoin-cash",
+        "dash",
+        "dogecoin",
+        "litecoin",
+        "zcash"
+      ],
+      "claim_boundary": "Do not use for full-corpus claims.",
+      "decision": "HOLD_SAMPLE_ONLY",
+      "name": "Kaggle/Hugging Face sampled datasets",
+      "source_urls": [
+        "https://huggingface.co/datasets/Omarrran/CryptoXChain_500K_Multi_Network_Blockchain_Transaction_Dataset",
+        "https://www.kaggle.com/datasets/amritpal333/crypto-mining-data"
+      ],
+      "why": "Useful for smoke tests and model fixtures, not complete chain mirrors."
+    }
+  ]
+}

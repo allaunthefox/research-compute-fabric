@@ -1,0 +1,75 @@
+created: 20260511000000000
+modified: 20260511000000000
+tags: ResearchStack NUVMAP Blockchain L3 Waveprobe Metaprobe GPU Turbulence Index
+title: NUVMAP Turbulence Stabilization Index
+type: text/vnd.tiddlywiki
+
+! NUVMAP Turbulence Stabilization Index
+
+Status: `STABILIZATION_INDEX`
+
+This index captures the current high-turbulence blockchain / GPU / NUVMAP
+design surface so the stack does not have to re-derive it from chat context.
+
+!! Current Shape
+
+```text
+public blockchain corpus
+  -> L3 self-scan scheduler
+  -> GPU metadata blitter
+  -> hyper-soliton radix bins
+  -> waveprobe / metaprobe routing
+  -> NUVMAP receipt chain
+  -> next scan frontier
+```
+
+The key change is that scanning is no longer only a data-ingest action. It is a
+feedback loop:
+
+```text
+scan_receipts_t -> route_policy_t+1
+```
+
+!! Core Cards
+
+* [[Blockchain L3 Self-Scan Scheduler]]
+* [[NUVMAP Chain Protocol Plan]]
+* [[NUVMAP Metadata Blitter]]
+* [[Hyper-Soliton Radix Bins]]
+* [[NUVMAP GPU Burst Check Plan]]
+* [[Waveprobe]]
+* [[Topological Soliton Raytrace Tessellation NUVMAP Protocol]]
+* [[Hutter JPEG XL Starfield Eigenprobe First Sweep]]
+
+!! Durable Artifacts
+
+```text
+4-Infrastructure/shim/blockchain_l3_self_scan_scheduler.py
+4-Infrastructure/shim/nuvmap_chain_protocol_plan.py
+4-Infrastructure/shim/nuvmap_gpu_burst_check_plan.py
+5-Applications/scripts/nuvmap_metadata_blitter.wgsl
+5-Applications/scripts/nuvmap_metadata_blitter.md
+```
+
+Receipts:
+
+```text
+shared-data/data/blockchain_corpus/blockchain_l3_self_scan_scheduler_receipt.json
+shared-data/data/blockchain_corpus/nuvmap_chain_protocol_plan_receipt.json
+shared-data/data/blockchain_corpus/nuvmap_gpu_burst_check_plan_receipt.json
+```
+
+!! Claim Boundary
+
+This cluster is protocol and routing infrastructure. It does not claim:
+
+* Hutter Prize progress
+* compression gain
+* blockchain market prediction
+* mainnet readiness
+* token or economic design
+* semantic meaning from radix bins
+* GPU acceleration without parity receipts
+
+Every promotion requires replayable source windows, negative controls, receipt
+hashes, and explicit HOLD/ADMIT/QUARANTINE decisions.

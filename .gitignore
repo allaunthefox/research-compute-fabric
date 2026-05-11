@@ -70,6 +70,7 @@ data/*.iso
 **/hardware/sparkle/tangnano9k/*.pnr.json
 **/hardware/sparkle/tangnano9k/*.history
 **/hardware/sparkle/tangnano9k/sparkle_tangnano9k.json
+*.vcd
 *_tb.v
 *_test_vectors.json
 

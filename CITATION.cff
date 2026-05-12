@@ -1,0 +1,41 @@
+cff-version: 1.2.0
+message: "If you use Research Stack, OTOM, Rainbow Raccoon Compiler, or the associated formal/compression artifacts, please cite this repository."
+type: software
+title: "Research Stack (OTOM)"
+abstract: >-
+  Research Stack is a formal-methods and compression research repository for
+  integer-routed symbolic systems, Omindirection logogram atoms, the Rainbow
+  Raccoon Compiler admission gate, Lean-backed semantics, and associated
+  documentation, infrastructure, and experimental adapters.
+authors:
+  - family-names: "Schneider"
+    given-names: "Brandon"
+    alias: "allaunthefox"
+  - name: "Research Stack Contributors"
+repository-code: "https://github.com/allaunthefox/Research-Stack"
+url: "https://github.com/allaunthefox/Research-Stack"
+date-released: 2026-05-08
+license: Apache-2.0
+keywords:
+  - formal-verification
+  - lean4
+  - compression
+  - symbolic-systems
+  - omindirection
+  - rainbow-raccoon-compiler
+  - hutter-prize
+  - fpga
+  - manifolds
+  - reproducible-research
+preferred-citation:
+  type: software
+  title: "Research Stack (OTOM)"
+  authors:
+    - family-names: "Schneider"
+      given-names: "Brandon"
+      alias: "allaunthefox"
+    - name: "Research Stack Contributors"
+  repository-code: "https://github.com/allaunthefox/Research-Stack"
+  url: "https://github.com/allaunthefox/Research-Stack"
+  date-released: 2026-05-08
+  license: Apache-2.0

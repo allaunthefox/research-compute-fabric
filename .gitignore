@@ -98,6 +98,26 @@ tools/servo-fetch/
 5-Applications/tools-scripts/external/quantum/
 5-Applications/tools-scripts/external/typst-cli/
 
+# Local/generated mirrors that should not be ordinary staging surfaces.
+# Force-add a specific artifact when it is promoted into repository evidence.
+extensions/
+6-Documentation/typst/
+6-Documentation/tiddlywiki-local/wiki/tiddlers/*.tid
+6-Documentation/wiki/Obsidian-connector/Connector Gap Fill *.md
+
+# Downloaded third-party research trees and paper caches.
+2-Search-Space/AI-Feynman/
+2-Search-Space/AI-Newton/
+2-Search-Space/Goedel-Prover-V2/
+2-Search-Space/PINNs/
+2-Search-Space/alphageometry/
+2-Search-Space/neural-conservation-law/
+6-Documentation/papers/Downloads_from_internet/
+6-Documentation/papers/downloads/
+6-Documentation/papers/facebook_pdfs/
+6-Documentation/papers/literature/
+6-Documentation/papers/supporting-materials/
+
 # Kernel module build artifacts
 *.ko
 *.mod

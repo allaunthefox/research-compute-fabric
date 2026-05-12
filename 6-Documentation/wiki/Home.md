@@ -9,6 +9,9 @@
 | `docs/GLOSSARY.md` | Project-wide glossary — all terms across all domains |
 | `wiki/Concept-Archive.md` | Concept archive — canonical, speculative, held, lossy, retired, and abandoned terms |
 | `docs/BEGINNERS_MAP.md` | Narrative onboarding — what this stack is and why it exists |
+| `wiki/Build-System.md` | Build system — pinned Python (`3.11.15`), uv integration, VSCode tasks, npm scripts |
+| `wiki/Text-to-CAD-Environment.md` | Text-to-CAD environment — CAD-specific venv sequencing, `build123d` / `OCP` verification, agent contract |
+| `wiki/DeepSeek-Review-Process.md` | AI-assisted mathematical review — receipt schema, two-stage pipeline, prime-gap example |
 | `docs/VISION_NORTH_STAR.md` | Long-term vision — where the stack converges |
 | `docs/PHI_CENTER_REVAMP.md` | Phi-centered cockpit architecture — cost/efficiency comparison root |
 | `docs/BRAIN_AS_MANIFOLD.md` | Biological manifold theory — hyperbolic geometry, intelligence ladder, Physarum |
@@ -63,3 +66,19 @@
 | `CITATION.cff` | Terminology neutrality map — technical terms vs cultural aliases |
 | `PROJECT_MAP.md` | Repository-wide directory structure and module map |
 | `MATH_MODEL_MAP.tsv` | Full equation registry indexed by phinary ID |
+
+## Build System & Environments
+
+| Document | Summary |
+|---|---|
+| `wiki/Build-System.md` | Python `3.11.15` pin via `.python-version`, uv install path, VSCode interpreter, npm script surface |
+| `wiki/Text-to-CAD-Environment.md` | CAD-specific sequencing that consumes the canonical setup commands in `wiki/Build-System.md` |
+| `GETTING_STARTED.md` | Lean toolchain installation and end-to-end Lean build walkthrough |
+
+## AI-Assisted Review
+
+| Document | Summary |
+|---|---|
+| `wiki/DeepSeek-Review-Process.md` | Receipt schema (`ollama_deepseek_review_receipt_v1`), two-stage pipeline (`deepseek-v3.2` + `deepseek-v4-flash` continuation), prime-gap entropy-collapse example |
+| `shared-data/artifacts/deepseek_review/` | Paired answer + receipt artifacts for each review run |
+| `5-Applications/tools-scripts/llm/deepseek_review_adapter.py` | Adapter that emits the answer / receipt pair |

@@ -1,6 +1,5 @@
 {
-    "cmake.sourceDirectory": "/home/allaun/Documents/Research Stack/2-Search-Space/simulations/heat-2D",
-    "python.defaultInterpreterPath": "/home/allaun/.local/share/uv/python/cpython-3.11-linux-x86_64-gnu/bin/python3.11",
+    "cmake.sourceDirectory": "${workspaceFolder}/2-Search-Space/simulations/heat-2D",
     "files.watcherExclude": {
         "**/.git/objects/**": true,
         "**/.git/subtree-cache/**": true,

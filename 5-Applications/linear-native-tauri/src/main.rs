@@ -18,7 +18,7 @@ async fn main() {
             });
 
             let window = app.get_webview_window("main").unwrap();
-            window.navigate("https://linear.app".parse().unwrap());
+            let _ = window.navigate("https://linear.app".parse().unwrap());
             Ok(())
         })
         .run(tauri::generate_context!())

@@ -1,15 +1,21 @@
-use crate::shifters::{Shifter, ManifoldState};
+use crate::shifters::{ManifoldState, Shifter};
 use serde_json::json;
 
 pub struct PISTShifter;
 
 impl Shifter for PISTShifter {
-    fn name(&self) -> &'static str { "pist" }
+    fn name(&self) -> &'static str {
+        "pist"
+    }
 
     fn encode(&self, state: &mut ManifoldState) -> anyhow::Result<()> {
-        let data = if !state.encoded.is_empty() { &state.encoded } else { &state.raw_bytes };
+        let data = if !state.encoded.is_empty() {
+            &state.encoded
+        } else {
+            &state.raw_bytes
+        };
         let mut result = Vec::with_capacity(data.len() * 2);
-        
+
         for &b in data {
             let n = b as u64;
             let k = (n as f64).sqrt() as u64;
@@ -26,9 +32,11 @@ impl Shifter for PISTShifter {
         let data = &state.encoded;
         let mut result = Vec::with_capacity(data.len() / 2);
         for i in (0..data.len()).step_by(2) {
-            if i + 1 >= data.len() { break; }
+            if i + 1 >= data.len() {
+                break;
+            }
             let k = data[i] as u64;
-            let t = data[i+1] as u64;
+            let t = data[i + 1] as u64;
             let n = k * k + t;
             result.push(n as u8);
         }

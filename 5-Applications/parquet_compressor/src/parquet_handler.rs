@@ -1,16 +1,16 @@
-use std::fs::File;
-use std::path::Path;
 use parquet::file::reader::{FileReader, SerializedFileReader};
 use parquet::record::RowAccessor;
 use serde_json::json;
+use std::fs::File;
+use std::path::Path;
 
 pub fn serialize_parquet_to_bytes(path: &Path) -> anyhow::Result<Vec<u8>> {
     let file = File::open(path)?;
     let reader = SerializedFileReader::new(file)?;
-    
+
     let mut lines = Vec::new();
     let row_iter = reader.get_row_iter(None)?;
-    
+
     for record in row_iter {
         let record = record?;
         // Find fields by name

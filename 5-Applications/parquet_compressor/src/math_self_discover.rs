@@ -1,4 +1,5 @@
 use anyhow::{Context, Result};
+use arrow::array::Array;
 use arrow::array::StringArray;
 use arrow::datatypes::{DataType, Field, Schema};
 use arrow::record_batch::RecordBatch;
@@ -7,18 +8,17 @@ use dashmap::DashMap;
 use indicatif::{ProgressBar, ProgressStyle};
 use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
 use parquet::arrow::ArrowWriter;
-use rayon::ThreadPoolBuilder;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
+use rayon::ThreadPoolBuilder;
 use regex::Regex;
 use serde::Serialize;
-use arrow::array::Array;
 use std::collections::HashMap;
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, Write};
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
-use sysinfo::{System, RefreshKind, CpuRefreshKind, MemoryRefreshKind};
+use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 
 // ── CLI ──────────────────────────────────────────────────────────────────────
 
@@ -27,15 +27,26 @@ use sysinfo::{System, RefreshKind, CpuRefreshKind, MemoryRefreshKind};
 #[command(about = "Unsupervised structural taxonomy from naked equations.")]
 struct Config {
     /// Input parquet (math-raw)
-    #[arg(short, long, default_value = "/home/allaun/Documents/Research Stack/3-Mathematical-Models/equations_parquet_tagged/equations_math_raw.parquet")]
+    #[arg(
+        short,
+        long,
+        default_value = "/home/allaun/Documents/Research Stack/3-Mathematical-Models/equations_parquet_tagged/equations_math_raw.parquet"
+    )]
     input: String,
 
     /// Output JSON report
-    #[arg(short, long, default_value = "/home/allaun/Documents/Research Stack/3-Mathematical-Models/math_self_discovered.json")]
+    #[arg(
+        short,
+        long,
+        default_value = "/home/allaun/Documents/Research Stack/3-Mathematical-Models/math_self_discovered.json"
+    )]
     report: String,
 
     /// Output parquet with cluster assignments
-    #[arg(long, default_value = "/home/allaun/Documents/Research Stack/3-Mathematical-Models/equations_parquet_tagged/equations_self_clustered.parquet")]
+    #[arg(
+        long,
+        default_value = "/home/allaun/Documents/Research Stack/3-Mathematical-Models/equations_parquet_tagged/equations_self_clustered.parquet"
+    )]
     clustered: String,
 
     /// Max CPU threads (0 = num_cpus / 2)
@@ -100,7 +111,8 @@ impl ResourceMonitor {
                 .with_memory(MemoryRefreshKind::everything()),
         );
 
-        let cpu_usage: f32 = sys.cpus().iter().map(|c| c.cpu_usage()).sum::<f32>() / sys.cpus().len() as f32;
+        let cpu_usage: f32 =
+            sys.cpus().iter().map(|c| c.cpu_usage()).sum::<f32>() / sys.cpus().len() as f32;
         let mem_usage = sys.used_memory() as f32 / sys.total_memory() as f32 * 100.0;
 
         let ok = cpu_usage < self.cpu_threshold && mem_usage < self.memory_threshold;
@@ -304,8 +316,8 @@ impl FingerprintEngine {
 
         // Multi-letter identifiers
         let math_funcs: std::collections::HashSet<&str> = [
-            "sin", "cos", "tan", "exp", "log", "ln", "sqrt", "det", "tr",
-            "dim", "ker", "rank", "span", "frac", "sum", "prod", "int",
+            "sin", "cos", "tan", "exp", "log", "ln", "sqrt", "det", "tr", "dim", "ker", "rank",
+            "span", "frac", "sum", "prod", "int",
         ]
         .iter()
         .copied()
@@ -343,14 +355,6 @@ impl FingerprintEngine {
 
         text
     }
-
-    /// SIMD-friendly batch surface: process a slice of equations as a data-parallel array.
-    /// The compiler auto-vectorizes the hot loops across each equation's byte slice.
-    fn fingerprint_batch(&self, eqs: &[String]) -> Vec<String> {
-        eqs.iter()
-            .map(|eq| self.fingerprint(eq))
-            .collect()
-    }
 }
 
 // ── Clustering ───────────────────────────────────────────────────────────────
@@ -377,7 +381,11 @@ fn main() -> Result<()> {
 
     // ── Resource-aware thread pool ───────────────────────────────────────────
     let n_cpus = std::thread::available_parallelism()?.get();
-    let threads = if config.threads == 0 { n_cpus / 2 } else { config.threads };
+    let threads = if config.threads == 0 {
+        n_cpus / 2
+    } else {
+        config.threads
+    };
     let threads = threads.max(1);
 
     eprintln!("════════════════════════════════════════════════════════════");
@@ -387,7 +395,14 @@ fn main() -> Result<()> {
     eprintln!("  Batch size: {}", config.batch_size);
     eprintln!("  CPU threshold: {}%", config.cpu_threshold);
     eprintln!("  Memory threshold: {}%", config.memory_threshold);
-    eprintln!("  Cache dir: {}", if config.cache_dir.is_empty() { "default" } else { &config.cache_dir });
+    eprintln!(
+        "  Cache dir: {}",
+        if config.cache_dir.is_empty() {
+            "default"
+        } else {
+            &config.cache_dir
+        }
+    );
     eprintln!("════════════════════════════════════════════════════════════");
 
     ThreadPoolBuilder::new()
@@ -395,15 +410,18 @@ fn main() -> Result<()> {
         .build_global()
         .context("failed to build thread pool")?;
 
-    let monitor = Arc::new(ResourceMonitor::new(config.cpu_threshold, config.memory_threshold));
+    let monitor = Arc::new(ResourceMonitor::new(
+        config.cpu_threshold,
+        config.memory_threshold,
+    ));
 
     // ── Cache manager ──────────────────────────────────────────────────────────
     let cache = Arc::new(CacheManager::new(&config.cache_dir, config.ram_cache_cap)?);
 
     // ── Open input + output (stream copy) ────────────────────────────────────
     eprintln!("\nOpening input parquet...");
-    let file = File::open(&config.input)
-        .with_context(|| format!("failed to open {}", config.input))?;
+    let file =
+        File::open(&config.input).with_context(|| format!("failed to open {}", config.input))?;
     let builder = ParquetRecordBatchReaderBuilder::try_new(file)?;
     let total_rows = builder.metadata().file_metadata().num_rows() as u64;
     eprintln!("  Total rows: {}", total_rows);
@@ -463,9 +481,7 @@ fn main() -> Result<()> {
             .and_then(|c| c.as_any().downcast_ref::<StringArray>());
 
         // Build equation strings for cache/SIMD surface
-        let eqs: Vec<String> = (0..n)
-            .map(|i| eq_col.value(i).to_string())
-            .collect();
+        let eqs: Vec<String> = (0..n).map(|i| eq_col.value(i).to_string()).collect();
 
         // Fingerprint via cache-first SIMD batch surface
         let fingerprints: Vec<String> = eqs
@@ -543,7 +559,10 @@ fn main() -> Result<()> {
 
     // ── Cache stats ──────────────────────────────────────────────────────────
     let (cache_entries, hits, misses) = cache.stats();
-    eprintln!("  Cache: {} entries, {} hits, {} misses", cache_entries, hits, misses);
+    eprintln!(
+        "  Cache: {} entries, {} hits, {} misses",
+        cache_entries, hits, misses
+    );
     eprintln!("  Flushing cache to disk...");
     cache.flush_to_disk()?;
     eprintln!("  Cache flushed to: {}", cache.disk_path.display());

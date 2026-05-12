@@ -1,0 +1,5 @@
+cbor2==6.0.1
+msgpack==1.1.2
+protobuf==7.34.1
+flatbuffers==25.12.19
+nanopb==0.4.9.1

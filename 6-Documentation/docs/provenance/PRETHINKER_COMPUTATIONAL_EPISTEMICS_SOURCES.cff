@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+title: Prethinker Computational Epistemics Prior Sources
+message: "Cite the external Prethinker repository and documentation as idea sources when using this Research Stack prior."
+type: dataset
+authors:
+  - name: dr3d
+repository-code: "https://github.com/dr3d/prethinker"
+url: "https://github.com/dr3d/prethinker"
+date-released: "2026-05-08"
+license: "unknown"
+keywords:
+  - computational epistemics
+  - semantic intake
+  - deterministic admission
+  - semantic lenses
+  - source envelope
+  - selector guards
+references:
+  - type: software
+    title: "Prethinker"
+    url: "https://github.com/dr3d/prethinker"
+  - type: generic
+    title: "Prethinker Semantic Instrument"
+    url: "https://raw.githubusercontent.com/dr3d/prethinker/main/docs/SEMANTIC_INSTRUMENT.md"
+  - type: generic
+    title: "Prethinker Multi-Pass Semantic Compiler"
+    url: "https://raw.githubusercontent.com/dr3d/prethinker/main/docs/MULTI_PASS_SEMANTIC_COMPILER.md"
+  - type: generic
+    title: "Prethinker Semantic IR Mapper Specification"
+    url: "https://raw.githubusercontent.com/dr3d/prethinker/main/docs/SEMANTIC_IR_MAPPER_SPEC.md"
+  - type: generic
+    title: "Prethinker Current Harness Instrument"
+    url: "https://raw.githubusercontent.com/dr3d/prethinker/main/docs/CURRENT_HARNESS_INSTRUMENT.md"
+abstract: >
+  External source manifest for Research Stack's Prethinker computational-epistemics
+  prior. The prior treats Prethinker as an architecture source for governed
+  semantic intake: LLM proposals, deterministic mapper admission, semantic
+  lenses, selector guards, uncertainty states, and artifact-first replay.
+  License is recorded as unknown until the upstream repository license is
+  verified; no upstream code is vendored by this prior.

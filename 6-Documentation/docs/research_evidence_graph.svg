@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600">
+  <defs>
+    <style>
+      .title { font-family: Arial, sans-serif; font-size: 24px; font-weight: bold; fill: #333; }
+      .section-title { font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; fill: #444; }
+      .cell-text { font-family: Arial, sans-serif; font-size: 12px; fill: #333; }
+      .cell-header { font-family: Arial, sans-serif; font-size: 13px; font-weight: bold; fill: #222; }
+      .reasoning-text { font-family: Arial, sans-serif; font-size: 11px; fill: #555; }
+      .bar-strong { fill: #4CAF50; }
+      .bar-moderate { fill: #FFC107; }
+      .bar-weak { fill: #FF5722; }
+      .border { stroke: #ccc; stroke-width: 1; fill: none; }
+      .cell-bg { fill: #f9f9f9; }
+      .cell-bg-alt { fill: #fff; }
+      .gap-cell { fill: #ffebee; }
+      .question-text { font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; fill: #333; }
+      .why-text { font-family: Arial, sans-serif; font-size: 11px; fill: #666; font-style: italic; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="1200" height="1600" fill="white"/>
+
+  <!-- Main Title -->
+  <text x="600" y="40" text-anchor="middle" class="title">Research Evidence Analysis: Invariance Principles in Wave Equations</text>
+
+  <!-- Claims and Evidence Table -->
+  <text x="50" y="80" class="section-title">Claims and Evidence</text>
+
+  <!-- Table Header -->
+  <rect x="50" y="100" width="300" height="30" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="350" y="100" width="150" height="30" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="500" y="100" width="400" height="30" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="900" y="100" width="100" height="30" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+
+  <text x="200" y="120" text-anchor="middle" class="cell-header">Claim</text>
+  <text x="425" y="120" text-anchor="middle" class="cell-header">Evidence Strength</text>
+  <text x="700" y="120" text-anchor="middle" class="cell-header">Reasoning</text>
+  <text x="950" y="120" text-anchor="middle" class="cell-header">Papers</text>
+
+  <!-- Row 1 -->
+  <rect x="50" y="130" width="300" height="60" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+  <rect x="350" y="130" width="150" height="60" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+  <rect x="500" y="130" width="400" height="60" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+  <rect x="900" y="130" width="100" height="60" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+
+  <text x="60" y="155" class="cell-text">Symmetry/Invariance principles</text>
+  <text x="60" y="175" class="cell-text">fundamental to wave eqns</text>
+
+  <!-- Bar: Strong -->
+  <rect x="360" y="145" width="130" height="12" class="bar-strong"/>
+  <text x="360" y="175" class="cell-text" font-size="10">Strong</text>
+
+  <text x="510" y="155" class="reasoning-text">Well-established in classical</text>
+  <text x="510" y="170" class="reasoning-text">and quantum mechanics</text>
+  <text x="510" y="185" class="reasoning-text">with rigorous proofs</text>
+
+  <text x="950" y="165" text-anchor="middle" class="cell-text">12+</text>
+
+  <!-- Row 2 -->
+  <rect x="50" y="190" width="300" height="60" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="350" y="190" width="150" height="60" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="500" y="190" width="400" height="60" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="900" y="190" width="100" height="60" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+
+  <text x="60" y="215" class="cell-text">Noncommutative analogues</text>
+  <text x="60" y="235" class="cell-text">extend classical invariance</text>
+
+  <!-- Bar: Moderate -->
+  <rect x="360" y="205" width="90" height="12" class="bar-moderate"/>
+  <text x="360" y="235" class="cell-text" font-size="10">Moderate</text>
+
+  <text x="510" y="215" class="reasoning-text">Theoretical framework exists</text>
+  <text x="510" y="230" class="reasoning-text">but computational methods</text>
+  <text x="510" y="245" class="reasoning-text">still developing</text>
+
+  <text x="950" y="225" text-anchor="middle" class="cell-text">8+</text>
+
+  <!-- Row 3 -->
+  <rect x="50" y="250" width="300" height="60" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+  <rect x="350" y="250" width="150" height="60" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+  <rect x="500" y="250" width="400" height="60" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+  <rect x="900" y="250" width="100" height="60" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+
+  <text x="60" y="275" class="cell-text">Group-invariant ML models</text>
+  <text x="60" y="295" class="cell-text">preserve symmetry structure</text>
+
+  <!-- Bar: Strong -->
+  <rect x="360" y="265" width="130" height="12" class="bar-strong"/>
+  <text x="360" y="295" class="cell-text" font-size="10">Strong</text>
+
+  <text x="510" y="275" class="reasoning-text">Recent advances in equivariant</text>
+  <text x="510" y="290" class="reasoning-text">neural networks show promise</text>
+  <text x="510" y="305" class="reasoning-text">with empirical validation</text>
+
+  <text x="950" y="285" text-anchor="middle" class="cell-text">15+</text>
+
+  <!-- Row 4 -->
+  <rect x="50" y="310" width="300" height="60" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="350" y="310" width="150" height="60" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="500" y="310" width="400" height="60" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="900" y="310" width="100" height="60" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+
+  <text x="60" y="335" class="cell-text">QSP invariants connect</text>
+  <text x="60" y="355" class="cell-text">to quantum information</text>
+
+  <!-- Bar: Weak -->
+  <rect x="360" y="325" width="50" height="12" class="bar-weak"/>
+  <text x="360" y="355" class="cell-text" font-size="10">Weak</text>
+
+  <text x="510" y="335" class="reasoning-text">Emerging field with limited</text>
+  <text x="510" y="350" class="reasoning-text">experimental validation</text>
+  <text x="510" y="365" class="reasoning-text">needs more research</text>
+
+  <text x="950" y="345" text-anchor="middle" class="cell-text">3+</text>
+
+  <!-- Conclusion Section -->
+  <text x="50" y="420" class="section-title">Conclusion</text>
+  <rect x="50" y="435" width="950" height="50" fill="#f0f8ff" stroke="#ccc" stroke-width="1"/>
+  <text x="60" y="455" class="cell-text">Invariance principles provide a powerful unifying framework across classical wave equations, quantum wave equations,</text>
+  <text x="60" y="475" class="cell-text">and modern machine learning approaches. The strongest evidence supports symmetry-based derivations, while noncommutative</text>
+  <text x="60" y="495" class="cell-text">generalizations represent a promising frontier requiring further development.</text>
+
+  <!-- Research Gaps Table -->
+  <text x="50" y="540" class="section-title">Research Gaps Analysis</text>
+
+  <!-- Grid Header -->
+  <rect x="50" y="560" width="250" height="35" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="300" y="560" width="250" height="35" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="550" y="560" width="250" height="35" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="800" y="560" width="250" height="35" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+
+  <text x="175" y="583" text-anchor="middle" class="cell-header">Topic/Outcome</text>
+  <text x="425" y="583" text-anchor="middle" class="cell-header">Classical Wave Eqns</text>
+  <text x="675" y="583" text-anchor="middle" class="cell-header">Quantum Wave Eqns</text>
+  <text x="925" y="583" text-anchor="middle" class="cell-header">Group-Invariant ML/QSP Models</text>
+
+  <!-- Row 1: Symmetry-based derivation -->
+  <rect x="50" y="595" width="250" height="40" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+  <rect x="300" y="595" width="250" height="40" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+  <rect x="550" y="595" width="250" height="40" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+  <rect x="800" y="595" width="250" height="40" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+
+  <text x="60" y="620" class="cell-text">Symmetry-based derivation</text>
+  <text x="425" y="620" text-anchor="middle" class="cell-text" font-size="16" font-weight="bold">2</text>
+  <text x="675" y="620" text-anchor="middle" class="cell-text" font-size="16" font-weight="bold">2</text>
+  <text x="925" y="620" text-anchor="middle" class="cell-text" font-size="16" font-weight="bold">2</text>
+
+  <!-- Row 2: Noncommutative generalizations -->
+  <rect x="50" y="635" width="250" height="40" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="300" y="635" width="250" height="40" class="gap-cell" stroke="#ccc" stroke-width="1"/>
+  <rect x="550" y="635" width="250" height="40" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="800" y="635" width="250" height="40" class="gap-cell" stroke="#ccc" stroke-width="1"/>
+
+  <text x="60" y="660" class="cell-text">Noncommutative generalizations</text>
+  <text x="425" y="660" text-anchor="middle" class="cell-text" font-size="14" font-weight="bold" fill="#d32f2f">GAP</text>
+  <text x="675" y="660" text-anchor="middle" class="cell-text" font-size="16" font-weight="bold">2</text>
+  <text x="925" y="660" text-anchor="middle" class="cell-text" font-size="14" font-weight="bold" fill="#d32f2f">GAP</text>
+
+  <!-- Row 3: Computational complexity -->
+  <rect x="50" y="675" width="250" height="40" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+  <rect x="300" y="675" width="250" height="40" class="gap-cell" stroke="#ccc" stroke-width="1"/>
+  <rect x="550" y="675" width="250" height="40" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+  <rect x="800" y="675" width="250" height="40" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+
+  <text x="60" y="700" class="cell-text">Computational complexity</text>
+  <text x="425" y="700" text-anchor="middle" class="cell-text" font-size="14" font-weight="bold" fill="#d32f2f">GAP</text>
+  <text x="675" y="700" text-anchor="middle" class="cell-text" font-size="16" font-weight="bold">1</text>
+  <text x="925" y="700" text-anchor="middle" class="cell-text" font-size="16" font-weight="bold">2</text>
+
+  <!-- Row 4: Physical applications -->
+  <rect x="50" y="715" width="250" height="40" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="300" y="715" width="250" height="40" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="550" y="715" width="250" height="40" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <rect x="800" y="715" width="250" height="40" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+
+  <text x="60" y="740" class="cell-text">Physical applications</text>
+  <text x="425" y="740" text-anchor="middle" class="cell-text" font-size="16" font-weight="bold">1</text>
+  <text x="675" y="740" text-anchor="middle" class="cell-text" font-size="16" font-weight="bold">1</text>
+  <text x="925" y="740" text-anchor="middle" class="cell-text" font-size="16" font-weight="bold">1</text>
+
+  <!-- Legend for Research Gaps -->
+  <rect x="50" y="770" width="200" height="60" fill="#f9f9f9" stroke="#ccc" stroke-width="1"/>
+  <text x="60" y="790" class="cell-text" font-weight="bold">Legend:</text>
+  <text x="60" y="810" class="cell-text">2 = Well-established</text>
+  <text x="60" y="825" class="cell-text">1 = Emerging</text>
+  <text x="150" y="810" class="cell-text" fill="#d32f2f" font-weight="bold">GAP = Research gap</text>
+
+  <!-- Open Research Questions -->
+  <text x="50" y="870" class="section-title">Open Research Questions</text>
+
+  <!-- Question 1 -->
+  <rect x="50" y="890" width="950" height="70" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+  <text x="60" y="910" class="question-text">Q1: How can noncommutative invariant theory be systematically integrated with classical wave equation derivations?</text>
+  <text x="60" y="930" class="why-text">Why: Current approaches are ad-hoc and lack a unified framework for connecting noncommutative algebra to wave physics.</text>
+  <text x="60" y="950" class="why-text">This integration could reveal new conservation laws and symmetry structures.</text>
+
+  <!-- Question 2 -->
+  <rect x="50" y="960" width="950" height="70" class="cell-bg" stroke="#ccc" stroke-width="1"/>
+  <text x="60" y="980" class="question-text">Q2: What scalable computational methods can handle the complexity of group-invariant ML models for high-dimensional systems?</text>
+  <text x="60" y="1000" class="why-text">Why: Current methods scale poorly with dimensionality and group size, limiting practical applications.</text>
+  <text x="60" y="1020" class="why-text">Hierarchical decomposition and approximation techniques are needed.</text>
+
+  <!-- Question 3 -->
+  <rect x="50" y="1030" width="950" height="70" class="cell-bg-alt" stroke="#ccc" stroke-width="1"/>
+  <text x="60" y="1050" class="question-text">Q3: Can hybrid approaches combining classical, quantum, and ML perspectives reveal new physics beyond individual frameworks?</text>
+  <text x="60" y="1070" class="why-text">Why: Each framework has blind spots; hybrid methods could uncover phenomena invisible to single approaches.</text>
+  <text x="60" y="1090" class="why-text">Cross-pollination between fields is historically fruitful but underexplored here.</text>
+
+  <!-- Evidence Strength Legend -->
+  <text x="50" y="1140" class="section-title">Evidence Strength Legend</text>
+  <rect x="50" y="1155" width="950" height="50" fill="#f9f9f9" stroke="#ccc" stroke-width="1"/>
+
+  <rect x="60" y="1170" width="50" height="12" class="bar-strong"/>
+  <text x="120" y="1180" class="cell-text">Strong: Well-established with rigorous proofs and multiple validations</text>
+
+  <rect x="450" y="1170" width="50" height="12" class="bar-moderate"/>
+  <text x="510" y="1180" class="cell-text">Moderate: Theoretical framework exists, computational methods developing</text>
+
+  <rect x="850" y="1170" width="50" height="12" class="bar-weak"/>
+  <text x="910" y="1180" class="cell-text">Weak: Emerging field with limited validation</text>
+
+  <!-- Footer -->
+  <text x="600" y="1280" text-anchor="middle" class="cell-text" font-size="10" fill="#888">Generated from research evidence analysis | May 2026</text>
+</svg>

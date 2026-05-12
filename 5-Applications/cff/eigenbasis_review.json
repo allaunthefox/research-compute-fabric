@@ -1,0 +1,874 @@
+{
+  "eigenvalue_range": [
+    1.3999779272653148,
+    8.609567621380449e-18
+  ],
+  "isolated_equations": [],
+  "new_equations": [
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "domain": "Classical Mechanics",
+      "eq_id": 19,
+      "name": "Damped Harmonic Oscillator",
+      "spectral_mass": 1.053541
+    }
+  ],
+  "num_edges": 64,
+  "num_eigenvalues": 79,
+  "num_isolated": 0,
+  "num_new_equations": 1,
+  "num_nodes": 79,
+  "num_shifted": 51,
+  "shifted_equations": [
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Biophysics",
+      "dominant_mode": "1",
+      "eigenvalue": -1.2785,
+      "eq_id": 593,
+      "layer": 4,
+      "name": "Nernst Equation (Membrane Equilibrium Potential)",
+      "spectral_mass": 2.699023
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Statistical Mechanics",
+      "dominant_mode": "1",
+      "eigenvalue": -1.2785,
+      "eq_id": 300,
+      "layer": 2,
+      "name": "Gibbs Entropy Formula",
+      "spectral_mass": 2.680224
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "right_handed_vector_bias",
+      "domain": "Thermodynamics",
+      "dominant_mode": "1",
+      "eigenvalue": -1.2785,
+      "eq_id": 68,
+      "layer": 1,
+      "name": "Second Law of Thermodynamics",
+      "spectral_mass": 2.632046
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Statistical Mechanics",
+      "dominant_mode": "1",
+      "eigenvalue": -1.2785,
+      "eq_id": 296,
+      "layer": 2,
+      "name": "Boltzmann Distribution",
+      "spectral_mass": 2.609717
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Cosmology",
+      "dominant_mode": "7",
+      "eigenvalue": -1.0101,
+      "eq_id": 164,
+      "layer": 2,
+      "name": "CMB Blackbody Spectrum",
+      "spectral_mass": 2.550659
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Surface Science",
+      "dominant_mode": "24",
+      "eigenvalue": -0.7071,
+      "eq_id": 451,
+      "layer": 2,
+      "name": "Kelvin Equation (Capillary Condensation)",
+      "spectral_mass": 2.436894
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Material Physics",
+      "dominant_mode": "17",
+      "eigenvalue": 0.7265,
+      "eq_id": 502,
+      "layer": 2,
+      "name": "Nernst Equation (Electrode Potential)",
+      "spectral_mass": 2.421445
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Plasma Physics",
+      "dominant_mode": "7",
+      "eigenvalue": -1.0101,
+      "eq_id": 272,
+      "layer": 2,
+      "name": "MHD Induction Equation",
+      "spectral_mass": 2.300064
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Quantum Mechanics",
+      "dominant_mode": "29",
+      "eigenvalue": -0.7071,
+      "eq_id": 102,
+      "layer": 1,
+      "name": "Spin-\u00bd Algebra (Pauli Matrices)",
+      "spectral_mass": 2.277911
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Condensed Matter",
+      "dominant_mode": "29",
+      "eigenvalue": -0.7071,
+      "eq_id": 219,
+      "layer": 2,
+      "name": "Bloch's Theorem",
+      "spectral_mass": 2.192643
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Optics",
+      "dominant_mode": "27",
+      "eigenvalue": -0.7071,
+      "eq_id": 203,
+      "layer": 2,
+      "name": "Rayleigh Criterion (Resolution Limit)",
+      "spectral_mass": 2.183978
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Biophysics",
+      "dominant_mode": "9",
+      "eigenvalue": -0.9036,
+      "eq_id": 597,
+      "layer": 4,
+      "name": "Cable Equation (Neuronal Dendrite/Axon)",
+      "spectral_mass": 2.089467
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Quantum Mechanics",
+      "dominant_mode": "7",
+      "eigenvalue": -1.0101,
+      "eq_id": 86,
+      "layer": 1,
+      "name": "Planck's Blackbody Radiation Law",
+      "spectral_mass": 2.087887
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Polymer Physics",
+      "dominant_mode": "33",
+      "eigenvalue": -0.7071,
+      "eq_id": 438,
+      "layer": 2,
+      "name": "Williams-Landel-Ferry (WLF) Equation",
+      "spectral_mass": 2.079654
+    },
+    {
+      "chiral_new": "chiral_scarred",
+      "chiral_old": "left_handed_mass_bias",
+      "domain": "Cosmology",
+      "dominant_mode": "40",
+      "eigenvalue": 0.5,
+      "eq_id": 168,
+      "layer": 2,
+      "name": "Dark Energy Equation of State",
+      "spectral_mass": 2.069697
+    },
+    {
+      "chiral_new": "chiral_scarred",
+      "chiral_old": "left_handed_mass_bias",
+      "domain": "Extremophile Bounds",
+      "dominant_mode": "40",
+      "eigenvalue": 0.5,
+      "eq_id": 745,
+      "layer": 4,
+      "name": "Perchlorate Brine Limit (Don Juan Pond: -50\u00b0C liquid water maintained by CaCl\u2082 e",
+      "spectral_mass": 2.062542
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Electromagnetism",
+      "dominant_mode": "7",
+      "eigenvalue": -1.0101,
+      "eq_id": 38,
+      "layer": 1,
+      "name": "Maxwell's Equations (Differential)",
+      "spectral_mass": 2.039742
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Nuclear Physics",
+      "dominant_mode": "3",
+      "eigenvalue": -1.1176,
+      "eq_id": 241,
+      "layer": 2,
+      "name": "Radioactive Decay Law",
+      "spectral_mass": 1.993108
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Thermodynamics",
+      "dominant_mode": "28",
+      "eigenvalue": -0.7071,
+      "eq_id": 69,
+      "layer": 1,
+      "name": "Third Law of Thermodynamics",
+      "spectral_mass": 1.928032
+    },
+    {
+      "chiral_new": "achiral_stable",
+      "chiral_old": "left_handed_mass_bias",
+      "domain": "Biophysics",
+      "dominant_mode": "0",
+      "eigenvalue": 1.4,
+      "eq_id": 773,
+      "layer": 4,
+      "name": "Optimal DNA Sequence Compression (PIST/CFF Biological Analogue)",
+      "spectral_mass": 1.925629
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Material Physics",
+      "dominant_mode": "26",
+      "eigenvalue": -0.7071,
+      "eq_id": 464,
+      "layer": 2,
+      "name": "Fick's First Law (Steady-State Diffusion)",
+      "spectral_mass": 1.808281
+    },
+    {
+      "chiral_new": "right_handed_vector_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Continuum Mechanics",
+      "dominant_mode": "11",
+      "eigenvalue": -0.866,
+      "eq_id": 316,
+      "layer": 2,
+      "name": "Euler-Bernoulli Beam Equation",
+      "spectral_mass": 1.800321
+    },
+    {
+      "chiral_new": "right_handed_vector_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Fluid Dynamics",
+      "dominant_mode": "11",
+      "eigenvalue": -0.866,
+      "eq_id": 181,
+      "layer": 2,
+      "name": "Poiseuille Flow (Hagen-Poiseuille)",
+      "spectral_mass": 1.800321
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Electromagnetism",
+      "dominant_mode": "24",
+      "eigenvalue": -0.7071,
+      "eq_id": 65,
+      "layer": 1,
+      "name": "Magnetic Susceptibility",
+      "spectral_mass": 1.723144
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Electromagnetism",
+      "dominant_mode": "4",
+      "eigenvalue": 1.083,
+      "eq_id": 46,
+      "layer": 1,
+      "name": "Kirchhoff's Current Law (KCL)",
+      "spectral_mass": 1.71528
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Optics",
+      "dominant_mode": "22",
+      "eigenvalue": 0.7071,
+      "eq_id": 200,
+      "layer": 2,
+      "name": "Fresnel Equations (Amplitude Reflection/Transmission)",
+      "spectral_mass": 1.684137
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Radical Adaptations",
+      "dominant_mode": "1",
+      "eigenvalue": -1.2785,
+      "eq_id": 754,
+      "layer": 4,
+      "name": "Primary Endosymbiosis \u2014 Mitochondrial and Plastid Acquisition, the Singular Evol",
+      "spectral_mass": 1.653077
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Quantum Mechanics",
+      "dominant_mode": "29",
+      "eigenvalue": -0.7071,
+      "eq_id": 104,
+      "layer": 1,
+      "name": "Dirac Equation",
+      "spectral_mass": 1.610726
+    },
+    {
+      "chiral_new": "achiral_stable",
+      "chiral_old": "left_handed_mass_bias",
+      "domain": "Extremophile Bounds",
+      "dominant_mode": "0",
+      "eigenvalue": 1.4,
+      "eq_id": 744,
+      "layer": 4,
+      "name": "Long-Term Dormancy Survival Limit (~250 million years in salt; ~100 million year",
+      "spectral_mass": 1.577049
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Quantum Mechanics",
+      "dominant_mode": "29",
+      "eigenvalue": -0.7071,
+      "eq_id": 94,
+      "layer": 1,
+      "name": "Time-Independent Schr\u00f6dinger Equation",
+      "spectral_mass": 1.550433
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Optics",
+      "dominant_mode": "27",
+      "eigenvalue": -0.7071,
+      "eq_id": 191,
+      "layer": 2,
+      "name": "Snell's Law of Refraction",
+      "spectral_mass": 1.544305
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "right_handed_vector_bias",
+      "domain": "Information Theory",
+      "dominant_mode": "2",
+      "eigenvalue": 1.2785,
+      "eq_id": 324,
+      "layer": 4,
+      "name": "Landauer's Principle",
+      "spectral_mass": 1.476851
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Nuclear Physics",
+      "dominant_mode": "1",
+      "eigenvalue": -1.2785,
+      "eq_id": 247,
+      "layer": 2,
+      "name": "Four-Factor Formula (Nuclear Reactor)",
+      "spectral_mass": 1.476851
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Polymer Physics",
+      "dominant_mode": "33",
+      "eigenvalue": -0.7071,
+      "eq_id": 443,
+      "layer": 2,
+      "name": "Flory-Fox Equation (T_g vs Molecular Weight)",
+      "spectral_mass": 1.470538
+    },
+    {
+      "chiral_new": "right_handed_vector_bias",
+      "chiral_old": "left_handed_mass_bias",
+      "domain": "Radical Adaptations",
+      "dominant_mode": "11",
+      "eigenvalue": -0.866,
+      "eq_id": 766,
+      "layer": 4,
+      "name": "Pterosaur Giant Flight \u2014 Quetzalcoatlus 11m Wingspan, Estimated 200-250 kg, Larg",
+      "spectral_mass": 1.434296
+    },
+    {
+      "chiral_new": "right_handed_vector_bias",
+      "chiral_old": "left_handed_mass_bias",
+      "domain": "Radical Adaptations",
+      "dominant_mode": "12",
+      "eigenvalue": 0.866,
+      "eq_id": 764,
+      "layer": 4,
+      "name": "Sauropod Hemodynamics \u2014 Pumping Blood 8-10m Vertically Against Gravity, the Larg",
+      "spectral_mass": 1.434296
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Thermodynamics",
+      "dominant_mode": "28",
+      "eigenvalue": -0.7071,
+      "eq_id": 70,
+      "layer": 1,
+      "name": "Ideal Gas Law",
+      "spectral_mass": 1.363325
+    },
+    {
+      "chiral_new": "right_handed_vector_bias",
+      "chiral_old": "left_handed_mass_bias",
+      "domain": "Radical Adaptations",
+      "dominant_mode": "45",
+      "eigenvalue": 0.5,
+      "eq_id": 752,
+      "layer": 4,
+      "name": "Biological Cavitation / Sonoluminescence \u2014 Pistol Shrimp, Mantis Shrimp",
+      "spectral_mass": 1.329916
+    },
+    {
+      "chiral_new": "right_handed_vector_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Fluid Dynamics",
+      "dominant_mode": "45",
+      "eigenvalue": 0.5,
+      "eq_id": 176,
+      "layer": 2,
+      "name": "Navier-Stokes Equation (Incompressible)",
+      "spectral_mass": 1.329916
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Material Physics",
+      "dominant_mode": "26",
+      "eigenvalue": -0.7071,
+      "eq_id": 465,
+      "layer": 2,
+      "name": "Fick's Second Law (Time-Dependent Diffusion)",
+      "spectral_mass": 1.278648
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Optics",
+      "dominant_mode": "22",
+      "eigenvalue": 0.7071,
+      "eq_id": 197,
+      "layer": 2,
+      "name": "Single-Slit Diffraction",
+      "spectral_mass": 1.190865
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "right_handed_vector_bias",
+      "domain": "Classical Mechanics",
+      "dominant_mode": "4",
+      "eigenvalue": 1.083,
+      "eq_id": 4,
+      "layer": 1,
+      "name": "Hamilton-Jacobi Equation",
+      "spectral_mass": 1.175209
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "achiral_stable",
+      "domain": "Extremophile Bounds",
+      "dominant_mode": "4",
+      "eigenvalue": 1.083,
+      "eq_id": 738,
+      "layer": 4,
+      "name": "Upper Temperature Limit of Carbon-Based Life (~122\u00b0C at depth, ~113\u00b0C at surface",
+      "spectral_mass": 1.175209
+    },
+    {
+      "chiral_new": "achiral_stable",
+      "chiral_old": "left_handed_mass_bias",
+      "domain": "Quantum Information",
+      "dominant_mode": "46",
+      "eigenvalue": 0.5,
+      "eq_id": 668,
+      "layer": 4,
+      "name": "Concatenated Quantum Error Correction Threshold Theorem",
+      "spectral_mass": 1.148621
+    },
+    {
+      "chiral_new": "achiral_stable",
+      "chiral_old": "left_handed_mass_bias",
+      "domain": "Radical Adaptations",
+      "dominant_mode": "14",
+      "eigenvalue": -0.809,
+      "eq_id": 748,
+      "layer": 4,
+      "name": "Biological Immortality via Cellular Transdifferentiation \u2014 Turritopsis dohrnii (",
+      "spectral_mass": 1.08631
+    },
+    {
+      "chiral_new": "achiral_stable",
+      "chiral_old": "left_handed_mass_bias",
+      "domain": "Astrophysics",
+      "dominant_mode": "15",
+      "eigenvalue": -0.809,
+      "eq_id": 254,
+      "layer": 2,
+      "name": "TOV Limit (Neutron Star Maximum Mass)",
+      "spectral_mass": 1.08631
+    },
+    {
+      "chiral_new": "achiral_stable",
+      "chiral_old": "left_handed_mass_bias",
+      "domain": "Radical Adaptations",
+      "dominant_mode": "48",
+      "eigenvalue": 0.5,
+      "eq_id": 757,
+      "layer": 4,
+      "name": "Biological Sonar \u2014 Echolocation Convergent Evolution in Bats and Toothed Whales ",
+      "spectral_mass": 1.077442
+    },
+    {
+      "chiral_new": "left_handed_mass_bias",
+      "chiral_old": "unknown",
+      "domain": "Classical Mechanics",
+      "dominant_mode": "0",
+      "eigenvalue": 1.4,
+      "eq_id": 19,
+      "layer": 1,
+      "name": "Damped Harmonic Oscillator",
+      "spectral_mass": 1.053541
+    },
+    {
+      "chiral_new": "achiral_stable",
+      "chiral_old": "left_handed_mass_bias",
+      "domain": "Radical Adaptations",
+      "dominant_mode": "36",
+      "eigenvalue": 0.6296,
+      "eq_id": 767,
+      "layer": 4,
+      "name": "Megalodon Bite Force \u2014 108,000-182,000 N (~11-19 tonnes-force), Largest Bite For",
+      "spectral_mass": 0.92388
+    },
+    {
+      "chiral_new": "achiral_stable",
+      "chiral_old": "left_handed_mass_bias",
+      "domain": "Extremophile Bounds",
+      "dominant_mode": "5",
+      "eigenvalue": 1.0505,
+      "eq_id": 739,
+      "layer": 4,
+      "name": "Maximum Hydrostatic Pressure for Cell Division (~100-200 MPa confirmed; ~1 GPa s",
+      "spectral_mass": 0.92388
+    },
+    {
+      "chiral_new": "achiral_stable",
+      "chiral_old": "left_handed_mass_bias",
+      "domain": "Radical Adaptations",
+      "dominant_mode": "5",
+      "eigenvalue": 1.0505,
+      "eq_id": 755,
+      "layer": 4,
+      "name": "Spider Silk \u2014 Tensile Strength Exceeding Steel, Toughness Exceeding Kevlar, Mole",
+      "spectral_mass": 0.92388
+    }
+  ],
+  "spectral_gap_max_idx": 2,
+  "spectral_gap_max_value": -0.16095547241916908,
+  "top_eigenmodes": [
+    {
+      "eigenvalue": 1.4,
+      "mode": 0,
+      "num_nodes_below_threshold": 10,
+      "top_nodes": [
+        {
+          "coordinate": 0.839756,
+          "eq_id": 773,
+          "name": "Optimal DNA Sequence Compression (PIST/CFF Biological Analog"
+        },
+        {
+          "coordinate": 0.37185,
+          "eq_id": 744,
+          "name": "Long-Term Dormancy Survival Limit (~250 million years in sal"
+        },
+        {
+          "coordinate": 0.299918,
+          "eq_id": 19,
+          "name": "Damped Harmonic Oscillator"
+        },
+        {
+          "coordinate": 0.201408,
+          "eq_id": 241,
+          "name": "Radioactive Decay Law"
+        },
+        {
+          "coordinate": 0.120151,
+          "eq_id": 605,
+          "name": "Arrhenius Equation (Chemical Reaction Rate)"
+        },
+        {
+          "coordinate": 0.071933,
+          "eq_id": 741,
+          "name": "Maximum Ionizing Radiation Dose Survived (Deinococcus radiod"
+        },
+        {
+          "coordinate": 0.049186,
+          "eq_id": 46,
+          "name": "Kirchhoff's Current Law (KCL)"
+        },
+        {
+          "coordinate": 0.042912,
+          "eq_id": 4,
+          "name": "Hamilton-Jacobi Equation"
+        },
+        {
+          "coordinate": 0.042912,
+          "eq_id": 738,
+          "name": "Upper Temperature Limit of Carbon-Based Life (~122\u00b0C at dept"
+        },
+        {
+          "coordinate": 0.017567,
+          "eq_id": 758,
+          "name": "Explosive Biochemistry \u2014 Bombardier Beetle, Skunk Spray, Ven"
+        }
+      ]
+    },
+    {
+      "eigenvalue": -1.2785,
+      "mode": 1,
+      "num_nodes_below_threshold": 19,
+      "top_nodes": [
+        {
+          "coordinate": -0.571024,
+          "eq_id": 68,
+          "name": "Second Law of Thermodynamics"
+        },
+        {
+          "coordinate": 0.468627,
+          "eq_id": 593,
+          "name": "Nernst Equation (Membrane Equilibrium Potential)"
+        },
+        {
+          "coordinate": 0.281256,
+          "eq_id": 296,
+          "name": "Boltzmann Distribution"
+        },
+        {
+          "coordinate": 0.263633,
+          "eq_id": 300,
+          "name": "Gibbs Entropy Formula"
+        },
+        {
+          "coordinate": -0.227656,
+          "eq_id": 597,
+          "name": "Cable Equation (Neuronal Dendrite/Axon)"
+        },
+        {
+          "coordinate": 0.223313,
+          "eq_id": 247,
+          "name": "Four-Factor Formula (Nuclear Reactor)"
+        },
+        {
+          "coordinate": 0.223313,
+          "eq_id": 324,
+          "name": "Landauer's Principle"
+        },
+        {
+          "coordinate": -0.216358,
+          "eq_id": 502,
+          "name": "Nernst Equation (Electrode Potential)"
+        },
+        {
+          "coordinate": -0.183268,
+          "eq_id": 754,
+          "name": "Primary Endosymbiosis \u2014 Mitochondrial and Plastid Acquisitio"
+        },
+        {
+          "coordinate": -0.148165,
+          "eq_id": 742,
+          "name": "Absolute Minimum Metabolic Rate for Sustained Life (~10\u207b\u00b3 to"
+        }
+      ]
+    },
+    {
+      "eigenvalue": 1.2785,
+      "mode": 2,
+      "num_nodes_below_threshold": 19,
+      "top_nodes": [
+        {
+          "coordinate": -0.571024,
+          "eq_id": 68,
+          "name": "Second Law of Thermodynamics"
+        },
+        {
+          "coordinate": -0.468627,
+          "eq_id": 593,
+          "name": "Nernst Equation (Membrane Equilibrium Potential)"
+        },
+        {
+          "coordinate": -0.281256,
+          "eq_id": 296,
+          "name": "Boltzmann Distribution"
+        },
+        {
+          "coordinate": -0.263633,
+          "eq_id": 300,
+          "name": "Gibbs Entropy Formula"
+        },
+        {
+          "coordinate": -0.227656,
+          "eq_id": 597,
+          "name": "Cable Equation (Neuronal Dendrite/Axon)"
+        },
+        {
+          "coordinate": -0.223313,
+          "eq_id": 324,
+          "name": "Landauer's Principle"
+        },
+        {
+          "coordinate": -0.223313,
+          "eq_id": 247,
+          "name": "Four-Factor Formula (Nuclear Reactor)"
+        },
+        {
+          "coordinate": -0.216358,
+          "eq_id": 502,
+          "name": "Nernst Equation (Electrode Potential)"
+        },
+        {
+          "coordinate": -0.183268,
+          "eq_id": 754,
+          "name": "Primary Endosymbiosis \u2014 Mitochondrial and Plastid Acquisitio"
+        },
+        {
+          "coordinate": -0.148165,
+          "eq_id": 742,
+          "name": "Absolute Minimum Metabolic Rate for Sustained Life (~10\u207b\u00b3 to"
+        }
+      ]
+    },
+    {
+      "eigenvalue": -1.1176,
+      "mode": 3,
+      "num_nodes_below_threshold": 10,
+      "top_nodes": [
+        {
+          "coordinate": -0.611076,
+          "eq_id": 605,
+          "name": "Arrhenius Equation (Chemical Reaction Rate)"
+        },
+        {
+          "coordinate": 0.477243,
+          "eq_id": 241,
+          "name": "Radioactive Decay Law"
+        },
+        {
+          "coordinate": 0.341813,
+          "eq_id": 46,
+          "name": "Kirchhoff's Current Law (KCL)"
+        },
+        {
+          "coordinate": 0.273394,
+          "eq_id": 4,
+          "name": "Hamilton-Jacobi Equation"
+        },
+        {
+          "coordinate": 0.273394,
+          "eq_id": 738,
+          "name": "Upper Temperature Limit of Carbon-Based Life (~122\u00b0C at dept"
+        },
+        {
+          "coordinate": -0.242116,
+          "eq_id": 744,
+          "name": "Long-Term Dormancy Survival Limit (~250 million years in sal"
+        },
+        {
+          "coordinate": -0.213518,
+          "eq_id": 741,
+          "name": "Maximum Ionizing Radiation Dose Survived (Deinococcus radiod"
+        },
+        {
+          "coordinate": -0.152926,
+          "eq_id": 758,
+          "name": "Explosive Biochemistry \u2014 Bombardier Beetle, Skunk Spray, Ven"
+        },
+        {
+          "coordinate": 0.063921,
+          "eq_id": 773,
+          "name": "Optimal DNA Sequence Compression (PIST/CFF Biological Analog"
+        },
+        {
+          "coordinate": -0.028598,
+          "eq_id": 19,
+          "name": "Damped Harmonic Oscillator"
+        }
+      ]
+    },
+    {
+      "eigenvalue": 1.083,
+      "mode": 4,
+      "num_nodes_below_threshold": 10,
+      "top_nodes": [
+        {
+          "coordinate": -0.623289,
+          "eq_id": 605,
+          "name": "Arrhenius Equation (Chemical Reaction Rate)"
+        },
+        {
+          "coordinate": -0.40892,
+          "eq_id": 241,
+          "name": "Radioactive Decay Law"
+        },
+        {
+          "coordinate": -0.365687,
+          "eq_id": 46,
+          "name": "Kirchhoff's Current Law (KCL)"
+        },
+        {
+          "coordinate": -0.287748,
+          "eq_id": 738,
+          "name": "Upper Temperature Limit of Carbon-Based Life (~122\u00b0C at dept"
+        },
+        {
+          "coordinate": -0.287748,
+          "eq_id": 4,
+          "name": "Hamilton-Jacobi Equation"
+        },
+        {
+          "coordinate": 0.249307,
+          "eq_id": 773,
+          "name": "Optimal DNA Sequence Compression (PIST/CFF Biological Analog"
+        },
+        {
+          "coordinate": -0.188782,
+          "eq_id": 741,
+          "name": "Maximum Ionizing Radiation Dose Survived (Deinococcus radiod"
+        },
+        {
+          "coordinate": -0.168823,
+          "eq_id": 758,
+          "name": "Explosive Biochemistry \u2014 Bombardier Beetle, Skunk Spray, Ven"
+        },
+        {
+          "coordinate": 0.115095,
+          "eq_id": 19,
+          "name": "Damped Harmonic Oscillator"
+        },
+        {
+          "coordinate": -0.073687,
+          "eq_id": 744,
+          "name": "Long-Term Dormancy Survival Limit (~250 million years in sal"
+        }
+      ]
+    }
+  ]
+}

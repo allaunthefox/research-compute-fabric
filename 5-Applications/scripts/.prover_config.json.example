@@ -1,0 +1,17 @@
+{
+  "backend": "ollama",
+  "model": "zeyu-zheng/BFS-Prover-V2-7B:q8_0",
+  "backends": {
+    "ollama": {
+      "host": "localhost",
+      "port": 11434
+    },
+    "unsloth": {
+      "model_path": "unsloth/llama-3-8b-bnb-4bit"
+    },
+    "thoth": {
+      "api_key": "YOUR_THOTH_API_KEY",
+      "endpoint": "http://localhost:8000"
+    }
+  }
+}

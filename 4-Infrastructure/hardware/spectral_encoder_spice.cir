@@ -1,0 +1,89 @@
+* Spectral Encoder Circuit Simulation
+* Implements spectral encoding theory in analog circuit form
+* Based on Signal Theory Compendium spectral encoding theory
+*
+* Core concepts:
+* - Spectral signature: 8-bin amplitude vector
+* - Genetic event mapping to spectral peaks
+* - Spectral overlap and accumulation
+
+.title Spectral Encoder Analog Circuit Simulation
+
+* Input signals for genetic events (A, T, G, C)
+* Each event maps to a specific spectral bin
+VA_IN 2 0 PULSE(0 3.3 1n 1n 10n 20n 100n)
+VT_IN 3 0 PULSE(0 3.3 21n 1n 10n 20n 100n)
+VG_IN 4 0 PULSE(0 3.3 41n 1n 10n 20n 100n)
+VC_IN 5 0 PULSE(0 3.3 61n 1n 10n 20n 100n)
+
+* Spectral bin circuits (8 bins total)
+* Each bin is an RC integrator that accumulates charge
+
+* Bin 0 (Event A)
+R_BIN0 10 0 10k
+C_BIN0 10 0 10p
+E_BIN0 2 0 10 0 1  ; Voltage-controlled voltage source for event A
+
+* Bin 1 (Event T)
+R_BIN1 11 0 10k
+C_BIN1 11 0 10p
+E_BIN1 3 0 11 0 1  ; Voltage-controlled voltage source for event T
+
+* Bin 2 (Event G)
+R_BIN2 12 0 10k
+C_BIN2 12 0 10p
+E_BIN2 4 0 12 0 1  ; Voltage-controlled voltage source for event G
+
+* Bin 3 (Event C)
+R_BIN3 13 0 10k
+C_BIN3 13 0 10p
+E_BIN3 5 0 13 0 1  ; Voltage-controlled voltage source for event C
+
+* Remaining bins (4-7) - initially empty
+R_BIN4 14 0 10k
+C_BIN4 14 0 10p
+
+R_BIN5 15 0 10k
+C_BIN5 15 0 10p
+
+R_BIN6 16 0 10k
+C_BIN6 16 0 10p
+
+R_BIN7 17 0 10k
+C_BIN7 17 0 10p
+
+* Spectral overlap circuit (summing amplifier)
+* Computes inner product of spectral signatures
+R_SUM1 18 0 10k
+R_SUM2 19 0 10k
+R_SUM3 20 0 10k
+R_SUM4 21 0 10k
+E_SUM1 10 0 18 0 0.125
+E_SUM2 11 0 19 0 0.125
+E_SUM3 12 0 20 0 0.125
+E_SUM4 13 0 21 0 0.125
+
+R_SUM_OUT 22 0 2.5k
+E_SUM_OUT 18 21 22 0 1
+
+* Output buffers for spectral bins
+E_OUT0 10 0 30 0 1
+E_OUT1 11 0 31 0 1
+E_OUT2 12 0 32 0 1
+E_OUT3 13 0 33 0 1
+E_OUT4 14 0 34 0 1
+E_OUT5 15 0 35 0 1
+E_OUT6 16 0 36 0 1
+E_OUT7 17 0 37 0 1
+
+* Analysis
+.TRAN 1n 200n
+.PLOT TRAN V(2) V(3) V(4) V(5) V(30) V(31) V(32) V(33) V(22)
+
+* Measurement commands
+.MEASURE TRAN bin0_peak MAX V(30)
+.MEASURE TRAN bin1_peak MAX V(31)
+.MEASURE TRAN bin2_peak MAX V(32)
+.MEASURE TRAN bin3_peak MAX V(33)
+
+.END

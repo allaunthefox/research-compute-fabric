@@ -1,0 +1,18 @@
+namespace ResearchStack.Finance;
+
+table FinancialClaimPacket {
+  id:string;
+  claimant:string;
+  counterparty:string;
+  principal:string;
+  currency:string;
+  rate:string;
+  maturity:string;
+  collateral:string;
+  jurisdiction:string;
+  risk:string;
+  settlement_path:string;
+  receipt:string;
+}
+
+root_type FinancialClaimPacket;

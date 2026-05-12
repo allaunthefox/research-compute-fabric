@@ -1,0 +1,346 @@
+# GCL Nanokernel FPGA UART Loader
+# Purpose: Program FPGA via UART without Gowin toolchain
+# Target: Gowin GW1NR-9 / Tang Nano 9K via FTDI FT2232C
+
+# FPGA UART Constants
+const FPGA_BAUD_RATE = 115200
+const FPGA_DEVICE_PATH = "/dev/ttyUSB0"
+const FPGA_MAGIC_HEADER = [0x47, 0x43, 0x4C, 0x46]  # "GCLF"
+const FPGA_FOOTER = [0x00, 0x00, 0x00, 0x00]
+
+# Protocol Constants
+const CMD_STATUS = 0x00
+const CMD_PROGRAM = 0x01
+const CMD_VERIFY = 0x02
+const CMD_RESET = 0x03
+
+const ACK_SUCCESS = 0xFA
+const ACK_ERROR = 0xFE
+const ACK_READY = 0xFF
+
+# UART Protocol Decoder State Machine
+# States: IDLE, HEADER, LENGTH, DATA, FOOTER, ACK, ERROR
+const STATE_IDLE = 0
+const STATE_HEADER = 1
+const STATE_LENGTH = 2
+const STATE_DATA = 3
+const STATE_FOOTER = 4
+const STATE_ACK = 5
+const STATE_ERROR = 6
+
+# Protocol State
+var protocol_state = STATE_IDLE
+var protocol_position = 0
+var expected_length = 0
+var checksum = 0
+
+# UART Protocol Decoder State Machine
+function uartProtocolDecoder(byte, protocol_state, protocol_position, expected_length, checksum):
+    # State machine for UART protocol decoding
+    # Returns: (new_state, new_position, new_expected_length, new_checksum, error_flag)
+
+    error_flag = 0
+
+    if protocol_state == STATE_IDLE:
+        # Wait for magic header byte
+        if byte == FPGA_MAGIC_HEADER[0]:
+            return (STATE_HEADER, 1, 0, byte, 0)
+        else:
+            return (STATE_IDLE, 0, 0, 0, 0)
+
+    elif protocol_state == STATE_HEADER:
+        # Check magic header bytes 2-4
+        if protocol_position < 4:
+            if byte == FPGA_MAGIC_HEADER[protocol_position]:
+                checksum = checksum + byte
+                return (STATE_HEADER, protocol_position + 1, 0, checksum, 0)
+            else:
+                return (STATE_ERROR, 0, 0, 0, 1)
+        else:
+            return (STATE_LENGTH, 0, 0, checksum, 0)
+
+    elif protocol_state == STATE_LENGTH:
+        # Read 4-byte length (little-endian)
+        if protocol_position < 4:
+            checksum = checksum + byte
+            expected_length = expected_length + (byte << (8 * protocol_position))
+            return (STATE_LENGTH, protocol_position + 1, expected_length, checksum, 0)
+        else:
+            if expected_length > 0:
+                return (STATE_DATA, 0, expected_length, checksum, 0)
+            else:
+                return (STATE_ERROR, 0, 0, 0, 1)
+
+    elif protocol_state == STATE_DATA:
+        # Read data bytes
+        if protocol_position < expected_length:
+            checksum = checksum + byte
+            return (STATE_DATA, protocol_position + 1, expected_length, checksum, 0)
+        else:
+            return (STATE_FOOTER, 0, 0, checksum, 0)
+
+    elif protocol_state == STATE_FOOTER:
+        # Check footer bytes
+        if protocol_position < 4:
+            if byte == FPGA_FOOTER[protocol_position]:
+                return (STATE_FOOTER, protocol_position + 1, 0, checksum, 0)
+            else:
+                return (STATE_ERROR, 0, 0, 0, 1)
+        else:
+            return (STATE_ACK, 0, 0, checksum, 0)
+
+    elif protocol_state == STATE_ACK:
+        # Wait for ACK
+        if byte == ACK_SUCCESS:
+            return (STATE_IDLE, 0, 0, 0, 0)
+        elif byte == ACK_ERROR:
+            return (STATE_ERROR, 0, 0, 0, 1)
+        else:
+            return (STATE_ACK, 0, 0, checksum, 0)
+
+    elif protocol_state == STATE_ERROR:
+        # Reset to idle on any byte
+        return (STATE_IDLE, 0, 0, 0, 0)
+
+    else:
+        return (STATE_ERROR, 0, 0, 0, 1)
+
+# Open FPGA UART device
+function fpgaOpenDevice(device_path):
+    # Open UART device with nanokernel syscall
+    handle = syscall network_open device_path
+    if handle < 0:
+        return error
+    return handle
+
+# Close FPGA UART device
+function fpgaCloseDevice(handle):
+    result = syscall network_close handle
+    return result
+
+# Send single byte to FPGA
+function fpgaSendByte(handle, byte):
+    result = syscall network_send handle byte
+    return result
+
+# Receive single byte from FPGA
+function fpgaReceiveByte(handle):
+    byte = syscall network_receive handle
+    return byte
+
+# Send command to FPGA
+function fpgaSendCommand(handle, cmd):
+    fpgaSendByte handle, cmd
+    ack = fpgaReceiveByte handle
+    if ack != ACK_SUCCESS:
+        return error
+    return success
+
+# Read FPGA status
+function fpgaReadStatus(handle):
+    fpgaSendCommand handle, CMD_STATUS
+    status = fpgaReceiveByte handle
+    return status
+
+# Reset FPGA
+function fpgaReset(handle):
+    fpgaSendCommand handle, CMD_RESET
+    # Wait for reset to complete
+    syscall timer_tick 100
+    return success
+
+# Send bitstream header with protocol state machine and receipt
+function fpgaSendHeader(handle, length):
+    # Initialize protocol state
+    protocol_state = STATE_IDLE
+    protocol_position = 0
+    checksum = 0
+    header_receipt = ""
+
+    # Send magic header
+    for i in 0..3:
+        fpgaSendByte handle, FPGA_MAGIC_HEADER[i]
+        # Update protocol state
+        (protocol_state, protocol_position, expected_length, checksum, error_flag) =
+            uartProtocolDecoder(FPGA_MAGIC_HEADER[i], protocol_state, protocol_position, 0, 0)
+        header_receipt = header_receipt + str(FPGA_MAGIC_HEADER[i])
+        if error_flag == 1:
+            return error
+
+    # Send length (4 bytes, little-endian)
+    for i in 0..3:
+        byte = (length >> (8 * i)) & 0xFF
+        fpgaSendByte handle, byte
+        (protocol_state, protocol_position, expected_length, checksum, error_flag) =
+            uartProtocolDecoder(byte, protocol_state, protocol_position, 0, checksum)
+        header_receipt = header_receipt + str(byte)
+        if error_flag == 1:
+            return error
+
+    ack = fpgaReceiveByte handle
+    if ack != ACK_SUCCESS:
+        return error
+
+    # Generate header receipt
+    header_receipt = generateReceipt header_receipt
+    return success
+
+# Send bitstream data
+function fpgaSendBitstream(handle, bitstream, length):
+    fpgaSendCommand handle, CMD_PROGRAM
+
+    # Send header
+    result = fpgaSendHeader handle, length
+    if result == error:
+        return error
+
+    # Send data in chunks
+    chunk_size = 64
+    offset = 0
+
+    while offset < length:
+        # Send chunk
+        chunk_end = min(offset + chunk_size, length)
+        while offset < chunk_end:
+            fpgaSendByte handle, bitstream[offset]
+            offset = offset + 1
+
+        # Wait for ACK
+        ack = fpgaReceiveByte handle
+        if ack != ACK_SUCCESS:
+            return error
+
+    # Send footer
+    for i in 0..3:
+        fpgaSendByte handle, FPGA_FOOTER[i]
+
+    # Wait for final ACK
+    ack = fpgaReceiveByte handle
+    if ack != ACK_SUCCESS:
+        return error
+
+    return success
+
+# Verify FPGA state
+function fpgaVerify(handle, expected_state):
+    fpgaSendCommand handle, CMD_VERIFY
+    state = fpgaReceiveByte handle
+    if state == expected_state:
+        return success
+    else:
+        return error
+
+# Main programming function with error handling and retry
+function fpgaProgram(bitstream, length):
+    # Open device
+    handle = fpgaOpenDevice FPGA_DEVICE_PATH
+    if handle < 0:
+        return error
+
+    # Reset FPGA with retry
+    retry_count = 0
+    max_retries = 3
+
+    while retry_count < max_retries:
+        result = fpgaReset handle
+        if result == success:
+            break
+        retry_count = retry_count + 1
+        syscall timer_tick 100  # Wait 100ms between retries
+
+    if retry_count >= max_retries:
+        fpgaCloseDevice handle
+        return error
+
+    # Program bitstream with retry
+    retry_count = 0
+    while retry_count < max_retries:
+        result = fpgaSendBitstream handle, bitstream, length
+        if result == success:
+            break
+        retry_count = retry_count + 1
+        syscall timer_tick 100
+
+    if retry_count >= max_retries:
+        fpgaCloseDevice handle
+        return error
+
+    # Verify programming
+    result = fpgaVerify handle, ACK_READY
+    if result == error:
+        fpgaCloseDevice handle
+        return error
+
+    # Close device
+    fpgaCloseDevice handle
+
+    return success
+
+# Generate SHA256 receipt for data
+function generateReceipt(data):
+    # Generate SHA256 hash for receipt
+    receipt = syscall hash_sha256 data
+    return receipt
+
+# Load bitstream from file with receipt
+function fpgaLoadBitstream(filename):
+    # Read bitstream from persistent storage
+    bitstream = syscall block_read filename
+    receipt = generateReceipt bitstream
+    return (bitstream, receipt)
+
+# Main entry point with receipt chain
+# Receipt chain: verilog_design_receipt -> verilator_simulation_receipt ->
+#              bitstream_receipt -> fpga_programming_receipt -> verification_receipt
+# Scale band: UART 115200 baud tolerance ±5%, Q16_16 precision ±0.0001
+function main():
+
+    # Stage 1: Load bitstream with receipt
+    (bitstream, bitstream_receipt) = fpgaLoadBitstream "metamanifold_prover.bin"
+    length = length bitstream
+    syscall console_write "Bitstream receipt: " + bitstream_receipt
+
+    # Stage 2: Open device with receipt
+    handle = fpgaOpenDevice FPGA_DEVICE_PATH
+    if handle < 0:
+        syscall console_write "Device open failed"
+        return error
+    device_receipt = generateReceipt FPGA_DEVICE_PATH
+    syscall console_write "Device receipt: " + device_receipt
+
+    # Stage 3: Reset FPGA with receipt
+    result = fpgaReset handle
+    if result == error:
+        syscall console_write "Reset failed"
+        fpgaCloseDevice handle
+        return error
+    reset_receipt = generateReceipt "reset_complete"
+    syscall console_write "Reset receipt: " + reset_receipt
+
+    # Stage 4: Program bitstream with receipt
+    result = fpgaSendBitstream handle, bitstream, length
+    if result == error:
+        syscall console_write "Programming failed"
+        fpgaCloseDevice handle
+        return error
+    programming_receipt = generateReceipt bitstream_receipt + reset_receipt
+    syscall console_write "Programming receipt: " + programming_receipt
+
+    # Stage 5: Verify programming with receipt
+    result = fpgaVerify handle, ACK_READY
+    if result == error:
+        syscall console_write "Verification failed"
+        fpgaCloseDevice handle
+        return error
+    verification_receipt = generateReceipt programming_receipt + "verified"
+    syscall console_write "Verification receipt: " + verification_receipt
+
+    # Stage 6: Close device
+    fpgaCloseDevice handle
+
+    # Final receipt chain
+    final_receipt = generateReceipt bitstream_receipt + device_receipt + reset_receipt + programming_receipt + verification_receipt
+    syscall console_write "Final receipt chain: " + final_receipt
+
+    syscall console_write "FPGA programming successful with receipt chain"
+    return success

@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns">
+  <key id="label" for="all" attr.name="label" attr.type="string"/>
+  <key id="kind" for="node" attr.name="kind" attr.type="string"/>
+  <key id="sign" for="all" attr.name="sign" attr.type="string"/>
+  <key id="axis_id" for="all" attr.name="axis_id" attr.type="string"/>
+  <key id="classification" for="edge" attr.name="classification" attr.type="string"/>
+  <key id="closed_exactly" for="edge" attr.name="closed_exactly" attr.type="boolean"/>
+  <graph id="standard_model_signed_axis_graph" edgedefault="directed">
+    <node id="origin::exact_closure">
+      <data key="label">exact closure origin</data>
+      <data key="kind">origin</data>
+    </node>
+    <node id="origin::qphi_mirror">
+      <data key="label">Q(phi) mirror origin</data>
+      <data key="kind">origin</data>
+    </node>
+    <node id="origin::rehydration_balance">
+      <data key="label">rehydration balance origin</data>
+      <data key="kind">origin</data>
+    </node>
+    <node id="origin::uncertainty_envelope">
+      <data key="label">uncertainty envelope origin</data>
+      <data key="kind">origin</data>
+    </node>
+    <node id="origin::eigen_gap_reference">
+      <data key="label">eigen gap reference origin</data>
+      <data key="kind">origin</data>
+    </node>
+    <node id="+su3_gluon_field">
+      <data key="label">+su3_gluon_field</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">+</data>
+      <data key="axis_id">centroid::su3_gluon_field</data>
+    </node>
+    <node id="-su3_gluon_field">
+      <data key="label">-su3_gluon_field</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">-</data>
+      <data key="axis_id">centroid::su3_gluon_field</data>
+    </node>
+    <node id="+nonabelian_self_interaction">
+      <data key="label">+nonabelian_self_interaction</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">+</data>
+      <data key="axis_id">centroid::nonabelian_self_interaction</data>
+    </node>
+    <node id="-nonabelian_self_interaction">
+      <data key="label">-nonabelian_self_interaction</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">-</data>
+      <data key="axis_id">centroid::nonabelian_self_interaction</data>
+    </node>
+    <node id="+electroweak_charged_w">
+      <data key="label">+electroweak_charged_w</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">+</data>
+      <data key="axis_id">centroid::electroweak_charged_w</data>
+    </node>
+    <node id="-electroweak_charged_w">
+      <data key="label">-electroweak_charged_w</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">-</data>
+      <data key="axis_id">centroid::electroweak_charged_w</data>
+    </node>
+    <node id="+electroweak_neutral_za">
+      <data key="label">+electroweak_neutral_za</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">+</data>
+      <data key="axis_id">centroid::electroweak_neutral_za</data>
+    </node>
+    <node id="-electroweak_neutral_za">
+      <data key="label">-electroweak_neutral_za</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">-</data>
+      <data key="axis_id">centroid::electroweak_neutral_za</data>
+    </node>
+    <node id="+higgs_goldstone_scalar">
+      <data key="label">+higgs_goldstone_scalar</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">+</data>
+      <data key="axis_id">centroid::higgs_goldstone_scalar</data>
+    </node>
+    <node id="-higgs_goldstone_scalar">
+      <data key="label">-higgs_goldstone_scalar</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">-</data>
+      <data key="axis_id">centroid::higgs_goldstone_scalar</data>
+    </node>
+    <node id="+scalar_potential">
+      <data key="label">+scalar_potential</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">+</data>
+      <data key="axis_id">centroid::scalar_potential</data>
+    </node>
+    <node id="-scalar_potential">
+      <data key="label">-scalar_potential</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">-</data>
+      <data key="axis_id">centroid::scalar_potential</data>
+    </node>
+    <node id="+fermion_quark_sector">
+      <data key="label">+fermion_quark_sector</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">+</data>
+      <data key="axis_id">centroid::fermion_quark_sector</data>
+    </node>
+    <node id="-fermion_quark_sector">
+      <data key="label">-fermion_quark_sector</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">-</data>
+      <data key="axis_id">centroid::fermion_quark_sector</data>
+    </node>
+    <node id="+fermion_lepton_sector">
+      <data key="label">+fermion_lepton_sector</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">+</data>
+      <data key="axis_id">centroid::fermion_lepton_sector</data>
+    </node>
+    <node id="-fermion_lepton_sector">
+      <data key="label">-fermion_lepton_sector</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">-</data>
+      <data key="axis_id">centroid::fermion_lepton_sector</data>
+    </node>
+    <node id="+yukawa_mass_coupling">
+      <data key="label">+yukawa_mass_coupling</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">+</data>
+      <data key="axis_id">centroid::yukawa_mass_coupling</data>
+    </node>
+    <node id="-yukawa_mass_coupling">
+      <data key="label">-yukawa_mass_coupling</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">-</data>
+      <data key="axis_id">centroid::yukawa_mass_coupling</data>
+    </node>
+    <node id="+charged_current_ckm">
+      <data key="label">+charged_current_ckm</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">+</data>
+      <data key="axis_id">centroid::charged_current_ckm</data>
+    </node>
+    <node id="-charged_current_ckm">
+      <data key="label">-charged_current_ckm</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">-</data>
+      <data key="axis_id">centroid::charged_current_ckm</data>
+    </node>
+    <node id="+ghost_gaugefix_sector">
+      <data key="label">+ghost_gaugefix_sector</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">+</data>
+      <data key="axis_id">centroid::ghost_gaugefix_sector</data>
+    </node>
+    <node id="-ghost_gaugefix_sector">
+      <data key="label">-ghost_gaugefix_sector</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">-</data>
+      <data key="axis_id">centroid::ghost_gaugefix_sector</data>
+    </node>
+    <node id="+derivative_kinetic_flow">
+      <data key="label">+derivative_kinetic_flow</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">+</data>
+      <data key="axis_id">centroid::derivative_kinetic_flow</data>
+    </node>
+    <node id="-derivative_kinetic_flow">
+      <data key="label">-derivative_kinetic_flow</data>
+      <data key="kind">exact_centroid_mirror</data>
+      <data key="sign">-</data>
+      <data key="axis_id">centroid::derivative_kinetic_flow</data>
+    </node>
+    <node id="+higgs_goldstone_phi_displacement">
+      <data key="label">+higgs_goldstone_phi_displacement</data>
+      <data key="kind">targeted_phi_displacement</data>
+      <data key="sign">+</data>
+      <data key="axis_id">phi_delta::higgs_goldstone_scalar</data>
+    </node>
+    <node id="-higgs_goldstone_phi_displacement">
+      <data key="label">-higgs_goldstone_phi_displacement</data>
+      <data key="kind">targeted_phi_displacement</data>
+      <data key="sign">-</data>
+      <data key="axis_id">phi_delta::higgs_goldstone_scalar</data>
+    </node>
+    <node id="+top6_explicit_core">
+      <data key="label">+top6_explicit_core</data>
+      <data key="kind">residual_mass_axis</data>
+      <data key="sign">+</data>
+      <data key="axis_id">residual::top6_mass</data>
+    </node>
+    <node id="-residual_sidecar">
+      <data key="label">-residual_sidecar</data>
+      <data key="kind">residual_mass_axis</data>
+      <data key="sign">-</data>
+      <data key="axis_id">residual::top6_mass</data>
+    </node>
+    <node id="+ordinary_gravity_reference">
+      <data key="label">+ordinary_gravity_reference</data>
+      <data key="kind">experimental_residual_axis</data>
+      <data key="sign">+</data>
+      <data key="axis_id">antihydrogen::gravity_residual</data>
+    </node>
+    <node id="-antihydrogen_central_residual">
+      <data key="label">-antihydrogen_central_residual</data>
+      <data key="kind">experimental_residual_axis</data>
+      <data key="sign">-</data>
+      <data key="axis_id">antihydrogen::gravity_residual</data>
+    </node>
+    <node id="+phi_gap_lift">
+      <data key="label">+phi_gap_lift</data>
+      <data key="kind">spectral_gap_lift_axis</data>
+      <data key="sign">+</data>
+      <data key="axis_id">eigen_gap::phi_lift</data>
+    </node>
+    <node id="-no_phi_gap_reference">
+      <data key="label">-no_phi_gap_reference</data>
+      <data key="kind">spectral_gap_lift_axis</data>
+      <data key="sign">-</data>
+      <data key="axis_id">eigen_gap::phi_lift</data>
+    </node>
+    <edge id="centroid::su3_gluon_field::+" source="origin::exact_closure" target="+su3_gluon_field">
+      <data key="axis_id">centroid::su3_gluon_field</data>
+      <data key="sign">+</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::su3_gluon_field::-" source="origin::exact_closure" target="-su3_gluon_field">
+      <data key="axis_id">centroid::su3_gluon_field</data>
+      <data key="sign">-</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::nonabelian_self_interaction::+" source="origin::exact_closure" target="+nonabelian_self_interaction">
+      <data key="axis_id">centroid::nonabelian_self_interaction</data>
+      <data key="sign">+</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::nonabelian_self_interaction::-" source="origin::exact_closure" target="-nonabelian_self_interaction">
+      <data key="axis_id">centroid::nonabelian_self_interaction</data>
+      <data key="sign">-</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::electroweak_charged_w::+" source="origin::exact_closure" target="+electroweak_charged_w">
+      <data key="axis_id">centroid::electroweak_charged_w</data>
+      <data key="sign">+</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::electroweak_charged_w::-" source="origin::exact_closure" target="-electroweak_charged_w">
+      <data key="axis_id">centroid::electroweak_charged_w</data>
+      <data key="sign">-</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::electroweak_neutral_za::+" source="origin::exact_closure" target="+electroweak_neutral_za">
+      <data key="axis_id">centroid::electroweak_neutral_za</data>
+      <data key="sign">+</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::electroweak_neutral_za::-" source="origin::exact_closure" target="-electroweak_neutral_za">
+      <data key="axis_id">centroid::electroweak_neutral_za</data>
+      <data key="sign">-</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::higgs_goldstone_scalar::+" source="origin::exact_closure" target="+higgs_goldstone_scalar">
+      <data key="axis_id">centroid::higgs_goldstone_scalar</data>
+      <data key="sign">+</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::higgs_goldstone_scalar::-" source="origin::exact_closure" target="-higgs_goldstone_scalar">
+      <data key="axis_id">centroid::higgs_goldstone_scalar</data>
+      <data key="sign">-</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::scalar_potential::+" source="origin::exact_closure" target="+scalar_potential">
+      <data key="axis_id">centroid::scalar_potential</data>
+      <data key="sign">+</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::scalar_potential::-" source="origin::exact_closure" target="-scalar_potential">
+      <data key="axis_id">centroid::scalar_potential</data>
+      <data key="sign">-</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::fermion_quark_sector::+" source="origin::exact_closure" target="+fermion_quark_sector">
+      <data key="axis_id">centroid::fermion_quark_sector</data>
+      <data key="sign">+</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::fermion_quark_sector::-" source="origin::exact_closure" target="-fermion_quark_sector">
+      <data key="axis_id">centroid::fermion_quark_sector</data>
+      <data key="sign">-</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::fermion_lepton_sector::+" source="origin::exact_closure" target="+fermion_lepton_sector">
+      <data key="axis_id">centroid::fermion_lepton_sector</data>
+      <data key="sign">+</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::fermion_lepton_sector::-" source="origin::exact_closure" target="-fermion_lepton_sector">
+      <data key="axis_id">centroid::fermion_lepton_sector</data>
+      <data key="sign">-</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::yukawa_mass_coupling::+" source="origin::exact_closure" target="+yukawa_mass_coupling">
+      <data key="axis_id">centroid::yukawa_mass_coupling</data>
+      <data key="sign">+</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::yukawa_mass_coupling::-" source="origin::exact_closure" target="-yukawa_mass_coupling">
+      <data key="axis_id">centroid::yukawa_mass_coupling</data>
+      <data key="sign">-</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::charged_current_ckm::+" source="origin::exact_closure" target="+charged_current_ckm">
+      <data key="axis_id">centroid::charged_current_ckm</data>
+      <data key="sign">+</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::charged_current_ckm::-" source="origin::exact_closure" target="-charged_current_ckm">
+      <data key="axis_id">centroid::charged_current_ckm</data>
+      <data key="sign">-</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::ghost_gaugefix_sector::+" source="origin::exact_closure" target="+ghost_gaugefix_sector">
+      <data key="axis_id">centroid::ghost_gaugefix_sector</data>
+      <data key="sign">+</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::ghost_gaugefix_sector::-" source="origin::exact_closure" target="-ghost_gaugefix_sector">
+      <data key="axis_id">centroid::ghost_gaugefix_sector</data>
+      <data key="sign">-</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::derivative_kinetic_flow::+" source="origin::exact_closure" target="+derivative_kinetic_flow">
+      <data key="axis_id">centroid::derivative_kinetic_flow</data>
+      <data key="sign">+</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="centroid::derivative_kinetic_flow::-" source="origin::exact_closure" target="-derivative_kinetic_flow">
+      <data key="axis_id">centroid::derivative_kinetic_flow</data>
+      <data key="sign">-</data>
+      <data key="classification">annihilating_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="phi_delta::higgs_goldstone_scalar::+" source="origin::qphi_mirror" target="+higgs_goldstone_phi_displacement">
+      <data key="axis_id">phi_delta::higgs_goldstone_scalar</data>
+      <data key="sign">+</data>
+      <data key="classification">qphi_signed_displacement_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="phi_delta::higgs_goldstone_scalar::-" source="origin::qphi_mirror" target="-higgs_goldstone_phi_displacement">
+      <data key="axis_id">phi_delta::higgs_goldstone_scalar</data>
+      <data key="sign">-</data>
+      <data key="classification">qphi_signed_displacement_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="residual::top6_mass::+" source="origin::rehydration_balance" target="+top6_explicit_core">
+      <data key="axis_id">residual::top6_mass</data>
+      <data key="sign">+</data>
+      <data key="classification">core_residual_balance_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="residual::top6_mass::-" source="origin::rehydration_balance" target="-residual_sidecar">
+      <data key="axis_id">residual::top6_mass</data>
+      <data key="sign">-</data>
+      <data key="classification">core_residual_balance_axis</data>
+      <data key="closed_exactly">true</data>
+    </edge>
+    <edge id="antihydrogen::gravity_residual::+" source="origin::uncertainty_envelope" target="+ordinary_gravity_reference">
+      <data key="axis_id">antihydrogen::gravity_residual</data>
+      <data key="sign">+</data>
+      <data key="classification">uncertainty_envelope_axis</data>
+      <data key="closed_exactly">false</data>
+    </edge>
+    <edge id="antihydrogen::gravity_residual::-" source="origin::uncertainty_envelope" target="-antihydrogen_central_residual">
+      <data key="axis_id">antihydrogen::gravity_residual</data>
+      <data key="sign">-</data>
+      <data key="classification">uncertainty_envelope_axis</data>
+      <data key="closed_exactly">false</data>
+    </edge>
+    <edge id="eigen_gap::phi_lift::+" source="origin::eigen_gap_reference" target="+phi_gap_lift">
+      <data key="axis_id">eigen_gap::phi_lift</data>
+      <data key="sign">+</data>
+      <data key="classification">measured_feature_axis</data>
+      <data key="closed_exactly">false</data>
+    </edge>
+    <edge id="eigen_gap::phi_lift::-" source="origin::eigen_gap_reference" target="-no_phi_gap_reference">
+      <data key="axis_id">eigen_gap::phi_lift</data>
+      <data key="sign">-</data>
+      <data key="classification">measured_feature_axis</data>
+      <data key="closed_exactly">false</data>
+    </edge>
+  </graph>
+</graphml>

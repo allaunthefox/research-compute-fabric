@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use AlphaFold-derived structure priors, cite AlphaFold DB and the relevant structure or dataset publications."
+type: dataset
+title: "AlphaFold Bulk Structure Database Prior Sources"
+authors:
+  - name: "Research Stack Contributors"
+date-released: 2026-05-08
+url: "https://github.com/allaunthefox/Research-Stack"
+repository-code: "https://github.com/allaunthefox/Research-Stack"
+license: Apache-2.0
+references:
+  - type: dataset
+    title: "AlphaFold Protein Structure Database Downloads"
+    authors:
+      - name: "EMBL-EBI"
+      - name: "Google DeepMind"
+    url: "https://alphafold.ebi.ac.uk/download"
+    license: CC-BY-4.0
+    notes: "External source cited as a biological structure corpus and bulk-download prior. Data is not vendored here."
+  - type: software
+    title: "AlphaFold Protein Structure Database FTP Area"
+    authors:
+      - name: "EMBL-EBI"
+      - name: "Google DeepMind"
+    url: "https://ftp.ebi.ac.uk/pub/databases/alphafold"
+    license: CC-BY-4.0
+    notes: "Bulk archive source for explicit, receipted ingest only."
+  - type: article
+    title: "Highly accurate protein structure prediction with AlphaFold"
+    authors:
+      - family-names: "Jumper"
+        given-names: "John"
+      - name: "et al."
+    journal: "Nature"
+    date-published: 2021
+    doi: "10.1038/s41586-021-03819-2"
+    url: "https://www.nature.com/articles/s41586-021-03819-2"
+    notes: "Required citation for UniProt AlphaFold predictions where applicable."

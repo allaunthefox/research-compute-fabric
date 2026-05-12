@@ -67,6 +67,15 @@ data/*.iso
 # Agda build artifacts
 *.agdai
 
+# Local formal scratch/WIP that is not part of the clean build surface.
+0-Core-Formalism/Agda_Test.agda
+0-Core-Formalism/lean/Semantics/Ancillary/LegacyQuarantine/
+0-Core-Formalism/otom/tools/
+2-Search-Space/FAMM/FAMM_FSDU.lean
+2-Search-Space/FAMM/FAMM_hyperheuristic.lean
+2-Search-Space/FAMM/FAMM_minimal.lean
+4-Infrastructure/hardware/test.lean
+
 # Hardware/FPGA build artifacts
 **/obj_dir/
 **/hardware/sparkle/tangnano9k/*.fs

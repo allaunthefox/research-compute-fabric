@@ -1,0 +1,50 @@
+cff-version: 1.2.0
+message: "If you use these Kaggle-derived density-prior notes, cite the original Kaggle sources and verify each source license before copying code."
+type: dataset
+title: "Kaggle Algorithm Density Marker Prior Sources"
+authors:
+  - name: "Research Stack Contributors"
+date-released: 2026-05-08
+url: "https://github.com/allaunthefox/Research-Stack"
+repository-code: "https://github.com/allaunthefox/Research-Stack"
+license: Apache-2.0
+references:
+  - type: software
+    title: "Ubiquant chunked dtype reduction"
+    authors:
+      - name: "Unknown Kaggle notebook author"
+    url: "https://www.kaggle.com/competitions/ubiquant-market-prediction"
+    notes: "Kaggle source cited as an external design-prior surface only. Notebook code is not vendored in this repository; license must be verified on Kaggle before copying, adapting, or redistributing code."
+  - type: software
+    title: "Ubiquant Parquet columnar loading"
+    authors:
+      - name: "Rob Mulla"
+      - name: "Unknown Kaggle notebook author"
+    url: "https://www.kaggle.com/robikscube/ubiquant-parquet"
+    notes: "Kaggle source cited as an external design-prior surface only. Notebook code is not vendored in this repository; license must be verified on Kaggle before copying, adapting, or redistributing code."
+  - type: software
+    title: "Santa 2022 pixel travel map"
+    authors:
+      - name: "oxzplvifi"
+      - name: "crodoc"
+      - name: "Ryan Holbrook"
+    url: "https://www.kaggle.com/code/oxzplvifi/pixel-travel-map"
+    notes: "Kaggle source cited as an external design-prior surface only. Notebook code is not vendored in this repository; license must be verified on Kaggle before copying, adapting, or redistributing code."
+  - type: software
+    title: "Mercedes autoencoder feature compression"
+    authors:
+      - name: "remidi"
+    url: "https://www.kaggle.com/code/remidi/neural-compression-auto-encoder-lb-0-55"
+    notes: "Kaggle source cited as an external design-prior surface only. Notebook code is not vendored in this repository; license must be verified on Kaggle before copying, adapting, or redistributing code."
+  - type: software
+    title: "AIMO3 speculative decoding and context-compression appliance"
+    authors:
+      - name: "khoinguyennguyen"
+    url: "https://www.kaggle.com/code/khoinguyennguyen/eagle3-specdecoding-optional-context-compression"
+    notes: "Kaggle source cited as an external design-prior surface only. Notebook code is not vendored in this repository; license must be verified on Kaggle before copying, adapting, or redistributing code."
+  - type: webpage
+    title: "Kaggle Terms of Use"
+    authors:
+      - name: "Kaggle"
+    url: "https://www.kaggle.com/terms"
+    notes: "Platform terms; individual notebooks/datasets may carry additional metadata and licenses."

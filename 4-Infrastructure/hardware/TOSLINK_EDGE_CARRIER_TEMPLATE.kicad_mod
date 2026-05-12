@@ -1,0 +1,93 @@
+(footprint "TOSLINK_EDGE_CARRIER_TEMPLATE"
+  (version 20240108)
+  (generator "OpenAI")
+  (descr "Parameterized mechanical helper footprint for board-edge TOSLINK carrier anchoring. Fill from exact TX/RX datasheet.")
+  (tags "TOSLINK carrier anchor mechanical template")
+  (attr board_only exclude_from_pos_files exclude_from_bom)
+
+  ;; =========================
+  ;; USER PARAMETERS TO FILL
+  ;; =========================
+  ;; A = support hole pitch of chosen TOSLINK module
+  ;; B = pitch between left/right carrier anchor holes or slots
+  ;; C = distance from PCB edge to carrier anchor centerline
+  ;; D = signal pin row pitch / location from official connector footprint
+  ;; E = body width
+  ;; F = body depth from board edge
+  ;;
+  ;; IMPORTANT:
+  ;; 1) Use the connector vendor's official electrical footprint for pins.
+  ;; 2) This helper footprint only adds mechanical anchor references / courtyard / keepout.
+  ;; 3) Verify all drills and edge clearances against the actual module datasheet.
+
+  (layer "F.Cu")
+
+  ;; ---------- Board edge reference ----------
+  (fp_line (start -12 0) (end 12 0)
+    (stroke (width 0.15) (type dash))
+    (layer "Dwgs.User"))
+  (fp_text user "BOARD EDGE" (at 0 -1.2 0)
+    (layer "Dwgs.User")
+    (effects (font (size 1 1) (thickness 0.15))))
+
+  ;; ---------- Connector body reference (example only) ----------
+  ;; Replace width/depth with actual body size.
+  (fp_rect (start -7 0.2) (end 7 12.2)
+    (stroke (width 0.12) (type solid))
+    (fill none)
+    (layer "F.Fab"))
+  (fp_text user "TOSLINK BODY REF" (at 0 6.4 0)
+    (layer "F.Fab")
+    (effects (font (size 0.8 0.8) (thickness 0.12))))
+
+  ;; ---------- Keepout around connector for carrier and finger access ----------
+  (fp_rect (start -10 -0.2) (end 10 15.5)
+    (stroke (width 0.12) (type dash))
+    (fill none)
+    (layer "Dwgs.User"))
+  (fp_text user "KEEP OUT FOR CARRIER / FIBER" (at 0 15.9 0)
+    (layer "Dwgs.User")
+    (effects (font (size 0.8 0.8) (thickness 0.12))))
+
+  ;; ---------- Mechanical support hole references ----------
+  ;; Replace x positions with +/- A/2 and actual drill diameter.
+  (pad "" np_thru_hole circle (at -5 14.5) (size 2.6 2.6) (drill 2.6) (layers "*.Mask"))
+  (pad "" np_thru_hole circle (at 5 14.5) (size 2.6 2.6) (drill 2.6) (layers "*.Mask"))
+  (fp_text user "support holes (A pitch)" (at 0 17.7 0)
+    (layer "Dwgs.User")
+    (effects (font (size 0.75 0.75) (thickness 0.12))))
+
+  ;; ---------- Carrier anchor holes / slots ----------
+  ;; Replace x positions with +/- B/2 and y position with C from board edge.
+  ;; For screw anchors use plated holes; for snap carrier use NPTH/slots as needed.
+  (pad "" np_thru_hole circle (at -12 8.5) (size 2.2 2.2) (drill 2.2) (layers "*.Mask"))
+  (pad "" np_thru_hole circle (at 12 8.5) (size 2.2 2.2) (drill 2.2) (layers "*.Mask"))
+  (fp_text user "carrier anchors (B pitch)" (at 0 10.8 0)
+    (layer "Dwgs.User")
+    (effects (font (size 0.75 0.75) (thickness 0.12))))
+
+  ;; ---------- Optional signal pin references ----------
+  ;; Delete if not helpful. Use vendor footprint for actual plated pins.
+  (fp_circle (center -2.25 18.8) (end -1.65 18.8)
+    (stroke (width 0.12) (type solid)) (fill none) (layer "Dwgs.User"))
+  (fp_circle (center -0.75 18.8) (end -0.15 18.8)
+    (stroke (width 0.12) (type solid)) (fill none) (layer "Dwgs.User"))
+  (fp_circle (center 0.75 18.8) (end 1.35 18.8)
+    (stroke (width 0.12) (type solid)) (fill none) (layer "Dwgs.User"))
+  (fp_circle (center 2.25 18.8) (end 2.85 18.8)
+    (stroke (width 0.12) (type solid)) (fill none) (layer "Dwgs.User"))
+  (fp_text user "signal pin row ref only" (at 0 20.6 0)
+    (layer "Dwgs.User")
+    (effects (font (size 0.75 0.75) (thickness 0.12))))
+
+  ;; ---------- Courtyard ----------
+  (fp_rect (start -14 -1.0) (end 14 21.8)
+    (stroke (width 0.05) (type solid))
+    (fill none)
+    (layer "F.CrtYd"))
+
+  ;; ---------- Notes ----------
+  (fp_text user "Use separate 3D printed carrier; PCB should not be the spring." (at 0 23.6 0)
+    (layer "Cmts.User")
+    (effects (font (size 0.9 0.9) (thickness 0.15))))
+)

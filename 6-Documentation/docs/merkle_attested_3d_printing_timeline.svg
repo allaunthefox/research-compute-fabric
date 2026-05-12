@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">
+  <defs>
+    <style>
+      .title { font-family: 'Arial', sans-serif; font-size: 28px; font-weight: bold; fill: #1a1a2e; }
+      .subtitle { font-family: 'Arial', sans-serif; font-size: 16px; fill: #4a4a6a; }
+      .year-label { font-family: 'Arial', sans-serif; font-size: 20px; font-weight: bold; fill: #2d3748; }
+      .circle-label { font-family: 'Arial', sans-serif; font-size: 24px; font-weight: bold; fill: #ffffff; }
+      .event-title { font-family: 'Arial', sans-serif; font-size: 14px; font-weight: bold; fill: #1a1a2e; }
+      .event-detail { font-family: 'Arial', sans-serif; font-size: 11px; fill: #4a5568; }
+      .layer-title { font-family: 'Arial', sans-serif; font-size: 15px; font-weight: bold; fill: #2d3748; }
+      .layer-item { font-family: 'Arial', sans-serif; font-size: 11px; fill: #4a5568; }
+      .gate-title { font-family: 'Arial', sans-serif; font-size: 14px; font-weight: bold; fill: #1a1a2e; }
+      .gate-item { font-family: 'Arial', sans-serif; font-size: 11px; fill: #4a5568; }
+    </style>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f5576c;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#43e97b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#38f9d7;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad5" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#fa709a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fee140;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="700" fill="#f8f9fa" />
+
+  <!-- Title -->
+  <text x="600" y="40" text-anchor="middle" class="title">Merkle-Attested 3D Printing With Equihash-Style Load Scheduling</text>
+  <text x="600" y="65" text-anchor="middle" class="subtitle">Timeline showing evolution from foundational theories to corrected layered architecture</text>
+
+  <!-- Timeline Line -->
+  <line x1="100" y1="280" x2="1100" y2="280" stroke="#cbd5e0" stroke-width="3" />
+
+  <!-- Year Markers -->
+  <line x1="150" y1="270" x2="150" y2="290" stroke="#718096" stroke-width="2" />
+  <text x="150" y="310" text-anchor="middle" class="year-label">1979</text>
+
+  <line x1="400" y1="270" x2="400" y2="290" stroke="#718096" stroke-width="2" />
+  <text x="400" y="310" text-anchor="middle" class="year-label">2015</text>
+
+  <line x1="650" y1="270" x2="650" y2="290" stroke="#718096" stroke-width="2" />
+  <text x="650" y="310" text-anchor="middle" class="year-label">2016</text>
+
+  <line x1="900" y1="270" x2="900" y2="290" stroke="#718096" stroke-width="2" />
+  <text x="900" y="310" text-anchor="middle" class="year-label">2026</text>
+
+  <!-- Event 1: Merkle Trees -->
+  <circle cx="150" cy="200" r="35" fill="url(#grad1)" />
+  <text x="150" y="208" text-anchor="middle" class="circle-label">1</text>
+  <line x1="150" y1="235" x2="150" y2="280" stroke="#667eea" stroke-width="2" stroke-dasharray="5,5" />
+
+  <rect x="70" y="130" width="160" height="60" rx="8" fill="white" stroke="#667eea" stroke-width="2" />
+  <text x="150" y="150" text-anchor="middle" class="event-title">Merkle Trees</text>
+  <text x="150" y="168" text-anchor="middle" class="event-detail">Logarithmic membership</text>
+  <text x="150" y="182" text-anchor="middle" class="event-detail">Tamper-evident commitments</text>
+
+  <!-- Event 2: Equihash -->
+  <circle cx="400" cy="200" r="35" fill="url(#grad2)" />
+  <text x="400" y="208" text-anchor="middle" class="circle-label">2</text>
+  <line x1="400" y1="235" x2="400" y2="280" stroke="#f5576c" stroke-width="2" stroke-dasharray="5,5" />
+
+  <rect x="320" y="130" width="160" height="60" rx="8" fill="white" stroke="#f5576c" stroke-width="2" />
+  <text x="400" y="150" text-anchor="middle" class="event-title">Equihash</text>
+  <text x="400" y="168" text-anchor="middle" class="event-detail">IACR ePrint 2015/946</text>
+  <text x="400" y="182" text-anchor="middle" class="event-detail">Memory-hard PoW</text>
+
+  <!-- Event 3: Equihash NDSS -->
+  <circle cx="650" cy="200" r="35" fill="url(#grad3)" />
+  <text x="650" y="208" text-anchor="middle" class="circle-label">3</text>
+  <line x1="650" y1="235" x2="650" y2="280" stroke="#4facfe" stroke-width="2" stroke-dasharray="5,5" />
+
+  <rect x="570" y="130" width="160" height="60" rx="8" fill="white" stroke="#4facfe" stroke-width="2" />
+  <text x="650" y="150" text-anchor="middle" class="event-title">Equihash NDSS</text>
+  <text x="650" y="168" text-anchor="middle" class="event-detail">NDSS 2016</text>
+  <text x="650" y="182" text-anchor="middle" class="event-detail">Zcash implementation</text>
+
+  <!-- Event 4: Invariant Mechanics -->
+  <circle cx="900" cy="200" r="35" fill="url(#grad4)" />
+  <text x="900" y="208" text-anchor="middle" class="circle-label">4</text>
+  <line x1="900" y1="235" x2="900" y2="280" stroke="#43e97b" stroke-width="2" stroke-dasharray="5,5" />
+
+  <rect x="820" y="130" width="160" height="60" rx="8" fill="white" stroke="#43e97b" stroke-width="2" />
+  <text x="900" y="150" text-anchor="middle" class="event-title">Invariant Dual Mechanics</text>
+  <text x="900" y="168" text-anchor="middle" class="event-detail">PNAS 2026</text>
+  <text x="900" y="182" text-anchor="middle" class="event-detail">Tensegrity-Origami duality</text>
+
+  <!-- Integration Arrow -->
+  <path d="M 150 280 L 400 280 L 650 280 L 900 280" stroke="#718096" stroke-width="2" marker-end="url(#arrow)" />
+  <polygon points="1050,275 1060,280 1050,285" fill="#718096" />
+
+  <!-- Corrected Layer Model Section -->
+  <rect x="50" y="350" width="350" height="200" rx="12" fill="white" stroke="#667eea" stroke-width="2" />
+  <text x="225" y="375" text-anchor="middle" class="layer-title">Corrected Layer Model</text>
+
+  <rect x="70" y="390" width="310" height="40" rx="6" fill="#f0f4ff" stroke="#667eea" stroke-width="1" />
+  <text x="225" y="408" text-anchor="middle" class="layer-item">MechanicalLayer: geometry, material, load, stiffness</text>
+  <text x="225" y="422" text-anchor="middle" class="layer-item">K(q_i) * u_i = f_i</text>
+
+  <rect x="70" y="440" width="310" height="40" rx="6" fill="#fff0f5" stroke="#f5576c" stroke-width="1" />
+  <text x="225" y="458" text-anchor="middle" class="layer-item">CommitmentLayer: hashes, sensor digest, schedule</text>
+  <text x="225" y="472" text-anchor="middle" class="layer-item">MerkleRoot(leaf_1, ..., leaf_N)</text>
+
+  <rect x="70" y="490" width="310" height="40" rx="6" fill="#f0ffff" stroke="#4facfe" stroke-width="1" />
+  <text x="225" y="508" text-anchor="middle" class="layer-item">ScheduleWitness: load bucket, nonce, merkle path</text>
+  <text x="225" y="522" text-anchor="middle" class="layer-item">EquihashOK = VerifyWitness(...)</text>
+
+  <!-- Parallel Domain Section -->
+  <rect x="425" y="350" width="350" height="200" rx="12" fill="white" stroke="#43e97b" stroke-width="2" />
+  <text x="600" y="375" text-anchor="middle" class="layer-title">Parallel Domain Interpretation</text>
+
+  <text x="600" y="395" text-anchor="middle" class="layer-item" font-weight="bold">Stage_t = {9 domains}</text>
+
+  <text x="600" y="420" text-anchor="middle" class="layer-item">• D_t^mechanical, D_t^geometry, D_t^material</text>
+  <text x="600" y="438" text-anchor="middle" class="layer-item">• D_t^load, D_t^merkle, D_t^equihash_witness</text>
+  <text x="600" y="456" text-anchor="middle" class="layer-item">• D_t^sensor, D_t^repair, D_t^closure</text>
+
+  <rect x="445" y="470" width="310" height="35" rx="6" fill="#f0fff4" stroke="#43e97b" stroke-width="1" />
+  <text x="600" y="492" text-anchor="middle" class="layer-item">Stage_{t+1} = parallel_map(f_domain, D_t^domain)</text>
+
+  <rect x="445" y="510" width="310" height="35" rx="6" fill="#f0fff4" stroke="#43e97b" stroke-width="1" />
+  <text x="600" y="532" text-anchor="middle" class="layer-item">barrier_ok iff all domains satisfy conditions</text>
+
+  <!-- Combined Gate Section -->
+  <rect x="800" y="350" width="350" height="200" rx="12" fill="white" stroke="#fa709a" stroke-width="2" />
+  <text x="975" y="375" text-anchor="middle" class="layer-title">Corrected Combined Gate</text>
+
+  <text x="975" y="395" text-anchor="middle" class="layer-item" font-weight="bold">AcceptLayer_i = conjunction (not sum)</text>
+
+  <rect x="820" y="405" width="310" height="35" rx="6" fill="#fff5f5" stroke="#fa709a" stroke-width="1" />
+  <text x="975" y="427" text-anchor="middle" class="layer-item">• MechanicalOK: ||R_mech|| ≤ ε</text>
+
+  <rect x="820" y="445" width="310" height="35" rx="6" fill="#fff5f5" stroke="#fa709a" stroke-width="1" />
+  <text x="975" y="467" text-anchor="middle" class="layer-item">• MerkleOK: VerifyMerklePath(...)</text>
+
+  <rect x="820" y="485" width="310" height="35" rx="6" fill="#fff5f5" stroke="#fa709a" stroke-width="1" />
+  <text x="975" y="507" text-anchor="middle" class="layer-item">• ScheduleOK, WitnessOK, SensorOK</text>
+
+  <rect x="820" y="525" width="310" height="20" rx="6" fill="#fff5f5" stroke="#fa709a" stroke-width="1" />
+  <text x="975" y="540" text-anchor="middle" class="layer-item">Hashes ≠ Mechanical Forces</text>
+
+  <!-- Final Compact Form -->
+  <rect x="200" y="580" width="800" height="100" rx="12" fill="white" stroke="#718096" stroke-width="2" />
+  <text x="600" y="605" text-anchor="middle" class="gate-title">Final Compact Form: AcceptPrint</text>
+
+  <text x="600" y="630" text-anchor="middle" class="gate-item">MechanicalClosure ∧ CommitmentClosure ∧ ScheduleClosure ∧</text>
+  <text x="600" y="650" text-anchor="middle" class="gate-item">WitnessClosure ∧ SensorClosure ∧ RepairClosure</text>
+
+  <text x="600" y="675" text-anchor="middle" class="gate-item" fill="#718096">Key: mechanics = structure, Merkle = commitments, Equihash = anti-spoofing, receipts = inspection</text>
+
+  <!-- Connection lines from timeline to sections -->
+  <path d="M 150 315 Q 150 340 225 350" stroke="#667eea" stroke-width="1" fill="none" stroke-dasharray="3,3" />
+  <path d="M 400 315 Q 400 340 600 350" stroke="#f5576c" stroke-width="1" fill="none" stroke-dasharray="3,3" />
+  <path d="M 650 315 Q 650 340 975 350" stroke="#4facfe" stroke-width="1" fill="none" stroke-dasharray="3,3" />
+  <path d="M 900 315 Q 900 340 600 350" stroke="#43e97b" stroke-width="1" fill="none" stroke-dasharray="3,3" />
+
+</svg>

@@ -78,11 +78,17 @@ repos:
           (Lean Semantics kernels, ArithmeticSpec docs, stack solidification
           receipts), require that at least one file under
           shared-data/artifacts/deepseek_review/ or
-          0-Core-Formalism/lean/Semantics/ is also part of the commit. This
-          enforces the math-first contract at commit time; the same check
-          runs in CI for PR-scope coverage.
-        entry: scripts/math-first/require_math_evidence.py
+          0-Core-Formalism/lean/Semantics/ -- or claims.yaml -- is also part
+          of the same commit. This enforces the math-first contract at
+          commit time; the same check runs in CI for PR-scope coverage.
+        entry: scripts/math-first/require_math_evidence.py --staged
         language: python
-        files: '^(0-Core-Formalism/lean/Semantics/|6-Documentation/docs/distilled/|shared-data/data/stack_solidification/).*$'
-        pass_filenames: true
+        # always_run + pass_filenames: false because pre-commit's per-hook
+        # ``files`` filter would otherwise strip evidence files (receipts,
+        # claims.yaml) from the staged file list before the script ever
+        # sees them. The script reads the full staged set itself via
+        # ``git diff --cached --name-only`` and exits 0 early if no
+        # math-track files are present, so this is cheap.
+        always_run: true
+        pass_filenames: false
         require_serial: true

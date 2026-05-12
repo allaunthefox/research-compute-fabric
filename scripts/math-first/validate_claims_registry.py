@@ -26,7 +26,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -35,11 +34,21 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = REPO_ROOT / "shared-data" / "schemas" / "claims-registry.schema.json"
 DEFAULT_REGISTRY = REPO_ROOT / "claims.yaml"
 
-# Anything matching one of these prefixes is treated as an external citation
-# rather than a repo-relative path, and is therefore not required to resolve
-# to a file on disk.
-_EXTERNAL_PREFIXES = ("http://", "https://", "arXiv:", "arxiv:", "doi:", "DOI:")
-_EXTERNAL_RE = re.compile(r"^[A-Za-z]+:")
+# Anything matching one of these prefixes (case-insensitively) is treated
+# as an external citation rather than a repo-relative path, and is therefore
+# not required to resolve to a file on disk. The list is intentionally
+# closed: matching every ``scheme:`` blob would silently skip path checks
+# for anything that happens to contain a colon (e.g. ``Module:Theorem``),
+# which would hide registry rot.
+_EXTERNAL_PREFIXES: tuple[str, ...] = (
+    "http://",
+    "https://",
+    "arxiv:",
+    "doi:",
+    "isbn:",
+    "mailto:",
+    "urn:",
+)
 
 
 def _load_schema(schema_path: Path) -> dict[str, Any]:
@@ -90,9 +99,8 @@ def _load_registry(registry_path: Path) -> dict[str, Any]:
 
 
 def _is_external(reference: str) -> bool:
-    if reference.startswith(_EXTERNAL_PREFIXES):
-        return True
-    return bool(_EXTERNAL_RE.match(reference))
+    lowered = reference.lower()
+    return any(lowered.startswith(prefix) for prefix in _EXTERNAL_PREFIXES)
 
 
 def _check_path(reference: str) -> tuple[bool, str]:
@@ -126,9 +134,13 @@ def main(argv: list[str] | None = None) -> int:
     schema = _load_schema(args.schema)
     registry = _load_registry(args.path)
 
-    from jsonschema import Draft202012Validator
+    from jsonschema import Draft202012Validator, FormatChecker
 
-    validator = Draft202012Validator(schema)
+    # FormatChecker keeps date-time / uri / etc. behaviour consistent with
+    # validate_deepseek_receipts.py. Even though the current claims schema
+    # does not declare any ``format`` keywords, threading the checker in
+    # avoids a footgun for the next contributor who adds one.
+    validator = Draft202012Validator(schema, format_checker=FormatChecker())
     errors = sorted(validator.iter_errors(registry), key=lambda e: list(e.absolute_path))
     if errors:
         print(f"FAIL {args.path}")

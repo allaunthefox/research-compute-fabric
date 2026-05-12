@@ -78,7 +78,7 @@ class ENENodeBalancer:
     - Latency-aware routing
     """
     
-    def __init__(self, db_path: str = "/home/allaun/Documents/Research Stack/data/ene_cloud_nodes.db"):
+    def __init__(self, db_path: str = "/home/allaun/Documents/Research Stack/shared-data/data/ene_cloud_nodes.db"):
         self.db_path = db_path
         self.nodes: Dict[str, NodeStats] = {}
         self.active_connections: Dict[str, NodeConnection] = {}
@@ -318,7 +318,7 @@ class ENECloudCredentialManager:
     - Access control
     """
     
-    def __init__(self, db_path: str = "/home/allaun/Documents/Research Stack/data/ene_cloud_credentials.db"):
+    def __init__(self, db_path: str = "/home/allaun/Documents/Research Stack/shared-data/data/ene_cloud_credentials.db"):
         self.db_path = db_path
         self.security = ENESecurityManager()
         self.balancer = ENENodeBalancer()

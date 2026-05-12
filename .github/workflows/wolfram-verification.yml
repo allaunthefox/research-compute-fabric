@@ -3,12 +3,18 @@ name: Wolfram Alpha Verification Check
 on:
   pull_request:
     paths:
-      - 'tools/lean/Semantics/**/*.lean'
-      - 'docs/AGENTS.md'
+      - '0-Core-Formalism/lean/Semantics/**/*.lean'
+      - '0-Core-Formalism/lean/Semantics/AGENTS.md'
+      - '6-Documentation/docs/AGENTS.md'
   push:
     paths:
-      - 'tools/lean/Semantics/**/*.lean'
-      - 'docs/AGENTS.md'
+      - '0-Core-Formalism/lean/Semantics/**/*.lean'
+      - '0-Core-Formalism/lean/Semantics/AGENTS.md'
+      - '6-Documentation/docs/AGENTS.md'
+
+permissions:
+  contents: read
+  issues: write
 
 jobs:
   wolfram-verification:
@@ -29,7 +35,7 @@ jobs:
           fi
 
           # Filter for Lean files in Semantics
-          grep 'tools/lean/Semantics.*\.lean$' /tmp/changed_files.txt > /tmp/lean_files.txt || true
+          grep '^0-Core-Formalism/lean/Semantics/.*\.lean$' /tmp/changed_files.txt > /tmp/lean_files.txt || true
 
           if [ -s /tmp/lean_files.txt ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
@@ -133,5 +139,5 @@ jobs:
               def customOp (x : Q16_16) : Q16_16 := ...
               \`\`\`
 
-              See [AGENTS.md Section 5.1](docs/AGENTS.md) for details.`
+              See [AGENTS.md Section 5.1](6-Documentation/docs/AGENTS.md) for details.`
             })

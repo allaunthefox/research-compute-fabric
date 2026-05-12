@@ -2,6 +2,11 @@
   "name": "research-stack",
   "private": true,
   "description": "Local Research Stack tooling dependencies.",
+  "scripts": {
+    "install-python": "uv python install 3.11.15",
+    "setup-cad-env": "cd 5-Applications/text-to-cad && python3.11 -m venv .venv && ./.venv/bin/pip install -r requirements-cad.txt",
+    "verify-cad": "cd 5-Applications/text-to-cad && ./.venv/bin/python -c \"import build123d; import OCP; print('CAD dependencies OK')\""
+  },
   "dependencies": {
     "better-sqlite3": "^12.4.1"
   }

@@ -123,71 +123,99 @@ def _run_mutex_check() -> int:
 
 
 def _run_staged_regression() -> int:
-    """Regression test: ``--staged`` sees the entire index, not just argv.
+    """Regression for the pre-commit ``files``-filter bug.
 
-    Reproduces the pre-commit ``files`` filter bug. Without ``--staged``
-    invoking the script with only the math-track filename (as pre-commit
-    would, after filtering) would falsely fail. With ``--staged`` the
-    script reads the full index and passes.
+    Builds a throwaway git repo so this test is self-contained -- the
+    test does not depend on the state of the real repo's index. The
+    script is run with ``cwd=tmp_path`` (NOT via ``runpy``) so that
+    ``git rev-parse --show-toplevel`` inside the script resolves to the
+    temp repo, and ``git diff --cached`` queries the temp repo's index.
+
+    Three sub-cases:
+        (a) math-track-only staged                -> expect exit 1
+            (proves the script actually evaluates classification logic;
+            without (a) the next sub-case could pass vacuously by
+            short-circuiting on an empty diff)
+        (b) math-track + receipt staged           -> expect exit 0
+            (the original pre-commit ``files``-filter bug)
+        (c) math-track + claims.yaml staged       -> expect exit 0
+            (verifies the registry-update path)
     """
     failures = 0
     with tempfile.TemporaryDirectory() as tmp:
-        tmp_path = Path(tmp)
+        tmp_path = Path(tmp).resolve()
         _git("init", "-q", cwd=tmp_path)
 
-        # Lay out a minimal mirror of the math-track and evidence surfaces.
         math_track = tmp_path / "6-Documentation" / "docs" / "distilled" / "Spec.md"
         math_track.parent.mkdir(parents=True, exist_ok=True)
         math_track.write_text("# math claim\n")
 
         receipt = (
-            tmp_path
-            / "shared-data"
-            / "artifacts"
-            / "deepseek_review"
-            / "x.receipt.json"
+            tmp_path / "shared-data" / "artifacts" / "deepseek_review" / "x.receipt.json"
         )
         receipt.parent.mkdir(parents=True, exist_ok=True)
         receipt.write_text("{}\n")
 
-        # Stage both files. (The script does not parse the receipts here --
-        # it only classifies by path.)
-        _git("add", str(math_track.relative_to(tmp_path)), cwd=tmp_path)
-        _git("add", str(receipt.relative_to(tmp_path)), cwd=tmp_path)
+        claims = tmp_path / "claims.yaml"
+        claims.write_text("claims: []\n")
 
-        # Run with --staged from inside the temp repo. The script will
-        # rebase REPO_ROOT off its own location (the real repo), but the
-        # ``git diff --cached`` call uses subprocess cwd, which we override
-        # below by chdir-ing.
-        # We invoke the script with a small wrapper script so we control cwd.
-        wrapper = tmp_path / "run_wrapper.py"
-        wrapper.write_text(
-            "import os, runpy, sys\n"
-            f"os.chdir({str(tmp_path)!r})\n"
-            "sys.argv = ['require_math_evidence.py', '--staged']\n"
-            f"runpy.run_path({str(SCRIPT)!r}, run_name='__main__')\n"
+        def _stage_only(*relpaths: str) -> None:
+            # Reset the index to a clean state, then stage exactly the
+            # supplied paths. ``git reset`` is safe here -- the temp repo
+            # has no commits, so there is no "HEAD" to reset against. We
+            # instead remove everything currently in the index.
+            _git("rm", "--cached", "-rf", "--ignore-unmatch", ".", cwd=tmp_path)
+            for relpath in relpaths:
+                _git("add", "--", relpath, cwd=tmp_path)
+
+        def _invoke() -> subprocess.CompletedProcess[str]:
+            return subprocess.run(
+                [sys.executable, str(SCRIPT), "--staged"],
+                capture_output=True,
+                text=True,
+                cwd=str(tmp_path),
+            )
+
+        def _assert(label: str, expected_exit: int, *staged: str) -> int:
+            _stage_only(*staged)
+            indexed = _git("diff", "--cached", "--name-only", cwd=tmp_path).stdout.splitlines()
+            indexed = [line for line in indexed if line.strip()]
+            if sorted(indexed) != sorted(staged):
+                print(f"FAIL {label}: index does not match expected staging")
+                print(f"  expected: {sorted(staged)}")
+                print(f"  actual:   {sorted(indexed)}")
+                return 1
+            result = _invoke()
+            if result.returncode != expected_exit:
+                print(
+                    f"FAIL {label}: expected exit {expected_exit}, "
+                    f"got {result.returncode}"
+                )
+                if result.stdout.strip():
+                    print(f"  stdout: {result.stdout.strip()}")
+                if result.stderr.strip():
+                    print(f"  stderr: {result.stderr.strip()}")
+                return 1
+            print(f"OK   {label} (exit {expected_exit})")
+            return 0
+
+        failures += _assert(
+            "staged_regression_negative (math-only -> FAIL)",
+            1,
+            "6-Documentation/docs/distilled/Spec.md",
         )
-        result = subprocess.run(
-            [sys.executable, str(wrapper)],
-            capture_output=True,
-            text=True,
-            cwd=str(tmp_path),
+        failures += _assert(
+            "staged_regression_positive_receipt (math + receipt -> OK)",
+            0,
+            "6-Documentation/docs/distilled/Spec.md",
+            "shared-data/artifacts/deepseek_review/x.receipt.json",
         )
-        # The script's REPO_ROOT is computed from its own __file__ (the real
-        # repo), so it would join 6-Documentation/... onto the real repo
-        # path. That's fine -- ``_is_math_track`` and ``_is_evidence``
-        # operate on path *strings*, not on disk existence. The relevant
-        # invariant is that the staged file list (computed via
-        # ``git diff --cached`` in tmp_path) contains BOTH files.
-        if result.returncode != 0:
-            failures += 1
-            print("FAIL staged_regression: expected exit 0, got", result.returncode)
-            if result.stdout.strip():
-                print(f"  stdout: {result.stdout.strip()}")
-            if result.stderr.strip():
-                print(f"  stderr: {result.stderr.strip()}")
-        else:
-            print("OK   staged_regression (math-track + receipt both staged -> exit 0)")
+        failures += _assert(
+            "staged_regression_positive_claims (math + claims.yaml -> OK)",
+            0,
+            "6-Documentation/docs/distilled/Spec.md",
+            "claims.yaml",
+        )
     return failures
 
 

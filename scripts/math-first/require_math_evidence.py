@@ -40,7 +40,41 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Only used for logging/help -- *not* as the subprocess ``cwd`` for the git
+# calls below. Hardcoding the subprocess cwd to this path caused the
+# regression test in ``test_require_math_evidence.py`` to pass vacuously
+# because the test stages files in a *temp* repo and expects ``git diff
+# --cached`` to query that temp repo, not the real one. Pre-commit and CI
+# both happen to invoke the script from inside the repo root, so letting
+# the git subprocess inherit cwd is correct in every real-world case.
 REPO_ROOT = Path(__file__).resolve().parents[2]
+
+
+def _git_toplevel(cwd: Path | None = None) -> Path:
+    """Return the absolute path of the git working tree containing ``cwd``.
+
+    Defaults to the current working directory. The script never assumes the
+    git repo lives at ``REPO_ROOT`` because that would be wrong when the
+    script is run from a different working tree -- notably, the temp repo
+    set up by ``test_require_math_evidence.py``.
+    """
+    cmd = ["git", "rev-parse", "--show-toplevel"]
+    try:
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=str(cwd) if cwd is not None else None,
+        )
+    except subprocess.CalledProcessError as exc:
+        print(
+            f"error: `{' '.join(cmd)}` failed: {exc.stderr.strip()}",
+            file=sys.stderr,
+        )
+        raise SystemExit(2)
+    return Path(result.stdout.strip())
+
 
 MATH_TRACK_PREFIXES: tuple[str, ...] = (
     "0-Core-Formalism/lean/Semantics/",
@@ -82,9 +116,12 @@ def _is_evidence(path: str) -> bool:
 
 
 def _files_from_git_diff(base_ref: str) -> list[str]:
+    cwd = _git_toplevel()
     cmd = ["git", "diff", "--name-only", f"{base_ref}...HEAD"]
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True, cwd=REPO_ROOT)
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, check=True, cwd=str(cwd)
+        )
     except subprocess.CalledProcessError as exc:
         print(f"error: `{' '.join(cmd)}` failed: {exc.stderr.strip()}", file=sys.stderr)
         raise SystemExit(2)
@@ -99,10 +136,17 @@ def _files_from_staged() -> list[str]:
     ``files`` filter. This is important because pre-commit otherwise strips
     receipts and ``claims.yaml`` from the argv before the script ever sees
     them, which would cause the evidence check to falsely fail.
+
+    The subprocess cwd is the actual git toplevel containing the *current*
+    working directory, not a hardcoded path -- so the script works
+    correctly inside the regression test's temp repo too.
     """
+    cwd = _git_toplevel()
     cmd = ["git", "diff", "--cached", "--name-only"]
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True, cwd=REPO_ROOT)
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, check=True, cwd=str(cwd)
+        )
     except subprocess.CalledProcessError as exc:
         print(f"error: `{' '.join(cmd)}` failed: {exc.stderr.strip()}", file=sys.stderr)
         raise SystemExit(2)

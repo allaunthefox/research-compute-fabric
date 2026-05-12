@@ -81,4 +81,5 @@
 |---|---|
 | `wiki/DeepSeek-Review-Process.md` | Receipt schema (`ollama_deepseek_review_receipt_v1`), two-stage pipeline (`deepseek-v3.2` + `deepseek-v4-flash` continuation), prime-gap entropy-collapse example |
 | `shared-data/artifacts/deepseek_review/` | Paired answer + receipt artifacts for each review run |
+| `5-Applications/tools-scripts/llm/ollama_deepseek_review_emitter.py` | Canonical Ollama-compatible DeepSeek review emitter with write-time answer-hash verification |
 | `5-Applications/tools-scripts/llm/deepseek_review_adapter.py` | Related Anthropic-compatible DeepSeek adapter; it does not emit the current Ollama-style receipt schema |

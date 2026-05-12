@@ -10,12 +10,11 @@ of the review pipeline, the receipt schema, and the canonical example
 `shared-data/artifacts/deepseek_review/`.
 
 Important boundary: the canonical artifacts documented on this page are
-Ollama-compatible review receipts. The tracked
-`5-Applications/tools-scripts/llm/deepseek_review_adapter.py` is a separate
-Anthropic-compatible DeepSeek adapter with its own `schema_version: "1.0"`
-receipt format. Do not use that adapter as the emitter for the
-`ollama_deepseek_review_receipt_v1` schema unless it has first been reconciled
-to this schema.
+Ollama-compatible review receipts. Use
+`5-Applications/tools-scripts/llm/ollama_deepseek_review_emitter.py` for this
+schema. The tracked `5-Applications/tools-scripts/llm/deepseek_review_adapter.py`
+is a separate Anthropic-compatible DeepSeek adapter with its own
+`schema_version: "1.0"` receipt format.
 
 ---
 
@@ -52,10 +51,12 @@ Anthropic-compatible DeepSeek reviews.
 The artifacts in `shared-data/artifacts/deepseek_review/` instead record the
 Ollama-compatible schema documented below: `schema`, `created_at`, `endpoint`,
 `usage.{prompt_tokens,completion_tokens,total_tokens}`, plain string
-`context_files`, and `answer_sha256`. As of this page, no tracked canonical
-Ollama emitter script has been identified in the repository. Treat the checked
-receipts themselves as the schema authority until such an emitter is added or
-the adapter is reconciled.
+`context_files`, and `answer_sha256`. The canonical emitter is
+`5-Applications/tools-scripts/llm/ollama_deepseek_review_emitter.py`; it writes
+the answer file first, computes `answer_sha256` from bytes read back from disk,
+writes the receipt, and immediately verifies the receipt against the answer
+path before returning success. This write-time verification gate exists because
+the first manually landed Ollama receipts had stale `answer_sha256` values.
 
 ### Receipt Schema
 
@@ -188,9 +189,11 @@ When emitting new review artifacts:
 2. Write the matching receipt alongside it with the same stem and
    `.receipt.json` suffix, using `ollama_deepseek_review_receipt_v1` for the
    primary review and `ollama_deepseek_review_continuation_receipt_v1` for any
-   continuation. Do not generate these receipts with
-   `5-Applications/tools-scripts/llm/deepseek_review_adapter.py`; it emits a
-   different Anthropic-compatible schema unless explicitly updated.
+   continuation. Use
+   `5-Applications/tools-scripts/llm/ollama_deepseek_review_emitter.py`; do not
+   generate these receipts with
+   `5-Applications/tools-scripts/llm/deepseek_review_adapter.py`, which emits a
+   different Anthropic-compatible schema.
 3. Populate `context_files` with repo-relative paths to every file consumed
    by the prompt so future agents can reproduce the prompt body. Continuation
    receipts omit `context_files` and `message_keys` records the alternate
@@ -208,6 +211,9 @@ When emitting new review artifacts:
 
 - [[Build-System]] — pinned Python interpreter for review tooling and
   prompt-hash reproducibility across runs.
+- `5-Applications/tools-scripts/llm/ollama_deepseek_review_emitter.py` —
+  canonical Ollama-compatible emitter for this schema; verifies
+  `answer_sha256` after writing.
 - `5-Applications/tools-scripts/llm/deepseek_review_adapter.py` —
   Anthropic-compatible DeepSeek adapter with a different receipt schema; useful
   as related infrastructure, but not the emitter for the current Ollama-style

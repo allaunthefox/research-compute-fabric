@@ -24,6 +24,8 @@ This file is the first stop for coding agents working in this repository.
 - Documentation and wiki surfaces: `6-Documentation/`
 - Stack receipts: `shared-data/data/stack_solidification/`
 - Promoted review receipts: `shared-data/artifacts/deepseek_review/`
+- Canonical Ollama/DeepSeek review emitter:
+  `5-Applications/tools-scripts/llm/ollama_deepseek_review_emitter.py`
 - CAD harness: `5-Applications/text-to-cad/`
 - Historical scoped staging maps:
   `6-Documentation/docs/stack_solidification_staging_manifest_2026-05-09.md`
@@ -34,6 +36,9 @@ This file is the first stop for coding agents working in this repository.
 - For Lean changes, run the narrow target first, then the broader `lake build` when feasible.
 - For Python shims, run `python3 -m py_compile` on touched files.
 - For JSON receipts, run `python3 -m json.tool` or a repo-native receipt parser.
+- For promoted Ollama/DeepSeek review receipts, run
+  `python3 5-Applications/tools-scripts/llm/ollama_deepseek_review_emitter.py --verify-only`
+  so `answer_sha256` is checked against the answer file after write.
 - For hardware claims, distinguish software witness, bitstream presence, SRAM load, flash persistence, UART beacon, and live hardware receipt.
 - Before committing, run `git diff --cached --check` and a staged secret scan
   for touched source/receipt files. The repository credential hook is a final

@@ -40,23 +40,16 @@ import subprocess
 import sys
 from pathlib import Path
 
-# Only used for logging/help -- *not* as the subprocess ``cwd`` for the git
-# calls below. Hardcoding the subprocess cwd to this path caused the
-# regression test in ``test_require_math_evidence.py`` to pass vacuously
-# because the test stages files in a *temp* repo and expects ``git diff
-# --cached`` to query that temp repo, not the real one. Pre-commit and CI
-# both happen to invoke the script from inside the repo root, so letting
-# the git subprocess inherit cwd is correct in every real-world case.
-REPO_ROOT = Path(__file__).resolve().parents[2]
-
 
 def _git_toplevel(cwd: Path | None = None) -> Path:
     """Return the absolute path of the git working tree containing ``cwd``.
 
     Defaults to the current working directory. The script never assumes the
-    git repo lives at ``REPO_ROOT`` because that would be wrong when the
+    git repo lives at a hardcoded path because that would be wrong when the
     script is run from a different working tree -- notably, the temp repo
-    set up by ``test_require_math_evidence.py``.
+    set up by ``test_require_math_evidence.py``. Pre-commit and CI both
+    happen to invoke the script from inside the repo root, so letting the
+    git subprocess inherit cwd is correct in every real-world case.
     """
     cmd = ["git", "rev-parse", "--show-toplevel"]
     try:

@@ -1,0 +1,45 @@
+# Research Stack Mathematical Claim Registry
+# -----------------------------------------------------------------------------
+# Single source of truth for tracked mathematical claims and their current
+# rigor level. See docs/math-first-tooling.md for the math-first contract.
+#
+# Schema (per entry):
+#   id:            slug, kebab-case, stable across renames.
+#   title:         one-line natural-language statement of the claim.
+#   status:        one of:
+#                    conjecture          - asserted, no machine evidence yet
+#                    verified-by-ai      - has at least one DeepSeek review
+#                                          receipt and human spot-check
+#                    formally-proven     - Lean proof builds in lake
+#                    published           - peer-reviewed publication exists
+#   lean:          (optional) repo-relative Lean source or `theorem` symbol
+#                  that carries the proof obligation.
+#   review_receipts:
+#                  (optional) list of repo-relative `*.receipt.json` paths
+#                  emitted by ollama_deepseek_review_emitter.py.
+#   sources:       (optional) list of repo-relative supporting docs, scripts,
+#                  or external citations.
+#   notes:         (optional) free-form prose; keep short.
+#
+# The math-check CI workflow validates this file against the corresponding
+# JSON Schema at shared-data/schemas/claims-registry.schema.json (see
+# docs/math-first-tooling.md).
+# -----------------------------------------------------------------------------
+
+claims:
+  - id: prime-gap-entropy-collapse
+    title: >-
+      The prime-gap entropy collapse detector identifies the k=21 entropy
+      threshold predicted by the Arithmetic spec.
+    status: verified-by-ai
+    lean: 0-Core-Formalism/lean/Semantics/Semantics/HCMMR/Kernels/EntropyCollapseDetector.lean
+    review_receipts:
+      - shared-data/artifacts/deepseek_review/prime_gap_entropy_collapse_deepseek_deepseek-v3.2_20260512T033551Z.receipt.json
+      - shared-data/artifacts/deepseek_review/prime_gap_entropy_collapse_deepseek_deepseek-v4-flash_continuation_20260512T033849Z.receipt.json
+    sources:
+      - 6-Documentation/docs/distilled/ArithmeticSpec_Corrected_2026-05-11.md
+      - shared-data/data/stack_solidification/prime_gap_k21_rerun_receipt_2026-05-11.md
+    notes: >-
+      Continuation receipt covers the truncated tail of the primary review.
+      Lean kernel proves the discrete detector; entropy bound itself remains
+      a numerical witness.

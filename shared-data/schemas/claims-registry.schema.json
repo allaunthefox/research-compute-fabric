@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/allaunthefox/Research-Stack/shared-data/schemas/claims-registry.schema.json",
+  "title": "Research Stack Mathematical Claim Registry",
+  "description": "Schema for claims.yaml at the repo root. Tracks the rigor level of every mathematical claim the stack stands behind, plus the Lean proof and/or DeepSeek review receipts that back it. See docs/math-first-tooling.md.",
+  "type": "object",
+  "required": ["claims"],
+  "additionalProperties": false,
+  "properties": {
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/claim" }
+    }
+  },
+  "$defs": {
+    "claim": {
+      "type": "object",
+      "required": ["id", "title", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$",
+          "description": "Stable kebab-case slug. Must remain unique across the registry."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "One-line natural-language statement of the claim."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["conjecture", "verified-by-ai", "formally-proven", "published"],
+          "description": "Current rigor level for the claim."
+        },
+        "lean": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional repo-relative Lean source file or `theorem` symbol carrying the proof obligation."
+        },
+        "review_receipts": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "\\.receipt\\.json$",
+            "description": "Repo-relative path to a DeepSeek review receipt."
+          }
+        },
+        "sources": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Repo-relative path or external citation supporting the claim."
+          }
+        },
+        "notes": {
+          "type": "string",
+          "description": "Free-form context. Keep short."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "verified-by-ai" } } },
+          "then": {
+            "required": ["review_receipts"],
+            "properties": {
+              "review_receipts": { "minItems": 1 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "const": "formally-proven" } } },
+          "then": { "required": ["lean"] }
+        }
+      ]
+    }
+  }
+}

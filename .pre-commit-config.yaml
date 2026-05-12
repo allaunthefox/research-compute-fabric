@@ -1,0 +1,88 @@
+# Research Stack pre-commit configuration
+# -----------------------------------------------------------------------------
+# Math-first guardrails that run on every commit. See docs/math-first-tooling.md
+# for the contract and rationale.
+#
+# Install once per clone:
+#   uv tool install pre-commit
+#   pre-commit install
+#
+# Run against the full tree:
+#   pre-commit run --all-files
+# -----------------------------------------------------------------------------
+
+default_install_hook_types: [pre-commit]
+fail_fast: false
+
+repos:
+  # --- Generic hygiene -------------------------------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-json
+        # Schemas, MCP config, package.json, VS Code config, and JSON receipts.
+        files: '\.json$'
+        # Skip Lean editor metadata and Lake-managed lockfiles.
+        exclude: '\.(lean\.pist\.meta|lake)/'
+      - id: check-yaml
+        # Validate YAML at the syntactic level. The claims registry gets a
+        # stronger semantic check below.
+        files: '\.(ya?ml)$'
+      - id: end-of-file-fixer
+        # Force a trailing newline only on text files the math-first scripts
+        # actually own. Avoid sweeping the rest of the tree (see AGENTS.md).
+        files: '^(scripts/math-first/|shared-data/schemas/|claims\.yaml$|docs/math-first-tooling\.md$|\.mcp\.json$|\.pre-commit-config\.yaml$|\.github/workflows/math-check\.yml$)'
+      - id: trailing-whitespace
+        files: '^(scripts/math-first/|shared-data/schemas/|claims\.yaml$|docs/math-first-tooling\.md$|\.mcp\.json$|\.pre-commit-config\.yaml$|\.github/workflows/math-check\.yml$)'
+      - id: detect-private-key
+
+  # --- Math-first guardrails -------------------------------------------------
+  - repo: local
+    hooks:
+      - id: deepseek-receipt-schema
+        name: Validate DeepSeek review receipts
+        description: >-
+          Validates every tracked *.receipt.json under
+          shared-data/artifacts/deepseek_review/ against
+          shared-data/schemas/deepseek-review-receipt.schema.json.
+        entry: scripts/math-first/validate_deepseek_receipts.py
+        language: python
+        additional_dependencies:
+          - "jsonschema>=4.21"
+          - "rfc3339-validator"
+        files: '^shared-data/artifacts/deepseek_review/.*\.receipt\.json$'
+        # Pass matched files explicitly so partial commits still get a check
+        # but stay scoped to the changed receipts.
+        require_serial: true
+        types_or: [file]
+
+      - id: claims-registry-schema
+        name: Validate claims.yaml registry
+        description: >-
+          Validates claims.yaml against
+          shared-data/schemas/claims-registry.schema.json and asserts every
+          referenced repo-relative path exists on disk.
+        entry: scripts/math-first/validate_claims_registry.py
+        language: python
+        additional_dependencies:
+          - "jsonschema>=4.21"
+          - "PyYAML"
+        files: '^claims\.yaml$'
+        pass_filenames: false
+        require_serial: true
+
+      - id: receipt-required-for-math-content
+        name: Require a DeepSeek receipt or Lean proof for math-track content
+        description: >-
+          If a commit touches a file under one of the math-track surfaces
+          (Lean Semantics kernels, ArithmeticSpec docs, stack solidification
+          receipts), require that at least one file under
+          shared-data/artifacts/deepseek_review/ or
+          0-Core-Formalism/lean/Semantics/ is also part of the commit. This
+          enforces the math-first contract at commit time; the same check
+          runs in CI for PR-scope coverage.
+        entry: scripts/math-first/require_math_evidence.py
+        language: python
+        files: '^(0-Core-Formalism/lean/Semantics/|6-Documentation/docs/distilled/|shared-data/data/stack_solidification/).*$'
+        pass_filenames: true
+        require_serial: true

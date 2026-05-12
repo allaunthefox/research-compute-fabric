@@ -196,9 +196,11 @@ When emitting new review artifacts:
    different Anthropic-compatible schema.
 3. Populate `context_files` with repo-relative paths to every file consumed
    by the prompt so future agents can reproduce the prompt body. Continuation
-   receipts omit `context_files` and `message_keys` records the alternate
-   shape of the continuation response; consumers reconstruct continuation
-   context via the primary receipt indexed by `previous_answer_path` (see
+   receipts omit `context_files`. Continuation receipts MUST populate
+   `message_keys` to record the alternate shape of the continuation response
+   (e.g. `["role", "content", "reasoning"]`). Consumers reconstruct
+   continuation context via the primary receipt indexed by
+   `previous_answer_path` (see
    [[#Reconstructing context for continuations]] above).
 4. Record `prompt_sha256` and `answer_sha256` for integrity verification.
 5. Commit the answer and receipt together — the receipt is meaningless

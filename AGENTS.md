@@ -10,6 +10,11 @@ This file is the first stop for coding agents working in this repository.
 - Prefer repo-native tools and receipt generators over ad hoc summaries.
 - Treat Lean as the source of truth for formal or hardware-adjacent claims.
 - Keep claims bounded: a receipt proves only the gate it actually checks.
+- Secrets are runtime-only. Use environment variables such as `OLLAMA_API_KEY`
+  or `DEEPSEEK_API_KEY`; never paste, print, or commit literal provider keys.
+- For repo-stabilization tasks, finish with a clean `git status --branch --short
+  --untracked-files=all` and an empty `git clean -nd` dry run before claiming
+  the tree is stable.
 
 ## Core Surfaces
 
@@ -18,7 +23,11 @@ This file is the first stop for coding agents working in this repository.
 - Hardware bring-up: `4-Infrastructure/hardware/`
 - Documentation and wiki surfaces: `6-Documentation/`
 - Stack receipts: `shared-data/data/stack_solidification/`
-- Current scoped staging map: `6-Documentation/docs/stack_solidification_staging_manifest_2026-05-09.md`
+- Promoted review receipts: `shared-data/artifacts/deepseek_review/`
+- CAD harness: `5-Applications/text-to-cad/`
+- Historical scoped staging maps:
+  `6-Documentation/docs/stack_solidification_staging_manifest_2026-05-09.md`
+  and `6-Documentation/docs/stack_solidification_staging_manifest_2026-05-10.md`
 
 ## Verification Expectations
 
@@ -26,6 +35,12 @@ This file is the first stop for coding agents working in this repository.
 - For Python shims, run `python3 -m py_compile` on touched files.
 - For JSON receipts, run `python3 -m json.tool` or a repo-native receipt parser.
 - For hardware claims, distinguish software witness, bitstream presence, SRAM load, flash persistence, UART beacon, and live hardware receipt.
+- Before committing, run `git diff --cached --check` and a staged secret scan
+  for touched source/receipt files. The repository credential hook is a final
+  gate, not a substitute for local review.
+- For root CAD setup changes, JSON-parse `package.json`, `.vscode/settings.json`,
+  and `.vscode/tasks.json`, then use the pinned Python/CAD commands documented
+  in `5-Applications/text-to-cad/AGENTS.md`.
 
 ## Do Not Sweep
 
@@ -39,6 +54,30 @@ git clean -fdx
 ```
 
 Use explicit file lists from the relevant staging manifest.
+
+`shared-data/` is ignored by default because most of it is generated or
+offloaded. Promote only specific, durable receipts with `git add -f -- <path>`,
+and keep empty/failed model outputs out of Git unless they are themselves the
+evidence under review.
+
+## Git Remote Hygiene
+
+- The active branch may not have an upstream. Inspect with
+  `git rev-parse --abbrev-ref --symbolic-full-name @{u}` before assuming push
+  state.
+- For GitHub sync, prefer the `github` remote and verify the remote head after
+  push:
+
+```bash
+git fetch github <branch>
+git rev-list --left-right --count FETCH_HEAD...HEAD
+git push -u github <branch>
+git ls-remote --heads github <branch>
+```
+
+- Dependabot banners printed by GitHub after push may be stale relative to the
+  live alert API. Treat the push result and remote-head hash separately from
+  dependency-alert remediation.
 
 ## Legacy Recovery Trigger
 

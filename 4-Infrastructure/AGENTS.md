@@ -13,6 +13,13 @@ Scope: `4-Infrastructure/`
 - Treat `/usr/bin/sem` as GNU Parallel on this machine unless proven otherwise;
   use the isolated `sem` binary documented in stack solidification receipts when
   needed.
+- Remote model/API probes must be secret-clean. Read provider credentials from
+  environment variables only (`OLLAMA_API_KEY`, `DEEPSEEK_API_KEY`, etc.); never
+  embed literal keys in scripts, receipts, prompts, or docs.
+- LLM/model outputs are reviewer receipts, not validation. If a model review is
+  promoted, store the answer and a machine-readable receipt with prompt/answer
+  hashes under `shared-data/artifacts/`, and state which files formed the
+  context.
 
 ## Preferred Checks
 
@@ -20,6 +27,10 @@ Scope: `4-Infrastructure/`
 python3 -m py_compile 4-Infrastructure/shim/<script>.py
 python3 -m json.tool <receipt>.json >/dev/null
 ```
+
+For API-facing or receipt-writing scripts, also run a touched-file secret scan
+before staging. Treat the repository credential hook as a backstop, not the
+first detector.
 
 For Tang Nano 9K work, keep the boundaries explicit:
 

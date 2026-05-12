@@ -24,20 +24,34 @@ Project-specific context may live under `models/`. Keep project-local notes comp
 
 ## Python Environment
 
-Prefer the repo-local CAD runtime when it exists:
+The root workspace pins Python 3.11.15 in `.python-version` and exposes the CAD
+setup through root `package.json` scripts. From the repository root, prefer:
+
+```bash
+npm run install-python
+npm run setup-cad-env
+npm run verify-cad
+```
+
+These commands mirror the checked-in VS Code tasks in `.vscode/tasks.json`.
+
+Inside this harness, prefer the repo-local CAD runtime when it exists:
 
 ```bash
 ./.venv/bin/python
 ```
 
 This environment has the CAD dependencies required by the skill tools, including
-`build123d` and `OCP`. If `.venv` is missing or cannot import those modules,
-create/install it from the repo root before running CAD tools:
+`build123d` and `OCP`. If `.venv` is missing or cannot import those modules and
+the root scripts are unavailable, create/install it from this harness root:
 
 ```bash
 python3.11 -m venv .venv
 ./.venv/bin/pip install -r requirements-cad.txt
 ```
+
+Do not commit `.venv`, Python caches, or local package caches. They are runtime
+state, not CAD source.
 
 ## Source Of Truth
 
@@ -45,6 +59,9 @@ python3.11 -m venv .venv
 - Package-local render, topology, component, and review-image artifacts are derived artifacts.
 - Do not hand-edit generated artifacts unless explicitly instructed. Edit the owning source file or imported source file first, then regenerate explicit targets with the relevant skill tool.
 - If regenerated output differs from checked-in generated files, the regenerated output is authoritative.
+- Root `.python-version`, root `package.json` scripts, and root VS Code tasks
+  are workspace setup surfaces. Update them when the preferred CAD rebuild
+  command changes.
 
 ## Prompt Artifacts
 

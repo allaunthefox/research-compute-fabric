@@ -64,12 +64,19 @@ data/*.iso
 **/_build/
 **/__pycache__/
 
+# Agda build artifacts
+*.agdai
+
 # Hardware/FPGA build artifacts
 **/obj_dir/
 **/hardware/sparkle/tangnano9k/*.fs
 **/hardware/sparkle/tangnano9k/*.pnr.json
 **/hardware/sparkle/tangnano9k/*.history
 **/hardware/sparkle/tangnano9k/sparkle_tangnano9k.json
+4-Infrastructure/hardware/tangnano9k/
+4-Infrastructure/hardware/tangnano9k_*.fs
+4-Infrastructure/hardware/tangnano9k_*.json
+4-Infrastructure/hardware/tangnano9k_*_pnr.json
 *.vcd
 *_tb.v
 *_test_vectors.json
@@ -88,6 +95,10 @@ shared-data/
 # Rust build artifacts
 **/target/
 tools/servo-fetch/
+
+# Local runtime sandboxes
+**/.sandbox-home/
+**/.sandbox-tmp/
 
 # JavaScript build artifacts
 **/node_modules/
@@ -112,11 +123,71 @@ extensions/
 2-Search-Space/PINNs/
 2-Search-Space/alphageometry/
 2-Search-Space/neural-conservation-law/
+2-Search-Space/search/stract/crates/optics/testcases/samples/
 6-Documentation/papers/Downloads_from_internet/
 6-Documentation/papers/downloads/
 6-Documentation/papers/facebook_pdfs/
 6-Documentation/papers/literature/
 6-Documentation/papers/supporting-materials/
+
+# Generated benchmark corpora and run outputs.
+3-Mathematical-Models/dna_benchmark/**/corpus/
+3-Mathematical-Models/dna_benchmark/results/
+3-Mathematical-Models/dna_benchmark/**/compressor_manifold.json
+3-Mathematical-Models/dna_benchmark/**/eigenvalue_survey.json
+3-Mathematical-Models/equations_parquet_tagged/*_curriculum.jsonl
+3-Mathematical-Models/equations_parquet_tagged/*_receipt.json
+3-Mathematical-Models/equations_parquet_tagged/*_table.csv
+3-Mathematical-Models/unified_surface/cache/
+
+# Generated shim/app run bundles.
+4-Infrastructure/shim/erdos_surface_orchestrator/out/
+4-Infrastructure/shim/*_after.json
+4-Infrastructure/shim/*_benchmarks.csv
+4-Infrastructure/shim/*_before.json
+4-Infrastructure/shim/*_bit.json
+4-Infrastructure/shim/*_checkpoint.json
+4-Infrastructure/shim/*_compression.json
+4-Infrastructure/shim/*_curriculum.jsonl
+4-Infrastructure/shim/*_eigenvectors.json
+4-Infrastructure/shim/*_lut.json
+4-Infrastructure/shim/*_manifest.jsonl
+4-Infrastructure/shim/*_packages.json
+4-Infrastructure/shim/*_packets.jsonl
+4-Infrastructure/shim/*_pull.json
+4-Infrastructure/shim/*_receipt.json
+4-Infrastructure/shim/*_receipt_*.json
+4-Infrastructure/shim/*_report.json
+4-Infrastructure/shim/*_responses.jsonl
+4-Infrastructure/shim/*_results.json
+4-Infrastructure/shim/*_sft.jsonl
+4-Infrastructure/shim/*_smoke.json
+4-Infrastructure/shim/*_stream.bin
+4-Infrastructure/shim/finance_claim_remote_bundle/
+4-Infrastructure/shim/finance_claim_lut_fixtures/claim-*/
+4-Infrastructure/shim/finance_claim_lut_fixtures/*.pdf
+4-Infrastructure/shim/full_gambit_runs/
+4-Infrastructure/shim/h200_encode_dry_run/
+4-Infrastructure/shim/offload_receipts/
+4-Infrastructure/shim/parallel_metaprobe_runs/
+4-Infrastructure/shim/tang9k_pbacs_receipts/
+5-Applications/linear-native-tauri/gen/
+
+# Generated hardware probe products.
+4-Infrastructure/hardware/batch_results/
+4-Infrastructure/hardware/*_receipt.json
+4-Infrastructure/hardware/*.png
+4-Infrastructure/hardware/*.pdf
+4-Infrastructure/hardware/metamanifold_prover.json
+
+# Local documentation exports and downloaded references.
+6-Documentation/chat-log-dumps/
+6-Documentation/docs/reference-videos/
+6-Documentation/docs/x86_64_specs/*.pdf
+6-Documentation/docs/x86_64_specs/*.txt
+6-Documentation/reports/jupyter-books/
+6-Documentation/reports/typst/*.pdf
+5-Applications/text-to-cad/models/.*/
 
 # Kernel module build artifacts
 *.ko

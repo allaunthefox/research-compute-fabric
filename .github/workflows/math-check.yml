@@ -142,6 +142,25 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # We deliberately do not smudge LFS pointers here -- the pre-commit
+          # hooks never need the actual binary content, and pulling LFS would
+          # add noise. The next step disables the LFS smudge filters locally
+          # so pre-commit's stash/pop cycle does not trip over pointer files.
+          lfs: false
+
+      - name: Disable LFS filters for pre-commit
+        # pre-commit stashes unstaged changes before running hooks and pops
+        # them back after. When the working tree contains LFS pointer files
+        # but Git's LFS smudge filter is configured (per .gitattributes), the
+        # stash/pop cycle reports a phantom diff against the binary content
+        # Git thinks it should smudge, and the pop fails. Clearing the
+        # filters locally for this job removes the disagreement without
+        # mutating the repository or any LFS-tracked files.
+        run: |
+          git config --local filter.lfs.smudge ""
+          git config --local filter.lfs.clean ""
+          git config --local filter.lfs.process ""
+          git config --local filter.lfs.required false
 
       - name: Setup Python 3.11
         uses: actions/setup-python@v5

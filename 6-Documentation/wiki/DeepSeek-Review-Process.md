@@ -1,6 +1,6 @@
 # DeepSeek Review Process
 
-> **Source:** [[Home|Wiki Home]] · `5-Applications/tools-scripts/llm/deepseek_review_adapter.py` · `shared-data/artifacts/deepseek_review/`
+> **Source:** [[Home|Wiki Home]] · `shared-data/artifacts/deepseek_review/`
 
 The Research Stack incorporates DeepSeek AI models for formal mathematical
 review and validation of canonical specifications, Lean kernels, and
@@ -8,6 +8,14 @@ statistical-interpretation receipts. This page documents the wiki-level view
 of the review pipeline, the receipt schema, and the canonical example
 (prime-gap entropy collapse) shipped under
 `shared-data/artifacts/deepseek_review/`.
+
+Important boundary: the canonical artifacts documented on this page are
+Ollama-compatible review receipts. The tracked
+`5-Applications/tools-scripts/llm/deepseek_review_adapter.py` is a separate
+Anthropic-compatible DeepSeek adapter with its own `schema_version: "1.0"`
+receipt format. Do not use that adapter as the emitter for the
+`ollama_deepseek_review_receipt_v1` schema unless it has first been reconciled
+to this schema.
 
 ---
 
@@ -31,6 +39,23 @@ without re-running the model.
 
 Receipt filenames are aligned with their answer files by sharing the same
 `<topic>_<model>_<ISO-timestamp>` stem.
+
+### Emitter Boundary
+
+The existing prime-gap receipts were not emitted by
+`5-Applications/tools-scripts/llm/deepseek_review_adapter.py`. That adapter
+targets `https://api.deepseek.com/anthropic`, records `schema_version`,
+`completed_at`, `tokens.{input,output,cache_creation,cache_read}`,
+`response_sha256`, and structured `cached_context_files`, and is suitable for
+Anthropic-compatible DeepSeek reviews.
+
+The artifacts in `shared-data/artifacts/deepseek_review/` instead record the
+Ollama-compatible schema documented below: `schema`, `created_at`, `endpoint`,
+`usage.{prompt_tokens,completion_tokens,total_tokens}`, plain string
+`context_files`, and `answer_sha256`. As of this page, no tracked canonical
+Ollama emitter script has been identified in the repository. Treat the checked
+receipts themselves as the schema authority until such an emitter is added or
+the adapter is reconciled.
 
 ### Receipt Schema
 
@@ -163,7 +188,9 @@ When emitting new review artifacts:
 2. Write the matching receipt alongside it with the same stem and
    `.receipt.json` suffix, using `ollama_deepseek_review_receipt_v1` for the
    primary review and `ollama_deepseek_review_continuation_receipt_v1` for any
-   continuation.
+   continuation. Do not generate these receipts with
+   `5-Applications/tools-scripts/llm/deepseek_review_adapter.py`; it emits a
+   different Anthropic-compatible schema unless explicitly updated.
 3. Populate `context_files` with repo-relative paths to every file consumed
    by the prompt so future agents can reproduce the prompt body. Continuation
    receipts omit `context_files` and `message_keys` records the alternate
@@ -179,10 +206,12 @@ When emitting new review artifacts:
 
 ## Related
 
-- [[Build-System]] — pinned Python interpreter that drives the review adapter
-  and ensures prompt-hash reproducibility across runs.
-- `5-Applications/tools-scripts/llm/deepseek_review_adapter.py` — adapter that
-  emits the receipt + answer pair.
+- [[Build-System]] — pinned Python interpreter for review tooling and
+  prompt-hash reproducibility across runs.
+- `5-Applications/tools-scripts/llm/deepseek_review_adapter.py` —
+  Anthropic-compatible DeepSeek adapter with a different receipt schema; useful
+  as related infrastructure, but not the emitter for the current Ollama-style
+  artifacts.
 - `6-Documentation/docs/distilled/` — canonical specs that reviews validate
   against (e.g. `ArithmeticSpec_Corrected_2026-05-11.md`).
 - `0-Core-Formalism/lean/Semantics/Semantics/HCMMR/Kernels/` — Lean kernels

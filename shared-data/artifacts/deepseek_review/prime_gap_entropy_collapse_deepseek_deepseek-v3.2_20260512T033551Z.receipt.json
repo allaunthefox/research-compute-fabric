@@ -4,7 +4,7 @@
   "model": "deepseek-v3.2",
   "endpoint": "https://ollama.com/v1/chat/completions",
   "prompt_sha256": "sha256:41d0d6e83f36bee093b5ac992b7b29ff7657bc33e0dce0e684e1d3ddc679ee92",
-  "answer_sha256": "sha256:8f12e758a3dcce56982e1ffdff99e31cfa4cf071afc8b7ed8d348972af9536c7",
+  "answer_sha256": "sha256:81fe9e97f9de62ea4adc852185f7d85424ce6476f5b7f158106806bffddf6303",
   "usage": {
     "prompt_tokens": 5008,
     "completion_tokens": 5000,

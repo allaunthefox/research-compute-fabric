@@ -156,7 +156,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 while not (REPO_ROOT / ".git").exists() and REPO_ROOT != REPO_ROOT.parent:
     REPO_ROOT = REPO_ROOT.parent
-DEFAULT_REMOTE = "forgejo"
+DEFAULT_REMOTE = os.environ.get("PTOS_REMOTE", "github")
 _PHI = (1 + 5 ** 0.5) / 2  # golden ratio — used for nd_point and foam_score
 SIDECAR_EXTENSIONS = frozenset({
     ".json",
@@ -367,7 +367,8 @@ PACKAGES: dict = {
             "5-Applications/scripts/math_check_packages.py",
             "5-Applications/scripts/repair_index.py",
             "5-Applications/scripts/stage0_classifier.py",
-            "5-Applications/scripts/substrate_git_index.py",
+            "5-Applications/tools-scripts/substrate/substrate_git_index.py",
+            "4-Infrastructure/witness/sources.json",
             "5-Applications/tests/test_iso_symbol_table.py",
             "5-Applications/tests/test_math_check_packages.py",
         ],

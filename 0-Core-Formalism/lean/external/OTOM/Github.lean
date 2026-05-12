@@ -1,4 +1,4 @@
-import Semantics.Bind
+import Semantics.ProvenanceSource
 
 namespace Semantics.Github
 
@@ -11,20 +11,39 @@ structure GithubEvent where
   isPublic : Bool
   isValid : Bool
 
+def githubPolicy : Semantics.ProvenanceSource.CostPolicy := {
+  trustedActors := []
+  trustedCost := 0x00050000
+  untrustedCost := 0x00050000
+  publicCost := 0x00050000
+}
+
+def toSourceEvent (e : GithubEvent) : Semantics.ProvenanceSource.SourceEvent := {
+  backend := .vcs "git" "github"
+  source := e.repo
+  action := e.action
+  actor := { scheme := "user", name := "unspecified" }
+  ref := { scheme := "git-ref", value := e.action }
+  visibility := if e.isPublic then .publicRecord else .privateRecord
+  isValid := e.isValid && e.isPublic
+}
+
 /--
 Invariant: Github events are lawful if they are intended for the public record
 and target the research-stack repo.
 -/
 def githubInvariant (e : GithubEvent) : String :=
-  if e.isValid && e.isPublic then s!"public_record_github:{e.repo}:{e.action}"
-  else "unlawful_github_attempt"
+  Semantics.ProvenanceSource.legacyInvariant
+    "public_record_github"
+    "unlawful_github_attempt"
+    (toSourceEvent e)
 
 /--
 Cost function: Measures the cost of public publication.
 Public visibility adds significant informational weight (Q16.16).
 -/
 def githubCost (_e : GithubEvent) (_g : Metric) : UInt32 :=
-  0x00050000 -- 5.0 cost (high weight for public disclosure)
+  Semantics.ProvenanceSource.cost githubPolicy (toSourceEvent _e) "" _g
 
 /--
 The Github Bind: Marks the idea as "in full view".

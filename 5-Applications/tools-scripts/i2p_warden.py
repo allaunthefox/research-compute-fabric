@@ -59,7 +59,7 @@ def attempt_restart():
 def alert_user(message):
     """Alerts the user via console and potentially other channels."""
     print(f"\n[!!! WARDEN ALERT !!!] {message}")
-    # Integration with Linear or Forgejo could go here
+    # Integration with Linear or a configured witness source could go here
     # For now, we use a high-visibility console alert
 
 def main():
@@ -78,7 +78,7 @@ def main():
             
         if not success:
             alert_user("i2p Router is FATALLY OFFLINE. Manual intervention required.")
-            # Optional: push to Forgejo if Tailscale is up
+            # Optional: push to a configured witness source if Tailscale is up
             return False
     else:
         print("[WARDEN] i2p is healthy.")

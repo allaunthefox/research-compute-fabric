@@ -106,7 +106,7 @@ app.get("/health/network", async (_req, res) => {
     substrate: "OFFLINE",
     tailscale: "CHECKING",
     remotes: {
-      forgejo: "ONLINE",
+      witnessSources: "CONFIGURED",
       i2p: "OFFLINE"
     }
   };

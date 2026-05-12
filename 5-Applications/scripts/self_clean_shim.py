@@ -210,7 +210,7 @@ def analyze_file(filepath: Path) -> Optional[FileMetrics]:
     if is_lean:
         # Check if module name is in the known failing list from context
         failing_modules = {
-            "AVMR", "DomainKernel", "Forgejo", "Metatype", "FuzzyAssociation",
+            "AVMR", "DomainKernel", "Metatype", "FuzzyAssociation",
             "SurfaceCore", "Transition", "Protocol", "CalibratedKernel",
             "BraidCross", "SSMS_nD"
         }

@@ -1,4 +1,4 @@
-# ARCHITECTURE.md — Sovereign Research Stack
+# ARCHITECTURE.md — Observerless Research Stack
 
 **The single-page map of the system. Read this first.**
 
@@ -6,7 +6,7 @@
 
 ## 1. Core Idea
 
-The Sovereign Research Stack is a formal verification and compression system grounded in cross-domain invariant analysis. Every transformation — whether a byte-compression pass, a PDE discretization step, or a spiking-neuron firing — is treated as a receipt-bearing event that must preserve declared invariants. Lean 4 is the source of truth. All computation uses Q16.16 fixed-point arithmetic. No floating-point, no unproven claims, no receipt-free promotions.
+The Observerless Research Stack is a formal verification and compression system grounded in cross-domain invariant analysis. Every transformation — whether a byte-compression pass, a PDE discretization step, or a spiking-neuron firing — is treated as a receipt-bearing event that must preserve declared invariants. Lean 4 is the source of truth. All computation uses Q16.16 fixed-point arithmetic. No floating-point, no unproven claims, no receipt-free promotions.
 
 ---
 
@@ -198,4 +198,4 @@ valid syntax
 
 ---
 
-*Sovereign Research Stack — Architecture v1.0 (2026-05-04)*
+*Observerless Research Stack — Architecture v1.0 (2026-05-04)*

@@ -1158,7 +1158,7 @@ mod tests {
     #[test]
     fn oauth_token_maps_to_bearer_auth_source() {
         let auth = AuthSource::from(OAuthTokenSet {
-            access_token: "access-token".to_string(),
+            access_token: "dummy-access-token".to_string(),
             refresh_token: Some("refresh".to_string()),
             expires_at: Some(123),
             scopes: vec!["scope:a".to_string()],
@@ -1187,7 +1187,7 @@ mod tests {
         std::env::remove_var("ANTHROPIC_AUTH_TOKEN");
         std::env::remove_var("ANTHROPIC_API_KEY");
         save_oauth_credentials(&runtime::OAuthTokenSet {
-            access_token: "saved-access-token".to_string(),
+            access_token: "dummy-access-token".to_string(),
             refresh_token: Some("refresh".to_string()),
             expires_at: Some(now_unix_timestamp() + 300),
             scopes: vec!["scope:a".to_string()],
@@ -1205,13 +1205,13 @@ mod tests {
     #[test]
     fn oauth_token_expiry_uses_expires_at_timestamp() {
         assert!(oauth_token_is_expired(&OAuthTokenSet {
-            access_token: "access-token".to_string(),
+            access_token: "dummy-access-token".to_string(),
             refresh_token: None,
             expires_at: Some(1),
             scopes: Vec::new(),
         }));
         assert!(!oauth_token_is_expired(&OAuthTokenSet {
-            access_token: "access-token".to_string(),
+            access_token: "dummy-access-token".to_string(),
             refresh_token: None,
             expires_at: Some(now_unix_timestamp() + 60),
             scopes: Vec::new(),
@@ -1226,7 +1226,7 @@ mod tests {
         std::env::remove_var("ANTHROPIC_AUTH_TOKEN");
         std::env::remove_var("ANTHROPIC_API_KEY");
         save_oauth_credentials(&runtime::OAuthTokenSet {
-            access_token: "expired-access-token".to_string(),
+            access_token: "dummy-access-token".to_string(),
             refresh_token: Some("refresh-token".to_string()),
             expires_at: Some(1),
             scopes: vec!["scope:a".to_string()],
@@ -1258,7 +1258,7 @@ mod tests {
         std::env::remove_var("ANTHROPIC_AUTH_TOKEN");
         std::env::remove_var("ANTHROPIC_API_KEY");
         save_oauth_credentials(&runtime::OAuthTokenSet {
-            access_token: "saved-access-token".to_string(),
+            access_token: "dummy-access-token".to_string(),
             refresh_token: Some("refresh".to_string()),
             expires_at: Some(now_unix_timestamp() + 300),
             scopes: vec!["scope:a".to_string()],
@@ -1282,7 +1282,7 @@ mod tests {
         std::env::remove_var("ANTHROPIC_AUTH_TOKEN");
         std::env::remove_var("ANTHROPIC_API_KEY");
         save_oauth_credentials(&runtime::OAuthTokenSet {
-            access_token: "expired-access-token".to_string(),
+            access_token: "dummy-access-token".to_string(),
             refresh_token: Some("refresh-token".to_string()),
             expires_at: Some(1),
             scopes: vec!["scope:a".to_string()],
@@ -1314,7 +1314,7 @@ mod tests {
         std::env::remove_var("ANTHROPIC_AUTH_TOKEN");
         std::env::remove_var("ANTHROPIC_API_KEY");
         save_oauth_credentials(&runtime::OAuthTokenSet {
-            access_token: "expired-access-token".to_string(),
+            access_token: "dummy-access-token".to_string(),
             refresh_token: Some("refresh-token".to_string()),
             expires_at: Some(1),
             scopes: vec!["scope:a".to_string()],
@@ -1475,8 +1475,8 @@ mod tests {
     #[test]
     fn auth_source_applies_headers() {
         let auth = AuthSource::ApiKeyAndBearer {
-            api_key: "test-key".to_string(),
-            bearer_token: "proxy-token".to_string(),
+            api_key: "dummy-api-key".to_string(),
+            bearer_token: "dummy-bearer-token".to_string(),
         };
         let request = auth
             .apply(reqwest::Client::new().post("https://example.test"))
@@ -1705,8 +1705,8 @@ mod tests {
     fn enrich_bearer_auth_error_skips_hint_when_api_key_header_is_also_present() {
         // given
         let auth = AuthSource::ApiKeyAndBearer {
-            api_key: "sk-ant-api03-legitimate".to_string(),
-            bearer_token: "sk-ant-api03-deadbeef".to_string(),
+            api_key: "dummy-api-key".to_string(),
+            bearer_token: "dummy-bearer-token".to_string(),
         };
         let error = crate::error::ApiError::Api {
             status: reqwest::StatusCode::UNAUTHORIZED,
@@ -1731,7 +1731,7 @@ mod tests {
     #[test]
     fn enrich_bearer_auth_error_ignores_401_when_auth_source_has_no_bearer() {
         // given
-        let auth = AuthSource::ApiKey("sk-ant-api03-legitimate".to_string());
+        let auth = AuthSource::ApiKey("dummy-api-key".to_string());
         let error = crate::error::ApiError::Api {
             status: reqwest::StatusCode::UNAUTHORIZED,
             error_type: Some("authentication_error".to_string()),

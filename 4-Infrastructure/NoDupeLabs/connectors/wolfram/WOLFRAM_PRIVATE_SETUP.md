@@ -33,7 +33,7 @@ Forbidden exposure:
 ## Environment
 
 ```bash
-export WOLFRAM_CONNECTOR_TOKEN="long-random-private-token-at-least-32-chars"
+export WOLFRAM_CONNECTOR_TOKEN="YOUR_WOLFRAM_CONNECTOR_TOKEN"
 export WOLFRAM_APP_ID="your-private-wolfram-alpha-app-id"
 export WOLFRAM_MAX_QUERY_CHARS=1600
 export WOLFRAM_TIMEOUT_MS=15000

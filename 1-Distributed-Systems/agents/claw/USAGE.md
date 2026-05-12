@@ -131,7 +131,7 @@ cd rust
 
 ```bash
 export ANTHROPIC_BASE_URL="http://127.0.0.1:8080"
-export ANTHROPIC_AUTH_TOKEN="local-dev-token"
+export ANTHROPIC_AUTH_TOKEN="YOUR_ANTHROPIC_AUTH_TOKEN"
 
 cd rust
 ./target/debug/claw --model "claude-sonnet-4-6" prompt "reply with the word ready"
@@ -141,7 +141,7 @@ cd rust
 
 ```bash
 export OPENAI_BASE_URL="http://127.0.0.1:8000/v1"
-export OPENAI_API_KEY="local-dev-token"
+export OPENAI_API_KEY="YOUR_OPENAI_API_KEY"
 
 cd rust
 ./target/debug/claw --model "qwen2.5-coder" prompt "reply with the word ready"
@@ -161,7 +161,7 @@ cd rust
 
 ```bash
 export OPENAI_BASE_URL="https://openrouter.ai/api/v1"
-export OPENAI_API_KEY="sk-or-v1-..."
+export OPENAI_API_KEY="YOUR_OPENROUTER_API_KEY"
 
 cd rust
 ./target/debug/claw --model "openai/gpt-4.1-mini" prompt "summarize this repository in one sentence"

@@ -12,8 +12,9 @@ Exit code:
 from __future__ import annotations
 
 import argparse
-import importlib
+import importlib.metadata
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -115,34 +116,136 @@ COMMAND_TOOLS: tuple[CommandTool, ...] = (
 )
 
 
-def _module_version(module: Any) -> str | None:
-    for attr in ("__version__", "VERSION", "version"):
-        value = getattr(module, attr, None)
-        if value is None:
-            continue
-        if callable(value):
-            try:
-                value = value()
-            except Exception:
-                continue
-        return str(value)
-    return None
+_DISTRIBUTION_NAMES: dict[str, str] = {
+    "pywavelets": "PyWavelets",
+}
+
+
+def _distribution_version(tool: PythonTool) -> str | None:
+    name = _DISTRIBUTION_NAMES.get(tool.key, tool.key)
+    try:
+        return importlib.metadata.version(name)
+    except importlib.metadata.PackageNotFoundError:
+        return None
+
+
+def _first_line(text: str) -> str:
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped:
+            return stripped
+    return text.strip()
+
+
+def _liboqs_env() -> dict[str, str]:
+    env = dict(os.environ)
+    if "OQS_INSTALL_PATH" in env:
+        return env
+
+    home_install = Path.home() / "_oqs"
+    if (home_install / "lib" / "liboqs.so").exists() or (
+        home_install / "lib64" / "liboqs.so"
+    ).exists():
+        env["OQS_INSTALL_PATH"] = str(home_install)
+    return env
+
+
+def _has_native_liboqs() -> bool:
+    candidates = [
+        Path(os.environ["OQS_INSTALL_PATH"])
+        for key in ("OQS_INSTALL_PATH",)
+        if key in os.environ
+    ]
+    candidates.append(Path.home() / "_oqs")
+    for root in candidates:
+        if (root / "lib" / "liboqs.so").exists() or (
+            root / "lib64" / "liboqs.so"
+        ).exists():
+            return True
+    for pattern in ("/usr/lib/liboqs.so*", "/usr/local/lib/liboqs.so*"):
+        if list(Path("/").glob(pattern.lstrip("/"))):
+            return True
+    return False
 
 
 def _probe_python(tool: PythonTool) -> dict[str, Any]:
+    installed_version = _distribution_version(tool)
+    if installed_version is None:
+        return {
+            **asdict(tool),
+            "available": False,
+            "error": "package is not installed in this Python environment",
+        }
+
+    if tool.key == "liboqs-python" and not _has_native_liboqs():
+        return {
+            **asdict(tool),
+            "available": False,
+            "installed_version": installed_version,
+            "error": "Python package is installed, but native liboqs.so is missing",
+        }
+
+    marker = "__SCIENCE_TOOLBELT_PROBE__"
+    code = f"""
+import importlib
+import json
+
+module = importlib.import_module({tool.module!r})
+version = None
+for attr in ("__version__", "VERSION", "version"):
+    value = getattr(module, attr, None)
+    if value is None:
+        continue
+    if callable(value):
+        try:
+            value = value()
+        except Exception:
+            continue
+    version = str(value)
+    break
+print({marker!r} + json.dumps({{"version": version, "path": getattr(module, "__file__", None)}}))
+"""
+    env = _liboqs_env() if tool.key == "liboqs-python" else dict(os.environ)
     try:
-        module = importlib.import_module(tool.module)
+        result = subprocess.run(
+            [sys.executable, "-c", code],
+            capture_output=True,
+            text=True,
+            timeout=20,
+            check=False,
+            env=env,
+        )
     except Exception as exc:
         return {
             **asdict(tool),
             "available": False,
+            "installed_version": installed_version,
             "error": f"{type(exc).__name__}: {exc}",
         }
+
+    payload = None
+    for line in result.stdout.splitlines():
+        if line.startswith(marker):
+            payload = json.loads(line[len(marker) :])
+    if result.returncode != 0 or payload is None:
+        error = _first_line(result.stderr) or _first_line(result.stdout)
+        return {
+            **asdict(tool),
+            "available": False,
+            "installed_version": installed_version,
+            "error": error or f"import subprocess exited {result.returncode}",
+        }
+
     return {
         **asdict(tool),
         "available": True,
-        "version": _module_version(module),
-        "path": getattr(module, "__file__", None),
+        "version": installed_version,
+        **(
+            {"module_version": payload.get("version")}
+            if payload.get("version") and payload.get("version") != installed_version
+            else {}
+        ),
+        "path": payload.get("path"),
     }
 
 

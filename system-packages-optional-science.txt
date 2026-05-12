@@ -22,5 +22,11 @@ zstd
 graphviz
 paraview
 
+# CFD/PDE native helpers
+# Arch/CachyOS: fftw-openmpi
+
 # Chemistry / materials native helpers
 openbabel
+
+# Cryptography native helpers
+# liboqs may need a local source install when no distro package exists.

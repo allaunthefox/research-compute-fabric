@@ -22,8 +22,15 @@ Equivalent npm convenience commands:
 
 ```bash
 npm run setup-science-light
+npm run setup-science-all
 npm run probe-science
 ```
+
+`setup-science-light` installs the pure Python and wheel-backed baseline.
+`setup-science-all` also asks for Dedalus and `liboqs-python`; those packages
+still need native libraries on the host. On Arch/CachyOS, Dedalus needed
+`fftw-openmpi`, and `liboqs-python` was completed by installing liboqs under
+`$HOME/_oqs`.
 
 Native command-line tools are listed in:
 

@@ -38,6 +38,7 @@ scripts/venv_unsloth/
 **/venv_wgpu/
 **/*.venv/
 **/venv/
+.venv-science/
 
 # API Keys and credentials (NEVER track in git)
 API KEYS/

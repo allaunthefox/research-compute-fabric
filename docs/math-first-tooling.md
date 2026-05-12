@@ -97,11 +97,17 @@ python3 scripts/math-first/validate_deepseek_receipts.py \
   shared-data/artifacts/deepseek_review/<topic>_<model>_<ts>.receipt.json
 ```
 
-The validator has its own self-tests:
+The receipt validator and the evidence gate both have self-tests:
 
 ```bash
 python3 scripts/math-first/test_validate_deepseek_receipts.py
+python3 scripts/math-first/test_require_math_evidence.py
 ```
+
+The `require_math_evidence` self-test includes a regression for the
+pre-commit `files`-filter bug: it builds a throwaway repo, stages a
+math-track file plus a receipt, then invokes the script with `--staged`
+to confirm both files are visible end-to-end.
 
 ## Mathematical Claim Registry
 
@@ -140,12 +146,16 @@ or `sources` exists on disk.
 * `claims-registry-schema` — runs the registry validator whenever
   `claims.yaml` is staged.
 * `receipt-required-for-math-content` — invokes
-  `scripts/math-first/require_math_evidence.py`. If a commit touches a
-  math-track surface (`0-Core-Formalism/lean/Semantics/`,
+  `scripts/math-first/require_math_evidence.py --staged`. If a commit
+  touches a math-track surface (`0-Core-Formalism/lean/Semantics/`,
   `6-Documentation/docs/distilled/`,
   `shared-data/data/stack_solidification/`), the same commit must also touch
   a math-evidence surface (a DeepSeek receipt, a Lean kernel, or
-  `claims.yaml`).
+  `claims.yaml`). The hook is configured with `always_run: true` and
+  `pass_filenames: false` so the script reads the entire staged set via
+  `git diff --cached --name-only`; pre-commit's per-hook `files` filter
+  would otherwise strip evidence files from the argv before the script
+  could see them.
 
 ### Install
 
@@ -174,7 +184,11 @@ math-first surface. It has three jobs:
 3. **`pre-commit`** — runs every pre-commit hook against the PR's range of
    changed files (`pre-commit run --from-ref <base> --to-ref HEAD`), so the
    guardrails are honoured even when a contributor has not installed the
-   hooks locally.
+   hooks locally. Note: `receipt-required-for-math-content` is a no-op in
+   this CI job because pre-commit's `--from-ref / --to-ref` mode does not
+   stage anything in the index, so the script's `--staged` lookup returns
+   an empty file list and exits 0. PR-scope enforcement of the same rule
+   lives in the dedicated `require-evidence` job above.
 
 The pre-existing `wolfram-verification.yml` workflow continues to police
 mathematical formulas inside Lean source for missing Wolfram Alpha
@@ -244,6 +258,7 @@ uv run --python 3.11 \
   bash -c '
     python3 scripts/math-first/validate_deepseek_receipts.py \
       && python3 scripts/math-first/test_validate_deepseek_receipts.py \
+      && python3 scripts/math-first/test_require_math_evidence.py \
       && python3 scripts/math-first/validate_claims_registry.py \
       && for r in shared-data/artifacts/deepseek_review/*.receipt.json; do \
            python3 5-Applications/tools-scripts/llm/ollama_deepseek_review_emitter.py --verify-only "$r"; \

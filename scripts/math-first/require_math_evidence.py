@@ -21,10 +21,12 @@ Math-evidence surfaces (accepted as evidence):
 
 Usage:
     scripts/math-first/require_math_evidence.py [FILES ...]
+    scripts/math-first/require_math_evidence.py --staged
     scripts/math-first/require_math_evidence.py --from-git-diff BASE_REF
 
-If neither files nor ``--from-git-diff`` is supplied the script exits 0 with
-a noop. Pre-commit invokes it with the staged file list, CI invokes it with
+If no input mode is supplied the script exits 0 with a noop. Pre-commit
+invokes it with ``--staged`` so the script sees the entire staged set
+regardless of pre-commit's own ``files`` filter; CI invokes it with
 ``--from-git-diff origin/<base>``.
 
 Exit code:
@@ -38,7 +40,34 @@ import subprocess
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+
+def _git_toplevel(cwd: Path | None = None) -> Path:
+    """Return the absolute path of the git working tree containing ``cwd``.
+
+    Defaults to the current working directory. The script never assumes the
+    git repo lives at a hardcoded path because that would be wrong when the
+    script is run from a different working tree -- notably, the temp repo
+    set up by ``test_require_math_evidence.py``. Pre-commit and CI both
+    happen to invoke the script from inside the repo root, so letting the
+    git subprocess inherit cwd is correct in every real-world case.
+    """
+    cmd = ["git", "rev-parse", "--show-toplevel"]
+    try:
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=str(cwd) if cwd is not None else None,
+        )
+    except subprocess.CalledProcessError as exc:
+        print(
+            f"error: `{' '.join(cmd)}` failed: {exc.stderr.strip()}",
+            file=sys.stderr,
+        )
+        raise SystemExit(2)
+    return Path(result.stdout.strip())
+
 
 MATH_TRACK_PREFIXES: tuple[str, ...] = (
     "0-Core-Formalism/lean/Semantics/",
@@ -80,9 +109,37 @@ def _is_evidence(path: str) -> bool:
 
 
 def _files_from_git_diff(base_ref: str) -> list[str]:
+    cwd = _git_toplevel()
     cmd = ["git", "diff", "--name-only", f"{base_ref}...HEAD"]
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True, cwd=REPO_ROOT)
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, check=True, cwd=str(cwd)
+        )
+    except subprocess.CalledProcessError as exc:
+        print(f"error: `{' '.join(cmd)}` failed: {exc.stderr.strip()}", file=sys.stderr)
+        raise SystemExit(2)
+    return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+
+
+def _files_from_staged() -> list[str]:
+    """Return the staged file list via ``git diff --cached --name-only``.
+
+    Used by the pre-commit hook so the script sees every staged file --
+    math-track *and* evidence -- regardless of pre-commit's per-hook
+    ``files`` filter. This is important because pre-commit otherwise strips
+    receipts and ``claims.yaml`` from the argv before the script ever sees
+    them, which would cause the evidence check to falsely fail.
+
+    The subprocess cwd is the actual git toplevel containing the *current*
+    working directory, not a hardcoded path -- so the script works
+    correctly inside the regression test's temp repo too.
+    """
+    cwd = _git_toplevel()
+    cmd = ["git", "diff", "--cached", "--name-only"]
+    try:
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, check=True, cwd=str(cwd)
+        )
     except subprocess.CalledProcessError as exc:
         print(f"error: `{' '.join(cmd)}` failed: {exc.stderr.strip()}", file=sys.stderr)
         raise SystemExit(2)
@@ -101,10 +158,21 @@ def main(argv: list[str] | None = None) -> int:
         metavar="BASE_REF",
         help="Compute the file list from `git diff --name-only BASE_REF...HEAD`.",
     )
+    parser.add_argument(
+        "--staged",
+        action="store_true",
+        help="Compute the file list from `git diff --cached --name-only` "
+        "(use this from pre-commit so the entire staged set is visible).",
+    )
     args = parser.parse_args(argv)
+
+    if sum(bool(x) for x in (args.from_git_diff, args.staged, args.files)) > 1:
+        parser.error("--from-git-diff, --staged, and explicit FILES are mutually exclusive")
 
     if args.from_git_diff:
         files = _files_from_git_diff(args.from_git_diff)
+    elif args.staged:
+        files = _files_from_staged()
     else:
         files = list(args.files)
 

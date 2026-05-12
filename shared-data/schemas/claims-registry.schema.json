@@ -64,7 +64,10 @@
       },
       "allOf": [
         {
-          "if": { "properties": { "status": { "const": "verified-by-ai" } } },
+          "if": {
+            "required": ["status"],
+            "properties": { "status": { "const": "verified-by-ai" } }
+          },
           "then": {
             "required": ["review_receipts"],
             "properties": {
@@ -73,7 +76,10 @@
           }
         },
         {
-          "if": { "properties": { "status": { "const": "formally-proven" } } },
+          "if": {
+            "required": ["status"],
+            "properties": { "status": { "const": "formally-proven" } }
+          },
           "then": { "required": ["lean"] }
         }
       ]

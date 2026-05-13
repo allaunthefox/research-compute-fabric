@@ -512,6 +512,799 @@ Individualized connectome-protective thresholds based on baseline cognitive capa
 ### 10. Dynamic Load Balancing
 Real-time shifting of cognitive load to emotional processing to prevent connectome damage.
 
+## 2026-05-13 Full-Stack Load / Closure Revision
+
+This revision generalizes cognitive load from a domain response score into a boundary-and-receipt transition stack. The short intuition is:
+
+```
+attempting to force mountain-scale input through straw-scale assimilation
+does not make the input disappear.
+
+It creates overflow pressure, shell stress, phase echo, residual burden,
+and validation debt.
+```
+
+The model therefore treats load as a routed transition problem:
+
+```
+Boundary pressure enters;
+shell sequence resists;
+flux and torsion route;
+Reynolds activation gates;
+echoes remember;
+residuals return;
+receipts decide closure.
+```
+
+Native keeper:
+
+```
+No receipt, no law. No repair, no closure.
+```
+
+### Master Object
+
+```
+M_Full =
+  (A0, S, B, P_shell, G_T, BFTO, C16, RRTO, RRM, W, L, KOT, OECM, ECTRL)
+```
+
+where:
+- `A0` = base admissibility layer / lawful state substrate
+- `S` = typed spread network
+- `B` = boundary-derived surface transform
+- `P_shell` = sequential shell protection / collapse
+- `G_T` = phase-coupled transport graph
+- `BFTO` = boundary flux-torsion operator
+- `C16` = 16-channel control manifold
+- `RRTO` = Reynolds regime transition operator
+- `RRM` = residual re-admission map
+- `W` = state transition receipt
+- `L` = loopback closure map
+- `KOT` = kinetic operation receipt
+- `OECM` = OmniToken entropy cost model
+- `ECTRL` = extropy-compatible transition receipt layer
+
+Global evolution:
+
+```
+A0^t
+  -> S^t
+  -> B^t
+  -> P_shell^t
+  -> G_T^t
+  -> BFTO^t
+  -> RRTO^t
+  -> C16^t
+  -> RRM(epsilon^t)
+  -> A0^(t+1)
+```
+
+Closure:
+
+```
+A0^(t+1) ~ A0^t
+```
+
+Failure to close:
+
+```
+A0^(t+1) !~ A0^t
+  => new mode, quarantine, residual expansion, or model failure
+```
+
+### Micro-Position State
+
+Each local cell, node, or packet is:
+
+```
+m_i^t = (x_i, r_i, theta_i, q16_i, Gamma_i, s_i, g_i, Psi_i, W_i, epsilon_i)
+```
+
+where:
+- `x_i` = position, address, coordinate, graph node, or chart point
+- `r_i` = scale / refinement level
+- `theta_i` = loopback phase
+- `q16_i` = 16-channel controller vector
+- `Gamma_i` = transition / reconstruction / braid packet
+- `s_i` = shell-state vector
+- `g_i` = delayed phase echo state
+- `Psi_i` = local modal state
+- `W_i` = transition receipt
+- `epsilon_i` = residual burden
+
+Core local update:
+
+```
+m_i^(t+1) =
+  Gate_C16[
+    Transport_G_T(m_i^t, Gamma_i, g_i)
+    + BFTO_i
+    + RRTO_i
+    + RRM(epsilon_i)
+    - SBPCM_i
+  ]
+```
+
+### Boundary-Derived Surface
+
+A boundary is a collapsed disagreement surface:
+
+```
+partial_Omega_i =
+  Collapse(sum_k c_ik lambda_ik psi_ik)
+```
+
+Boundary activation:
+
+```
+B_i =
+  |sum_k c_ik lambda_ik psi_ik|
+  + a_Phi Phi_i
+  + a_tau tau_i
+  + a_g g_i
+  + a_epsilon ||epsilon_i||
+```
+
+Quiet boundary:
+
+```
+B_i < Theta_partial_i
+```
+
+Activated boundary:
+
+```
+B_i >= Theta_partial_i
+```
+
+Boundary activation event:
+
+```
+BAE_i = (partial_Omega_i, B_i, Theta_partial_i, q16_i, W_i)
+```
+
+Native phrase:
+
+```
+boundary = compressed disagreement made physical
+```
+
+### Corrected Reynolds / Hermite Activation Bridge
+
+This is the repaired monotone bridge. The normalized activation and the offset physical bridge must stay distinct.
+
+Reynolds coordinate:
+
+```
+Re_i = rho_i u_i L_i / mu_i
+```
+
+Transition coordinate:
+
+```
+x_i = Clamp_[0,1]((Re_i - 2300) / 1700)
+```
+
+so:
+
+```
+Re = 2300 => x = 0
+Re = 4000 => x = 1
+```
+
+Normalized activation:
+
+```
+A(x) = 3x^2 - 2x^3
+```
+
+Properties:
+
+```
+A(0) = 0
+A(1) = 1
+A'(x) = 6x(1 - x)
+A'(0) = 0
+A'(1) = 0
+A'(x) >= 0 for 0 <= x <= 1
+```
+
+Use `A(x)` as the controller activation curve.
+
+Offset physical bridge:
+
+```
+f_A(x) = f0 + (f1 - f0) A(x)
+```
+
+with:
+
+```
+f0 = 0.0278
+f1 = 0.0398
+```
+
+therefore:
+
+```
+f_A(x) = 0.0278 + 0.012(3x^2 - 2x^3)
+```
+
+and:
+
+```
+f_A(0) = 0.0278
+f_A(1) = 0.0398
+```
+
+Use `f_A(x)` only as the offset physical bridge, not as the normalized controller activation.
+
+### Modal Flow State
+
+Flow is not binary:
+
+```
+Psi_flow_i = alpha_L_i psi_L + alpha_T_i psi_T + alpha_U_i psi_U
+```
+
+with:
+
+```
+alpha_L_i + alpha_T_i + alpha_U_i = 1
+```
+
+Simple allocation:
+
+```
+alpha_U_i = A(x_i)
+alpha_L_i = 1 - A(x_i)
+```
+
+Optional transition participation:
+
+```
+alpha_T_i_raw = 4 x_i (1 - x_i)
+```
+
+If all three modes are active:
+
+```
+Z_i = alpha_L_i_raw + alpha_T_i_raw + alpha_U_i_raw
+alpha_k_i = alpha_k_i_raw / Z_i
+```
+
+### RRTO Full Activation
+
+```
+gamma_i =
+  Clamp_[0,1](
+    b0 A(x_i)
+    + b1 |omega_i|
+    + b2 Q_i
+    + b3 h_i
+    + b4 Phi_E_i
+    + b5 g_i
+    + b6 ||epsilon_i||
+  )
+```
+
+where:
+- `A(x_i)` = smooth Reynolds transition activation
+- `omega_i = curl(u_i)` = vorticity
+- `Q_i` = Q-criterion / vortex criterion
+- `h_i = u_i dot omega_i` = helicity
+- `Phi_E_i` = local energy / flux activation
+- `g_i` = delayed phase echo
+- `epsilon_i` = residual burden
+
+```
+RRTO_i =
+  (Re_i, x_i, A(x_i), f_A(x_i), gamma_i, alpha_L_i, alpha_T_i, alpha_U_i)
+```
+
+### Sequential Boundary Protection / Collapse
+
+Generalized boundary pressure:
+
+```
+Pi_i =
+  a_E E_chem_i
+  + a_Phi Phi_partial_i
+  + a_sigma sigma_i
+  + a_sigmadot sigmadot_i
+  + a_grad |grad Pi_i|
+  + a_tau tau_i
+  + a_T T_i
+  + a_C C_i
+```
+
+Each shell state:
+
+```
+s_ij(t) in [0,1]
+```
+
+Total shell protection:
+
+```
+P_shell_i(t) = sum_j A_ij s_ij(t)
+```
+
+Shell dynamics:
+
+```
+ds_ij/dt =
+  alpha_ij sigma_k(Pi_i - Theta_ij_on)(1 - s_ij)
+  - beta_ij sigma_k(Pi_i - Theta_ij_fail)s_ij
+  + eta_ij RRM(epsilon_i)
+```
+
+with:
+
+```
+sigma_k(z) = 1 / (1 + exp(-kz))
+```
+
+Safe discrete update:
+
+```
+s_ij^(t+1) = Clamp_[0,1](s_ij^t + Delta_t ds_ij/dt)
+```
+
+Static envelope:
+
+```
+P_shell_i(Pi) =
+  sum_j A_ij sigma_k(Pi_i - Theta_ij_on)
+    [1 - sigma_k(Pi_i - Theta_ij_fail)]
+```
+
+Native phrase:
+
+```
+boundary survives by admitting shell class before failure
+```
+
+### Boundary Flux-Torsion Operator
+
+Classical projected flux:
+
+```
+S_i = E_i x H_i
+```
+
+or:
+
+```
+S_i = (1 / mu_0) E_i x B_i
+```
+
+Boundary flux:
+
+```
+Phi_partial_i = integral_partial_Omega_i S dot n dA
+```
+
+Discrete:
+
+```
+Phi_partial_i ~= sum_(ell in partial_Omega_i) (S_ell dot n_ell) Delta_A_ell
+```
+
+Torsion:
+
+```
+tau_i =
+  b1 kappa_i
+  + b2 dGamma_i/dt
+  + b3 g_i
+  + b4 ||epsilon_i||
+```
+
+Boundary flux-torsion operator:
+
+```
+BFTO16_i = Gate_C16[Phi_partial_i xor tau_i xor Gamma_i xor g_i xor epsilon_i]
+```
+
+Loopback phase:
+
+```
+theta_i^(t+1) =
+  theta_i^t + Omega(Phi_partial_i, tau_i, Gamma_i, g_i, epsilon_i)
+```
+
+### Delayed Phase Echo
+
+Complex form:
+
+```
+g_i(t) = sum_(j in N(i)) alpha_ij S_j(t - Delta_ij) exp(i phi_ij)
+```
+
+Real controller form:
+
+```
+g_i(t) = sum_(j in N(i)) alpha_ij cos(phi_ij) S_j(t - Delta_ij)
+```
+
+Echo edge:
+
+```
+e_ij_echo = (Delta_ij, phi_ij, alpha_ij, kappa_ij, epsilon_ij, W_ij)
+```
+
+Bounded echo:
+
+```
+sum_j |alpha_ij| <= A_max < 1
+Delta_ij <= Delta_max
+N_echo <= N_max
+```
+
+Phase-coupled transport graph:
+
+```
+G_T = (V, E_transport, E_phase, E_echo, q, W, epsilon)
+```
+
+### Cutting / Collapse
+
+Complete cutting score:
+
+```
+K_partial_Omega_i =
+  Gate_C16[
+    Norm(Pi_i)
+    + lambda1 Norm(Pi_dot_i)
+    + lambda2 Norm(|grad Pi_i|)
+    - Norm(K_mat_i)
+    - Norm(P_shell_i)
+    + lambda3 Norm(tau_i)
+    + lambda4 Norm(g_i)
+    + lambda5 Norm(epsilon_i)
+  ]
+```
+
+Cut:
+
+```
+K_partial_Omega_i > Theta_cut_i
+```
+
+Survival:
+
+```
+K_partial_Omega_i <= Theta_cut_i
+```
+
+Explosive branch:
+
+```
+dPi_i/dt > dP_shell_i/dt + K_rate_i
+```
+
+Native phrase:
+
+```
+explosive cut = outrun shell admission
+```
+
+Implosive branch:
+
+```
+|grad Pi_i| > |grad P_shell_i| + K_grad_i
+```
+
+Native phrase:
+
+```
+implosive cut = collapse shell geometry
+```
+
+Corrosive branch:
+
+```
+Pi_i > Theta_N_fail and s_iN -> 0
+```
+
+Native phrase:
+
+```
+corrosive cut = exhaust shell sequence
+```
+
+Fatigue / pulsed branch:
+
+```
+D_i^(t+1) =
+  D_i^t
+  + zeta1 Norm(Pi_i)
+  + zeta2 Norm(g_i)
+  - zeta3 Norm(P_shell_i)
+```
+
+Failure:
+
+```
+D_i > D_max
+```
+
+Native phrase:
+
+```
+fatigue cut = echo-assisted residual accumulation
+```
+
+### Residual Re-Admission
+
+Prediction error:
+
+```
+epsilon_i = D_i - D_hat_i
+```
+
+Residual classifier:
+
+```
+r_i = Classify(epsilon_i, q16_i, W_i)
+```
+
+Residual re-admission:
+
+```
+RRM(epsilon_i) =
+  0           if ||epsilon_i|| < Theta0
+  compress    if Theta0 <= ||epsilon_i|| < Theta1
+  new mode    if Theta1 <= ||epsilon_i|| < Theta2
+  quarantine  if ||epsilon_i|| >= Theta2
+```
+
+Admissibility update:
+
+```
+A0^(t+1) = L(C16^t, RRM(epsilon^t), W^t)
+```
+
+Native phrase:
+
+```
+residual is pullback, not garbage
+```
+
+### 16-Channel Control Manifold
+
+```
+q16_i = [q0_i, q1_i, ..., q15_i]
+```
+
+Current integrated layout:
+
+| Channel | Meaning |
+|---|---|
+| `q0` | normalized boundary pressure `Norm(Pi)` |
+| `q1` | pressure rate `Pi_dot` |
+| `q2` | pressure gradient `Norm(|grad Pi|)` |
+| `q3` | total shell protection `Norm(P_shell)` |
+| `q4` | active shell occupancy / shell index |
+| `q5` | material cohesion `Norm(K_mat)` |
+| `q6` | boundary flux `Norm(Phi_partial)` |
+| `q7` | torsion `Norm(tau)` |
+| `q8` | delayed phase echo `Norm(g)` |
+| `q9` | residual burden `Norm(||epsilon||)` |
+| `q10` | normalized Reynolds activation `A(x)` |
+| `q11` | offset physical bridge `f_A(x)` |
+| `q12` | entropy reduction `Delta_S_minus` |
+| `q13` | entropy generated / cost `Delta_S_plus` |
+| `q14` | witness confidence `W` |
+| `q15` | final admissibility / halt / loopback gate |
+
+Controller update:
+
+```
+q16_i^(t+1) =
+  Clamp_Q0.16(
+    q16_i^t
+    + F_q[
+      Norm(Pi),
+      Pi_dot,
+      grad Pi,
+      Norm(P_shell),
+      Norm(Phi_partial),
+      Norm(tau),
+      Norm(g),
+      Norm(epsilon),
+      A(x),
+      f_A(x),
+      W
+    ]
+  )
+```
+
+Gate output:
+
+```
+G_i = Gate_q16(m_i)
+  in {ADMIT, REFINE, MERGE, BRAID, PATCH, QUARANTINE, HALT, LOOPBACK}
+```
+
+### Kinetic Operation Receipt
+
+Every accepted transition emits:
+
+```
+KOT_i =
+  (m_i, m_i+1, Delta_S_i_minus, Delta_S_i_plus,
+   E_i, C_i, T_i, B_i, epsilon_i, W_i, DAG_i)
+```
+
+Validity:
+
+```
+KOT_i valid
+  iff W_i >= Theta_W
+  and B_i <= B_max
+  and ||epsilon_i|| <= epsilon_max
+```
+
+### OmniToken Entropy Cost Model
+
+```
+O_i = OECM(KOT_i)
+```
+
+Signed entropy-cost form:
+
+```
+O_i =
+  a Delta_S_i_minus
+  - b Delta_S_i_plus
+  - c E_i
+  - d C_i
+  - e T_i
+  - f ||epsilon_i||
+  + g W_i
+```
+
+Interpretation:
+
+```
+useful transformation = entropy reduction - cost of achieving it
+```
+
+Claim aggregation:
+
+```
+O_claim = sum_i O_i
+```
+
+### Extropy-Compatible Transition Receipt Layer
+
+Transition receipt:
+
+```
+ECTRL(m_i -> m_i+1) =
+  (Delta_S_i, D_i, I_i, B_i, Falsify_i, Vc_i, DAG_i)
+```
+
+Acceptance:
+
+```
+Vc_i >= Theta_V
+and Delta_S_i > 0
+and Falsify_i != empty
+and DAG_i != empty
+```
+
+Extropy-native settlement:
+
+```
+XP_j = R_j F_j Delta_S_j (w_j dot E_j) (1 / T_s_j)
+```
+
+OmniToken-adapted settlement:
+
+```
+XP_j = R_j F_j O_claim (w_j dot E_j) (1 / T_s_j)
+```
+
+Goodhart isolation invariant:
+
+```
+Value(KOT_i) != f(actor reputation)
+```
+
+Reputation may route validators, but must not alter transition value.
+
+### Receipt / Attack-Repair Validation
+
+Complete state transition receipt:
+
+```
+STR_i =
+  (m_i, m_i+1, Norm(K_i), q16_i, s_i, g_i,
+   epsilon_i, W_i, KOT_i, DAG_i, A_i)
+```
+
+Attack / repair audit:
+
+```
+A_i = {
+  STR_units,
+  STR_shell_bounds,
+  STR_echo_safe,
+  STR_residual,
+  STR_smooth_activation,
+  STR_Goodhart,
+  STR_falsifiable
+}
+```
+
+Justified transition:
+
+```
+m_i -> m_i+1 justified
+  iff every STR_a in A_i is PASS
+```
+
+Failed receipt:
+
+```
+m_i -> m_i+1 = UNJUSTIFIED
+  => RRM(epsilon_i) or QUARANTINE
+```
+
+### Compressed Master Equation
+
+```
+m_i^(t+1) =
+  Gate_C16[
+    Transport_G_T(m_i^t, Gamma_i, g_i)
+    + BFTO(Phi_partial_i, tau_i, Gamma_i, g_i, epsilon_i)
+    + RRTO(Re_i, A(x_i), f_A(x_i), Psi_flow_i)
+    + RRM(epsilon_i)
+    - SBPCM(Pi_i, s_i, Theta_i)
+  ]
+```
+
+with:
+
+```
+x_i = Clamp_[0,1]((Re_i - 2300) / 1700)
+A(x_i) = 3x_i^2 - 2x_i^3
+f_A(x_i) = 0.0278 + 0.012 A(x_i)
+
+SBPCM =
+  K_mat_i
+  + sum_j A_ij s_ij(t)
+  - lambda1 Pi_dot_i
+  - lambda2 |grad Pi_i|
+
+KOT_i =
+  Receipt(m_i, m_i+1, Delta_S_minus, Delta_S_plus,
+          E, C, T, B, epsilon, W, DAG)
+
+O_i =
+  a Delta_S_i_minus
+  - b Delta_S_i_plus
+  - c E_i
+  - d C_i
+  - e T_i
+  - f ||epsilon_i||
+  + g W_i
+
+A0^(t+1) = L(C16^t, RRM(epsilon^t), {STR_i})
+```
+
+Claim boundary:
+
+```
+This is a control / compression / transition-receipt model.
+It is not a proven biological, fluid-mechanical, psychological,
+or economic law without calibrated domain instruments and receipts.
+```
+
 ## Implementation Requirements
 
 ### Data Collection

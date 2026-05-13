@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+duration="${QFOX_TOPOLOGY_SAMPLE_SEC:-5}"
+out_dir="${QFOX_TOPOLOGY_SAMPLE_DIR:-/var/lib/qfox-topology-manager/samples}"
+sampler="${QFOX_TOPOLOGY_SAMPLER:-/usr/src/qfox-topology-manager-0.1.0/qfox_topology_trace_sampler.py}"
+reporter="${QFOX_TOPOLOGY_REPORTER:-/usr/src/qfox-topology-manager-0.1.0/qfox_topology_optimizer_report.py}"
+report_dir="${QFOX_TOPOLOGY_REPORT_DIR:-/var/lib/qfox-topology-manager/reports}"
+drive_dir="${QFOX_TOPOLOGY_DRIVE_DIR:-/home/allaun/Gdrive/topological_storage/research-stack/qfox-topology-manager}"
+
+install -d -m 0755 "$out_dir"
+out="$out_dir/trace-sample-$(date -u +%Y%m%dT%H%M%SZ).json"
+
+python3 "$sampler" --duration "$duration" --json --out "$out" > "$out.tmp"
+mv "$out.tmp" "$out.summary.json"
+if [[ -x "$reporter" ]]; then
+  install -d -m 0755 "$report_dir"
+  report="$report_dir/optimization-report-$(date -u +%Y%m%dT%H%M%SZ).json"
+  python3 "$reporter" --samples-dir "$out_dir" --json --out "$report" --inject > "$report.summary.json"
+  cp "$report" "$report_dir/optimization-latest.json"
+fi
+
+if mountpoint -q /home/allaun/Gdrive; then
+  install -d -m 0755 "$drive_dir/samples" "$drive_dir/reports"
+  cp -f "$out" "$out.summary.json" "$drive_dir/samples/"
+  if [[ -n "${report:-}" && -f "$report" ]]; then
+    cp -f "$report" "$report.summary.json" "$drive_dir/reports/"
+    cp -f "$report" "$drive_dir/reports/optimization-latest.json"
+  fi
+fi
+printf '%s\n' "$out"

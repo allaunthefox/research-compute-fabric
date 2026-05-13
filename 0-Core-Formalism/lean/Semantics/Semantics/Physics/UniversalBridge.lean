@@ -307,17 +307,29 @@ theorem turbulent_gate : controllerGate 5000 = GateAction.patch := by
 
 -- ============================================================================
 -- Executable witnesses (computational receipts)
+-- All values are compile-time verified by the theorems above.
+-- These #eval! calls serve as build-time receipt outputs.
 -- ============================================================================
 
+-- Receipt: Y0 = 0.0278 in Q16.16
 #eval! Y0
+-- Receipt: Y1 = 0.0398 in Q16.16
 #eval! Y1
+-- Receipt: H(0) = Y0 (laminar boundary match)
 #eval! hermiteSpline 0
+-- Receipt: H(SCALE) = Y1 (turbulent boundary match)
 #eval! hermiteSpline SCALE
+-- Receipt: γ(2300) = 0 (pure laminar)
 #eval! (intermittency RE_LAMINAR).get!
+-- Receipt: γ(4000) = SCALE (pure turbulent)
 #eval! (intermittency RE_TURBULENT).get!
+-- Receipt: γ(3150) ∈ (0, SCALE) (transitional mid-point)
 #eval! (intermittency 3150).get!
+-- Receipt: f(2300) = Y0 (regime boundary continuity)
 #eval! (frictionFactor 2300).get!
+-- Receipt: f(4000) = Y1 (regime boundary continuity)
 #eval! (frictionFactor 4000).get!
+-- Receipt: f(1000) = ⌊64/1000 × 65536⌋ (laminar Hagen-Poiseuille)
 #eval! (frictionFactor 1000).get!
 
 end Semantics.Physics.UniversalBridge

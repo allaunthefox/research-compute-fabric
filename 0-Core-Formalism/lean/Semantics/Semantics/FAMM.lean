@@ -142,23 +142,21 @@ theorem fammBindReflexive (bank : FAMMBank) (mode : FAMMAccessMode) (address : N
     (fammBind bank mode address).lawful = (fammBind bank mode address).lawful := by
   rfl
 
-/-- MORE FAMM Architecture Integration
-
+/- MORE FAMM Architecture Integration
     The unified architecture requires capability-based memory isolation
     and thermal management for safe operation. These extensions integrate
     FAMM with the nanokernel, TSM, and pruning systems.
-    -/
+-/
 
 /-- Capability-enhanced FAMM cell with access control -/
 structure FAMMCapabilityCell where
   data : Q16_16
   delay : Q16_16
   owner : UInt8           -- Segment ID (capability-based access)
-  accessRights : UInt4    -- READ | WRITE | PRUNE | EXECUTE
+  accessRights : UInt8    -- READ | WRITE | PRUNE | EXECUTE (4-bit encoded in lower nibble)
   delayMass : Q16_16
   delayWeight : Q16_16
-
-deriving Repr, Inhabited
+  deriving Repr, Inhabited
 
 /-- Thermal-aware FAMM bank with TSM integration -/
 structure FAMMThermalBank extends FAMMBank where
@@ -171,7 +169,7 @@ deriving Repr
 /-- FAMM cell pruning: ban high-frustration cells (coordinate banning) -/
 def fammPruneCell (cell : FAMMCapabilityCell) (threshold : Q16_16) : Option FAMMCapabilityCell :=
   -- If cell delay exceeds threshold, ban (prune) this coordinate
-  if cell.delay > threshold then
+  if Q16_16.lt threshold cell.delay then
     none  -- Banned: removed from active computation
   else
     some cell  -- Retained: within thermal/performance bounds
@@ -179,7 +177,7 @@ def fammPruneCell (cell : FAMMCapabilityCell) (threshold : Q16_16) : Option FAMM
 /-- Thermal management with early termination (TSM integration) -/
 def fammThermalCheck (bank : FAMMThermalBank) : Bool × String :=
   -- Builder ADD continues until thermal stress detected
-  if bank.currentStress > bank.thermalBudget then
+  if Q16_16.lt bank.thermalBudget bank.currentStress then
     -- Judge PAUSE triggers: return halt signal
     (false, "JUDGE_PAUSE: Thermal budget exceeded")
   else if bank.heatsinkHalt then
@@ -203,7 +201,7 @@ deriving Repr, Inhabited
 def fammMetadataCollapse (bank : FAMMThermalBank) : FAMMCollapsedState :=
   { cellCount := bank.cells.size,
     bannedCount := 0,  -- TODO: Track pruned cells
-    energySignature := bank.cells.foldl (λ acc cell => acc + cell.delayMass) Q16_16.ofInt 0,
+    energySignature := bank.cells.foldl (λ acc cell => acc + cell.delayMass) (Q16_16.zero),
     thermalResidual := bank.thermalBudget - bank.currentStress,
     ownerSegment := 0 }  -- TODO: Per-segment ownership
 

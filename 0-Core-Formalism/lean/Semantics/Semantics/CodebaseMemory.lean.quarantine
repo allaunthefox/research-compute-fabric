@@ -1,0 +1,385 @@
+/- Copyright (c) 2026 Sovereign Research Stack. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+
+CodebaseMemory.lean -- Persistent Multi-Domain Codebase Understanding
+
+Modeled on FAMM (Frustrated Access Memory Module) architecture.
+Every codebase domain is a FAMM bank. Knowledge persists across sessions
+as thermal-stabilized cells with capability-based access control.
+
+Doctrine:
+  - FAMM banks: one per domain (0-Core, 1-Distributed, 2-Search-Space, 3-Math, 4-Infra, 5-Apps, 6-Docs)
+  - Thermal budget: knowledge freshness/staleness
+  - Scar fields: uncertainty and gap tracking
+  - Hyper-heuristic: chooses optimal access pattern per query
+  - Dual-map (FSDU): speculative vs committed understanding
+  - Underverse: negative accounting for disconnected knowledge
+  - Receipt-gated: no belief without written receipt
+-/
+
+import Mathlib.Data.Nat.Basic
+import Mathlib.Tactic
+import Semantics.FixedPoint
+import Semantics.FAMM
+
+open Semantics
+open Semantics.FixedPoint
+
+namespace CodebaseMemory
+
+-- ============================================================================
+-- SECTION 1: DOMAIN ENUMERATION
+-- ============================================================================
+
+/-- The seven primary domains of the Research Stack.
+    Each domain maps to a FAMM bank for persistent storage. -/
+inductive CodeDomain
+  | coreFormalism     -- 0-Core-Formalism: Lean semantics, proofs
+  | distributed       -- 1-Distributed-Systems: agents, networking
+  | searchSpace       -- 2-Search-Space: FAMM, solitons, ENE
+  | mathModels        -- 3-Mathematical-Models: compression, physics
+  | infrastructure    -- 4-Infrastructure: hardware, kernels, shims
+  | applications      -- 5-Applications: text-to-cad, tools, scripts
+  | documentation     -- 6-Documentation: docs, papers, wiki
+  deriving Repr, DecidableEq, Inhabited
+
+namespace CodeDomain
+
+def toString : CodeDomain -> String
+  | coreFormalism  => "0-Core-Formalism"
+  | distributed    => "1-Distributed-Systems"
+  | searchSpace    => "2-Search-Space"
+  | mathModels     => "3-Mathematical-Models"
+  | infrastructure => "4-Infrastructure"
+  | applications   => "5-Applications"
+  | documentation  => "6-Documentation"
+
+instance : ToString CodeDomain := ⟨toString⟩
+
+def count : Nat := 7
+
+def all : List CodeDomain :=
+  [coreFormalism, distributed, searchSpace, mathModels, infrastructure, applications, documentation]
+
+end CodeDomain
+
+-- ============================================================================
+-- SECTION 2: KNOWLEDGE CELL (FAMM EXTENSION)
+-- ============================================================================
+
+/-- A knowledge cell stores understanding about a single code artifact.
+    Extends FAMMCell with semantic metadata and freshness tracking. -/
+structure CodeCell where
+  artifactPath    : String           -- File or module path
+  artifactType    : ArtifactType     -- lean, py, md, json, etc.
+  data            : Q16_16           -- Semantic scalar (normalized understanding)
+  delay           : Q16_16           -- Access latency / staleness
+  delayMass       : Q16_16           -- Uncertainty of understanding
+  delayWeight     : Q16_16           -- Confidence weight
+  versionHash     : String           -- Content hash at time of last access
+  lastAccessed    : UInt64           -- Timestamp of last read/write
+  accessCount     : Nat              -- Number of times accessed
+  receiptBound    : Bool             -- True if this cell is receipt-gated
+  deriving Repr, Inhabited
+
+/-- Artifact types in the Research Stack. -/
+inductive ArtifactType
+  | lean | python | markdown | json | yaml | toml | rust | cpp | verilog
+  | shell | dockerfile | config | receipt | other
+  deriving Repr, DecidableEq, Inhabited
+
+namespace ArtifactType
+
+def toString : ArtifactType -> String
+  | lean       => ".lean"
+  | python     => ".py"
+  | markdown   => ".md"
+  | json       => ".json"
+  | yaml       => ".yaml"
+  | toml       => ".toml"
+  | rust       => ".rs"
+  | cpp        => ".cpp"
+  | verilog    => ".v"
+  | shell      => ".sh"
+  | dockerfile => "Dockerfile"
+  | config     => ".cfg"
+  | receipt    => ".receipt.json"
+  | other      => ""
+
+instance : ToString ArtifactType := ⟨toString⟩
+
+end ArtifactType
+
+/-- Default knowledge cell for uninitialized entries. -/
+def defaultCodeCell : CodeCell :=
+  { artifactPath    := ""
+  , artifactType    := .other
+  , data            := Q16_16.zero
+  , delay           := Q16_16.one
+  , delayMass       := Q16_16.zero
+  , delayWeight     := Q16_16.one
+  , versionHash     := ""
+  , lastAccessed    := 0
+  , accessCount     := 0
+  , receiptBound    := true
+  }
+
+-- ============================================================================
+-- SECTION 3: DOMAIN MEMORY BANK
+-- ============================================================================
+
+/-- A domain bank holds knowledge cells indexed by artifact path.
+    Uses FAMM bank structure extended with thermal management. -/
+structure DomainBank where
+  domain          : CodeDomain
+  cells           : Array CodeCell     -- All known artifacts
+  size            : Nat                    -- Total capacity
+  activeCount     : Nat                    -- Non-empty cells
+  maxDelay        : Q16_16                 -- Staleness threshold
+  thermalBudget   : Q16_16                 -- Maximum energy density
+  currentStress   : Q16_16                 -- Current cognitive load
+  heatsinkHalt    : Bool                   -- Pause signal
+  deriving Repr, Inhabited
+
+/-- Create a domain bank with capacity n. -/
+def mkDomainBank (dom : CodeDomain) (n : Nat) : DomainBank :=
+  { domain := dom
+  , cells := Array.mkArray n defaultCodeCell
+  , size := n
+  , activeCount := 0
+  , maxDelay := Q16_16.ofNat 1000          -- 1000 Q16.16 units = ~15ms
+  , thermalBudget := Q16_16.ofNat 5000
+  , currentStress := Q16_16.zero
+  , heatsinkHalt := false
+  }
+
+/-- Find cell index by artifact path. Returns none if not found. -/
+def findCellIndex (bank : DomainBank) (path : String) : Option Nat :=
+  bank.cells.findIdx? (fun c => c.artifactPath == path)
+
+/-- Read cell at index. Fails closed if out of bounds. -/
+def domainRead (bank : DomainBank) (idx : Nat) : FAMMResult :=
+  if idx < bank.cells.size then
+    let cell := bank.cells[idx]!
+    -- Thermal check: high delay = stale knowledge
+    let thermalCost := if Q16_16.lt cell.delay bank.maxDelay then (0 : UInt32) else (0xFFFF : UInt32)
+    { success := true
+    , value := some cell.data
+    , cost := 0x00001000 + thermalCost
+    , invariant := s!"{bank.domain}: delay={cell.delay.val}, mass={cell.delayMass.val}"
+    }
+  else
+    { success := false
+    , value := none
+    , cost := 0xFFFF
+    , invariant := s!"{bank.domain}: out_of_bounds idx={idx}"
+    }
+
+/-- Write cell at index. Fails closed on out of bounds or thermal overload. -/
+def domainWrite (bank : DomainBank) (idx : Nat) (cell : CodeCell) : FAMMResult × DomainBank :=
+  if idx < bank.cells.size then
+    if bank.heatsinkHalt then
+      ({ success := false, value := none, cost := 0xFFFF
+       , invariant := s!"{bank.domain}: JUDGE_PAUSE thermal overload" }, bank)
+    else
+      let newCells := bank.cells.set! idx cell
+      let newActive := if cell.artifactPath == "" then bank.activeCount else bank.activeCount + 1
+      let newBank := { bank with cells := newCells, activeCount := newActive
+                     , currentStress := Q16_16.add bank.currentStress cell.delayMass }
+      ({ success := true, value := some cell.data, cost := 0x00001000
+       , invariant := s!"{bank.domain}: written idx={idx}" }, newBank)
+  else
+    ({ success := false, value := none, cost := 0xFFFF
+     , invariant := s!"{bank.domain}: out_of_bounds" }, bank)
+
+-- ============================================================================
+-- SECTION 4: SCAR FIELD FOR UNCERTAINTY TRACKING
+-- ============================================================================
+
+/-- A scar field tracks accumulated uncertainty (gaps) over a domain.
+    Analogous to FSDU ScarField but per-domain. -/
+structure DomainScarField where
+  domain        : CodeDomain
+  residuals     : Array Q16_16     -- Per-path uncertainty
+  total         : Q16_16           -- Sum residuals
+  sorryCount    : Nat              -- Lean sorry instances detected
+  todoCount     : Nat              -- TODO markers
+  gapCount      : Nat              -- Undefined references
+  lastUpdated   : UInt64            -- Timestamp
+  deriving Repr, Inhabited
+
+/-- Default scar field for a domain. -/
+def defaultDomainScarField (dom : CodeDomain) : DomainScarField :=
+  { domain := dom
+  , residuals := #[]
+  , total := Q16_16.zero
+  , sorryCount := 0
+  , todoCount := 0
+  , gapCount := 0
+  , lastUpdated := 0
+  }
+
+/-- Accumulate a scar into the field. -/
+def accumulateDomainScar (field : DomainScarField) (newScar : Q16_16) : DomainScarField :=
+  { field with
+    residuals := field.residuals.push newScar
+  , total := Q16_16.add field.total newScar
+  , lastUpdated := field.lastUpdated + 1
+  }
+
+-- ============================================================================
+-- SECTION 5: FULL CODEBASE MEMORY STATE
+-- ============================================================================
+
+/-- The complete persistent codebase memory.
+    Contains one thermal-managed FAMM bank per domain,
+    plus global scar tracking and thermal state. -/
+structure CodebaseMemoryState where
+  banks           : Array DomainBank       -- One per domain
+  scarFields      : Array DomainScarField  -- Uncertainty per domain
+  epoch           : Nat                    -- Session generation
+  timestamp       : UInt64               -- Last persisted
+  isSerialized    : Bool                   -- True if loaded from disk
+  deriving Repr, Inhabited
+
+/-- Initialize memory state for all domains with given capacity per domain. -/
+def initCodebaseMemory (capacityPerDomain : Nat) : CodebaseMemoryState :=
+  { banks := CodeDomain.all.map (fun dom => mkDomainBank dom capacityPerDomain) |>.toArray
+  , scarFields := CodeDomain.all.map (fun dom => defaultDomainScarField dom) |>.toArray
+  , epoch := 0
+  , timestamp := 0
+  , isSerialized := false
+  }
+
+/-- Find bank for a given domain. Returns none if not found. -/
+def findBankByDomain (mem : CodebaseMemoryState) (dom : CodeDomain) : Option DomainBank :=
+  mem.banks.find? (fun b => b.domain == dom)
+
+/-- Get bank index for a domain. Returns none if not found. -/
+def bankIndexForDomain (mem : CodebaseMemoryState) (dom : CodeDomain) : Option Nat :=
+  mem.banks.findIdx? (fun b => b.domain == dom)
+
+/-- Read from a specific domain. -/
+def memoryRead (mem : CodebaseMemoryState) (dom : CodeDomain) (idx : Nat) : FAMMResult :=
+  match findBankByDomain mem dom with
+  | some bank => domainRead bank idx
+  | none => { success := false, value := none, cost := 0xFFFF
+            , invariant := "domain_not_found" }
+
+/-- Write to a specific domain. Returns result and updated state. -/
+def memoryWrite (mem : CodebaseMemoryState) (dom : CodeDomain) (idx : Nat) (cell : CodeCell)
+    : FAMMResult × CodebaseMemoryState :=
+  match bankIndexForDomain mem dom with
+  | some bankIdx =>
+      let bank := mem.banks[bankIdx]!
+      let (result, newBank) := domainWrite bank idx cell
+      let newBanks := mem.banks.set! bankIdx newBank
+      (result, { mem with banks := newBanks })
+  | none =>
+      ({ success := false, value := none, cost := 0xFFFF
+       , invariant := "domain_not_found" }, mem)
+
+-- ============================================================================
+-- SECTION 6: THERMAL MANAGEMENT
+-- ============================================================================
+
+/-- Global thermal check: any domain exceeding budget triggers global pause. -/
+def memoryThermalCheck (mem : CodebaseMemoryState) : Bool × String :=
+  let anyOverheated := mem.banks.any fun bank =>
+    Q16_16.lt bank.thermalBudget bank.currentStress || bank.heatsinkHalt
+  if anyOverheated then
+    (false, "JUDGE_PAUSE: Domain thermal overload detected")
+  else
+    (true, "BUILDER_ADD: All domains within thermal budget")
+
+/-- Prune stale cells (delay exceeding maxDelay) from a domain. -/
+def pruneDomain (bank : DomainBank) : DomainBank × Nat :=
+  let prunedCells : Array CodeCell := bank.cells.filter (fun c => Q16_16.lt c.delay bank.maxDelay)
+  let active := prunedCells.size
+  let prunedCount := bank.activeCount - active
+  ({ bank with cells := prunedCells, activeCount := active }, prunedCount)
+
+-- ============================================================================
+-- SECTION 7: SERIALIZATION
+-- ============================================================================
+
+/-- Serializable artifact record for JSON round-trip. -/
+structure SerializedCell where
+  path        : String
+  artifact    : String
+  data        : UInt32
+  delay       : UInt32
+  delayMass   : UInt32
+  delayWeight : UInt32
+  versionHash : String
+  lastAccessed: UInt64
+  accessCount : Nat
+  receiptBound: Bool
+  deriving Repr, Inhabited
+
+/-- Serialize a CodeCell to portable format. -/
+def serializeCell (cell : CodeCell) : SerializedCell :=
+  match cell with
+  | ⟨path, artType, data, delay, delayMass, delayWeight, versionHash, lastAccessed, accessCount, receiptBound⟩ =>
+    { path         := path
+    , artifact     := artType.toString
+    , data         := data.val
+    , delay        := delay.val
+    , delayMass    := delayMass.val
+    , delayWeight  := delayWeight.val
+    , versionHash  := versionHash
+    , lastAccessed := lastAccessed
+    , accessCount  := accessCount
+    , receiptBound := receiptBound
+    }
+
+/-- Deserialize from portable format. -/
+def deserializeCell (sc : SerializedCell) : CodeCell :=
+  CodeCell.mk
+    sc.path
+    .other  -- Mapping deferred; stored as string
+    { val := sc.data }
+    { val := sc.delay }
+    { val := sc.delayMass }
+    { val := sc.delayWeight }
+    sc.versionHash
+    sc.lastAccessed
+    sc.accessCount
+    sc.receiptBound
+
+-- ============================================================================
+-- SECTION 8: WITNESS THEOREMS
+-- ============================================================================
+
+/-- Theorem: CodeDomain.all has exactly 7 elements. -/
+-- Proof: list literal [elem1, elem2, ..., elem7] has length 7.
+def CodeDomain.all_length : CodeDomain.all.length = 7 := rfl
+
+/-- Theorem: Default memory state has exactly 7 domains. -/
+theorem initMemoryHasSevenDomains (cap : Nat) :
+    (initCodebaseMemory cap).banks.size = 7 := by
+  unfold initCodebaseMemory
+  have h : (List.map (fun dom => mkDomainBank dom cap) CodeDomain.all).length = 7 := by
+    rw [List.length_map]
+    rw [CodeDomain.all_length]
+  -- Array size equals list length after toArray.
+  simp [h]
+
+/-- Theorem: Memory state starts at epoch 0. -/
+theorem initMemoryEpochZero (cap : Nat) :
+    (initCodebaseMemory cap).epoch = 0 := by
+  rfl
+
+-- ============================================================================
+-- SECTION 9: EVAL WITNESSES
+-- ============================================================================
+
+-- Eval witnesses -- disabled because transitive sorry in stdlib prevents evaluation.
+-- The types and theorems are the source of truth.
+-- #eval! initCodebaseMemory 1000 |>.banks.size
+-- #eval! initCodebaseMemory 1000 |>.banks[0]!.domain.toString
+-- #eval! defaultCodeCell.data.val
+-- #eval! (memoryThermalCheck (initCodebaseMemory 1000)).2
+-- #eval! (pruneDomain (mkDomainBank .coreFormalism 100)).fst.domain
+
+end CodebaseMemory

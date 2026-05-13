@@ -1,0 +1,215 @@
+/- Copyright (c) 2026 Sovereign Research Stack. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+
+CodebaseReceipt.lean -- Receipt Emission for Codebase Memory Access
+
+Every read, write, or query to codebase memory produces a receipt.
+No belief without receipt. Receipts are the bridge between Lean formalism
+and Hermes agent runtime.
+-/
+
+import Mathlib.Data.Nat.Basic
+import Mathlib.Data.List.Basic
+import Mathlib.Tactic
+import Semantics.ReceiptCore
+import Semantics.CodebaseMemory
+import Semantics.CodebaseFSDU
+
+open Semantics
+open Semantics.ReceiptCore
+open CodebaseMemory
+open CodebaseFSDU
+
+namespace CodebaseMemory.Receipt
+
+-- ============================================================================
+-- SECTION 1: MEMORY ACCESS RECEIPT
+-- ============================================================================
+
+/-- Receipt for a single memory access (read or write). -/
+structure MemoryAccessReceipt where
+  timestamp   : Nat              -- Monotonic timestamp
+  domain      : CodeDomain
+  action      : AccessAction       -- read, write, query
+  path        : String             -- Artifact path
+  success     : Bool               -- Did access complete
+  cost        : UInt32             -- Computed cost
+  invariant   : String             -- Extracted invariant
+  dataValue   : UInt32             -- Data read/written (Q16_16 raw)
+  thermalOk   : Bool               -- Thermal check passed
+  deriving Repr, Inhabited
+
+/-- Types of memory access. -/
+inductive AccessAction
+  | read
+  | write
+  | query         -- Search across domains
+  | pruned        -- Stale cell pruned
+  | admitted      -- Speculative knowledge admitted
+  | blocked       -- Knowledge blocked by gate
+  deriving Repr, DecidableEq, Inhabited
+
+namespace AccessAction
+
+def toString : AccessAction -> String
+  | read     => "read"
+  | write    => "write"
+  | query    => "query"
+  | pruned   => "pruned"
+  | admitted => "admitted"
+  | blocked  => "blocked"
+
+instance : ToString AccessAction := ⟨toString⟩
+end AccessAction
+
+-- ============================================================================
+-- SECTION 2: RECEIPT CONVERSION
+-- ============================================================================
+
+/-- Convert MemoryAccessReceipt to canonical ReceiptCore.Receipt. -/
+def memoryAccessToReceipt (mar : MemoryAccessReceipt) : Receipt :=
+  { kind := if mar.success then .sourceAudit else .wardenEmission
+  , targetId := s!"{mar.domain}:{mar.path}"
+  , summary := s!"{mar.action} {mar.domain} {mar.path} cost={mar.cost} thermal={mar.thermalOk}"
+  , valid := mar.success && mar.thermalOk
+  , authority := "codebase_memory"
+  , timestamp := mar.timestamp
+  }
+
+/-- Build receipt from a FAMMResult. -/
+def receiptFromResult (dom : CodeDomain) (action : AccessAction) (path : String)
+    (result : FAMMResult) (ts : Nat) (thermal : Bool) : MemoryAccessReceipt :=
+  { timestamp := ts
+  , domain := dom
+  , action := action
+  , path := path
+  , success := result.success
+  , cost := result.cost
+  , invariant := result.invariant
+  , dataValue := result.value.map (·.val) |>.getD 0
+  , thermalOk := thermal
+  }
+
+-- ============================================================================
+-- SECTION 3: AGENT OBSERVER/PROVIDER PAIRS
+-- ============================================================================
+
+/-- An observer captures evidence but does not act. -/
+structure Observer where
+  observerId : String
+  watches    : List CodeDomain
+  receipts   : List MemoryAccessReceipt
+  deriving Repr, Inhabited
+
+/-- A provider can modify the codebase memory state. -/
+structure Provider where
+  providerId : String
+  serves     : List CodeDomain
+  canWrite   : Bool             -- True = can modify, False = read-only
+  receiptGate : Bool            -- Rejected if receipt != valid
+  deriving Repr, Inhabited
+
+/-- ObserverProvider pair: linked by shared receipt audit. -/
+structure ObserverProviderPair where
+  pairId     : String
+  observer   : Observer
+  provider   : Provider
+  isTrusted  : Bool            -- Both agree on last audit
+  lastReceipt : MemoryAccessReceipt
+  deriving Repr, Inhabited
+
+/-- Create a linked pair for a domain. -/
+def mkDomainPair (dom : CodeDomain) (id : String) : ObserverProviderPair :=
+  { pairId := s!"{id}_{dom}"
+  , observer := { observerId := s!"O_{dom}", watches := [dom], receipts := [] }
+  , provider := { providerId := s!"P_{dom}", serves := [dom], canWrite := true, receiptGate := true }
+  , isTrusted := true
+  , lastReceipt := default
+  }
+
+-- ============================================================================
+-- SECTION 4: RECEIPT-GAITED OPERATIONS
+-- ============================================================================
+
+/-- Perform receipt-gated read: observer verifies, provider executes,
+    both emit receipt, promotion requires valid receipt. -/
+def gatedRead (pair : ObserverProviderPair) (mem : CodebaseMemoryState)
+    (dom : CodeDomain) (idx : Nat) (ts : Nat)
+    : FAMMResult × MemoryAccessReceipt × ObserverProviderPair :=
+  -- Thermal check
+  let (thermalOk, _) := memoryThermalCheck mem
+  -- Execute read
+  let result := memoryRead mem dom idx
+  -- Build receipt
+  let receipt := receiptFromResult dom .read "cell_read" result ts thermalOk
+  -- Update pair
+  let newObserver := { pair.observer with receipts := pair.observer.receipts ++ [receipt] }
+  let newPair := { pair with observer := newObserver, lastReceipt := receipt
+                  , isTrusted := result.success && thermalOk }
+  (result, receipt, newPair)
+
+/-- Perform receipt-gated write with full admission control. -/
+def gatedWrite (pair : ObserverProviderPair) (mem : CodebaseMemoryState)
+    (dom : CodeDomain) (idx : Nat) (cell : KnowledgeCell) (ts : Nat)
+    : FAMMResult × CodebaseMemoryState × MemoryAccessReceipt × ObserverProviderPair :=
+  -- Thermal check
+  let (thermalOk, _) := memoryThermalCheck mem
+  -- Execute write
+  let (result, newMem) := memoryWrite mem dom idx cell
+  -- Build receipt
+  let receipt := receiptFromResult dom .write cell.artifactPath result ts thermalOk
+  -- Update pair
+  let newObserver := { pair.observer with receipts := pair.observer.receipts ++ [receipt] }
+  let newPair := { pair with observer := newObserver, lastReceipt := receipt
+                  , isTrusted := result.success && thermalOk }
+  (result, newMem, receipt, newPair)
+
+-- ============================================================================
+-- SECTION 5: PROMOTION GATE
+-- ============================================================================
+
+/-- Promotion gate: a pair can promote if:
+    1. Last receipt is valid
+    2. Thermal checks pass
+    3. Both observer and provider agree -/
+def canPromote (pair : ObserverProviderPair) : Bool :=
+  pair.isTrusted
+  && pair.lastReceipt.success
+  && pair.lastReceipt.thermalOk
+
+/-- Block pair if receipt is invalid. -/
+def blockPair (pair : ObserverProviderPair) (reason : String)
+    : ObserverProviderPair :=
+  { pair with isTrusted := false
+            , lastReceipt := { pair.lastReceipt with success := false
+                                                   , invariant := reason } }
+
+-- ============================================================================
+-- SECTION 6: THEOREMS
+-- ============================================================================
+
+/-- Theorem: Gated read produces valid receipt iff result is success and thermal ok. -/
+theorem gatedReadReceiptValid (pair : ObserverProviderPair) (mem : CodebaseMemoryState)
+    (dom : CodeDomain) (idx : Nat) (ts : Nat) :
+    let (result, receipt, newPair) := gatedRead pair mem dom idx ts
+    memoryAccessToReceipt receipt |> Receipt.valid = (result.success && receipt.thermalOk) := by
+  unfold gatedRead receiptFromResult memoryAccessToReceipt
+  split <;> simp
+  split <;> simp
+
+/-- Theorem: Blocked pair is never promotable. -/
+theorem blockedPairCannotPromote (pair : ObserverProviderPair) (reason : String) :
+    let blocked := blockPair pair reason
+    canPromote blocked = false := by
+  unfold blockPair canPromote
+  simp
+
+-- ============================================================================
+-- SECTION 7: EVAL WITNESSES
+-- ============================================================================
+
+#eval (mkDomainPair .coreFormalism "test").pairId
+#eval (mkDomainPair .coreFormalism "test").provider.serves.length
+#eval (gatedRead (mkDomainPair .coreFormalism "test") (initCodebaseMemory 10) .coreFormalism 0 12345).2.success
+
+end CodebaseMemory.Receipt

@@ -1,0 +1,188 @@
+/- Copyright (c) 2026 Sovereign Research Stack. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+
+CodebaseFSDU.lean -- Frustrated Scar Differential Update for Codebase Memory
+
+The dual-map state: speculative vs committed codebase understanding.
+Ahead map: current working hypothesis about the codebase.
+Behind map: last committed (verified) understanding.
+Scar differential: Delta S = S_ahead - S_behind controls admission.
+Scars above epsilon gate are rejected until proven.
+-/
+
+import Mathlib.Data.Nat.Basic
+import Mathlib.Tactic
+import Semantics.FixedPoint
+import Semantics.FAMM
+import Semantics.CodebaseMemory
+
+open Semantics
+open Semantics.FixedPoint
+open CodebaseMemory
+
+namespace CodebaseFSDU
+
+-- ============================================================================
+-- SECTION 1: SCAR FIELD PER DOMAIN
+-- ============================================================================
+
+/-- Per-domain scar differential tracking.
+    Each domain has its own ahead and behind scar field. -/
+structure DomainScarDifferential where
+  domain          : CodeDomain
+  aheadScar       : DomainScarField   -- Speculative uncertainty
+  behindScar      : DomainScarField   -- Committed uncertainty
+  differential    : Q16_16            -- Delta S = ahead - behind
+  epsilon         : Q16_16            -- Admissibility threshold
+  epoch           : Nat               -- Session generation
+  deriving Repr, Inhabited
+
+/-- Compute differential: ahead total - behind total. -/
+def computeDifferential (dsd : DomainScarDifferential) : Q16_16 :=
+  Q16_16.sub dsd.aheadScar.total dsd.behindScar.total
+
+/-- Absolute differential (used for admission). -/
+def absDifferential (dsd : DomainScarDifferential) : Q16_16 :=
+  let diff := computeDifferential dsd
+  if Q16_16.lt diff Q16_16.zero then Q16_16.sub Q16_16.zero diff else diff
+
+/-- Admissibility check: absolute differential within epsilon. -/
+def domainAdmissible (dsd : DomainScarDifferential) : Bool :=
+  Q16_16.le (absDifferential dsd) dsd.epsilon
+
+-- ============================================================================
+-- SECTION 2: COMMITMENT GATE
+-- ============================================================================
+
+/-- Commitment gate: admits speculative knowledge only if scar differential
+    is within epsilon. Otherwise requires human review (receipt gate). -/
+inductive CommitResult
+  | admit (reason : String)              -- Accept ahead into behind
+  | hold  (reason : String)            -- Keep ahead separate, wait
+  | block (reason : String)            -- Reject ahead, emit underverse
+  deriving Repr, Inhabited
+
+/-- Commit speculative understanding to committed state. -/
+def commitGate (dsd : DomainScarDifferential)
+    (aheadMemory : CodebaseMemoryState) (behindMemory : CodebaseMemoryState)
+    : CommitResult × CodebaseMemoryState × CodebaseMemoryState :=
+  if domainAdmissible dsd then
+    let reason := s!"admit: domain {dsd.domain} |Delta|={absDifferential dsd} <= epsilon={dsd.epsilon}"
+    (CommitResult.admit reason, behindMemory, aheadMemory)  -- Ahead becomes new behind
+  else
+    let reason := s!"hold: domain {dsd.domain} |Delta|={absDifferential dsd} > epsilon={dsd.epsilon}"
+    (CommitResult.hold reason, behindMemory, aheadMemory)   -- Keep both, wait for receipts
+
+-- ============================================================================
+-- SECTION 3: FULL DUAL-MAP STATE
+-- ============================================================================
+
+/-- The complete FSDU dual-map codebase memory.
+    ahead: speculative understanding of current codebase
+    behind: last committed/verified understanding
+    differentials: per-domain scar tracking -/
+structure DualMapMemory where
+  ahead         : CodebaseMemoryState    -- Speculative understanding
+  behind        : CodebaseMemoryState    -- Committed understanding
+  differentials : Array DomainScarDifferential
+  globalEpsilon : Q16_16                 -- Global threshold
+  commitQueue   : Array CommitResult     -- Pending decisions
+  epoch         : Nat                    -- Session generation
+  deriving Repr, Inhabited
+
+/-- Initialize dual-map memory with capacity per domain. -/
+def initDualMapMemory (cap : Nat) (eps : Q16_16) : DualMapMemory :=
+  { ahead := initCodebaseMemory cap
+  , behind := initCodebaseMemory cap
+  , differentials := CodeDomain.all.map (fun dom =>
+      { domain := dom
+      , aheadScar := defaultDomainScarField dom
+      , behindScar := defaultDomainScarField dom
+      , differential := Q16_16.zero
+      , epsilon := eps
+      , epoch := 0 }) |>.toArray
+  , globalEpsilon := eps
+  , commitQueue := #[]
+  , epoch := 0
+  }
+
+/-- Find differential for a domain. -/
+def findDifferential (dmm : DualMapMemory) (dom : CodeDomain) : Option DomainScarDifferential :=
+  dmm.differentials.find? (fun dsd => dsd.domain = dom)
+
+/-- Update ahead scar for a domain. -/
+def updateAheadScar (dmm : DualMapMemory) (dom : CodeDomain) (newScar : Q16_16)
+    : DualMapMemory :=
+  match dmm.differentials.findIdx? (fun dsd => dsd.domain = dom) with
+  | some idx =>
+      let dsd := dmm.differentials[idx]!
+      let newAhead := accumulateDomainScar dsd.aheadScar newScar
+      let newDsd := { dsd with aheadScar := newAhead
+                     , differential := Q16_16.sub newAhead.total dsd.behindScar.total }
+      { dmm with differentials := dmm.differentials.set! idx newDsd }
+  | none => dmm
+
+/-- Update behind scar for a domain (after successful admission). -/
+def updateBehindScar (dmm : DualMapMemory) (dom : CodeDomain) (newScar : Q16_16)
+    : DualMapMemory :=
+  match dmm.differentials.findIdx? (fun dsd => dsd.domain = dom) with
+  | some idx =>
+      let dsd := dmm.differentials[idx]!
+      let newBehind := accumulateDomainScar dsd.behindScar newScar
+      let newDsd := { dsd with behindScar := newBehind
+                     , differential := Q16_16.sub dsd.aheadScar.total newBehind.total }
+      { dmm with differentials := dmm.differentials.set! idx newDsd }
+  | none => dmm
+
+-- ============================================================================
+-- SECTION 4: MIXTURE DAMPING (ADAPTIVE EPOCH CONTROL)
+-- ============================================================================
+
+/-- Damped mixture update: next epsilon = (1-eta)*current + eta*proposed. -/
+def dampEpsilon (current : Q16_16) (proposed : Q16_16) (eta : Q16_16) : Q16_16 :=
+  Q16_16.add
+    (Q16_16.mul (Q16_16.sub Q16_16.one eta) current)
+    (Q16_16.mul eta proposed)
+
+/-- Adaptive epsilon adjustment based on commit success rate. -/
+def adaptiveEpsilon (dmm : DualMapMemory) : Q16_16 :=
+  let admitCount := dmm.commitQueue.count (fun r => match r with | .admit _ => true | _ => false)
+  let holdCount  := dmm.commitQueue.count (fun r => match r with | .hold  _ => true | _ => false)
+  let total := dmm.commitQueue.size
+  if total = 0 then dmm.globalEpsilon
+  else
+    -- If too many holds, increase epsilon (relax gate)
+    if holdCount * 2 > total then
+      Q16_16.ofNat 120   -- Increase by 20%
+    else if admitCount * 2 > total then
+      Q16_16.ofNat 80    -- Decrease by 20%
+    else
+      dmm.globalEpsilon
+
+-- ============================================================================
+-- SECTION 5: THEOREMS
+-- ============================================================================
+
+/-- Theorem: Commit gate admits when differential is exactly zero. -/
+theorem commitGate_admits_zero (dsd : DomainScarDifferential)
+    (h : computeDifferential dsd = Q16_16.zero) :
+    domainAdmissible dsd = true := by
+  unfold domainAdmissible absDifferential computeDifferential
+  rw [h]
+  simp [Q16_16.le]
+
+/-- Theorem: Dual-map initialization has 7 differentials. -/
+theorem initDualMapSevenDifferentials (cap : Nat) (eps : Q16_16) :
+    (initDualMapMemory cap eps).differentials.size = 7 := by
+  unfold initDualMapMemory
+  simp [CodeDomain.count]
+
+-- ============================================================================
+-- SECTION 6: EVAL WITNESSES
+-- ============================================================================
+
+#eval (initDualMapMemory 100 (Q16_16.ofNat 50)).differentials.size
+#eval (initDualMapMemory 100 (Q16_16.ofNat 50)).differentls[0]!.domain.toString
+#eval domainAdmissible (initDualMapMemory 100 (Q16_16.ofNat 50)).differentials[0]!
+
+end CodebaseFSDU

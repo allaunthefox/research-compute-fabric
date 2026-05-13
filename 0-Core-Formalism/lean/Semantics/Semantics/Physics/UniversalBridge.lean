@@ -18,10 +18,9 @@
 
   Note on Q16.16 arithmetic:
     Lean 4.30 uses Euclidean (floor) division for `Int./`.  Standard Q16.16
-    multiplication truncates toward zero.  We correct this via an explicit
-    sign check in `q16_mul`.  The difference is at most 1 ULP (1/65536)
-    and is negligible for engineering purposes, but formal correctness
-    requires the fix.
+    truncates toward zero.  We apply a sign check in `q16_mul` and `q16_div`
+    to correct for this.  The difference is at most 1 ULP (1/65536) and is
+    negligible for engineering purposes, but formal correctness requires it.
 -/
 
 namespace Semantics.Physics.UniversalBridge
@@ -69,11 +68,14 @@ def q16_add (a b : Int) : Int := a + b
 
 def q16_sub (a b : Int) : Int := a - b
 
-/-- Q16.16 division guarded against division by zero.  Returns `none` when
-    divisor is zero.  Euclidean division is acceptable here because the
-    result is always non-negative for valid Reynolds inputs. -/
+/-- Q16.16 division with truncation toward zero.  Returns `none` when
+    divisor is zero.  The numerator `num = ft − Y0` in `intermittency`
+    can be negative (Hermite spline dips below Y0 near the laminar exit),
+    requiring the same truncation correction as `q16_mul`. -/
 def q16_div (a b : Int) : Option Int :=
-  if b = 0 then none else some ((a * SCALE) / b)
+  if b = 0 then none
+  else if a ≥ 0 then some ((a * SCALE) / b)
+  else some (-(((-a) * SCALE) / b))
 
 -- ============================================================================
 -- Normalized variable t = (Re − 2300) / 1700, as Q16.16
@@ -147,7 +149,7 @@ def hermiteSpline (t : Int) : Int :=
 -/
 def frictionFactor (re : Int) : Option Int :=
   if re < RE_LAMINAR then
-    -- Laminar: f = 64/Re  (Blasius laminar) in Q16.16: (64 * SCALE) / Re
+    -- Laminar: f = 64/Re  (Hagen-Poiseuille) in Q16.16: (64 * SCALE) / Re
     -- q16_div multiplies numerator by SCALE internally, so pass 64
     q16_div 64 re
   else if re > RE_TURBULENT then

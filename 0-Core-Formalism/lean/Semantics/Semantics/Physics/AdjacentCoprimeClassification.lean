@@ -19,19 +19,11 @@ def step (c1 c2 aPrev aCurr : Int) : Int := c1 * aCurr + c2 * aPrev
 -- Conditions: gcd(1,2)=1, gcd(2,1)=1, gcd(1,1)=1  ALL PASS
 -- Sequence: 1, 2, 3, 5, 8, 13, 21, 34, 55, 89
 
-theorem fibCond1 : Int.gcd 1 2 = 1 := by native_decide
-theorem fibCond2 : Int.gcd 2 1 = 1 := by native_decide
-theorem fibCond3 : Int.gcd 1 1 = 1 := by native_decide
-
-theorem fibGcd1 : Int.gcd 1 2 = 1 := by native_decide
-theorem fibGcd2 : Int.gcd 2 3 = 1 := by native_decide
-theorem fibGcd3 : Int.gcd 3 5 = 1 := by native_decide
-theorem fibGcd4 : Int.gcd 5 8 = 1 := by native_decide
-theorem fibGcd5 : Int.gcd 8 13 = 1 := by native_decide
-theorem fibGcd6 : Int.gcd 13 21 = 1 := by native_decide
-theorem fibGcd7 : Int.gcd 21 34 = 1 := by native_decide
-theorem fibGcd8 : Int.gcd 34 55 = 1 := by native_decide
-theorem fibGcd9 : Int.gcd 55 89 = 1 := by native_decide
+theorem fibGcdAll :
+  Int.gcd 1 2 = 1 ∧ Int.gcd 2 3 = 1 ∧ Int.gcd 3 5 = 1 ∧
+  Int.gcd 5 8 = 1 ∧ Int.gcd 8 13 = 1 ∧ Int.gcd 13 21 = 1 ∧
+  Int.gcd 21 34 = 1 ∧ Int.gcd 34 55 = 1 ∧ Int.gcd 55 89 = 1 := by
+  native_decide
 
 -- Supporting identity: gcd(5, 1*5+1*3) = gcd(5, 1*3)
 theorem fibSupport : Int.gcd 5 (step 1 1 3 5) = Int.gcd 5 3 := by native_decide
@@ -42,27 +34,20 @@ theorem fibCore : Int.gcd 5 (step 1 1 3 5) = Int.gcd 5 1 := by native_decide
 -- Example 2: c1=2, c2=2, a1=1, a2=3. gcd(c1,c2)=2 FAIL
 -- Sequence: 1, 3, 8, 22, 60, 164. Break at gcd(8, 22) = 2
 
-theorem badCond1 : Int.gcd 1 3 = 1 := by native_decide
-theorem badCond2 : Int.gcd 3 2 = 1 := by native_decide
-theorem badCond3 : Int.gcd 2 2 = 2 := by native_decide
-
-theorem badBreak : Int.gcd 8 22 = 2 := by native_decide
+theorem badAll :
+  Int.gcd 1 3 = 1 ∧ Int.gcd 3 2 = 1 ∧ Int.gcd 2 2 = 2 ∧
+  Int.gcd 8 22 = 2 := by
+  native_decide
 
 -- Example 3: c1=3, c2=5, a1=2, a2=7. All conditions PASS.
 -- Sequence: 2, 7, 31, 128, 539, 2257, 9466, 39683, 166409
 
-theorem ex3Cond1 : Int.gcd 2 7 = 1 := by native_decide
-theorem ex3Cond2 : Int.gcd 7 5 = 1 := by native_decide
-theorem ex3Cond3 : Int.gcd 3 5 = 1 := by native_decide
-
-theorem ex3Gcd1 : Int.gcd 2 7 = 1 := by native_decide
-theorem ex3Gcd2 : Int.gcd 7 31 = 1 := by native_decide
-theorem ex3Gcd3 : Int.gcd 31 128 = 1 := by native_decide
-theorem ex3Gcd4 : Int.gcd 128 539 = 1 := by native_decide
-theorem ex3Gcd5 : Int.gcd 539 2257 = 1 := by native_decide
-theorem ex3Gcd6 : Int.gcd 2257 9466 = 1 := by native_decide
-theorem ex3Gcd7 : Int.gcd 9466 39683 = 1 := by native_decide
-theorem ex3Gcd8 : Int.gcd 39683 166409 = 1 := by native_decide
+theorem ex3All :
+  Int.gcd 2 7 = 1 ∧ Int.gcd 7 5 = 1 ∧ Int.gcd 3 5 = 1 ∧
+  Int.gcd 2 7 = 1 ∧ Int.gcd 7 31 = 1 ∧ Int.gcd 31 128 = 1 ∧
+  Int.gcd 128 539 = 1 ∧ Int.gcd 539 2257 = 1 ∧ Int.gcd 2257 9466 = 1 ∧
+  Int.gcd 9466 39683 = 1 ∧ Int.gcd 39683 166409 = 1 := by
+  native_decide
 
 -- Invariant core: gcd(31, step 3 5 7 31) = gcd(31, 5) = 1
 theorem ex3Core : Int.gcd 31 (step 3 5 7 31) = Int.gcd 31 5 := by native_decide
@@ -70,25 +55,19 @@ theorem ex3Core : Int.gcd 31 (step 3 5 7 31) = Int.gcd 31 5 := by native_decide
 -- Example 4: c1=2, c2=4, a1=1, a2=3. gcd(c1,c2)=4 FAIL.
 -- Sequence: 1, 3, 10, 32, 104. Break at gcd(10, 32) = 2
 
-theorem bad2Cond1 : Int.gcd 1 3 = 1 := by native_decide
-theorem bad2Cond2 : Int.gcd 3 4 = 1 := by native_decide
-theorem bad2Cond3 : Int.gcd 2 4 = 2 := by native_decide
-
-theorem bad2Break : Int.gcd 10 32 = 2 := by native_decide
+theorem bad2All :
+  Int.gcd 1 3 = 1 ∧ Int.gcd 3 4 = 1 ∧ Int.gcd 2 4 = 2 ∧
+  Int.gcd 10 32 = 2 := by
+  native_decide
 
 -- Example 5: c1=1, c2=3, a1=5, a2=7. All conditions PASS.
 -- Sequence: 5, 7, 22, 43, 109, 238, 565, 1279
 
-theorem ex5Cond1 : Int.gcd 5 7 = 1 := by native_decide
-theorem ex5Cond2 : Int.gcd 7 3 = 1 := by native_decide
-theorem ex5Cond3 : Int.gcd 1 3 = 1 := by native_decide
-
-theorem ex5Gcd1 : Int.gcd 5 7 = 1 := by native_decide
-theorem ex5Gcd2 : Int.gcd 7 22 = 1 := by native_decide
-theorem ex5Gcd3 : Int.gcd 22 43 = 1 := by native_decide
-theorem ex5Gcd4 : Int.gcd 43 109 = 1 := by native_decide
-theorem ex5Gcd5 : Int.gcd 109 238 = 1 := by native_decide
-theorem ex5Gcd6 : Int.gcd 238 565 = 1 := by native_decide
+theorem ex5All :
+  Int.gcd 5 7 = 1 ∧ Int.gcd 7 3 = 1 ∧ Int.gcd 1 3 = 1 ∧
+  Int.gcd 5 7 = 1 ∧ Int.gcd 7 22 = 1 ∧ Int.gcd 22 43 = 1 ∧
+  Int.gcd 43 109 = 1 ∧ Int.gcd 109 238 = 1 ∧ Int.gcd 238 565 = 1 := by
+  native_decide
 
 -- Receipts
 #eval step 1 1 3 5

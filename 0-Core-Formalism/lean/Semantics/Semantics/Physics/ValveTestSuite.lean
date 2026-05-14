@@ -1,11 +1,9 @@
 -- ValveTestSuite.lean — cosmological comparisons
 
+import Semantics.Physics.Q16Utils
+open Semantics.Physics.Q16Utils
+
 namespace Semantics.Physics.ValveTestSuite
-
-def scale : Int := 65536
-
-def absDiff (a b : Int) : Int :=
-  if a ≥ b then a - b else b - a
 
 -- ═════════════════════════════════════════════════════════════════════════════
 -- VALVE 1: S8 = s8 * (Om / 0.3)^0.5

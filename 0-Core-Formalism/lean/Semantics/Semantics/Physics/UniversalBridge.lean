@@ -1,12 +1,8 @@
 
+import Semantics.Physics.Q16Utils
+open Semantics.Physics.Q16Utils
 
 namespace Semantics.Physics.UniversalBridge
-
--- ============================================================================
--- Q16.16 fixed-point scale (2¹⁶ = 65536)
--- ============================================================================
-
-def scale : Int := 65536
 
 -- ============================================================================
 -- Boundary condition constants (all pre-computed as Q16.16 integers)
@@ -33,26 +29,9 @@ def H_M1 : Int := -277
 -- Q16.16 arithmetic helpers
 -- ============================================================================
 
-/-- Q16.16 multiplication with truncation toward zero.
-    Lean's `Int./` is Euclidean division (floor), which rounds negative
-    results one further away from zero.  We correct by negating the
-    truncation of the absolute product. -/
-def q16_mul (a b : Int) : Int :=
-  let prod := a * b
-  if prod ≥ 0 then prod / scale else -((-prod) / scale)
+private def q16_add (a b : Int) : Int := a + b
 
-def q16_add (a b : Int) : Int := a + b
-
-def q16_sub (a b : Int) : Int := a - b
-
-/-- Q16.16 division with truncation toward zero.  Returns `none` when
-    divisor is zero.  The numerator `num = ft − Y0` in `intermittency`
-    can be negative (Hermite spline dips below Y0 near the laminar exit),
-    requiring the same truncation correction as `q16_mul`. -/
-def q16_div (a b : Int) : Option Int :=
-  if b = 0 then none
-  else if a ≥ 0 then some ((a * scale) / b)
-  else some (-(((-a) * scale) / b))
+private def q16_sub (a b : Int) : Int := a - b
 
 -- ============================================================================
 -- Normalized variable t = (Re − 2300) / 1700, as Q16.16
@@ -61,7 +40,7 @@ def q16_div (a b : Int) : Option Int :=
 def normalizedT (re : Int) : Option Int :=
   if re < RE_LAMINAR then some 0
   else if re > RE_TURBULENT then some scale
-  else q16_div (re - RE_LAMINAR) H_INTERVAL
+  else q16Div (re - RE_LAMINAR) H_INTERVAL
 
 -- ============================================================================
 -- Hermite basis functions (all operate on Q16.16 t ∈ [0, scale])
@@ -69,31 +48,31 @@ def normalizedT (re : Int) : Option Int :=
 
 /-- Basis function h00(t) = (1 − t)²(1 + 2t) = 1 − 3t² + 2t³ -/
 def h00 (t : Int) : Int :=
-  let t2 := q16_mul t t
-  let t3 := q16_mul t2 t
-  let term3 := q16_mul (3 * scale) t2
-  let term2 := q16_mul (2 * scale) t3
+  let t2 := q16Mul t t
+  let t3 := q16Mul t2 t
+  let term3 := q16Mul (3 * scale) t2
+  let term2 := q16Mul (2 * scale) t3
   q16_sub (q16_add scale term2) term3
 
 /-- Basis function h01(t) = t²(3 − 2t) = 3t² − 2t³ -/
 def h01 (t : Int) : Int :=
-  let t2 := q16_mul t t
-  let t3 := q16_mul t2 t
-  let term3 := q16_mul (3 * scale) t2
-  let term2 := q16_mul (2 * scale) t3
+  let t2 := q16Mul t t
+  let t3 := q16Mul t2 t
+  let term3 := q16Mul (3 * scale) t2
+  let term2 := q16Mul (2 * scale) t3
   q16_sub term3 term2
 
 /-- Basis function h10(t) = (1 − t)²·t -/
 def h10 (t : Int) : Int :=
   let t1m := q16_sub scale t
-  let t1m2 := q16_mul t1m t1m
-  q16_mul t1m2 t
+  let t1m2 := q16Mul t1m t1m
+  q16Mul t1m2 t
 
 /-- Basis function h11(t) = t²·(1 − t) -/
 def h11 (t : Int) : Int :=
-  let t2 := q16_mul t t
+  let t2 := q16Mul t t
   let t1m := q16_sub scale t
-  q16_mul t2 t1m
+  q16Mul t2 t1m
 
 -- ============================================================================
 -- Hermite spline evaluation
@@ -110,10 +89,10 @@ def h11 (t : Int) : Int :=
   Returns the friction factor f as a Q16.16 value at normalized position t.
 -/
 def hermiteSpline (t : Int) : Int :=
-  let h00_y0 := q16_mul (h00 t) Y0
-  let h01_y1 := q16_mul (h01 t) Y1
-  let h10_s0 := q16_mul (h10 t) H_M0
-  let h11_s1 := q16_mul (h11 t) H_M1
+  let h00_y0 := q16Mul (h00 t) Y0
+  let h01_y1 := q16Mul (h01 t) Y1
+  let h10_s0 := q16Mul (h10 t) H_M0
+  let h11_s1 := q16Mul (h11 t) H_M1
   q16_add (q16_add h00_y0 h01_y1) (q16_sub h10_s0 h11_s1)
 
 /--
@@ -127,8 +106,8 @@ def hermiteSpline (t : Int) : Int :=
 def frictionFactor (re : Int) : Option Int :=
   if re < RE_LAMINAR then
     -- Laminar: f = 64/Re  (Hagen-Poiseuille) in Q16.16: (64 * scale) / Re
-    -- q16_div multiplies numerator by scale internally, so pass 64
-    q16_div 64 re
+    -- q16Div multiplies numerator by scale internally, so pass 64
+    q16Div 64 re
   else if re > RE_TURBULENT then
     -- Turbulent: constant approximation at Re=4000
     some Y1
@@ -149,7 +128,7 @@ def intermittency (re : Int) : Option Int :=
     let ft := hermiteSpline t
     let num := q16_sub ft Y0
     let den := q16_sub Y1 Y0
-    q16_div num den
+    q16Div num den
 
 -- ============================================================================
 -- Reynolds regime classification

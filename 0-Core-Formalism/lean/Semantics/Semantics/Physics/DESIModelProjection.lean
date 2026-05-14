@@ -106,82 +106,7 @@ def predictSigma8 : Int := 53215
 def predictSigma8_sigma : Int := 983
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- §3  Model Parameter Record
--- ═══════════════════════════════════════════════════════════════════════════
-
-structure ModelParams where
-  w0 : Int
-  wa : Int
-  omegaM : Int
-  sigma8 : Int
-  w0_sigma : Int
-  wa_sigma : Int
-  omegaM_sigma : Int
-  sigma8_sigma : Int
-  deriving Repr, Inhabited
-
-def model : ModelParams :=
-  { w0              := predictW0
-  , wa              := predictWa
-  , omegaM          := predictOmegaM
-  , sigma8          := predictSigma8
-  , w0_sigma        := predictW0_sigma
-  , wa_sigma        := predictWa_sigma
-  , omegaM_sigma    := predictOmegaM_sigma
-  , sigma8_sigma    := predictSigma8_sigma
-  }
-
--- ═══════════════════════════════════════════════════════════════════════════
--- §4  Residual Computation
--- ═══════════════════════════════════════════════════════════════════════════
-
-/-- Verdict categories for model vs observation -/
-inductive Verdict
-  | consistent    -- within 2σ: model compatible with observation
-  | marginal      -- within 3σ: tension but not falsified
-  | inconsistent  -- outside 3σ: model disagrees with observation
-  deriving Repr, DecidableEq
-
-/-- Residual record for a single observable -/
-structure Residual where
-  param         : String
-  modelVal      : Int
-  desiVal       : Int
-  desiSigma     : Int
-  residual      : Int
-  absResidual   : Int
-  passesWithin  : Bool
-  verdict       : Verdict
-  deriving Repr
-
-/-- Compute residual and classify -/
-def computeResidual (name : String) (m d s : Int) : Residual :=
-  let r := m - d
-  let ar := q16Abs r
-  let p := ar ≤ 3 * s
-  let v := if ar ≤ 2 * s then Verdict.consistent
-           else if ar ≤ 3 * s then Verdict.marginal
-           else Verdict.inconsistent
-  { param        := name
-  , modelVal     := m
-  , desiVal      := d
-  , desiSigma    := s
-  , residual     := r
-  , absResidual  := ar
-  , passesWithin := p
-  , verdict      := v
-  }
-
-/-- All residuals: model vs DESI DR1 (arXiv:2404.03002) -/
-def residuals : List Residual :=
-  [ computeResidual "w_0"     model.w0     desiDR1.w0     desiDR1.w0_sigma
-  , computeResidual "w_a"     model.wa     desiDR1.wa     desiDR1.wa_sigma
-  , computeResidual "Omega_m" model.omegaM desiDR1.omegaM desiDR1.omegaM_sigma
-  , computeResidual "sigma_8" model.sigma8 desiDR1.sigma8 desiDR1.sigma8_sigma
-  ]
-
--- ═══════════════════════════════════════════════════════════════════════════
--- §5  Theorems — Geometry
+-- §3  Theorems — Geometry
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-- Menger Hausdorff dimension is strictly less than 3 -/
@@ -209,7 +134,7 @@ theorem torsionDrivesBoundary : torsionCoupling > 0 := by
   native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- §6  Theorems — Directional Agreement
+-- §4  Theorems — Directional Agreement
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-- Model and DESI both say w₀ > -1 (dark energy is not Λ) -/
@@ -221,7 +146,7 @@ theorem modelWaDirectionAligns : predictWa < waLcdm := by
   native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- §7  Theorems — Residual Bounds
+-- §5  Theorems — Residual Bounds
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-- Model w₀ calibrated to DESI DR1 w₀ = -0.827 → residual = 0 -/
@@ -257,7 +182,7 @@ theorem omegaMResidualWithin2SigmaDr2 :
   native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- §8  Executable Receipts
+-- §6  Executable Receipts
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- Receipt: Model w₀ = -0.827 (Q16_16, calibrated to DESI DR1)

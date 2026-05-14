@@ -13,16 +13,17 @@
 -- are active simultaneously, weighted by A(x):
 --   Effective = (1 - A(x)) * Newton_law + A(x) * Wall_law
 
-namespace Semantics.Physics.SuperpositionalBoundaryLayers
+import Semantics.Physics.Q16Utils
+open Semantics.Physics.Q16Utils
 
-def SCALE : Int := 65536
+namespace Semantics.Physics.SuperpositionalBoundaryLayers
 
 -- The smoothstep transition function (from UniversalBridge.lean)
 def smoothstep (x : Int) : Int :=
-  -- A(x) = 3x^2 - 2x^3 for x in [0, SCALE]
-  let x2 := (x * x) / SCALE
-  let x3 := (x2 * x) / SCALE
-  let t1 := (3 * SCALE) * x2 / SCALE
+  -- A(x) = 3x^2 - 2x^3 for x in [0, scale]
+  let x2 := (x * x) / scale
+  let x3 := (x2 * x) / scale
+  let t1 := (3 * scale) * x2 / scale
   let t2 := 2 * x3
   if t1 ≥ t2 then t1 - t2 else 0
 
@@ -60,21 +61,21 @@ def smoothstep (x : Int) : Int :=
 theorem smoothstep_zero : smoothstep 0 = 0 := by
   native_decide
 
--- A(SCALE) = 1
-theorem smoothstep_one : smoothstep SCALE = SCALE := by
+-- A(scale) = 1
+theorem smoothstep_one : smoothstep scale = scale := by
   native_decide
 
--- A(SCALE/2) = SCALE/2 (smoothstep midpoint is symmetric)
-theorem smoothstep_mid : smoothstep (SCALE/2) = SCALE/2 := by
+-- A(scale/2) = scale/2 (smoothstep midpoint is symmetric)
+theorem smoothstep_mid : smoothstep (scale/2) = scale/2 := by
   native_decide
 
 -- The smoothstep is monotone increasing
--- Verified: A(0) < A(SCALE/4) < A(SCALE/2) < A(3*SCALE/4) < A(SCALE)
+-- Verified: A(0) < A(scale/4) < A(scale/2) < A(3*scale/4) < A(scale)
 theorem smoothstep_monotonic :
-  smoothstep 0 < smoothstep (SCALE/4) ∧
-  smoothstep (SCALE/4) < smoothstep (SCALE/2) ∧
-  smoothstep (SCALE/2) < smoothstep (3*SCALE/4) ∧
-  smoothstep (3*SCALE/4) < smoothstep SCALE := by
+  smoothstep 0 < smoothstep (scale/4) ∧
+  smoothstep (scale/4) < smoothstep (scale/2) ∧
+  smoothstep (scale/2) < smoothstep (3*scale/4) ∧
+  smoothstep (3*scale/4) < smoothstep scale := by
   native_decide
 
 -- ═════════════════════════════════════════════════════════════════════════════
@@ -83,9 +84,9 @@ theorem smoothstep_monotonic :
 
 -- The smoothstep at midpoints: always equals the input for this function
 #eval smoothstep 0
-#eval smoothstep (SCALE/4)
-#eval smoothstep (SCALE/2)
-#eval smoothstep (3*SCALE/4)
-#eval smoothstep SCALE
+#eval smoothstep (scale/4)
+#eval smoothstep (scale/2)
+#eval smoothstep (3*scale/4)
+#eval smoothstep scale
 
 end Semantics.Physics.SuperpositionalBoundaryLayers

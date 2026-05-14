@@ -22,14 +22,10 @@ Conventions:
   Namespace: Semantics.Physics.DESIInvariant
 -/
 
+import Semantics.Physics.Q16Utils
+open Semantics.Physics.Q16Utils
+
 namespace Semantics.Physics.DESIInvariant
-
--- ═══════════════════════════════════════════════════════════════════════════
--- §0  Fixed-Point Scale
--- ═══════════════════════════════════════════════════════════════════════════
-
-/-- Q16_16 scale factor: 1.0 = 65536 -/
-def scale : Int := 65536
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §1  BAO Sound Horizon (raw Int, units: Mpc)
@@ -116,22 +112,11 @@ def sigma8Dr2 : Int := 53215
 /-- σ₈ uncertainty (DR2), Q16_16: ±0.011 × 65536 = 721 -/
 def sigma8Dr2Sigma : Int := 721
 
--- Helper: absolute difference
-def absDiff (a b : Int) : Int := if a ≥ b then a - b else b - a
-
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §6  Observation Record
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Named DESI parameter (finite, indexable) -/
-inductive DESIParam where
-  | w0
-  | wa
-  | h0
-  | omegaM
-  | sigma8
-  | rD
-  deriving Repr, DecidableEq
+-- REMOVED: DESIParam was unused
 
 /-- Packaged DESI observation set -/
 structure DESIObservation where

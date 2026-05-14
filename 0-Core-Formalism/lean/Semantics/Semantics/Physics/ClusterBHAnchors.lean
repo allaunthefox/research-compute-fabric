@@ -8,10 +8,10 @@
 --   Cluster→BAO void fraction: consistent with n ≈ 3 Menger iterations.
 --   Model s8 = 0.812: consistent with DES+SPT (0.6s), above Planck SZ (2.1s).
 
-namespace Semantics.Physics.ClusterBHAnchors
+import Semantics.Physics.Q16Utils
+open Semantics.Physics.Q16Utils
 
-def scale : Int := 65536
-def absDiff (a b : Int) : Int := if a ≥ b then a - b else b - a
+namespace Semantics.Physics.ClusterBHAnchors
 
 -- ═════════════════════════════════════════════════════════════════════════════
 -- §0  Void fraction consistency (cluster vs BAO scale)

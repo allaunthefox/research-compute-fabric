@@ -1,5 +1,8 @@
 -- H0ValveTest.lean
 
+import Semantics.Physics.Q16Utils
+open Semantics.Physics.Q16Utils
+
 namespace Semantics.Physics.H0ValveTest
 
 -- H0 values stored as km/s/Mpc (no Q16.16 — small integers)
@@ -22,10 +25,6 @@ def h0DESISigma : Int := 45
 -- (±1.2 is the systematic range from combining Planck+DESI+SH0ES systematics)
 def h0Model : Int := 6800
 def h0ModelSigma : Int := 120
-
--- Helper: absolute difference
-def absDiff (a b : Int) : Int :=
-  if a ≥ b then a - b else b - a
 
 -- Combined sigma (in quadrature)
 -- For Lean native_decide, compare |diff| ≤ n·sigma

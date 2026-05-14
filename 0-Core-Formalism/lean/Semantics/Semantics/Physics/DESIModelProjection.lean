@@ -193,8 +193,7 @@ theorem menger_dim_less_than_3 : mengerDH < 3 * SCALE := by
 theorem koch_dim_less_than_menger : kochDim < mengerDH := by
   native_decide
 
-/-- Menger/Koch divergence ratio exceeds 1:
-    boundary complexity grows faster than interior scaffold survives -/
+/-- Menger/Koch divergence base exceeds 1 -/
 theorem mk_divergence_exceeds_1 : mkDivergenceBase > SCALE := by
   native_decide
 
@@ -206,7 +205,7 @@ theorem horn_volume_bounded : hornVolumeBound = SCALE := by
 theorem horn_surface_grows : hornSurfaceGrowthRate > 0 := by
   native_decide
 
-/-- Torsion coupling is positive: torsion drives boundary expansion -/
+/-- Torsion coupling is positive -/
 theorem torsion_drives_boundary : torsionCoupling > 0 := by
   native_decide
 

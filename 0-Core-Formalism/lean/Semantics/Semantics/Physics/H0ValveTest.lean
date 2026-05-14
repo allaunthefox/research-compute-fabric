@@ -1,11 +1,4 @@
 -- H0ValveTest.lean
---
--- Tests the 16D horn-fiber model against the Hubble constant tension —
--- the best-known "valve" in cosmology: Planck (~67) vs SH0ES (~73).
---
--- The model predicts w0 > -1, wa < 0, Om ~ 0.290. From the CMB sound
--- horizon rd ~ 147 Mpc, these parameters imply H0 in the DESI+CMB range
--- (~68). This creates a falsifiable prediction against SH0ES.
 
 namespace Semantics.Physics.H0ValveTest
 
@@ -46,13 +39,10 @@ theorem model_consistent_with_desi :
   absDiff h0Model h0DESI ≤ 3 * h0DESI_sigma := by
   native_decide
 
--- But the model is INCONSISTENT with SH0ES at > 3σ
 theorem model_inconsistent_with_sh0es :
   ¬ (absDiff h0Model h0SH0ES ≤ 3 * h0SH0ES_sigma) := by
   native_decide
 
--- Stricter: consistent to how many sigma?
--- SH0ES: |6800 - 7304| = 504. SH0ES_sigma = 104. 504 / 104 = 4.8σ
 theorem sh0es_tension_model_flag :
   absDiff h0Model h0SH0ES > 4 * h0SH0ES_sigma := by
   native_decide

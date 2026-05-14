@@ -2,8 +2,6 @@
 DESIInvariant.lean — DESI DR1/DR2 Observational Invariants
 
 Hardcodes DESI cosmological measurements as fixed-point constants.
-These are the observational ground truth against which the 16D
-horn-fiber / Menger/Koch model is projected.
 
 All values are precomputed Q16_16 integers (scale = 65536) for
 dimensionless fractions; dimensional quantities (H₀, r_d) are

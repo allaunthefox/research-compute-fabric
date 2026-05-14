@@ -9,7 +9,6 @@
 -- Key identity:  gcd(a_n, a_{n+1}) = gcd(a_n, c2.a_{n-1})
 -- Invariant: gcd(a_n, a_{n+1}) = gcd(a_n, c2) if gcd(a_{n-1}, a_n) = 1
 --
--- Project language: state flow + gate + hidden history channel + leakage failure
 
 namespace Semantics.Physics.AdjacentCoprimeClassification
 

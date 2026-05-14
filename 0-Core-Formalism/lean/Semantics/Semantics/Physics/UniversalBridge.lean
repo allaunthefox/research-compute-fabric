@@ -1,27 +1,4 @@
-/-
-  UniversalBridge.lean - Hermite Spline Transition for the 16D Reynolds Regime Bridge
 
-  Implements the C¹-continuous Cubic Hermite Spline connecting the laminar and
-  turbulent friction-factor regimes across the transitional zone (2300 ≤ Re ≤ 4000).
-
-  Boundary conditions (Moody chart / Darcy friction factor):
-    Point A (Laminar exit):   Re=2300, f=0.0278, slope m₀ = −1.21×10⁻⁵
-    Point B (Turbulent entry): Re=4000, f=0.0398, slope m₁ = −2.49×10⁻⁶
-
-  The bridge function H(t) uses the normalized variable t = (Re − 2300) / 1700
-  and satisfies:
-    H(0) = y₀,   H'(0) = h·m₀
-    H(1) = y₁,   H'(1) = h·m₁
-
-  Intermittency γ = (H(t) − y₀) / (y₁ − y₀) gives the turbulent fraction in
-  the 16D controller's superpositional collapse model.
-
-  Note on Q16.16 arithmetic:
-    Lean 4.30 uses Euclidean (floor) division for `Int./`.  Standard Q16.16
-    truncates toward zero.  We apply a sign check in `q16_mul` and `q16_div`
-    to correct for this.  The difference is at most 1 ULP (1/65536) and is
-    negligible for engineering purposes, but formal correctness requires it.
--/
 
 namespace Semantics.Physics.UniversalBridge
 
@@ -188,10 +165,6 @@ def classifyRegime (re : Int) : Regime :=
   if re < RE_LAMINAR then .laminar
   else if re > RE_TURBULENT then .turbulent
   else .transitional
-
--- ============================================================================
--- 16D controller gate: maps Reynolds regime to controller action
--- ============================================================================
 
 inductive GateAction : Type
   | admit

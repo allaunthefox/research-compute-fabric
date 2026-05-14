@@ -11,7 +11,6 @@ NOTE: w0 is CALIBRATED to DESI DR1, not predicted.
 Zero Float arithmetic. All values are hardcoded Q16_16 Int literals.
 -/
 
-import Semantics.FixedPoint
 import Semantics.Physics.DESIInvariant
 
 open Semantics
@@ -23,17 +22,17 @@ namespace Semantics.Physics.DESIModelProjection
 -- §0  Fixed-Point Scale and Helpers
 -- ═══════════════════════════════════════════════════════════════════════════
 
-def SCALE : Int := 65536
+def scale : Int := 65536
 
 /-- Q16_16 absolute value -/
-def q16_abs (x : Int) : Int :=
+def q16Abs (x : Int) : Int :=
   if x ≥ 0 then x else -x
 
 /-- Integer division toward zero for fixed-point -/
 def q16_div (a b : Int) : Option Int :=
   if b = 0 then none
-  else if a ≥ 0 then some ((a * SCALE) / b)
-  else some (-(((-a) * SCALE) / b))
+  else if a ≥ 0 then some ((a * scale) / b)
+  else some (-(((-a) * scale) / b))
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §1  Model Constants (Menger/Koch/Gabriel Horn, Q16_16)
@@ -52,7 +51,7 @@ def kochDim : Int := 82706
 def mkDivergenceBase : Int := 117964
 
 /-- Gabriel horn: volume bounded by 1.0 in Q16_16 -/
-def hornVolumeBound : Int := SCALE
+def hornVolumeBound : Int := scale
 
 /-- Horn surface growth rate α: 0.007 × 65536 = 459 -/
 def hornSurfaceGrowthRate : Int := 459
@@ -158,7 +157,7 @@ structure Residual where
 /-- Compute residual and classify -/
 def computeResidual (name : String) (m d s : Int) : Residual :=
   let r := m - d
-  let ar := q16_abs r
+  let ar := q16Abs r
   let p := ar ≤ 3 * s
   let v := if ar ≤ 2 * s then Verdict.consistent
            else if ar ≤ 3 * s then Verdict.marginal
@@ -186,27 +185,27 @@ def residuals : List Residual :=
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-- Menger Hausdorff dimension is strictly less than 3 -/
-theorem menger_dim_less_than_3 : mengerDH < 3 * SCALE := by
+theorem mengerDimLessThan3 : mengerDH < 3 * scale := by
   native_decide
 
 /-- Koch boundary dimension is strictly less than Menger dimension -/
-theorem koch_dim_less_than_menger : kochDim < mengerDH := by
+theorem kochDimLessThanMenger : kochDim < mengerDH := by
   native_decide
 
 /-- Menger/Koch divergence base exceeds 1 -/
-theorem mk_divergence_exceeds_1 : mkDivergenceBase > SCALE := by
+theorem mkDivergenceExceeds1 : mkDivergenceBase > scale := by
   native_decide
 
 /-- Gabriel horn has bounded volume -/
-theorem horn_volume_bounded : hornVolumeBound = SCALE := by
+theorem hornVolumeBounded : hornVolumeBound = scale := by
   rfl
 
 /-- Gabriel horn surface grows: α > 0 -/
-theorem horn_surface_grows : hornSurfaceGrowthRate > 0 := by
+theorem hornSurfaceGrows : hornSurfaceGrowthRate > 0 := by
   native_decide
 
 /-- Torsion coupling is positive -/
-theorem torsion_drives_boundary : torsionCoupling > 0 := by
+theorem torsionDrivesBoundary : torsionCoupling > 0 := by
   native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -214,11 +213,11 @@ theorem torsion_drives_boundary : torsionCoupling > 0 := by
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-- Model and DESI both say w₀ > -1 (dark energy is not Λ) -/
-theorem model_w0_direction_aligns : predictW0 > w0_LCDM := by
+theorem modelW0DirectionAligns : predictW0 > w0Lcdm := by
   native_decide
 
 /-- Model and DESI both say w_a < 0 (dark energy was stronger in past) -/
-theorem model_wa_direction_aligns : predictWa < wa_LCDM := by
+theorem modelWaDirectionAligns : predictWa < waLcdm := by
   native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -226,35 +225,35 @@ theorem model_wa_direction_aligns : predictWa < wa_LCDM := by
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-- Model w₀ calibrated to DESI DR1 w₀ = -0.827 → residual = 0 -/
-theorem w0_residual_is_zero : predictW0 - desiDR1.w0 = 0 := by
+theorem w0ResidualIsZero : predictW0 - desiDR1.w0 = 0 := by
   native_decide
 
 /-- Model w_a residual within 1σ of DESI DR1:
     |−36045 − (−49152)| = 13107 ≤ 19005 (DR1 wa_sigma) -/
-theorem wa_residual_within_1sigma_DR1 :
-  q16_abs (predictWa - desiDR1.wa) ≤ desiDR1.wa_sigma := by
+theorem waResidualWithin1SigmaDr1 :
+  q16Abs (predictWa - desiDR1.wa) ≤ desiDR1.wa_sigma := by
   native_decide
 
 /-- Model Ω_m residual within 1σ of DESI DR1:
     |19005 − 19333| = 328 ≤ 524 (DR1 OmegaM_sigma) -/
-theorem omegam_residual_within_1sigma :
-  q16_abs (predictOmegaM - desiDR1.omegaM) ≤ desiDR1.omegaM_sigma := by
+theorem omegaMResidualWithin1Sigma :
+  q16Abs (predictOmegaM - desiDR1.omegaM) ≤ desiDR1.omegaM_sigma := by
   native_decide
 
 /-- Model σ₈ matches DESI DR1 exactly: both 0.812 -/
-theorem sigma8_residual_is_zero : predictSigma8 - desiDR1.sigma8 = 0 := by
+theorem sigma8ResidualIsZero : predictSigma8 - desiDR1.sigma8 = 0 := by
   native_decide
 
 /-- Model w_a residual within 1σ of DESI DR2:
     |−36045 − (−38666)| = 2621 ≤ 16384 (DR2 wa_sigma) -/
-theorem wa_residual_within_1sigma_DR2 :
-  q16_abs (predictWa - desiDR2.wa) ≤ desiDR2.wa_sigma := by
+theorem waResidualWithin1SigmaDr2 :
+  q16Abs (predictWa - desiDR2.wa) ≤ desiDR2.wa_sigma := by
   native_decide
 
 /-- Model Ω_m residual within 2σ of DESI DR2:
     |19005 − 19498| = 493 ≤ 2 × 564 = 1128 -/
-theorem omegam_residual_within_2sigma_DR2 :
-  q16_abs (predictOmegaM - desiDR2.omegaM) ≤ 2 * desiDR2.omegaM_sigma := by
+theorem omegaMResidualWithin2SigmaDr2 :
+  q16Abs (predictOmegaM - desiDR2.omegaM) ≤ 2 * desiDR2.omegaM_sigma := by
   native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════════

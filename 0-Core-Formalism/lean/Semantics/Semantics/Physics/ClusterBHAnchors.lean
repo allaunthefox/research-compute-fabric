@@ -10,7 +10,7 @@
 
 namespace Semantics.Physics.ClusterBHAnchors
 
-def SCALE : Int := 65536
+def scale : Int := 65536
 def absDiff (a b : Int) : Int := if a ≥ b then a - b else b - a
 
 -- ═════════════════════════════════════════════════════════════════════════════
@@ -21,21 +21,21 @@ def absDiff (a b : Int) : Int := if a ≥ b then a - b else b - a
 -- (20/27)^3 = 0.406 — surviving volume fraction at 3 iterations
 -- Void fraction = 1 - 0.406 = 0.594 (consistent with observed ~55-65%)
 -- Q16_16: 0.594 * 65536 = 38928
-def voidFrac_n3 : Int := 38928
+def voidFracN3 : Int := 38928
 
 -- Model's Menger void fraction at n = 4 (BAO scale):
 -- (20/27)^4 = 0.301 — surviving volume fraction at 4 iterations
 -- Void fraction = 1 - 0.301 = 0.699 (consistent with observed ~70%)
 -- Q16_16: 0.699 * 65536 = 45810
-def voidFrac_n4 : Int := 45810
+def voidFracN4 : Int := 45810
 
 -- Observed cluster void fraction: 55-65% → Q16_16 bounds
 -- 0.55 * 65536 = 36045, 0.65 * 65536 = 42598
-theorem cluster_void_in_range : 36045 < voidFrac_n3 ∧ voidFrac_n3 < 42598 := by
+theorem clusterVoidInRange : 36045 < voidFracN3 ∧ voidFracN3 < 42598 := by
   native_decide
 
 -- Observed BAO void fraction: 65-75% → Q16_16 bounds
-theorem bao_void_in_range : 42598 < voidFrac_n4 ∧ voidFrac_n4 < 49152 := by
+theorem baoVoidInRange : 42598 < voidFracN4 ∧ voidFracN4 < 49152 := by
   native_decide
 
 -- ═════════════════════════════════════════════════════════════════════════════
@@ -53,15 +53,15 @@ def planckSzS8 : Int := 50463
 def planckSzSig : Int := 1311
 
 -- Model s8 is consistent with DES+SPT within 0.6s
-theorem s8_consistent_des_spt : absDiff modelS8 desSptS8 ≤ desSptSig := by
+theorem s8ConsistentDesSpt : absDiff modelS8 desSptS8 ≤ desSptSig := by
   native_decide
 
 -- Model s8 is 2.1s above Planck SZ cluster value
-theorem s8_tension_planck_sz : absDiff modelS8 planckSzS8 > 2 * planckSzSig := by
+theorem s8TensionPlanckSz : absDiff modelS8 planckSzS8 > 2 * planckSzSig := by
   native_decide
 
 -- But within 3s of Planck SZ
-theorem s8_within_3sigma_planck_sz : absDiff modelS8 planckSzS8 < 3 * planckSzSig := by
+theorem s8Within3SigmaPlanckSz : absDiff modelS8 planckSzS8 < 3 * planckSzSig := by
   native_decide
 
 -- ═════════════════════════════════════════════════════════════════════════════
@@ -87,7 +87,7 @@ def mengerPlusKoch : Int := 261402
 def msigExponent : Int := 262144
 
 -- The sum matches the observed exponent to within 0.3%
-theorem msig_corrected_match : mengerPlusKoch * 1000 > msigExponent * 997 := by
+theorem msigCorrectedMatch : mengerPlusKoch * 1000 > msigExponent * 997 := by
   native_decide
 
 
@@ -96,8 +96,8 @@ theorem msig_corrected_match : mengerPlusKoch * 1000 > msigExponent * 997 := by
 -- §3  Executable receipts
 -- ═════════════════════════════════════════════════════════════════════════════
 
-#eval voidFrac_n3
-#eval voidFrac_n4
-#eval absDiff modelS8 desSptS8
+#eval! voidFracN3
+#eval! voidFracN4
+#eval! absDiff modelS8 desSptS8
 
 end Semantics.Physics.ClusterBHAnchors

@@ -1,27 +1,14 @@
 /-
-DESIModelProjection.lean — 16D Horn-Fiber Projection onto DESI Observables
+DESIModelProjection.lean — Model Projection onto DESI Observables
 
-Projects the 16D Menger/Koch/Gabriel-Horn fiber model onto the DESI
-observational invariant set. Computes residuals and declares which
-predictions are within tolerance and which are not.
+Projects a cosmological parameter set (w0, wa, Om, s8) onto the DESI
+observational invariant set. Computes residuals against DESI DR1/DR2.
+
+NOTE: w0 is CALIBRATED to DESI DR1, not predicted.
+      wa, Om, s8 are structural projections that happen to be
+      consistent with DESI within 1s.
 
 Zero Float arithmetic. All values are hardcoded Q16_16 Int literals.
-
-Model components:
-  1. Menger/Koch divergence ratio: D_MK(n) ~ (9/5)^n → predicts w₀ > -1
-  2. Gabriel horn torsion widening: dA/dt > 0 while dV/dt ≈ 0 → predicts w_a < 0
-  3. Fractal void hierarchy: d_H = ln(20)/ln(3) → predicts Ω_m effective reduction
-
-Each projection:
-  model_prediction → compare with DESI observation → residual → verdict
-
-Conventions:
-  PascalCase types, camelCase functions.
-  Q16_16 for dimensionless; raw Int × 100 for dimensional.
-  structure for domain concepts.
-  theorem for residual bounds.
-  #eval! for executable receipts.
-  Namespace: Semantics.Physics.DESIModelProjection
 -/
 
 import Semantics.FixedPoint
@@ -78,9 +65,8 @@ def torsionCoupling : Int := 197
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /--
-Prediction 1: w₀ > -1 (dark energy not cosmological constant).
-Menger/Koch divergence D_MK ~ (9/5)^n produces residual boundary pressure.
-Model calibrated to DESI DR1 w₀ = -0.827.
+Prediction 1: w₀ > -1 is an observational fact (DESI DR1/DR2).
+Model w₀ is CALIBRATED to DESI DR1 w₀ = -0.827.
 Q16_16: -0.827 × 65536 = -54198.
 -/
 def predictW0 : Int := -54198
@@ -89,14 +75,9 @@ def predictW0 : Int := -54198
 def predictW0_sigma : Int := 3277
 
 /--
-Prediction 2: w_a < 0 (dark energy was stronger in the past).
-Gabriel horn torsion: dA_boundary/dt = α·A + β·‖τ‖².
-At higher z, more compact → larger ‖τ‖² → more negative w_a.
-Model predicts w_a ≈ -0.55.
-
-Check: -0.55 × 65536 = -36044.8 ≈ -36045.
-DESI DR1: -0.75. Residual: 0.20 (within 1σ).
-DESI DR2: -0.59. Residual: 0.04 (within 1σ).
+Prediction 2: w_a < 0 is an observational fact (DESI DR1/DR2).
+Model w_a = -0.55 is consistent with DESI DR2 w_a = -0.59 +- 0.25
+at 0.16 sigma.
 -/
 def predictWa : Int := -36045
 
@@ -104,12 +85,10 @@ def predictWa : Int := -36045
 def predictWa_sigma : Int := 9830
 
 /--
-Prediction 3: Ω_m effective from Menger void correction.
-ΛCDM Ω_m ≈ 0.31, Menger (20/27)^3 × 0.31 ≈ 0.13 (too low).
-Real cosmic void fraction ~10% correction: Ω_m ≈ 0.29.
-Q16_16: 0.290 × 65536 = 19005.
+Prediction 3: Ω_m = 0.290 from Menger void correction.
+ΛCDM Ω_m ≈ 0.31. Menger (20/27)^3 × 0.31 ≈ 0.13 (over-correction).
+Real cosmic void fraction ~10%: Ω_m ≈ 0.29.
 DESI DR1: 0.295. Residual: -0.005 (within 1σ).
-DESI DR2: 0.2975. Residual: -0.0075 (within 1σ).
 -/
 def predictOmegaM : Int := 19005
 

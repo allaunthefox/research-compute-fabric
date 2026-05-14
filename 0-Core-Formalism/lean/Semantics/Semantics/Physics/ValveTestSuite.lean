@@ -1,13 +1,11 @@
 -- ValveTestSuite.lean
 --
--- Multi-valve cosmological test suite for the 16D horn-fiber model.
+-- Cosmological comparison suite for a parameter set (w0, wa, Om, s8).
+-- Computes residuals against DESI DR1, Planck, DES, KiDS.
 --
--- Valves tested:
---   1. S8 tension (matter fluctuation amplitude)
---   2. BAO distance-redshift consistency (DESI DR1)
---   3. Cosmic age vs known bounds
---
--- All model predictions from: w0 = -0.827, wa = -0.55, Om = 0.290, s8 = 0.812
+-- NOTE: these are COMPARISONS, not predictions. w0 is calibrated.
+-- S8 sits between CMB and weak-lensing values. This is a data point,
+-- not a tension resolution claim.
 
 namespace Semantics.Physics.ValveTestSuite
 

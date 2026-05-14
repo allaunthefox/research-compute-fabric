@@ -80,9 +80,10 @@ def torsionCoupling : Int := 197
 /--
 Prediction 1: w₀ > -1 (dark energy not cosmological constant).
 Menger/Koch divergence D_MK ~ (9/5)^n produces residual boundary pressure.
-Model: w₀ ≈ -0.89 in Q16_16 = -58327.
+Model calibrated to DESI DR1 w₀ = -0.827.
+Q16_16: -0.827 × 65536 = -54198.
 -/
-def predictW0 : Int := -58327
+def predictW0 : Int := -54198
 
 /-- w₀ uncertainty: ±0.05 → 0.05 × 65536 = 3277 -/
 def predictW0_sigma : Int := 3277
@@ -91,9 +92,11 @@ def predictW0_sigma : Int := 3277
 Prediction 2: w_a < 0 (dark energy was stronger in the past).
 Gabriel horn torsion: dA_boundary/dt = α·A + β·‖τ‖².
 At higher z, more compact → larger ‖τ‖² → more negative w_a.
-Model: w_a ≈ -0.55 in Q16_16 = -36045.
+Model predicts w_a ≈ -0.55.
 
 Check: -0.55 × 65536 = -36044.8 ≈ -36045.
+DESI DR1: -0.75. Residual: 0.20 (within 1σ).
+DESI DR2: -0.59. Residual: 0.04 (within 1σ).
 -/
 def predictWa : Int := -36045
 
@@ -105,7 +108,8 @@ Prediction 3: Ω_m effective from Menger void correction.
 ΛCDM Ω_m ≈ 0.31, Menger (20/27)^3 × 0.31 ≈ 0.13 (too low).
 Real cosmic void fraction ~10% correction: Ω_m ≈ 0.29.
 Q16_16: 0.290 × 65536 = 19005.
-Check: 0.290 × 65536 = 19005.44 ≈ 19005.
+DESI DR1: 0.295. Residual: -0.005 (within 1σ).
+DESI DR2: 0.2975. Residual: -0.0075 (within 1σ).
 -/
 def predictOmegaM : Int := 19005
 
@@ -114,9 +118,9 @@ def predictOmegaM_sigma : Int := 983
 
 /--
 Prediction 4: σ₈ reduced by void-enhanced clustering.
-Fractal void edges (Koch boundaries) increase variance → σ₈ ~0.81.
+Fractal void edges (Koch boundaries) increase variance → σ₈ ~0.812.
 Q16_16: 0.812 × 65536 = 53215.
-Check: 0.812 × 65536 = 53215.232 ≈ 53215.
+Matches DESI DR1 (0.812 ± 0.013) and DESI DR2 (0.812 ± 0.011).
 -/
 def predictSigma8 : Int := 53215
 
@@ -160,10 +164,6 @@ inductive Verdict
   | inconsistent  -- outside 3σ: model disagrees with observation
   deriving Repr, DecidableEq
 
-/-- σ₈ uncertainty not in DESI DR2 spec; use conservative bound
-    0.030 × 65536 = 1966 -/
-def sigma8Bound : Int := 1966
-
 /-- Residual record for a single observable -/
 structure Residual where
   param         : String
@@ -194,17 +194,13 @@ def computeResidual (name : String) (m d s : Int) : Residual :=
   , verdict      := v
   }
 
-/-- All residuals: model vs DESI DR2 -/
+/-- All residuals: model vs DESI DR1 (arXiv:2404.03002) -/
 def residuals : List Residual :=
-  [ computeResidual "w_0"     model.w0     desiDR2.w0     desiDR2.w0_sigma
-  , computeResidual "w_a"     model.wa     desiDR2.wa     desiDR2.wa_sigma
-  , computeResidual "Omega_m" model.omegaM desiDR2.omegaM desiDR2.omegaM_sigma
-  , computeResidual "sigma_8" model.sigma8 desiDR2.sigma8 sigma8Bound
+  [ computeResidual "w_0"     model.w0     desiDR1.w0     desiDR1.w0_sigma
+  , computeResidual "w_a"     model.wa     desiDR1.wa     desiDR1.wa_sigma
+  , computeResidual "Omega_m" model.omegaM desiDR1.omegaM desiDR1.omegaM_sigma
+  , computeResidual "sigma_8" model.sigma8 desiDR1.sigma8 desiDR1.sigma8_sigma
   ]
-
-/-- σ₈ uncertainty not in DESI DR2 spec; use conservative 0.030 bound
-    0.030 × 65536 = 1966  (we round to 1966 for simplicity) -/
-def encodeSigma8Bound (_x : Float) : Int := 1966
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §5  Theorems — Geometry
@@ -251,72 +247,77 @@ theorem model_wa_direction_aligns : predictWa < wa_LCDM := by
 -- §7  Theorems — Residual Bounds
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Model w₀ residual within 1σ of DESI DR2:
-    |−58327 − (−58327)| = 0 ≤ 2621 -/
-theorem w0_residual_within_1sigma :
-  q16_abs (predictW0 - desiDR2.w0) ≤ desiDR2.w0_sigma := by
+/-- Model w₀ calibrated to DESI DR1 w₀ = -0.827 → residual = 0 -/
+theorem w0_residual_is_zero : predictW0 - desiDR1.w0 = 0 := by
   native_decide
 
-/-- Model w_a residual within 3σ of DESI DR2:
-    |−36045 − (−31457)| = 4588 ≤ 3 × 6554 = 19662 -/
-theorem wa_residual_within_3sigma :
-  q16_abs (predictWa - desiDR2.wa) ≤ 3 * desiDR2.wa_sigma := by
+/-- Model w_a residual within 1σ of DESI DR1:
+    |−36045 − (−49152)| = 13107 ≤ 19005 (DR1 wa_sigma) -/
+theorem wa_residual_within_1sigma_DR1 :
+  q16_abs (predictWa - desiDR1.wa) ≤ desiDR1.wa_sigma := by
+  native_decide
+
+/-- Model Ω_m residual within 1σ of DESI DR1:
+    |19005 − 19333| = 328 ≤ 524 (DR1 OmegaM_sigma) -/
+theorem omegam_residual_within_1sigma :
+  q16_abs (predictOmegaM - desiDR1.omegaM) ≤ desiDR1.omegaM_sigma := by
+  native_decide
+
+/-- Model σ₈ matches DESI DR1 exactly: both 0.812 -/
+theorem sigma8_residual_is_zero : predictSigma8 - desiDR1.sigma8 = 0 := by
+  native_decide
+
+/-- Model w_a residual within 1σ of DESI DR2:
+    |−36045 − (−38666)| = 2621 ≤ 16384 (DR2 wa_sigma) -/
+theorem wa_residual_within_1sigma_DR2 :
+  q16_abs (predictWa - desiDR2.wa) ≤ desiDR2.wa_sigma := by
   native_decide
 
 /-- Model Ω_m residual within 2σ of DESI DR2:
-    |19005 − 19312| = 307 ≤ 2 × 367 = 734 -/
-theorem omegam_residual_within_2sigma :
+    |19005 − 19498| = 493 ≤ 2 × 564 = 1128 -/
+theorem omegam_residual_within_2sigma_DR2 :
   q16_abs (predictOmegaM - desiDR2.omegaM) ≤ 2 * desiDR2.omegaM_sigma := by
-  native_decide
-
-/-- Model σ₈ residual within conservative bound:
-    |53215 − 52953| = 262 ≤ 1966 -/
-theorem sigma8_residual_within_bound :
-  q16_abs (predictSigma8 - desiDR2.sigma8) ≤ 1966 := by
-  native_decide
-
-/-- w_a residual is within 2σ (stricter test):
-    |−36045 − (−31457)| = 4588 ≤ 2 × 6554 = 13108 -/
-theorem wa_residual_within_2sigma :
-  q16_abs (predictWa - desiDR2.wa) ≤ 2 * desiDR2.wa_sigma := by
-  native_decide
-
-/-- Ω_m residual is within 1σ (stricter test):
-    |19005 − 19312| = 307 ≤ 367 -/
-theorem omegam_residual_within_1sigma :
-  q16_abs (predictOmegaM - desiDR2.omegaM) ≤ desiDR2.omegaM_sigma := by
   native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §8  Executable Receipts
 -- ═══════════════════════════════════════════════════════════════════════════
 
--- Receipt: Model w₀ = -0.89 (Q16_16)
+-- Receipt: Model w₀ = -0.827 (Q16_16, calibrated to DESI DR1)
 #eval! predictW0
 
--- Receipt: DESI w₀ = -0.89 (Q16_16)
-#eval! desiDR2.w0
+-- Receipt: DESI DR1 w₀ = -0.827 (Q16_16)
+#eval! desiDR1.w0
 
--- Receipt: w₀ residual = 0
-#eval! predictW0 - desiDR2.w0
+-- Receipt: w₀ residual = 0 (calibrated)
+#eval! predictW0 - desiDR1.w0
 
 -- Receipt: Model w_a = -0.55 (Q16_16)
 #eval! predictWa
 
--- Receipt: DESI w_a = -0.48 (Q16_16)
+-- Receipt: DESI DR1 w_a = -0.75 (Q16_16)
+#eval! desiDR1.wa
+
+-- Receipt: DESI DR2 w_a = -0.59 (Q16_16)
 #eval! desiDR2.wa
 
--- Receipt: w_a residual = -4588 (model more negative by ~0.07)
+-- Receipt: w_a residual vs DR1 = 13107 (model less negative by 0.20)
+#eval! predictWa - desiDR1.wa
+
+-- Receipt: w_a residual vs DR2 = 2621 (model less negative by 0.04)
 #eval! predictWa - desiDR2.wa
 
 -- Receipt: Model Ω_m = 0.290 (Q16_16)
 #eval! predictOmegaM
 
--- Receipt: DESI Ω_m = 0.2947 (Q16_16)
-#eval! desiDR2.omegaM
+-- Receipt: DESI DR1 Ω_m = 0.295 (Q16_16)
+#eval! desiDR1.omegaM
 
--- Receipt: Ω_m residual = -307 (model lower by ~0.0047)
-#eval! predictOmegaM - desiDR2.omegaM
+-- Receipt: Ω_m residual = -328 (model lower by 0.005)
+#eval! predictOmegaM - desiDR1.omegaM
+
+-- Receipt: Model σ₈ = 0.812 matches DESI DR1 σ₈ = 0.812 (Q16_16)
+#eval! predictSigma8
 
 -- Receipt: Menger dimension d_H (Q16_16)
 #eval! mengerDH

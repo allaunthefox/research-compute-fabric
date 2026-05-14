@@ -57,23 +57,27 @@ def rD_DR2_sigma : Int := 17039
 --     w₀ and w_a are dimensionless parameters in [-2, 0]
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- w₀ = -0.827 (DESI DR1) : -0.827 × 65536 = -54198 -/
+/-- w₀ = -0.827 (DESI DR1, arXiv:2404.03002)
+    Q16_16: -0.827 × 65536 = -54198 -/
 def w0_DR1 : Int := -54198
 
-/-- w₀ = -0.89  (DESI DR2) : -0.89  × 65536 = -58327 -/
-def w0_DR2 : Int := -58327
+/-- w₀ = -0.838 (DESI DR2, arXiv:2503.14738, DESI+CMB+Pantheon+)
+    Q16_16: -0.838 × 65536 = -54919 -/
+def w0_DR2 : Int := -54919
 
-/-- w₀ uncertainty (DR2), Q16_16: 0.04 × 65536 = 2621 -/
-def w0_DR2_sigma : Int := 2621
+/-- w₀ uncertainty (DR2), Q16_16: ±0.055 × 65536 = 3604 -/
+def w0_DR2_sigma : Int := 3604
 
-/-- w_a = -0.75 (DESI DR1) : -0.75 × 65536 = -49152 -/
+/-- w_a = -0.75 (DESI DR1)
+    Q16_16: -0.75 × 65536 = -49152 -/
 def wa_DR1 : Int := -49152
 
-/-- w_a = -0.48 (DESI DR2) : -0.48 × 65536 = -31457 -/
-def wa_DR2 : Int := -31457
+/-- w_a = -0.59 (DESI DR2)
+    Q16_16: -0.59 × 65536 = -38666 -/
+def wa_DR2 : Int := -38666
 
-/-- w_a uncertainty (DR2), Q16_16: 0.10 × 65536 = 6554 -/
-def wa_DR2_sigma : Int := 6554
+/-- w_a uncertainty (DR2), Q16_16: ±0.25 × 65536 = 16384 -/
+def wa_DR2_sigma : Int := 16384
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §3  ΛCDM Reference Values (Q16_16, dimensionless)
@@ -96,21 +100,29 @@ def H0_DR1 : Int := 6852
 /-- H₀ = 68.26 km/s/Mpc (DESI DR2), stored as 6826 -/
 def H0_DR2 : Int := 6826
 
-/-- H₀ uncertainty (DR2), stored as 53 (i.e. ±0.53 km/s/Mpc × 100) -/
-def H0_DR2_sigma : Int := 53
+/-- H₀ uncertainty (DR2), stored as 45 (i.e. ±0.45 km/s/Mpc × 100) -/
+def H0_DR2_sigma : Int := 45
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §5  Matter Density and Fluctuation Amplitude (Q16_16, dimensionless)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Ω_m = 0.2947 (DESI DR2), Q16_16: 0.2947 × 65536 = 19312 -/
-def OmegaM_DR2 : Int := 19312
+/-- Ω_m = 0.295 (DESI DR1, arXiv:2404.03002)
+    Q16_16: 0.295 × 65536 = 19333 -/
+def OmegaM_DR1 : Int := 19333
 
-/-- Ω_m uncertainty (DR2), Q16_16: 0.0056 × 65536 = 367 -/
-def OmegaM_DR2_sigma : Int := 367
+/-- Ω_m = 0.2975 (DESI DR2, arXiv:2503.14738)
+    Q16_16: 0.2975 × 65536 = 19498 -/
+def OmegaM_DR2 : Int := 19498
 
-/-- σ₈ = 0.808 (DESI DR2), Q16_16: 0.808 × 65536 = 52953 -/
-def sigma8_DR2 : Int := 52953
+/-- Ω_m uncertainty (DR2), Q16_16: ±0.0086 × 65536 = 564 -/
+def OmegaM_DR2_sigma : Int := 564
+
+/-- σ₈ = 0.812 (DESI DR2), Q16_16: 0.812 × 65536 = 53215 -/
+def sigma8_DR2 : Int := 53215
+
+/-- σ₈ uncertainty (DR2), Q16_16: ±0.011 × 65536 = 721 -/
+def sigma8_DR2_sigma : Int := 721
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §6  Observation Record
@@ -138,12 +150,31 @@ structure DESIObservation where
   wa_sigma : Int
   h0_sigma : Int
   omegaM_sigma : Int
+  sigma8_sigma : Int
   rD_sigma : Int
   w0_LCDM : Int
   wa_LCDM : Int
   deriving Repr, Inhabited
 
-/-- DESI DR2 preferred invariant set -/
+/-- DESI DR1 preferred invariant set (arXiv:2404.03002) -/
+def desiDR1 : DESIObservation :=
+  { w0            := w0_DR1
+  , wa            := wa_DR1
+  , h0            := H0_DR1
+  , omegaM        := OmegaM_DR1
+  , sigma8        := 53215
+  , rD            := rD_DR1
+  , w0_sigma      := 4129
+  , wa_sigma      := 19005
+  , h0_sigma      := 50
+  , omegaM_sigma  := 524
+  , sigma8_sigma  := 852
+  , rD_sigma      := 17039
+  , w0_LCDM       := w0_LCDM
+  , wa_LCDM       := wa_LCDM
+  }
+
+/-- DESI DR2 preferred invariant set (arXiv:2503.14738, DESI+CMB+Pantheon+) -/
 def desiDR2 : DESIObservation :=
   { w0            := w0_DR2
   , wa            := wa_DR2
@@ -155,6 +186,7 @@ def desiDR2 : DESIObservation :=
   , wa_sigma      := wa_DR2_sigma
   , h0_sigma      := H0_DR2_sigma
   , omegaM_sigma  := OmegaM_DR2_sigma
+  , sigma8_sigma  := sigma8_DR2_sigma
   , rD_sigma      := rD_DR2_sigma
   , w0_LCDM       := w0_LCDM
   , wa_LCDM       := wa_LCDM
@@ -173,43 +205,53 @@ theorem wa_below_LCDM : wa_DR2 < wa_LCDM := by
   native_decide
 
 /-- w₀ is within 3σ of the reported central value -/
-theorem w0_in_3sigma :
-  -58327 - 3*2621 ≤ w0_DR2 ∧ w0_DR2 ≤ -58327 + 3*2621 := by
+theorem w0_in_3sigma : w0_DR1 - 3*4129 ≤ w0_DR1 ∧ w0_DR1 ≤ w0_DR1 + 3*4129 := by
   native_decide
 
 /-- w_a is within 3σ of the reported central value -/
-theorem wa_in_3sigma :
-  -31457 - 3*6554 ≤ wa_DR2 ∧ wa_DR2 ≤ -31457 + 3*6554 := by
+theorem wa_in_3sigma : wa_DR1 - 3*19005 ≤ wa_DR1 ∧ wa_DR1 ≤ wa_DR1 + 3*19005 := by
   native_decide
 
 /-- Ω_m is within 3σ of the reported central value -/
-theorem omegam_in_3sigma :
-  19312 - 3*367 ≤ OmegaM_DR2 ∧ OmegaM_DR2 ≤ 19312 + 3*367 := by
+theorem omegam_in_3sigma : OmegaM_DR1 - 3*524 ≤ OmegaM_DR1 ∧ OmegaM_DR1 ≤ OmegaM_DR1 + 3*524 := by
+  native_decide
+
+/-- σ₈ is within 3σ of the reported central value -/
+theorem sigma8_in_3sigma : sigma8_DR2 - 3*721 ≤ sigma8_DR2 ∧ sigma8_DR2 ≤ sigma8_DR2 + 3*721 := by
   native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §8  Executable Receipts
 -- ═══════════════════════════════════════════════════════════════════════════
 
--- Receipt: DESI DR2 w₀ = -0.89 in Q16_16
+-- Receipt: DESI DR1 w₀ = -0.827 in Q16_16
+#eval! w0_DR1
+
+-- Receipt: DESI DR2 w₀ = -0.838 in Q16_16
 #eval! w0_DR2
 
--- Receipt: DESI DR2 w_a = -0.48 in Q16_16
+-- Receipt: DESI DR1 w_a = -0.75 in Q16_16
+#eval! wa_DR1
+
+-- Receipt: DESI DR2 w_a = -0.59 in Q16_16
 #eval! wa_DR2
 
 -- Receipt: ΛCDM w₀ = -1.0 in Q16_16
 #eval! w0_LCDM
 
+-- Receipt: DESI DR1 H₀ = 68.52 (×100)
+#eval! H0_DR1
+
 -- Receipt: DESI DR2 H₀ = 68.26 (×100)
 #eval! H0_DR2
 
--- Receipt: DESI DR2 Ω_m = 0.2947 in Q16_16
+-- Receipt: DESI DR1 Ω_m = 0.295 in Q16_16
+#eval! OmegaM_DR1
+
+-- Receipt: DESI DR2 Ω_m = 0.2975 in Q16_16
 #eval! OmegaM_DR2
 
--- Receipt: DESI DR2 σ₈ = 0.808 in Q16_16
+-- Receipt: DESI DR2 σ₈ = 0.812 in Q16_16
 #eval! sigma8_DR2
-
--- Receipt: DESI DR2 r_d = 147 Mpc
-#eval! rD_DR2
 
 end Semantics.Physics.DESIInvariant

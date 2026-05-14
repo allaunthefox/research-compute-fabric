@@ -137,10 +137,7 @@ def fammAdjustDelay (bank : FAMMBank) (address : Nat) (newDelay : Q16_16) : FAMM
     let bindResult := fammBind bank .adjustDelay address
     { success := false, value := none, cost := bindResult.cost, invariant := bindResult.invariant }
 
-/-- Theorem: FAMM bind returns Bool type (reflexivity). -/
-theorem fammBindReflexive (bank : FAMMBank) (mode : FAMMAccessMode) (address : Nat) :
-    (fammBind bank mode address).lawful = (fammBind bank mode address).lawful := by
-  rfl
+-- REMOVED: fammBindReflexive was tautological (X = X)
 
 /- MORE FAMM Architecture Integration
     The unified architecture requires capability-based memory isolation
@@ -215,16 +212,7 @@ structure FAMMDelta where
 
 deriving Repr, Inhabited
 
-/-- Theorem: FAMM compression achieves space reduction
-    Formal guarantee that metadata collapse reduces state size.
-
-    Note: bannedCount tracking is a TODO. Currently proves that
-    collapsed state represents the bank's cells count. -/
-theorem famm_compression_property
-  (bank : FAMMThermalBank) :
-  let collapsed := fammMetadataCollapse bank
-  collapsed.cellCount = bank.cells.size := by
-  simp [fammMetadataCollapse]
+-- REMOVED: famm_compression_property was tautological (trivial identity)
 
 /-- Integration with Entropy Phase Engine
     FAMM provides memory substrate for nanokernel isolation,

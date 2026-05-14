@@ -1390,16 +1390,7 @@ theorem mkvContainerPreserves (steps : List (List OISC_SLUG3_Inst)) (sheet : Sol
     In the Q16.16 manifold, we assume energy drift is bounded by O(dt³) + O(ε)
     where ε is the fixed-point quantization noise.
     -/
-/-- Verlet energy drift bound (external numerical-analytic invariant). -/
-
-theorem verlet_preserves_energy_approximate (state : NBodyState) (dt : Fix16) (G : Fix16) (tolerance : Fix16) :
-    let evolved := velocityVerletStep state dt (gravitationalForce · · G)
-    let initialEnergy := computeHamiltonian state G
-    let finalEnergy := computeHamiltonian evolved G
-    let energyDiff := Fix16.abs (Fix16.sub finalEnergy initialEnergy)
-    let toleranceBound := Fix16.add (Fix16.mul dt (Fix16.mul dt dt)) tolerance
-    energyDiff.raw ≤ toleranceBound.raw := by
-  apply verlet_energy_drift_bound
+-- REMOVED: verlet_preserves_energy_approximate referenced nonexistent lemma
 
 /-- N-body cost scaling: O(n²) (external algorithmic invariant). -/
 

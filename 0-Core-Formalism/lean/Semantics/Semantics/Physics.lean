@@ -6,4 +6,6 @@ import Semantics.Physics.Projection
 import Semantics.Physics.Examples
 import Semantics.Physics.UniversalBridge
 import Semantics.Physics.BindPhysics
+import Semantics.Physics.DESIInvariant
+import Semantics.Physics.DESIModelProjection
 import Semantics.Physics.Tests

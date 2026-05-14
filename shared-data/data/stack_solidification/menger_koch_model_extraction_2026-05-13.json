@@ -1,0 +1,214 @@
+{
+  "source": {
+    "title": "Menger Koch Fractal",
+    "session_timestamp": "2026-05-14T00:32:40.150Z",
+    "url": "https://chatgpt.com/c/6a026cb8-15e4-83ea-9328-6dbcbf7d6f34",
+    "total_messages": 414,
+    "message_hash": "579971ed08d8c38f6fad685acc06d215f932d8f7ac7d139b800ab349516892f8"
+  },
+  "derived_components": {
+    "menger_koch_divergence": {
+      "description": "Menger/Koch hybrid fractal divergence model",
+      "equations": [
+        "F_{n+1} = K_\u03b2(\u2202M_\u03b1(F_n)) \u222a core(M_\u03b1(F_n))",
+        "D_Koch = ln 4 / ln 3",
+        "D_Menger = ln 20 / ln 3",
+        "D_MK(n) = boundary_complexity_n / (interior_mass_n + \u03b5)",
+        "D_MK(n) \u223c (4/3)^n / ((20/27)^n + \u03b5) \u223c (9/5)^n"
+      ],
+      "domain": "cosmology/DESI",
+      "status": "concept",
+      "coverage": "GOOD",
+      "existing_files": [
+        "0-Core-Formalism/lean/Semantics/Semantics/TopologyFractalEncoding.lean \u2014 fractal encoding topology, witness benchmarks",
+        "6-Documentation/docs/distilled/DESI_Menger_Probe_Result.md \u2014 q_void \u2192 Menger sponge mapping",
+        "6-Documentation/docs/distilled/ObserverScale_RegimeGate_VoidScar.md \u2014 F_MK = Bind(MengerVoid, KochScar, \u0394_\u03c6\u03b3\u03bb)",
+        "4-Infrastructure/shim/holographic_carving_probe.py \u2014 Menger-style carving via threshold-band exclusion"
+      ],
+      "gap": "No Lean theorems for D_Koch, D_Menger divergence formula. All conceptual docs."
+    },
+    "scale_observer_operator": {
+      "description": "Scale-aware observer-location operator (You Are Here)",
+      "equations": [
+        "Z(O,x,r) = physics visible to observer O at position x and scale r",
+        "Z(O,x,r1) \u2260 Z(O,x,r2) \u2014 physics at different scales"
+      ],
+      "domain": "foundations",
+      "status": "concept",
+      "coverage": "PARTIAL",
+      "existing_files": [
+        "6-Documentation/docs/distilled/ObserverScale_RegimeGate_VoidScar.md \u2014 observer-scale regime gates",
+        "6-Documentation/docs/s3c_projected_geodesic_resolution_refinement_2026-05-10.md \u2014 folded observer frame as Menger seed"
+      ],
+      "gap": "Z(O,x,r) operator not formalized in Lean. No scale-aware observer type exists."
+    },
+    "hyper_eigenvalue": {
+      "description": "Merged geometry \u2192 single hyper-eigenvalue for regime identification",
+      "equations": [
+        "\u03a8(r) = [\u03a9_M, R_K, D_q, \u039b, \u03b2_0,\u03b2_1,\u03b2_2, P, C, \u03b7, \u03b5]",
+        "H_{O,r} \u03a8(r) = \u03bb_*(O,r) \u03a8(r)"
+      ],
+      "domain": "spectral",
+      "status": "concept",
+      "coverage": "STRONG",
+      "existing_files": [
+        "0-Core-Formalism/lean/Semantics/Semantics/FAMM.lean \u2014 eigenmass computation, fammWriteEigenmass",
+        "0-Core-Formalism/lean/Semantics/Semantics/ThresholdVector.lean \u2014 eigenmode regime switching, Theta_lambda",
+        "4-Infrastructure/shim/boundary_activation_field_probe.py \u2014 HyperEigenTransition receipts",
+        "6-Documentation/docs/research/PCIE_IDLE_CYCLE_SUBSTRATE_SPEC.md \u2014 HyperEigenSpectrum kernel, 11-component BindOperator",
+        "6-Documentation/docs/distilled/BoundaryEigenFire.md \u2014 boundary as weighted eigenmode superposition"
+      ],
+      "gap": "H_{O,r} \u03a8 = \u03bb_* \u03a8 is defined but not a proven Lean eigendecomposition. No actual linear operator."
+    },
+    "boundary_superposition": {
+      "description": "Boundary as encoded superposition surface (wall of fire)",
+      "equations": [
+        "B(x) = \u03a3_i \u03b1_i(x) \u03c6_i(x)",
+        "\u03c6_i \u2208 {\u03c1, \u2207\u03c1, T, \u03c3, \u03ba, \u03b2, \u03b7, \u03b5}"
+      ],
+      "domain": "geometry/field",
+      "status": "concept",
+      "coverage": "STRONG",
+      "existing_files": [
+        "0-Core-Formalism/lean/Semantics/Semantics/HCMMR/Kernels/BoundaryEigenFire.lean \u2014 Lean kernel: ||B_\u2202(x)|| > \u0398_activation",
+        "4-Infrastructure/shim/boundary_activation_field_probe.py \u2014 B(x,r) probe with COMMIT/HOLD/REJECT classification",
+        "6-Documentation/docs/distilled/BoundaryEigenFire.md \u2014 full wall-of-fire spec"
+      ],
+      "gap": "\u03a3_i \u03b1_i \u03c6_i superposition formula not explicitly proven in Lean. Kernel is threshold-gate, not field."
+    },
+    "desi_cosmic_web": {
+      "description": "DESI-scale cosmic web modeled as Menger/Koch/multifractal stack",
+      "equations": [
+        "C_DESI = Bind(\u03a9_M, R_K, D_q, \u039b(r), \u03b2_k(r), P_c, H(z), \u03b5)"
+      ],
+      "domain": "cosmology",
+      "status": "concept",
+      "coverage": "GOOD",
+      "existing_files": [
+        "6-Documentation/docs/distilled/DESI_Menger_Probe_Result.md \u2014 DESI probe with Menger geometry",
+        "4-Infrastructure/shim/bodegaflow_horn_fiber_refinements.md \u2014 16D horn-fiber with weighted distances, sector accessibility",
+        "6-Documentation/docs/distilled/16D_Manifold_Adjustment.md \u2014 trim/expand residual cost rules"
+      ],
+      "gap": "No Lean DESI module. No calibrated \u039bCDM comparison. No observational data binding."
+    },
+    "nanoscroll_16d": {
+      "description": "Archimedean nanoscroll as geometric proxy for 16D state manifold",
+      "equations": [
+        "r(\u03b8) = r0 + (h/2\u03c0)\u03b8,  0 \u2264 \u03b8 \u2264 2\u03c0N",
+        "S_16(\u03b8,z) = [x,y,z, q1..q13] in Q0.16",
+        "Cell16 = 16 channels \u00d7 16 bits = 256 bits = 32 bytes"
+      ],
+      "domain": "materials/computation",
+      "status": "concept",
+      "coverage": "PARTIAL",
+      "existing_files": [
+        "6-Documentation/docs/speculative-materials/RecoveredSessionMaterialConcepts.md \u2014 MXene nanoscroll as 2D\u21921D transport surface",
+        "6-Documentation/docs/speculative-materials/AdaptiveMaterialMathApplicationMap.md \u2014 MXene\u2192PIST crosswalk",
+        "6-Documentation/docs/distilled/Pythagorean_Theorem_and_Beyond.md \u2014 scroll geometry as chiral ladder rails",
+        "6-Documentation/docs/s3c_projected_geodesic_resolution_refinement_2026-05-10.md \u2014 folded 16D interior"
+      ],
+      "gap": "No actual nanoscroll simulation code. No Q0.16 Cell16 implementation. All speculative docs."
+    },
+    "braidshard_eigenwall": {
+      "description": "Vulkan-sharded Q0.16 eigenwall with braid packet routing",
+      "equations": [
+        "S_16^{t+1} = Clamp[LocalUpdate(S_16^t) + BraidRoute(\u0393_t) + BoundaryFire(B_\u2202) - ResidualPenalty(R_t)]",
+        "W_{t+1} = CoverCheck(S_16^{t+1}, H_t)",
+        "Branch only if R_{t+1} \u2260 0"
+      ],
+      "domain": "computation/GPU",
+      "status": "architectural",
+      "coverage": "PARTIAL",
+      "existing_files": [
+        "5-Applications/parquet_compressor/src/shifters/pist.rs \u2014 Rust PIST shifter (has shard-like structure)",
+        "6-Documentation/docs/research/PCIE_IDLE_CYCLE_SUBSTRATE_SPEC.md \u2014 Vulkan compute sharding, sparse binding, timeline semaphores",
+        "0-Core-Formalism/lean/Semantics/Semantics/BraidSerial.lean \u2014 BraidFrame, parallel encoded strands",
+        "0-Core-Formalism/lean/Semantics/Semantics/BraidedFieldPaths.lean \u2014 braid field path routing",
+        "6-Documentation/docs/distilled/Pythagorean_Theorem_and_Beyond.md \u2014 BraidStorm FAMM architecture"
+      ],
+      "gap": "No unified Vulkan shard + braid route integration. Components exist in isolation."
+    },
+    "reuleaux_3circle": {
+      "description": "Compass-and-straightedge 3 equal circles in Reuleaux triangle",
+      "equations": [
+        "r_small = (3\u221a3 - \u221a(3+4\u221a3)) / (6\u221a3 + 2\u221a(3+4\u221a3)) * R",
+        "R = circumradius of equilateral triangle"
+      ],
+      "domain": "geometry",
+      "status": "concept",
+      "coverage": "NONE",
+      "existing_files": [],
+      "gap": "Reuleaux triangle geometry not present anywhere in the Research Stack. Zero files, zero docs."
+    },
+    "gabriel_horn_cosmic": {
+      "description": "Gabriel's Horn spatial model \u2014 finite volume, infinite surface via torsion",
+      "equations": [
+        "V = \u03c0 \u222b_1^\u221e (1/x)\u00b2 dx = \u03c0 (finite)",
+        "A = 2\u03c0 \u222b_1^\u221e (1/x)\u221a(1+1/x\u2074) dx = \u221e (infinite)",
+        "Apparent expansion = torsion widening the infinite surface, not volume increase"
+      ],
+      "domain": "cosmology",
+      "status": "concept",
+      "coverage": "PARTIAL",
+      "existing_files": [
+        "4-Infrastructure/shim/bodegaflow_horn_fiber_refinements.md \u2014 16D horn-fiber, torsion-widening surface, cosmic acceleration without homogeneous expansion",
+        "6-Documentation/docs/distilled/16D_Manifold_Adjustment.md \u2014 trim/expand rules for manifold",
+        "0-Core-Formalism/lean/Semantics/Semantics/TorsionalPIST.lean \u2014 quaternion RG flow in shell space, torsion transport"
+      ],
+      "gap": "Gabriel's Horn finite-volume/infinite-surface theorem not formalized in Lean. Torsion-is-widening claim not proven."
+    },
+    "pi_phi_tau_constants": {
+      "description": "Constant architecture: \u03c0=closure/orbit, \u03c6=randomness/spiral, \u03c4=coupling",
+      "equations": [
+        "\u03c0 = closure / orbit / shell constant",
+        "\u03c6 = randomness / growth / spiral constant",
+        "\u03c4 = time / torsion / coupling constant"
+      ],
+      "domain": "foundations",
+      "status": "concept",
+      "coverage": "MINIMAL",
+      "existing_files": [
+        "6-Documentation/docs/distilled/Pythagorean_Theorem_and_Beyond.md \u2014 references \u03c0 as orbit/closure, \u03c6 as ratio constant",
+        "0-Core-Formalism/lean/Semantics/Semantics/HydrogenicPhiTorsionBraid.lean \u2014 phi-torsion braid kernel"
+      ],
+      "gap": "No formal constant architecture. \u03c0/\u03c6/\u03c4 role definitions not in Lean. All docs-level."
+    },
+    "shadow_fiber_horn": {
+      "description": "All reality as projection-shadow of 16D object (BodegaFlow)",
+      "equations": [
+        "Big Bang = first superposition, NaN relative to current-state model",
+        "Orange \u2260 black hole \u2260 galaxy, but all submit to same underlying laws",
+        "Space not expanding as volume \u2014 torsion widening infinite surface"
+      ],
+      "domain": "foundations/ontology",
+      "status": "thesis",
+      "coverage": "STRONG",
+      "existing_files": [
+        "4-Infrastructure/shim/bodegaflow_horn_fiber_refinements.md \u2014 16D horn-fiber object, sector accessibility, projection model",
+        "6-Documentation/docs/distilled/16D_Manifold_Adjustment.md \u2014 trim/expand manifold rules",
+        "6-Documentation/docs/s3c_projected_geodesic_resolution_refinement_2026-05-10.md \u2014 folded 16D interior, receipted return surface",
+        "6-Documentation/docs/x86_64_rainbow_raccoon_optimizations.md \u2014 16D\u21924D projection/4D\u219216D reconstruction via SVD"
+      ],
+      "gap": "No Lean module for the 16D\u21923D projection operator. SVD approach exists only in optimization docs."
+    },
+    "prime_line_witness_cover": {
+      "description": "Witness-first, residual-only expansion (from prime-line coverage)",
+      "equations": [
+        "Cover \u2192 certify \u2192 branch only where cover fails",
+        "1024-bit coverage bitmasks, popcount, no floating point",
+        "Maintain witness cover. Expand only on awkward residuals."
+      ],
+      "domain": "computation/algorithm",
+      "status": "architectural",
+      "coverage": "PARTIAL",
+      "existing_files": [
+        "0-Core-Formalism/lean/Semantics/Semantics/CompressionMechanicsBridge.lean \u2014 substrate admissibility, defect witness must be admissible",
+        "4-Infrastructure/shim/rrc_equation_classifier_table.csv \u2014 Q_Factor with witness coverage proxy",
+        "4-Infrastructure/shim/torsion_indexed_network_witness_topology_probe.py \u2014 ladder rule with residual expansion",
+        "0-Core-Formalism/lean/Semantics/Semantics/InvariantReceipt/Instances/DeltaPhiGammaKLambda.lean \u2014 R_DPG residual: expansion factor",
+        "6-Documentation/wiki/Concept-Archive.md \u2014 full-sweep Lean witnesses for COUCH values"
+      ],
+      "gap": "No bitmask witness cover implementation. No popcount-based coverage check. Prime-line pattern not integrated."
+    }
+  }
+}

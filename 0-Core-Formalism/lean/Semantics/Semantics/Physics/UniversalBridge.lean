@@ -9,38 +9,45 @@ namespace Semantics.Physics.UniversalBridge
 -- ============================================================================
 
 /-- Reynolds number at laminar exit -/
-def RE_LAMINAR : Int := 2300
+def reLaminar : Int := 2300
 /-- Reynolds number at turbulent entry -/
-def RE_TURBULENT : Int := 4000
-/-- Interval width h = RE_TURBULENT − RE_LAMINAR = 1700 -/
-def H_INTERVAL : Int := 1700
+def reTurbulent : Int := 4000
+/-- Interval width h = reTurbulent − reLaminar = 1700 -/
+def hInterval : Int := 1700
 
 /-- f at laminar exit: round(0.0278 × 65536) = 1822 -/
-def Y0 : Int := 1822
+def y0 : Int := 1822
 /-- f at turbulent entry: round(0.0398 × 65536) = 2608 -/
-def Y1 : Int := 2608
+def y1 : Int := 2608
 
 /-- h·m₀ where m₀ = −1.21e−5: round(1700 × −1.21e−5 × 65536) = −1348 -/
-def H_M0 : Int := -1348
+def hM0 : Int := -1348
 /-- h·m₁ where m₁ = −2.49e−6: round(1700 × −2.49e−6 × 65536) = −277 -/
-def H_M1 : Int := -277
+def hM1 : Int := -277
 
 -- ============================================================================
 -- Q16.16 arithmetic helpers
 -- ============================================================================
 
-private def q16_add (a b : Int) : Int := a + b
+private def q16Add (a b : Int) : Int := a + b
 
-private def q16_sub (a b : Int) : Int := a - b
+private def q16Sub (a b : Int) : Int := a - b
+
+private def hermiteSharedTerms (t : Int) : Int × Int × Int × Int :=
+  let t2 := q16Mul t t
+  let t3 := q16Mul t2 t
+  let term3 := q16Mul (3 * scale) t2
+  let term2 := q16Mul (2 * scale) t3
+  (t2, t3, term3, term2)
 
 -- ============================================================================
 -- Normalized variable t = (Re − 2300) / 1700, as Q16.16
 -- ============================================================================
 
 def normalizedT (re : Int) : Option Int :=
-  if re < RE_LAMINAR then some 0
-  else if re > RE_TURBULENT then some scale
-  else q16Div (re - RE_LAMINAR) H_INTERVAL
+  if re < reLaminar then some 0
+  else if re > reTurbulent then some scale
+  else q16Div (re - reLaminar) hInterval
 
 -- ============================================================================
 -- Hermite basis functions (all operate on Q16.16 t ∈ [0, scale])
@@ -48,30 +55,24 @@ def normalizedT (re : Int) : Option Int :=
 
 /-- Basis function h00(t) = (1 − t)²(1 + 2t) = 1 − 3t² + 2t³ -/
 def h00 (t : Int) : Int :=
-  let t2 := q16Mul t t
-  let t3 := q16Mul t2 t
-  let term3 := q16Mul (3 * scale) t2
-  let term2 := q16Mul (2 * scale) t3
-  q16_sub (q16_add scale term2) term3
+  let (_, _, term3, term2) := hermiteSharedTerms t
+  q16Sub (q16Add scale term2) term3
 
 /-- Basis function h01(t) = t²(3 − 2t) = 3t² − 2t³ -/
 def h01 (t : Int) : Int :=
-  let t2 := q16Mul t t
-  let t3 := q16Mul t2 t
-  let term3 := q16Mul (3 * scale) t2
-  let term2 := q16Mul (2 * scale) t3
-  q16_sub term3 term2
+  let (_, _, term3, term2) := hermiteSharedTerms t
+  q16Sub term3 term2
 
 /-- Basis function h10(t) = (1 − t)²·t -/
 def h10 (t : Int) : Int :=
-  let t1m := q16_sub scale t
+  let t1m := q16Sub scale t
   let t1m2 := q16Mul t1m t1m
   q16Mul t1m2 t
 
 /-- Basis function h11(t) = t²·(1 − t) -/
 def h11 (t : Int) : Int :=
   let t2 := q16Mul t t
-  let t1m := q16_sub scale t
+  let t1m := q16Sub scale t
   q16Mul t2 t1m
 
 -- ============================================================================
@@ -89,11 +90,11 @@ def h11 (t : Int) : Int :=
   Returns the friction factor f as a Q16.16 value at normalized position t.
 -/
 def hermiteSpline (t : Int) : Int :=
-  let h00_y0 := q16Mul (h00 t) Y0
-  let h01_y1 := q16Mul (h01 t) Y1
-  let h10_s0 := q16Mul (h10 t) H_M0
-  let h11_s1 := q16Mul (h11 t) H_M1
-  q16_add (q16_add h00_y0 h01_y1) (q16_sub h10_s0 h11_s1)
+  let h00_y0 := q16Mul (h00 t) y0
+  let h01_y1 := q16Mul (h01 t) y1
+  let h10_s0 := q16Mul (h10 t) hM0
+  let h11_s1 := q16Mul (h11 t) hM1
+  q16Add (q16Add h00_y0 h01_y1) (q16Sub h10_s0 h11_s1)
 
 /--
   Compute the friction factor f at a given Reynolds number.
@@ -104,13 +105,13 @@ def hermiteSpline (t : Int) : Int :=
   Returns `none` for Re = 0 (division by zero in the laminar branch).
 -/
 def frictionFactor (re : Int) : Option Int :=
-  if re < RE_LAMINAR then
+  if re < reLaminar then
     -- Laminar: f = 64/Re  (Hagen-Poiseuille) in Q16.16: (64 * scale) / Re
     -- q16Div multiplies numerator by scale internally, so pass 64
     q16Div 64 re
-  else if re > RE_TURBULENT then
+  else if re > reTurbulent then
     -- Turbulent: constant approximation at Re=4000
-    some Y1
+    some y1
   else
     match normalizedT re with
     | some t => some (hermiteSpline t)
@@ -126,8 +127,8 @@ def intermittency (re : Int) : Option Int :=
   | none => none
   | some t =>
     let ft := hermiteSpline t
-    let num := q16_sub ft Y0
-    let den := q16_sub Y1 Y0
+    let num := q16Sub ft y0
+    let den := q16Sub y1 y0
     q16Div num den
 
 -- ============================================================================
@@ -141,8 +142,8 @@ inductive Regime : Type
   deriving Repr, DecidableEq
 
 def classifyRegime (re : Int) : Regime :=
-  if re < RE_LAMINAR then .laminar
-  else if re > RE_TURBULENT then .turbulent
+  if re < reLaminar then .laminar
+  else if re > reTurbulent then .turbulent
   else .transitional
 
 inductive GateAction : Type
@@ -165,12 +166,12 @@ def controllerGate (re : Int) : GateAction :=
 
 -- Hermite boundary values ------------------------------------------------
 
-/-- The Hermite spline at t=0 equals Y0 (laminar boundary). -/
-theorem hermiteSplineAtZero : hermiteSpline 0 = Y0 := by
+/-- The Hermite spline at t=0 equals y0 (laminar boundary). -/
+theorem hermiteSplineAtZero : hermiteSpline 0 = y0 := by
   native_decide
 
-/-- The Hermite spline at t=scale equals Y1 (turbulent boundary). -/
-theorem hermiteSplineAtOne : hermiteSpline scale = Y1 := by
+/-- The Hermite spline at t=scale equals y1 (turbulent boundary). -/
+theorem hermiteSplineAtOne : hermiteSpline scale = y1 := by
   native_decide
 
 -- Hermite basis function values at t=0 -----------------------------------
@@ -191,22 +192,22 @@ theorem h11AtOne : h11 scale = 0 := by native_decide
 
 /-- `intermittency` returns `some` at the laminar exit. -/
 theorem intermittencyAtLaminarExitSome :
-  (intermittency RE_LAMINAR).isSome := by
+  (intermittency reLaminar).isSome := by
   native_decide
 
 /-- `intermittency` returns 0 at the laminar exit. -/
 theorem intermittencyAtLaminarExit :
-  (intermittency RE_LAMINAR).get! = 0 := by
+  (intermittency reLaminar).get! = 0 := by
   native_decide
 
 /-- `intermittency` returns `some` at the turbulent entry. -/
 theorem intermittencyAtTurbulentEntrySome :
-  (intermittency RE_TURBULENT).isSome := by
+  (intermittency reTurbulent).isSome := by
   native_decide
 
 /-- Intermittency is scale at turbulent entry (fully turbulent). -/
 theorem intermittencyAtTurbulentEntry :
-  (intermittency RE_TURBULENT).get! = scale := by
+  (intermittency reTurbulent).get! = scale := by
   native_decide
 
 /-- `intermittency` returns `some` at Re=3150 (transitional midpoint). -/
@@ -224,20 +225,20 @@ theorem intermittencyMidpointInRange :
 
 /-- `frictionFactor` returns `some` at the laminar exit. -/
 theorem frictionAtLaminarExitSome :
-  (frictionFactor RE_LAMINAR).isSome := by
+  (frictionFactor reLaminar).isSome := by
   native_decide
 
 theorem frictionAtLaminarExit :
-  (frictionFactor RE_LAMINAR).get! = Y0 := by
+  (frictionFactor reLaminar).get! = y0 := by
   native_decide
 
 /-- `frictionFactor` returns `some` at the turbulent entry. -/
 theorem frictionAtTurbulentEntrySome :
-  (frictionFactor RE_TURBULENT).isSome := by
+  (frictionFactor reTurbulent).isSome := by
   native_decide
 
 theorem frictionAtTurbulentEntry :
-  (frictionFactor RE_TURBULENT).get! = Y1 := by
+  (frictionFactor reTurbulent).get! = y1 := by
   native_decide
 
 -- Regime classification --------------------------------------------------
@@ -268,23 +269,23 @@ theorem turbulentGate : controllerGate 5000 = GateAction.patch := by
 -- These #eval! calls serve as build-time receipt outputs.
 -- ============================================================================
 
--- Receipt: Y0 = 0.0278 in Q16.16
-#eval! Y0
--- Receipt: Y1 = 0.0398 in Q16.16
-#eval! Y1
--- Receipt: H(0) = Y0 (laminar boundary match)
+-- Receipt: y0 = 0.0278 in Q16.16
+#eval! y0
+-- Receipt: y1 = 0.0398 in Q16.16
+#eval! y1
+-- Receipt: H(0) = y0 (laminar boundary match)
 #eval! hermiteSpline 0
--- Receipt: H(scale) = Y1 (turbulent boundary match)
+-- Receipt: H(scale) = y1 (turbulent boundary match)
 #eval! hermiteSpline scale
 -- Receipt: γ(2300) = 0 (pure laminar)
-#eval! (intermittency RE_LAMINAR).get!
+#eval! (intermittency reLaminar).get!
 -- Receipt: γ(4000) = scale (pure turbulent)
-#eval! (intermittency RE_TURBULENT).get!
+#eval! (intermittency reTurbulent).get!
 -- Receipt: γ(3150) ∈ (0, scale) (transitional mid-point)
 #eval! (intermittency 3150).get!
--- Receipt: f(2300) = Y0 (regime boundary continuity)
+-- Receipt: f(2300) = y0 (regime boundary continuity)
 #eval! (frictionFactor 2300).get!
--- Receipt: f(4000) = Y1 (regime boundary continuity)
+-- Receipt: f(4000) = y1 (regime boundary continuity)
 #eval! (frictionFactor 4000).get!
 -- Receipt: f(1000) = ⌊64/1000 × 65536⌋ (laminar Hagen-Poiseuille)
 #eval! (frictionFactor 1000).get!

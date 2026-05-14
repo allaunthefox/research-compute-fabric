@@ -10,8 +10,6 @@
   License: Research-Only
 -/
 
-import Std.Tactic
-import Semantics.FixedPoint
 import Semantics.Bind
 import Semantics.DynamicCanal
 import Semantics.LocalDerivative
@@ -223,7 +221,7 @@ def quadrupoleGWPowerLoss (p1 p2 : Particle) : Fix16 :=
 def isRelativisticParticle (p : Particle) : Bool :=
   let vSquared := vecDot' p.velocity p.velocity
   let v := if vSquared.raw == 0 then Fix16.zero else Fix16.sqrt vSquared
-  let threshold := Fix16.mul relativisticThreshold c_const
+  let threshold := Fix16.mul relativisticThreshold cConst
   v.raw > threshold.raw
 
 /-- Detect if any particle in state is relativistic -/
@@ -1421,4 +1419,5 @@ theorem particle_conservation :
   intro state dt forceFn
   simp [velocityVerletStep, Array.size_mapIdx, Array.size_map]
 
+-- All defs in this file are data definitions exercised through theorems in dependent files.
 end Semantics.Physics.NBody

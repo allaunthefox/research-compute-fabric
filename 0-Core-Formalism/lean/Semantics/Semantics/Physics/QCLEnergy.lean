@@ -7,8 +7,6 @@
   Wavenumbers (cm⁻¹) stored as Q16.16.
 -/
 import Semantics.Bind
-import Semantics.FixedPoint
-import Semantics.Physics.Conservation
 
 namespace Semantics.Physics.QCLEnergy
 
@@ -16,10 +14,10 @@ open Semantics Q16_16
 
 -- Physical constants in Q16.16
 -- hc in eV·nm: 1239.8 eV·nm — stored scaled: 1239 * 65536
-def hc_eV_nm : Q16_16 := ⟨1239 * 65536⟩
+def hcEvNm : Q16_16 := ⟨1239 * 65536⟩
 
 -- 1 eV = 65536 in Q16.16
-def eV_one : Q16_16 := one
+def eVOne : Q16_16 := one
 
 -- QCL operating parameters
 structure QCLSpec where
@@ -32,7 +30,7 @@ deriving Repr, Inhabited, DecidableEq
 -- Row 65: E_photon = hc / λ  (eV, for a single wavelength)
 def photonEnergy (lambdaNm : Q16_16) : Q16_16 :=
   if lambdaNm.val == 0 then infinity
-  else div hc_eV_nm lambdaNm
+  else div hcEvNm lambdaNm
 
 -- Row 66: ΔE = E_upper - E_lower = hc/λ_min - hc/λ_max
 def subbandSpacing (spec : QCLSpec) : Q16_16 :=
@@ -112,5 +110,12 @@ def qclPhysicalBind (a b : QCLSpec) (m : Metric) : Bind QCLSpec QCLSpec :=
 -- Verify
 #eval photonEnergy ⟨10 * 65536⟩      -- 10 μm → ~0.124 eV
 #eval cascadeGain { lambdaMin := ⟨9 * 65536⟩, lambdaMax := ⟨11 * 65536⟩, nWells := 50, eElectron := ⟨65536⟩ }
+
+-- #eval witnesses for key constants
+#eval hcEvNm
+#eval subbandSpacing { lambdaMin := ⟨9 * 65536⟩, lambdaMax := ⟨11 * 65536⟩, nWells := 50, eElectron := ⟨65536⟩ }
+#eval alphaThermal
+#eval atmosphericTransmission ⟨32768⟩
+#eval injectionEfficiency one one one
 
 end Semantics.Physics.QCLEnergy

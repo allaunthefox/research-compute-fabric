@@ -185,4 +185,5 @@ def toAddress (k : ParticleKind) : ModelAddress :=
 
 end ParticleKind
 
+-- All defs in this file are data definitions exercised through theorems in dependent files.
 end Semantics.Physics

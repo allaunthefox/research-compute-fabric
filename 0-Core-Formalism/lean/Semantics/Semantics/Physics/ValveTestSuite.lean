@@ -19,22 +19,22 @@ namespace Semantics.Physics.ValveTestSuite
 
 def modelS8 : Int := 52321
 def planckS8 : Int := 54664
-def planckS8_sig : Int := 1049
+def planckS8Sig : Int := 1049
 def desS8 : Int := 50856
-def desS8_sig : Int := 1114
+def desS8Sig : Int := 1114
 def kidsS8 : Int := 49742
-def kidsS8_sig : Int := 1311
+def kidsS8Sig : Int := 1311
 
 -- Model within 3s of all three surveys
-theorem s8Within3SigmaPlanck : absDiff modelS8 planckS8 ≤ 3 * planckS8_sig := by native_decide
-theorem s8Within3SigmaDes     : absDiff modelS8 desS8 ≤ 3 * desS8_sig := by native_decide
-theorem s8Within2SigmaDes     : absDiff modelS8 desS8 ≤ 2 * desS8_sig := by native_decide
-theorem s8Within3SigmaKids   : absDiff modelS8 kidsS8 ≤ 3 * kidsS8_sig := by native_decide
+theorem s8Within3SigmaPlanck : absDiff modelS8 planckS8 ≤ 3 * planckS8Sig := by native_decide
+theorem s8Within3SigmaDes     : absDiff modelS8 desS8 ≤ 3 * desS8Sig := by native_decide
+theorem s8Within2SigmaDes     : absDiff modelS8 desS8 ≤ 2 * desS8Sig := by native_decide
+theorem s8Within3SigmaKids   : absDiff modelS8 kidsS8 ≤ 3 * kidsS8Sig := by native_decide
 
 theorem s8CloserToDes : absDiff modelS8 desS8 < absDiff modelS8 planckS8 := by native_decide
 
 -- Model outside 2s of Planck (meaningful tension with CMB)
-theorem s8Outside2SigmaPlanck : absDiff modelS8 planckS8 > 2 * planckS8_sig := by native_decide
+theorem s8Outside2SigmaPlanck : absDiff modelS8 planckS8 > 2 * planckS8Sig := by native_decide
 
 -- ═════════════════════════════════════════════════════════════════════════════
 -- VALVE 2: BAO distance consistency at DESI DR1 redshifts
@@ -44,20 +44,20 @@ theorem s8Outside2SigmaPlanck : absDiff modelS8 planckS8 > 2 * planckS8_sig := b
 --   z=0.51 is the best-constrained BAO measurement outside Lyα
 -- ═════════════════════════════════════════════════════════════════════════════
 
-def baoDM_model : Int := 869305     -- 13.26 * 65536
-def baoDM_desi  : Int := 871629    -- 13.30 * 65536
-def baoDM_sig   : Int := 16384     -- 0.25 * 65536
+def baoDMModel : Int := 869305     -- 13.26 * 65536
+def baoDMDesi  : Int := 871629    -- 13.30 * 65536
+def baoDMSig   : Int := 16384     -- 0.25 * 65536
 
-def baoDH_model : Int := 1474766   -- 22.50 * 65536
-def baoDH_desi  : Int := 1374973   -- 20.98 * 65536 (correct DESI DR1)
-def baoDH_sig   : Int := 39977     -- 0.61 * 65536
+def baoDHModel : Int := 1474766   -- 22.50 * 65536
+def baoDHDesi  : Int := 1374973   -- 20.98 * 65536 (correct DESI DR1)
+def baoDHSig   : Int := 39977     -- 0.61 * 65536
 
 -- DM at z=0.51 consistent within 1s
-theorem baoDmZ051Within1Sigma : absDiff baoDM_model baoDM_desi ≤ baoDM_sig := by
+theorem baoDmZ051Within1Sigma : absDiff baoDMModel baoDMDesi ≤ baoDMSig := by
   native_decide
 
 -- DH at z=0.51 consistent within 3s
-theorem baoDhZ051Within3Sigma : absDiff baoDH_model baoDH_desi ≤ 3 * baoDH_sig := by
+theorem baoDhZ051Within3Sigma : absDiff baoDHModel baoDHDesi ≤ 3 * baoDHSig := by
   native_decide
 
 -- ═════════════════════════════════════════════════════════════════════════════
@@ -69,7 +69,7 @@ theorem baoDhZ051Within3Sigma : absDiff baoDH_model baoDH_desi ≤ 3 * baoDH_sig
 
 def modelAge : Int := 875561
 def planckAge : Int := 903642
-def planckAge_sig : Int := 1311
+def planckAgeSig : Int := 1311
 
 -- Model age is 0.43 Gyr younger than Planck (~3%)
 -- But well above the globular cluster lower bound (12.5 Gyr)
@@ -87,9 +87,9 @@ theorem ageOlderThanEarth : modelAge > 450000 := by native_decide  -- 6.9 Gyr
 #eval! absDiff modelS8 planckS8
 #eval! absDiff modelS8 desS8
 -- BAO DM at z=0.51
-#eval! absDiff baoDM_model baoDM_desi
+#eval! absDiff baoDMModel baoDMDesi
 -- BAO DH at z=0.51
-#eval! absDiff baoDH_model baoDH_desi
+#eval! absDiff baoDHModel baoDHDesi
 -- Age
 #eval! modelAge
 

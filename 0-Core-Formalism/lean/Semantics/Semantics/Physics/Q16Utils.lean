@@ -13,4 +13,5 @@ def q16Div (a b : Int) : Option Int :=
   else if a ≥ 0 then some ((a * scale) / b)
   else some (-(((-a) * scale) / b))
 
+-- All defs in this file are data definitions exercised through theorems in dependent files.
 end Semantics.Physics.Q16Utils

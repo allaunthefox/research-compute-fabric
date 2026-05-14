@@ -58,20 +58,20 @@ def smoothstep (x : Int) : Int :=
 -- ═════════════════════════════════════════════════════════════════════════════
 
 -- A(0) = 0
-theorem smoothstep_zero : smoothstep 0 = 0 := by
+theorem smoothstepZero : smoothstep 0 = 0 := by
   native_decide
 
 -- A(scale) = 1
-theorem smoothstep_one : smoothstep scale = scale := by
+theorem smoothstepOne : smoothstep scale = scale := by
   native_decide
 
 -- A(scale/2) = scale/2 (smoothstep midpoint is symmetric)
-theorem smoothstep_mid : smoothstep (scale/2) = scale/2 := by
+theorem smoothstepMid : smoothstep (scale/2) = scale/2 := by
   native_decide
 
 -- The smoothstep is monotone increasing
 -- Verified: A(0) < A(scale/4) < A(scale/2) < A(3*scale/4) < A(scale)
-theorem smoothstep_monotonic :
+theorem smoothstepMonotonic :
   smoothstep 0 < smoothstep (scale/4) ∧
   smoothstep (scale/4) < smoothstep (scale/2) ∧
   smoothstep (scale/2) < smoothstep (3*scale/4) ∧

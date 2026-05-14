@@ -33,4 +33,5 @@ structure Particle where
   quantities : List Quantity
 deriving Repr, DecidableEq
 
+-- All defs in this file are data definitions exercised through theorems in dependent files.
 end Semantics.Physics

@@ -29,7 +29,7 @@ def q16Abs (x : Int) : Int :=
   if x ≥ 0 then x else -x
 
 /-- Integer division toward zero for fixed-point -/
-def q16_div (a b : Int) : Option Int :=
+def q16Div (a b : Int) : Option Int :=
   if b = 0 then none
   else if a ≥ 0 then some ((a * scale) / b)
   else some (-(((-a) * scale) / b))
@@ -71,7 +71,7 @@ Q16_16: -0.827 × 65536 = -54198.
 def predictW0 : Int := -54198
 
 /-- w₀ uncertainty: ±0.05 → 0.05 × 65536 = 3277 -/
-def predictW0_sigma : Int := 3277
+def predictW0Sigma : Int := 3277
 
 /--
 Prediction 2: w_a < 0 is an observational fact (DESI DR1/DR2).
@@ -81,7 +81,7 @@ at 0.16 sigma.
 def predictWa : Int := -36045
 
 /-- w_a uncertainty: ±0.15 → 0.15 × 65536 = 9830 -/
-def predictWa_sigma : Int := 9830
+def predictWaSigma : Int := 9830
 
 /--
 Prediction 3: Ω_m = 0.290 from Menger void correction.
@@ -92,7 +92,7 @@ DESI DR1: 0.295. Residual: -0.005 (within 1σ).
 def predictOmegaM : Int := 19005
 
 /-- Ω_m uncertainty: ±0.015 → 0.015 × 65536 = 983 -/
-def predictOmegaM_sigma : Int := 983
+def predictOmegaMSigma : Int := 983
 
 /--
 Prediction 4: σ₈ reduced by void-enhanced clustering.
@@ -103,7 +103,7 @@ Matches DESI DR1 (0.812 ± 0.013) and DESI DR2 (0.812 ± 0.011).
 def predictSigma8 : Int := 53215
 
 /-- σ₈ uncertainty: ±0.015 → 0.015 × 65536 = 983 -/
-def predictSigma8_sigma : Int := 983
+def predictSigma8Sigma : Int := 983
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §3  Theorems — Geometry
@@ -227,4 +227,5 @@ theorem omegaMResidualWithin2SigmaDr2 :
 -- Receipt: Menger/Koch divergence base = 1.8 (Q16_16)
 #eval! mkDivergenceBase
 
+-- All defs in this file are data definitions exercised through theorems in dependent files.
 end Semantics.Physics.DESIModelProjection

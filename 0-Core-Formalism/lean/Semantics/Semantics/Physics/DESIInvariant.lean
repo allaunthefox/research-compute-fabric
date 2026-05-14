@@ -28,14 +28,14 @@ open Semantics.Physics.Q16Utils
 namespace Semantics.Physics.DESIInvariant
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- §1  BAO Sound Horizon (raw Int, units: Mpc)
+-- §1  BAO Sound Horizon (raw Int, units: Mpc × 100 for precision)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- r_d = 147.09 Mpc (DESI DR1) -/
-def rdDr1 : Int := 147
+/-- r_d = 147.09 Mpc (DESI DR1), stored as 14709 (×100) -/
+def rdDr1 : Int := 14709
 
-/-- r_d = 147.18 Mpc (DESI DR2) -/
-def rdDr2 : Int := 147
+/-- r_d = 147.18 Mpc (DESI DR2), stored as 14718 (×100) -/
+def rdDr2 : Int := 14718
 
 /-- r_d uncertainty, Q16_16: 0.26 × 65536 = 17039 -/
 def rdDr2Sigma : Int := 17039
@@ -125,7 +125,7 @@ structure DESIObservation where
   h0 : Int
   omegaM : Int
   sigma8 : Int
-  rD : Int
+  rd : Int
   w0_sigma : Int
   wa_sigma : Int
   h0_sigma : Int
@@ -143,7 +143,7 @@ def desiDR1 : DESIObservation :=
   , h0            := h0Dr1
   , omegaM        := omegaMDr1
   , sigma8        := 53215
-  , rD            := rdDr1
+  , rd            := rdDr1
   , w0_sigma      := 4129
   , wa_sigma      := 19005
   , h0_sigma      := 50
@@ -161,7 +161,7 @@ def desiDR2 : DESIObservation :=
   , h0            := h0Dr2
   , omegaM        := omegaMDr2
   , sigma8        := sigma8Dr2
-  , rD            := rdDr2
+  , rd            := rdDr2
   , w0_sigma      := w0Dr2Sigma
   , wa_sigma      := waDr2Sigma
   , h0_sigma      := h0Dr2Sigma

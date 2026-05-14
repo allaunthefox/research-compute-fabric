@@ -124,6 +124,9 @@ def sigma8_DR2 : Int := 53215
 /-- σ₈ uncertainty (DR2), Q16_16: ±0.011 × 65536 = 721 -/
 def sigma8_DR2_sigma : Int := 721
 
+-- Helper: absolute difference
+def absDiff (a b : Int) : Int := if a ≥ b then a - b else b - a
+
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §6  Observation Record
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -204,20 +207,16 @@ theorem w0_above_LCDM : w0_DR2 > w0_LCDM := by
 theorem wa_below_LCDM : wa_DR2 < wa_LCDM := by
   native_decide
 
-/-- w₀ is within 3σ of the reported central value -/
-theorem w0_in_3sigma : w0_DR1 - 3*4129 ≤ w0_DR1 ∧ w0_DR1 ≤ w0_DR1 + 3*4129 := by
+/-- w₀ DR2 is consistent with DR1 within 1σ -/
+theorem w0_dr1_dr2_consistent : absDiff w0_DR1 w0_DR2 ≤ w0_DR2_sigma := by
   native_decide
 
-/-- w_a is within 3σ of the reported central value -/
-theorem wa_in_3sigma : wa_DR1 - 3*19005 ≤ wa_DR1 ∧ wa_DR1 ≤ wa_DR1 + 3*19005 := by
+/-- w_a DR2 is consistent with DR1 within 1σ (larger DR2 uncertainty) -/
+theorem wa_dr1_dr2_consistent : absDiff wa_DR1 wa_DR2 ≤ wa_DR2_sigma := by
   native_decide
 
-/-- Ω_m is within 3σ of the reported central value -/
-theorem omegam_in_3sigma : OmegaM_DR1 - 3*524 ≤ OmegaM_DR1 ∧ OmegaM_DR1 ≤ OmegaM_DR1 + 3*524 := by
-  native_decide
-
-/-- σ₈ is within 3σ of the reported central value -/
-theorem sigma8_in_3sigma : sigma8_DR2 - 3*721 ≤ sigma8_DR2 ∧ sigma8_DR2 ≤ sigma8_DR2 + 3*721 := by
+/-- Ω_m DR1 and DR2 are consistent within 1σ -/
+theorem omegam_dr1_dr2_consistent : absDiff OmegaM_DR1 OmegaM_DR2 ≤ OmegaM_DR2_sigma := by
   native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════════

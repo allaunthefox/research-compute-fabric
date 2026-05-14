@@ -257,6 +257,11 @@ theorem intermittency_at_turbulent_entry :
   (intermittency RE_TURBULENT).get! = SCALE := by
   native_decide
 
+/-- `intermittency` returns `some` at Re=3150 (transitional midpoint). -/
+theorem intermittency_midpoint_some :
+  (intermittency 3150).isSome := by
+  native_decide
+
 /-- Intermittency at the midpoint (Re=3150) is strictly between 0 and SCALE. -/
 theorem intermittency_midpoint_in_range :
   let v := (intermittency 3150).get!

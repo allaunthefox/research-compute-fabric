@@ -34,8 +34,13 @@ def E_wall : Int := 448  -- ×10^6 GeV
 -- The torsion model predicts: delta_c / c < (E_gamma / E_wall)^2 < 1e-35
 -- This is 20 orders of magnitude below the current bound.
 
-theorem torsion_dispersion_negligible : (1 : Int) > 0 := by
-  native_decide  -- placeholder: the effect is computationally negligible
+-- NOTE: no theorem here. The torsion-induced photon dispersion is
+-- suppressed by (E_gamma / E_wall)^2 < 10^-35 at all lab energies.
+-- This is 20 orders of magnitude below the HOM interferometry bound
+-- (delta_c/c < 10^-15). Any Lean theorem proving this would require
+-- computing 10^-35 in Q16_16, which underflows to 0. The physics is
+-- sound but unverifiable by finite arithmetic — the null result is
+-- guaranteed by scale suppression, not by theorem.
 
 -- Vacuum birefringence bound from cavity QED:
 -- delta_n < 1e-20 (vacuum is isotropic for all polarizations)

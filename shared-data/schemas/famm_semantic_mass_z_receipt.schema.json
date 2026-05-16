@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FAMM Semantic Mass Z Receipt",
+  "type": "object",
+  "required": [
+    "receipt_type",
+    "schema_version",
+    "basis_layer",
+    "ar_order",
+    "coefficients",
+    "poles",
+    "residual",
+    "route_decision",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "receipt_type": {
+      "const": "famm_semantic_mass_z_receipt"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "basis_layer": {
+      "const": "MASS_Z_ACCEL"
+    },
+    "ar_order": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "sequence_len": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "coefficients": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "poles": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "residual": {
+      "type": "object"
+    },
+    "route_decision": {
+      "type": "object"
+    },
+    "no_drift_boundary": {
+      "type": "string"
+    },
+    "receipt_sha256": {
+      "type": "string"
+    }
+  }
+}

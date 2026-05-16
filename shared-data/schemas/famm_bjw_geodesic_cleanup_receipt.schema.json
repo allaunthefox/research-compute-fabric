@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FAMM Builder-Judge-Warden Geodesic Cleanup Receipt",
+  "type": "object",
+  "required": [
+    "receipt_type",
+    "schema_version",
+    "source_object_hash",
+    "accepted_geodesic",
+    "rejected_moves",
+    "final_object_hash",
+    "exact_receipt",
+    "receipt_hash"
+  ],
+  "properties": {
+    "receipt_type": {
+      "const": "famm_bjw_geodesic_cleanup_receipt"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "source_object_hash": {
+      "type": "string"
+    },
+    "source_description": {
+      "type": "string"
+    },
+    "accepted_geodesic": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "rejected_moves": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "final_object_hash": {
+      "type": "string"
+    },
+    "exact_receipt": {
+      "type": "object"
+    },
+    "cleanup_metrics": {
+      "type": "object"
+    },
+    "no_drift_boundary": {
+      "type": "string"
+    },
+    "receipt_hash": {
+      "type": "string"
+    }
+  }
+}

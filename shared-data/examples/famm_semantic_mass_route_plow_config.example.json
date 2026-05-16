@@ -1,0 +1,44 @@
+{
+  "lane_weights": {
+    "u_norm": 0.18,
+    "v_norm": 0.18,
+    "pressure_norm": 0.14,
+    "vorticity_norm": 0.16,
+    "divergence_residual": 0.2,
+    "pde_residual": 0.24,
+    "boundary_residual": 0.2,
+    "invariant_pressure": 0.22,
+    "scar": 0.18,
+    "closure_cost": 0.12
+  },
+  "semantic_mass_samples": [
+    {"k": 0, "lanes": {"u_norm": 0.1, "v_norm": 0.1, "pressure_norm": 0.2, "vorticity_norm": 0.05, "divergence_residual": 0.3, "pde_residual": 0.4, "boundary_residual": 0.2, "invariant_pressure": 0.3, "scar": 0.1, "closure_cost": 0.2}},
+    {"k": 1, "lanes": {"u_norm": 0.18, "v_norm": 0.14, "pressure_norm": 0.25, "vorticity_norm": 0.08, "divergence_residual": 0.25, "pde_residual": 0.34, "boundary_residual": 0.18, "invariant_pressure": 0.35, "scar": 0.12, "closure_cost": 0.18}},
+    {"k": 2, "lanes": {"u_norm": 0.26, "v_norm": 0.19, "pressure_norm": 0.29, "vorticity_norm": 0.12, "divergence_residual": 0.21, "pde_residual": 0.29, "boundary_residual": 0.15, "invariant_pressure": 0.42, "scar": 0.13, "closure_cost": 0.15}},
+    {"k": 3, "lanes": {"u_norm": 0.32, "v_norm": 0.24, "pressure_norm": 0.32, "vorticity_norm": 0.16, "divergence_residual": 0.18, "pde_residual": 0.24, "boundary_residual": 0.13, "invariant_pressure": 0.48, "scar": 0.12, "closure_cost": 0.13}},
+    {"k": 4, "lanes": {"u_norm": 0.37, "v_norm": 0.28, "pressure_norm": 0.35, "vorticity_norm": 0.2, "divergence_residual": 0.15, "pde_residual": 0.2, "boundary_residual": 0.11, "invariant_pressure": 0.53, "scar": 0.1, "closure_cost": 0.11}},
+    {"k": 5, "lanes": {"u_norm": 0.41, "v_norm": 0.31, "pressure_norm": 0.37, "vorticity_norm": 0.23, "divergence_residual": 0.13, "pde_residual": 0.17, "boundary_residual": 0.1, "invariant_pressure": 0.56, "scar": 0.09, "closure_cost": 0.1}},
+    {"k": 6, "lanes": {"u_norm": 0.44, "v_norm": 0.33, "pressure_norm": 0.38, "vorticity_norm": 0.25, "divergence_residual": 0.12, "pde_residual": 0.15, "boundary_residual": 0.09, "invariant_pressure": 0.58, "scar": 0.09, "closure_cost": 0.09}}
+  ],
+  "z_domain": {
+    "ar_order": 3,
+    "thresholds": {
+      "stable_radius": 1.0,
+      "near_unit_tol": 0.05,
+      "residual_rmse_max": 0.03
+    }
+  },
+  "ranking": {
+    "alpha_distance": 0.9,
+    "beta_scar": 1.2,
+    "gamma_invariant": 1.4,
+    "eta_cost": 0.8,
+    "mass_gain": 0.6
+  },
+  "route_candidates": [
+    {"route_id": "diffusion_to_burgers", "distance": 0.25, "scar": 0.1, "invariant_overlap": 0.8, "cost": 0.35, "prior": 0.1},
+    {"route_id": "burgers_to_poisson_pressure", "distance": 0.35, "scar": 0.18, "invariant_overlap": 0.72, "cost": 0.45, "prior": 0.05},
+    {"route_id": "cavity_flow_boundary_closure", "distance": 0.55, "scar": 0.35, "invariant_overlap": 0.65, "cost": 0.55, "prior": 0.02},
+    {"route_id": "navier_stokes_full_step", "distance": 0.75, "scar": 0.42, "invariant_overlap": 0.85, "cost": 0.9, "prior": 0.0}
+  ]
+}

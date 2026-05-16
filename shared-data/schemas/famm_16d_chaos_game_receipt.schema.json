@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FAMM 16D Chaos Game Field Shrinker Receipt",
+  "type": "object",
+  "required": [
+    "receipt_type",
+    "schema_version",
+    "basis_layer",
+    "seed",
+    "steps",
+    "burn_in",
+    "projection_axes",
+    "anchor_count",
+    "selected_counts",
+    "orbit_sha256",
+    "projection_sha256",
+    "final_state",
+    "final_projection",
+    "route_recommendations",
+    "no_drift_boundary",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "receipt_type": {
+      "const": "famm_16d_chaos_game_field_shrinker_receipt"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "basis_layer": {
+      "const": "16D_CHAOS_GAME_FIELD_SHRINKER"
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "steps": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "burn_in": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "projection_axes": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 15
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "anchor_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "selected_counts": {
+      "type": "object"
+    },
+    "transition_counts": {
+      "type": "object"
+    },
+    "orbit_sha256": {
+      "type": "string"
+    },
+    "projection_sha256": {
+      "type": "string"
+    },
+    "final_state": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 16,
+      "maxItems": 16
+    },
+    "final_projection": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "route_recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "no_drift_boundary": {
+      "type": "string"
+    },
+    "receipt_sha256": {
+      "type": "string"
+    }
+  }
+}

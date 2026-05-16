@@ -1,0 +1,21 @@
+{
+  "anchor_pack": "logogram_chirality_route_gate",
+  "basis_layer": "LOGOGRAM_CHIRALITY_ROUTE_GATE",
+  "version": "0.1.0",
+  "anchors": [
+    {
+      "id": "LOGOGRAM_CHIRALITY_ROUTE_GATE",
+      "vector_axes": {
+        "2_semantic_mass": 0.52,
+        "6_chirality": 0.96,
+        "10_surface_geometry": 0.68,
+        "11_scar": 0.18,
+        "13_invariant": 0.82,
+        "14_receipt": 0.88,
+        "15_projection_display": 0.44
+      },
+      "handoff_gate": "chirality_compatibility_receipt",
+      "notes": "Promote logogram chirality from metadata to active route coordinate only when orientation changes admissibility, replay, or NUVMAP merge safety."
+    }
+  ]
+}

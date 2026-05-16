@@ -1,0 +1,51 @@
+{
+  "anchor_pack": "sidon_famm_map",
+  "basis_layer": "SIDON_FAMM_MAP",
+  "version": "0.1.0",
+  "anchors": [
+    {
+      "id": "SIDON_PAIR_SUM_GATE",
+      "vector_axes": {
+        "1_additive_address": 0.98,
+        "2_semantic_mass": 0.6,
+        "11_scar": 0.08,
+        "13_invariant": 0.95,
+        "14_receipt": 0.96
+      },
+      "handoff_gate": "pair_sum_injectivity_receipt"
+    },
+    {
+      "id": "SIDON_COLLISION_COARSENER",
+      "vector_axes": {
+        "1_additive_address": 0.82,
+        "6_closure": 0.66,
+        "7_residual_seal": 0.7,
+        "11_scar": 0.94,
+        "14_receipt": 0.8
+      },
+      "handoff_gate": "collision_scar_coarsening_receipt"
+    },
+    {
+      "id": "TWO_LAYER_KINETIC_SIDON_FLOW",
+      "vector_axes": {
+        "2_semantic_mass": 0.72,
+        "8_cfd_residual": 0.52,
+        "9_oscillation": 0.74,
+        "13_invariant": 0.78,
+        "14_receipt": 0.74
+      },
+      "handoff_gate": "kinetic_to_sidon_flow_receipt"
+    },
+    {
+      "id": "QUATERNION_PHASE_SIDON_FIELD",
+      "vector_axes": {
+        "3_z_pole": 0.58,
+        "6_chirality": 0.78,
+        "10_surface_geometry": 0.7,
+        "13_invariant": 0.82,
+        "14_receipt": 0.76
+      },
+      "handoff_gate": "phase_signature_anti_alias_receipt"
+    }
+  ]
+}

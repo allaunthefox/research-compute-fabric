@@ -1,0 +1,11 @@
+{
+  "set": [1, 2, 5, 10, 16, 23],
+  "candidate": 34,
+  "capacity_N": 40,
+  "weights": {
+    "collision": 1.0,
+    "scar": 1.5,
+    "capacity_pressure": 0.2,
+    "residual": 1.0
+  }
+}

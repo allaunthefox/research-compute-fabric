@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FAMM Hessian Curvature Receipt",
+  "type": "object",
+  "required": [
+    "receipt_type",
+    "schema_version",
+    "basis_layer",
+    "operator",
+    "lanczos",
+    "route_decision",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "receipt_type": {
+      "const": "famm_hessian_curvature_receipt"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "basis_layer": {
+      "const": "HESSIAN_EIGEN"
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "operator": {
+      "type": "object",
+      "required": [
+        "kind",
+        "size",
+        "dtype",
+        "device"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "dtype": {
+          "type": "string"
+        },
+        "device": {
+          "type": "string"
+        }
+      }
+    },
+    "lanczos": {
+      "type": "object",
+      "required": [
+        "k",
+        "iterations",
+        "eigenvalues",
+        "ritz_residuals",
+        "converged"
+      ],
+      "properties": {
+        "k": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "iterations": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "eigenvalues": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "ritz_residuals": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "converged": {
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "trace": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "estimate": {
+              "type": "number"
+            },
+            "stderr": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "samples_sha256": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "spectral_density": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "sigma": {
+              "type": "number"
+            },
+            "grid_sha256": {
+              "type": "string"
+            },
+            "density_sha256": {
+              "type": "string"
+            },
+            "raw_eigenvalues_sha256": {
+              "type": "string"
+            },
+            "raw_weights_sha256": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "route_decision": {
+      "type": "object"
+    },
+    "no_drift_boundary": {
+      "type": "string"
+    },
+    "receipt_sha256": {
+      "type": "string"
+    }
+  }
+}

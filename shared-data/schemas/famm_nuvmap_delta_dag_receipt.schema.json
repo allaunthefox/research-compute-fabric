@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FAMM NUVMAP Delta-DAG Search Receipt",
+  "type": "object",
+  "required": [
+    "receipt_type",
+    "schema_version",
+    "problem_type",
+    "problem_hash",
+    "route_rule_hash",
+    "projection_level",
+    "solved",
+    "metrics",
+    "compression_estimate",
+    "dag",
+    "delta_stream_sha256",
+    "no_drift_boundary",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "receipt_type": {
+      "const": "famm_nuvmap_delta_dag_search_receipt"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "problem_type": {
+      "type": "string"
+    },
+    "problem_hash": {
+      "type": "string"
+    },
+    "route_rule_hash": {
+      "type": "string"
+    },
+    "projection_level": {
+      "type": "string"
+    },
+    "n": {
+      "type": "integer"
+    },
+    "k": {
+      "type": "integer"
+    },
+    "edge_count": {
+      "type": "integer"
+    },
+    "solved": {
+      "type": "boolean"
+    },
+    "solution": {},
+    "exact_receipt": {
+      "type": "object"
+    },
+    "metrics": {
+      "type": "object"
+    },
+    "compression_estimate": {
+      "type": "object"
+    },
+    "dag": {
+      "type": "object"
+    },
+    "delta_stream_sha256": {
+      "type": "string"
+    },
+    "no_drift_boundary": {
+      "type": "string"
+    },
+    "receipt_sha256": {
+      "type": "string"
+    }
+  }
+}

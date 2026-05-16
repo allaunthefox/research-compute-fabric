@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FAMM Sidon Map Receipt",
+  "type": "object",
+  "required": [
+    "receipt_type",
+    "schema_version",
+    "set",
+    "is_sidon",
+    "pair_sums",
+    "collisions",
+    "famm",
+    "receipt_hash"
+  ],
+  "properties": {
+    "receipt_type": {
+      "const": "famm_sidon_map_receipt"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "set": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "is_sidon": {
+      "type": "boolean"
+    },
+    "pair_sums": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "collisions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "famm": {
+      "type": "object"
+    },
+    "receipt_hash": {
+      "type": "string"
+    }
+  }
+}

@@ -42,6 +42,11 @@ in
 
   systemd.services.caddy.serviceConfig.EnvironmentFile = [ "/etc/caddy/porkbun.env" ];
 
+  # Stateful storage initialization for Open WebUI
+  systemd.tmpfiles.rules = [
+    "d /var/lib/open-webui 0700 root root -"
+  ];
+
   services.caddy = {
     enable = true;
     logFormat = "level INFO";
@@ -66,6 +71,16 @@ in
           }
         }
         reverse_proxy http://100.101.198.87:11434
+      }
+
+      chat.researchstack.info {
+        tls {
+          dns porkbun {
+            api_key {$PORKBUN_API_KEY}
+            api_secret_key {$PORKBUN_SECRET_KEY}
+          }
+        }
+        reverse_proxy http://127.0.0.1:8080
       }
 
       cupfox.tail4e7094.ts.net {
@@ -99,6 +114,24 @@ in
           "--dns" "100.101.247.127"
           "--dns" "1.1.1.1"
           "--dns" "8.8.8.8"
+        ];
+      };
+
+      open-webui = {
+        image = "ghcr.io/open-webui/open-webui:main";
+        autoStart = true;
+        ports = [ "127.0.0.1:8080:8080" ];
+        environment = {
+          OLLAMA_BASE_URL = "http://100.101.198.87:11434";
+          WEBUI_AUTH = "true";
+        };
+        extraOptions = [
+          "--dns" "100.101.247.127"
+          "--dns" "1.1.1.1"
+          "--dns" "8.8.8.8"
+        ];
+        volumes = [
+          "/var/lib/open-webui:/app/backend/data"
         ];
       };
     };
@@ -144,6 +177,26 @@ in
     };
   };
 
+  systemd.services.gather-metrics = {
+    description = "Gather system metrics across all nodes";
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+    path = with pkgs; [ curl jq procps openssh iputils gawk gnused ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "/usr/local/bin/gather-metrics.sh";
+    };
+  };
+
+  systemd.timers.gather-metrics = {
+    description = "Gather metrics every minute";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "*:0/1";
+      Persistent = true;
+    };
+  };
+
   environment.systemPackages = with pkgs; [
     curl
     dig
@@ -153,6 +206,7 @@ in
     jq
     podman-compose
     podman-tui
+    rclone
     ripgrep
     vim
     wget

@@ -206,12 +206,12 @@ Those that do (g₀, π, φ-1, normalised values) get a Q16.16 representation he
 Constants outside the Q16_16 range are intentionally omitted.
 -/
 
-/-- g₀ = 9.80665 m/s² in Q16.16 (raw int = 642729). -/
-def standardGravity_Q1616_raw : Nat := 642729  -- round(9.80665 × 65536)
+/-- g₀ = 9.80665 m/s² in Q16.16 (raw int = 642689). -/
+def standardGravity_Q1616_raw : Nat := 642689  -- round(9.80665 × 65536)
 
 #eval standardGravity_Q1616_raw
 
-example : standardGravity_Q1616_raw = 642729 := by decide
+example : standardGravity_Q1616_raw = 642689 := by decide
 
 /-- π in Q16.16 (raw int = 205887). -/
 def pi_Q1616_raw : Nat := 205887  -- round(3.14159265358979… × 65536)

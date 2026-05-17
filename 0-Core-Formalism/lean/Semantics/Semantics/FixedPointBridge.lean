@@ -41,88 +41,98 @@ def q16ToQ0 (x : Q16_16) : Q0_16 :=
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-- Round-trip conversion: Q0_16 → Q16_16 → Q0_16 preserves value for normalized range.
-    This theorem states that converting a Q0_16 value to Q16_16 and back
-    yields the original value (within quantization error tolerance). -/
+    TODO(lean-port): round-trip equality proof requires formalizing Float-based
+    quantization error bounds; the conversion path uses Float intermediates
+    that prevent exact equality proofs with current automation. The quantization
+    error is bounded by 2^-15 in practice. -/
 theorem roundTripQ0 (x : Q0_16) :
-    let q16 := q0ToQ16 x
-    let q0' := q16ToQ0 q16
-    -- The round-trip preserves the value modulo quantization error
-    -- For exact equality, we need to account for the scaling/rounding
-    -- This is an axiom for now; the quantization error is bounded by 2^-15
-    True := by trivial
+    q16ToQ0 (q0ToQ16 x) = x := by
+  sorry
 
 /-- Round-trip conversion: Q16_16 → Q0_16 → Q16_16 preserves value for normalized range.
-    This theorem states that for Q16_16 values in [-1, 1], converting to Q0_16
-    and back yields the original value (within quantization error tolerance). -/
+    TODO(lean-port): round-trip equality proof for normalized Q16_16 values
+    requires Float-based quantization error bounds; the Float path through
+    q16ToQ0 and q0ToQ16 prevents exact equality with current automation. -/
 theorem roundTripQ16 (x : Q16_16) (h : x.val.toNat ≤ 0x00010000 ∨ x.val.toNat ≥ 0xFFFF0000) :
-    let q0 := q16ToQ0 x
-    let q16' := q0ToQ16 q0
-    -- The round-trip preserves the value for normalized inputs (modulo quantization)
-    True := by trivial
+    q0ToQ16 (q16ToQ0 x) = x := by
+  sorry
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §3  Monotonicity Theorems (Preserve Order)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Conversion preserves order: if a < b in Q0_16, then q0ToQ16 a < q0ToQ16 b.
-    This is critical for proofs that rely on monotonicity. -/
-theorem q0ToQ16_mono (_a _b : Q0_16) (_h : Q0_16.lt _a _b) :
-  True := by
-  trivial
+/-- Conversion preserves order: if a.val < b.val in Q0_16, then q0ToQ16 a < q0ToQ16 b.
+    TODO(lean-port): monotonicity requires proving that the Float-based conversion
+    q0ToQ16 preserves the ordering given by raw UInt16 values; needs Float
+    ordering reasoning not currently available in the automation stack. -/
+theorem q0ToQ16_mono (a b : Q0_16) (h : a.val < b.val) :
+    (q0ToQ16 a).toInt < (q0ToQ16 b).toInt := by
+  sorry
 
 /-- Conversion preserves order for normalized values: if a < b in Q16_16 (normalized),
-    then q16ToQ0 a < q16ToQ0 b. -/
-theorem q16ToQ0_mono (_a _b : Q16_16)
-    (_ha : _a.val.toNat ≤ 0x00010000 ∨ _a.val.toNat ≥ 0xFFFF0000)
-    (_hb : _b.val.toNat ≤ 0x00010000 ∨ _b.val.toNat ≥ 0xFFFF0000)
-    (_h : _a.val < _b.val) :
-  True := by
-  trivial
+    then q16ToQ0 a < q16ToQ0 b.
+    TODO(lean-port): monotonicity for normalized Q16_16 requires proof that
+    the Float-based q16ToQ0 preserves signed ordering on the normalized subset;
+    the Float path through ofFloat prevents direct automation. -/
+theorem q16ToQ0_mono (a b : Q16_16)
+    (ha : a.val.toNat ≤ 0x00010000 ∨ a.val.toNat ≥ 0xFFFF0000)
+    (hb : b.val.toNat ≤ 0x00010000 ∨ b.val.toNat ≥ 0xFFFF0000)
+    (h : a.toInt < b.toInt) :
+    (q16ToQ0 a).val < (q16ToQ0 b).val := by
+  sorry
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §4  Arithmetic Preservation Theorems
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-- Addition commutes with conversion: q0ToQ16 (a + b) ≈ q0ToQ16 a + q0ToQ16 b.
-    The approximation accounts for quantization error in the conversion. -/
+    TODO(lean-port): additive homomorphism requires Float-based quantization
+    analysis; the Q16_16.add uses saturating arithmetic that may not match
+    the naive addition after Float-based conversions. -/
 theorem addCommutesWithConversion (a b : Q0_16) :
-    let lhs := q0ToQ16 (Q0_16.add a b)
-    let rhs := Q16_16.add (q0ToQ16 a) (q0ToQ16 b)
-    -- The values are equal modulo quantization error
-    -- For exact equality in practice, the quantization error is bounded
-    True := by trivial
+    q0ToQ16 (Q0_16.add a b) = Q16_16.add (q0ToQ16 a) (q0ToQ16 b) := by
+  sorry
 
 /-- Multiplication scales appropriately: q0ToQ16 (a * b) ≈ (q0ToQ16 a * q0ToQ16 b) / 65536.
-    This accounts for the different scaling factors in Q0_16 and Q16_16 multiplication. -/
+    TODO(lean-port): multiplicative scaling relationship requires Float-based
+    analysis of the differing normalization factors between Q0_16 (shift 15)
+    and Q16_16 (shift 16). -/
 theorem mulScalesWithConversion (a b : Q0_16) :
-    let lhs := q0ToQ16 (Q0_16.mul a b)
-    let rhs := Q16_16.div (Q16_16.mul (q0ToQ16 a) (q0ToQ16 b)) Q16_16.one
-    -- The values are equal modulo scaling factor adjustment
-    True := by trivial
+    q0ToQ16 (Q0_16.mul a b) = Q16_16.div (Q16_16.mul (q0ToQ16 a) (q0ToQ16 b)) Q16_16.one := by
+  sorry
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §5  Helper Lemmas for Q0_16 (Analogous to Q16_16 Helper Lemmas)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Q0_16 zero is preserved by conversion. -/
+/-- Q0_16 zero maps to Q16_16 zero via Float-based conversion.
+    TODO(lean-port): Float rounding may introduce sub-ULP error; an exact proof
+    would require proving that ofFloat 0.0 = zero for both types. -/
 theorem q0ToQ16_zero :
-  True := by
-  trivial
+    q0ToQ16 Q0_16.zero = Q16_16.zero := by
+  sorry
 
-/-- Q0_16 one is preserved by conversion (modulo scaling). -/
+/-- Q0_16 one maps to Q16_16 one via Float-based conversion.
+    TODO(lean-port): Q0_16.one = 0x7FFF (≈0.999985) which differs from
+    Q16_16.one = 0x00010000 (exactly 1.0); the conversion preserves the
+    mathematical value but not the literal bit pattern. -/
 theorem q0ToQ16_one :
-  True := by
-  trivial
+    q0ToQ16 Q0_16.one = Q16_16.one := by
+  sorry
 
-/-- Q0_16 negation commutes with conversion. -/
-theorem q0ToQ16_neg (_x : Q0_16) :
-  True := by
-  trivial
+/-- Conversion commutes with negation: q0ToQ16 (-x) = -(q0ToQ16 x).
+    TODO(lean-port): requires Float-based proof that scaling and negation
+    commute through the ofFloat/toFloat pipeline. -/
+theorem q0ToQ16_neg (x : Q0_16) :
+    q0ToQ16 (-x) = -(q0ToQ16 x) := by
+  sorry
 
-/-- Q0_16 absolute value commutes with conversion. -/
-theorem q0ToQ16_abs (_x : Q0_16) :
-  True := by
-  trivial
+/-- Conversion commutes with absolute value: q0ToQ16 |x| = |q0ToQ16 x|.
+    TODO(lean-port): requires Float-based proof that abs and Float scaling
+    commute through the conversion pipeline. -/
+theorem q0ToQ16_abs (x : Q0_16) :
+    q0ToQ16 (Q0_16.abs x) = Q16_16.abs (q0ToQ16 x) := by
+  sorry
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §6  Generic FixedPoint Typeclass (Unified Interface)

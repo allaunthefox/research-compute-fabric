@@ -153,7 +153,12 @@ All core logic, theorems, and primary documentation must use **neutral technical
 Every algorithm you port must be expressible as:
 
 ```lean
-bind : (A × B × Metric) → Bind A B
+bind {A B : Type}
+  (left : A) (right : B)
+  (metric : Metric)
+  (cost_fn : A → B → Metric → Semantics.Q16_16)
+  (invA : A → String) (invB : B → String)
+  : Bind A B
 ```
 
 If you cannot express the domain logic as a `bind` instance with:
@@ -515,19 +520,18 @@ Current actual `sorry` debt is outside the main import path unless explicitly im
 - `GradientPathMap.lean`: no actual proof hole; mentions `sorry` only in historical prose
 
 ### Remaining Axiom Debt
-`rg` currently finds 109 `axiom` declarations across 31 Lean files under `0-Core-Formalism/lean/Semantics/Semantics`. These must be handled module-by-module:
+`rg` finds 13 `axiom` declarations across 9 Lean files in `0-Core-Formalism/lean/Semantics/Semantics/`, plus 5 in `ExtensionScaffold/Temporal/OMT.lean`, for a total of 18 across 10 files. These must be handled module-by-module:
 1. Replace definitional axioms with executable definitions/theorems.
 2. If a claim is genuinely external, represent it as an explicit assumption structure or hypothesis, not a global axiom.
 3. Quarantine modules with unresolved axioms from the main import path unless the axiom is intentionally part of a named model boundary.
 4. Record each quarantine with `TODO(lean-port): <reason>`.
 
 ### FixedPoint Status
-FixedPoint cleanup completed:
-- `toInt` conversion lemmas are theorems.
-- nonnegative raw comparison lemmas are theorems.
-- `add_zero`, `mul_zero`, `sub_self`, raw `max`/`min`, `sqrt_zero`, and `sqrt_one` are theorems.
-- false signed `max`/`min` claims were replaced with explicit counterexamples.
-- broad unproved bit-shift/mul/div/neg universal axioms were replaced by executable core-constant theorems where full `BitVec` proofs were not yet needed.
+`FixedPoint.lean` currently contains 12 theorems: `ext`, `zero_toInt`, `one_toInt`, `epsilon_toInt`, `epsilon_toInt_pos`, `zero_mul`, `mul_zero`, `one_mul`, `mul_one`, `toInt_eq_zero_iff`, `epsilon_add_pos`, `piPandigitalCorrect`. The file has 0 `axiom` and 0 `sorry` declarations.
+
+TODO(lean-port): The following standard lemmas are still needed in `FixedPoint.lean`: `add_zero`, `sub_self`, `sqrt_zero`, `sqrt_one`, `mul_comm`. Do not claim these as theorems until they are proved.
+
+False signed `max`/`min` claims were replaced with explicit counterexamples. Broad unproved bit-shift/mul/div/neg universal axioms were replaced by executable core-constant theorems where full `BitVec` proofs were not yet needed.
 
 ### Build Gate
 Working branches may have documented linter warnings; release candidates require the zero-warning gate in §11.

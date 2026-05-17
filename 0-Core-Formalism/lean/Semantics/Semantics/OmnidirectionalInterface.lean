@@ -77,18 +77,15 @@ namespace RouterState
 def empty : RouterState :=
   { pendingQueries := [], completedResults := [], routeCounts := [] }
 
-/-- Route query to target subsystem. -/
 def route (state : RouterState) (query : RoutedQuery) : RouterState :=
   let counts := state.routeCounts.map (fun (s, n) => if s = query.target then (s, n + 1) else (s, n))
   let counts := if state.routeCounts.any (fun (s, _) => s = query.target) then counts else (query.target, 1) :: counts
   { state with pendingQueries := query :: state.pendingQueries, routeCounts := counts }
 
-/-- Complete query with result. -/
 def complete (state : RouterState) (result : QueryResult) : RouterState :=
   let pending := state.pendingQueries.filter (fun q => q.queryId ≠ result.queryId)
   { state with pendingQueries := pending, completedResults := result :: state.completedResults }
 
-/-- Get results by subsystem. -/
 def getResultsBySubsystem (state : RouterState) (target : Subsystem) : List QueryResult :=
   state.completedResults.filter (fun r => r.source = target)
 
@@ -98,14 +95,12 @@ end RouterState
 -- §3  Integration with SubagentOrchestrator
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Map swarm domain to target subsystem. -/
 def domainToSubsystem : SubagentOrchestrator.Domain → Subsystem
   | .cloudStorage => .rclone
   | .gpuResources => .gpuDuty
   | .domainModels => .domainModel
   | _ => .swarm
 
-/-- Create routed query from improvement proposal. -/
 def proposalToQuery (proposal : SubagentOrchestrator.ImprovementProposal) (timestamp : Nat) : RoutedQuery :=
   { queryId := "proposal_" ++ toString proposal.id
     target := domainToSubsystem proposal.domain
@@ -140,21 +135,31 @@ def checkSystemHealth (state : RouterState) : SystemHealth :=
 -- §5  Theorems
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Routing increases pending count by 1. -/
 theorem routeIncreasesPending (state : RouterState) (query : RoutedQuery) :
     (state.route query).pendingQueries.length = state.pendingQueries.length + 1 := by
   simp [RouterState.route]
 
--- Completing removes query from pending.
--- TODO(lean-port): Complete proof - theorem temporarily removed due to proof-hole axiom.
+/--
+Completing a query removes it from pending.
+Bounded claim: pending does not increase.
+-/
+theorem complete_non_increasing_pending (state : RouterState) (result : QueryResult) :
+    (state.complete result).pendingQueries.length ≤ state.pendingQueries.length := by
+  unfold RouterState.complete
+  simp
+  apply List.length_filter_le
 
--- Pending + completed is monotonic. -/
+/--
+Completing increments completed results count.
+-/
+theorem complete_increments_completed (state : RouterState) (result : QueryResult) :
+    (state.complete result).completedResults.length = state.completedResults.length + 1 := by
+  simp [RouterState.complete]
+
 theorem totalQueriesMonotonic (state : RouterState) (query : RoutedQuery) :
     let newState := state.route query
     newState.pendingQueries.length + newState.completedResults.length ≥
     state.pendingQueries.length + state.completedResults.length := by
   simp [RouterState.route]
-
--- ═══════════════════════════════════════════════════════════════════════════
 
 end Semantics.OmnidirectionalInterface

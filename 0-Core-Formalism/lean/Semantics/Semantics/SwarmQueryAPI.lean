@@ -46,16 +46,13 @@ open Semantics.OmnidirectionalInterface (Subsystem RoutedQuery QueryResult Route
 -- §1  Typed query model (replaces Pydantic SwarmQueryRequest)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Constraints carried as a structure. -/
 structure QueryLimit where
   value : Nat
   deriving Repr, DecidableEq, Inhabited, ToJson, FromJson
 
-/-- Smart constructor that clamps instead of failing. -/
 def QueryLimit.mk? (n : Nat) : QueryLimit :=
   if n ≤ 1000 then ⟨n⟩ else ⟨1000⟩
 
-/-- Formal status filter values. No free-form strings. -/
 inductive FormalStatus
   | proven
   | stated
@@ -63,7 +60,6 @@ inductive FormalStatus
   | unknown
   deriving Repr, DecidableEq, Inhabited, ToJson, FromJson
 
-/-- Typed request. Replaces the Pydantic BaseModel. -/
 structure SwarmQueryRequest where
   subjects : List String
   keywords : List String
@@ -73,7 +69,6 @@ structure SwarmQueryRequest where
   includeMetadata : Bool
   deriving Repr, Inhabited, ToJson, FromJson
 
-/-- Default request used when only partial info is supplied. -/
 def SwarmQueryRequest.empty : SwarmQueryRequest :=
   { subjects := []
     keywords := []
@@ -95,8 +90,6 @@ structure EntityRecord where
   hasLeanModule : Bool
   deriving Repr, Inhabited, ToJson, FromJson
 
--- Q16_16 and Subsystem now use derived JSON instances from their home modules.
-
 structure SwarmStats where
   agentCount : Nat
   activeQueries : Nat
@@ -106,11 +99,10 @@ structure SwarmStats where
 
 def getStats : SwarmStats :=
   let agents := Semantics.SubagentOrchestrator.Domain.all
-  { agentCount := agents.length,
-    activeQueries := 0,
-    systemConfidence := Q16_16.one,
-    networkMode := true -- Forced networked approach as per user directive 
-  }
+  { agentCount := agents.length
+    activeQueries := 0
+    systemConfidence := Q16_16.one
+    networkMode := true }
 
 structure SwarmQueryResponse where
   success : Bool
@@ -229,13 +221,35 @@ def runViaOrchestrator
 -- §8  Theorems
 -- ═══════════════════════════════════════════════════════════════════════════
 
--- Theorem: handle respects limit
--- TODO(lean-port): Complete proof - theorem temporarily removed due to proof-hole axiom.
+/--
+handle respects the request limit: the result count is bounded
+by the limit value after applying both filters and limit.
+-/
+theorem handle_respects_limit (req : SwarmQueryRequest) (rawRecords : List EntityRecord) :
+    (handle req rawRecords).count ≤ req.limit.value := by
+  unfold handle applyLimit
+  simp
 
--- Theorem: handle does not invent records
--- TODO(lean-port): Complete proof - theorem temporarily removed due to proof-hole axiom.
+/--
+handle does not invent records: every result in the output
+appears in the filtered version of the input records.
+-/
+theorem handle_subset_of_filtered (req : SwarmQueryRequest) (rawRecords : List EntityRecord) :
+    (handle req rawRecords).results ⊆ applyFilters req rawRecords := by
+  unfold handle applyLimit
+  exact List.take_subset _ _
 
--- Theorem: lean query routes to math db
--- TODO(lean-port): Complete proof - theorem temporarily removed due to proof-hole axiom.
+/--
+When requireLeanFormalization is true and the subjects don't name
+a specific subsystem, the query routes to mathDb.
+-/
+theorem lean_query_routes_to_mathdb (req : SwarmQueryRequest)
+    (hLean : req.requireLeanFormalization)
+    (hNoGpu : (req.subjects.map String.toLower).any (· == "gpu") = false)
+    (hNoRclone : (req.subjects.map String.toLower).any (· == "rclone") = false)
+    (hNoDomain : (req.subjects.map String.toLower).any (· == "domain-model") = false) :
+    chooseSubsystem req = Subsystem.mathDb := by
+  unfold chooseSubsystem
+  simp [hLean, hNoGpu, hNoRclone, hNoDomain]
 
 end Semantics.SwarmQueryAPI

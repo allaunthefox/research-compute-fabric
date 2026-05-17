@@ -1,0 +1,34 @@
+{
+  "name": "Research Stack (OTOM)",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "leanprover.lean4",
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "ms-toolsai.jupyter"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "python.defaultInterpreterPath": "/home/researcher/venv/bin/python",
+        "python.analysis.extraPaths": [
+          "/home/researcher/stack"
+        ],
+        "lean4.toolchainPath": "/home/researcher/.elan/bin"
+      }
+    }
+  },
+  "remoteUser": "researcher",
+  "containerEnv": {
+    "PATH": "/home/researcher/.elan/bin:/home/researcher/venv/bin:/home/researcher/.local/bin:${containerEnv:PATH}"
+  },
+  "runArgs": [
+    "--userns=keep-id"
+  ],
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/researcher/stack,type=bind,Z",
+  "workspaceFolder": "/home/researcher/stack"
+}

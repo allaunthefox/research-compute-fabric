@@ -38,6 +38,8 @@ def ofNat := Q16_16.ofNat
 def toInt := Q16_16.toInt
 def ofFloat := Q16_16.ofFloat
 def toFloat := Q16_16.toFloat
+def neg := Q16_16.neg
+def mk (raw : UInt32) : Fix16 := { val := raw }
 end Fix16
 
 -- ============================================================

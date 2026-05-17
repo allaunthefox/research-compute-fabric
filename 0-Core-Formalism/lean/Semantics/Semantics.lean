@@ -148,6 +148,13 @@ import Semantics.ThresholdVector
 import Semantics.LogogramRotationLoop
 import Semantics.CompressionYield
 
+import Semantics.FAMM
+import Semantics.HCMMR.Core
+import Semantics.HCMMR.Kernels.FAMMScarMemory
+import Semantics.MMRFAMMUnification
+import Semantics.CGAVersorAddress
+import Semantics.FAMMCoChain
+
 namespace Semantics
 
 def version := "2.0.0-Cambrian-Bind"

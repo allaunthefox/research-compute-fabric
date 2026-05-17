@@ -45,7 +45,7 @@ KernelDelta = {
 }
 ```
 
-**Compression Ratio:** [CALIBRATED_ENGINEERING_DELTA - ~10-100x (only store changes) - requires baseline comparison against zlib/gzip/brotli/zstd on real corpus with SI standard compression ratio (original/compressed), corpus provenance, file sizes, and compression times]
+**Compression Ratio:** [CALIBRATED_ENGINEERING_DELTA — ~10-100x (only store changes) requires baseline comparison against zlib/gzip/brotli/zstd on real corpus. SI compression ratio = original/compressed, per AGENTS.md §14.1.]
 
 ### Layer 2: Genetic Codon Encoding of Kernel State
 
@@ -438,7 +438,7 @@ class SwarmCompressor:
 4. **Lesion response:** [>85% - requires measurement evidence with SI units and corpus provenance]
 5. **Timing drift tolerance:** [<5% - requires measurement evidence with SI units and corpus provenance]
 6. **Behavior waveform recovery:** [>90% - requires measurement evidence with SI units and corpus provenance]
-7. **Compression ratio:** [>100x - requires baseline comparison against industry standards with SI standard compression ratio]
+7. **Compression ratio:** [CALIBRATED_ENGINEERING_DELTA — >100x requires baseline comparison against zlib/gzip/brotli/zstd on real corpus. SI compression ratio = original/compressed, per AGENTS.md §14.1.]
 8. **Invariant preservation:** [>99% - requires measurement evidence with SI units and corpus provenance]
 
 **Test Harness:**
@@ -495,17 +495,17 @@ Implement multi-scale compression:
 
 ## Conclusion
 
-[CALIBRATED_ENGINEERING_DELTA - All compression claims require baseline comparison against industry standards (zlib/gzip/brotli/zstd) on real corpus with SI standard compression ratio (original/compressed), corpus provenance, file sizes, and compression times before treatment as verified results.]
+[CALIBRATED_ENGINEERING_DELTA — All compression claims require baseline comparison against zlib/gzip/brotli/zstd on real corpus with SI standard compression ratio (original/compressed, per AGENTS.md §14.1), corpus provenance, file sizes, and compression times before treatment as verified results.]
 
 Maximal compression for neuron-as-kernel encoding proposes:
 
-**Total Compression Ratio:** [CALIBRATED_ENGINEERING_DELTA - ~80-6400x - requires baseline comparison evidence]
+**Total Compression Ratio:** [CALIBRATED_ENGINEERING_DELTA — ~80-6400x requires baseline comparison against zlib/gzip/brotli/zstd on real corpus. SI compression ratio = original/compressed, per AGENTS.md §14.1.]
 
 **Layers:**
-1. Kernel Delta Extraction [CALIBRATED_ENGINEERING_DELTA - 10-100x - requires baseline comparison evidence]
-2. Genetic Codon Encoding [CALIBRATED_ENGINEERING_DELTA - 8-16x - requires baseline comparison evidence]
-3. Delta GCL Compression [CALIBRATED_ENGINEERING_DELTA - 2-4x - requires baseline comparison evidence]
-4. Swarm Composition [CALIBRATED_ENGINEERING_DELTA - 5-10x - requires baseline comparison evidence]
+1. Kernel Delta Extraction [CALIBRATED_ENGINEERING_DELTA — 10-100x requires baseline comparison against zlib/gzip/brotli/zstd. SI compression ratio = original/compressed, per AGENTS.md §14.1.]
+2. Genetic Codon Encoding [CALIBRATED_ENGINEERING_DELTA — 8-16x requires baseline comparison against zlib/gzip/brotli/zstd. SI compression ratio = original/compressed, per AGENTS.md §14.1.]
+3. Delta GCL Compression [CALIBRATED_ENGINEERING_DELTA — 2-4x requires baseline comparison against zlib/gzip/brotli/zstd. SI compression ratio = original/compressed, per AGENTS.md §14.1.]
+4. Swarm Composition [CALIBRATED_ENGINEERING_DELTA — 5-10x requires baseline comparison against zlib/gzip/brotli/zstd. SI compression ratio = original/compressed, per AGENTS.md §14.1.]
 
 **Key Principles:**
 - Store only verified deltas

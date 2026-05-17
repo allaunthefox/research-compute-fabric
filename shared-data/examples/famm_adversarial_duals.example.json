@@ -1,0 +1,45 @@
+{
+  "target": {
+    "route_id": "candidate_ns16_closure_route",
+    "claim": "bounded witness packet controls vorticity stretching in tested class",
+    "promotion_stage": "candidate"
+  },
+  "anti_famm_tests": [
+    {
+      "id": "projection_nullspace_probe_001",
+      "projection_invisibility": 0.92,
+      "target_behavior_change": 0.87,
+      "invariant_failure": 0.65,
+      "false_scar_evidence": 0.0,
+      "hidden_residual": 0.74
+    },
+    {
+      "id": "false_scar_probe_001",
+      "projection_invisibility": 0.2,
+      "target_behavior_change": 0.1,
+      "invariant_failure": 0.0,
+      "false_scar_evidence": 0.78,
+      "hidden_residual": 0.05
+    }
+  ],
+  "anti_braidstorm_tests": [
+    {
+      "id": "hostile_crossing_alias_001",
+      "braid_order_residual": 0.72,
+      "receipt_alias_risk": 0.85,
+      "fake_receipt_risk": 0.66,
+      "toxic_recombination_risk": 0.38,
+      "scar_masking_risk": 0.44,
+      "local_pass_global_fail": 0.91
+    },
+    {
+      "id": "friendly_survivor_check_001",
+      "braid_order_residual": 0.08,
+      "receipt_alias_risk": 0.05,
+      "fake_receipt_risk": 0.02,
+      "toxic_recombination_risk": 0.03,
+      "scar_masking_risk": 0.04,
+      "local_pass_global_fail": 0.05
+    }
+  ]
+}

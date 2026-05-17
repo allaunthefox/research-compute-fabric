@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FAMM Adversarial Duals Receipt",
+  "type": "object",
+  "required": [
+    "receipt_type",
+    "schema_version",
+    "target",
+    "anti_famm_results",
+    "anti_braidstorm_results",
+    "summary",
+    "warden_decision",
+    "nuvmap",
+    "receipt_hash"
+  ],
+  "properties": {
+    "receipt_type": {"const": "famm_adversarial_duals_receipt"},
+    "schema_version": {"type": "string"},
+    "target": {"type": "object"},
+    "anti_famm_results": {"type": "array", "items": {"type": "object"}},
+    "anti_braidstorm_results": {"type": "array", "items": {"type": "object"}},
+    "summary": {"type": "object"},
+    "warden_decision": {"type": "string"},
+    "nuvmap": {"type": "object"},
+    "no_drift_boundary": {"type": "string"},
+    "receipt_hash": {"type": "string"}
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "target_metric": 2990,
+  "metric_mode": "lower_is_better",
+  "noise_floor": 10,
+  "min_seeds": 3,
+  "source_refresh_hours": 12,
+  "warden_threshold": 0.45,
+  "harness": {
+    "agents": {
+      "rules_file": "AGENTS.md",
+      "autonomy": "keep_loop_running_unless_warden_blocks"
+    },
+    "goal": {
+      "file": "goal.md",
+      "target": "reach benchmark target in fewer steps with valid statistical receipt"
+    },
+    "plan": {
+      "file": "plan.md",
+      "state": "mutable frontier"
+    },
+    "thread": {
+      "file": "scratchpad/THREAD.md",
+      "state": "durable mission log"
+    },
+    "source_refresh": {
+      "cadence_hours": 12,
+      "sources": ["upstream PRs", "records", "papers", "local best"]
+    }
+  },
+  "experiments": [
+    {
+      "id": "contra_muon_stack_v3",
+      "idea": {"name": "Contra-Muon stack", "lineage": ["upstream PR", "previous local frontier"]},
+      "patch": {"files": ["train_gpt.py"], "summary": "optimizer/schedule/init mutation"},
+      "config": {"schedule": 3050, "lr_power": 1.2},
+      "run": {"log": "runs/contra_muon_stack_v3.log"},
+      "metric": {"value": 2930, "target": 2990},
+      "judge": {"seeds": 31, "noise_floor": 10, "rule_pass": true, "reproducible": true},
+      "warden": {"source_stale_hours": 2, "local_loop_score": 0.1, "overfit_risk": 0.15},
+      "compute": {"gpu_hours": 42, "tokens": 120000000}
+    },
+    {
+      "id": "novelty_only_deadend",
+      "idea": {"name": "unvalidated novelty optimizer"},
+      "patch": {"files": ["optimizer.py"], "summary": "novel but weak idea"},
+      "config": {},
+      "run": {"log": "runs/novelty_deadend.log"},
+      "metric": {"value": 3105, "target": 2990},
+      "judge": {"seeds": 1, "noise_floor": 10, "rule_pass": true, "reproducible": false},
+      "warden": {"source_stale_hours": 20, "local_loop_score": 0.7, "overfit_risk": 0.4},
+      "compute": {"gpu_hours": 12, "tokens": 50000000}
+    }
+  ]
+}

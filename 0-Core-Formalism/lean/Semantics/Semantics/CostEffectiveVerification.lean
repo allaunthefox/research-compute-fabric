@@ -63,7 +63,22 @@ def groupByOperator (manifold : BehavioralManifold) (operatorId : String) : Arra
   manifold.points.filter (fun p => p.operator.id = operatorId)
 
 /-- Cost-effective verification target theorem:
-The manifold can group ontologically different systems together when they share the same behavioral operator. -/
+    TODO(lean-port): manifoldGroupsOntologicallyDifferentSystems requires
+    a concrete manifold population and an executable witness for the group
+    crossing claim. Currently axiomatized as a structural placeholder. -/
+theorem manifoldGroupsOntologicallyDifferentSystems (manifold : BehavioralManifold) (operatorId : String) :
+  let group := groupByOperator manifold operatorId
+  group.size > 1 →
+  ∃ p1 p2 : BehavioralPoint,
+    p1 ∈ group ∧
+    p2 ∈ group ∧
+    ontologicallyDifferent p1 p2 ∧
+    shareSameOperator p1 p2 := by
+  sorry
+/-
+  Commented out axiom — replaced with sorry + TODO(lean-port):
+  the predicates ontologicallyDifferent and shareSameOperator are defined but
+  the claim requires an executable witness for manifold population and crossing.
 axiom manifoldGroupsOntologicallyDifferentSystems (manifold : BehavioralManifold) (operatorId : String) :
   let group := groupByOperator manifold operatorId
   group.size > 1 →
@@ -72,6 +87,7 @@ axiom manifoldGroupsOntologicallyDifferentSystems (manifold : BehavioralManifold
     p2 ∈ group ∧
     ontologicallyDifferent p1 p2 ∧
     shareSameOperator p1 p2
+-/
 
 /-- Null hypothesis: 3N does not add useful information. It only adds overhead. -/
 structure NullHypothesis where
@@ -95,9 +111,34 @@ def testHypothesis (exp : VerificationExperiment) : Bool :=
   exp.threeProjectionYield > exp.oneProjectionYield
 
 /-- The cheapest meaningful proof: given the same event budget N,
-a 3-projection scalar pipeline produces more useful map structure than a 1-projection calculation-only pipeline. -/
+    a 3-projection scalar pipeline produces more useful map structure than
+    a 1-projection calculation-only pipeline.
+    TODO(lean-port): this is P → P after unfolding testHypothesis; it is
+    a definitional tautology, not a verifiable claim.  Replace with an actual
+    inequality over concrete pipeline yields once data is available. -/
+theorem cheapestVerificationTarget (exp : VerificationExperiment) :
+    testHypothesis exp →
+    exp.threeProjectionYield > exp.oneProjectionYield := by
+  intro h
+  exact h
+/-
+  Commented out axiom — replaced with direct proof (definitional):
+  testHypothesis exp := exp.threeProjectionYield > exp.oneProjectionYield
+  so the implication is trivially true.
+  The claim is vacuous without a concrete experiment population.
 axiom cheapestVerificationTarget (exp : VerificationExperiment) :
   testHypothesis exp →
   exp.threeProjectionYield > exp.oneProjectionYield
+-/
+
+#eval shareSameOperator
+    { system := ⟨"a", "shipping"⟩, operator := ⟨"op1", "bottleneck"⟩, vector := #[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
+    { system := ⟨"b", "DNA"⟩, operator := ⟨"op1", "bottleneck"⟩, vector := #[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
+
+#eval ontologicallyDifferent
+    { system := ⟨"a", "shipping"⟩, operator := ⟨"op1", "bottleneck"⟩, vector := #[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
+    { system := ⟨"b", "DNA"⟩, operator := ⟨"op1", "bottleneck"⟩, vector := #[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
+
+#eval testHypothesis { eventBudget := 100, oneProjectionYield := 30, threeProjectionYield := 50 }
 
 end Semantics.CostEffectiveVerification

@@ -1,0 +1,11 @@
+{
+  "sha256": "6ba88d9a7cce47092f78b3da48bf8cf94ff92b3d07f033c0fb97cd32eb6d38c1",
+  "backup_name": "adjacent_coprime_classification_2026-05-13",
+  "date": "2026-05-13",
+  "description": "Complete classification of adjacent coprimality in second-order integer linear recurrences",
+  "source_commit": "a8101272",
+  "lean_module": "AdjacentCoprimeClassification.lean",
+  "build_status": "lake build Semantics 3529 jobs, zero errors",
+  "theorems_proven": 30,
+  "verified_examples": 5
+}

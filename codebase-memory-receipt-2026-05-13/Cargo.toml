@@ -1,0 +1,25 @@
+[package]
+name = "codebase-memory"
+version = "0.1.0"
+edition = "2021"
+authors = ["Research Stack Team"]
+description = "FAMM-based persistent multi-domain codebase memory for Hermes agent"
+license = "Apache-2.0"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sha2 = "0.10"
+walkdir = "2.5"
+thiserror = "1.0"
+
+[dev-dependencies]
+tempfile = "3.10"
+
+[[bin]]
+name = "codebase-memory"
+path = "src/main.rs"
+
+[lib]
+name = "codebase_memory"
+path = "src/lib.rs"

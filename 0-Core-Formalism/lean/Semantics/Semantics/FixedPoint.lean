@@ -313,6 +313,15 @@ theorem mul_zero (a : Q16_16) : a * zero = zero := by
     cases av
     simp [HMul.hMul, Mul.mul, zero, u64_mul_zero]
 
+/-- a - a = zero -/
+theorem sub_self (a : Q16_16) : sub a a = zero := by
+  cases a with
+  | mk av =>
+    delta sub zero
+    apply congrArg Q16_16.mk
+    cases av
+    simp
+
 /-- one * a = a -/
 theorem one_mul (a : Q16_16) : one * a = a := by
   cases a with

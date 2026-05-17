@@ -57,7 +57,7 @@ This is NOT a Yang-Mills proof stack. This IS a lattice-gauge / compression / ve
 
 ## Executive Summary
 
-This specification defines a distributed computing approach for the Yang-Mills mass gap problem using existing infrastructure: VPS nodes, topological state machines, Delta GCL compression, and Layer 3 local computation. The approach leverages the user's existing math stack (quaternions, braid calculus, figure 8 immersion) and achieves realistic compression ratios of 60-135× for lattice data.
+This specification defines a distributed computing approach for the Yang-Mills mass gap problem using existing infrastructure: VPS nodes, topological state machines, Delta GCL compression, and Layer 3 local computation. The approach leverages the user's existing math stack (quaternions, braid calculus, figure 8 immersion) and achieves compression ratios of 60-135× [CALIBRATED_ENGINEERING_DELTA — requires baseline comparison against zlib/gzip/brotli/zstd before promotion. SI compression ratio = original/compressed, per AGENTS.md §14.1.] for lattice data.
 
 ---
 

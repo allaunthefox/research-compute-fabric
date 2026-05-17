@@ -138,7 +138,7 @@ def countConcordantPairs (items : Array ScoredItem) : Nat × Nat :=
     -/
 def computeAuroc (items : Array ScoredItem) : Q0_16 :=
   let (concordant, total) := countConcordantPairs items
-  if total = 0 then zero else
+  if total = 0 then Q0_16.zero else
     let ratio := (concordant * 32767) / total
     ⟨ratio.toUInt16⟩
 
@@ -498,27 +498,28 @@ end Semantics.SigmaGate
 
 namespace Semantics.SigmaGate.Conformal
 
-/-- Exchangeability axiom: calibration samples are i.i.d. from a fixed distribution.
+/-- Minimum sample-size check for conformal calibration preconditions.
 
-    This is the foundational assumption for conformal calibration.
-    Exchangeable sequences satisfy: P(X_1, ..., X_n) = P(X_π(1), ..., X_π(n))
-    for all permutations π.
+    NOTE: This is a TUNABLE heuristic, not a formal exchangeability test.
+    Exchangeability (P(X_1,...,X_n) = P(X_π(1),...,X_π(n)) for all
+    permutations π) is a statistical property that cannot be verified by
+    a simple size check.  The threshold of 100 is a provisional lower bound
+    chosen for the conformal quantile to be non-degenerate; it has no
+    derivation from a concentration inequality.
 
-    In Lean, we encode this as a predicate on arrays of scored items:
-    the distribution is invariant under permutation.
-    -/
-def isExchangeable (items : Array ScoredItem) : Prop :=
-  -- Structural property: all items are drawn from the same (unknown) distribution.
-  -- In the formal setting, this is an axiom, not a computable check.
-  -- Empirical verification is done via shim (Python permutation tests).
-  items.size ≥ 100  -- Minimum sample size for exchangeability approximation
+    True exchangeability verification requires a Python shim (permutation
+    tests on real calibration data), not a Lean `items.size ≥ n` predicate.
 
-/-- Exchangeability of subsequences: extracting at least 100 items from an
-    exchangeable array preserves the size threshold for exchangeability.
-    #eval witness on concrete array confirms the property holds for the
-    conformal calibration pipeline. -/
-example : isExchangeable (Array.ofList (List.replicate 100 default)) := by
-  simp [isExchangeable]
+    Renamed from `isExchangeable` to avoid claiming statistical properties
+    this check does not assess. -/
+def isMinimumSampleSize (items : Array ScoredItem) : Prop :=
+  -- Provisional/tunable threshold: calibrate per deployment dataset size.
+  items.size ≥ 100
+
+/-- Witness: a concrete array of 100 items passes the minimum-sample-size
+    check.  This confirms the #eval workflow, not any statistical property. -/
+example : isMinimumSampleSize (List.replicate 100 default |>.toArray) := by
+  simp [isMinimumSampleSize]
 
 /-- Coverage guarantee theorem (structural form).
 
@@ -538,7 +539,7 @@ example : isExchangeable (Array.ofList (List.replicate 100 default)) := by
 theorem conformalCoverageGuarantee
   (_items : Array ScoredItem)
   (_threshold : ConformalThreshold)
-  (_h_exchangeable : isExchangeable _items)
+  (_h_minSamples : isMinimumSampleSize _items)
   (_h_calibration_sufficient : _threshold.calibratedOn ≥ 100)
   (_h_alpha_valid : _threshold.alpha.val > Q0_16.zero.val)
   (_h_delta_valid : _threshold.delta.val > Q0_16.zero.val)
@@ -550,17 +551,16 @@ theorem conformalCoverageGuarantee
   intros futureItem h_label _h_accept
   simp [h_label]
 
-/-- Stronger guarantee: if α is sufficiently small (high confidence target),
-    then accepted items are "likely" correct. This is the operational
-    interpretation used by the sigma gate.
-
-    For α < 0.2 (80% coverage target), accepted items have >80% chance
-    of being correct at calibration time.
+/-- Structural acceptance lemma: if α is below a tunable threshold and
+    the sample size is sufficient, accepted items carry a label.
+    NOTE: This does not prove correctness — it is a structural type
+    exhaustion, not a statistical guarantee. The tunable parameters
+    (α < 0.2, calibratedOn ≥ 817) are provisional.
     -/
 theorem conformalHighConfidenceAccept
   (_items : Array ScoredItem)
   (threshold : ConformalThreshold)
-  (_h_exchangeable : isExchangeable _items)
+  (_h_minSamples : isMinimumSampleSize _items)
   (_h_alpha_low : threshold.alpha.val < (Q0_16.ofFloat 0.2).val)
   (_h_calibration_sufficient : threshold.calibratedOn ≥ 817)
   : ∀ (item : ScoredItem),

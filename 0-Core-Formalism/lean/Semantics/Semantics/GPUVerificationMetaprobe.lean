@@ -215,14 +215,27 @@ def executeFixedPointVerification (surface : GPUVerificationSurface) (batchId : 
   let surfaceWithBatch := addVerificationBatch surface batch
   processPendingBatches surfaceWithBatch currentTime
 
-/-- Verification statistics theorem.
-    GPU-verified: 100% pass rate for all FixedPoint theorems (scripts/q16_path_explorer.py) -/
-axiom verificationStats_valid (surface : GPUVerificationSurface) :
-  let stats := getVerificationStats surface
-  stats.passRate ≤ 65536
+/-- Verification statistics invariant: after processing all pending batches,
+    totalPassed ≤ totalVerified. This holds by construction of
+    processPendingBatches, which only increments totalPassed from results
+    derived from the same batch that increments totalVerified.
+    TODO(lean-port): this requires an invariant proof over the surface
+    construction; for an arbitrary surface the inequality may not hold.
+    A proper proof would add a `ValidSurface` predicate. -/
+theorem verificationStats_valid (surface : GPUVerificationSurface) :
+    let stats := getVerificationStats surface
+    stats.totalPassed ≤ stats.totalTheorems := by
+  sorry
 
 /-- Surface preserves total verified count after processing.
-    GPU-verified: All batches processed correctly (scripts/q16_path_explorer.py) -/
-axiom surface_preservesTotalVerified (surface : GPUVerificationSurface) (currentTime : Nat) :
-  let surface' := processPendingBatches surface currentTime
-  surface'.totalVerified = surface.totalVerified + surface.pendingBatches.foldl (λ acc b => acc + b.requests.length) 0
+    NOTE: this claim is unverified — it depends on the GPU hardware
+    actually returning results matching the request count, which is
+    simulated (every request returns a result with passed := true)
+    in the current `executeGPUVerificationBatch` implementation.
+    No hardware receipt exists for this claim.
+    TODO(lean-port): replace simulated GPU execution with a hardware
+    witness, or mark this as a model assumption. -/
+theorem surface_preservesTotalVerified (surface : GPUVerificationSurface) (currentTime : Nat) :
+    let surface' := processPendingBatches surface currentTime
+    surface'.totalVerified = surface.totalVerified + surface.pendingBatches.foldl (λ acc b => acc + b.requests.length) 0 := by
+  sorry

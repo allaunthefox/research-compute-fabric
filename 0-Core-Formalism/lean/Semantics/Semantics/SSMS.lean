@@ -124,8 +124,8 @@ structure MlgruState where
   deriving Repr, Inhabited
 
 /-- One MLGRU recurrence step.
-    fT: forget gate (from ternary dot product, Q16.16).
-    cT: candidate state (from ternary dot product, Q16.16). -/
+    fT: forget gate (from ternary dot product, Q16_16).
+    cT: candidate state (from ternary dot product, Q16_16). -/
 def mlgruStep (fT cT : Q16_16) (st : MlgruState) : MlgruState :=
   let termA  := Q16_16.mul fT st.hT                    -- fT · h_{t-1}
   let oneMf := Q16_16.sub fT Q16_16.one                 -- 1 − fT
@@ -312,7 +312,7 @@ structure TopoState where
   deriving Repr, Inhabited
 
 /-- CoarseSignal: velocity-bearing gossip signal.
-    Velocity v ∈ [0, 1] as Q16.16 (0 = static, 65536 = max). -/
+    Velocity v ∈ [0, 1] as Q16_16 (0 = static, 65536 = max). -/
 structure CoarseSignal where
   payload   : GossipPacket
   velocity  : Q16_16   -- rate of change indicator
@@ -460,10 +460,54 @@ def aciSatisfied {N : Nat} (H : BettiSwooshH N)
     Q16_16.abs ((nodes e.2).hidden.hT - (nodes e.1).hidden.hT)
       ≤ H.aciBound
 
--- ACI preservation witness.
--- If the forget gate f is uniform (fᵢ = fⱼ = f) and the candidate c satisfies ACI,
--- then the MLGRU step preserves ACI for the hidden state h.
--- TODO(lean-port): Complete proof - theorem temporarily removed due to proof-hole axiom.
+/--
+ACI preservation under MLGRU step (bounded claim).
+
+Hypotheses:
+  1. For every edge (i, j), the forget gates are equal: f_i = f_j.
+  2. For every edge (i, j), the candidate states satisfy ACI: |c_i - c_j| ≤ ϵ.
+  3. The previous hidden states satisfy ACI: |h_i^{prev} - h_j^{prev}| ≤ ϵ.
+
+Then the new hidden states also satisfy ACI with the same bound, because:
+  |h_i - h_j| = |f·h_i^{prev} + (1-f)·c_i - f·h_j^{prev} - (1-f)·c_j|
+              ≤ f·|h_i^{prev} - h_j^{prev}| + (1-f)·|c_i - c_j|
+              ≤ f·ϵ + (1-f)·ϵ = ϵ
+
+NOTE: This proof relies on Q16_16 arithmetic satisfying the standard
+triangle inequality and scalar multiplication monotonicity. The current
+Q16_16 implementation uses saturating arithmetic over UInt32, which makes
+these algebraic lemmas non-trivial. TODO(lean-port): prove Q16_16 lemmas
+for abv_add_le, mul_le_of_nonneg_of_le, and sub_eq_add_neg.
+-/
+theorem aciPreservedByMlgruStep {N : Nat} (H : BettiSwooshH N)
+    (nodes : Fin N → ScalarNode)
+    (cT : Fin N → Q16_16)
+    (fT : Fin N → Q16_16)
+    (hForgetUniform : ∀ e ∈ H.complex.edges, fT e.1 = fT e.2)
+    (hCandidateACI : ∀ e ∈ H.complex.edges,
+      Q16_16.abs (cT e.2 - cT e.1) ≤ H.aciBound)
+    (hPrevACI : aciSatisfied H nodes) :
+    aciSatisfied H (fun i =>
+      let st := mlgruStep (fT i) (cT i) (nodes i).hidden
+      { (nodes i) with hidden := st }) := by
+  intro e he
+  unfold aciSatisfied at hPrevACI
+  have hPrev := hPrevACI e he
+  have hCand := hCandidateACI e he
+  have hUnif := hForgetUniform e he
+  -- TODO(lean-port): Requires Q16_16 lemmas:
+  --   1. sub_eq_add_neg: a - b = a + (-b)
+  --   2. abs_sub_le: |a - b| ≤ |a - c| + |c - b|
+  --   3. mul_comm, mul_assoc for Q16_16
+  --   4. add_comm to reorder terms
+  --   5. |f| ≤ 1 for forget gate f in [0,1]
+  -- With these, the algebraic steps in the doc comment become:
+  --   Q16_16.abs( h_i' - h_j' )
+  --   = |f·h_i + (1-f)·c_i - f·h_j - (1-f)·c_j|
+  --   ≤ f·|h_i - h_j| + (1-f)·|c_i - c_j|
+  --   ≤ f·ε + (1-f)·ε = ε
+  sorry
+
 
 -- ════════════════════════════════════════════════════════════
 -- §11  SRAM Banking Layout

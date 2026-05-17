@@ -72,18 +72,18 @@ def dot (p q : Quaternion) : Fix16 :=
   (A 4D extension of the octagonal norm).
 -/
 def normApprox (q : Quaternion) : Fix16 :=
-  let abs_val (v : Fix16) := if v.raw < 0x80000000 then v else Fix16.neg v
+  let abs_val (v : Fix16) := if v.val < 0x80000000 then v else Fix16.neg v
   let aw := abs_val q.w
   let ax := abs_val q.x
   let ay := abs_val q.y
   let az := abs_val q.z
-  let m1 := if aw.raw > ax.raw then aw else ax
-  let m2 := if ay.raw > az.raw then ay else az
-  let hi := if m1.raw > m2.raw then m1 else m2
+  let m1 := if aw.val > ax.val then aw else ax
+  let m2 := if ay.val > az.val then ay else az
+  let hi := if m1.val > m2.val then m1 else m2
   -- Sum the others roughly
   let sum_others := Fix16.add aw (Fix16.add ax (Fix16.add ay az))
   let others := Fix16.sub sum_others hi
-  let o38 := Fix16.mk ((others.raw.toNat * 0x6000 / 0x10000).toUInt32)
+  let o38 := Fix16.mk ((others.val.toNat * 0x6000 / 0x10000).toUInt32)
   Fix16.add hi o38
 
 /-- Conjugate of a Quaternion: q* = w - xi - yj - zk -/

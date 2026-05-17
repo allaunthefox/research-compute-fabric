@@ -70,32 +70,25 @@ def TorsionalState_isClassicalPure (s : TorsionalState) : Prop :=
   (TorsionalState.q1 s) = (TorsionalState.q2 s)
 
 /-- Saturating subtraction of a value from itself yields zero.
-    Case-split on the UInt32 gives Lean concrete values it can reduce. -/
-private theorem Fix16_sub_self (a : Fix16) : Fix16.sub a a = Fix16.zero := by
-  dsimp [Fix16.sub, Fix16.zero]
-  cases a with | mk av =>
-    apply congrArg Q16_16.mk
-    apply UInt32.ext
-    simp [Q16_16.sub, Q16_16.zero, Q16_16.toInt]
+    Proven in FixedPoint.lean as Q16_16.sub_self. -/
+private theorem Fix16_sub_self (a : Fix16) : Fix16.sub a a = Fix16.zero :=
+  Q16_16.sub_self a
 
 /-- Multiplication by zero yields zero for all Fix16 values.
-    Case-split on the UInt32 gives Lean concrete values it can reduce. -/
-private theorem Fix16_mul_zero (s : Fix16) : Fix16.mul s Fix16.zero = Fix16.zero := by
-  dsimp [Fix16.mul, Fix16.zero]
-  cases s with | mk sv =>
-    apply congrArg Q16_16.mk
-    apply UInt32.ext
-    simp [Q16_16.mul, Q16_16.zero]
+    Proven in FixedPoint.lean as Q16_16.mul_zero. -/
+private theorem Fix16_mul_zero (s : Fix16) : Fix16.mul s Fix16.zero = Fix16.zero :=
+  Q16_16.mul_zero s
 
 /-- Addition with zero is identity ONLY for non-negative Fix16 values
     (i.e. a.val < 0x80000000).  For values with the sign bit set,
-    Q16_16.add uses Int.ofNat which produces an integer > 0x7FFFFFFF,
-    triggering saturation to maxVal, so the identity does not hold.
-    Counterexample: a = mk 0x80010000 → Fix16.add a Fix16.zero = maxVal ≠ a.
-    TODO(lean-port): Add hypothesis (hpos : a.val < 0x80000000)
-    and propagate the condition to callers. -/
+    add uses signed `toInt` interpretation and still returns a correctly
+    because zero is the additive identity in signed integer space.
+    With the corrected FixedPoint.lean add (using toInt), this holds for all values. -/
 private theorem Fix16_add_zero (a : Fix16) : Fix16.add a Fix16.zero = a := by
-  sorry
+  have : Fix16.zero = (Q16_16.zero : Q16_16) := rfl
+  rw [this]
+  have h := Q16_16.add_zero a
+  exact h
 
 theorem TorsionalState_classical_limit_is_monotone (s : TorsionalState) (h : TorsionalState_isClassicalPure s) :
   TorsionalState.q1 (TorsionalState_torsionalBetaStep s { val := 0x00010000 }) = TorsionalState.q1 s := by

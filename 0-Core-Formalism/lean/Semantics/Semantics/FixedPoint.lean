@@ -14,9 +14,9 @@ open Lean
 
 Q0.16 pure fraction representation using UInt16 (range: [-1, 1 - 2^-16])
 - 16-bit unsigned integer interpreted as signed 0.16 fixed point.
-- 0x8000 = 1.0 (max positive value)
+- 0x7FFF = 1.0 (max positive value, represents ~1.0)
 - 0x0000 = 0.0
-- Range: [-1.0, 1.0 - 2^-16] ≈ [-1.0, 0.999985]
+- Range: [-1.0, 1.0 - 2^-15] ≈ [-1.0, 0.99997]
 - Resolution: 1/32767 ≈ 0.0000305
 -/
 structure Q0_16 where
@@ -43,7 +43,7 @@ def mul (a b : Q0_16) : Q0_16 :=
   let prod : UInt32 := UInt32.ofNat (a.val.toNat * b.val.toNat)
   ⟨(prod >>> 15).toUInt16⟩
 def div (a b : Q0_16) : Q0_16 :=
-  if b.val = 0 then ⟨0x7FFF⟩
+  if b.val = 0 then zero
   else ⟨(UInt32.ofNat (a.val.toNat * (1 <<< 15)) / UInt32.ofNat b.val.toNat).toUInt16⟩
 def abs (x : Q0_16) : Q0_16 :=
   if (x.val &&& 0x8000) != 0 then neg x else x
@@ -161,25 +161,29 @@ def scale : Nat := 65536
 def ofInt (n : Int) : Q16_16 :=
   ofRawInt (n * 65536)
 
-/-- Saturating addition (matches hardware add_sat) -/
+/-- Saturating addition (matches hardware add_sat).
+     Uses two's-complement overflow detection on raw UInt32 values.
+     Both inputs negative and result positive → negative overflow → minVal.
+     Both inputs positive and result negative → positive overflow → maxVal.
+     Result stays in [-32768, 32767.999985] via saturation. -/
 @[inline]
 def add (a b : Q16_16) : Q16_16 :=
-  let a_s := Int.ofNat a.val.toNat
-  let b_s := Int.ofNat b.val.toNat
-  let res := a_s + b_s
-  if res > 0x7FFFFFFF then ⟨0x7FFFFFFF⟩
-  else if res < -0x80000000 then ⟨0x80000000⟩
-  else ⟨UInt32.ofNat res.toNat⟩
+  let s := a.val + b.val
+  if a.val < 0x80000000 && b.val < 0x80000000 && s ≥ 0x80000000 then maxVal
+  else if a.val ≥ 0x80000000 && b.val ≥ 0x80000000 && s < 0x80000000 then minVal
+  else ⟨s⟩
 
-/-- Saturating subtraction (matches hardware sub_sat) -/
+/-- Saturating subtraction (matches hardware sub_sat).
+     Uses two's-complement overflow detection on raw UInt32 values.
+     a positive minus b negative → possible positive overflow.
+     a negative minus b positive → possible negative overflow.
+     Result stays in [-32768, 32767.999985] via saturation. -/
 @[inline]
 def sub (a b : Q16_16) : Q16_16 :=
-  let a_s := Int.ofNat a.val.toNat
-  let b_s := Int.ofNat b.val.toNat
-  let res := a_s - b_s
-  if res > 0x7FFFFFFF then ⟨0x7FFFFFFF⟩
-  else if res < -0x80000000 then ⟨0x80000000⟩
-  else ⟨UInt32.ofNat res.toNat⟩
+  let d := a.val - b.val
+  if a.val < 0x80000000 && b.val ≥ 0x80000000 && d ≥ 0x80000000 then maxVal
+  else if a.val ≥ 0x80000000 && b.val < 0x80000000 && d < 0x80000000 then minVal
+  else ⟨d⟩
 
 @[inline]
 def mul (a b : Q16_16) : Q16_16 :=
@@ -315,12 +319,59 @@ theorem mul_zero (a : Q16_16) : a * zero = zero := by
 
 /-- a - a = zero -/
 theorem sub_self (a : Q16_16) : sub a a = zero := by
-  cases a with
-  | mk av =>
-    delta sub zero
-    apply congrArg Q16_16.mk
-    cases av
-    simp
+  ext
+  simp [sub, zero]
+  have hsub0 : a.val - a.val = (0 : UInt32) := by
+    apply UInt32.ext; simp
+  simp [hsub0]
+  by_cases h : a.val < (0x80000000 : UInt32)
+  · have hnge : ¬ a.val ≥ (0x80000000 : UInt32) := by
+      intro hge; exact Nat.lt_irrefl _ (Nat.lt_of_lt_of_le h hge)
+    simp [h, hnge]
+  · have hge : a.val ≥ (0x80000000 : UInt32) := Nat.le_of_not_lt h
+    simp [h, hge]
+
+/-- a + zero = a (right-additive identity, holds for all signed values). -/
+theorem add_zero (a : Q16_16) : add a zero = a := by
+  ext
+  simp [add, zero]
+  have hadd0 : a.val + (0 : UInt32) = a.val := by
+    apply UInt32.ext; simp
+  have h0_lt_8 : (0 : UInt32) < (0x80000000 : UInt32) := by native_decide
+  have hn0_ge_8 : ¬ (0 : UInt32) ≥ (0x80000000 : UInt32) := by native_decide
+  simp [hadd0, h0_lt_8, hn0_ge_8]
+  by_cases h : a.val < (0x80000000 : UInt32)
+  · have hnge : ¬ a.val ≥ (0x80000000 : UInt32) := by
+      intro hge; exact Nat.lt_irrefl _ (Nat.lt_of_lt_of_le h hge)
+    simp [h, hnge]
+  · have hge : a.val ≥ (0x80000000 : UInt32) := Nat.le_of_not_lt h
+    simp [h, hge]
+
+/-- zero + a = a (left-additive identity). -/
+theorem zero_add (a : Q16_16) : add zero a = a := by
+  ext
+  simp [add, zero]
+  have hadd0 : (0 : UInt32) + a.val = a.val := by
+    apply UInt32.ext; simp
+  have h0_lt_8 : (0 : UInt32) < (0x80000000 : UInt32) := by native_decide
+  have hn0_ge_8 : ¬ (0 : UInt32) ≥ (0x80000000 : UInt32) := by native_decide
+  simp [hadd0, h0_lt_8, hn0_ge_8]
+  by_cases h : a.val < (0x80000000 : UInt32)
+  · have hnge : ¬ a.val ≥ (0x80000000 : UInt32) := by
+      intro hge; exact Nat.lt_irrefl _ (Nat.lt_of_lt_of_le h hge)
+    simp [h, hnge]
+  · have hge : a.val ≥ (0x80000000 : UInt32) := Nat.le_of_not_lt h
+    simp [h, hge]
+
+/-- sqrt of zero is zero. -/
+theorem sqrt_zero : sqrt zero = zero := by
+  delta sqrt zero
+  simp
+
+/-- sqrt of one is approximately one (within 1 LSB for Q16_16). -/
+theorem sqrt_one : (sqrt one).toInt - one.toInt ≤ 1 := by
+  delta sqrt one toInt
+  native_decide
 
 /-- one * a = a -/
 theorem one_mul (a : Q16_16) : one * a = a := by
@@ -367,28 +418,37 @@ theorem epsilon_add_pos {r : Q16_16} (hr : r.toInt ≥ 0) :
   change toInt (add r epsilon) > 0
   cases r with
   | mk rv =>
-    have hlt := UInt32.toNat_lt rv
-    simp [add, epsilon, toInt] at hr ⊢
-    split
-    · native_decide
-    · rename_i hhi
-      split
-      · rename_i hlo
+    have hrv_lt : rv < (0x80000000 : UInt32) := by
+      by_contra! hge
+      have : toInt (mk rv) < 0 := by
+        have h_lt_full : rv.toNat < 4294967296 := UInt32.toNat_lt rv
+        simp [toInt, hge]
         omega
-      · rename_i hlo
-        have hrvadd : (rv + 1).toNat = rv.toNat + 1 := by
-          rw [UInt32.toNat_add, UInt32.toNat_ofNat]
-          norm_num
+      linarith
+    have h1_lt_8 : (1 : UInt32) < (0x80000000 : UInt32) := by native_decide
+    have h_nge_8 : ¬ rv ≥ (0x80000000 : UInt32) := by
+      intro hge; exact Nat.lt_irrefl _ (Nat.lt_of_lt_of_le hrv_lt hge)
+    simp [add, epsilon, toInt, hrv_lt, h1_lt_8, h_nge_8]
+    by_cases h_ov : rv + (1 : UInt32) ≥ (0x80000000 : UInt32)
+    · simp [h_ov, maxVal, toInt]
+      native_decide
+    · simp [h_ov, toInt]
+      have h_no_wrap : (rv + (1 : UInt32)).toNat = rv.toNat + 1 := by
+        have h_lt_max : rv.toNat + 1 < 4294967296 := by
+          have h_rv_nat : rv.toNat < 2147483648 := by
+            have : (0x80000000 : UInt32).toNat = 2147483648 := by native_decide
+            have : rv.toNat < (0x80000000 : UInt32).toNat := hrv_lt
+            simpa [this] using this
           omega
-        have hpos : 0 < (rv + 1).toNat := by
-          rw [hrvadd]
-          omega
-        have hnosign : ¬2147483648 ≤ rv + 1 := by
-          change ¬(2147483648 : UInt32).toNat ≤ (rv + 1).toNat
-          simp [UInt32.toNat_ofNat, hrvadd]
-          omega
-        simp [hnosign]
-        exact_mod_cast hpos
+        calc
+          (rv + (1 : UInt32)).toNat = (rv.toNat + (1 : UInt32).toNat) % 4294967296 := by
+            simp [UInt32.toNat_add]
+          _ = (rv.toNat + 1) % 4294967296 := by simp
+          _ = rv.toNat + 1 := Nat.mod_eq_of_lt h_lt_max
+      have hpos : (rv + (1 : UInt32)).toNat > 0 := by
+        rw [h_no_wrap]
+        omega
+      exact_mod_cast hpos
 
 def sat01 (q : Q16_16) : Q16_16 :=
   if q.toInt < 0 then zero

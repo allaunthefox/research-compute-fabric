@@ -1,0 +1,42 @@
+# Research Stack is intentionally large; keep Windsurf/Codeium indexing on
+# source and docs, not generated corpora, chain snapshots, build products, or
+# archived dependency trees.
+
+.git/
+.changes/
+.cache/
+.lake/
+**/.lake/
+**/target/
+**/node_modules/
+**/__pycache__/
+**/.venv/
+
+shared-data/
+data/
+artifacts/
+out/
+logs/
+scratch/
+extensions/
+ai-math-discovery-systems/
+
+5-Applications/out/
+5-Applications/scripts/models/
+3-Mathematical-Models/equations_*/
+3-Mathematical-Models/equations_parquet_tagged/
+4-Infrastructure/ComfyUI/
+
+*.jsonl
+*.parquet
+*.vcd
+*.gguf
+*.zip
+*.tar
+*.tar.gz
+*.zst
+*.mp4
+*.gif
+
+API KEYS/
+Security & Passwords/

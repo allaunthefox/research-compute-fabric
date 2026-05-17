@@ -1,4 +1,4 @@
-# Getting Started — Sovereign Research Stack
+# Getting Started — Observerless Research Stack
 
 Start here. Every command on this page is copy-pasteable and verified against the repo.
 

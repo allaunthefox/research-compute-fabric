@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use the DNA codec filter, cite biological sources separately and keep the codec layer analogy-bounded."
+type: software
+title: "DNA Codec Filter Sources"
+authors:
+  - name: "Research Stack Contributors"
+date-released: 2026-05-09
+url: "https://github.com/allaunthefox/Research-Stack"
+repository-code: "https://github.com/allaunthefox/Research-Stack"
+license: Apache-2.0
+references:
+  - type: software
+    title: "seqLogo"
+    authors:
+      - name: "Bioconductor"
+    url: "https://bioconductor.org/packages/release/bioc/html/seqLogo.html"
+    notes: "Reference surface for sequence-logo information-content intuition. No biological sequence data is vendored here."
+  - type: article
+    title: "A unified view of polymer, dumbbell, and oligonucleotide DNA nearest-neighbor thermodynamics"
+    authors:
+      - name: "John SantaLucia Jr."
+    doi: "10.1073/pnas.95.4.1460"
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC19045/"
+    notes: "Reference surface for nearest-neighbor thermodynamics. The local codec uses only an analogy-bound synthetic binding score."
+  - type: article
+    title: "Fidelity of DNA replication - a matter of proofreading"
+    authors:
+      - name: "DNA replication fidelity review authors"
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC6153641/"
+    notes: "Reference surface for layered fidelity, proofreading, and mismatch-repair framing. The local codec uses only receipt-layer analogy."
+  - type: article
+    title: "Mutation - The Engine of Evolution: Studying Mutation and Its Role in the Evolution of Bacteria"
+    authors:
+      - name: "Nature Education / review authors"
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC4563715/"
+    notes: "Reference surface for Drake-rule mutation-rate scaling discussion. The local codec uses only a per-token receipt-budget analogy."
+  - type: webpage
+    title: "Worm-like Chain"
+    authors:
+      - name: "Chemistry LibreTexts"
+    url: "https://chem.libretexts.org/Bookshelves/Biological_Chemistry/Concepts_in_Biophysical_Chemistry_%28Tokmakoff%29/02%3A_Macromolecules/09%3A_Macromolecular_Mechanics/9.02%3A_Worm-like_Chain"
+    notes: "Reference surface for replay-curvature analogy. No polymer simulation or DNA geometry result is claimed."

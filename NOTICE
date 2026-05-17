@@ -1,0 +1,14 @@
+Research Stack (OTOM)
+Copyright 2026 Brandon Schneider and Research Stack Contributors
+
+This product includes software and documentation developed for the Research
+Stack / OTOM project.
+
+Unless a file, directory, vendored dependency, generated artifact, dataset, or
+third-party subtree states a different license, repository source code and
+documentation are made available under the Apache License, Version 2.0.
+
+Third-party components, copied datasets, generated corpora, notebooks, papers,
+models, and external examples may carry their own licenses or terms. Their
+upstream notices remain authoritative for those components. This NOTICE file
+does not relicense third-party material.

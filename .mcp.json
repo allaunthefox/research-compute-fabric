@@ -1,0 +1,49 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/2025-03-26/client-config.json",
+  "_comment": "Math-first MCP server declarations for Research Stack. Each server below is gated on a runtime environment variable so the config never embeds secrets and so contributors who have not provisioned a given backend simply skip it. See docs/math-first-tooling.md for setup instructions.",
+  "mcpServers": {
+    "filesystem": {
+      "_comment": "Read/write proof artifacts, Lean kernels, and DeepSeek receipts. Scope is the repository root so review tooling cannot escape the project tree.",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "."
+      ],
+      "env": {}
+    },
+    "sympy": {
+      "_comment": "Local SymPy bridge for symbolic verification of arithmetic claims that appear in distilled docs and ArithmeticSpec. Backed by sympy-mcp upstream; see https://github.com/sdiehl/sympy-mcp.",
+      "command": "uv",
+      "args": [
+        "tool",
+        "run",
+        "--from",
+        "sympy-mcp",
+        "sympy-mcp"
+      ],
+      "env": {}
+    },
+    "wolfram-alpha": {
+      "_comment": "Wolfram Alpha symbolic verification. Required to discharge the `Verified with Wolfram Alpha` comments enforced by .github/workflows/wolfram-verification.yml. Provide a Short Answers API key via WOLFRAM_ALPHA_APPID at runtime; the server is otherwise dormant.",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@wolfram-alpha/mcp-server"
+      ],
+      "env": {
+        "WOLFRAM_ALPHA_APPID": "${WOLFRAM_ALPHA_APPID}"
+      }
+    },
+    "lean": {
+      "_comment": "Lean 4 / Mathlib typecheck bridge. Targets 0-Core-Formalism/lean/Semantics/ via the existing lakefile. Requires `elan` on PATH; see GETTING_STARTED.md for the lean-toolchain pin (leanprover/lean4:v4.30.0-rc2).",
+      "command": "uvx",
+      "args": [
+        "lean-mcp",
+        "--lakefile",
+        "0-Core-Formalism/lean/Semantics/lakefile.toml"
+      ],
+      "env": {}
+    }
+  }
+}

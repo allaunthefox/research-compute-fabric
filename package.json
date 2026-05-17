@@ -2,6 +2,14 @@
   "name": "research-stack",
   "private": true,
   "description": "Local Research Stack tooling dependencies.",
+  "scripts": {
+    "install-python": "uv python install 3.11.15",
+    "setup-cad-env": "cd 5-Applications/text-to-cad && python3.11 -m venv .venv && ./.venv/bin/pip install -r requirements-cad.txt",
+    "verify-cad": "cd 5-Applications/text-to-cad && ./.venv/bin/python -c \"import build123d; import OCP; print('CAD dependencies OK')\"",
+    "setup-science-light": "uv venv .venv-science && . .venv-science/bin/activate && uv pip install -r requirements-optional-science.txt",
+    "setup-science-all": "uv venv --python 3.11 .venv-science && . .venv-science/bin/activate && uv pip install -r requirements-optional-science.txt 'dedalus>=3.0.5' 'liboqs-python>=0.14.1'",
+    "probe-science": "sh -c 'if [ -x .venv-science/bin/python ]; then .venv-science/bin/python scripts/probe_science_toolbelt.py; else python3 scripts/probe_science_toolbelt.py; fi'"
+  },
   "dependencies": {
     "better-sqlite3": "^12.4.1"
   }

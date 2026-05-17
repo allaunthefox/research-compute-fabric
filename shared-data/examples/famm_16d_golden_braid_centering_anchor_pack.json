@@ -1,0 +1,44 @@
+{
+  "anchor_pack": "golden_braid_centering_gate",
+  "basis_layer": "GOLDEN_BRAID_CENTERING_GATE",
+  "version": "0.1.0",
+  "anchors": [
+    {
+      "id": "FIBONACCI_CENTER_PULL",
+      "vector_axes": {
+        "2_semantic_mass": 0.48,
+        "5_delta_mem": 0.72,
+        "6_chirality": 0.62,
+        "7_residual_seal": 0.84,
+        "10_surface_geometry": 0.7,
+        "11_scar": 0.58,
+        "13_invariant": 0.9,
+        "14_receipt": 0.92
+      },
+      "handoff_gate": "golden_centering_receipt"
+    },
+    {
+      "id": "CENTERING_SCAR_COARSENER",
+      "vector_axes": {
+        "2_semantic_mass": 0.35,
+        "7_residual_seal": 0.78,
+        "11_scar": 0.95,
+        "13_invariant": 0.66,
+        "14_receipt": 0.72
+      },
+      "handoff_gate": "failed_centering_coarsening_receipt"
+    },
+    {
+      "id": "BRAID_SURVIVOR_FILTER",
+      "vector_axes": {
+        "5_delta_mem": 0.68,
+        "6_chirality": 0.72,
+        "7_residual_seal": 0.88,
+        "11_scar": 0.28,
+        "13_invariant": 0.94,
+        "14_receipt": 0.9
+      },
+      "handoff_gate": "survivor_centering_promotion_receipt"
+    }
+  ]
+}

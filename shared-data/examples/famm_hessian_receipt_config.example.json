@@ -1,0 +1,42 @@
+{
+  "seed": 0,
+  "operator": {
+    "kind": "diagonal",
+    "dtype": "float64",
+    "device": "cpu",
+    "diagonal": [
+      12.0,
+      7.5,
+      3.0,
+      0.000001,
+      0.0,
+      -0.25,
+      -1.5,
+      2.0
+    ]
+  },
+  "lanczos": {
+    "k": 5,
+    "max_iter": 8,
+    "tol": 1e-8,
+    "which": "LM"
+  },
+  "trace": {
+    "enabled": true,
+    "num_matvecs": 12,
+    "method": "hutch++"
+  },
+  "spectral_density": {
+    "enabled": true,
+    "num_runs": 2,
+    "lanczos_steps": 8,
+    "num_grid_points": 128
+  },
+  "route_thresholds": {
+    "lambda_max": 10.0,
+    "negative_eigenvalue_tol": -1e-6,
+    "flat_abs_tol": 1e-5,
+    "flat_ratio_min": 0.3,
+    "trace_max": 50.0
+  }
+}

@@ -1,0 +1,69 @@
+created: 20260511000000000
+modified: 20260511000000000
+tags: ResearchStack NUVMAP GPU BurstCheck HardwareWitness HOLD
+title: NUVMAP GPU Burst Check Plan
+type: text/vnd.tiddlywiki
+
+! NUVMAP GPU Burst Check Plan
+
+Status: `ADMIT_GPU_BURST_PLAN_HOLD_EXECUTION`
+
+This is the time-boxed plan for renting a GPU briefly, approximately three
+hours, to validate NUVMAP probe machinery.
+
+Runner:
+
+```text
+4-Infrastructure/shim/nuvmap_gpu_burst_check_plan.py
+```
+
+Receipt:
+
+```text
+shared-data/data/blockchain_corpus/nuvmap_gpu_burst_check_plan_receipt.json
+```
+
+Current receipt hash:
+
+```text
+73b6fab2800a94019247623b71082b54e80f71a819722ae2fb7bfc8fc6780296
+```
+
+!! Burst Phases
+
+```text
+P0 environment snapshot
+P1 NUVMAP fixture replay
+P2 CPU/GPU parity
+P3 waveprobe batch
+P4 metaprobe + negative controls
+P5 cost and shutdown receipt
+```
+
+!! Required Outputs
+
+* `environment_receipt.json`
+* `cpu_gpu_parity_receipt.json`
+* `waveprobe_batch_receipt.json`
+* `metaprobe_batch_receipt.json`
+* `negative_controls_receipt.json`
+* `cost_and_shutdown_receipt.json`
+
+!! Forbidden Inputs
+
+* wallet private keys
+* exchange credentials
+* mainnet transaction signing material
+* unbounded copyrighted payload mirrors
+
+!! Claim Boundary
+
+The GPU rental proves nothing by itself. Hardware witness requires visible GPU
+state plus CPU/GPU parity receipts. Compression feedback remains HOLD until a
+byte-exact baseline matrix exists.
+
+Related:
+
+* [[NUVMAP Metadata Blitter]]
+* [[Blockchain L3 Self-Scan Scheduler]]
+* [[NUVMAP Chain Protocol Plan]]

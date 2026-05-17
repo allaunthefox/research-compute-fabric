@@ -1,0 +1,8 @@
+[
+  {
+    "error": "DefaultCredentialsError",
+    "message": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+    "next_step": "Run gcloud auth application-default login or provide GOOGLE_APPLICATION_CREDENTIALS.",
+    "python": "/home/allaun/.local/share/research-stack/blockchain-bigquery-venv/bin/python"
+  }
+]

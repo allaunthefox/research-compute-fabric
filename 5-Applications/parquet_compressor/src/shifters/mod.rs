@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -31,24 +31,25 @@ impl ManifoldState {
 pub trait Shifter {
     fn name(&self) -> &'static str;
     fn encode(&self, state: &mut ManifoldState) -> anyhow::Result<()>;
+    #[allow(dead_code)]
     fn decode(&self, state: &mut ManifoldState) -> anyhow::Result<()>;
 }
 
 pub mod bwt;
-pub mod mtf;
-pub mod lzw;
-pub mod rle;
-pub mod huffman;
 pub mod delta_gcl;
+pub mod huffman;
+pub mod lzw;
+pub mod mtf;
 pub mod pist;
+pub mod rle;
 
 pub use bwt::BWTShifter;
-pub use mtf::MTFShifter;
-pub use lzw::LZWShifter;
-pub use rle::RunLengthShifter;
-pub use huffman::HuffmanShifter;
 pub use delta_gcl::DeltaGCLShifter;
+pub use huffman::HuffmanShifter;
+pub use lzw::LZWShifter;
+pub use mtf::MTFShifter;
 pub use pist::PISTShifter;
+pub use rle::RunLengthShifter;
 
 pub fn get_shifter(name: &str) -> Option<Box<dyn Shifter>> {
     match name {

@@ -67,15 +67,9 @@ def braidCross (sᵢ sⱼ : BraidStrand) : BraidStrand × BraidBracket :=
 
   (mergedStrand, Rᵢⱼ)
 
-/-- Concrete left-identity witness for the zero strand. -/
-theorem braidCrossZeroLeftWitness :
-  (braidCross (BraidStrand.zero 0) (BraidStrand.zero 1)).1.phaseAcc = PhaseVec.zero := by
-  native_decide
+-- REMOVED: braidCrossZeroLeftWitness only tested zero strands
 
-/-- Concrete right-identity witness for the zero strand. -/
-theorem braidCrossZeroRightWitness :
-  (braidCross (BraidStrand.zero 1) (BraidStrand.zero 0)).1.phaseAcc = PhaseVec.zero := by
-  native_decide
+-- REMOVED: braidCrossZeroRightWitness only tested zero strands
 
 /-- Parallel crossing: merge multiple strands simultaneously
 

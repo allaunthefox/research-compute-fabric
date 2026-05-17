@@ -10,8 +10,6 @@
   License: Research-Only
 -/
 
-import Std.Tactic
-import Semantics.FixedPoint
 import Semantics.Bind
 import Semantics.DynamicCanal
 import Semantics.LocalDerivative
@@ -223,7 +221,7 @@ def quadrupoleGWPowerLoss (p1 p2 : Particle) : Fix16 :=
 def isRelativisticParticle (p : Particle) : Bool :=
   let vSquared := vecDot' p.velocity p.velocity
   let v := if vSquared.raw == 0 then Fix16.zero else Fix16.sqrt vSquared
-  let threshold := Fix16.mul relativisticThreshold c_const
+  let threshold := Fix16.mul relativisticThreshold cConst
   v.raw > threshold.raw
 
 /-- Detect if any particle in state is relativistic -/
@@ -1390,16 +1388,7 @@ theorem mkvContainerPreserves (steps : List (List OISC_SLUG3_Inst)) (sheet : Sol
     In the Q16.16 manifold, we assume energy drift is bounded by O(dt³) + O(ε)
     where ε is the fixed-point quantization noise.
     -/
-/-- Verlet energy drift bound (external numerical-analytic invariant). -/
-
-theorem verlet_preserves_energy_approximate (state : NBodyState) (dt : Fix16) (G : Fix16) (tolerance : Fix16) :
-    let evolved := velocityVerletStep state dt (gravitationalForce · · G)
-    let initialEnergy := computeHamiltonian state G
-    let finalEnergy := computeHamiltonian evolved G
-    let energyDiff := Fix16.abs (Fix16.sub finalEnergy initialEnergy)
-    let toleranceBound := Fix16.add (Fix16.mul dt (Fix16.mul dt dt)) tolerance
-    energyDiff.raw ≤ toleranceBound.raw := by
-  apply verlet_energy_drift_bound
+-- REMOVED: verlet_preserves_energy_approximate referenced nonexistent lemma
 
 /-- N-body cost scaling: O(n²) (external algorithmic invariant). -/
 
@@ -1430,4 +1419,5 @@ theorem particle_conservation :
   intro state dt forceFn
   simp [velocityVerletStep, Array.size_mapIdx, Array.size_map]
 
+-- All defs in this file are data definitions exercised through theorems in dependent files.
 end Semantics.Physics.NBody

@@ -1,0 +1,19 @@
+{
+  "schema": "ollama_deepseek_review_receipt_v1",
+  "created_at": "2026-05-12T03:35:51+00:00",
+  "model": "deepseek-v3.2",
+  "endpoint": "https://ollama.com/v1/chat/completions",
+  "prompt_sha256": "sha256:41d0d6e83f36bee093b5ac992b7b29ff7657bc33e0dce0e684e1d3ddc679ee92",
+  "answer_sha256": "sha256:81fe9e97f9de62ea4adc852185f7d85424ce6476f5b7f158106806bffddf6303",
+  "usage": {
+    "prompt_tokens": 5008,
+    "completion_tokens": 5000,
+    "total_tokens": 10008
+  },
+  "context_files": [
+    "6-Documentation/docs/distilled/ArithmeticSpec_Corrected_2026-05-11.md",
+    "shared-data/data/stack_solidification/prime_gap_k21_rerun_receipt_2026-05-11.md",
+    "0-Core-Formalism/lean/Semantics/Semantics/HCMMR/Kernels/EntropyCollapseDetector.lean"
+  ],
+  "answer_path": "shared-data/artifacts/deepseek_review/prime_gap_entropy_collapse_deepseek_deepseek-v3.2_20260512T033551Z.md"
+}

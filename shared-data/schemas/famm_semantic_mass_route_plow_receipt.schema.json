@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FAMM Semantic Mass Route Plow Receipt",
+  "type": "object",
+  "required": [
+    "receipt_type",
+    "schema_version",
+    "basis_layers",
+    "mass_stream",
+    "z_domain",
+    "ranked_routes",
+    "closure_recommendation",
+    "residual_seal",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "receipt_type": {
+      "const": "famm_semantic_mass_route_plow_receipt"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "basis_layers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "mass_stream": {
+      "type": "object"
+    },
+    "z_domain": {
+      "type": "object"
+    },
+    "ranked_routes": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "closure_recommendation": {
+      "type": "object"
+    },
+    "residual_seal": {
+      "type": "object"
+    },
+    "no_drift_boundary": {
+      "type": "string"
+    },
+    "receipt_sha256": {
+      "type": "string"
+    }
+  }
+}

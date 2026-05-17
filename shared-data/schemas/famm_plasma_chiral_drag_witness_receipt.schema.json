@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FAMM Plasma Chiral Drag Witness Receipt",
+  "type": "object",
+  "required": [
+    "receipt_type",
+    "schema_version",
+    "source_model",
+    "inputs",
+    "derived",
+    "famm",
+    "packet",
+    "receipt_hash"
+  ],
+  "properties": {
+    "receipt_type": {"const": "famm_plasma_chiral_drag_witness_receipt"},
+    "schema_version": {"type": "string"},
+    "source_model": {"type": "string"},
+    "inputs": {"type": "object"},
+    "derived": {"type": "object"},
+    "famm": {"type": "object"},
+    "packet": {"type": "object"},
+    "no_drift_boundary": {"type": "string"},
+    "receipt_hash": {"type": "string"}
+  }
+}

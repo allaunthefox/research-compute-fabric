@@ -1,0 +1,74 @@
+* Spectral Encoder Simple Circuit Simulation
+* Implements spectral encoding theory in analog circuit form
+* Based on Signal Theory Compendium spectral encoding theory
+*
+* Core concepts:
+* - Spectral signature: 8-bin amplitude vector
+* - Genetic event mapping to spectral peaks
+* - Spectral overlap and accumulation
+
+.title Spectral Encoder Analog Circuit Simulation
+
+* Input signals for genetic events (A, T, G, C)
+* Each event maps to a specific spectral bin
+VA_IN 2 0 PULSE(0 3.3 1n 1n 10n 20n 100n)
+VT_IN 3 0 PULSE(0 3.3 21n 1n 10n 20n 100n)
+VG_IN 4 0 PULSE(0 3.3 41n 1n 10n 20n 100n)
+VC_IN 5 0 PULSE(0 3.3 61n 1n 10n 20n 100n)
+
+* Spectral bin circuits (8 bins total)
+* Each bin is an RC integrator that accumulates charge
+* Bin 0 (Event A)
+R_BIN0 10 0 10k
+C_BIN0 10 0 10p
+R_IN0 2 10 1k
+
+* Bin 1 (Event T)
+R_BIN1 11 0 10k
+C_BIN1 11 0 10p
+R_IN1 3 11 1k
+
+* Bin 2 (Event G)
+R_BIN2 12 0 10k
+C_BIN2 12 0 10p
+R_IN2 4 12 1k
+
+* Bin 3 (Event C)
+R_BIN3 13 0 10k
+C_BIN3 13 0 10p
+R_IN3 5 13 1k
+
+* Remaining bins (4-7) - initially empty
+R_BIN4 14 0 10k
+C_BIN4 14 0 10p
+
+R_BIN5 15 0 10k
+C_BIN5 15 0 10p
+
+R_BIN6 16 0 10k
+C_BIN6 16 0 10p
+
+R_BIN7 17 0 10k
+C_BIN7 17 0 10p
+
+* Output buffers (simple voltage followers)
+R_OUT0 30 0 10k
+R_OUT1 31 0 10k
+R_OUT2 32 0 10k
+R_OUT3 33 0 10k
+R_OUT4 34 0 10k
+R_OUT5 35 0 10k
+R_OUT6 36 0 10k
+R_OUT7 37 0 10k
+
+* Analysis
+.TRAN 1n 200n
+.PLOT TRAN V(2) V(3) V(4) V(5) V(10) V(11) V(12) V(13)
+
+* Measurement commands
+.MEASURE TRAN bin0_peak MAX V(10)
+.MEASURE TRAN bin1_peak MAX V(11)
+.MEASURE TRAN bin2_peak MAX V(12)
+.MEASURE TRAN bin3_peak MAX V(13)
+
+.END

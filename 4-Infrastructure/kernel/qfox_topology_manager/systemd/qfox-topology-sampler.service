@@ -1,0 +1,8 @@
+[Unit]
+Description=Sample QFox topology manager tracepoint averages
+ConditionPathExists=/dev/qfox_topoman
+
+[Service]
+Type=oneshot
+Environment=QFOX_TOPOLOGY_SAMPLE_SEC=5
+ExecStart=/usr/local/sbin/qfox-topology-sample

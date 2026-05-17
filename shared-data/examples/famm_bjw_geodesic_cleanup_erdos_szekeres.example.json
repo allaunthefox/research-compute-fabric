@@ -1,0 +1,62 @@
+{
+  "source_description": "Erdos-Szekeres monotone subsequence theorem cleanup",
+  "source_object": {
+    "problem": "Prove any sequence of distinct real numbers of length (r-1)(s-1)+1 has an increasing subsequence of length r or decreasing subsequence of length s.",
+    "raw_route": "search all subsequences"
+  },
+  "weights": {
+    "complexity": 1.0,
+    "residual": 1.2,
+    "scar": 1.5,
+    "invariant": 2.0,
+    "proof_burden": 0.8
+  },
+  "warden_threshold": 0.25,
+  "candidate_moves": [
+    {
+      "id": "builder_label_map",
+      "builder": {
+        "operation": "replace_subsequence_search_with_label_grid",
+        "proposal": "Map each term a_i to (I_i,D_i), longest increasing/decreasing subsequence ending at i.",
+        "delta_complexity": -0.86,
+        "delta_residual": -1.0
+      },
+      "judge": {
+        "invariant_preserved": true,
+        "receipt_pass": true,
+        "tests": [
+          "distinct input sequence",
+          "label injectivity",
+          "avoidance box capacity"
+        ]
+      },
+      "warden": {
+        "penalty": 0.0,
+        "blocks": []
+      }
+    },
+    {
+      "id": "bad_infinite_generalization",
+      "builder": {
+        "operation": "generalize_to_infinite_sequences_without_boundary",
+        "proposal": "Claim same finite pigeonhole result for arbitrary infinite sequences.",
+        "delta_complexity": -0.2,
+        "delta_residual": 0.5
+      },
+      "judge": {
+        "invariant_preserved": false,
+        "receipt_pass": false,
+        "tests": [
+          "finite theorem boundary violated"
+        ]
+      },
+      "warden": {
+        "penalty": 1.0,
+        "blocks": [
+          "overclaim",
+          "missing_boundary"
+        ]
+      }
+    }
+  ]
+}

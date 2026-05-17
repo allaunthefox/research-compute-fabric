@@ -1,0 +1,1171 @@
+{
+  "account_receipt": "shared-data/data/blockchain_corpus/blockchain_full_account_live_receipt.json",
+  "account_receipt_hash": "7f01aec8b1ee6531712f2c0d82f349d44ccd3d6ab0102387c1dcc35cd18a9683",
+  "claim_boundary": "Layer-3 scan scheduling receipt only. It uses existing inventory and transfer receipts to choose next bounded probes. It does not decode chain semantics, claim compression gain, claim market prediction, or fetch additional corpus bytes.",
+  "created_utc": "2026-05-11T17:39:53Z",
+  "decision": "ADMIT_L3_SELF_SCAN_POLICY",
+  "frontier": [
+    {
+      "bytes_per_object": 4767427.881,
+      "chain": "ethereum",
+      "completion": {
+        "completed_objects": 3937,
+        "completion_ratio": 0.999746064,
+        "missing_objects": 1,
+        "remote_parquet_count": 3937,
+        "remote_payload_count": 3937
+      },
+      "dataset": "aws-public-blockchain",
+      "density_band": "light",
+      "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_eth_blocks_inventory_full.json",
+      "inventory_hash": "1edc316f0e250ea56e9e4d9958db559af28c717cc53c6fdd6fcde717ab876bda",
+      "object_count": 3938,
+      "scan_actions": [
+        {
+          "action": "RETRY_MISSING_OBJECTS",
+          "decision": "HOLD_UNTIL_RETRY_RECEIPT",
+          "inputs": {
+            "chain": "ethereum",
+            "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_eth_blocks_inventory_full.json",
+            "table": "blocks"
+          },
+          "reason": "Remote payload/parquet count is below inventory object count.",
+          "script": "4-Infrastructure/shim/blockchain_public_dataset_transfer.py"
+        },
+        {
+          "action": "RUN_HEADER_OR_BLOCK_PATTERN_PROBE",
+          "decision": "ADMIT_BOUNDED_ROUTE_PRIOR_SCAN",
+          "inputs": {
+            "chain": "ethereum",
+            "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_eth_blocks_inventory_full.json",
+            "table": "blocks"
+          },
+          "reason": "Use deterministic numeric residuals as route priors before byte-heavy scans.",
+          "script": "4-Infrastructure/shim/blockchain_header_pattern_probe.py"
+        },
+        {
+          "action": "REFRESH_SELF_SCAN_SCHEDULER",
+          "decision": "ADMIT_RECEIPT_FEEDBACK_LOOP",
+          "inputs": {
+            "account_receipt": "shared-data/data/blockchain_corpus/blockchain_full_account_live_receipt.json"
+          },
+          "reason": "The scan output becomes the next L3 control input.",
+          "script": "4-Infrastructure/shim/blockchain_l3_self_scan_scheduler.py"
+        }
+      ],
+      "storage_channel_model": {
+        "actions": [
+          {
+            "action": "RUN_ONCHAIN_STORAGE_CHANNEL_PROBE",
+            "decision": "ADMIT_STORAGE_SURFACE_SCAN_HOLD_PAYLOAD_USE",
+            "inputs": {
+              "chain": "ethereum",
+              "density_band": "light",
+              "family": "evm",
+              "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_eth_blocks_inventory_full.json",
+              "table": "blocks"
+            },
+            "reason": "Blockchain records can contain intentional public data carriers; scan them as storage surfaces before treating bytes as neutral noise."
+          }
+        ],
+        "channels": [
+          {
+            "channel": "calldata",
+            "scan_surface": "transaction input bytes",
+            "use_boundary": "Route by byte density and selector shape only; no private-key, exploit, or evasion workflow."
+          },
+          {
+            "channel": "event_logs",
+            "scan_surface": "topics and data fields",
+            "use_boundary": "Receipt emitted public events as storage-like data lanes."
+          },
+          {
+            "channel": "contract_bytecode",
+            "scan_surface": "creation/runtime bytecode",
+            "use_boundary": "Static payload/code-carrier diagnostic only."
+          },
+          {
+            "channel": "blob_or_da_payload",
+            "scan_surface": "data availability/blob lanes when present in source tables",
+            "use_boundary": "Cost-bounded metadata scan first; bulk payload fetch remains HOLD."
+          }
+        ],
+        "claim_boundary": "Storage-channel model is for detection, accounting, and receipt routing. It does not recommend publishing payloads on-chain, bypassing moderation, hiding data, or using public ledgers as private storage.",
+        "family": "evm"
+      },
+      "table": "blocks",
+      "total_listed_bytes": 18774130997
+    },
+    {
+      "bytes_per_object": 0.0,
+      "chain": "bitcoin-cash",
+      "completion": {
+        "completed_objects": 0,
+        "completion_ratio": 0.0,
+        "missing_objects": 100,
+        "remote_parquet_count": 0,
+        "remote_payload_count": 0
+      },
+      "dataset": "blockchair_dumps",
+      "density_band": "light",
+      "inventory": "shared-data/data/blockchain_corpus/blockchair_bitcoin-cash_blocks_inventory_first100.json",
+      "inventory_hash": "67c7b090be906e72933ec4d958ff8690856b3487a5ec8ca3eb78e17458ad6815",
+      "object_count": 100,
+      "scan_actions": [
+        {
+          "action": "RETRY_MISSING_OBJECTS",
+          "decision": "HOLD_UNTIL_RETRY_RECEIPT",
+          "inputs": {
+            "chain": "bitcoin-cash",
+            "inventory": "shared-data/data/blockchain_corpus/blockchair_bitcoin-cash_blocks_inventory_first100.json",
+            "table": "blocks"
+          },
+          "reason": "Remote payload/parquet count is below inventory object count.",
+          "script": "4-Infrastructure/shim/blockchain_public_dataset_transfer.py"
+        },
+        {
+          "action": "RUN_HEADER_OR_BLOCK_PATTERN_PROBE",
+          "decision": "ADMIT_BOUNDED_ROUTE_PRIOR_SCAN",
+          "inputs": {
+            "chain": "bitcoin-cash",
+            "inventory": "shared-data/data/blockchain_corpus/blockchair_bitcoin-cash_blocks_inventory_first100.json",
+            "table": "blocks"
+          },
+          "reason": "Use deterministic numeric residuals as route priors before byte-heavy scans.",
+          "script": "4-Infrastructure/shim/blockchain_header_pattern_probe.py"
+        },
+        {
+          "action": "REFRESH_SELF_SCAN_SCHEDULER",
+          "decision": "ADMIT_RECEIPT_FEEDBACK_LOOP",
+          "inputs": {
+            "account_receipt": "shared-data/data/blockchain_corpus/blockchain_full_account_live_receipt.json"
+          },
+          "reason": "The scan output becomes the next L3 control input.",
+          "script": "4-Infrastructure/shim/blockchain_l3_self_scan_scheduler.py"
+        }
+      ],
+      "storage_channel_model": {
+        "actions": [
+          {
+            "action": "RUN_ONCHAIN_STORAGE_CHANNEL_PROBE",
+            "decision": "ADMIT_STORAGE_SURFACE_SCAN_HOLD_PAYLOAD_USE",
+            "inputs": {
+              "chain": "bitcoin-cash",
+              "density_band": "light",
+              "family": "bitcoin",
+              "inventory": "shared-data/data/blockchain_corpus/blockchair_bitcoin-cash_blocks_inventory_first100.json",
+              "table": "blocks"
+            },
+            "reason": "Blockchain records can contain intentional public data carriers; scan them as storage surfaces before treating bytes as neutral noise."
+          }
+        ],
+        "channels": [
+          {
+            "channel": "op_return",
+            "scan_surface": "transaction outputs / scriptPubKey",
+            "use_boundary": "Detect and receipt embedded payload surfaces; do not publish or optimize arbitrary payload insertion."
+          },
+          {
+            "channel": "witness_inscription_like_payload",
+            "scan_surface": "segwit witness data",
+            "use_boundary": "Treat as public immutable payload evidence only."
+          },
+          {
+            "channel": "coinbase_tag",
+            "scan_surface": "coinbase transaction script/witness fields",
+            "use_boundary": "Pool tags and receipt markers only; no attribution claim without external witness."
+          }
+        ],
+        "claim_boundary": "Storage-channel model is for detection, accounting, and receipt routing. It does not recommend publishing payloads on-chain, bypassing moderation, hiding data, or using public ledgers as private storage.",
+        "family": "bitcoin"
+      },
+      "table": "blocks",
+      "total_listed_bytes": 0
+    },
+    {
+      "bytes_per_object": 0.0,
+      "chain": "dash",
+      "completion": {
+        "completed_objects": 0,
+        "completion_ratio": 0.0,
+        "missing_objects": 100,
+        "remote_parquet_count": 0,
+        "remote_payload_count": 0
+      },
+      "dataset": "blockchair_dumps",
+      "density_band": "light",
+      "inventory": "shared-data/data/blockchain_corpus/blockchair_dash_blocks_inventory_first100.json",
+      "inventory_hash": "6e5449f73399c45838e139386c34d36cebf1b8c2ce855a7619dbe4b7d51a26a0",
+      "object_count": 100,
+      "scan_actions": [
+        {
+          "action": "RETRY_MISSING_OBJECTS",
+          "decision": "HOLD_UNTIL_RETRY_RECEIPT",
+          "inputs": {
+            "chain": "dash",
+            "inventory": "shared-data/data/blockchain_corpus/blockchair_dash_blocks_inventory_first100.json",
+            "table": "blocks"
+          },
+          "reason": "Remote payload/parquet count is below inventory object count.",
+          "script": "4-Infrastructure/shim/blockchain_public_dataset_transfer.py"
+        },
+        {
+          "action": "RUN_HEADER_OR_BLOCK_PATTERN_PROBE",
+          "decision": "ADMIT_BOUNDED_ROUTE_PRIOR_SCAN",
+          "inputs": {
+            "chain": "dash",
+            "inventory": "shared-data/data/blockchain_corpus/blockchair_dash_blocks_inventory_first100.json",
+            "table": "blocks"
+          },
+          "reason": "Use deterministic numeric residuals as route priors before byte-heavy scans.",
+          "script": "4-Infrastructure/shim/blockchain_header_pattern_probe.py"
+        },
+        {
+          "action": "REFRESH_SELF_SCAN_SCHEDULER",
+          "decision": "ADMIT_RECEIPT_FEEDBACK_LOOP",
+          "inputs": {
+            "account_receipt": "shared-data/data/blockchain_corpus/blockchain_full_account_live_receipt.json"
+          },
+          "reason": "The scan output becomes the next L3 control input.",
+          "script": "4-Infrastructure/shim/blockchain_l3_self_scan_scheduler.py"
+        }
+      ],
+      "storage_channel_model": {
+        "actions": [
+          {
+            "action": "RUN_ONCHAIN_STORAGE_CHANNEL_PROBE",
+            "decision": "ADMIT_STORAGE_SURFACE_SCAN_HOLD_PAYLOAD_USE",
+            "inputs": {
+              "chain": "dash",
+              "density_band": "light",
+              "family": "bitcoin",
+              "inventory": "shared-data/data/blockchain_corpus/blockchair_dash_blocks_inventory_first100.json",
+              "table": "blocks"
+            },
+            "reason": "Blockchain records can contain intentional public data carriers; scan them as storage surfaces before treating bytes as neutral noise."
+          }
+        ],
+        "channels": [
+          {
+            "channel": "op_return",
+            "scan_surface": "transaction outputs / scriptPubKey",
+            "use_boundary": "Detect and receipt embedded payload surfaces; do not publish or optimize arbitrary payload insertion."
+          },
+          {
+            "channel": "witness_inscription_like_payload",
+            "scan_surface": "segwit witness data",
+            "use_boundary": "Treat as public immutable payload evidence only."
+          },
+          {
+            "channel": "coinbase_tag",
+            "scan_surface": "coinbase transaction script/witness fields",
+            "use_boundary": "Pool tags and receipt markers only; no attribution claim without external witness."
+          }
+        ],
+        "claim_boundary": "Storage-channel model is for detection, accounting, and receipt routing. It does not recommend publishing payloads on-chain, bypassing moderation, hiding data, or using public ledgers as private storage.",
+        "family": "bitcoin"
+      },
+      "table": "blocks",
+      "total_listed_bytes": 0
+    },
+    {
+      "bytes_per_object": 0.0,
+      "chain": "dogecoin",
+      "completion": {
+        "completed_objects": 0,
+        "completion_ratio": 0.0,
+        "missing_objects": 100,
+        "remote_parquet_count": 0,
+        "remote_payload_count": 0
+      },
+      "dataset": "blockchair_dumps",
+      "density_band": "light",
+      "inventory": "shared-data/data/blockchain_corpus/blockchair_dogecoin_blocks_inventory_first100.json",
+      "inventory_hash": "b4765f59840c9c4ed35b4863652a91eb66956a3d1930bb41053a646c621df298",
+      "object_count": 100,
+      "scan_actions": [
+        {
+          "action": "RETRY_MISSING_OBJECTS",
+          "decision": "HOLD_UNTIL_RETRY_RECEIPT",
+          "inputs": {
+            "chain": "dogecoin",
+            "inventory": "shared-data/data/blockchain_corpus/blockchair_dogecoin_blocks_inventory_first100.json",
+            "table": "blocks"
+          },
+          "reason": "Remote payload/parquet count is below inventory object count.",
+          "script": "4-Infrastructure/shim/blockchain_public_dataset_transfer.py"
+        },
+        {
+          "action": "RUN_HEADER_OR_BLOCK_PATTERN_PROBE",
+          "decision": "ADMIT_BOUNDED_ROUTE_PRIOR_SCAN",
+          "inputs": {
+            "chain": "dogecoin",
+            "inventory": "shared-data/data/blockchain_corpus/blockchair_dogecoin_blocks_inventory_first100.json",
+            "table": "blocks"
+          },
+          "reason": "Use deterministic numeric residuals as route priors before byte-heavy scans.",
+          "script": "4-Infrastructure/shim/blockchain_header_pattern_probe.py"
+        },
+        {
+          "action": "REFRESH_SELF_SCAN_SCHEDULER",
+          "decision": "ADMIT_RECEIPT_FEEDBACK_LOOP",
+          "inputs": {
+            "account_receipt": "shared-data/data/blockchain_corpus/blockchain_full_account_live_receipt.json"
+          },
+          "reason": "The scan output becomes the next L3 control input.",
+          "script": "4-Infrastructure/shim/blockchain_l3_self_scan_scheduler.py"
+        }
+      ],
+      "storage_channel_model": {
+        "actions": [
+          {
+            "action": "RUN_ONCHAIN_STORAGE_CHANNEL_PROBE",
+            "decision": "ADMIT_STORAGE_SURFACE_SCAN_HOLD_PAYLOAD_USE",
+            "inputs": {
+              "chain": "dogecoin",
+              "density_band": "light",
+              "family": "bitcoin",
+              "inventory": "shared-data/data/blockchain_corpus/blockchair_dogecoin_blocks_inventory_first100.json",
+              "table": "blocks"
+            },
+            "reason": "Blockchain records can contain intentional public data carriers; scan them as storage surfaces before treating bytes as neutral noise."
+          }
+        ],
+        "channels": [
+          {
+            "channel": "op_return",
+            "scan_surface": "transaction outputs / scriptPubKey",
+            "use_boundary": "Detect and receipt embedded payload surfaces; do not publish or optimize arbitrary payload insertion."
+          },
+          {
+            "channel": "witness_inscription_like_payload",
+            "scan_surface": "segwit witness data",
+            "use_boundary": "Treat as public immutable payload evidence only."
+          },
+          {
+            "channel": "coinbase_tag",
+            "scan_surface": "coinbase transaction script/witness fields",
+            "use_boundary": "Pool tags and receipt markers only; no attribution claim without external witness."
+          }
+        ],
+        "claim_boundary": "Storage-channel model is for detection, accounting, and receipt routing. It does not recommend publishing payloads on-chain, bypassing moderation, hiding data, or using public ledgers as private storage.",
+        "family": "bitcoin"
+      },
+      "table": "blocks",
+      "total_listed_bytes": 0
+    },
+    {
+      "bytes_per_object": 0.0,
+      "chain": "litecoin",
+      "completion": {
+        "completed_objects": 0,
+        "completion_ratio": 0.0,
+        "missing_objects": 100,
+        "remote_parquet_count": 0,
+        "remote_payload_count": 0
+      },
+      "dataset": "blockchair_dumps",
+      "density_band": "light",
+      "inventory": "shared-data/data/blockchain_corpus/blockchair_litecoin_blocks_inventory_first100.json",
+      "inventory_hash": "70037496b226b387b6fac749a699791dc38a7a817e05b6be0cfe85c63bde55bc",
+      "object_count": 100,
+      "scan_actions": [
+        {
+          "action": "RETRY_MISSING_OBJECTS",
+          "decision": "HOLD_UNTIL_RETRY_RECEIPT",
+          "inputs": {
+            "chain": "litecoin",
+            "inventory": "shared-data/data/blockchain_corpus/blockchair_litecoin_blocks_inventory_first100.json",
+            "table": "blocks"
+          },
+          "reason": "Remote payload/parquet count is below inventory object count.",
+          "script": "4-Infrastructure/shim/blockchain_public_dataset_transfer.py"
+        },
+        {
+          "action": "RUN_HEADER_OR_BLOCK_PATTERN_PROBE",
+          "decision": "ADMIT_BOUNDED_ROUTE_PRIOR_SCAN",
+          "inputs": {
+            "chain": "litecoin",
+            "inventory": "shared-data/data/blockchain_corpus/blockchair_litecoin_blocks_inventory_first100.json",
+            "table": "blocks"
+          },
+          "reason": "Use deterministic numeric residuals as route priors before byte-heavy scans.",
+          "script": "4-Infrastructure/shim/blockchain_header_pattern_probe.py"
+        },
+        {
+          "action": "REFRESH_SELF_SCAN_SCHEDULER",
+          "decision": "ADMIT_RECEIPT_FEEDBACK_LOOP",
+          "inputs": {
+            "account_receipt": "shared-data/data/blockchain_corpus/blockchain_full_account_live_receipt.json"
+          },
+          "reason": "The scan output becomes the next L3 control input.",
+          "script": "4-Infrastructure/shim/blockchain_l3_self_scan_scheduler.py"
+        }
+      ],
+      "storage_channel_model": {
+        "actions": [
+          {
+            "action": "RUN_ONCHAIN_STORAGE_CHANNEL_PROBE",
+            "decision": "ADMIT_STORAGE_SURFACE_SCAN_HOLD_PAYLOAD_USE",
+            "inputs": {
+              "chain": "litecoin",
+              "density_band": "light",
+              "family": "bitcoin",
+              "inventory": "shared-data/data/blockchain_corpus/blockchair_litecoin_blocks_inventory_first100.json",
+              "table": "blocks"
+            },
+            "reason": "Blockchain records can contain intentional public data carriers; scan them as storage surfaces before treating bytes as neutral noise."
+          }
+        ],
+        "channels": [
+          {
+            "channel": "op_return",
+            "scan_surface": "transaction outputs / scriptPubKey",
+            "use_boundary": "Detect and receipt embedded payload surfaces; do not publish or optimize arbitrary payload insertion."
+          },
+          {
+            "channel": "witness_inscription_like_payload",
+            "scan_surface": "segwit witness data",
+            "use_boundary": "Treat as public immutable payload evidence only."
+          },
+          {
+            "channel": "coinbase_tag",
+            "scan_surface": "coinbase transaction script/witness fields",
+            "use_boundary": "Pool tags and receipt markers only; no attribution claim without external witness."
+          }
+        ],
+        "claim_boundary": "Storage-channel model is for detection, accounting, and receipt routing. It does not recommend publishing payloads on-chain, bypassing moderation, hiding data, or using public ledgers as private storage.",
+        "family": "bitcoin"
+      },
+      "table": "blocks",
+      "total_listed_bytes": 0
+    },
+    {
+      "bytes_per_object": 0.0,
+      "chain": "zcash",
+      "completion": {
+        "completed_objects": 0,
+        "completion_ratio": 0.0,
+        "missing_objects": 100,
+        "remote_parquet_count": 0,
+        "remote_payload_count": 0
+      },
+      "dataset": "blockchair_dumps",
+      "density_band": "light",
+      "inventory": "shared-data/data/blockchain_corpus/blockchair_zcash_blocks_inventory_first100.json",
+      "inventory_hash": "4f5c828c07792f8be026891585954bc2cf08ea13f0068d6ba01c6f8042a4b245",
+      "object_count": 100,
+      "scan_actions": [
+        {
+          "action": "RETRY_MISSING_OBJECTS",
+          "decision": "HOLD_UNTIL_RETRY_RECEIPT",
+          "inputs": {
+            "chain": "zcash",
+            "inventory": "shared-data/data/blockchain_corpus/blockchair_zcash_blocks_inventory_first100.json",
+            "table": "blocks"
+          },
+          "reason": "Remote payload/parquet count is below inventory object count.",
+          "script": "4-Infrastructure/shim/blockchain_public_dataset_transfer.py"
+        },
+        {
+          "action": "RUN_HEADER_OR_BLOCK_PATTERN_PROBE",
+          "decision": "ADMIT_BOUNDED_ROUTE_PRIOR_SCAN",
+          "inputs": {
+            "chain": "zcash",
+            "inventory": "shared-data/data/blockchain_corpus/blockchair_zcash_blocks_inventory_first100.json",
+            "table": "blocks"
+          },
+          "reason": "Use deterministic numeric residuals as route priors before byte-heavy scans.",
+          "script": "4-Infrastructure/shim/blockchain_header_pattern_probe.py"
+        },
+        {
+          "action": "REFRESH_SELF_SCAN_SCHEDULER",
+          "decision": "ADMIT_RECEIPT_FEEDBACK_LOOP",
+          "inputs": {
+            "account_receipt": "shared-data/data/blockchain_corpus/blockchain_full_account_live_receipt.json"
+          },
+          "reason": "The scan output becomes the next L3 control input.",
+          "script": "4-Infrastructure/shim/blockchain_l3_self_scan_scheduler.py"
+        }
+      ],
+      "storage_channel_model": {
+        "actions": [
+          {
+            "action": "RUN_ONCHAIN_STORAGE_CHANNEL_PROBE",
+            "decision": "ADMIT_STORAGE_SURFACE_SCAN_HOLD_PAYLOAD_USE",
+            "inputs": {
+              "chain": "zcash",
+              "density_band": "light",
+              "family": "bitcoin",
+              "inventory": "shared-data/data/blockchain_corpus/blockchair_zcash_blocks_inventory_first100.json",
+              "table": "blocks"
+            },
+            "reason": "Blockchain records can contain intentional public data carriers; scan them as storage surfaces before treating bytes as neutral noise."
+          }
+        ],
+        "channels": [
+          {
+            "channel": "op_return",
+            "scan_surface": "transaction outputs / scriptPubKey",
+            "use_boundary": "Detect and receipt embedded payload surfaces; do not publish or optimize arbitrary payload insertion."
+          },
+          {
+            "channel": "witness_inscription_like_payload",
+            "scan_surface": "segwit witness data",
+            "use_boundary": "Treat as public immutable payload evidence only."
+          },
+          {
+            "channel": "coinbase_tag",
+            "scan_surface": "coinbase transaction script/witness fields",
+            "use_boundary": "Pool tags and receipt markers only; no attribution claim without external witness."
+          }
+        ],
+        "claim_boundary": "Storage-channel model is for detection, accounting, and receipt routing. It does not recommend publishing payloads on-chain, bypassing moderation, hiding data, or using public ledgers as private storage.",
+        "family": "bitcoin"
+      },
+      "table": "blocks",
+      "total_listed_bytes": 0
+    },
+    {
+      "bytes_per_object": 68716662.373,
+      "chain": "arbitrum",
+      "completion": {
+        "completed_objects": 3200,
+        "completion_ratio": 1.0,
+        "missing_objects": 0,
+        "remote_parquet_count": 3200,
+        "remote_payload_count": 3200
+      },
+      "dataset": "aws-public-blockchain",
+      "density_band": "heavy",
+      "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_arbitrum_blocks_inventory_full.json",
+      "inventory_hash": "2d5dd25747c8384c06b4f453060c71166cb472beb398f16ef9b2914cecf96230",
+      "object_count": 3200,
+      "scan_actions": [
+        {
+          "action": "RUN_HEADER_OR_BLOCK_PATTERN_PROBE",
+          "decision": "ADMIT_BOUNDED_ROUTE_PRIOR_SCAN",
+          "inputs": {
+            "chain": "arbitrum",
+            "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_arbitrum_blocks_inventory_full.json",
+            "table": "blocks"
+          },
+          "reason": "Use deterministic numeric residuals as route priors before byte-heavy scans.",
+          "script": "4-Infrastructure/shim/blockchain_header_pattern_probe.py"
+        },
+        {
+          "action": "RUN_PARQUET_LOGOGRAM_EIGENPROBE_SAMPLE",
+          "decision": "ADMIT_SAMPLE_ONLY_HOLD_BULK",
+          "inputs": {
+            "chain": "arbitrum",
+            "sample_policy": "first_middle_last_partition",
+            "table": "blocks"
+          },
+          "reason": "Large average objects should be sampled through feature/density probes before broader transfer.",
+          "script": "4-Infrastructure/shim/parquet_logogram_eigenprobe.py"
+        },
+        {
+          "action": "REFRESH_SELF_SCAN_SCHEDULER",
+          "decision": "ADMIT_RECEIPT_FEEDBACK_LOOP",
+          "inputs": {
+            "account_receipt": "shared-data/data/blockchain_corpus/blockchain_full_account_live_receipt.json"
+          },
+          "reason": "The scan output becomes the next L3 control input.",
+          "script": "4-Infrastructure/shim/blockchain_l3_self_scan_scheduler.py"
+        }
+      ],
+      "storage_channel_model": {
+        "actions": [
+          {
+            "action": "RUN_ONCHAIN_STORAGE_CHANNEL_PROBE",
+            "decision": "ADMIT_STORAGE_SURFACE_SCAN_HOLD_PAYLOAD_USE",
+            "inputs": {
+              "chain": "arbitrum",
+              "density_band": "heavy",
+              "family": "evm",
+              "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_arbitrum_blocks_inventory_full.json",
+              "table": "blocks"
+            },
+            "reason": "Blockchain records can contain intentional public data carriers; scan them as storage surfaces before treating bytes as neutral noise."
+          }
+        ],
+        "channels": [
+          {
+            "channel": "calldata",
+            "scan_surface": "transaction input bytes",
+            "use_boundary": "Route by byte density and selector shape only; no private-key, exploit, or evasion workflow."
+          },
+          {
+            "channel": "event_logs",
+            "scan_surface": "topics and data fields",
+            "use_boundary": "Receipt emitted public events as storage-like data lanes."
+          },
+          {
+            "channel": "contract_bytecode",
+            "scan_surface": "creation/runtime bytecode",
+            "use_boundary": "Static payload/code-carrier diagnostic only."
+          },
+          {
+            "channel": "blob_or_da_payload",
+            "scan_surface": "data availability/blob lanes when present in source tables",
+            "use_boundary": "Cost-bounded metadata scan first; bulk payload fetch remains HOLD."
+          }
+        ],
+        "claim_boundary": "Storage-channel model is for detection, accounting, and receipt routing. It does not recommend publishing payloads on-chain, bypassing moderation, hiding data, or using public ledgers as private storage.",
+        "family": "evm"
+      },
+      "table": "blocks",
+      "total_listed_bytes": 219893319594
+    },
+    {
+      "bytes_per_object": 45683299.611,
+      "chain": "aptos",
+      "completion": {
+        "completed_objects": 1665,
+        "completion_ratio": 1.0,
+        "missing_objects": 0,
+        "remote_parquet_count": 1665,
+        "remote_payload_count": 1665
+      },
+      "dataset": "aws-public-blockchain",
+      "density_band": "medium",
+      "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_aptos_blocks_inventory_full.json",
+      "inventory_hash": "962c88cf0ebc0ceec4aed0b52855e40d82be50cf180790eda96eb0b7484f66ce",
+      "object_count": 1665,
+      "scan_actions": [
+        {
+          "action": "RUN_HEADER_OR_BLOCK_PATTERN_PROBE",
+          "decision": "ADMIT_BOUNDED_ROUTE_PRIOR_SCAN",
+          "inputs": {
+            "chain": "aptos",
+            "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_aptos_blocks_inventory_full.json",
+            "table": "blocks"
+          },
+          "reason": "Use deterministic numeric residuals as route priors before byte-heavy scans.",
+          "script": "4-Infrastructure/shim/blockchain_header_pattern_probe.py"
+        },
+        {
+          "action": "RUN_PARQUET_LOGOGRAM_EIGENPROBE_SAMPLE",
+          "decision": "ADMIT_SAMPLE_ONLY_HOLD_BULK",
+          "inputs": {
+            "chain": "aptos",
+            "sample_policy": "first_middle_last_partition",
+            "table": "blocks"
+          },
+          "reason": "Large average objects should be sampled through feature/density probes before broader transfer.",
+          "script": "4-Infrastructure/shim/parquet_logogram_eigenprobe.py"
+        },
+        {
+          "action": "REFRESH_SELF_SCAN_SCHEDULER",
+          "decision": "ADMIT_RECEIPT_FEEDBACK_LOOP",
+          "inputs": {
+            "account_receipt": "shared-data/data/blockchain_corpus/blockchain_full_account_live_receipt.json"
+          },
+          "reason": "The scan output becomes the next L3 control input.",
+          "script": "4-Infrastructure/shim/blockchain_l3_self_scan_scheduler.py"
+        }
+      ],
+      "storage_channel_model": {
+        "actions": [
+          {
+            "action": "RUN_ONCHAIN_STORAGE_CHANNEL_PROBE",
+            "decision": "ADMIT_STORAGE_SURFACE_SCAN_HOLD_PAYLOAD_USE",
+            "inputs": {
+              "chain": "aptos",
+              "density_band": "medium",
+              "family": "memo",
+              "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_aptos_blocks_inventory_full.json",
+              "table": "blocks"
+            },
+            "reason": "Blockchain records can contain intentional public data carriers; scan them as storage surfaces before treating bytes as neutral noise."
+          }
+        ],
+        "channels": [
+          {
+            "channel": "memo_or_message",
+            "scan_surface": "transaction memo/message/payload fields",
+            "use_boundary": "Public memo payload diagnostics only."
+          }
+        ],
+        "claim_boundary": "Storage-channel model is for detection, accounting, and receipt routing. It does not recommend publishing payloads on-chain, bypassing moderation, hiding data, or using public ledgers as private storage.",
+        "family": "memo"
+      },
+      "table": "blocks",
+      "total_listed_bytes": 76062693853
+    },
+    {
+      "bytes_per_object": 22105222.309,
+      "chain": "provenance",
+      "completion": {
+        "completed_objects": 2014,
+        "completion_ratio": 1.0,
+        "missing_objects": 0,
+        "remote_parquet_count": 2014,
+        "remote_payload_count": 2014
+      },
+      "dataset": "aws-public-blockchain",
+      "density_band": "medium",
+      "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_provenance_blocks_inventory_full.json",
+      "inventory_hash": "454acd030b9f66326ba4585711c9bc507e98a618c6905d2f09598a0ec9f71648",
+      "object_count": 2014,
+      "scan_actions": [
+        {
+          "action": "RUN_HEADER_OR_BLOCK_PATTERN_PROBE",
+          "decision": "ADMIT_BOUNDED_ROUTE_PRIOR_SCAN",
+          "inputs": {
+            "chain": "provenance",
+            "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_provenance_blocks_inventory_full.json",
+            "table": "blocks"
+          },
+          "reason": "Use deterministic numeric residuals as route priors before byte-heavy scans.",
+          "script": "4-Infrastructure/shim/blockchain_header_pattern_probe.py"
+        },
+        {
+          "action": "RUN_PARQUET_LOGOGRAM_EIGENPROBE_SAMPLE",
+          "decision": "ADMIT_SAMPLE_ONLY_HOLD_BULK",
+          "inputs": {
+            "chain": "provenance",
+            "sample_policy": "first_middle_last_partition",
+            "table": "blocks"
+          },
+          "reason": "Large average objects should be sampled through feature/density probes before broader transfer.",
+          "script": "4-Infrastructure/shim/parquet_logogram_eigenprobe.py"
+        },
+        {
+          "action": "REFRESH_SELF_SCAN_SCHEDULER",
+          "decision": "ADMIT_RECEIPT_FEEDBACK_LOOP",
+          "inputs": {
+            "account_receipt": "shared-data/data/blockchain_corpus/blockchain_full_account_live_receipt.json"
+          },
+          "reason": "The scan output becomes the next L3 control input.",
+          "script": "4-Infrastructure/shim/blockchain_l3_self_scan_scheduler.py"
+        }
+      ],
+      "storage_channel_model": {
+        "actions": [
+          {
+            "action": "RUN_ONCHAIN_STORAGE_CHANNEL_PROBE",
+            "decision": "ADMIT_STORAGE_SURFACE_SCAN_HOLD_PAYLOAD_USE",
+            "inputs": {
+              "chain": "provenance",
+              "density_band": "medium",
+              "family": "memo",
+              "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_provenance_blocks_inventory_full.json",
+              "table": "blocks"
+            },
+            "reason": "Blockchain records can contain intentional public data carriers; scan them as storage surfaces before treating bytes as neutral noise."
+          }
+        ],
+        "channels": [
+          {
+            "channel": "memo_or_message",
+            "scan_surface": "transaction memo/message/payload fields",
+            "use_boundary": "Public memo payload diagnostics only."
+          }
+        ],
+        "claim_boundary": "Storage-channel model is for detection, accounting, and receipt routing. It does not recommend publishing payloads on-chain, bypassing moderation, hiding data, or using public ledgers as private storage.",
+        "family": "memo"
+      },
+      "table": "blocks",
+      "total_listed_bytes": 44519917731
+    },
+    {
+      "bytes_per_object": 4324610.932,
+      "chain": "ton",
+      "completion": {
+        "completed_objects": 9327,
+        "completion_ratio": 1.0,
+        "missing_objects": 0,
+        "remote_parquet_count": 9327,
+        "remote_payload_count": 9327
+      },
+      "dataset": "aws-public-blockchain",
+      "density_band": "light",
+      "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_ton_blocks_inventory_full.json",
+      "inventory_hash": "9366e8758b563c2c1219c3eaba209b30b9eaf54e5779c53fa65f23956312dda4",
+      "object_count": 9327,
+      "scan_actions": [
+        {
+          "action": "RUN_HEADER_OR_BLOCK_PATTERN_PROBE",
+          "decision": "ADMIT_BOUNDED_ROUTE_PRIOR_SCAN",
+          "inputs": {
+            "chain": "ton",
+            "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_ton_blocks_inventory_full.json",
+            "table": "blocks"
+          },
+          "reason": "Use deterministic numeric residuals as route priors before byte-heavy scans.",
+          "script": "4-Infrastructure/shim/blockchain_header_pattern_probe.py"
+        },
+        {
+          "action": "REFRESH_SELF_SCAN_SCHEDULER",
+          "decision": "ADMIT_RECEIPT_FEEDBACK_LOOP",
+          "inputs": {
+            "account_receipt": "shared-data/data/blockchain_corpus/blockchain_full_account_live_receipt.json"
+          },
+          "reason": "The scan output becomes the next L3 control input.",
+          "script": "4-Infrastructure/shim/blockchain_l3_self_scan_scheduler.py"
+        }
+      ],
+      "storage_channel_model": {
+        "actions": [
+          {
+            "action": "RUN_ONCHAIN_STORAGE_CHANNEL_PROBE",
+            "decision": "ADMIT_STORAGE_SURFACE_SCAN_HOLD_PAYLOAD_USE",
+            "inputs": {
+              "chain": "ton",
+              "density_band": "light",
+              "family": "memo",
+              "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_ton_blocks_inventory_full.json",
+              "table": "blocks"
+            },
+            "reason": "Blockchain records can contain intentional public data carriers; scan them as storage surfaces before treating bytes as neutral noise."
+          }
+        ],
+        "channels": [
+          {
+            "channel": "memo_or_message",
+            "scan_surface": "transaction memo/message/payload fields",
+            "use_boundary": "Public memo payload diagnostics only."
+          }
+        ],
+        "claim_boundary": "Storage-channel model is for detection, accounting, and receipt routing. It does not recommend publishing payloads on-chain, bypassing moderation, hiding data, or using public ledgers as private storage.",
+        "family": "memo"
+      },
+      "table": "blocks",
+      "total_listed_bytes": 40335646161
+    },
+    {
+      "bytes_per_object": 29268320.978,
+      "chain": "base",
+      "completion": {
+        "completed_objects": 1215,
+        "completion_ratio": 1.0,
+        "missing_objects": 0,
+        "remote_parquet_count": 1215,
+        "remote_payload_count": 1215
+      },
+      "dataset": "aws-public-blockchain",
+      "density_band": "medium",
+      "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_base_blocks_inventory_full.json",
+      "inventory_hash": "d3121c9b9c4856e97d14ea855adab9fef2237c3f509cbdc6213a797420a3cb83",
+      "object_count": 1215,
+      "scan_actions": [
+        {
+          "action": "RUN_HEADER_OR_BLOCK_PATTERN_PROBE",
+          "decision": "ADMIT_BOUNDED_ROUTE_PRIOR_SCAN",
+          "inputs": {
+            "chain": "base",
+            "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_base_blocks_inventory_full.json",
+            "table": "blocks"
+          },
+          "reason": "Use deterministic numeric residuals as route priors before byte-heavy scans.",
+          "script": "4-Infrastructure/shim/blockchain_header_pattern_probe.py"
+        },
+        {
+          "action": "RUN_PARQUET_LOGOGRAM_EIGENPROBE_SAMPLE",
+          "decision": "ADMIT_SAMPLE_ONLY_HOLD_BULK",
+          "inputs": {
+            "chain": "base",
+            "sample_policy": "first_middle_last_partition",
+            "table": "blocks"
+          },
+          "reason": "Large average objects should be sampled through feature/density probes before broader transfer.",
+          "script": "4-Infrastructure/shim/parquet_logogram_eigenprobe.py"
+        },
+        {
+          "action": "REFRESH_SELF_SCAN_SCHEDULER",
+          "decision": "ADMIT_RECEIPT_FEEDBACK_LOOP",
+          "inputs": {
+            "account_receipt": "shared-data/data/blockchain_corpus/blockchain_full_account_live_receipt.json"
+          },
+          "reason": "The scan output becomes the next L3 control input.",
+          "script": "4-Infrastructure/shim/blockchain_l3_self_scan_scheduler.py"
+        }
+      ],
+      "storage_channel_model": {
+        "actions": [
+          {
+            "action": "RUN_ONCHAIN_STORAGE_CHANNEL_PROBE",
+            "decision": "ADMIT_STORAGE_SURFACE_SCAN_HOLD_PAYLOAD_USE",
+            "inputs": {
+              "chain": "base",
+              "density_band": "medium",
+              "family": "evm",
+              "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_base_blocks_inventory_full.json",
+              "table": "blocks"
+            },
+            "reason": "Blockchain records can contain intentional public data carriers; scan them as storage surfaces before treating bytes as neutral noise."
+          }
+        ],
+        "channels": [
+          {
+            "channel": "calldata",
+            "scan_surface": "transaction input bytes",
+            "use_boundary": "Route by byte density and selector shape only; no private-key, exploit, or evasion workflow."
+          },
+          {
+            "channel": "event_logs",
+            "scan_surface": "topics and data fields",
+            "use_boundary": "Receipt emitted public events as storage-like data lanes."
+          },
+          {
+            "channel": "contract_bytecode",
+            "scan_surface": "creation/runtime bytecode",
+            "use_boundary": "Static payload/code-carrier diagnostic only."
+          },
+          {
+            "channel": "blob_or_da_payload",
+            "scan_surface": "data availability/blob lanes when present in source tables",
+            "use_boundary": "Cost-bounded metadata scan first; bulk payload fetch remains HOLD."
+          }
+        ],
+        "claim_boundary": "Storage-channel model is for detection, accounting, and receipt routing. It does not recommend publishing payloads on-chain, bypassing moderation, hiding data, or using public ledgers as private storage.",
+        "family": "evm"
+      },
+      "table": "blocks",
+      "total_listed_bytes": 35561009988
+    },
+    {
+      "bytes_per_object": 6635676.137,
+      "chain": "xrp",
+      "completion": {
+        "completed_objects": 5032,
+        "completion_ratio": 1.0,
+        "missing_objects": 0,
+        "remote_parquet_count": 5032,
+        "remote_payload_count": 5032
+      },
+      "dataset": "aws-public-blockchain",
+      "density_band": "light",
+      "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_xrp_blocks_inventory_full.json",
+      "inventory_hash": "c7904177ada7fea02aeef391e3eb78e69fec846bda02205aabfc51c79fa75fc8",
+      "object_count": 5032,
+      "scan_actions": [
+        {
+          "action": "RUN_HEADER_OR_BLOCK_PATTERN_PROBE",
+          "decision": "ADMIT_BOUNDED_ROUTE_PRIOR_SCAN",
+          "inputs": {
+            "chain": "xrp",
+            "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_xrp_blocks_inventory_full.json",
+            "table": "blocks"
+          },
+          "reason": "Use deterministic numeric residuals as route priors before byte-heavy scans.",
+          "script": "4-Infrastructure/shim/blockchain_header_pattern_probe.py"
+        },
+        {
+          "action": "REFRESH_SELF_SCAN_SCHEDULER",
+          "decision": "ADMIT_RECEIPT_FEEDBACK_LOOP",
+          "inputs": {
+            "account_receipt": "shared-data/data/blockchain_corpus/blockchain_full_account_live_receipt.json"
+          },
+          "reason": "The scan output becomes the next L3 control input.",
+          "script": "4-Infrastructure/shim/blockchain_l3_self_scan_scheduler.py"
+        }
+      ],
+      "storage_channel_model": {
+        "actions": [
+          {
+            "action": "RUN_ONCHAIN_STORAGE_CHANNEL_PROBE",
+            "decision": "ADMIT_STORAGE_SURFACE_SCAN_HOLD_PAYLOAD_USE",
+            "inputs": {
+              "chain": "xrp",
+              "density_band": "light",
+              "family": "memo",
+              "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_xrp_blocks_inventory_full.json",
+              "table": "blocks"
+            },
+            "reason": "Blockchain records can contain intentional public data carriers; scan them as storage surfaces before treating bytes as neutral noise."
+          }
+        ],
+        "channels": [
+          {
+            "channel": "memo_or_message",
+            "scan_surface": "transaction memo/message/payload fields",
+            "use_boundary": "Public memo payload diagnostics only."
+          }
+        ],
+        "claim_boundary": "Storage-channel model is for detection, accounting, and receipt routing. It does not recommend publishing payloads on-chain, bypassing moderation, hiding data, or using public ledgers as private storage.",
+        "family": "memo"
+      },
+      "table": "blocks",
+      "total_listed_bytes": 33390722320
+    },
+    {
+      "bytes_per_object": 11077089.183,
+      "chain": "cronos",
+      "completion": {
+        "completed_objects": 1537,
+        "completion_ratio": 1.0,
+        "missing_objects": 0,
+        "remote_parquet_count": 1537,
+        "remote_payload_count": 1537
+      },
+      "dataset": "aws-public-blockchain",
+      "density_band": "medium",
+      "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_cronos_blocks_inventory_full.json",
+      "inventory_hash": "f5fe32ec4ddc02600fd6da03a2837ffdb43a1dd7cdfc09f5472cd440a54707e7",
+      "object_count": 1537,
+      "scan_actions": [
+        {
+          "action": "RUN_HEADER_OR_BLOCK_PATTERN_PROBE",
+          "decision": "ADMIT_BOUNDED_ROUTE_PRIOR_SCAN",
+          "inputs": {
+            "chain": "cronos",
+            "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_cronos_blocks_inventory_full.json",
+            "table": "blocks"
+          },
+          "reason": "Use deterministic numeric residuals as route priors before byte-heavy scans.",
+          "script": "4-Infrastructure/shim/blockchain_header_pattern_probe.py"
+        },
+        {
+          "action": "RUN_PARQUET_LOGOGRAM_EIGENPROBE_SAMPLE",
+          "decision": "ADMIT_SAMPLE_ONLY_HOLD_BULK",
+          "inputs": {
+            "chain": "cronos",
+            "sample_policy": "first_middle_last_partition",
+            "table": "blocks"
+          },
+          "reason": "Large average objects should be sampled through feature/density probes before broader transfer.",
+          "script": "4-Infrastructure/shim/parquet_logogram_eigenprobe.py"
+        },
+        {
+          "action": "REFRESH_SELF_SCAN_SCHEDULER",
+          "decision": "ADMIT_RECEIPT_FEEDBACK_LOOP",
+          "inputs": {
+            "account_receipt": "shared-data/data/blockchain_corpus/blockchain_full_account_live_receipt.json"
+          },
+          "reason": "The scan output becomes the next L3 control input.",
+          "script": "4-Infrastructure/shim/blockchain_l3_self_scan_scheduler.py"
+        }
+      ],
+      "storage_channel_model": {
+        "actions": [
+          {
+            "action": "RUN_ONCHAIN_STORAGE_CHANNEL_PROBE",
+            "decision": "ADMIT_STORAGE_SURFACE_SCAN_HOLD_PAYLOAD_USE",
+            "inputs": {
+              "chain": "cronos",
+              "density_band": "medium",
+              "family": "evm",
+              "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_cronos_blocks_inventory_full.json",
+              "table": "blocks"
+            },
+            "reason": "Blockchain records can contain intentional public data carriers; scan them as storage surfaces before treating bytes as neutral noise."
+          }
+        ],
+        "channels": [
+          {
+            "channel": "calldata",
+            "scan_surface": "transaction input bytes",
+            "use_boundary": "Route by byte density and selector shape only; no private-key, exploit, or evasion workflow."
+          },
+          {
+            "channel": "event_logs",
+            "scan_surface": "topics and data fields",
+            "use_boundary": "Receipt emitted public events as storage-like data lanes."
+          },
+          {
+            "channel": "contract_bytecode",
+            "scan_surface": "creation/runtime bytecode",
+            "use_boundary": "Static payload/code-carrier diagnostic only."
+          },
+          {
+            "channel": "blob_or_da_payload",
+            "scan_surface": "data availability/blob lanes when present in source tables",
+            "use_boundary": "Cost-bounded metadata scan first; bulk payload fetch remains HOLD."
+          }
+        ],
+        "claim_boundary": "Storage-channel model is for detection, accounting, and receipt routing. It does not recommend publishing payloads on-chain, bypassing moderation, hiding data, or using public ledgers as private storage.",
+        "family": "evm"
+      },
+      "table": "blocks",
+      "total_listed_bytes": 17025486075
+    },
+    {
+      "bytes_per_object": 40756.121,
+      "chain": "bitcoin",
+      "completion": {
+        "completed_objects": 9303,
+        "completion_ratio": 1.0,
+        "missing_objects": 0,
+        "remote_parquet_count": 9303,
+        "remote_payload_count": 9303
+      },
+      "dataset": "aws-public-blockchain",
+      "density_band": "light",
+      "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_btc_blocks_inventory_full.json",
+      "inventory_hash": "cf537aa53a3e23e71499ed8eddcf080ab08178e2db9754d085a30b4f79a6334e",
+      "object_count": 9303,
+      "scan_actions": [
+        {
+          "action": "RUN_HEADER_OR_BLOCK_PATTERN_PROBE",
+          "decision": "ADMIT_BOUNDED_ROUTE_PRIOR_SCAN",
+          "inputs": {
+            "chain": "bitcoin",
+            "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_btc_blocks_inventory_full.json",
+            "table": "blocks"
+          },
+          "reason": "Use deterministic numeric residuals as route priors before byte-heavy scans.",
+          "script": "4-Infrastructure/shim/blockchain_header_pattern_probe.py"
+        },
+        {
+          "action": "REFRESH_SELF_SCAN_SCHEDULER",
+          "decision": "ADMIT_RECEIPT_FEEDBACK_LOOP",
+          "inputs": {
+            "account_receipt": "shared-data/data/blockchain_corpus/blockchain_full_account_live_receipt.json"
+          },
+          "reason": "The scan output becomes the next L3 control input.",
+          "script": "4-Infrastructure/shim/blockchain_l3_self_scan_scheduler.py"
+        }
+      ],
+      "storage_channel_model": {
+        "actions": [
+          {
+            "action": "RUN_ONCHAIN_STORAGE_CHANNEL_PROBE",
+            "decision": "ADMIT_STORAGE_SURFACE_SCAN_HOLD_PAYLOAD_USE",
+            "inputs": {
+              "chain": "bitcoin",
+              "density_band": "light",
+              "family": "bitcoin",
+              "inventory": "shared-data/data/blockchain_corpus/aws_public_blockchain_btc_blocks_inventory_full.json",
+              "table": "blocks"
+            },
+            "reason": "Blockchain records can contain intentional public data carriers; scan them as storage surfaces before treating bytes as neutral noise."
+          }
+        ],
+        "channels": [
+          {
+            "channel": "op_return",
+            "scan_surface": "transaction outputs / scriptPubKey",
+            "use_boundary": "Detect and receipt embedded payload surfaces; do not publish or optimize arbitrary payload insertion."
+          },
+          {
+            "channel": "witness_inscription_like_payload",
+            "scan_surface": "segwit witness data",
+            "use_boundary": "Treat as public immutable payload evidence only."
+          },
+          {
+            "channel": "coinbase_tag",
+            "scan_surface": "coinbase transaction script/witness fields",
+            "use_boundary": "Pool tags and receipt markers only; no attribution claim without external witness."
+          }
+        ],
+        "claim_boundary": "Storage-channel model is for detection, accounting, and receipt routing. It does not recommend publishing payloads on-chain, bypassing moderation, hiding data, or using public ledgers as private storage.",
+        "family": "bitcoin"
+      },
+      "table": "blocks",
+      "total_listed_bytes": 379154195
+    }
+  ],
+  "global_storage_boundary": "Public blockchains can store data, but this scheduler only models storage-bearing surfaces for detection, provenance, and compression-route diagnostics. Bulk payload reconstruction and payload publication remain outside this receipt.",
+  "layer3_interpretation": {
+    "core_rule": "scan_receipts_t -> route_policy_t_plus_1",
+    "feedback_equation": "P_{t+1}=L3(R_t,A_t,C_t); R_{t+1}=scan(P_{t+1})",
+    "old_label": "L3 Bitstream",
+    "scanner_label": "L3 executable scan policy",
+    "storage_rule": "onchain_payload_surfaces_t -> storage_channel_receipts_t_plus_1"
+  },
+  "receipt_hash": "d9d8c49369c700e0749e467615bf0ab87fc180b5f0d5a31788d2886a1014632a",
+  "schema": "blockchain_l3_self_scan_scheduler_v0",
+  "source_count": 14
+}

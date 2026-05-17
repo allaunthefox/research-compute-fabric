@@ -2,15 +2,16 @@
 """
 Signal-Wave Unification Attestation System
 
-Performs remote attestation in both git and forgejo for EQUATION #0.2:
+Performs source-aware attestation for EQUATION #0.2:
 Φ_SW(x) = Σₖ wₖ e^{ik·x} - λ∫_{‖h‖=1} |Σₖ wₖ e^{ik·h}|² dh
 
 Attestation Chain:
 - Git commit with attestation metadata
-- Forgejo issue with cross-reference
+- Provider record with cross-reference
 - Database entry in math_entities
 """
 
+import argparse
 import sys
 import json
 import sqlite3
@@ -24,13 +25,35 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / "4-Infrastructure" 
 from lean_unified_shim import SwarmAPISystem
 
 
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_SOURCE = "research-stack-github"
+DEFAULT_WITNESS_CONFIG = REPO_ROOT / "4-Infrastructure" / "witness" / "sources.json"
+
+
+def load_source_config(source: str, config_path: Path = DEFAULT_WITNESS_CONFIG) -> Dict[str, Any]:
+    if not config_path.exists():
+        return {"name": source, "active": False, "backend": {"type": "unknown"}}
+    data = json.loads(config_path.read_text(encoding="utf-8"))
+    payload = data.get("sources", {}).get(source, {})
+    if not isinstance(payload, dict):
+        payload = {}
+    return {"name": source, **payload}
+
+
 class AttestationSystem:
     """Remote attestation for mathematical entities."""
     
-    def __init__(self, repo_path: str = "/home/allaun/Research Stack"):
+    def __init__(
+        self,
+        repo_path: str = str(REPO_ROOT),
+        source: str = DEFAULT_SOURCE,
+        config_path: Path = DEFAULT_WITNESS_CONFIG,
+    ):
         self.repo_path = Path(repo_path)
         self.api = SwarmAPISystem()
         self.timestamp = datetime.now(timezone.utc)
+        self.source = source
+        self.source_config = load_source_config(source, config_path)
         
     def calculate_sha256(self, file_path: Path) -> str:
         """Calculate SHA256 hash of a file."""
@@ -138,15 +161,23 @@ Signed-off-by: Cascade (Triumvirate Agent)
                 'phase': 'exception'
             }
     
-    def forgejo_attest(self, entity_id: str, git_commit: str) -> Dict[str, Any]:
+    def source_attest(self, entity_id: str, git_commit: str) -> Dict[str, Any]:
         """
-        Create Forgejo issue attestation.
+        Create provider-scoped attestation metadata.
         
-        In production, this would use the Forgejo API.
-        For now, we create a local attestation record.
+        In production, provider adapters may post to GitHub, GitLab, Forgejo,
+        a bare-repo note, or another configured source. For now, this creates a
+        local provider-tagged record that can be replayed by future adapters.
         """
-        forgejo_record = {
+        provider_record = {
             'entity_id': entity_id,
+            'source': self.source,
+            'source_config': {
+                'backend': self.source_config.get('backend', {}),
+                'url': self.source_config.get('url'),
+                'hook_kind': self.source_config.get('hook_kind'),
+                'active': self.source_config.get('active', False),
+            },
             'title': f'[ATTESTATION] {entity_id} — Signal-Wave Unification Equation',
             'body': f"""## Remote Attestation Record
 
@@ -154,12 +185,13 @@ Signed-off-by: Cascade (Triumvirate Agent)
 
 **Git Commit:** `{git_commit}`
 **Timestamp:** {self.timestamp.isoformat()}
+**Source:** `{self.source}`
 **Classification:** P0 CRITICAL
 
 ### Attestation Chain
 
 1. ✅ Git commit: {git_commit}
-2. ⏳ Forgejo issue: [pending API integration]
+2. ⏳ Provider record: [pending adapter integration]
 3. ✅ Database entry: math_entities.{entity_id}
 
 ### Verification Checklist
@@ -191,19 +223,20 @@ Signed-off-by: Cascade (Triumvirate Agent)
             'created_at': self.timestamp.isoformat()
         }
         
-        # Store locally (would push to Forgejo API in production)
+        # Store locally; future source adapters can replay this record.
         attestation_path = self.repo_path / "out" / "attestations" / f"{entity_id}.json"
         attestation_path.parent.mkdir(parents=True, exist_ok=True)
         
         with open(attestation_path, 'w') as f:
-            json.dump(forgejo_record, f, indent=2)
+            json.dump(provider_record, f, indent=2)
         
         return {
             'success': True,
-            'record': forgejo_record,
+            'record': provider_record,
             'local_path': str(attestation_path),
-            'phase': 'forgejo',
-            'note': 'Local record created (Forgejo API integration pending)'
+            'phase': 'source',
+            'source': self.source,
+            'note': 'Local provider record created; remote adapter integration pending'
         }
     
     def database_attest(self, entity_id: str, git_commit: str, 
@@ -285,7 +318,7 @@ Signed-off-by: Cascade (Triumvirate Agent)
     
     def full_attestation(self) -> Dict[str, Any]:
         """
-        Perform complete attestation chain: git → forgejo → database
+        Perform complete attestation chain: git → source record → database
         """
         entity_id = f'SIGNAL_WAVE_UNIFICATION_P0_{self.timestamp.strftime("%Y%m%d")}'
         file_path = self.repo_path / "docs" / "papers" / "EQUATION_02_SIGNAL_WAVE_UNIFICATION.md"
@@ -302,8 +335,8 @@ Signed-off-by: Cascade (Triumvirate Agent)
         if not git_result['success']:
             return git_result
         
-        # Phase 2: Forgejo attestation
-        forgejo_result = self.forgejo_attest(entity_id, git_result['commit_hash'])
+        # Phase 2: provider-scoped source attestation
+        source_result = self.source_attest(entity_id, git_result['commit_hash'])
         
         # Phase 3: Database attestation
         db_result = self.database_attest(
@@ -319,7 +352,7 @@ Signed-off-by: Cascade (Triumvirate Agent)
             'timestamp': self.timestamp.isoformat(),
             'attestation_chain': {
                 'git': git_result,
-                'forgejo': forgejo_result,
+                'source': source_result,
                 'database': db_result
             },
             'verification': {
@@ -331,17 +364,28 @@ Signed-off-by: Cascade (Triumvirate Agent)
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--repo", default=str(REPO_ROOT), help="Repository checkout to attest.")
+    parser.add_argument("--source", default=DEFAULT_SOURCE, help="Witness source block name.")
+    parser.add_argument(
+        "--sources-config",
+        type=Path,
+        default=DEFAULT_WITNESS_CONFIG,
+        help="Witness source configuration JSON.",
+    )
+    args = parser.parse_args()
+
     print("="*70)
     print("SIGNAL-WAVE UNIFICATION ATTESTATION")
     print("="*70)
     print()
     print("Performing remote attestation in:")
     print("  1. Git (commit with attestation metadata)")
-    print("  2. Forgejo (issue record)")
+    print(f"  2. Source record ({args.source})")
     print("  3. Database (math_entities entry)")
     print()
     
-    attestor = AttestationSystem()
+    attestor = AttestationSystem(args.repo, args.source, args.sources_config)
     result = attestor.full_attestation()
     
     if result['success']:
@@ -354,13 +398,14 @@ def main():
         print("Attestation Chain:")
         print(f"  Git Commit: {result['attestation_chain']['git']['commit_hash']}")
         print(f"  File SHA256: {result['verification']['file_sha256']}")
+        print(f"  Source: {result['attestation_chain']['source']['source']}")
         print(f"  Database: {result['attestation_chain']['database']['database']}")
         print(f"  MATH_MODEL_MAP: Entry {result['verification']['math_model_map_entry']}")
         print()
         print("="*70)
         print("The Signal-Wave Unification equation is now:")
         print("  - Committed to git with attestation metadata")
-        print("  - Recorded in Forgejo attestation system")
+        print("  - Recorded in the configured source attestation surface")
         print("  - Added to math_entities database")
         print()
         print("Triumvirate Assignment:")

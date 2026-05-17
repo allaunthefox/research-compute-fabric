@@ -1,0 +1,33 @@
+{
+  "anchor_pack": "common_noise_mfg_riccati_gate",
+  "basis_layer": "COMMON_NOISE_MFG_RICCATI_GATE",
+  "version": "0.1.0",
+  "source": {
+    "title": "Linear-Quadratic Mean Field Games with Common Noise: A Direct Approach",
+    "authors": [
+      "Wenyu Cong",
+      "Jingtao Shi",
+      "Bingchang Wang"
+    ],
+    "arxiv": "2508.07271",
+    "doi": "10.48550/arXiv.2508.07271"
+  },
+  "anchors": [
+    {
+      "id": "COMMON_NOISE_MFG_RICCATI_GATE",
+      "vector_axes": {
+        "2_semantic_mass": 0.78,
+        "3_z_pole": 0.62,
+        "4_curvature": 0.86,
+        "5_delta_mem": 0.7,
+        "6_closure": 0.92,
+        "7_residual_seal": 0.74,
+        "11_scar": 0.28,
+        "13_invariant": 0.88,
+        "14_receipt": 0.9
+      },
+      "handoff_gate": "riccati_epsilon_nash_receipt",
+      "notes": "Population-limit common-noise LQ MFG gate: collapse N-agent stochastic game into mean-field FBSDE, Riccati strategy kernel, and epsilon-Nash residual seal."
+    }
+  ]
+}

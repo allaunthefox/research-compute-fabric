@@ -1,0 +1,24 @@
+{
+  "ar_order": 3,
+  "semantic_mass_sequence": [
+    1.0,
+    1.55,
+    1.83,
+    1.91,
+    1.89,
+    1.84,
+    1.79,
+    1.75,
+    1.72,
+    1.7,
+    1.69,
+    1.685,
+    1.682,
+    1.681
+  ],
+  "route_thresholds": {
+    "stable_radius": 1.0,
+    "near_unit_tol": 0.05,
+    "residual_rmse_max": 0.05
+  }
+}

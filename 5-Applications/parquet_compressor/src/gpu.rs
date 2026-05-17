@@ -1,5 +1,5 @@
-use wgpu::util::DeviceExt;
 use std::borrow::Cow;
+use wgpu::util::DeviceExt;
 
 pub struct GpuContext {
     pub device: wgpu::Device,
@@ -11,22 +11,31 @@ pub struct GpuContext {
 impl GpuContext {
     pub async fn new() -> anyhow::Result<Self> {
         let instance = wgpu::Instance::default();
-        let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions {
-            power_preference: wgpu::PowerPreference::HighPerformance,
-            compatible_surface: None,
-            force_fallback_adapter: false,
-        }).await.ok_or_else(|| anyhow::anyhow!("No adapter found"))?;
+        let adapter = instance
+            .request_adapter(&wgpu::RequestAdapterOptions {
+                power_preference: wgpu::PowerPreference::HighPerformance,
+                compatible_surface: None,
+                force_fallback_adapter: false,
+            })
+            .await
+            .ok_or_else(|| anyhow::anyhow!("No adapter found"))?;
 
         let mut limits = wgpu::Limits::default();
         limits.max_storage_buffer_binding_size = adapter.limits().max_storage_buffer_binding_size;
         limits.max_buffer_size = adapter.limits().max_buffer_size;
-        limits.max_compute_invocations_per_workgroup = adapter.limits().max_compute_invocations_per_workgroup;
+        limits.max_compute_invocations_per_workgroup =
+            adapter.limits().max_compute_invocations_per_workgroup;
 
-        let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor {
-            label: None,
-            required_features: wgpu::Features::empty(),
-            required_limits: limits,
-        }, None).await?;
+        let (device, queue) = adapter
+            .request_device(
+                &wgpu::DeviceDescriptor {
+                    label: None,
+                    required_features: wgpu::Features::empty(),
+                    required_limits: limits,
+                },
+                None,
+            )
+            .await?;
 
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("XOR Shader"),
@@ -72,7 +81,12 @@ impl GpuContext {
             entry_point: "main",
         });
 
-        Ok(Self { device, queue, pipeline, bind_group_layout })
+        Ok(Self {
+            device,
+            queue,
+            pipeline,
+            bind_group_layout,
+        })
     }
 
     pub fn run_xor_transform(&self, data: &[u8], _key: u8) -> anyhow::Result<Vec<u8>> {
@@ -80,16 +94,20 @@ impl GpuContext {
         let mut padded_data = vec![0u8; padded_len];
         padded_data[..data.len()].copy_from_slice(data);
 
-        let input_buffer = self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("Input Buffer"),
-            contents: bytemuck::cast_slice(&padded_data),
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
-        });
+        let input_buffer = self
+            .device
+            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("Input Buffer"),
+                contents: bytemuck::cast_slice(&padded_data),
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            });
 
         let output_buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Output Buffer"),
             size: padded_len as u64,
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC | wgpu::BufferUsages::COPY_DST,
+            usage: wgpu::BufferUsages::STORAGE
+                | wgpu::BufferUsages::COPY_SRC
+                | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
 
@@ -115,12 +133,17 @@ impl GpuContext {
             ],
         });
 
-        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
         {
-            let mut compute_pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor { label: None, timestamp_writes: None });
+            let mut compute_pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                label: None,
+                timestamp_writes: None,
+            });
             compute_pass.set_pipeline(&self.pipeline);
             compute_pass.set_bind_group(0, &bind_group, &[]);
-            
+
             let total_elements = (padded_len / 4) as u32;
             let workgroups_x = ((total_elements + 255) / 256).min(65535);
             let workgroups_y = (total_elements + 256 * 65535 - 1) / (256 * 65535);

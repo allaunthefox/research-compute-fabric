@@ -1,0 +1,76 @@
+{
+  "anchor_pack": "bio_organoid_signal_field_gate",
+  "basis_layer": "BIO_ORGANOID_SIGNAL_FIELD_GATE",
+  "version": "0.1.0",
+  "anchors": [
+    {
+      "id": "ORGANOID_OSCILLATORY_CIRCUIT",
+      "source_doi": "10.1038/s41467-022-32115-4",
+      "vector_axes": {
+        "2_semantic_mass": 0.66,
+        "4_curvature": 0.55,
+        "9_oscillation": 0.92,
+        "11_scar": 0.18,
+        "13_invariant": 0.78,
+        "14_receipt": 0.82
+      },
+      "handoff_gate": "connectivity_oscillation_receipt",
+      "notes": "Weak/strong connectivity skeleton, spike/LFP phase-locking, oscillatory organoid dynamics."
+    },
+    {
+      "id": "ORGANOID_FLOW_MATURATION",
+      "source_doi": "10.1038/s42003-023-04547-1",
+      "vector_axes": {
+        "8_cfd_residual": 0.88,
+        "9_vorticity_flow": 0.54,
+        "12_cost": 0.48,
+        "13_invariant": 0.68,
+        "14_receipt": 0.72
+      },
+      "handoff_gate": "flow_shear_maturation_receipt",
+      "notes": "RCCS and microfluidic laminar flow maturation, shear stress, harvestability, cellular diversity."
+    },
+    {
+      "id": "HIPPOCAMPAL_CYB_ORGANOID_INTERFACE",
+      "source_doi": "10.1038/s41467-024-48452-5",
+      "vector_axes": {
+        "5_interface_memory": 0.74,
+        "6_closure": 0.44,
+        "10_chirality_geometry": 0.60,
+        "12_cost": 0.50,
+        "13_invariant": 0.76,
+        "14_receipt": 0.84
+      },
+      "handoff_gate": "soft_mesh_mea_receipt",
+      "notes": "Liquid metal-polymer mesh, 128 channels, flexible/stretchable interface for hippocampal organoids."
+    },
+    {
+      "id": "MAGNETIC_RESHAPABLE_3D_MEA",
+      "source_doi": "10.1038/s41467-024-55752-3",
+      "vector_axes": {
+        "4_curvature": 0.58,
+        "5_interface_memory": 0.82,
+        "10_chirality_geometry": 0.76,
+        "12_cost": 0.58,
+        "13_invariant": 0.74,
+        "14_receipt": 0.78
+      },
+      "handoff_gate": "dynamic_sensor_geometry_receipt",
+      "notes": "Magnetically reshaped soft liquid-metal electrodes increase effective recording site density."
+    },
+    {
+      "id": "ANESTHETIZED_HIPPOCAMPAL_SEMANTIC_GATE",
+      "source_doi": "10.1038/s41586-026-10448-0",
+      "vector_axes": {
+        "2_semantic_mass": 0.94,
+        "3_z_pole": 0.72,
+        "5_delta_mem": 0.78,
+        "6_closure": 0.62,
+        "13_invariant": 0.82,
+        "14_receipt": 0.86
+      },
+      "handoff_gate": "semantic_prediction_plasticity_receipt",
+      "notes": "Oddball discrimination, semantic/grammatical features, upcoming-word prediction under anesthesia."
+    }
+  ]
+}

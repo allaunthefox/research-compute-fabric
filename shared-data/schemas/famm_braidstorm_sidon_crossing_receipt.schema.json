@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FAMM BraidStorm Sidon Crossing Receipt",
+  "type": "object",
+  "required": [
+    "receipt_type",
+    "schema_version",
+    "strand_count_requested",
+    "strand_count_labeled",
+    "address_budget",
+    "address_mode",
+    "labels",
+    "validation",
+    "famm",
+    "nuvmap",
+    "receipt_hash"
+  ],
+  "properties": {
+    "receipt_type": {"const": "famm_braidstorm_sidon_crossing_receipt"},
+    "schema_version": {"type": "string"},
+    "problem": {"type": "string"},
+    "strand_count_requested": {"type": "integer"},
+    "strand_count_labeled": {"type": "integer"},
+    "address_budget": {"type": "integer"},
+    "address_mode": {"type": "string"},
+    "allow_self_crossings": {"type": "boolean"},
+    "constructed_by_runner": {"type": "boolean"},
+    "labels": {"type": "array", "items": {"type": "integer"}},
+    "capacity": {"type": "object"},
+    "validation": {"type": "object"},
+    "famm": {"type": "object"},
+    "nuvmap": {"type": "object"},
+    "no_drift_boundary": {"type": "string"},
+    "receipt_hash": {"type": "string"}
+  }
+}

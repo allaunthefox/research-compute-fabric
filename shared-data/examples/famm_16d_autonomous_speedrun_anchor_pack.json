@@ -1,0 +1,40 @@
+{
+  "anchor_pack": "autonomous_speedrun_harness_gate",
+  "basis_layer": "AUTO_NANOGPT_AUTONOMOUS_RESEARCH_HARNESS_GATE",
+  "version": "0.1.0",
+  "anchors": [
+    {
+      "id": "AUTONOMOUS_SPEEDRUN_HARNESS_GATE",
+      "vector_axes": {
+        "2_semantic_mass": 0.8,
+        "5_delta_mem": 0.86,
+        "7_residual_seal": 0.82,
+        "11_scar": 0.72,
+        "13_invariant": 0.88,
+        "14_receipt": 0.94
+      },
+      "handoff_gate": "statistical_experiment_receipt"
+    },
+    {
+      "id": "SOURCE_REFRESH_WARDEN_GATE",
+      "vector_axes": {
+        "5_delta_mem": 0.7,
+        "6_closure": 0.84,
+        "11_scar": 0.66,
+        "13_invariant": 0.86,
+        "14_receipt": 0.78
+      },
+      "handoff_gate": "source_freshness_receipt"
+    },
+    {
+      "id": "FAILED_IDEA_COARSENER",
+      "vector_axes": {
+        "2_semantic_mass": 0.42,
+        "7_residual_seal": 0.74,
+        "11_scar": 0.94,
+        "14_receipt": 0.7
+      },
+      "handoff_gate": "failed_basin_coarsening_receipt"
+    }
+  ]
+}

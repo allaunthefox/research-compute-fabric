@@ -138,7 +138,7 @@ async def call_tool(name: str, arguments: Dict[str, Any]) -> List[TextContent]:
         return [TextContent(type="text", text=f"Error: {module} not found.")]
 
     elif name == "get_academic_validation":
-        papers_file = Path("/home/allaun/Documents/Research Stack/data/academic_papers_validation.json")
+        papers_file = Path("/home/allaun/Documents/Research Stack/shared-data/data/academic_papers_validation.json")
         if papers_file.exists():
             with open(papers_file) as f:
                 data = json.load(f)

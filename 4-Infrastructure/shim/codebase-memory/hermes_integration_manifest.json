@@ -1,0 +1,68 @@
+{
+  "manifest_version": "2026-05-13",
+  "agent": "hermes-nous-research",
+  "runtime_stack": {
+    "formal": "Lean 4 (lake build)",
+    "runtime": "Rust (cargo build/test)",
+    "persistence": "JSON serialization via serde",
+    "ffi": "None -- all Rust, no Python, no untyped shell"
+  },
+  "doctrine": {
+    "observer_provider_pairs": true,
+    "receipt_gate_before_belief": true,
+    "human_interference_allowed": true,
+    "lean_source_of_truth": true,
+    "no_sorry_without_todo": true,
+    "no_python_in_runtime": true
+  },
+  "codebase_memory": {
+    "crate": "4-Infrastructure/shim/codebase-memory",
+    "type": "Rust library + binary",
+    "module_design": "FAMM-based multi-domain architecture",
+    "domains": [
+      "0-Core-Formalism",
+      "1-Distributed-Systems",
+      "2-Search-Space",
+      "3-Mathematical-Models",
+      "4-Infrastructure",
+      "5-Applications",
+      "6-Documentation"
+    ],
+    "components": {
+      "types.rs": "Q16_16, CodeDomain, CodeCell, DomainBank, DomainScarField, DualMapMemory",
+      "adapter.rs": "CodebaseMemoryAdapter, observe, commit, advance_epoch, query_all, load_for_hermes",
+      "main.rs": "Binary entry point: load_for_hermes(project_root, .hermes/codebase_memory.json)"
+    },
+    "key_features": [
+      "Thermal management: JUDGE_PAUSE on budget exceeded, BUILDER_ADD within budget",
+      "Scar differential tracking: ahead vs behind understanding",
+      "Commitment gate: admit if |Delta| <= epsilon, hold otherwise",
+      "Receipt emission: every read/write/commit produces MemoryAccessReceipt",
+      "Pruning: stale cells (delay > max_delay) removed on capacity pressure",
+      "JSON persistence: serde_json for cross-session state",
+      "File hash tracking: SHA-256 of content to detect changes",
+      "Observer/Provider: observe() records; commit() validates before promoting"
+    ]
+  },
+  "lean_modules": {
+    "quarantined": [
+      "Semantics/CodebaseMemory.lean.quarantine",
+      "Semantics/CodebaseFSDU.lean.quarantine",
+      "Semantics/CodebaseReceipt.lean.quarantine"
+    ],
+    "status": "Needs field notation fixes and theorem completion before build reinclusion",
+    "strategy": "Rust crate is production. Lean modules are reference spec. Fix when Q16_16.lt issue resolved."
+  },
+  "verification": {
+    "cargo_check": true,
+    "cargo_test": "6/6 passed",
+    "lake_build": "FAMM passes (3,300 jobs). CodebaseMemory quarantined.",
+    "receipt": "shared-data/data/stack_solidification/codebase_memory_receipt_2026-05-13.md"
+  },
+  "promotion_gates": {
+    "HOLD": "FSDU dual-map commit gate working; all tests pass",
+    "CANDIDATE": "JSON persistence verified; file hashing verified",
+    "REVIEWED": "Requires observer/provider receipt audit or human review",
+    "BLOCKED": "None current"
+  }
+}

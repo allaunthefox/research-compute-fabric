@@ -1,5 +1,4 @@
 import Semantics.Bind
-import Semantics.Physics.Boundary
 import Semantics.Physics.Conservation
 import Semantics.Physics.Examples
 
@@ -47,4 +46,5 @@ def examplePhysicalBind : Bind (List Particle) (List Particle) :=
 
 #eval examplePhysicalBind.lawful  -- expected: true
 
+-- All defs in this file are data definitions exercised through theorems in dependent files.
 end Semantics.Physics

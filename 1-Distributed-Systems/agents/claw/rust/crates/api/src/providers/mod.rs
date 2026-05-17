@@ -688,9 +688,9 @@ mod tests {
 
 ANTHROPIC_API_KEY=plain-value
 XAI_API_KEY=\"quoted-value\"
-OPENAI_API_KEY='single-quoted'
+OPENAI_API_KEY='quoted-openai-value'
 export GROK_API_KEY=exported-value
-   PADDED_KEY  =  padded-value  
+   PADDED_KEY  =  padded-value
 EMPTY_VALUE=
 NO_EQUALS_LINE
 ";
@@ -709,7 +709,7 @@ NO_EQUALS_LINE
         );
         assert_eq!(
             values.get("OPENAI_API_KEY").map(String::as_str),
-            Some("single-quoted")
+            Some("quoted-openai-value")
         );
         assert_eq!(
             values.get("GROK_API_KEY").map(String::as_str),

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FAMM Autonomous Speedrun Harness Receipt",
+  "type": "object",
+  "required": [
+    "receipt_type",
+    "schema_version",
+    "harness",
+    "scored_experiments",
+    "summary",
+    "nuvmap",
+    "receipt_hash"
+  ],
+  "properties": {
+    "receipt_type": {
+      "const": "famm_autonomous_speedrun_harness_receipt"
+    },
+    "schema_version": {"type": "string"},
+    "source_pattern": {"type": "string"},
+    "harness": {"type": "object"},
+    "config": {"type": "object"},
+    "scored_experiments": {"type": "array", "items": {"type": "object"}},
+    "summary": {"type": "object"},
+    "nuvmap": {"type": "object"},
+    "no_drift_boundary": {"type": "string"},
+    "receipt_hash": {"type": "string"}
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "block_shape": {
+    "body": {
+      "metaprobe_receipts": "bounded list of route/context/curriculum summaries",
+      "negative_controls": "required controls before promotion of any route",
+      "scan_actions": "next bounded scan plan emitted by L3 scheduler",
+      "storage_channel_receipts": "detected on-chain storage surfaces from source chains",
+      "waveprobe_receipts": "bounded list of wave/eigen/density diagnostic summaries"
+    },
+    "forbidden_body_fields": [
+      "private keys",
+      "wallet credentials",
+      "bulk copyrighted payloads",
+      "payloads intended to hide from moderation or provenance",
+      "financial promotion metadata"
+    ],
+    "header": {
+      "created_utc": "iso8601",
+      "height": "u64",
+      "parent_hash": "sha256(previous_block)",
+      "scanner_policy_hash": "sha256(l3_policy)",
+      "sidecar_manifest_root": "merkle_root(sidecar_hashes)",
+      "state_root": "merkle_root(receipt_state)"
+    }
+  },
+  "chain_model": {
+    "consensus_candidate": "single-writer_receipt_log_then_multisig_validator_set",
+    "data_availability": "on-chain summaries plus content-addressed off-chain sidecars",
+    "deployment_stage": "LOCAL_DEVNET_ONLY",
+    "economic_model": "NO_TOKEN_NO_MARKET",
+    "finality_model": "append-only_merkle_root_with_periodic_external_anchor_optional"
+  },
+  "claim_boundary": "Protocol design receipt only. This does not create a blockchain, token, market, consensus network, compression result, or Hutter Prize claim. It defines a local/devnet receipt substrate for metaprobe and waveprobe state.",
+  "created_utc": "2026-05-11T17:45:10Z",
+  "decision": "ADMIT_NUVMAP_PROTOCOL_PLAN_HOLD_CHAIN_IMPLEMENTATION",
+  "decision_law": {
+    "ADMIT": "All required hashes replay, source windows exist, and negative controls do not collapse the signal.",
+    "HOLD": "Evidence is incomplete, cost is unknown, payload surface is unverified, or object-level provenance is missing.",
+    "QUARANTINE": "Hash mismatch, unsafe payload class, missing provenance, or claim boundary violation."
+  },
+  "minimal_transaction_types": [
+    {
+      "required_fields": [
+        "shader_hash",
+        "params_hash",
+        "source_hash",
+        "key_buffer_hash",
+        "metric_buffer_hash",
+        "decision"
+      ],
+      "type": "BLITTER_BIN_RECEIPT"
+    },
+    {
+      "required_fields": [
+        "source_hash",
+        "window_descriptor",
+        "feature_vector_hash",
+        "decision"
+      ],
+      "type": "WAVE_RECEIPT"
+    },
+    {
+      "required_fields": [
+        "prior_id",
+        "route_family",
+        "evidence_hash",
+        "decision"
+      ],
+      "type": "META_RECEIPT"
+    },
+    {
+      "required_fields": [
+        "source_chain",
+        "channel",
+        "carrier_descriptor",
+        "payload_hash_or_null",
+        "decision"
+      ],
+      "type": "STORAGE_SURFACE_RECEIPT"
+    },
+    {
+      "required_fields": [
+        "previous_policy_hash",
+        "new_policy_hash",
+        "action_merkle_root",
+        "decision"
+      ],
+      "type": "SCAN_POLICY_UPDATE"
+    },
+    {
+      "required_fields": [
+        "control_kind",
+        "source_hash",
+        "result_hash",
+        "decision"
+      ],
+      "type": "NEGATIVE_CONTROL"
+    }
+  ],
+  "next_implementation_steps": [
+    "Create a JSON fixture block with one WAVE_RECEIPT, one META_RECEIPT, and one SCAN_POLICY_UPDATE.",
+    "Add a verifier that recomputes the block hash and merkle roots.",
+    "Feed the current blockchain_l3_self_scan_scheduler receipt into the first fixture block.",
+    "Run negative controls before any compression-route promotion.",
+    "Only after local fixture replay works, consider a small append-only local devnet."
+  ],
+  "probe_mapping": {
+    "l3_scheduler": {
+      "input": "current receipt frontier",
+      "output": "next scan frontier",
+      "storage": "scanner policy hash and action list"
+    },
+    "metadata_blitter": {
+      "input": "fixed-size metadata words from chain/block/window records",
+      "output": "sortable route keys and packed metric words",
+      "storage": "blitter shader hash, parameter receipt, key/metric buffer hashes"
+    },
+    "metaprobe": {
+      "input": "domain priors, route families, previous scan receipts",
+      "output": "policy/context update and HOLD/ADMIT/QUARANTINE decision hints",
+      "storage": "decision receipt, route vector, source receipt backlinks"
+    },
+    "waveprobe": {
+      "input": "byte windows, block fields, density neighborhoods, eigenvalue spectra",
+      "output": "local signal vector plus residual/curvature summary",
+      "storage": "hash, vector summary, source window receipt, not raw bulk by default"
+    }
+  },
+  "purpose": {
+    "anti_goal": "Do not use public commodity ledgers as arbitrary bulk storage when a purpose-built receipt chain is enough.",
+    "core_use": "Store replayable probe-state commitments so scanning can route itself over time.",
+    "expanded_role": "Numerical Universe Vector Map receipt chain",
+    "name": "NUVMAP"
+  },
+  "radix_bin_model": {
+    "claim_boundary": "Radix bins are route basins, not semantic labels.",
+    "fields": {
+      "delta7": "shock or torsion gradient",
+      "density7": "amplitude / byte pressure",
+      "flags4": "boundary condition",
+      "hash8": "phase seed / local identity packet",
+      "zero6": "void / low-information throat"
+    },
+    "metaphor": "hyper_soliton_search",
+    "stability_rule": "Promote only bins that persist across salts, windows, and negative controls."
+  },
+  "receipt_hash": "5e51f55f88133e3eb61e4179bcd932fb58512db76ec46dbb37d4419db32ced40",
+  "schema": "nuvmap_chain_protocol_plan_v0"
+}

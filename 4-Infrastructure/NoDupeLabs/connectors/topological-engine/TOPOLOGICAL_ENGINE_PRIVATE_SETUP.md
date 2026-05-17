@@ -34,11 +34,11 @@ Forbidden exposure:
 ## Environment
 
 ```bash
-export TOPOLOGICAL_ENGINE_TOKEN="long-random-private-token-at-least-32-chars"
+export TOPOLOGICAL_ENGINE_TOKEN="YOUR_TOPOLOGICAL_ENGINE_TOKEN"
 export OBSIDIAN_VAULT_PATH="/absolute/path/to/private/obsidian-vault"
 export NEO4J_URI="bolt://127.0.0.1:7687"
 export NEO4J_USER="neo4j"
-export NEO4J_PASSWORD="use-a-local-secret-manager"
+export NEO4J_PASSWORD="YOUR_NEO4J_PASSWORD"
 ```
 
 Never store secrets in GitHub, Notion, Google Drive, or Obsidian notes.

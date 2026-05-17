@@ -1,0 +1,79 @@
+created: 20260511000000000
+modified: 20260511000000000
+tags: ResearchStack NUVMAP Soliton RadixBins GPU Waveprobe Metaprobe HOLD
+title: Hyper-Soliton Radix Bins
+type: text/vnd.tiddlywiki
+
+! Hyper-Soliton Radix Bins
+
+Status: `METAPHOR_TO_ROUTE_MODEL`
+
+Hyper-soliton radix bins are the route-basin interpretation of the NUVMAP
+metadata blitter output.
+
+The crucial rule:
+
+```text
+radix bins are route basins, not semantic labels
+```
+
+!! Mapping
+
+| Radix Object | Hyper-Soliton Analogue |
+|---|---|
+| `hash8` | phase seed / local identity packet |
+| `density7` | amplitude / byte pressure |
+| `delta7` | shock or torsion gradient |
+| `zero6` | void / low-information throat |
+| `flags4` | boundary condition |
+| radix bin | persistent soliton basin |
+| bin split | soliton fission |
+| bin merge | soliton collision |
+| unstable bin | dispersive residue / HOLD |
+
+!! Stability Rule
+
+```text
+probe bins that persist across salts, windows, and controls;
+hold bins that only exist under one projection.
+```
+
+The bin becomes interesting only if it survives:
+
+* salt changes
+* window shifts
+* shuffled source controls
+* random-byte controls
+* chain-label shuffles
+* CPU/GPU parity checks
+
+!! NUVMAP Receipt
+
+The NUVMAP protocol adds:
+
+```text
+BLITTER_BIN_RECEIPT
+```
+
+Required fields:
+
+```text
+shader_hash
+params_hash
+source_hash
+key_buffer_hash
+metric_buffer_hash
+decision
+```
+
+!! Claim Boundary
+
+The bin is a routing hint. It is not a semantic proof, compression proof, market
+signal, or chain behavior prediction.
+
+Related:
+
+* [[NUVMAP Metadata Blitter]]
+* [[NUVMAP Chain Protocol Plan]]
+* [[Topological Soliton Raytrace Tessellation NUVMAP Protocol]]
+* [[Waveprobe]]

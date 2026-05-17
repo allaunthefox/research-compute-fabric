@@ -1,0 +1,106 @@
+cff-version: 1.2.0
+message: "If you use the n-space bulk dataset route table, cite the original dataset providers and verify dataset-specific terms before ingest."
+type: dataset
+title: "N-Space Bulk Dataset Route Sources"
+authors:
+  - name: "Research Stack Contributors"
+date-released: 2026-05-08
+url: "https://github.com/allaunthefox/Research-Stack"
+repository-code: "https://github.com/allaunthefox/Research-Stack"
+license: Apache-2.0
+references:
+  - type: dataset
+    title: "Gaia Data Release 3"
+    authors:
+      - name: "European Space Agency Gaia Collaboration"
+    url: "https://www.cosmos.esa.int/web/gaia/dr3"
+    notes: "External astronomy source for galactic phase-space density matrices. Data is not vendored here."
+  - type: dataset
+    title: "ERA5 Reanalysis"
+    authors:
+      - name: "ECMWF / Copernicus Climate Data Store"
+    url: "https://cds.climate.copernicus.eu/datasets/reanalysis-era5-single-levels"
+    notes: "External climate source for spatio-temporal grid manifolds. Data is not vendored here."
+  - type: dataset
+    title: "LAION-5B"
+    authors:
+      - name: "LAION"
+    url: "https://laion.ai/blog/laion-5b/"
+    notes: "External semantic embedding and image-text metadata source. Raw media and downstream licenses require separate handling."
+  - type: dataset
+    title: "AlphaFold Protein Structure Database Downloads"
+    authors:
+      - name: "EMBL-EBI"
+      - name: "Google DeepMind"
+    url: "https://alphafold.ebi.ac.uk/download"
+    license: CC-BY-4.0
+    notes: "External predicted protein structure source; data is not vendored here."
+  - type: dataset
+    title: "NCBI ASN.1 Sequence FTP"
+    authors:
+      - name: "National Center for Biotechnology Information"
+    url: "https://ftp.ncbi.nlm.nih.gov/ncbi-asn1/"
+    notes: "External biological sequence source in ASN.1 Bioseq-set carrier format. Data is not vendored here."
+  - type: dataset
+    title: "GenBank FTP"
+    authors:
+      - name: "National Center for Biotechnology Information"
+    url: "https://ftp.ncbi.nlm.nih.gov/genbank/"
+    notes: "External biological sequence source in GenBank flatfile carrier format. Data is not vendored here."
+  - type: dataset
+    title: "The Well"
+    authors:
+      - name: "Polymathic AI"
+    url: "https://polymathic-ai.org/the_well/datasets_overview/"
+    notes: "External physics-dynamics source for uniform-grid scalar/vector/tensor field route tests. Data is not vendored here; dataset-specific terms and per-source citations must be verified before ingest."
+  - type: dataset
+    title: "PDEBench"
+    authors:
+      - name: "PDEBench authors"
+    url: "https://github.com/pdebench/PDEBench"
+    notes: "External canonical PDE benchmark surface. Data is not vendored here; code, DaRUS data, pretrained models, and citation requirements must be verified before ingest."
+  - type: dataset
+    title: "RealPDEBench"
+    authors:
+      - name: "AI4Science-WestlakeU"
+    url: "https://huggingface.co/datasets/AI4Science-WestlakeU/RealPDEBench"
+    license: CC-BY-NC-4.0
+    notes: "External paired real-measurement and simulation PDE benchmark surface. Data is not vendored here; noncommercial terms and per-scenario citation requirements must be verified before ingest."
+  - type: dataset
+    title: "MeshGraphNets"
+    authors:
+      - name: "Google DeepMind"
+    url: "https://github.com/google-deepmind/deepmind-research/tree/master/meshgraphnets"
+    notes: "External irregular-mesh simulation dataset/code surface for graph-topology route tests. Data is not vendored here; repository and dataset terms must be verified before ingest."
+  - type: dataset
+    title: "SRBench Datasets"
+    authors:
+      - name: "Cava Lab"
+    url: "https://cavalab.org/srbench/datasets/"
+    notes: "External symbolic-regression benchmark dataset surface, including black-box and ground-truth tasks. Data is not vendored here; source-specific licenses and citations must be verified before ingest."
+  - type: article
+    title: "ParFam: A Toolbox for Symbolic Regression Based on Parametric Families of Functions"
+    authors:
+      - name: "ParFam authors"
+    url: "https://arxiv.org/html/2310.05537"
+    notes: "External symbolic-law discovery prior. Use as algorithmic/bibliographic prior only unless code/data licenses and local replay checks are separately verified."
+  - type: dataset
+    title: "DLMF / Feynman Symbolic Regression"
+    authors:
+      - name: "NIST"
+      - name: "AI Feynman / FSReD authors"
+    url: "https://dlmf.nist.gov/"
+    notes: "External special-function and physics-equation reference prior. Use source-specific citations and terms before vendoring formulas, tables, or generated data."
+  - type: dataset
+    title: "LeanDojo / mathlib"
+    authors:
+      - name: "LeanDojo authors"
+      - name: "mathlib community"
+    url: "https://leandojo.org/index.html"
+    notes: "External formal theorem-proving and mathlib extraction prior. Data/code is not vendored here; local Lean replay remains the proof boundary."
+  - type: dataset
+    title: "NuminaMath"
+    authors:
+      - name: "AI-MO / Project Numina"
+    url: "https://huggingface.co/collections/AI-MO/numinamath"
+    notes: "External mathematical reasoning dataset/model collection. Treat as proposal-generation curriculum only unless answers are independently verified."

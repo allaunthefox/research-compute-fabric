@@ -1,0 +1,115 @@
+{
+  "surface_version": "0.1",
+  "node_id": "xen-alpine-surface",
+  "role": "gcl-edge",
+  "mode_default": "recovery",
+  "operational_model": "appliance",
+  "memory_budget_mb": 192,
+  "disk_budget_gb": 2,
+  "local_state_budget_mb": 64,
+  "api": {
+    "plain_health_port": 8080,
+    "websocket_port": 8080,
+    "bind": "localhost"
+  },
+  "storage": {
+    "provider": "none",
+    "mount_point": "/mnt/topological-storage",
+    "remote": "",
+    "required_for_boot": false,
+    "write_mode": "outbox",
+    "spool_budget_mb": 32
+  },
+  "topological_substrate": {
+    "class": "xen-alpine-nanokernel-carrier",
+    "carrier": "alpine-openrc-qemu-xen",
+    "kernel_exposes_primitives": true,
+    "vector_width_bits": 64,
+    "compute_slots": 1,
+    "memory_reserve_mb": 64,
+    "primitives": [
+      "health",
+      "status",
+      "metrics",
+      "attest",
+      "compress",
+      "rgflow",
+      "route",
+      "plan_route",
+      "mount_status",
+      "snapshot",
+      "receipt"
+    ],
+    "accelerators": [
+      "virtio_net",
+      "virtio_blk",
+      "serial_console"
+    ]
+  },
+  "boot_strategy": {
+    "target_layer": "layer0-gcl-nanokernel",
+    "handoff": "manual",
+    "linux_role": "runtime_carrier",
+    "destructive_handoff_allowed": false,
+    "layer0_image": {
+      "path": "/boot/gcl/layer0-xen-alpine.img",
+      "sha256": "TBD",
+      "signature": "/boot/gcl/layer0-xen-alpine.img.sig",
+      "public_key": "/etc/rs-surface/layer0.pub",
+      "cmdline": "console=hvc0 gcl.node=xen-alpine-surface gcl.mode=layer0"
+    },
+    "rollback": {
+      "boot_entry": "alpine-openrc-rs-surface-last-good",
+      "previous_image": "/boot/gcl/layer0-xen-alpine.previous.img",
+      "provider_rescue": "xen-console-or-qemu-serial"
+    },
+    "preserve": [
+      "serial_console",
+      "node_identity",
+      "last_good_receipt",
+      "rs_surface_profile",
+      "qemu_smoke_harness"
+    ],
+    "wipe": [
+      "general_linux_userspace",
+      "browser_session_state",
+      "model_router",
+      "ad_hoc_shell_state"
+    ],
+    "required_gates": [
+      "serial_or_console_health_pulse",
+      "qemu_health_probe",
+      "rollback_boot_entry",
+      "signed_layer0_image",
+      "out_of_band_recovery_window"
+    ]
+  },
+  "capabilities": [
+    "health",
+    "status",
+    "metrics",
+    "attest",
+    "compress",
+    "rgflow",
+    "route",
+    "plan_route",
+    "mount_status",
+    "snapshot",
+    "nanokernel",
+    "topological_substrate",
+    "kernel_primitives",
+    "recovery"
+  ],
+  "disabled": [
+    "full_git_checkout",
+    "local_training",
+    "local_build",
+    "large_database",
+    "browser_session_state",
+    "provider_secrets",
+    "legacy_warden_service",
+    "legacy_tardy_service",
+    "legacy_substrate_index_service",
+    "legacy_compression_gateway_service"
+  ]
+}

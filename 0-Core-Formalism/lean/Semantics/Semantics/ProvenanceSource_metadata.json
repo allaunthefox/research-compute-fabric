@@ -1,0 +1,109 @@
+{
+  "file_path": "/home/allaun/Research Stack/tools/lean/Semantics/Semantics/ProvenanceSource.lean",
+  "namespace": "Semantics.ProvenanceSource",
+  "imports": [
+    "Semantics.Bind"
+  ],
+  "opens": [
+    "Semantics.Q16_16"
+  ],
+  "structures": [
+    {
+      "name": "Identity",
+      "line": 28,
+      "doc": "Identity surface for a source-event actor."
+    },
+    {
+      "name": "Reference",
+      "line": 33,
+      "doc": "Reference surface for a source-event artifact pointer."
+    },
+    {
+      "name": "SourceEvent",
+      "line": 45,
+      "doc": "Open-future event report emitted by a configured source."
+    },
+    {
+      "name": "CostPolicy",
+      "line": 57,
+      "doc": "Cost hints for source-event adapters."
+    }
+  ],
+  "theorems": [],
+  "definitions": [
+    {
+      "name": "CostPolicy.neutral",
+      "line": 64,
+      "doc": "Neutral cost policy for receipt surfaces that should not bias bind cost."
+    },
+    {
+      "name": "CostPolicy.internalReview",
+      "line": 71,
+      "doc": "Default internal-review policy for provider compatibility shims."
+    },
+    {
+      "name": "actorKey",
+      "line": 78,
+      "doc": "Namespace an actor as scheme:name for policy matching."
+    },
+    {
+      "name": "isTrusted",
+      "line": 81,
+      "doc": "Check whether a cost policy trusts an actor by name or scheme-qualified key."
+    },
+    {
+      "name": "visibilityToken",
+      "line": 84,
+      "doc": "Render source-event visibility for invariant strings."
+    },
+    {
+      "name": "backendToken",
+      "line": 90,
+      "doc": "Render an open backend descriptor for invariant strings."
+    },
+    {
+      "name": "invariant",
+      "line": 101,
+      "doc": "Source-agnostic invariant string for lawful and unlawful source events."
+    },
+    {
+      "name": "legacyInvariant",
+      "line": 107,
+      "doc": "Compatibility invariant formatter for legacy provider modules."
+    },
+    {
+      "name": "targetInvariant",
+      "line": 110,
+      "doc": "Target-aware invariant adapter for Bind."
+    },
+    {
+      "name": "legacyTargetInvariant",
+      "line": 113,
+      "doc": "Compatibility target invariant adapter for legacy provider modules."
+    },
+    {
+      "name": "cost",
+      "line": 116,
+      "doc": "Source-agnostic cost function parameterized by policy and visibility."
+    },
+    {
+      "name": "bind",
+      "line": 124,
+      "doc": "Bind a source event to a target through the source-agnostic policy surface."
+    },
+    {
+      "name": "legacyBind",
+      "line": 127,
+      "doc": "Compatibility bind helper for legacy provider modules."
+    }
+  ],
+  "documentation": [
+    "ProvenanceSource is the open-future event surface for artifact lifecycle reports.",
+    "Observation changes the receipt surface, not the underlying law.",
+    "The backend and reference kinds deliberately carry strings instead of closed enums."
+  ],
+  "total_lines": 148,
+  "gcl_encoded": true,
+  "gcl_sequence": "F00020200",
+  "gcl_length": 9
+}

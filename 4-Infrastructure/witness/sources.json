@@ -1,0 +1,125 @@
+{
+  "schema": "research_stack_witness_sources_v1",
+  "notes": [
+    "Observation changes the receipt surface, not the underlying law.",
+    "Sources are reports, not authorities; Lean and the claims registry decide promotion."
+  ],
+  "sources": {
+    "research-stack-github": {
+      "active": true,
+      "backend": {
+        "type": "vcs",
+        "kind": "git",
+        "host": "github"
+      },
+      "url": "https://github.com/allaunthefox/Research-Stack.git",
+      "api_base": "https://api.github.com",
+      "auth_env": "GITHUB_TOKEN",
+      "hook_kind": "webhook",
+      "visibility": "public",
+      "cost_policy": {
+        "trusted_actors": [],
+        "trusted": 0.5,
+        "untrusted": 2.0,
+        "public": 5.0
+      }
+    },
+    "research-stack-bare-local": {
+      "active": true,
+      "backend": {
+        "type": "vcs",
+        "kind": "git",
+        "host": "bare"
+      },
+      "url": "file:///var/lib/git/research-stack.git",
+      "hook_kind": "server-side",
+      "visibility": "internal",
+      "cost_policy": {
+        "trusted_actors": [],
+        "trusted": 0.5,
+        "untrusted": 2.0,
+        "public": 5.0
+      }
+    },
+    "research-stack-forgejo-legacy": {
+      "active": false,
+      "backend": {
+        "type": "vcs",
+        "kind": "git",
+        "host": "forgejo"
+      },
+      "url": "file:///var/lib/git/research-stack.git",
+      "hook_kind": "server-side",
+      "visibility": "internal",
+      "retirement_note": "Forgejo is preserved for historical receipt replay only; new deployments should configure a provider-specific source block.",
+      "cost_policy": {
+        "trusted_actors": [],
+        "trusted": 0.5,
+        "untrusted": 2.0,
+        "public": 5.0
+      }
+    },
+    "science-toolbelt-probe": {
+      "active": true,
+      "backend": {
+        "type": "toolbelt",
+        "kind": "science-toolbelt"
+      },
+      "url": "shared-data/artifacts/science_toolbelt/probe.json",
+      "schema": "research_stack_optional_science_toolbelt_probe_v1",
+      "hook_kind": "post-event-script",
+      "visibility": "internal",
+      "cost_policy": {
+        "trusted_actors": [],
+        "trusted": 1.0,
+        "untrusted": 1.0,
+        "public": 1.0
+      }
+    },
+    "deepseek-review": {
+      "active": true,
+      "backend": {
+        "type": "toolbelt",
+        "kind": "deepseek-review"
+      },
+      "url": "shared-data/artifacts/deepseek_review/",
+      "schema": "ollama_deepseek_review_receipt_v1",
+      "hook_kind": "post-event-script",
+      "visibility": "internal"
+    },
+    "consolidation-ledger": {
+      "active": true,
+      "backend": {
+        "type": "ledger",
+        "kind": "sha256-manifest"
+      },
+      "url": ".consolidation-manifests/",
+      "hook_kind": "filesystem",
+      "visibility": "internal"
+    },
+    "example-mercurial": {
+      "active": false,
+      "backend": {
+        "type": "vcs",
+        "kind": "mercurial",
+        "host": "self-hosted"
+      },
+      "url": "ssh://example.invalid/research-stack",
+      "hook_kind": "pretxnchangegroup",
+      "visibility": "internal",
+      "adapter_status": "config-only"
+    },
+    "example-cvs": {
+      "active": false,
+      "backend": {
+        "type": "vcs",
+        "kind": "cvs",
+        "host": "self-hosted"
+      },
+      "url": "cvs://example.invalid/research-stack",
+      "hook_kind": "loginfo",
+      "visibility": "internal",
+      "adapter_status": "config-only"
+    }
+  }
+}

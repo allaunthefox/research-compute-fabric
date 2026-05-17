@@ -44,7 +44,8 @@ except ImportError:
     sys.exit(1)
 
 # ── Atlas dependencies (live components) ─────────────────────────────────────
-SUBSTRATE_DB = ROOT / "data" / "substrate_index.db"
+# Point to the actual database location in shared-data
+SUBSTRATE_DB = Path("/home/allaun/Documents/Research Stack/shared-data/data/substrate_index.db")
 
 # Local Ollama IPv6 carrier — sovereignty rule (see MEMORY.md)
 OLLAMA_USER  = "http://[::1]:11435"

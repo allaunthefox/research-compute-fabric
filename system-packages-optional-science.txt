@@ -1,0 +1,32 @@
+# Optional system packages for science toolbelt adapters.
+#
+# These are command-line tools or heavyweight native stacks that Python
+# requirements cannot reliably install. Names are Debian/Ubuntu-style package
+# names where available; distro packages vary.
+
+# Genetics / bioinformatics
+samtools
+bcftools
+minimap2
+
+# Formal methods / algebra
+cvc5
+z3
+gap
+sagemath
+
+# Compression and receipt payload baselines
+zstd
+
+# Visualization / data inspection
+graphviz
+paraview
+
+# CFD/PDE native helpers
+# Arch/CachyOS: fftw-openmpi
+
+# Chemistry / materials native helpers
+openbabel
+
+# Cryptography native helpers
+# liboqs may need a local source install when no distro package exists.

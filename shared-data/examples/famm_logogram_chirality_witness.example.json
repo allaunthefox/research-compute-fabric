@@ -1,0 +1,29 @@
+{
+  "receipt_type": "famm_logogram_chirality_witness",
+  "schema_version": "0.1.0",
+  "symbol_id": "OMNI_ATOM_BIND_RIGHT_TORSION",
+  "payload_hash": "sha256:payload-placeholder",
+  "chirality_witness": {
+    "direction": "rightward",
+    "handedness": "right",
+    "phase": 0.25,
+    "placement": "upper-right",
+    "mode": "bind_modifier"
+  },
+  "compatibility": {
+    "state_chirality": "right",
+    "operator_chirality": "right",
+    "surface_chirality": "right",
+    "score": 1.0,
+    "decision": "route_active"
+  },
+  "residual_policy": "carry_orientation_delta_and_verify_on_replay",
+  "benefit_gate": {
+    "disambiguates_same_payload": true,
+    "prevents_wrong_handed_pist_transition": true,
+    "reduces_nuvmap_false_merge": true,
+    "improves_replay_determinism": true,
+    "measured_route_gain_required_for_promotion": true
+  },
+  "receipt_hash": "sha256:receipt-placeholder"
+}

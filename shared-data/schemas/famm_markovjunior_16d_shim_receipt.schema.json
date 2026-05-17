@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FAMM MarkovJunior 16D Shim Receipt",
+  "type": "object",
+  "required": [
+    "receipt_type",
+    "schema_version",
+    "source",
+    "rules",
+    "anchors",
+    "nuvmap",
+    "receipt_hash"
+  ],
+  "properties": {
+    "receipt_type": {
+      "const": "famm_markovjunior_16d_shim_receipt"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "anchors": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "nuvmap": {
+      "type": "object"
+    },
+    "receipt_hash": {
+      "type": "string"
+    }
+  }
+}

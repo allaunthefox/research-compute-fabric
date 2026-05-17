@@ -1,0 +1,95 @@
+created: 20260511000000000
+modified: 20260511000000000
+tags: ResearchStack NUVMAP Blockchain ReceiptChain Waveprobe Metaprobe HOLD
+title: NUVMAP Chain Protocol Plan
+type: text/vnd.tiddlywiki
+
+! NUVMAP Chain Protocol Plan
+
+Status: `ADMIT_NUVMAP_PROTOCOL_PLAN_HOLD_CHAIN_IMPLEMENTATION`
+
+NUVMAP is currently a protocol plan for a dedicated receipt chain:
+
+```text
+Numerical Universe Vector Map receipt chain
+```
+
+Its purpose is to store replayable probe-state commitments so scanning can route
+itself over time without treating commodity public chains as accidental bulk
+storage.
+
+!! Runner
+
+```text
+4-Infrastructure/shim/nuvmap_chain_protocol_plan.py
+```
+
+Receipt:
+
+```text
+shared-data/data/blockchain_corpus/nuvmap_chain_protocol_plan_receipt.json
+```
+
+Current receipt hash:
+
+```text
+5e51f55f88133e3eb61e4179bcd932fb58512db76ec46dbb37d4419db32ced40
+```
+
+!! Chain Model
+
+```text
+deployment_stage: LOCAL_DEVNET_ONLY
+economic_model: NO_TOKEN_NO_MARKET
+finality_model: append-only merkle root
+data_availability: on-chain summaries + content-addressed sidecars
+```
+
+!! Minimal Transaction Types
+
+* `BLITTER_BIN_RECEIPT`
+* `WAVE_RECEIPT`
+* `META_RECEIPT`
+* `STORAGE_SURFACE_RECEIPT`
+* `SCAN_POLICY_UPDATE`
+* `NEGATIVE_CONTROL`
+
+!! Block Shape
+
+```text
+header:
+  parent_hash
+  height
+  scanner_policy_hash
+  state_root
+  sidecar_manifest_root
+
+body:
+  blitter bin receipts
+  waveprobe receipts
+  metaprobe receipts
+  storage-channel receipts
+  scan actions
+  negative controls
+```
+
+Forbidden body fields:
+
+* private keys
+* wallet credentials
+* bulk copyrighted payloads
+* hidden/evasive payloads
+* financial promotion metadata
+
+!! Claim Boundary
+
+This does not create a blockchain, token, market, consensus network,
+compression result, or Hutter Prize claim. Chain implementation remains HOLD
+until local fixture block replay and verifier receipts exist.
+
+Related:
+
+* [[Blockchain L3 Self-Scan Scheduler]]
+* [[NUVMAP Metadata Blitter]]
+* [[Hyper-Soliton Radix Bins]]
+* [[NUVMAP GPU Burst Check Plan]]

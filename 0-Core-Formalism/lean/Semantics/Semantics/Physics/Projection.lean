@@ -20,7 +20,8 @@ structure Measurement where
 A projection is faithful if the observed kind matches the hidden kind.
 (Stronger conservation checks can be added as the framework expands.)
 -/
-def FaithfulMeasurement (m : Measurement) : Prop :=
+def faithfulMeasurement (m : Measurement) : Prop :=
   m.hiddenState.kind = m.observedState.kind
 
+-- All defs in this file are data definitions exercised through theorems in dependent files.
 end Semantics.Physics

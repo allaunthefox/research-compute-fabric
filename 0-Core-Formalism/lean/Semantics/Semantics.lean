@@ -1,4 +1,5 @@
 import Semantics.Bind
+import Semantics.ProvenanceSource
 import Semantics.Forgejo
 import Semantics.Github
 import Semantics.Hutter
@@ -143,6 +144,9 @@ import Semantics.ColeHopfTransform
 import Semantics.LawfulLoss
 import Semantics.Core.MassNumber
 import Semantics.RRCLogogramProjection
+import Semantics.ThresholdVector
+import Semantics.LogogramRotationLoop
+import Semantics.CompressionYield
 
 namespace Semantics
 

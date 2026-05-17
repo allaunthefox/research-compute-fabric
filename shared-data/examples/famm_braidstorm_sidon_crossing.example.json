@@ -1,0 +1,8 @@
+{
+  "strand_count": 16,
+  "address_budget": 256,
+  "address_mode": "integer",
+  "allow_self_crossings": true,
+  "seed": 16384,
+  "max_restarts": 512
+}

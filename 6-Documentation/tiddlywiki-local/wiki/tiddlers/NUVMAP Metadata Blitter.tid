@@ -1,0 +1,73 @@
+created: 20260511000000000
+modified: 20260511000000000
+tags: ResearchStack NUVMAP GPU WebGPU Shader MetadataBlitter SIMD HOLD
+title: NUVMAP Metadata Blitter
+type: text/vnd.tiddlywiki
+
+! NUVMAP Metadata Blitter
+
+Status: `SHADER_PRIMITIVE_WITH_HOLD_BOUNDARIES`
+
+The NUVMAP metadata blitter is a small WebGPU compute shader that treats the GPU
+as a dataport fabric for metadata sorting.
+
+Runner:
+
+```text
+5-Applications/scripts/nuvmap_metadata_blitter.wgsl
+```
+
+Documentation:
+
+```text
+5-Applications/scripts/nuvmap_metadata_blitter.md
+```
+
+!! Purpose
+
+```text
+metadata shard
+  -> fixed-size word windows
+  -> SIMD-wide blitter pass
+  -> sortable route keys
+  -> packed metric words
+  -> radix grouping
+  -> waveprobe / metaprobe selection
+  -> NUVMAP receipts
+```
+
+The shader does not sort by itself. It emits deterministic keys and metrics that
+a later radix/sort pass or CPU verifier can consume.
+
+!! Key Word
+
+```text
+bits 31..24 hash8    phase seed
+bits 23..17 density7 byte pressure
+bits 16..10 delta7   shock / torsion gradient
+bits 9..4   zero6    void / low-information throat
+bits 3..0   flags4   boundary condition
+```
+
+!! Dispatch Shape
+
+```text
+@compute @workgroup_size(256, 1, 1)
+dispatch = ceil(record_count / 256)
+```
+
+Each invocation scans at most `64` words. Larger records should be split into
+fixed windows so the kernel remains predictable and shardable.
+
+!! Claim Boundary
+
+This shader emits route keys and metrics only. It does not decompress, classify
+semantic meaning, publish data on-chain, claim GPU acceleration, or claim
+compression improvement. GPU claims require CPU/GPU parity receipts.
+
+Related:
+
+* [[Hyper-Soliton Radix Bins]]
+* [[NUVMAP Chain Protocol Plan]]
+* [[Blockchain L3 Self-Scan Scheduler]]
+* [[NUVMAP GPU Burst Check Plan]]

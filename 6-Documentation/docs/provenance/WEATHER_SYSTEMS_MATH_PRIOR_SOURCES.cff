@@ -1,0 +1,41 @@
+cff-version: 1.2.0
+message: "If you use the weather systems math prior, cite atmospheric-model sources separately and keep the local fixtures no-download and claim-bounded."
+type: software
+title: "Weather Systems Math Prior Sources"
+authors:
+  - name: "Research Stack Contributors"
+date-released: 2026-05-09
+url: "https://github.com/allaunthefox/Research-Stack"
+repository-code: "https://github.com/allaunthefox/Research-Stack"
+license: Apache-2.0
+references:
+  - type: webpage
+    title: "IFS Documentation"
+    authors:
+      - name: "European Centre for Medium-Range Weather Forecasts"
+    url: "https://www.ecmwf.int/en/publications/ifs-documentation"
+    notes: "Reference surface for primitive-equation dynamics and data-assimilation framing. No IFS code or data is vendored here."
+  - type: webpage
+    title: "ERA5"
+    authors:
+      - name: "European Centre for Medium-Range Weather Forecasts"
+    url: "https://www.ecmwf.int/en/forecasts/dataset/ecmwf-reanalysis-v5"
+    notes: "Reference surface for reanalysis and assimilation route priors. No ERA5 data is ingested or vendored here."
+  - type: webpage
+    title: "Numerical Weather Prediction"
+    authors:
+      - name: "NOAA National Centers for Environmental Information"
+    url: "https://www.ncei.noaa.gov/products/weather-climate-models/numerical-weather-prediction"
+    notes: "Reference surface for NWP data-family routing. No NWP archive data is ingested or benchmarked here."
+  - type: webpage
+    title: "FV3: Finite-Volume Cubed-Sphere Dynamical Core"
+    authors:
+      - name: "NOAA Geophysical Fluid Dynamics Laboratory"
+    url: "https://www.gfdl.noaa.gov/fv3"
+    notes: "Reference surface for finite-volume dynamical-core framing. The local prior uses only tiny synthetic fixtures."
+  - type: webpage
+    title: "FV3 Key Components"
+    authors:
+      - name: "NOAA Geophysical Fluid Dynamics Laboratory"
+    url: "https://www.gfdl.noaa.gov/fv3/fv3-key-components/"
+    notes: "Reference surface for finite-volume conservation and layered dynamics. No atmospheric model validation is claimed."

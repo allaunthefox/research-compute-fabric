@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FAMM Golden Braid Centering Receipt",
+  "type": "object",
+  "required": [
+    "receipt_type",
+    "schema_version",
+    "phi",
+    "inverse_phi",
+    "center",
+    "strand_receipts",
+    "multi_strand",
+    "receipt_hash"
+  ],
+  "properties": {
+    "receipt_type": {
+      "const": "famm_golden_braid_centering_receipt"
+    },
+    "schema_version": {"type": "string"},
+    "phi": {"type": "number"},
+    "inverse_phi": {"type": "number"},
+    "center": {
+      "type": "array",
+      "items": {"type": "number"}
+    },
+    "threshold": {"type": "number"},
+    "strand_receipts": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "multi_strand": {"type": "object"},
+    "no_drift_boundary": {"type": "string"},
+    "receipt_hash": {"type": "string"}
+  }
+}

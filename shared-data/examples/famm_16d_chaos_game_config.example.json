@@ -1,0 +1,112 @@
+{
+  "seed": 42,
+  "steps": 4096,
+  "burn_in": 256,
+  "noise_scale": 0.0005,
+  "projection_axes": [0, 1],
+  "initial_state": [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
+  "weights": {
+    "alpha_distance": 1.0,
+    "beta_scar": 1.4,
+    "gamma_invariant": 1.6,
+    "eta_cost": 0.8,
+    "lambda_mass": 1.1,
+    "rho_receipt": 1.2,
+    "tau_transition_scar": 2.0
+  },
+  "transition_scars": {
+    "HESSIAN_EIGEN->NAVIER_STOKES_FULL": 0.35,
+    "SIDON_PAIR_SUM_GATE->SIDON_PAIR_SUM_GATE": 0.15,
+    "CFD_LADDER->NAVIER_STOKES_FULL": 0.1
+  },
+  "anchors": [
+    {
+      "id": "THEODORUS_SHELL",
+      "vector": [0.95, 0.0, 0.45, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.7, 0.75, 0.0],
+      "contraction": 0.48,
+      "scar": 0.05,
+      "invariant_overlap": 0.75,
+      "cost": 0.2,
+      "semantic_mass": 0.55,
+      "receipt_strength": 0.72,
+      "handoff_gate": "orthogonal_mass_delta"
+    },
+    {
+      "id": "SIDON_PAIR_SUM_GATE",
+      "vector": [0.0, 0.95, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.15, 0.0, 0.88, 0.95, 0.0],
+      "contraction": 0.42,
+      "scar": 0.1,
+      "invariant_overlap": 0.92,
+      "cost": 0.25,
+      "semantic_mass": 0.62,
+      "receipt_strength": 0.96,
+      "handoff_gate": "exact_pair_sum_injectivity"
+    },
+    {
+      "id": "SEMANTIC_MASS_Z_ACCEL",
+      "vector": [0.0, 0.0, 0.9, 0.82, 0.0, 0.45, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.72, 0.7, 0.0],
+      "contraction": 0.55,
+      "scar": 0.12,
+      "invariant_overlap": 0.7,
+      "cost": 0.3,
+      "semantic_mass": 0.88,
+      "receipt_strength": 0.74,
+      "handoff_gate": "pole_roc_receipt"
+    },
+    {
+      "id": "HESSIAN_EIGEN",
+      "vector": [0.0, 0.0, 0.0, 0.0, 0.96, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.55, 0.35, 0.82, 0.8, 0.0],
+      "contraction": 0.5,
+      "scar": 0.22,
+      "invariant_overlap": 0.86,
+      "cost": 0.55,
+      "semantic_mass": 0.72,
+      "receipt_strength": 0.83,
+      "handoff_gate": "curvature_receipt"
+    },
+    {
+      "id": "SYSTEM_CLOSURE",
+      "vector": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.95, 0.0, 0.0, 0.0, 0.0, 0.2, 0.0, 0.82, 0.84, 0.0],
+      "contraction": 0.46,
+      "scar": 0.06,
+      "invariant_overlap": 0.84,
+      "cost": 0.38,
+      "semantic_mass": 0.6,
+      "receipt_strength": 0.82,
+      "handoff_gate": "boundary_closure_test"
+    },
+    {
+      "id": "RESIDUAL_SEAL",
+      "vector": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.95, 0.0, 0.0, 0.0, 0.08, 0.18, 0.0, 0.9, 0.0],
+      "contraction": 0.4,
+      "scar": 0.04,
+      "invariant_overlap": 0.78,
+      "cost": 0.15,
+      "semantic_mass": 0.5,
+      "receipt_strength": 0.88,
+      "handoff_gate": "bounded_residual_seal"
+    },
+    {
+      "id": "CFD_LADDER",
+      "vector": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.82, 0.68, 0.0, 0.0, 0.55, 0.62, 0.58, 0.0],
+      "contraction": 0.58,
+      "scar": 0.2,
+      "invariant_overlap": 0.66,
+      "cost": 0.62,
+      "semantic_mass": 0.7,
+      "receipt_strength": 0.56,
+      "handoff_gate": "cfl_divergence_boundary_receipt"
+    },
+    {
+      "id": "BRAINCA_LONG_RANGE_GATE",
+      "vector": [0.0, 0.0, 0.7, 0.0, 0.52, 0.0, 0.0, 0.0, 0.0, 0.0, 0.62, 0.0, 0.0, 0.74, 0.52, 0.8],
+      "contraction": 0.57,
+      "scar": 0.18,
+      "invariant_overlap": 0.76,
+      "cost": 0.58,
+      "semantic_mass": 0.75,
+      "receipt_strength": 0.55,
+      "handoff_gate": "long_range_topology_route"
+    }
+  ]
+}

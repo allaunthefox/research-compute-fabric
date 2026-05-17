@@ -1,0 +1,80 @@
+[
+  {
+    "path": "0-Core-Formalism/lean/Semantics/Semantics/Physics/UniversalBridge.lean",
+    "passed": true,
+    "issue_count": 10,
+    "structural": {
+      "theorems": 26,
+      "defs": 20,
+      "eval": 0,
+      "eval_bang": 11,
+      "sorries": 0,
+      "native_decide": 26,
+      "set_option_suppressions": 0,
+      "empty_theorems": 0,
+      "tautologies": 0
+    },
+    "issues": [
+      {
+        "check": "naming_conventions",
+        "message": "Function 'RE_LAMINAR' is not camelCase at line 12",
+        "line": 12,
+        "severity": "WARNING"
+      },
+      {
+        "check": "naming_conventions",
+        "message": "Function 'RE_TURBULENT' is not camelCase at line 14",
+        "line": 14,
+        "severity": "WARNING"
+      },
+      {
+        "check": "naming_conventions",
+        "message": "Function 'H_INTERVAL' is not camelCase at line 16",
+        "line": 16,
+        "severity": "WARNING"
+      },
+      {
+        "check": "naming_conventions",
+        "message": "Function 'Y0' is not camelCase at line 19",
+        "line": 19,
+        "severity": "WARNING"
+      },
+      {
+        "check": "naming_conventions",
+        "message": "Function 'Y1' is not camelCase at line 21",
+        "line": 21,
+        "severity": "WARNING"
+      },
+      {
+        "check": "naming_conventions",
+        "message": "Function 'H_M0' is not camelCase at line 24",
+        "line": 24,
+        "severity": "WARNING"
+      },
+      {
+        "check": "naming_conventions",
+        "message": "Function 'H_M1' is not camelCase at line 26",
+        "line": 26,
+        "severity": "WARNING"
+      },
+      {
+        "check": "naming_conventions",
+        "message": "Function 'q16_add' is not camelCase at line 32",
+        "line": 32,
+        "severity": "WARNING"
+      },
+      {
+        "check": "naming_conventions",
+        "message": "Function 'q16_sub' is not camelCase at line 34",
+        "line": 34,
+        "severity": "WARNING"
+      },
+      {
+        "check": "proof_quality",
+        "message": "def 'normalizedT' at line 47 has no companion theorem or #eval witness",
+        "line": 47,
+        "severity": "WARNING"
+      }
+    ]
+  }
+]

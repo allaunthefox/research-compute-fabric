@@ -210,7 +210,7 @@ _CLUSTER_KEYWORDS: dict[int, set[str]] = {
     5:  {"crypto", "hash", "sha256", "merkle", "zk", "stark", "proof",
          "signature", "seal", "attest", "verify", "provenance"},
     6:  {"database", "sql", "sqlite", "index", "query", "schema", "table",
-         "row", "column", "fts", "search", "forgejo", "git"},
+         "row", "column", "fts", "search", "source", "git"},
     7:  {"semantic", "language", "concept", "meaning", "vector", "embed",
          "nlp", "token", "word", "text", "notation", "symbol", "translate",
          "analog", "idea", "weight", "research", "coding", "decode",

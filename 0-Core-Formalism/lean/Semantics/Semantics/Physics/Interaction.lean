@@ -1,4 +1,3 @@
-import Semantics.Physics.Boundary
 import Semantics.Physics.Conservation
 
 namespace Semantics.Physics
@@ -26,6 +25,7 @@ that preserves invariants.
 structure PhysicalPath where
   steps : List Interaction
   -- Each step is lawful under the core conserved quantities
-  lawful : ∀ step ∈ steps, LawfulInteraction coreConservedQuantities step
+  lawful : ∀ step ∈ steps, lawfulInteraction coreConservedQuantities step
 
+-- All defs in this file are data definitions exercised through theorems in dependent files.
 end Semantics.Physics

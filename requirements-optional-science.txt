@@ -1,0 +1,34 @@
+# Optional science toolbelt for receipt-producing adapters.
+#
+# Install only when a task needs these domains:
+#
+#   uv pip install -r requirements-optional-science.txt
+#
+# These packages are intentionally not part of the default repo setup. They
+# provide reference implementations and data-format adapters for math-first
+# verification receipts.
+
+# Genetics / bioinformatics
+biopython>=1.87
+pysam>=0.24.0
+
+# Chemistry / materials
+rdkit>=2026.3.1
+
+# SMT / formal-methods bridge
+z3-solver>=4.16.0.0
+cvc5>=1.3.4
+
+# Cryptography / finite fields / symbolic checks
+pycryptodome>=3.23.0
+galois>=0.4.6
+
+# Graphs, signal analysis, and compression baselines
+networkx>=3.5
+PyWavelets>=1.9.0
+zstandard>=0.25.0
+
+# Heavy or native-stack options. Keep commented unless a task explicitly needs
+# the solver and the host has the native prerequisites.
+# dedalus>=3.0.5
+# liboqs-python>=0.14.1

@@ -1,0 +1,40 @@
+{
+  "$schema": "research_stack_openclaw_shared_bus_config_example_v1",
+  "claim_boundary": "Template only. Do not place secrets here. Keep real credentials under OpenClaw's local credential store.",
+  "gateway": {
+    "bind": "127.0.0.1",
+    "port": 18789,
+    "non_loopback": "disabled_until_auth_pairing_receipt"
+  },
+  "agents": {
+    "defaults": {
+      "sandbox": {
+        "mode": "non-main",
+        "required_for": [
+          "remote",
+          "group",
+          "public_channel",
+          "untrusted_input"
+        ]
+      }
+    }
+  },
+  "research_stack_bus": {
+    "memory_write_rule": "write only hashes, receipt paths, lawful statuses, and next-action pointers; never raw secrets",
+    "required_task_completion_keys": [
+      "agent_handle",
+      "task_id",
+      "receipt_path",
+      "receipt_hash",
+      "lawful",
+      "claim_boundary"
+    ],
+    "allowed_memory_value_types": [
+      "receipt_path",
+      "hash",
+      "lawful_status",
+      "claim_boundary",
+      "next_action_pointer"
+    ]
+  }
+}

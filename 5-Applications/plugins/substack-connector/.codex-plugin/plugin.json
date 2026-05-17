@@ -1,0 +1,40 @@
+{
+  "name": "substack-connector",
+  "version": "0.1.0",
+  "description": "Repo-local helper for preparing Markdown posts and assets for Substack publishing, with an optional authenticated updater for existing posts.",
+  "author": {
+    "name": "No One Everywhere LLC",
+    "email": "",
+    "url": ""
+  },
+  "homepage": "",
+  "repository": "",
+  "license": "MIT",
+  "keywords": [
+    "substack",
+    "publishing",
+    "markdown"
+  ],
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Substack Connector",
+    "shortDescription": "Prepare local Markdown posts and assets for Substack.",
+    "longDescription": "A local publishing helper that turns repo Markdown drafts into Substack-ready Markdown bundles with copied image assets and a lightweight HTML preview. When a local Substack cookie string is available, it can update an existing post draft and publish it without resending email.",
+    "developerName": "No One Everywhere LLC",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "",
+    "privacyPolicyURL": "",
+    "termsOfServiceURL": "",
+    "defaultPrompt": [
+      "Prepare my active article Markdown for Substack.",
+      "Create a Substack publish bundle for this post.",
+      "Check my Substack draft assets before publishing.",
+      "Update my existing Substack post from the prepared bundle."
+    ],
+    "brandColor": "#FF6719"
+  }
+}

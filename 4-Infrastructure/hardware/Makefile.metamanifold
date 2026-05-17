@@ -1,0 +1,40 @@
+# Verilator simulation Makefile for Meta-Manifold Prover
+# Usage:
+#   make         — build and run simulation
+#   make trace   — build and run with VCD waveform dump
+#   make clean   — remove build artifacts
+
+TOP := MetaManifoldProver
+PWD := $(shell pwd)
+RTL_TOP := "$(PWD)/metamanifold_prover_gowin.v"
+TB_CPP := "$(PWD)/tb_metamanifold_prover.cpp"
+
+BUILD_DIR := /tmp/verilator_metamanifold_sim
+SIM_BIN := $(BUILD_DIR)/V$(TOP)
+
+# Verilator flags
+VERILATOR := verilator
+VERILATOR_FLAGS := -Wall -Wpedantic -Wno-fatal \
+	-cc --exe --build --trace \
+	-Mdir $(BUILD_DIR) \
+	--top-module $(TOP)
+
+# Source files (absolute paths)
+VSRCS := $(RTL_TOP)
+
+.PHONY: all trace run clean
+
+all: $(SIM_BIN)
+	./$(SIM_BIN)
+
+trace: $(SIM_BIN)
+	TRACE=1 ./$(SIM_BIN)
+
+$(SIM_BIN): $(VSRCS) $(TB_CPP)
+	$(VERILATOR) $(VERILATOR_FLAGS) $(VSRCS) tb_metamanifold_prover.cpp
+
+run: $(SIM_BIN)
+	./$(SIM_BIN)
+
+clean:
+	rm -rf $(BUILD_DIR) *.vcd

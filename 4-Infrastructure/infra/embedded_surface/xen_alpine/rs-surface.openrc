@@ -1,0 +1,30 @@
+#!/sbin/openrc-run
+
+name="Research Stack minimal embedded surface"
+description="Small HTTP/WebSocket control surface for Alpine/Xen guests"
+supervisor=supervise-daemon
+command="${command:-/usr/bin/python3}"
+command_args="${command_args:-/opt/rs-surface/server.py}"
+command_user="${command_user:-surface:surface}"
+pidfile="${pidfile:-/run/rs-surface/rs-surface.pid}"
+output_log="${output_log:-/var/log/rs-surface/stdout.log}"
+error_log="${error_log:-/var/log/rs-surface/stderr.log}"
+respawn_delay=2
+respawn_max=5
+
+export RS_SURFACE_PROFILE="${RS_SURFACE_PROFILE:-/etc/rs-surface/node.json}"
+export RS_SURFACE_STATE="${RS_SURFACE_STATE:-/var/lib/rs-surface}"
+export RS_SURFACE_MOUNT="${RS_SURFACE_MOUNT:-/mnt/topological-storage}"
+export RS_SURFACE_PORT="${RS_SURFACE_PORT:-8080}"
+
+depend() {
+	need localmount
+	after firewall net
+}
+
+start_pre() {
+	checkpath -d -m 0755 -o surface:surface /run/rs-surface
+	checkpath -d -m 0755 -o surface:surface /var/lib/rs-surface
+	checkpath -d -m 0755 -o surface:surface /var/log/rs-surface
+	checkpath -d -m 0755 -o surface:surface /mnt/topological-storage
+}

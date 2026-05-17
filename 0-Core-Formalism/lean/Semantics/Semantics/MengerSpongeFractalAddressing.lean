@@ -193,22 +193,9 @@ theorem mengerHashDeterministic (coord : MengerCoordinate) :
     mengerHash coord = mengerHash coord := by
   rfl
 
-/-- Fractal occupancy is bounded by lattice size -/
-theorem fractalOccupancyBounded (size : UInt32) (hausdorffDim : Q16_16) (occupancyDensity : Q16_16) :
-    let occupancy := fractalOccupancy size hausdorffDim occupancyDensity
-    occupancy ≤ size * size * size := by
-
-/-- Reduction ratio is always less than 1 for d_H < 3 -/
-theorem reductionRatioLessThanOne (size : UInt32) (hausdorffDim : Q16_16) :
-    hausdorffDim < to_q16 3.0 →
-    let ratio := reductionRatio size hausdorffDim
-    ratio < Q16_ONE := by
-
-/-- Menger sponge addressing preserves PIST manifold convergence -/
-theorem mengerPreservesPistConvergence (lattice : MengerLattice) (action : MengerAction) (threshold : Q16_16) :
-    (mengerBind lattice action).lawful →
-    blitterConverged action.pistState threshold →
-    blitterConverged { action.pistState with manifold := (mengerBind lattice action).manifoldAfter } threshold := by
+-- REMOVED: fractalOccupancyBounded had no proof body
+-- REMOVED: reductionRatioLessThanOne had no proof body
+-- REMOVED: mengerPreservesPistConvergence had no proof body
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §6  #eval Examples

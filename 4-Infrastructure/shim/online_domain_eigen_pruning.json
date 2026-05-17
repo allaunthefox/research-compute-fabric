@@ -1,0 +1,290 @@
+{
+  "schema": "online_domain_eigen_pruning_v1",
+  "claim_boundary": "Leading eigenvector is a ranking prior over adjacent source-backed domains, not proof of correctness.",
+  "domain_count": 7,
+  "weighted_domains": [
+    {
+      "domain": "arithmetic_entropy_coding",
+      "equation": "message -> interval with subinterval widths proportional to symbol probabilities",
+      "role": "baseline entropy coder and probability weighting model",
+      "source": "Youssef, Parallel Algorithms for Entropy-Coding Techniques, NIST, 1998",
+      "url": "https://www.nist.gov/publications/parallel-algorithms-entropy-coding-techniques",
+      "eigen_weight": 0.32818448514877907
+    },
+    {
+      "domain": "asymmetric_numeral_systems",
+      "equation": "state-machine entropy coding with symbol-state allocation f_s ~= p_s R",
+      "role": "finite-state entropy coding, table/LUT-adjacent for hardware",
+      "source": "Pieprzyk et al., The Compression Optimality of Asymmetric Numeral Systems, Entropy, 2023",
+      "url": "https://www.mdpi.com/1099-4300/25/4/672",
+      "eigen_weight": 0.2598079624847316
+    },
+    {
+      "domain": "minimum_description_length",
+      "equation": "argmin_M L(M) + L(D | M)",
+      "role": "model selection prior; choose the shortest lawful template before encoding",
+      "source": "Grunwald, Model Selection Based on Minimum Description Length, Journal of Mathematical Psychology, 2000",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S0022249699912804",
+      "eigen_weight": 0.19256323124324387
+    },
+    {
+      "domain": "bounce_lightweight_integer_compression",
+      "equation": "compress k separate blocks of size N across SIMD lanes to preserve scalar ratio",
+      "role": "partitioned lane layout prior for avoiding wide-register ratio loss",
+      "source": "Bittner et al., BOUNCE: memory-efficient SIMD approach for lightweight integer compression, Distributed and Parallel Databases, 2023",
+      "url": "https://link.springer.com/article/10.1007/s10619-023-07426-0",
+      "eigen_weight": 0.10931260799338613
+    },
+    {
+      "domain": "simd_bp128_bitpacking",
+      "equation": "block_width = ceil(log2(max(block)+1)); pack N integers at block_width bits",
+      "role": "lane-width prior for GPU/FPGA integer surfaces",
+      "source": "Lemire and Boytsov, Decoding billions of integers per second through vectorization, Software: Practice and Experience, 2015",
+      "url": "https://arxiv.org/abs/1209.2137",
+      "eigen_weight": 0.057946842152125255
+    },
+    {
+      "domain": "delta_sigma_one_bit",
+      "equation": "b_t = Q(v_t + e_{t-1}); e_t = v_t + e_{t-1} - b_t",
+      "role": "1-bit residual-feedback transport prior, adjacent to PBACS",
+      "source": "Zierhofer, Adaptive Delta-Sigma Modulation for Enhanced Input Dynamic Range, EURASIP JASP, 2008",
+      "url": "https://link.springer.com/article/10.1155/2008/439203",
+      "eigen_weight": 0.03805214750155165
+    },
+    {
+      "domain": "normalized_compression_distance",
+      "equation": "NCD_Z(x,y) = (Z(xy) - min(Z(x), Z(y))) / max(Z(x), Z(y))",
+      "role": "compressor-backed similarity gate for choosing nearby templates",
+      "source": "Cilibrasi and Vitanyi, Clustering by Compression, IEEE Transactions on Information Theory, 2005",
+      "url": "https://ir.cwi.nl/pub/16389",
+      "eigen_weight": 0.014132723476182319
+    }
+  ],
+  "top_terms": [
+    {
+      "term": "entropy",
+      "weight": 0.2063358047091217
+    },
+    {
+      "term": "model",
+      "weight": 0.13192504349539264
+    },
+    {
+      "term": "selection",
+      "weight": 0.0837713577517334
+    },
+    {
+      "term": "parallel",
+      "weight": 0.07848924644513405
+    },
+    {
+      "term": "algorithms",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "arithmetic_entropy_coding",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "baseline",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "coder",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "entropy-coding",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "interval",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "message",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "nist",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "probabilities",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "probability",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "proportional",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "subinterval",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "symbol",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "techniques",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "weighting",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "widths",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "youssef",
+      "weight": 0.07515803351452537
+    },
+    {
+      "term": "allocation",
+      "weight": 0.05780453403001633
+    },
+    {
+      "term": "asymmetric",
+      "weight": 0.05780453403001633
+    },
+    {
+      "term": "asymmetric_numeral_systems",
+      "weight": 0.05780453403001633
+    },
+    {
+      "term": "f_s",
+      "weight": 0.05780453403001633
+    },
+    {
+      "term": "finite-state",
+      "weight": 0.05780453403001633
+    },
+    {
+      "term": "hardware",
+      "weight": 0.05780453403001633
+    },
+    {
+      "term": "lut-adjacent",
+      "weight": 0.05780453403001633
+    },
+    {
+      "term": "numeral",
+      "weight": 0.05780453403001633
+    },
+    {
+      "term": "optimality",
+      "weight": 0.05780453403001633
+    },
+    {
+      "term": "p_s",
+      "weight": 0.05780453403001633
+    },
+    {
+      "term": "pieprzyk",
+      "weight": 0.05780453403001633
+    },
+    {
+      "term": "state-machine",
+      "weight": 0.05780453403001633
+    },
+    {
+      "term": "symbol-state",
+      "weight": 0.05780453403001633
+    },
+    {
+      "term": "table",
+      "weight": 0.05780453403001633
+    },
+    {
+      "term": "prior",
+      "weight": 0.04862003891674652
+    },
+    {
+      "term": "argmin_m",
+      "weight": 0.0418856788758667
+    },
+    {
+      "term": "before",
+      "weight": 0.0418856788758667
+    },
+    {
+      "term": "choose",
+      "weight": 0.0418856788758667
+    },
+    {
+      "term": "description",
+      "weight": 0.0418856788758667
+    }
+  ],
+  "domain_similarity_matrix": [
+    [
+      0.9999999999999997,
+      0.06864763884530972,
+      0.0,
+      0.01513151045105087,
+      0.014647293359011769,
+      0.015228563066514943,
+      0.0
+    ],
+    [
+      0.06864763884530972,
+      1.0,
+      0.10532564245617808,
+      0.0,
+      0.028001404572565464,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.10532564245617808,
+      0.9999999999999998,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.01513151045105087,
+      0.0,
+      0.0,
+      1.0000000000000002,
+      0.034758527243063664,
+      0.01283417735563,
+      0.031889604696206345
+    ],
+    [
+      0.014647293359011769,
+      0.028001404572565464,
+      0.0,
+      0.034758527243063664,
+      1.0000000000000002,
+      0.01242347625226291,
+      0.0
+    ],
+    [
+      0.015228563066514943,
+      0.0,
+      0.0,
+      0.01283417735563,
+      0.01242347625226291,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.031889604696206345,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ]
+}

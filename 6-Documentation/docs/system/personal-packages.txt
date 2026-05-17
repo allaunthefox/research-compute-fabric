@@ -1,0 +1,305 @@
+# Personal / Non-FRT Packages — Safe to Remove for Clean Research Stack System
+# These are NOT required for Fractal Recursion Theory work.
+# Remove with: sudo pacman -R - < personal-packages.txt
+# WARNING: Review before removing — some may be needed for non-FRT daily use.
+
+# --- Redundant AI IDEs / Agents (keep VS Code + local LLM) ---
+cursor-bin
+windsurf-next
+openai-codex-bin
+qwen-code-bin
+claude-code-stable
+tabby
+opencode-bin
+
+# --- Webapp Electron Wrappers (use browser instead) ---
+notion-app-enhanced
+notion-native-tauri
+linear-desktop-git
+linear-native-tauri
+gemini-desktop-git
+
+# --- Redundant Chat CLIs (pick one if needed) ---
+chatblade
+tgpt
+aichat-ng-bin
+
+# --- Heavy Math / CAS Overlap (Lean + Python cover this) ---
+sagemath
+julia
+octave
+
+# --- Proof Assistants (Lean is the FRT source of truth) ---
+isabelle
+rocq
+agda
+agda-stdlib
+
+# --- Full Crypto Nodes (use light wallets or APIs) ---
+bitcoin-git
+go-ethereum
+
+# --- SDR / Radio (niche hardware tools) ---
+gnuradio
+gqrx
+inspectrum
+
+# --- Scientific Viz Overlap ---
+paraview
+
+# --- Chemistry / Molecular (niche domain) ---
+avogadro-crystals
+avogadro-fragments
+avogadro-molecules
+avogadrolibs
+avogadrolibs-qt
+openbabel
+
+# --- Bioinformatics (niche domain) ---
+samtools
+bcftools
+minimap2
+
+# --- CAD / PCB (keep if active hardware projects) ---
+freecad
+kicad
+freerouting
+openscad
+
+# --- FPGA (keep only if active silicon projects) ---
+gowin-eda-edu-ide
+gowin-eda-edu-programmer
+yosys
+prjtrellis
+vtr
+openfpgaloader
+
+# --- Virtualization (Docker covers most; keep QEMU only if needed) ---
+qemu-system-x86
+qemu-system-x86
+qemu-system-xtensa
+qemu-user-static
+qemu-user-static-binfmt
+
+# --- Office Suite (use web or keep minimal) ---
+libreoffice-fresh
+libreoffice-extension-texmaths
+libreoffice-extension-writer2latex
+
+# --- Extra Editors (vim covers all) ---
+nano
+nano-syntax-highlighting
+micro
+
+# --- Extra Shells (keep your configured primary) ---
+# bash is VITAL; zsh + fish are optional
+# fish
+cachyos-fish-config
+
+# --- Media / Entertainment (not research tools) ---
+blender
+strawberry
+haruna
+vlc-plugins-all
+sox
+tesseract
+tesseract-data-eng
+
+# --- Communication (keep only what you actively use) ---
+# signal-desktop — keep (secure comms)
+# telegram-desktop — keep (community)
+# thunderbird — keep (email)
+# bitwarden — keep (auth)
+protonmail-bridge-bin
+nheko-git
+
+# --- System Cosmetics ---
+cachyos-wallpapers
+cachyos-plymouth-bootanimation
+plymouth
+plymouth-kcm
+extra themes (cachyos-emerald-kde-theme-git, cachyos-nord-kde-theme-git, cachyos-iridescent-kde)
+
+# --- Boot / Display Extras ---
+plymouth
+cachyos-plymouth-bootanimation
+cachyos-wallpapers
+
+# --- Extra Filesystem Tools (btrfs covers all) ---
+jfsutils
+xfsprogs
+f2fs-tools
+nilfs-utils
+exfatprogs
+
+# --- Extra Compression Tools (base gzip/xz cover most) ---
+lbzip2
+pbzip2
+pigz
+pixz
+lrzip
+lzop
+lzip
+zopfli
+
+# --- Extra Network / Hardware Tools (debugging only) ---
+modemmanager
+bluez-hid2hci
+bluez-obex
+usb_modeswitch
+usbutils
+ethtool
+i2pd
+
+# --- Extra System Monitors (btop covers this) ---
+glances
+
+# --- Download / Transfer Extras ---
+aria2
+
+# --- Archive Extras ---
+unrar
+
+# --- Mail CLI ---
+s-nail
+
+# --- Legacy Network Tools ---
+inetutils
+
+# --- Extra File Managers / Search ---
+catfish
+
+# --- Extra Calculators ---
+kcalc
+
+# --- Extra Display / KCM Tools ---
+kscreen
+kinfocenter
+kwalletmanager
+kwalletmanager
+kio-admin
+
+# --- KDE Plasma Addons (optional widgets) ---
+kdeplasma-addons
+plasma-browser-integration
+plasma-firewall
+plasma-login-manager
+plasma-thunderbolt
+
+# --- Image / Video Thumbnails (optional) ---
+ffmpegthumbnailer
+ffmpegthumbs
+kdegraphics-thumbnailers
+
+# --- Extra Fonts (keep minimal set: noto, dejavu, liberation, meslo) ---
+awesome-terminal-fonts
+char-white
+ttf-bitstream-vera
+ttf-opensans
+cantarell-fonts
+
+# --- Extra System Utilities ---
+rebuild-detector
+reflector
+pkgfile
+plocate
+logrotate
+
+# --- Boot / Recovery Tools (single-use) ---
+fsarchiver
+f3
+etcher-bin
+
+# --- AppImage / Wrapper Tools ---
+guiscrcpy-appimage
+
+# --- Remote Desktop (if unused) ---
+remmina
+
+# --- SSHFS (if unused) ---
+sshfs
+
+# --- NFS (if unused) ---
+nfs-utils
+
+# --- CachyOS Branding Extras ---
+cachyos-hello
+cachyos-packageinstaller
+cachyos-rate-mirrors
+cachyos-kernel-manager
+cachyos-micro-settings
+cachyos-settings
+cachyos-hooks
+cachyos-snapper-support
+
+# --- Misc / Unknown Purpose ---
+tungsten
+antigravity
+harper
+
+# --- Wolfram (if no active license/project) ---
+wolframalpha
+wolframclient
+wljs-notebook-bin
+
+# --- SMT Solvers (keep if formal methods project needs them) ---
+z3
+yices
+cvc5-bin
+
+# --- Programming Languages (keep only if project-active) ---
+zig
+xtensa-elf-binutils
+perl
+
+# --- Newsletter / Publishing ---
+substack-local-preview
+
+# --- Document Conversion Extras ---
+unoconv
+pdf2htmlex
+
+# --- Extra Pagers / Viewers ---
+less  # base usually has this; check if redundant
+
+# --- Extra Development Libraries ---
+glib2-devel
+libvncserver
+gtk-vnc
+libxnvctrl-580xx
+libiconv
+libgsf
+libopenraw
+
+# --- Extra GStreamer / Media Backends ---
+gst-libav
+gst-plugin-pipewire
+gst-plugin-va
+gst-plugins-bad
+gst-plugins-ugly
+phonon-qt6-vlc
+opus-tools
+
+# --- Extra Init / Boot Tools ---
+os-prober
+
+# --- Extra Power Management ---
+cpupower
+powerdevil
+power-profiles-daemon
+upower
+
+# --- Plymouth / Theme Extras ---
+cachyos-themes-sddm
+
+# --- Extra Disk / Partition Tools ---
+partitionmanager
+
+# --- Extra Audio Tools ---
+pavucontrol  # if plasma-pa covers this
+
+# --- Extra Package Management ---
+pacman-contrib  # optional extras
+
+# --- Fonts / CJK (noto-fonts-cjk is NEEDED; these may be extras) ---
+# Review manually if you have additional font packages

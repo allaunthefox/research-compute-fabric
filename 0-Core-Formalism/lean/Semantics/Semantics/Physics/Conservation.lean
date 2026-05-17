@@ -33,7 +33,8 @@ instance : Decidable (conserved k i) := by
 A lawful interaction is one in which all of the listed quantity kinds
 are conserved.
 -/
-def LawfulInteraction (ks : List QuantityKind) (i : Interaction) : Prop :=
+def lawfulInteraction (ks : List QuantityKind) (i : Interaction) : Prop :=
   ∀ k ∈ ks, conserved k i
 
+-- All defs in this file are data definitions exercised through theorems in dependent files.
 end Semantics.Physics

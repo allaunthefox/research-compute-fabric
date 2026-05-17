@@ -1,0 +1,53 @@
+{
+  "source": {
+    "engine": "MarkovJunior",
+    "shim_mode": "rule_anchor_projection",
+    "reference": "https://github.com/mxgmn/MarkovJunior"
+  },
+  "grid": {
+    "dimensions": 2,
+    "size": [16, 16],
+    "alphabet": ["B", "W", "R", "G", "A", "*"]
+  },
+  "constraints": {
+    "observations": [
+      {"cell": [15, 15], "target": "R", "weight": 0.8}
+    ],
+    "temperature": 0.0
+  },
+  "rules": [
+    {
+      "id": "growth",
+      "left": "WB",
+      "right": "WW",
+      "weight": 1.0,
+      "node": "exists",
+      "orientation": "axis_aligned",
+      "chirality": "neutral"
+    },
+    {
+      "id": "maze_growth",
+      "left": "WBB",
+      "right": "WAW",
+      "weight": 0.8,
+      "node": "exists",
+      "orientation": "axis_aligned",
+      "chirality": "right"
+    },
+    {
+      "id": "backtracker_step",
+      "left": "RBB",
+      "right": "GGR",
+      "weight": 0.6,
+      "node": "markov",
+      "orientation": "axis_aligned",
+      "chirality": "right"
+    }
+  ],
+  "projection": {
+    "include_chirality": true,
+    "include_constraints": true,
+    "include_delta_memory": true,
+    "nuvmap_projection": "frontier"
+  }
+}

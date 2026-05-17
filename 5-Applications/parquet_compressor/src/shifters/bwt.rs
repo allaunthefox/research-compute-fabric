@@ -1,14 +1,20 @@
-use crate::shifters::{Shifter, ManifoldState};
-use serde_json::json;
+use crate::shifters::{ManifoldState, Shifter};
 use divsufsort::sort_in_place;
+use serde_json::json;
 
 pub struct BWTShifter;
 
 impl Shifter for BWTShifter {
-    fn name(&self) -> &'static str { "bwt" }
+    fn name(&self) -> &'static str {
+        "bwt"
+    }
 
     fn encode(&self, state: &mut ManifoldState) -> anyhow::Result<()> {
-        let data = if !state.encoded.is_empty() { &state.encoded } else { &state.raw_bytes };
+        let data = if !state.encoded.is_empty() {
+            &state.encoded
+        } else {
+            &state.raw_bytes
+        };
         if data.is_empty() {
             state.update(Vec::new(), self.name(), json!({"primary_index": 0}));
             return Ok(());
@@ -18,13 +24,13 @@ impl Shifter for BWTShifter {
         // divsufsort computes the suffix array SA
         // The BWT L is defined as: L[i] = data[SA[i] - 1] (with wrap around)
         // And we need the primary_index such that SA[primary_index] == 0.
-        
+
         let mut sa = vec![0i32; n];
         sort_in_place(data, &mut sa);
 
         let mut primary_index = 0;
         let mut result = Vec::with_capacity(n);
-        
+
         for i in 0..n {
             let s_idx = sa[i] as usize;
             if s_idx == 0 {
@@ -41,13 +47,22 @@ impl Shifter for BWTShifter {
 
     fn decode(&self, state: &mut ManifoldState) -> anyhow::Result<()> {
         let data = &state.encoded;
-        if data.is_empty() { return Ok(()); }
-        
-        let meta = state.metadata.get(self.name()).cloned().unwrap_or(json!({}));
-        let primary_index = meta.get("primary_index").and_then(|v| v.as_u64()).unwrap_or(0) as usize;
+        if data.is_empty() {
+            return Ok(());
+        }
+
+        let meta = state
+            .metadata
+            .get(self.name())
+            .cloned()
+            .unwrap_or(json!({}));
+        let primary_index = meta
+            .get("primary_index")
+            .and_then(|v| v.as_u64())
+            .unwrap_or(0) as usize;
 
         let n = data.len();
-        
+
         // Decoding BWT:
         // 1. Count occurrences of each byte
         let mut counts = [0usize; 256];

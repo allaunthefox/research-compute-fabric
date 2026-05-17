@@ -1,6 +1,6 @@
 # ==============================================================================
 # COPYRIGHT NO ONE EVERYWHERE LLC (WYOMING HOLDING COMPANY)
-# PROJECT: SOVEREIGN STACK
+# PROJECT: OBSERVERLESS STACK
 # This artifact is entirely proprietary and cryptographically proven.
 # Open-Source usage requires explicit permission from Brandon Scott Schneider.
 # ==============================================================================
@@ -17,33 +17,34 @@ except ImportError:
 #!/usr/bin/env python3
 # PTOS: LAYER=STORE / DOMAIN=DATA / CONDITION=EXPERIMENTAL / STAGE=ACTIVE / SOURCE=CODE
 """
-Substrate Git Index — Layer 3 of the sovereign computing stack.
-===============================================================
+Substrate Git Index — provider-driven source index.
+===================================================
 
 POSITION IN THE STACK
 ---------------------
-This script is the database layer that bridges Forgejo (git object store)
+This script is the database layer that bridges configured artifact sources
 and the rest of the substrate:
 
   Hardware Platform  (KDA / RISC-V nodes / HDL)
       ↑
   GraphVM OS         (TSM opcodes, FOAM voxels, substrate ISA, omnitoken bus)
       ↑
-  Git/Forgejo SQL DB ← THIS FILE
-      ├── Forgejo bare repo   content-addressed blob storage (git objects)
+  Source-backed SQL DB ← THIS FILE
+      ├── configured source    VCS / ledger / toolbelt / filesystem reports
       ├── SQLite index         queryable PTOS-tagged package registry
       └── HTTP query API       substrate-facing query interface
 
 CONCEPT
 -------
-Every `pkg/*` tag pushed to Forgejo carries a full PTOS manifest in its
-annotation (written by metafoam_pkg.py).  This script intercepts that push
-via a Forgejo server-side post-receive hook, parses the JSON annotation, and
-inserts a row into a SQLite database whose schema maps 1-to-1 to the PTOS
-tag axes.
+Every `pkg/*` tag pushed to a configured git source carries a full PTOS
+manifest in its annotation (written by metafoam_pkg.py).  This script can
+intercept that push via a server-side post-receive hook, parse the JSON
+annotation, and insert a row into a SQLite database whose schema maps 1-to-1
+to the PTOS tag axes.
 
-The result: Forgejo behaves as a custom SQL backend.  Git handles durability
-and content-addressing; SQLite handles queryability; PTOS tags are the schema.
+The result: any configured source can feed a custom SQL backend.  Git handles
+durability and content-addressing for git sources; SQLite handles queryability;
+PTOS tags are the schema.
 
   git object store  ≡  row storage (BLOB columns)
   annotated tag     ≡  typed SQL row
@@ -60,8 +61,8 @@ This script runs in three distinct modes:
      Git calls this after a push.  Reads  <old> <new> <ref>  lines from
      stdin.  For each refs/tags/pkg/* ref, reads the tag annotation from
      the git object, parses the PTOS JSON, and indexes it into SQLite.
-     Must be installed at:
-       /home/forgejo/repositories/sovereign/research-stack.git/hooks/post-receive
+     Install it with the source-aware wrapper:
+       python3 substrate_git_index.py install --repo <bare-git-repo> --source <source-name>
 
   2. serve  — HTTP query server daemon.
      Listens on a TCP port (default 7743).  Accepts JSON queries and
@@ -130,13 +131,10 @@ The serve mode exposes a minimal JSON API on port 7743 (default):
 All responses are JSON.  The SQL endpoint accepts arbitrary SELECT statements
 against the packages table — the substrate can issue any query it needs.
 
-INSTALL (on VPS)
-----------------
-  # Copy to VPS
-  scp substrate_git_index.py sovereign@38.242.222.130:~/substrate_git_index.py
-
-  # Install as post-receive hook
-  python3 substrate_git_index.py install --repo /home/forgejo/repositories/sovereign/research-stack.git
+INSTALL
+-------
+  # Install as post-receive hook for any bare git source
+  python3 substrate_git_index.py install --repo /path/to/research-stack.git --source research-stack-bare-local
 
   # Start HTTP server (background)
   python3 substrate_git_index.py serve --port 7743 --db /var/lib/substrate/index.db &
@@ -150,7 +148,7 @@ Usage:
   python3 substrate_git_index.py index <tag_name>             index one tag manually
   python3 substrate_git_index.py query "<WHERE clause>"       CLI SQL query
   python3 substrate_git_index.py status                       show indexed packages
-  python3 substrate_git_index.py install --repo <path>        install as Forgejo hook
+  python3 substrate_git_index.py install --repo <path>        install as a git post-receive hook
   python3 substrate_git_index.py install-service              write systemd unit
   python3 substrate_git_index.py schema                       print CREATE TABLE
   python3 substrate_git_index.py drop <pkg> [version]         remove a record
@@ -161,7 +159,6 @@ import hashlib
 import http.server
 import json
 import os
-import shutil
 import sqlite3
 import subprocess
 import sys
@@ -170,6 +167,59 @@ import zlib
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+
+def _repo_root() -> Path:
+    here = Path(__file__).resolve()
+    for parent in here.parents:
+        if (parent / ".git").exists() or (parent / "AGENTS.md").exists():
+            return parent
+    return here.parents[3]
+
+
+REPO_ROOT = _repo_root()
+
+
+def _witness_config_path() -> Path:
+    return Path(
+        os.environ.get(
+            "WITNESS_SOURCES_CONFIG",
+            REPO_ROOT / "4-Infrastructure" / "witness" / "sources.json",
+        )
+    )
+
+
+WITNESS_SOURCE = os.environ.get("WITNESS_SOURCE", "research-stack-github")
+
+
+def _load_witness_sources(config_path: Path | None = None) -> dict[str, Any]:
+    path = config_path or _witness_config_path()
+    if not path.exists():
+        return {"schema": "research_stack_witness_sources_v1", "sources": {}}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _source_config(source_name: str = WITNESS_SOURCE) -> dict[str, Any]:
+    data = _load_witness_sources()
+    sources = data.get("sources", {})
+    value = sources.get(source_name)
+    if not isinstance(value, dict):
+        return {}
+    return value
+
+
+def _file_url_to_path(url: str) -> Path | None:
+    if url.startswith("file://"):
+        return Path(urllib.parse.unquote(url[len("file://") :]))
+    if "://" not in url and url:
+        return Path(url)
+    return None
+
+
+def _repo_path_from_source(source_name: str = WITNESS_SOURCE) -> Path | None:
+    source = _source_config(source_name)
+    url = str(source.get("url", ""))
+    return _file_url_to_path(url)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Configuration — override via environment variables on the VPS
@@ -184,7 +234,10 @@ DB_PATH = Path(
 # Git repo to operate on (used by hook and index commands).
 # The hook mode detects this automatically from GIT_DIR env var set by git.
 REPO_PATH = Path(
-    os.environ.get("SUBSTRATE_REPO", Path(__file__).parent.parent)
+    os.environ.get(
+        "GIT_REPO_PATH",
+        os.environ.get("SUBSTRATE_REPO", os.environ.get("GIT_DIR", Path(__file__).parent.parent)),
+    )
 )
 
 # Default HTTP server port.
@@ -193,10 +246,12 @@ DEFAULT_PORT = int(os.environ.get("SUBSTRATE_PORT", "7743"))
 # Tag prefix that identifies metafoam packages.
 PKG_TAG_PREFIX = "refs/tags/pkg/"
 
-# Forgejo bare repo location (used by install command).
-FORGEJO_REPO = os.environ.get(
-    "FORGEJO_REPO",
-    "/home/forgejo/repositories/sovereign/research-stack.git",
+# Bare git repo location (used by install command). Prefer an explicit
+# GIT_REPO_PATH or a provider block in 4-Infrastructure/witness/sources.json.
+DEFAULT_HOOK_REPO = (
+    os.environ.get("GIT_REPO_PATH")
+    or os.environ.get("SUBSTRATE_REPO")
+    or (str(_repo_path_from_source()) if _repo_path_from_source() else "")
 )
 
 
@@ -1464,51 +1519,68 @@ def cmd_ingest_session(session_file: str) -> None:
 _SYSTEMD_UNIT = """\
 [Unit]
 Description=Substrate Git Index — HTTP query server
-After=network.target forgejo.service
+After=network.target
 
 [Service]
 Type=simple
-User=forgejo
 ExecStart=/usr/bin/python3 {script} serve --port {port} --db {db}
 Restart=on-failure
 RestartSec=5
 Environment=SUBSTRATE_DB={db}
 Environment=SUBSTRATE_PORT={port}
+Environment=WITNESS_SOURCE={source}
+Environment=WITNESS_SOURCES_CONFIG={config}
 
 [Install]
 WantedBy=multi-user.target
 """
 
 
-def cmd_install(repo: str = FORGEJO_REPO) -> None:
-    """Install this script as the post-receive hook in a Forgejo bare repo.
+def cmd_install(repo: str | None = None, source: str = WITNESS_SOURCE) -> None:
+    """Install this script as the post-receive hook in a bare git repo.
 
     # What this does
-    1. Copies this script to <repo>/hooks/post-receive
+    1. Writes a small provider-aware wrapper to <repo>/hooks/post-receive
     2. Makes it executable (chmod +x)
-    3. Sets SUBSTRATE_DB env var in the hook so it knows where to write.
+    3. Sets WITNESS_SOURCE, GIT_REPO_PATH, and SUBSTRATE_DB for the hook.
 
     # Parameters
-      repo : path to the Forgejo bare repo
-               default: /home/forgejo/repositories/sovereign/research-stack.git
+      repo   : path to the bare git repo
+      source : source block in 4-Infrastructure/witness/sources.json
     """
+    source_repo = _repo_path_from_source(source)
+    repo = repo or (str(source_repo) if source_repo else DEFAULT_HOOK_REPO)
+    if not repo:
+        print("[install] ERROR: no repo supplied and no local file:// source is configured.")
+        print("          Use --repo <bare-git-repo> or set GIT_REPO_PATH.")
+        sys.exit(1)
+
     hooks_dir = Path(repo) / "hooks"
     if not hooks_dir.exists():
         print(f"[install] ERROR: hooks dir not found: {hooks_dir}")
         sys.exit(1)
 
     dest = hooks_dir / "post-receive"
-    shutil.copy2(__file__, dest)
+    script = Path(__file__).resolve()
+    wrapper = f"""#!/usr/bin/env sh
+export WITNESS_SOURCE={source!r}
+export WITNESS_SOURCES_CONFIG={str(_witness_config_path())!r}
+export GIT_REPO_PATH="${{GIT_DIR:-{str(Path(repo).resolve())}}}"
+export SUBSTRATE_DB={str(DB_PATH)!r}
+exec /usr/bin/python3 {str(script)!r} hook "$@"
+"""
+    dest.write_text(wrapper, encoding="utf-8")
     dest.chmod(0o755)
     print(f"[install] hook installed → {dest}")
+    print(f"          Source: {source}")
     print(f"          DB will be written to: {DB_PATH}")
     print()
     print("  To change DB path, edit SUBSTRATE_DB in the hook or set env var.")
     print("  Start the query server:")
-    print(f"    python3 {dest} serve --port {DEFAULT_PORT} --db {DB_PATH}")
+    print(f"    python3 {script} serve --port {DEFAULT_PORT} --db {DB_PATH}")
 
 
-def cmd_install_service(port: int = DEFAULT_PORT) -> None:
+def cmd_install_service(port: int = DEFAULT_PORT, source: str = WITNESS_SOURCE) -> None:
     """Write a systemd unit file for the HTTP query server.
 
     Writes to /etc/systemd/system/substrate-git-index.service
@@ -1518,6 +1590,8 @@ def cmd_install_service(port: int = DEFAULT_PORT) -> None:
         script=Path(__file__).resolve(),
         port=port,
         db=DB_PATH,
+        source=source,
+        config=_witness_config_path(),
     )
     dest = Path("/etc/systemd/system/substrate-git-index.service")
     try:
@@ -1534,17 +1608,24 @@ def cmd_install_service(port: int = DEFAULT_PORT) -> None:
 # CLI dispatch
 # ─────────────────────────────────────────────────────────────────────────────
 
-def _parse_kv_args(args: list[str]) -> dict:
-    """Parse --key value pairs from an arg list into a dict."""
+def _parse_kv_args(args: list[str]) -> tuple[dict[str, str], list[str]]:
+    """Parse ``--key value`` pairs and preserve true positional arguments."""
     d: dict = {}
+    positional: list[str] = []
     i = 0
     while i < len(args):
-        if args[i].startswith("--") and i + 1 < len(args):
-            d[args[i][2:]] = args[i + 1]
-            i += 2
+        if args[i].startswith("--"):
+            key = args[i][2:]
+            if i + 1 < len(args) and not args[i + 1].startswith("--"):
+                d[key] = args[i + 1]
+                i += 2
+            else:
+                d[key] = "true"
+                i += 1
         else:
+            positional.append(args[i])
             i += 1
-    return d
+    return d, positional
 
 
 def main() -> None:
@@ -1556,8 +1637,7 @@ def main() -> None:
         return
 
     cmd = args[0]
-    opts = _parse_kv_args(args[1:])
-    positional = [a for a in args[1:] if not a.startswith("--")]
+    opts, positional = _parse_kv_args(args[1:])
 
     # Apply --db and --port overrides globally
     global DB_PATH, DEFAULT_PORT
@@ -1619,8 +1699,14 @@ def main() -> None:
         cmd_ingest_session(positional[0])
 
     elif cmd == "install":
-        repo = opts.get("repo", positional[0] if positional else FORGEJO_REPO)
-        cmd_install(repo)
+        repo = opts.get("repo") or (positional[0] if positional else None)
+        cmd_install(repo, source=opts.get("source", WITNESS_SOURCE))
+
+    elif cmd == "install-service":
+        cmd_install_service(
+            int(opts.get("port", str(DEFAULT_PORT))),
+            source=opts.get("source", WITNESS_SOURCE),
+        )
 
     elif cmd == "align":
         """Retroactively professionalize all nodes in the database."""
@@ -1651,9 +1737,6 @@ def main() -> None:
         conn.commit()
         conn.close()
         print(f"[align] professionalized {updates}/{len(rows)} nodes in {DB_PATH}")
-
-    elif cmd == "install-service":
-        cmd_install_service(DEFAULT_PORT)
 
     else:
         print(

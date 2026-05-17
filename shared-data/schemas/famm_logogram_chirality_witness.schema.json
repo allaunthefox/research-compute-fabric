@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FAMM Logogram Chirality Witness",
+  "type": "object",
+  "required": [
+    "receipt_type",
+    "schema_version",
+    "symbol_id",
+    "payload_hash",
+    "chirality_witness",
+    "residual_policy",
+    "benefit_gate",
+    "receipt_hash"
+  ],
+  "properties": {
+    "receipt_type": {
+      "const": "famm_logogram_chirality_witness"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "symbol_id": {
+      "type": "string"
+    },
+    "payload_hash": {
+      "type": "string"
+    },
+    "chirality_witness": {
+      "type": "object",
+      "required": [
+        "direction",
+        "handedness",
+        "phase",
+        "placement",
+        "mode"
+      ],
+      "properties": {
+        "direction": {
+          "type": "string"
+        },
+        "handedness": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "number"
+        },
+        "placement": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string"
+        }
+      }
+    },
+    "compatibility": {
+      "type": "object"
+    },
+    "residual_policy": {
+      "type": "string"
+    },
+    "benefit_gate": {
+      "type": "object"
+    },
+    "receipt_hash": {
+      "type": "string"
+    }
+  }
+}

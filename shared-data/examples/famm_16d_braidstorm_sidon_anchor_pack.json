@@ -1,0 +1,41 @@
+{
+  "anchor_pack": "braidstorm_sidon_crossing_antialias_gate",
+  "basis_layer": "BRAIDSTORM_SIDON_CROSSING_ANTIALIAS_GATE",
+  "version": "0.1.0",
+  "anchors": [
+    {
+      "id": "SIDON_CROSSING_ADDRESS_GATE",
+      "vector_axes": {
+        "1_additive_address": 0.98,
+        "2_semantic_mass": 0.66,
+        "5_delta_mem": 0.74,
+        "11_scar": 0.12,
+        "13_invariant": 0.96,
+        "14_receipt": 0.96
+      },
+      "handoff_gate": "pair_crossing_address_receipt"
+    },
+    {
+      "id": "BRAIDSTORM_PAIR_ALIAS_SCAR",
+      "vector_axes": {
+        "1_additive_address": 0.78,
+        "7_residual_seal": 0.74,
+        "11_scar": 0.95,
+        "13_invariant": 0.70,
+        "14_receipt": 0.78
+      },
+      "handoff_gate": "pair_alias_coarsening_receipt"
+    },
+    {
+      "id": "THEODORUS_SIDON_CAPACITY_PRIOR",
+      "vector_axes": {
+        "1_additive_address": 0.82,
+        "2_semantic_mass": 0.58,
+        "10_surface_geometry": 0.76,
+        "13_invariant": 0.64,
+        "14_receipt": 0.54
+      },
+      "handoff_gate": "sqrt_budget_capacity_receipt"
+    }
+  ]
+}

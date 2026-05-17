@@ -1,4 +1,4 @@
-import Semantics.Bind
+import Semantics.ProvenanceSource
 
 namespace Semantics.Forgejo
 
@@ -11,21 +11,39 @@ structure ForgejoEvent where
   author  : String
   isValid : Bool
 
+def forgejoPolicy : Semantics.ProvenanceSource.CostPolicy := {
+  trustedActors := []
+  trustedCost := 0x00008000
+  untrustedCost := 0x00020000
+  publicCost := 0x00020000
+}
+
+def toSourceEvent (e : ForgejoEvent) : Semantics.ProvenanceSource.SourceEvent := {
+  backend := .vcs "git" "forgejo"
+  source := e.repo
+  action := e.action
+  actor := { scheme := "user", name := e.author }
+  ref := { scheme := "git-ref", value := e.action }
+  visibility := .internalRecord
+  isValid := e.isValid
+}
+
 /--
 Invariant: Forgejo events are lawful if they originate from an allowed repo
 and the action is within the prescribed set.
 -/
 def forgejoInvariant (e : ForgejoEvent) : String :=
-  if e.isValid then s!"lawful_forgejo:{e.repo}:{e.action}"
-  else "unlawful_forgejo"
+  Semantics.ProvenanceSource.legacyInvariant
+    "lawful_forgejo"
+    "unlawful_forgejo"
+    (toSourceEvent e)
 
 /--
 Cost function: Measures the "computational friction" of a git event.
 Events from external authors have higher cost (Q16.16).
 -/
 def forgejoCost (e1 : ForgejoEvent) (_target : String) (g : Metric) : UInt32 :=
-  if e1.author == "sovereign" then 0x00008000 -- 0.5 cost
-  else 0x00020000 -- 2.0 cost
+  Semantics.ProvenanceSource.cost forgejoPolicy (toSourceEvent e1) _target g
 
 /--
 The Forgejo Bind: Connects an event to the research substrate.

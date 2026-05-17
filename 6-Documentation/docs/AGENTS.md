@@ -1,7 +1,7 @@
 # AGENTS.md — Strict LLM Operating Rules
 
 **Repository:** Sovereign Stack / Research Stack
-**Version:** 2.1 — Anti-Drift Evidence Standards (2026-04-29)
+**Version:** 2.2 — Anti-Drift Evidence Standards (2026-05-12)
 **Paradigm:** Functional Collapse — All models reduce to a single `bind` primitive.
 **Ground Truth:** Lean 4 (`0-Core-Formalism/lean/Semantics/`).
 **Goal:** Zero-guesswork, proven-correct, hardware-native code.
@@ -20,6 +20,36 @@ If you are asked to implement, fix, or refactor anything, the correct output is 
 ---
 
 ## 1. What You Must Never Do
+
+### 1.0 Legacy Recovery Requires Explicit Trigger
+
+Archived, quarantined, or cornfielded branches are cold storage. Do not search
+or revive them casually during normal implementation work.
+
+The explicit trigger is:
+
+```text
+RECOVER LEGACY INFORMATION
+```
+
+Accepted aliases:
+
+```text
+Recover Legacy Information
+recover from cornfield
+```
+
+When the user invokes that trigger, recover only the named path, concept,
+commit slice, or receipt. Use read-only inspection first (`git show`, `git log`,
+targeted file reads), then port the requested material onto the current clean
+branch. Never merge a legacy branch wholesale, never reset to it, and never use
+it as a new base unless the user explicitly asks for that branch operation.
+
+Known cornfield ref:
+
+```text
+backup/distilled-with-vcd-history-2026-05-11
+```
 
 ### 1.1 Never Add Dependencies
 Do not add new crates, pip packages, lake packages, or system libraries without explicit human approval. The stack is intentionally minimal. If you think you need a library, you are wrong — write the primitive in Lean.
@@ -228,6 +258,34 @@ else:
 - Changepoint detection at t=148 (error=2 samples) vs expected t=150
 - Achieved: 6 sigma (error < ±5 samples)
 - If error > ±10 samples: alert user, do not commit
+
+### 5.3 Entropy-Collapse Detector Arithmetic
+
+The canonical detector arithmetic is
+`distilled/ArithmeticSpec_Corrected_2026-05-11.md`, mirrored by
+`0-Core-Formalism/lean/Semantics/Semantics/HCMMR/Kernels/EntropyCollapseDetector.lean`.
+
+Hard boundaries:
+
+- Dense ranking is mandatory. Equal values get equal rank; tied pairs do not
+  create braid crossings.
+- For W=8, the corrected example has `crossings = 12`, not 18.
+- `K=7` is not selective under the random-permutation null:
+  `P(count > 7) = 38129/40320 = 94.57%`.
+- `K=21` is a heuristic random-permutation calibration:
+  strict `count > 21` gives `1230/40320 = 3.05%`; inclusive `count >= 21`
+  gives `2191/40320 = 5.43%`.
+- `sigma_q` on an `n=8` window is a deterministic window feature, not a robust
+  long-series Hurst estimate.
+- 1D Renyi D2 is bounded in `[0,1]`; `D_c = 1.2` is a definition mismatch for
+  this estimator. `D_c = 0.7` is heuristic.
+- Prime gaps do not satisfy the random-permutation null. Ties, non-uniform gap
+  marginals, overlapping windows, local dependence, and multiple testing must
+  be stated before making any prime-gap signal claim.
+
+The current bounded conclusion is: the original prime-gap result was mostly an
+artifact of non-selective `K=7`; strict `K=21` leaves rare candidate motifs, not
+evidence of a general prime-gap collapse phenomenon.
 
 ---
 
@@ -647,6 +705,11 @@ theorem energyConserved (initial final : PhysicalState) :
 - Beauty is not evidence
 - Elegance is not effect size
 - Coherence is not compression gain
+
+LLM reviews may be stored as reviewer receipts only when they include prompt
+hash, answer hash, model, timestamp, and the exact context files. They can guide
+follow-up work, but they do not override Lean checks, arithmetic receipts,
+hardware receipts, or empirical baselines.
 
 **Valid evidence requires:**
 - Reproducible benchmarks with corpus provenance

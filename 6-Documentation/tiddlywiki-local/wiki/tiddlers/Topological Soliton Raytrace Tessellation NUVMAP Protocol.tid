@@ -1,0 +1,81 @@
+created: 20260510000000000
+modified: 20260510000000000
+tags: ResearchStack Soliton Raytrace Tessellation NUVMAP TreeFiddy Protocol
+title: Topological Soliton Raytrace Tessellation NUVMAP Protocol
+type: text/vnd.tiddlywiki
+
+! Topological Soliton Raytrace Tessellation NUVMAP Protocol
+
+Status: `CANDIDATE_PROTOCOL_WITH_HOLD_BOUNDARIES`
+
+Seed:
+
+```text
+Topological solitons > ray-traced tessellation > Tree Fiddy > NUVMAP results
+```
+
+!! Core Pipeline
+
+```text
+topological soliton
+  -> invariant field identity
+  -> ray-traced local intersections
+  -> tessellated cells
+  -> Tree Fiddy bounded recursion
+  -> NUVMAP address/projection result
+  -> replay receipt
+```
+
+The move is to turn persistent topology into bounded addressable geometry.
+Solitons supply identity. Ray tracing supplies observation. Tessellation makes
+the surface finite. Tree Fiddy prevents runaway refinement. NUVMAP stores the
+address/projection result.
+
+!! Admission Rule
+
+```text
+ADMIT iff:
+  invariant_present
+  projection_present
+  tessellation_finite
+  tree_fiddy_depth <= declared_bound
+  nuvmap_address_valid
+  replay_residual <= epsilon
+```
+
+!! Why It Matters
+
+This bridges field-heavy soliton math into the compiler/address layer:
+
+```text
+field identity
+  -> sampled intersections
+  -> finite cells
+  -> bounded refinement
+  -> addressable receipt
+```
+
+It does not treat a ray-rendered view as proof. The rendered/tessellated view is
+only a projection. The receipt closes only if replay residual stays bounded.
+
+!! HOLD Boundary
+
+HOLD remains on:
+
+* physical control of solitons
+* device-readiness
+* ray rendering as proof of topology
+* infinite refinement
+* unbounded recursion
+* NUVMAP address results without replay residual and hash receipts
+
+Related:
+
+* [[Soliton N-Space Path]]
+* [[Tessellated Triangle Flow Migration]]
+* [[Tree Fiddy Monster Assignment]]
+* [[NUVMAP Turbulence Stabilization Index]]
+* [[NUVMAP Chain Protocol Plan]]
+* [[Hyper-Soliton Radix Bins]]
+* `6-Documentation/docs/topological_soliton_raytrace_tessellation_nuvmap_protocol_2026-05-10.md`
+* `shared-data/data/stack_solidification/topological_soliton_raytrace_tessellation_nuvmap_receipt.json`

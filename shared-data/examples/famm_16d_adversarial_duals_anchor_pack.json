@@ -1,0 +1,40 @@
+{
+  "anchor_pack": "adversarial_duals_anti_famm_anti_braidstorm",
+  "basis_layer": "ADVERSARIAL_DUALS",
+  "version": "0.1.0",
+  "anchors": [
+    {
+      "id": "ANTI_FAMM_SHADOW_ADVERSARY",
+      "vector_axes": {
+        "7_residual_seal": 0.92,
+        "11_scar": 0.86,
+        "12_shadow_gap": 0.98,
+        "13_invariant": 0.74,
+        "14_receipt": 0.82
+      },
+      "handoff_gate": "projection_nullspace_shadow_receipt"
+    },
+    {
+      "id": "ANTI_BRAIDSTORM_HOSTILE_CROSSING",
+      "vector_axes": {
+        "1_additive_address": 0.72,
+        "5_delta_mem": 0.84,
+        "6_chirality": 0.78,
+        "11_scar": 0.88,
+        "13_invariant": 0.70,
+        "14_receipt": 0.82
+      },
+      "handoff_gate": "hostile_crossing_adversary_receipt"
+    },
+    {
+      "id": "WARDEN_ADVERSARIAL_DUAL_DECISION",
+      "vector_axes": {
+        "7_residual_seal": 0.84,
+        "11_scar": 0.92,
+        "13_invariant": 0.86,
+        "14_receipt": 0.94
+      },
+      "handoff_gate": "warden_promote_scar_coarsen_reject_receipt"
+    }
+  ]
+}

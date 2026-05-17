@@ -1,0 +1,15 @@
+{
+  "backup_name": "desi_model_projection_receipt_2026-05-13",
+  "date": "2026-05-13",
+  "description": "DESI DR2 observational invariants + 16D horn-fiber model projection onto cosmological observables",
+  "source_commit": "7a790d8d",
+  "lean_modules": [
+    "DESIInvariant.lean",
+    "DESIModelProjection.lean"
+  ],
+  "modified_file": "Physics.lean (added imports)",
+  "receipt_file": "desi_model_projection_receipt_2026-05-13.md",
+  "build_status": "lake build Semantics 3529 jobs, zero errors",
+  "theorems_proven": 17,
+  "zero_float_arithmetic": true
+}

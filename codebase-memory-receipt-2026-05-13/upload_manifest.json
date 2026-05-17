@@ -1,0 +1,17 @@
+{
+  "manifest_version": "2026-05-13",
+  "project": "codebase-memory",
+  "description": "FAMM-based persistent multi-domain codebase memory for Hermes agent",
+  "commit_hash": "44f2f600a4d36f176e8e26d4782f0cae058f7bfe",
+  "timestamp": "2026-05-13T16:18:13-05:00",
+  "files": {
+    "./RECEIPT.md": "6e67bab76982c0165ad93c1062ba98c954d963ef64ad4b9a4b9c2c14e681e0c5",
+    "./Cargo.toml": "9862a4ec1cc9b98730fe63389644aedd4789612ded89e0607a236d0b75fb7fef",
+    "./src/lib.rs": "a1abd147a7d9ebbaf224d45d7221de7467777f50005d98d6f85cee43c9ff8425",
+    "./src/main.rs": "9124920f5cc02d9683263075acc0935fd31277806fe37cfc61f9282fbd406140",
+    "./src/adapter.rs": "ceaa3c48ea39c4718fe6135af563571aa75595965ddf5459199efff57aeac72e",
+    "./src/types.rs": "553b7d89262d9fa303957495f5266ac841c08047e0d7798184feea0dba04da0a"
+  },
+  "total_files": 6,
+  "verification_command": "cd 4-Infrastructure/shim/codebase-memory && cargo test --lib"
+}

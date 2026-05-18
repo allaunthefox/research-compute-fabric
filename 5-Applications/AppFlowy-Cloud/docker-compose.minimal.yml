@@ -1,0 +1,85 @@
+version: "3.9"
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: appflowy_local
+      POSTGRES_DB: appflowy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  gotrue:
+    image: docker.io/appflowyinc/gotrue:latest
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - GOTRUE_ADMIN_EMAIL=admin@researchstack.info
+      - GOTRUE_ADMIN_PASSWORD=changeme789
+      - GOTRUE_DISABLE_SIGNUP=false
+      - GOTRUE_SITE_URL=https://researchstack.info/appflowy
+      - GOTRUE_URI_ALLOW_LIST=**
+      - GOTRUE_JWT_SECRET=${APPFLOWY_JWT_SECRET:-changeme_jwt_secret_at_least_32_chars_long}
+      - GOTRUE_JWT_EXP=3600
+      - GOTRUE_DB_DRIVER=postgres
+      - API_EXTERNAL_URL=https://researchstack.info/appflowy/gotrue
+      - DATABASE_URL=postgres://postgres:appflowy_local@postgres:5432/appflowy?sslmode=disable&options=-c%20search_path%3Dauth%2Cpublic
+      - PORT=9999
+      - GOTRUE_MAILER_AUTOCONFIRM=true
+      - GOTRUE_RATE_LIMIT_EMAIL_SENT=100
+      - GOTRUE_LOG_LEVEL=info
+      - GOTRUE_JWT_ADMIN_GROUP_NAME=supabase_admin
+      - REDIS_ENABLED=true
+      - REDIS_URL=redis://redis:6379
+
+  appflowy_cloud:
+    image: docker.io/appflowyinc/appflowy_cloud:latest
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      gotrue:
+        condition: service_started
+    environment:
+      - APPFLOWY_ENVIRONMENT=production
+      - APPFLOWY_DATABASE_URL=postgres://postgres:appflowy_local@postgres:5432/appflowy?sslmode=disable
+      - APPFLOWY_REDIS_URI=redis://redis:6379
+      - APPFLOWY_GOTRUE_JWT_SECRET=${APPFLOWY_JWT_SECRET:-changeme_jwt_secret_at_least_32_chars_long}
+      - APPFLOWY_GOTRUE_JWT_EXP=3600
+      - APPFLOWY_GOTRUE_BASE_URL=http://gotrue:9999
+      - APPFLOWY_BASE_URL=https://researchstack.info/appflowy
+      - APPFLOWY_WS_BASE_URL=wss://researchstack.info/appflowy/ws/v1
+      - APPFLOWY_WEB_URL=https://researchstack.info/appflowy
+      - APPFLOWY_ENCRYPTION_KEY=${APPFLOWY_ENCRYPTION_KEY:-changeme_encryption_key_at_least_32_chars_long}
+      - APPFLOWY_JWT_SECRET=${APPFLOWY_JWT_SECRET:-changeme_jwt_secret_at_least_32_chars_long}
+      - APPFLOWY_S3_CREATE_BUCKET=false
+      - APPFLOWY_S3_USE_MINIO=false
+      - APPFLOWY_ACCESS_CONTROL=false
+
+      - APPFLOWY_S3_ENABLED=false
+      - APPFLOWY_SEARCH_ENABLED=false
+      - RUST_LOG=info
+    ports:
+      - "127.0.0.1:8000:8000"
+
+volumes:
+  pgdata:

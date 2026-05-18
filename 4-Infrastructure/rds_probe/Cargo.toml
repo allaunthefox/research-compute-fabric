@@ -7,7 +7,7 @@ license = "MIT"
 authors = ["Research Stack"]
 
 [dependencies]
-sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "json", "uuid"] }
+sqlx = { version = "0.7", features = ["runtime-tokio-native-tls", "postgres", "json", "uuid"] }
 tokio = { version = "1", features = ["full"] }
 dotenv = "0.15"
 serde = { version = "1", features = ["derive"] }

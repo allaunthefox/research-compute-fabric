@@ -121,4 +121,25 @@
       ExecStop = "${pkgs.podman-compose}/bin/podman-compose -f docker-compose.minimal.yml down";
     };
   };
+
+  systemd.services.appflowy-backup = {
+    description = "Daily AppFlowy PostgreSQL backup";
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+    path = with pkgs; [ podman ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "/var/lib/scripts/backup-appflowy-db.sh";
+    };
+  };
+
+  systemd.timers.appflowy-backup = {
+    description = "Daily AppFlowy backup timer";
+    requires = [ "appflowy-backup.service" ];
+    timerConfig = {
+      OnCalendar = "daily";
+      Persistent = true;
+    };
+    wantedBy = [ "timers.target" ];
+  };
 }

@@ -4,6 +4,15 @@
 
 Add the uploaded visualization topic — Möbius transforms, Circles of Apollonius, spirals, angles, and trigonometric chord partitions — as a conformal-geometry witness gate in the FAMM/BraidStorm/Universal Shortcut Center stack.
 
+Primary visual source:
+
+```text
+Möbius Transform and Circles of Apollonius - Spirals Angles Spirals Trigonometric Partitions.
+YouTube video: https://www.youtube.com/watch?v=ndjz5tVPywM
+Local uploaded artifact: Möbius Transform and Circles of Apollonius - Spirals Angles Spirals Trigonometric Partitions (720p, h264).mp4
+Accessed / integrated: 2026-05-18.
+```
+
 The useful project shape is:
 
 ```text
@@ -39,6 +48,8 @@ T'(z)=\frac{ad-bc}{(cz+d)^2}
 
 so local angles are preserved away from the pole.
 
+References: Ahlfors, *Complex Analysis*; Needham, *Visual Complex Analysis*; Beardon, *The Geometry of Discrete Groups*.
+
 ## Apollonius circle witness
 
 A Circle of Apollonius is the locus:
@@ -60,6 +71,8 @@ fixed source pair (a,b)
 ```
 
 Under a Möbius transformation, the Apollonius family is transported into another generalized-circle family, while cross-ratio and angle structure provide the guard conditions.
+
+References: Coxeter and Greitzer, *Geometry Revisited*; Needham, *Visual Complex Analysis*.
 
 ## Cross-ratio invariant
 
@@ -95,6 +108,8 @@ Pass condition:
 R_{\mathrm{cr}}\le \Theta_{\mathrm{tol}}
 ```
 
+References: Ahlfors, *Complex Analysis*; Beardon, *The Geometry of Discrete Groups*.
+
 ## Chord / unit-circle partition witness
 
 On the unit circle, a chord between two points with angular separation `theta` has length:
@@ -117,6 +132,8 @@ angle partition
 → circle-boundary witness
 → conformal transport through Möbius map
 ```
+
+Reference: Coxeter and Greitzer, *Geometry Revisited*.
 
 ## Spiral connection
 
@@ -256,6 +273,53 @@ Disallowed claim:
 
 ```text
 A GeoGebra visualization alone proves a new Riemann, spiral, or partition theorem.
+```
+
+## References
+
+### Visual source
+
+```bibtex
+@online{youtube_mobius_apollonius_spirals_2026,
+  title        = {Möbius Transform and Circles of Apollonius - Spirals Angles Spirals Trigonometric Partitions},
+  organization = {YouTube},
+  url          = {https://www.youtube.com/watch?v=ndjz5tVPywM},
+  urldate      = {2026-05-18},
+  note         = {User-supplied video source; local uploaded artifact title: Möbius Transform and Circles of Apollonius - Spirals Angles Spirals Trigonometric Partitions (720p, h264).mp4}
+}
+```
+
+### Mathematical references
+
+```bibtex
+@book{ahlfors1979complex,
+  title     = {Complex Analysis: An Introduction to the Theory of Analytic Functions of One Complex Variable},
+  author    = {Ahlfors, Lars V.},
+  edition   = {3},
+  publisher = {McGraw-Hill},
+  year      = {1979}
+}
+
+@book{needham1997visual,
+  title     = {Visual Complex Analysis},
+  author    = {Needham, Tristan},
+  publisher = {Oxford University Press},
+  year      = {1997}
+}
+
+@book{beardon1983geometry,
+  title     = {The Geometry of Discrete Groups},
+  author    = {Beardon, Alan F.},
+  publisher = {Springer},
+  year      = {1983}
+}
+
+@book{coxeter1967geometry,
+  title     = {Geometry Revisited},
+  author    = {Coxeter, H. S. M. and Greitzer, S. L.},
+  publisher = {Mathematical Association of America},
+  year      = {1967}
+}
 ```
 
 ## Project sentence

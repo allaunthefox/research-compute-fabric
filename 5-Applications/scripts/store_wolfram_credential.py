@@ -3,6 +3,7 @@
 Store Wolfram Alpha credential in ENE
 """
 
+import os
 import sys
 from pathlib import Path
 
@@ -33,7 +34,7 @@ def main():
         sys.exit(1)
     
     # Store Wolfram Alpha credential
-    wolfram_app_id = "HYJE3R3R63"
+    wolfram_app_id = os.environ.get("WOLFRAM_ALPHA_APPID", "")
     
     print(f"\nStoring Wolfram Alpha App ID: {wolfram_app_id}")
     

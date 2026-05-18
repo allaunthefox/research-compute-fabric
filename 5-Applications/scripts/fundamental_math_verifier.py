@@ -22,6 +22,7 @@ FixedPoint.lean.
 """
 
 import json
+import os
 import time
 import urllib.parse
 import urllib.request
@@ -106,7 +107,7 @@ def main():
     print("FUNDAMENTAL MATH VERIFICATION — DRIFT-PREVENTION ANCHOR NET")
     print("=" * 70)
 
-    app_id = "HYJE3R3R63"
+    app_id = os.environ.get("WOLFRAM_ALPHA_APPID", "")
     verifier = WolframAlphaVerifier(app_id)
 
     # (equation, description, expected_substring)

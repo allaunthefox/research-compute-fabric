@@ -1,4 +1,8 @@
 .env
+.claude/
+optimized_basis_v3.bin
+4-Infrastructure/deploy/
+
 **/node_modules/
 **/__pycache__/
 *.db

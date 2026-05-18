@@ -11,7 +11,7 @@ from infra.knowledge_ingestion import KnowledgeIngestion
 
 def test_wolfram_alpha():
     """Test Wolfram Alpha API integration"""
-    api_key = "HYJE3R3R63"
+    api_key = os.environ.get("WOLFRAM_ALPHA_APPID", "")
     
     print("Testing Wolfram Alpha API integration...")
     ingestion = KnowledgeIngestion(api_key)

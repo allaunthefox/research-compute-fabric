@@ -9,12 +9,13 @@ Output: JSON + Markdown reference table
 """
 
 import json
+import os
 import time
 import requests
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-WOLFRAM_APP_ID = "HYJE3R3R63"
+WOLFRAM_APP_ID = os.environ.get("WOLFRAM_ALPHA_APPID", "")
 WOLFRAM_API_URL = "https://api.wolframalpha.com/v2/query"
 
 # Canonical math function categories and test queries

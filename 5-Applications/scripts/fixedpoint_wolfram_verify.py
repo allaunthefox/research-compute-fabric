@@ -9,6 +9,7 @@ Verifies the 9 FixedPoint.lean theorems using Wolfram Alpha API:
 
 import sys
 import json
+import os
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -92,7 +93,7 @@ def main():
     print("Verifying 9 FixedPoint.lean theorems")
     print("=" * 70)
     
-    app_id = "HYJE3R3R63"
+    app_id = os.environ.get("WOLFRAM_ALPHA_APPID", "")
     verifier = WolframAlphaVerifier(app_id)
     
     # FixedPoint.lean theorems to verify

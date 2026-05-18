@@ -40,6 +40,7 @@ OP_PLAN_ROUTE = 11
 OP_WIKI = 12
 OP_FRACTAL_FOLD = 13
 OP_META_AUTOTYPE = 14
+OP_CREDENTIALS = 15
 
 CODEC_NONE = 0
 CODEC_ZLIB_TEST = 1
@@ -139,6 +140,7 @@ def primitive_payload() -> dict[str, Any]:
             "wiki",
             "fractal_fold",
             "meta_autotype",
+            "credentials",
         ]
     return {
         "node": PROFILE["node_id"],
@@ -267,15 +269,25 @@ def handle_surface_op(op: int, payload: bytes) -> dict[str, Any]:
             request = json.loads(payload.decode("utf-8")) if payload else {"op": "recent"}
             if not isinstance(request, dict):
                 raise ValueError("wiki payload must be a JSON object")
-            try:
-                from infra.ene_wiki_layer import ENEWikiLayer
-            except ModuleNotFoundError:
-                import sys
+            use_rds = os.environ.get("RS_USE_RDS", "").lower() in ("1", "true", "yes")
+            if use_rds:
+                try:
+                    from infra.ene_rds_wiki_layer import ENERDSWikiLayer
+                except ModuleNotFoundError:
+                    import sys
+                    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+                    from infra.ene_rds_wiki_layer import ENERDSWikiLayer
 
-                sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-                from infra.ene_wiki_layer import ENEWikiLayer
+                wiki = ENERDSWikiLayer()
+            else:
+                try:
+                    from infra.ene_wiki_layer import ENEWikiLayer
+                except ModuleNotFoundError:
+                    import sys
+                    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+                    from infra.ene_wiki_layer import ENEWikiLayer
 
-            wiki = ENEWikiLayer(STATE_DIR / "ene-wiki.db")
+                wiki = ENEWikiLayer(STATE_DIR / "ene-wiki.db")
             return wiki.handle_request(request)
         except Exception as exc:
             return {"ok": False, "op": "wiki", "error": str(exc)}
@@ -284,15 +296,25 @@ def handle_surface_op(op: int, payload: bytes) -> dict[str, Any]:
             request = json.loads(payload.decode("utf-8")) if payload else {"op": "manifest"}
             if not isinstance(request, dict):
                 raise ValueError("fractal_fold payload must be a JSON object")
-            try:
-                from infra.ene_fractal_fold import ENEFractalFold
-            except ModuleNotFoundError:
-                import sys
+            use_rds = os.environ.get("RS_USE_RDS", "").lower() in ("1", "true", "yes")
+            if use_rds:
+                try:
+                    from infra.ene_rds_fractal_fold import ENERDSFractalFold
+                except ModuleNotFoundError:
+                    import sys
+                    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+                    from infra.ene_rds_fractal_fold import ENERDSFractalFold
 
-                sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-                from infra.ene_fractal_fold import ENEFractalFold
+                fold = ENERDSFractalFold()
+            else:
+                try:
+                    from infra.ene_fractal_fold import ENEFractalFold
+                except ModuleNotFoundError:
+                    import sys
+                    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+                    from infra.ene_fractal_fold import ENEFractalFold
 
-            fold = ENEFractalFold(STATE_DIR / "ene-fractal-fold.db")
+                fold = ENEFractalFold(STATE_DIR / "ene-fractal-fold.db")
             return fold.handle_request(request)
         except Exception as exc:
             return {"ok": False, "op": "fractal_fold", "error": str(exc)}
@@ -312,6 +334,50 @@ def handle_surface_op(op: int, payload: bytes) -> dict[str, Any]:
             return handle_request(request)
         except Exception as exc:
             return {"ok": False, "op": "meta_autotype", "error": str(exc)}
+    if op == OP_CREDENTIALS:
+        try:
+            request = json.loads(payload.decode("utf-8")) if payload else {}
+            if not isinstance(request, dict):
+                raise ValueError("credentials payload must be a JSON object")
+            try:
+                from credential_provider import (
+                    credential_status,
+                    provider_manifest,
+                    resolve_credential,
+                )
+            except ModuleNotFoundError:
+                try:
+                    from infra.credential_provider import (
+                        credential_status,
+                        provider_manifest,
+                        resolve_credential,
+                    )
+                except ModuleNotFoundError:
+                    import sys
+
+                    sys.path.insert(0, str(Path(__file__).resolve().parent))
+                    from credential_provider import (
+                        credential_status,
+                        provider_manifest,
+                        resolve_credential,
+                    )
+
+            action = request.get("action", "status")
+            if action == "status":
+                return credential_status()
+            if action == "manifest":
+                return provider_manifest()
+            if action == "resolve":
+                provider = request.get("provider", "")
+                if not provider:
+                    return {"ok": False, "error": "missing provider name"}
+                cred = resolve_credential(provider)
+                if cred is None:
+                    return {"ok": False, "error": f"provider {provider!r} not available"}
+                return {"ok": True, "provider": cred.provider, "value": cred.value}
+            return {"ok": False, "error": f"unknown credentials action {action!r}"}
+        except Exception as exc:
+            return {"ok": False, "op": "credentials", "error": str(exc)}
     return {"error": "unknown-op", "op": op}
 
 
@@ -421,6 +487,20 @@ class SurfaceHandler(BaseHTTPRequestHandler):
             return
         if self.path == "/ws":
             self.handle_ws()
+            return
+        if self.path == "/credentials":
+            try:
+                from credential_provider import credential_status
+            except ModuleNotFoundError:
+                try:
+                    from infra.credential_provider import credential_status
+                except ModuleNotFoundError:
+                    import sys
+
+                    sys.path.insert(0, str(Path(__file__).resolve().parent))
+                    from credential_provider import credential_status
+
+            self.send_json(credential_status())
             return
         self.send_json({"error": "not-found"}, HTTPStatus.NOT_FOUND)
 

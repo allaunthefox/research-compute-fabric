@@ -52,13 +52,22 @@ in
     logFormat = "level INFO";
     package = caddyWithPorkbun;
     extraConfig = ''
-      researchstack.info, cupfox.researchstack.info, http://100.126.151.57 {
+      researchstack.info, cupfox.researchstack.info, git.researchstack.info, http://100.126.151.57 {
         tls {
           dns porkbun {
             api_key {$PORKBUN_API_KEY}
             api_secret_key {$PORKBUN_SECRET_KEY}
           }
         }
+
+        handle_path /api/credentials/* {
+          reverse_proxy http://100.69.1.43:8444
+        }
+
+        handle_path /git/* {
+          reverse_proxy http://127.0.0.1:3000
+        }
+
         root * /var/www/researchstack
         file_server
       }

@@ -68,6 +68,7 @@ inductive ServiceKind where
   | substrateIndex
   | rgflowFilter
   | tardyInterpreter
+  | apiProvider
   deriving Repr, DecidableEq, Inhabited, BEq
 
 /-- Hardware requirements per service. -/
@@ -79,6 +80,7 @@ def serviceRequirements : ServiceKind → List HardwareCapability
   | .substrateIndex     => [.storage, .compute]
   | .rgflowFilter       => [.compute, .network]
   | .tardyInterpreter   => [.compute]
+  | .apiProvider        => [.network]
 
 /-- Thermodynamic cost to run a service (Q16.16 per tick). -/
 def serviceCost : ServiceKind → Q16_16
@@ -89,6 +91,7 @@ def serviceCost : ServiceKind → Q16_16
   | .substrateIndex     => ofNat 2
   | .rgflowFilter       => ofNat 3
   | .tardyInterpreter   => ofNat 1
+  | .apiProvider        => ofNat 1
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §3  Node State Machine
@@ -236,5 +239,7 @@ def exampleFoxTopNode : TopologyNode :=
 #eval canRunService exampleCoreNode ServiceKind.architect
 #eval canRunService exampleEdgeNode ServiceKind.architect
 #eval canRunService exampleEdgeNode ServiceKind.warden
+#eval canRunService exampleEdgeNode ServiceKind.apiProvider
+#eval serviceCost ServiceKind.apiProvider
 
 end Semantics.TopologyNode

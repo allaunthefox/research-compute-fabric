@@ -108,6 +108,15 @@
         binutils
         # gcc for libstdc++.so.6 (needed by VS Code server)
         gcc
+        # OpenGL / X11 libraries for CAD (build123d, OCP, VTK) and GPU compute
+        libglvnd
+        xorg.libX11
+        xorg.libXext
+        xorg.libXrender
+        mesa
+        # pkg-config for Rust native dependency discovery (openssl-sys, etc.)
+        pkg-config
+        openssl
       ];
 
       # ── customEtc provides standard etc configuration with researcher user ──
@@ -157,8 +166,8 @@
           User       = "1000";
           WorkingDir = "/home/researcher/stack";
           Env = [
-            "PATH=/home/researcher/.elan/bin:${pythonEnv}/bin:${pkgs.uv}/bin:${pkgs.git}/bin:${pkgs.ripgrep}/bin:${pkgs.jq}/bin:${pkgs.coreutils}/bin:${pkgs.bashInteractive}/bin:${pkgs.binutils}/bin:${pkgs.glibc.bin}/bin:${pkgs.gzip}/bin:/usr/bin:/bin"
-            "LD_LIBRARY_PATH=${pkgs.gcc.cc.lib}/lib:${pkgs.glibc}/lib"
+            "PATH=/home/researcher/.elan/bin:${pythonEnv}/bin:${pkgs.uv}/bin:${pkgs.git}/bin:${pkgs.ripgrep}/bin:${pkgs.jq}/bin:${pkgs.coreutils}/bin:${pkgs.bashInteractive}/bin:${pkgs.binutils}/bin:${pkgs.glibc.bin}/bin:${pkgs.gzip}/bin:${pkgs.pkg-config}/bin:${pkgs.openssl.bin}/bin:/usr/bin:/bin"
+            "LD_LIBRARY_PATH=${pkgs.gcc.cc.lib}/lib:${pkgs.glibc}/lib:${pkgs.libglvnd}/lib:${pkgs.xorg.libX11}/lib:${pkgs.xorg.libXext}/lib:${pkgs.xorg.libXrender}/lib:${pkgs.mesa}/lib:${pkgs.openssl}/lib"
             "PYTHONUNBUFFERED=1"
             "XDG_CACHE_HOME=/home/researcher/.cache"
             "HOME=/home/researcher"

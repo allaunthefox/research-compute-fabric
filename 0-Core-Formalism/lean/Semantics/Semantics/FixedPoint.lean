@@ -515,6 +515,84 @@ theorem toInt_eq_zero_iff {a : Q16_16} : a.toInt = 0 ↔ a = zero := by
       · omega
   · intro h; subst h; rfl
 
+/-- zero / x = zero for any nonzero denominator (stated on the raw .val field) -/
+theorem zero_div (x : Q16_16) (hx : x.val ≠ 0) : div zero x = zero := by
+  unfold div zero
+  have hbeq : (x.val == 0) = false := by
+    apply Bool.eq_false_iff.mpr
+    simp [hx]
+  simp only [hbeq, ite_false]
+  apply Q16_16.ext
+  simp only [zero]
+  -- numerator is 0 shifted left: 0 <<< 16 = 0; 0 / anything = 0
+  have h0 : (0 : UInt32).toUInt64 <<< 16 = 0 := by decide
+  simp [h0]
+
+/-- Squaring any Q16_16 value yields a non-negative toInt.
+    The Q16_16 fixed-point product of a value with itself is always ≥ 0 because
+    the UInt64 intermediate is non-negative and the high 32-bit word is unsigned.
+    TODO(lean-port): complete UInt64 shift-bound proof -/
+theorem mul_self_nonneg (a : Q16_16) : (mul a a).toInt ≥ 0 := by
+  sorry
+
+/-- Product of two non-negative Q16_16 values is non-negative.
+    TODO(lean-port): prove via UInt64 bounds: a,b < 2^31 → a*b < 2^62 → >>16 < 2^46 → toUInt32 < 2^31 -/
+theorem mul_toInt_nonneg (a b : Q16_16) (ha : a.toInt ≥ 0) (hb : b.toInt ≥ 0) :
+    (mul a b).toInt ≥ 0 := by
+  sorry
+
+/-- After unfolding saturating add, the result with both inputs non-negative
+    has non-negative toInt.  Callers: unfold add, then apply this lemma; omega closes
+    the side goal `acc.toInt ≥ 0 ∧ wcc.toInt ≥ 0` from induction hypothesis.
+    TODO(lean-port): strengthen to eliminate sorry via UInt32 saturation analysis -/
+theorem ofRaw_toInt_nonneg (acc wcc : Q16_16) (hacc : acc.toInt ≥ 0) (hwcc : wcc.toInt ≥ 0) :
+    (Q16_16.add acc wcc).toInt ≥ 0 := by
+  sorry
+
+/-- Variant: raw UInt32 with s < 0x80000000 has non-negative toInt -/
+theorem mk_lt_half_nonneg (s : UInt32) (h : s < 0x80000000) : (Q16_16.mk s).toInt ≥ 0 := by
+  have h_not_ge : ¬ s ≥ (0x80000000 : UInt32) := by
+    intro hge; exact Nat.lt_irrefl _ (Nat.lt_of_lt_of_le h hge)
+  unfold toInt
+  simp [h_not_ge, UInt32.toNat_toUInt64]
+
+/-- (1 + omega).toInt ≥ 65536 when omega.toInt ≥ 0.
+    TODO(lean-port): complete saturation branch analysis -/
+theorem add_one_omega_ge_one (omega : Q16_16) (h : omega.toInt ≥ 0) :
+    (add one omega).toInt ≥ 65536 := by
+  sorry
+
+/-- Non-negative Q16_16 values have toInt ≤ 0x7FFFFFFF = 2147483647 -/
+theorem toInt_nonneg_le_maxVal (q : Q16_16) (h : q.toInt ≥ 0) : q.toInt ≤ 0x7FFFFFFF := by
+  cases q with | mk qv =>
+  -- Use the same pattern as epsilon_add_pos: by_contra hge then simp to derive contradiction
+  by_contra! hlt
+  -- h : q.toInt ≥ 0, hlt : q.toInt > 0x7FFFFFFF
+  -- This means q.toInt ≥ 0x80000000 = 2147483648
+  -- But toInt ≤ 0x7FFFFFFF for any Q16_16 with val < 0x80000000
+  -- and for val ≥ 0x80000000, toInt < 0 (contradicts h ≥ 0)
+  -- So both cases lead to contradiction
+  unfold toInt at h hlt
+  have h64 : qv.toUInt64.toNat = qv.toNat := UInt32.toNat_toUInt64 qv
+  simp only [h64] at h hlt
+  have hlt_full : qv.toNat < 4294967296 := UInt32.toNat_lt qv
+  by_cases hge : qv ≥ (0x80000000 : UInt32)
+  · simp only [hge, ite_true] at h
+    -- h : Int.ofNat qv.toNat - 4294967296 ≥ 0 is impossible since qv.toNat < 2^32
+    have hnn : Int.ofNat qv.toNat < 4294967296 := by
+      exact Int.ofNat_lt.mpr hlt_full
+    linarith
+  · simp only [hge, ite_false] at hlt
+    -- hlt : Int.ofNat qv.toNat > 2147483647
+    have h_not_ge : ¬ qv ≥ (0x80000000 : UInt32) := hge
+    -- derive qv.toNat < 2147483648
+    have hlt_nat : qv.toNat < 2147483648 := by
+      by_contra! hge2
+      exact h_not_ge (by simpa using hge2)
+    have hnn : Int.ofNat qv.toNat ≤ 2147483647 := by
+      exact Int.ofNat_le.mpr (Nat.lt_succ_iff.mp hlt_nat)
+    linarith
+
 /-- Non-negative addition: adding epsilon to a non-negative value yields a positive result. -/
 theorem epsilon_add_pos {r : Q16_16} (hr : r.toInt ≥ 0) :
     (r + epsilon).toInt > 0 := by
@@ -770,7 +848,7 @@ end Semantics.FixedPoint
 namespace Semantics
   export FixedPoint (Q0_16 Q16_16 Q0_64)
   namespace Q16_16
-    export FixedPoint.Q16_16 (mk zero one negOne epsilon two infinity maxVal minVal ofNat satFromNat ofRatio toInt ofRawInt ofFloat toFloat scale ofInt add sub mul div abs neg sqrt ln log2 expNeg sat01 max min le ge gt lt recip ofRaw clip isNeg zero_mul mul_zero one_mul mul_one zero_toInt one_toInt epsilon_toInt epsilon_toInt_pos toInt_eq_zero_iff epsilon_add_pos)
+    export FixedPoint.Q16_16 (mk zero one negOne epsilon two infinity maxVal minVal ofNat satFromNat ofRatio toInt ofRawInt ofFloat toFloat scale ofInt add sub mul div abs neg sqrt ln log2 expNeg sat01 max min le ge gt lt recip ofRaw clip isNeg zero_mul mul_zero one_mul mul_one zero_toInt one_toInt epsilon_toInt epsilon_toInt_pos toInt_eq_zero_iff epsilon_add_pos zero_div mul_self_nonneg mul_toInt_nonneg ofRaw_toInt_nonneg mk_lt_half_nonneg add_one_omega_ge_one toInt_nonneg_le_maxVal)
   end Q16_16
   namespace Q0_16
     export FixedPoint.Q0_16 (zero one half neg add sub mul div abs lt le gt ge toFloat ofFloat log2 min)

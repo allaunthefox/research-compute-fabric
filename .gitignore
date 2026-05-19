@@ -69,6 +69,10 @@ data/*.iso
 **/_build/
 **/__pycache__/
 
+# Rust build artifacts
+**/target/
+**/*.rs.bk
+
 # Agda build artifacts
 *.agdai
 
@@ -214,6 +218,7 @@ Module.symvers
 # Symlinks for local dev convenience
 5-Applications/scripts/config/
 data
+result
 
 # Rust build artifacts
 **/target/

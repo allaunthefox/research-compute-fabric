@@ -68,12 +68,15 @@
         gnugrep
         gnused
         gawk
+        util-linux # for flock
         # File transfer & compression
         curl
         wget
         rsync
         zstd
         xz
+        gnutar
+        gzip
         # Search
         ripgrep
         jq
@@ -99,15 +102,35 @@
         file
         procps
         htop
+        # glibc for ldd
+        glibc
+        # binutils for ldd
+        binutils
+        # gcc for libstdc++.so.6 (needed by VS Code server)
+        gcc
       ];
 
-      # ── fakeNss provides /etc/passwd, /etc/group with root + nobody ─────────
-      # We add researcher (UID 1000) via a setup derivation.
+      # ── customEtc provides standard etc configuration with researcher user ──
+      customEtc = pkgs.runCommand "custom-etc" {} ''
+        mkdir -p $out/etc
+        echo 'root:x:0:0:root user:/var/empty:/bin/sh' > $out/etc/passwd
+        echo 'nobody:x:65534:65534:nobody:/var/empty:/bin/sh' >> $out/etc/passwd
+        echo 'researcher:x:1000:1000:Research Stack developer:/home/researcher:/bin/bash' >> $out/etc/passwd
+
+        echo 'root:x:0:' > $out/etc/group
+        echo 'nobody:x:65534:' >> $out/etc/group
+        echo 'researcher:x:1000:' >> $out/etc/group
+
+        echo 'passwd: files' > $out/etc/nsswitch.conf
+        echo 'group: files' >> $out/etc/nsswitch.conf
+        echo 'hosts: files dns' >> $out/etc/nsswitch.conf
+      '';
+
+      # We add researcher home/tmp via a setup derivation.
       researcherSetup = pkgs.runCommand "researcher-home" {} ''
         mkdir -p $out/home/researcher/stack
         mkdir -p $out/home/researcher/.cache
-        mkdir -p $out/tmp
-        # passwd / group entries appended by the image config
+        mkdir -p -m 1777 $out/tmp
       '';
 
     in {
@@ -117,20 +140,16 @@
         tag    = "latest";
 
         contents = [
-          pkgs.dockerTools.fakeNss   # /etc/passwd, /etc/group, /etc/nsswitch.conf
+          customEtc                  # Custom etc configuration containing researcher user
           pkgs.dockerTools.usrBinEnv # /usr/bin/env
           pkgs.dockerTools.binSh     # /bin/sh -> bash
           researcherSetup
         ] ++ devPkgs;
 
-        # Write researcher user entries into /etc/passwd and /etc/group.
-        # fakeNss creates these files; we append with a sed-safe runCommand.
+        # Ensure home is owned by researcher
         fakeRootCommands = ''
-          # Add researcher user (UID/GID 1000)
-          echo 'researcher:x:1000:1000:Research Stack developer:/home/researcher:/bin/bash' >> ./etc/passwd
-          echo 'researcher:x:1000:' >> ./etc/group
-          # Ensure home is owned by researcher
           chown -R 1000:1000 ./home/researcher || true
+          chmod 1777 ./tmp || true
         '';
         enableFakechroot = true;
 
@@ -138,7 +157,8 @@
           User       = "1000";
           WorkingDir = "/home/researcher/stack";
           Env = [
-            "PATH=/home/researcher/.elan/bin:${pythonEnv}/bin:${pkgs.uv}/bin:${pkgs.git}/bin:${pkgs.ripgrep}/bin:${pkgs.jq}/bin:${pkgs.coreutils}/bin:${pkgs.bashInteractive}/bin:/usr/bin:/bin"
+            "PATH=/home/researcher/.elan/bin:${pythonEnv}/bin:${pkgs.uv}/bin:${pkgs.git}/bin:${pkgs.ripgrep}/bin:${pkgs.jq}/bin:${pkgs.coreutils}/bin:${pkgs.bashInteractive}/bin:${pkgs.binutils}/bin:${pkgs.glibc.bin}/bin:${pkgs.gzip}/bin:/usr/bin:/bin"
+            "LD_LIBRARY_PATH=${pkgs.gcc.cc.lib}/lib:${pkgs.glibc}/lib"
             "PYTHONUNBUFFERED=1"
             "XDG_CACHE_HOME=/home/researcher/.cache"
             "HOME=/home/researcher"

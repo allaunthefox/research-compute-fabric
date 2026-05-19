@@ -53,6 +53,7 @@
 | Component | Location |
 |---|---|
 | ENE (Endless Node Edges) | `4-Infrastructure/infra/ene_distributed_node.py` |
+| **ENE RDS Rust Workspace** | **`wiki/RDS-Rust-Workspace.md`** — replaces Python RDS stack with Rust |
 | AVM ABI surface | `avm_abi.py` |
 | AVM Core | `avm_core.py` |
 | Topological Storage (Google Drive) | `RcloneIntegration.lean`, `CONCEPTS.md` §Topological Storage |

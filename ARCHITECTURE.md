@@ -24,7 +24,7 @@ Level 0 — Primordial             PIST/DIAT Shells │ Q16.16 Arithmetic │ Br
 
 | Level | Domain | Key Substrates | Invariant |
 |-------|--------|----------------|-----------|
-| 0 (Primordial) | Pure math | PIST/DIAT shells, Q16.16, BraidField, BracketedCalculus | mass = t·(2k+1-t), arithmetic totality |
+| 0 (Primordial) | Pure math | PIST/DIAT shells, Q16.16, BraidField, BracketedCalculus, EigensolidConvergence | mass = t·(2k+1-t), arithmetic totality; 746 modules, 3529 jobs, 0 errors |
 | 1 (Geometric) | Shape-aware | GWL rotational coupling, toroidal shells, torsion quaternions, GWL throat | dE/dt ≤ 0, no zero-mass singularities |
 | 2 (Biological) | Life-aware | 64 codon tables, Izhikevich spiking neurons, STDP plasticity | codon validity, spike threshold v < 30mV |
 | 3 (Thermodynamic) | Energy-aware | Trixal state (thermal/work/irreversibility), homeostatic governor, HyperFlow NS-on-shells | irreversibility < threshold, |γ+s'(p*)| < 1 |
@@ -132,6 +132,9 @@ GCCL = Law Stack (what must be preserved)
 | `5-Applications/` | Scripts, tests, Hutter prize work, audit tools |
 | `6-Documentation/docs/` | Main documentation tree |
 | `docs/` | Research papers, specs, roadmaps (aliased into 6-Documentation) |
+| `4-Infrastructure/infra/ene-rds/` | ENE RDS Rust workspace (8 crates, replaces Python RDS stack; Axum API on :3000) |
+| `4-Infrastructure/storage/` | restic + Garage S3 + rclone storage stack; `storage_agent.py` observer |
+| `.devcontainer/` | NixOS devcontainer flake (OpenGL/X11, Lean, Python science stack, MCP: Notion + AWS) |
 | `shared-data/` | Databases, golden traces, artifacts |
 | `workspace-config/` | IDE and environment settings |
 | `scratch/` | Experimental code |
@@ -198,4 +201,59 @@ valid syntax
 
 ---
 
-*Observerless Research Stack — Architecture v1.0 (2026-05-04)*
+---
+
+## 11. Storage & Persistence Layer
+
+Three tools with non-overlapping responsibilities:
+
+| Tool | Role | Notes |
+|------|------|-------|
+| **restic** | Deduplicated, encrypted, content-addressed snapshots | Primary backend: Garage S3 |
+| **Garage v2.3.0** | Self-hosted S3-compatible object store over Tailscale mesh | 5 buckets; `replication_factor=1` (scale-out to 3 planned) |
+| **rclone** | Raw sync between remotes (Garage↔gdrive) | Cold copy of restic chunks to gdrive |
+
+Data flow: `git commit → post-commit hook → restic snap → Garage:research-stack`; daily 03:00 timer → `rclone copy → gdrive:restic-mirror`.
+
+Storage agent (`4-Infrastructure/storage/storage_agent.py`) runs an observe→decide→act loop every 15 minutes via systemd timer. All numeric thresholds are Q16_16. Receipts are JSONL hash-chained locally and uploaded to `s3://research-stack/agent-receipts/`.
+
+---
+
+## 12. ENE RDS Rust Workspace
+
+`4-Infrastructure/infra/ene-rds/` is an 8-crate Rust workspace that replaces the Python RDS stack:
+
+| Crate | Purpose |
+|-------|---------|
+| `ene-rds-core` | Shared PostgreSQL client, DSN builder, receipts |
+| `ene-rds-wiki` | Wiki CRUD + full-text search + revision tracking |
+| `ene-rds-ephemeral` | EphemeralNode thermal zones, tasks, receipts, scars, metrics |
+| `ene-rds-chat` | Chat session ingestion, keyword/semantic search |
+| `ene-api` | Axum HTTP server on :3000 (health, sessions, wiki, ephemeral endpoints) |
+| `ene-node` | Node identity and gossip primitives |
+| `ene-storage` | S3/Garage object storage client |
+| `ene-sync` | Polls opencode.db SQLite → upserts into RDS chat tables |
+
+All crates use sqlx 0.8.6 (Dependabot vuln from 0.7 resolved 2026-05-19).
+
+---
+
+## 13. Braid Eigensolid Compressor
+
+The braid eigensolid compressor is the planned compute substrate for the 8-strand BraidStorm topology:
+
+- **Eigensolid:** converged stable state of a braid crossing loop; detected when `crossStep(s) = s`
+- **Sidon labels:** addresses from a set where all pairwise sums are unique (powers of 2: 1, 2, 4, 8, 16, 32, 64, 128)
+- **Sidon slack:** `address budget − max label used` encodes capacity headroom
+- **Crossing matrix C:** Q0_2 crossing weights per strand pair; contractiveness enforced (row sum < 65536)
+- **Receipt dimensions:** `(C, σ, k, ε_seq, t, ∅_scars)` — the receipt IS the compressed state
+
+WGSL dispatch plan: `4-Infrastructure/shim/braid_blitter/` (Rust wgpu, following `5-Applications/parquet_compressor/src/gpu.rs`).
+
+Two required Lean theorems per compressor:
+1. `eigensolid_convergence` — braid crossing loop stabilizes (**proven**, `EigensolidConvergence.lean`, commit `d84569a5`)
+2. `receipt_invertible` — given the receipt, original state is reconstructible within bounded error (**pending**)
+
+---
+
+*Observerless Research Stack — Architecture v1.1 (2026-05-19)*

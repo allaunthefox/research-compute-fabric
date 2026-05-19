@@ -14,7 +14,7 @@ Because we only use addition, subtraction, multiplication, and modulo, this syst
 ## 🛠️ How we know it works (Zero Guesswork)
 We do not guess that our integer math works. We prove it.
 The core of this project is written in **Lean 4**, a strict mathematical theorem prover. 
-If our logic has a flaw, *the code physically will not compile.* We currently have over **3,500 mathematically verified proofs** securing this engine. 
+If our logic has a flaw, *the code physically will not compile.* We currently have **746 verified Lean modules** across a **3,529-job deterministic build** (0 errors) securing this engine.
 
 Python, Rust, and Verilog only exist in this repository to act as "dumb pipes" to feed data into our proven mathematical core.
 
@@ -56,6 +56,17 @@ python3 5-Applications/scripts/redpajama_english_manifold.py
 ## ⚖️ The One Rule for Contributors
 **Lean is the source of truth.** 
 If you add logic, it goes in `0-Core-Formalism/lean/Semantics/` and must be mathematically proven. Python scripts may not contain complex math, branching logic, or cost functions. Python is just the delivery boy for Lean.
+
+---
+
+## 🗄️ Infrastructure (Current)
+
+| Component | Description |
+| :--- | :--- |
+| **`4-Infrastructure/infra/ene-rds/`** | Rust workspace (8 crates) replacing the Python RDS stack — Axum HTTP API, PostgreSQL, Ollama embeddings |
+| **`4-Infrastructure/storage/`** | restic + Garage S3 (v2.3.0, Tailscale mesh) + rclone storage stack with automated observer agent |
+| **`.devcontainer/`** | NixOS hermetic devcontainer with OpenGL/X11, Lean, Python science stack, MCP servers (Notion + AWS) |
+| **`4-Infrastructure/infra/credential_server.py`** | Credential gateway with apiProvider service kind and cupfox routing |
 
 ---
 *Research Stack — All Rights Reserved*

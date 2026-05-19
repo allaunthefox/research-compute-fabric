@@ -299,9 +299,65 @@ settlement: FORMING
 
 ---
 
+## Braid Eigensolid Compressor
+
+**Definition:** A lossless compressor built on the 8-strand BraidStorm topology. The compressed state IS the receipt — not metadata around it.
+
+**Key terms:**
+
+- **Eigensolid:** The converged, stable state of a braid crossing loop. Detected when `crossStep(s) = s`. The DC baseline in the TNT BraidCarrier model.
+- **BraidStorm:** The 8-strand braid topology. Strands cross pairwise; each crossing merges phase and produces a residual.
+- **Sidon label:** An address from a set where all pairwise sums are unique. Canonical set for 8 strands: powers of 2 (1, 2, 4, 8, 16, 32, 64, 128).
+- **Sidon slack:** `address budget − max label used`. Encodes capacity headroom as a receipt dimension.
+- **Crossing matrix C:** Q0_2 crossing weights per strand pair. Contractiveness enforced: row sum < 65536.
+- **Receipt dimensions:** `(C, σ, k, ε_seq, t, ∅_scars)` — together form the encoding of the compressed state.
+
+**Two required Lean theorems:**
+1. `eigensolid_convergence` — the braid crossing loop stabilizes. **Proven** (`EigensolidConvergence.lean`, commit `d84569a5`).
+2. `receipt_invertible` — given the receipt, original state is reconstructible within bounded error. **Pending.**
+
+**Float is forbidden.** All crossing weights and phase values use Q16_16 integer arithmetic. No substrate is privileged — the algorithm is identical on GPU (WGSL/wgpu), CPU (scalar), FPGA (Verilog), or storage (NVMe/BTRFS).
+
+---
+
+## Constrained Agent Framework
+
+**Definition:** An execution framework that confines LLM/agent actions to a verifiable, bounded gate — the agent cannot act outside the declared action space.
+
+**Three documented approaches (as of 2026-05-19):**
+- **SmallCode gate** (`5-Applications/hutter_prize/SmallCode_constrained_agent_execution_gate.md`): The agent produces only syntactically valid, size-bounded code fragments. Gate rejects oversized or syntactically invalid outputs.
+- **OR-Tools WASM constraint solver gate** (`5-Applications/hutter_prize/OR-Tools_WASM_constraint_solver_gate.md`): Uses OR-Tools compiled to WASM as the execution substrate. Agent actions must satisfy declarative constraint satisfaction; the solver is the arbiter.
+- **GLIA** (Generic Lean Invariant Agent): Formal Lean invariants form the gate boundary. Any agent action that would violate a stated invariant is rejected at the Lean elaboration stage.
+
+**Relation to FAMM:** Constrained agent execution is a special case of FAMM — failed/out-of-bounds agent outputs are scars; accepted outputs are basins. The frustration signal guides future generation toward lawful regions.
+
+---
+
+## Garage S3 Storage Stack
+
+**Definition:** A self-hosted, S3-compatible object store running over a Tailscale mesh network, serving as the primary backend for the restic backup system.
+
+**Implementation:** Garage v2.3.0 — single-binary, Dynamo-style S3-compatible store written in Rust. Replaces rclone serve s3.
+
+**Topology:**
+
+| Node | Tailscale IP | Role |
+|------|-------------|------|
+| qfox-1 | 100.88.57.96 | primary, S3 endpoint (1.8 TB NVMe) |
+| cupfox-4gb-2cpu | 100.126.242.5 | storage node (planned) |
+| nixos | 100.119.165.120 | storage node (planned) |
+| microvm-racknerd | 100.101.247.127 | storage node VPS (planned) |
+
+**Buckets:** `research-stack`, `db-scratch`, `rds-overflow`, `snap-zone`, `gdrive-mirror`.
+
+**Storage agent** (`4-Infrastructure/storage/storage_agent.py`): observe→decide→act loop every 15 min. Q16_16 thresholds throughout. JSONL hash-chain receipts at `~/.cache/storage-agent.jsonl` and `s3://research-stack/agent-receipts/`.
+
+---
+
 ## See Also
 
 - `AGENTS.md` — Full operating rules and specifications (includes Topological RAM section 10)
 - `BRAIN_AS_MANIFOLD.md` — Detailed brain-as-manifold theory
 - `EQUATION_FOREST_INDEX.md` — Equation taxonomy and kernel IDs
 - `MATH_MODEL_MAP.tsv` — Equation registry (source of truth)
+- `4-Infrastructure/AGENTS.md` — Infrastructure operating contract (storage stack, ENE RDS, WGSL compute dispatch)

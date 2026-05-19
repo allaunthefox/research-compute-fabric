@@ -178,6 +178,7 @@ PCIe FPGA           = future math-hell router (VU9P-class)
 - **Deliverable:** `0-Core-Formalism/lean/Semantics/Q16_16.lean`
 - **Owner:** L0 Formal
 - **Status:** ✅ DONE (Unified UInt32 and Int variants on 2026-05-03)
+- **Result:** Q16_16 signed/unsigned bug fix (commit `23bb6303`); `add_pos_of_pos` lemma proved.
 
 ### B5. NII Core in Lean
 - **What:** `nii : predicted → observed → surprise` with bounded adaptation update rule
@@ -225,6 +226,13 @@ PCIe FPGA           = future math-hell router (VU9P-class)
 - **Status:** 📋 TODO
 - **Blocked by:** B1–B9
 - **Next action:** Add GitHub Actions workflow or local pre-commit hook
+
+### B11. Eigensolid Convergence Theorem
+- **What:** Prove that the braid crossing loop stabilizes: `crossStep(s) = s`
+- **Deliverable:** `0-Core-Formalism/lean/Semantics/EigensolidConvergence.lean`
+- **Owner:** L0 Formal
+- **Status:** ✅ DONE
+- **Result:** EigensolidConvergence.lean proof complete (commit `d84569a5`)
 
 ---
 
@@ -584,7 +592,7 @@ F1 + F2 + F3 + F5
 
 ---
 
-## Phase I — Standards Conformance & Adapters
+## Phase K — Standards Conformance & Adapters
 - **What:** Bridge the gap between "Architecture-aligned" and "Conformance-tested".
 - **Deliverables:**
     - [ ] **ISO 26262 Safety Case:** HARA/FMEA for the Q16.16 core
@@ -594,3 +602,59 @@ F1 + F2 + F3 + F5
 - **Status:** 🌑 NOT_STARTED
 - **Blocked by:** Phase B, C, D
 - **Owner:** Human architect / L1 Shim
+
+---
+
+## Phase I — Infrastructure & Data Layer
+
+### I1. ENE RDS Rust Workspace
+- **What:** 8-crate Rust workspace replacing Python RDS stack: ene-rds-core, ene-rds-wiki, ene-rds-ephemeral, ene-rds-chat, ene-api, ene-node, ene-storage, ene-sync
+- **Deliverable:** `4-Infrastructure/infra/ene-rds/`
+- **Status:** ✅ DONE
+- **Result:** Cargo build passing (sqlx 0.8.6, Axum HTTP on :3000, Ollama embedding, PostgreSQL RDS). Dependabot sqlx 0.7→0.8.6 vuln fixed.
+
+### I2. Garage S3 Storage Stack
+- **What:** Self-hosted S3-compatible object store (Garage v2.3.0) over Tailscale mesh with 5 buckets
+- **Deliverable:** `4-Infrastructure/storage/garage/`
+- **Status:** ✅ DONE (single-node, replication_factor=1)
+- **Next action:** Bootstrap additional nodes (cupfox-4gb-2cpu, nixos) and bump replication_factor to 3
+
+### I3. Storage Observer/Optimizer Agent
+- **What:** Observe → Decide → Act loop with Q16_16 thresholds, JSONL hash-chain receipts, dual S3+local sinks
+- **Deliverable:** `4-Infrastructure/storage/storage_agent.py`
+- **Status:** ✅ DONE
+- **Result:** systemd timer (every 15 min), triggers: snap/cold-copy/verify/forget/offload/garage-restart
+
+### I4. NixOS Devcontainer Flake
+- **What:** Hermetic NixOS devcontainer with OpenGL/X11, pkg-config, openssl, full Python science stack, MCP Notion + AWS servers
+- **Deliverable:** `.devcontainer/flake.nix` + `devcontainer.json`
+- **Status:** ✅ DONE
+
+### I5. Credential Gateway & EC2 Recovery
+- **What:** apiProvider service kind, credential server, cupfox routing, EC2 recovery backup (NixOS config, AppFlowy compose/env template)
+- **Deliverable:** `4-Infrastructure/infra/credential_server.py`, `4-Infrastructure/infra/ec2-configuration.nix`
+- **Status:** ✅ DONE
+
+### I6. Garage Replication Scale-Out (3 nodes)
+- **What:** Bootstrap cupfox-4gb-2cpu and nixos nodes, run garage-cluster-init.sh, set replication_factor=3
+- **Deliverable:** Updated `4-Infrastructure/storage/garage/node-registry.json` + cluster receipt
+- **Status:** 📋 TODO
+- **Blocked by:** Node provisioning
+- **Next action:** Run `garage-node-bootstrap.sh 100.126.242.5` then `garage-cluster-init.sh`
+
+---
+
+## Phase J — Adversarial Harnesses & Gate Library
+
+### J1. Anti-FAMM / Anti-BraidStorm Adversarial Harnesses
+- **What:** Anti-FAMM shadow adversary + Anti-BraidStorm hostile crossing gate with 16D anchor packs, runners, receipt schemas
+- **Deliverable:** `4-Infrastructure/shim/adversarial_duals/`
+- **Status:** ✅ DONE
+
+### J2. Gate Library Expansion
+- **What:** BraidStorm Sidon Crossing, Golden Braid Centering, Autonomous speedrun, MarkovJunior 16D PIST rewrite, Sidon FAMM map, Builder-Judge-Warden geodesic cleanup, Logogram chirality, NUVMAP Delta-DAG, Common-noise MFG Riccati, Bio-organoid signal field, 16D Chaos Game, FAMM Semantic Mass plow + Z-accelerator, FAMM Hessian curvature, Möbius-Apollonius, Chromatic Homotopy Height Spectral, Ahmed Integral, Universal Shortcut Center Manifold, Plasma Chiral Drag, Feynman path-integral shadow, Navier-Stokes shadow control gap map, OR-Tools WASM constraint solver, SmallCode constrained agent
+- **Status:** ✅ DONE (all gates have documentation, receipt schemas, and runners)
+
+### J3. Constrained Agent Framework (GLIA)
+- **What:** Document constrained agent approaches with GLIA; SmallCode execution gate; OR-Tools WASM solver gate
+- **Status:** ✅ DONE (documentation complete; GLIA integration pending)

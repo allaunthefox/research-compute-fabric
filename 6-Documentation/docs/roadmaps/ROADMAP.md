@@ -19,8 +19,8 @@ The Sovereign Research Stack is a formalized system where Lean 4 is the single s
 
 | Level | Name | Domain | Status | Key Components |
 |-------|------|--------|--------|----------------|
-| **L0** | Primordial | Pure math, fixed-point arithmetic, braid fields | **Implemented** (Lean) | Q16_16 FixedPoint, Q0_64 Scalar, PIST/DIAT Shell, BraidField, SSMS_nD |
-| **L1** | Geometric | Shape-aware topology, coupling geometry | **Partial** (docs migrated, partial Lean) | GWL 5-factor Coupling, TorsionalPIST (quaternion), HybridTSMPISTTorus, GWL Throat |
+| **L0** | Primordial | Pure math, fixed-point arithmetic, braid fields | **Implemented** (746 modules, 3529 build jobs, 0 errors) | Q16_16 FixedPoint, Q0_64 Scalar, PIST/DIAT Shell, BraidField, SSMS_nD, EigensolidConvergence |
+| **L1** | Geometric | Shape-aware topology, coupling geometry | **Partial** (docs migrated, partial Lean; eigensolid convergence proven) | GWL 5-factor Coupling, TorsionalPIST (quaternion), HybridTSMPISTTorus, GWL Throat, BodegaFlow horn-fiber |
 | **L2** | Biological | Genetic codes, spiking neurons, STDP | **Speculative** (docs exist, minor Lean) | 30+ Genetic Code Tables, Codon Optimization, SpikingDynamics (Izhikevich), GenomicCompression |
 | **L3** | Thermodynamic | Energy-aware quality, homeostatic governance | **Speculative** (docs migrated) | Trixal Quality (thermal/work/irreversibility), Homeostatic Governor, HyperFlow (Navier-Stokes) |
 | **L4** | Security | Attack-aware gating, frustration memory | **Partial** (AngrySphinx in Lean) | AngrySphinx (exponential PoD), FAMM Frustration, ASICTopology |
@@ -186,7 +186,10 @@ All 7 invariants are enforced by the USTSM kernel on every transition. No substr
 | **Day 3** | Shock Width Optimal `w* = argmin L_total(w)` | Invariant 6 (Cognitive) | `selectStrategy` + `totalTypeLoad` |
 | **Day 4** | KdV Soliton Stability `mass(soliton) = constant` | Invariant 7 (Scalar) | `scalarImpliesMassEquality` |
 
-**Status:** The Burgers stack has 7 Lean files with full numerical implementations (`#eval` passing) but zero theorems. The GENSIS 7-invariant system provides exact proof templates. The theorems are tractable — 4 days of formalization using `AutoAdaptiveMetatypeSystem.lean` templates.
+**Status:** The Burgers stack has 7 Lean files with full numerical implementations (`#eval` passing). The GENSIS 7-invariant system provides exact proof templates.
+
+- **Closed:** `eigensolid_convergence` — braid crossing loop convergence proven (`EigensolidConvergence.lean`, commit `d84569a5`).
+- **Open:** Energy dissipation, FNWH regularization, shock width, KdV soliton stability — 4 theorems remaining. Tractable in ~4 days using `AutoAdaptiveMetatypeSystem.lean` templates.
 
 ---
 
@@ -253,11 +256,11 @@ No promotion without domain-appropriate evidence. Compression claims require SI 
 
 | Layer | Status | Progress |
 |-------|--------|----------|
-| **L0 Primordial** | ✅ Lean implemented | PIST, Q16_16, BraidField, Genome18, NS-MΔ all have theorems/#eval |
-| **L1 Geometric** | 🔄 Burgers active | Numerical impls exist; 4-theorem attack in progress |
+| **L0 Primordial** | ✅ Lean implemented | 746 modules, 3529 build jobs, 0 errors; eigensolid convergence proven; Q16_16 signed-arithmetic bugs fixed; 9 sorrys closed; 95 inspection issues resolved |
+| **L1 Geometric** | 🔄 Burgers active | Eigensolid convergence closed; BodegaFlow horn-fiber refinements committed; RG torsion physics suite (H0, DESI, BAO, Higgs, Jupiter moons); 4 Burgers theorems remain |
 | **L2 Biological** | 📋 Speculative | GENSIS doc, genetic code tables mapped; no Lean |
 | **L3 Thermodynamic** | 📋 Speculative | Trixal, Homeostatic docs; no Lean |
-| **L4 Security** | 🔄 Partial | AngrySphinx Lean exists; FAMM, ASICTopology spec'd |
+| **L4 Security** | 🔄 Partial | AngrySphinx Lean exists; Anti-FAMM + Anti-BraidStorm adversarial harnesses added; 16D anchor packs operational; 20+ gate library entries added |
 | **L5 Semantic** | 🔄 Partial | RRC equation projection receipt exists; 278 surfaces projected, 249 HOLD pending scale-band/negative-control witnesses |
 | **L6 Meta** | 🔄 Partial | Cognitive load receipts exist; connectome-protective overflow needs Lean witness surface |
 | **FPGA Hardware** | ✅ Synthesized | Tang Nano 9K: Yosys pass (614 cells), P&R pass (162 MHz), bitstream (2 MB) |
@@ -265,13 +268,14 @@ No promotion without domain-appropriate evidence. Compression claims require SI 
 | **Integration** | 📋 TODO | Lean→Verilog extraction, equivalence checking spec'd |
 
 **Immediate next actions** (from `TODO_MAP.md` §Immediate Next Actions):
-1. Audit Lean for `sorry` — `grep -rn "sorry\|admit\|axiom" 0-Core-Formalism/lean/Semantics/`
-2. Add RRC scale-band witness schema for equation records; rerun `4-Infrastructure/shim/rrc_equation_classifier.py`
-3. Add negative-control strength witnesses for HOLD rows before promotion
-4. UART packet format design (start byte + 3-byte payload + checksum)
-5. Create `4-Infrastructure/surface/` FastAPI skeleton
-6. Flash Tang Nano 9K with generated bitstream; verify LED behavior
-7. Execute Burgers Day 1 theorem (Energy Dissipation)
+1. Execute Burgers Day 1 theorem (Energy Dissipation `d(Σ½u²)/dt ≤ 0`)
+2. Prove `receipt_invertible` for braid eigensolid compressor (second required theorem)
+3. Add RRC scale-band witness schema for equation records; rerun `4-Infrastructure/shim/rrc_equation_classifier.py`
+4. Add negative-control strength witnesses for HOLD rows before promotion
+5. Bootstrap Garage replication (cupfox-4gb-2cpu + nixos nodes → replication_factor=3)
+6. UART packet format design (start byte + 3-byte payload + checksum)
+7. Create `4-Infrastructure/surface/` FastAPI skeleton
+8. Flash Tang Nano 9K with generated bitstream; verify LED behavior
 
 ---
 
@@ -287,6 +291,51 @@ The USTSM unifies all 36 substrates across 7 abstraction levels. Every substrate
 - #14 (Cognitive Load): 5-component routing, shock width optimizer
 - #15 (Homeostatic Governor): fixed point, AVM witness convergence
 - #12 (Q0_64 Scalar): universal interface, soliton mass invariant
+
+---
+
+---
+
+## 12. Infrastructure & Data Layer (Current)
+
+### ENE RDS Rust Workspace
+
+`4-Infrastructure/infra/ene-rds/` — 8-crate Rust workspace replacing the Python RDS stack:
+
+| Crate | Purpose |
+|-------|---------|
+| `ene-rds-core` | Shared PostgreSQL client, DSN builder, receipts |
+| `ene-rds-wiki` | Wiki CRUD + full-text search + revision tracking |
+| `ene-rds-ephemeral` | EphemeralNode thermal zones, tasks, receipts, scars, metrics |
+| `ene-rds-chat` | Chat session ingestion, keyword/semantic search |
+| `ene-api` | Axum HTTP server on :3000 |
+| `ene-node` | Node identity and gossip primitives |
+| `ene-storage` | S3/Garage object storage client |
+| `ene-sync` | Polls opencode.db SQLite → upserts into RDS chat tables |
+
+sqlx 0.8.6 (Dependabot vuln from 0.7 resolved 2026-05-19).
+
+### Storage Stack (restic + Garage + rclone)
+
+Three tools, non-overlapping roles:
+
+| Tool | Role |
+|------|------|
+| **restic** | Deduplicated, encrypted, content-addressed snapshots. Primary backend: Garage S3. |
+| **Garage v2.3.0** | Self-hosted S3-compatible object store over Tailscale mesh. 5 buckets. `replication_factor=1` (scale-out to 3 planned). |
+| **rclone** | Raw sync between remotes (Garage↔gdrive). Cold copy of restic chunks to gdrive. |
+
+Data flow: `git commit → post-commit hook → restic snap → Garage:research-stack`; daily 03:00 timer → `rclone copy → gdrive:restic-mirror`.
+
+**Storage agent** (`4-Infrastructure/storage/storage_agent.py`): observe→decide→act loop every 15 min via systemd timer. All thresholds Q16_16. Receipts: JSONL hash-chain locally + `s3://research-stack/agent-receipts/`.
+
+### NixOS Devcontainer
+
+`.devcontainer/flake.nix`: hermetic NixOS environment with OpenGL/X11, pkg-config, openssl, full Python science stack, MCP servers for Notion and AWS.
+
+### Credential Gateway
+
+`4-Infrastructure/infra/credential_server.py`: apiProvider service kind, cupfox routing. EC2 recovery backup includes NixOS config and AppFlowy compose/env template.
 
 ---
 

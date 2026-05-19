@@ -831,15 +831,15 @@ def workUnitToDispatch (unit : WorkUnit) (gpuId : Nat) : AgentComputeDispatch :=
 -- §13  Eval Witnesses
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Witness: lifecycle state transitions are valid. -/
+/- Witness: lifecycle state transitions are valid. -/
 #eval (SpawnedSubagent.mk 1 none .coreBind .perDomain .pending "test" "cpu" none).stepForward .running
   -- Expected: some (agent with lifecycle = running)
 
-/-- Witness: illegal transition (completed → running) returns none. -/
+/- Witness: illegal transition (completed → running) returns none. -/
 #eval (SpawnedSubagent.mk 1 none .coreBind .perDomain .completed "test" "cpu" none).stepForward .running
   -- Expected: none
 
-/-- Witness: work-stealing pool basic operations. -/
+/- Witness: work-stealing pool basic operations. -/
 #eval
   let pool := WorkStealingPool.empty
   let unit := { unitId := 1, agentId := 1, domain := .coreBind, priority := Q16_16.one, description := "test", dependencies := [] }
@@ -848,13 +848,13 @@ def workUnitToDispatch (unit : WorkUnit) (gpuId : Nat) : AgentComputeDispatch :=
   (pool2.inFlightUnits.length, pool2.pendingUnits.length)
   -- Expected: (1, 0)
 
-/-- Witness: parallel orchestration with per-domain strategy. -/
+/- Witness: parallel orchestration with per-domain strategy. -/
 #eval
   let result := runParallelAnalysis currentSubagentSystem moduleRegistry .perDomain .keepHighest
   (result.totalAgentsSpawned, result.conflictsResolved, result.finalProposals.length)
   -- Expected: (number of domains, some conflict count, some proposal count)
 
-/-- Witness: cooperative merge keeps highest priority on conflict. -/
+/- Witness: cooperative merge keeps highest priority on conflict. -/
 #eval
   let p1 : ImprovementProposal :=
     { id := 1, targetModule := "Test", improvementType := .addTheorem, description := "low"

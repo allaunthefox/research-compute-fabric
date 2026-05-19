@@ -1,9 +1,19 @@
 mod bridge;
+mod compression;
+mod credential;
 mod embed;
+mod ene_core;
+mod fractal_fold;
+mod math;
+mod misc;
 mod models;
 mod normalize;
+mod s3c;
 mod sink;
 mod source;
+mod swarm;
+mod topology;
+mod wiki;
 
 use anyhow::Result;
 use clap::{Parser, Subcommand};

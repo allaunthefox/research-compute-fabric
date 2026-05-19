@@ -213,8 +213,10 @@ def hybridTSMBind (state : HybridTSMState) (action : HybridTSMAction) (dt : Q16_
 -- ═══════════════════════════════════════════════════════════════════════════
 
 theorem geneticScoreBounded (entropy genomicComplexity : Q16_16) (degeneracy : UInt32) :
-    let score := geneticOptimizationScore entropy genomicComplexity degeneracy
+    let score := geneticOptimizationScore entropy genomicComplexity degeneracy;
     Q16_16.ge score Q16_16.zero ∧ Q16_16.le score (Q16_16.mul entropy genomicComplexity) := by
+  -- TODO(lean-port): Prove genetic optimization score bounds.
+  sorry
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §5  Verification

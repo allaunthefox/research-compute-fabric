@@ -168,15 +168,19 @@ def torusBind (state : TorusTopologyState) (action : TorusAction) : TorusBind :=
 /-- Torus distance is symmetric -/
 theorem torusDistanceSymmetric (state : TorusTopologyState) (node1 node2 : TorusNode) :
     torusDistance state node1 node2 = torusDistance state node2 node1 := by
+  -- TODO(lean-port): Complete torus distance symmetry proof.
+  sorry
 
 /-- Torus diameter is sum of half dimensions -/
 theorem torusDiameterFormula (state : TorusTopologyState) :
     torusDiameter state = 0 -- Simplified theorem statement
                         := by
+  -- TODO(lean-port): Refine and prove correct diameter formula.
+  sorry
 
 /-- 5D torus node degree is always 10 -/
 theorem torusNodeDegreeConstant (state : TorusTopologyState) (node : TorusNode) :
-    nodeDegree state node = 10 := by
+    nodeDegree state node = 10 := rfl
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §5  Verification

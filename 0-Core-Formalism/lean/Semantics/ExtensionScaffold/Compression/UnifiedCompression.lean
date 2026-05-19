@@ -321,6 +321,13 @@ theorem nonSquarePulsePositiveMass (n : Nat) (hn : n < 65536) (h : ∀ k, n ≠ 
     rw [h_eq] at h_sub
     omega
   have hb_bound : (k + 1) * (k + 1) - n ≤ 511 := by
+    have h_le : (k + 1) * (k + 1) - n ≤ (k + 1) * (k + 1) - (k * k + 1) := by
+      apply Nat.sub_le_sub_left
+      omega
+    have h_eq : (k + 1) * (k + 1) - (k * k + 1) = 2 * k := by
+      simp [Nat.add_mul, Nat.mul_add]
+      omega
+    rw [h_eq] at h_le
     omega
   have h_prod_bound : (n - k * k) * ((k + 1) * (k + 1) - n) < UInt32.size := by
     norm_num [UInt32.size]
@@ -333,8 +340,7 @@ theorem nonSquarePulsePositiveMass (n : Nat) (hn : n < 65536) (h : ∀ k, n ≠ 
   have h_u32_pos : UInt32.ofNat ((n - k * k) * ((k + 1) * (k + 1) - n)) > 0 := by
     have h1 : (UInt32.ofNat ((n - k * k) * ((k + 1) * (k + 1) - n))).toNat
               = (n - k * k) * ((k + 1) * (k + 1) - n) := by
-      simp [UInt32.toNat_ofNat]
-      rw [Nat.mod_eq_of_lt h_prod_bound]
+      simp [UInt32.toNat_ofNat, Nat.mod_eq_of_lt h_prod_bound]
     have h2 : (0 : UInt32).toNat = 0 := by simp
     have h3 : (UInt32.ofNat ((n - k * k) * ((k + 1) * (k + 1) - n))).toNat > (0 : UInt32).toNat := by
       rw [h1, h2]

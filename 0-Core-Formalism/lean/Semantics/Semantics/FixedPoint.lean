@@ -263,19 +263,11 @@ def lt (a b : Q16_16) : Bool := a.toInt < b.toInt
     (a) the sum is in the positive range → result.toInt = a.val + b.val > 0, or
     (b) positive overflow → result = maxVal → toInt = 0x7FFFFFFF > 0.
     In both cases the result is > 0.
-    TODO(lean-port): Requires UInt32 ordering / overflow-case automation.
-    A native_decide witness on bounded values confirms the claim, but a
-    symbolic proof needs lemmas about UInt32 addition and two's-complement
-    bounds that are not in Mathlib 4.30. -/
+    TODO(lean-port): Requires UInt32.toNat_add_le and UInt32 ordering lemmas
+    not available in Mathlib 4.30. A native_decide witness on all 2^32×2^32
+    cases is infeasible; a symbolic proof needs a signed-integer model of
+    Q16_16.add that omega can reason about. -/
 theorem add_pos_of_pos (a b : Q16_16) (ha : a > 0) (hb : b > 0) : a + b > 0 := by
-  -- TODO(lean-port): BLOCKER — UInt32 ordering automation missing.
-  -- Needed: a > 0 means 0 < a.val < 0x80000000; b > 0 means 0 < b.val < 0x80000000.
-  -- Q16_16.add branches:
-  --   (1) Both < 0x80000000 and sum ≥ 0x80000000 → maxVal, toInt = 0x7FFFFFFF > 0.
-  --   (2) Both ≥ 0x80000000 → minVal, but this branch is unreachable (both are positive).
-  --   (3) Else → ⟨a.val + b.val⟩, and 0 < a.val + b.val < 0x80000000, so toInt > 0.
-  -- A proof would case-split on the if-conditions in `add` and use Nat/UInt32
-  -- ordering lemmas. `omega` does not handle UInt32 natAbs / toNat conversions.
   sorry
 
 def isNeg (q : Q16_16) : Bool := q.val ≥ 0x80000000

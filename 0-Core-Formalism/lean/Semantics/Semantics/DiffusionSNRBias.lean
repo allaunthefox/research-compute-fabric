@@ -24,6 +24,7 @@ Reference: alphaXiv.org/abs/2604.16044
 import Mathlib.Data.Nat.Basic
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Fin.Basic
+import Mathlib.Tactic
 
 namespace Semantics.DiffusionSNRBias
 
@@ -261,19 +262,26 @@ Preconditions needed for a full proof:
 -/
 theorem snrBoundedByModelParams (model : ReconstructionModel)
     (signalNorm : Q1616) (noiseFloor : Q1616)
-    (hNoisePos : noiseFloor.raw > 0) :
+    (hNoisePos : noiseFloor.raw > 0)
+    (hSignalNonneg : signalNorm.raw ≥ 0) :
     let xTheta0_signal := model.gamma_t * signalNorm
     let noise_contribution := model.phi_t * model.phi_t * noiseFloor
-    xTheta0_signal ≤ model.gamma_t * model.gamma_t * signalNorm := by
+    model.gamma_t * model.gamma_t * signalNorm ≤ xTheta0_signal := by
   intro xTheta0_signal _noise_contribution
   have hGammaSq : model.gamma_t * model.gamma_t ≤ Q1616.one := by
     rcases model.wf_gamma with ⟨_hpos, hle⟩
-    -- TODO(lean-port): need lemma: if γ.raw ≤ 65536 and γ.raw > 0 then γ*γ ≤ 1
-    -- in Q1616. Requires unfolding mul over Int division.
-    sorry
-  -- From this, gamma_t * signalNorm ≤ gamma_t^2 * signalNorm trivially
-  -- when signalNorm ≥ 0 (monotonic scaling).
-  -- TODO(lean-port): requires Q1616 lemmas for mul_le_mul_of_nonneg_right
+    -- Closed: if γ.raw ≤ 65536 then (γ.raw * γ.raw) / 65536 ≤ 65536 = Q1616.one.raw.
+    unfold HMul.hMul instHMul Q1616.instMul Q1616.mul Q1616.one LE.le Q1616.instLE
+    simp only []
+    have h : model.gamma_t.raw * model.gamma_t.raw ≤ 65536 * 65536 := by nlinarith
+    have h2 : model.gamma_t.raw * model.gamma_t.raw / 65536 ≤ 65536 * 65536 / 65536 :=
+      Int.ediv_le_ediv (by norm_num) h
+    norm_num at h2
+    exact h2
+  -- TODO(lean-port): BLOCKER — Q1616.mul monotonicity lemmas missing.
+  -- Goal: γ²·s ≤ γ·s  given γ² ≤ 1 and s ≥ 0.
+  -- Needs: Q1616.mul_le_mul_of_nonneg_right (a ≤ b → 0 ≤ c → a*c ≤ b*c)
+  -- and Q1616.mul_comm / mul_assoc. None exist in Mathlib 4.30.
   sorry
 
 end ReconstructionModel

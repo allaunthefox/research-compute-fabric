@@ -128,7 +128,7 @@ structure MlgruState where
     cT: candidate state (from ternary dot product, Q16_16). -/
 def mlgruStep (fT cT : Q16_16) (st : MlgruState) : MlgruState :=
   let termA  := Q16_16.mul fT st.hT                    -- fT · h_{t-1}
-  let oneMf := Q16_16.sub fT Q16_16.one                 -- 1 − fT
+  let oneMf := Q16_16.sub Q16_16.one fT                 -- 1 − fT
   let termB  := Q16_16.mul oneMf cT                    -- (1 − fT) · cT
   { hT := Q16_16.add termA termB, hPrev := st.hT }
 
@@ -495,17 +495,20 @@ theorem aciPreservedByMlgruStep {N : Nat} (H : BettiSwooshH N)
   have hPrev := hPrevACI e he
   have hCand := hCandidateACI e he
   have hUnif := hForgetUniform e he
-  -- TODO(lean-port): Requires Q16_16 lemmas:
-  --   1. sub_eq_add_neg: a - b = a + (-b)
-  --   2. abs_sub_le: |a - b| ≤ |a - c| + |c - b|
-  --   3. mul_comm, mul_assoc for Q16_16
-  --   4. add_comm to reorder terms
-  --   5. |f| ≤ 1 for forget gate f in [0,1]
-  -- With these, the algebraic steps in the doc comment become:
-  --   Q16_16.abs( h_i' - h_j' )
-  --   = |f·h_i + (1-f)·c_i - f·h_j - (1-f)·c_j|
-  --   ≤ f·|h_i - h_j| + (1-f)·|c_i - c_j|
-  --   ≤ f·ε + (1-f)·ε = ε
+  -- TODO(lean-port): BLOCKER — multiple Q16_16 algebraic lemmas are missing
+  -- even after fixing the mlgruStep sign error (oneMf now correctly = 1 − f).
+  --
+  -- Needed lemmas for the ACI bound proof:
+  --   (1) Q16_16.abs_add_le : |a + b| ≤ |a| + |b|
+  --       — triangle inequality for saturating UInt32 arithmetic; not in Mathlib.
+  --   (2) Q16_16.mul_abs_le : 0 ≤ f.toInt → f ≤ Q16_16.one →
+  --         Q16_16.abs (f * x) ≤ Q16_16.abs x
+  --       — monotone scaling by f ∈ [0,1]; needs signed-int bridge for UInt32 mul.
+  --   (3) Q16_16.abs_sub_comm, Q16_16.add_assoc, Q16_16.mul_comm
+  --       — basic algebraic identities for saturating arithmetic; none proved.
+  --   (4) Q16_16.one_sub_le_one : 0 ≤ (Q16_16.one - f).toInt for f ≤ Q16_16.one
+  --       — sign bound on (1−f); requires signed model.
+  -- None of these lemmas exist in the current Lean 4 / Mathlib 4.30 stack.
   sorry
 
 

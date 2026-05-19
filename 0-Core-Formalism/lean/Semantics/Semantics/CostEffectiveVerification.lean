@@ -63,10 +63,13 @@ def groupByOperator (manifold : BehavioralManifold) (operatorId : String) : Arra
   manifold.points.filter (fun p => p.operator.id = operatorId)
 
 /-- Cost-effective verification target theorem:
-    TODO(lean-port): manifoldGroupsOntologicallyDifferentSystems requires
-    a concrete manifold population and an executable witness for the group
-    crossing claim. Currently axiomatized as a structural placeholder. -/
-theorem manifoldGroupsOntologicallyDifferentSystems (manifold : BehavioralManifold) (operatorId : String) :
+    Given that the manifold contains two points with the same operatorId but
+    different system domains (cross-domain diversity hypothesis), the group
+    filtered by that operatorId witnesses ontological difference. -/
+theorem manifoldGroupsOntologicallyDifferentSystems (manifold : BehavioralManifold) (operatorId : String)
+    (h_diverse : ∃ p1 ∈ manifold.points, ∃ p2 ∈ manifold.points,
+        p1.operator.id = operatorId ∧ p2.operator.id = operatorId ∧
+        p1.system.domain ≠ p2.system.domain) :
   let group := groupByOperator manifold operatorId
   group.size > 1 →
   ∃ p1 p2 : BehavioralPoint,
@@ -74,14 +77,25 @@ theorem manifoldGroupsOntologicallyDifferentSystems (manifold : BehavioralManifo
     p2 ∈ group ∧
     ontologicallyDifferent p1 p2 ∧
     shareSameOperator p1 p2 := by
-  -- TODO(lean-port): this claim is not a tautology — a group filtered by
-  -- operatorId can contain two points with the same domain, which would make
-  -- `ontologicallyDifferent` false. The statement requires additional
-  -- hypotheses (e.g., that the manifold was populated with cross-domain
-  -- diversity) and an executable witness for that population.  Currently
-  -- there is no formal constructor for a cross-domain manifold, so the
-  -- existence proof cannot be discharged from the type alone.
-  sorry
+  simp only []
+  intro _hsize
+  -- Unpack the cross-domain diversity hypothesis
+  obtain ⟨p1, hp1_mem, p2, hp2_mem, hid1, hid2, hdiff⟩ := h_diverse
+  -- Both points pass the operatorId filter, so they are in group
+  have hp1_group : p1 ∈ groupByOperator manifold operatorId := by
+    simp [groupByOperator, Array.mem_filter]
+    exact ⟨hp1_mem, hid1⟩
+  have hp2_group : p2 ∈ groupByOperator manifold operatorId := by
+    simp [groupByOperator, Array.mem_filter]
+    exact ⟨hp2_mem, hid2⟩
+  -- ontologicallyDifferent follows from different domains
+  have h_onto : ontologicallyDifferent p1 p2 = true := by
+    simp [ontologicallyDifferent]
+    exact hdiff
+  -- shareSameOperator follows from matching operatorId
+  have h_share : shareSameOperator p1 p2 = true := by
+    simp [shareSameOperator, hid1, hid2]
+  exact ⟨p1, p2, hp1_group, hp2_group, h_onto, h_share⟩
 /-
   Commented out axiom — replaced with sorry + TODO(lean-port):
   the predicates ontologicallyDifferent and shareSameOperator are defined but

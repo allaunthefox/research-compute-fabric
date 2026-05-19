@@ -153,10 +153,25 @@ theorem lawful_preserves_non_negative_surplus (state : QFactorState) (action : Q
     let bind := qFactorBind state action
     bind.energySurplus ≥ zero := by
   intro bind
-  -- TODO(lean-port): requires Q16_16 arithmetic lemmas.
-  -- The Q16_16 instance uses saturating add/sub over UInt32,
-  -- which makes standard algebraic lemmas inapplicable.
-  -- Need: add/sub preserve non-negativity when deltas are reasonable.
+  -- TODO(lean-port): BLOCKER — Q16_16 saturating arithmetic lacks algebraic lemmas.
+  --
+  -- Goal after unfolding:
+  --   (energySurplus (updateEnergyBalance state.balance action)).val.toInt ≥ 0
+  -- where energySurplus b = (b.flashEnergy + b.enthalpy + b.recoveredEnergy)
+  --                       - (b.demonWork + b.workEnergy + b.energyLoss)
+  -- and updateEnergyBalance adds the action deltas to each field.
+  --
+  -- Needed lemmas (all about Q16_16 / UInt32 saturating arithmetic):
+  --   (1) Q16_16.add_nonneg : a ≥ zero → b ≥ zero → a + b ≥ zero
+  --       — blocked by saturating add over UInt32 not having a signed-interpretation lemma.
+  --   (2) Q16_16.sub_nonneg_of_le : a ≥ b → a - b ≥ zero
+  --       — the two's-complement sub in Q16_16 doesn't have this stated in Mathlib.
+  --   (3) isQFactorActionLawful's lossReasonable / recoveredReasonable guards are
+  --       phrased in terms of Q16_16 comparisons (toInt), but connecting them to
+  --       the raw UInt32 arithmetic in add/sub requires additional bridge lemmas.
+  --
+  -- Until Q16_16 has a verified signed-integer model with signed-monotone lemmas,
+  -- this proof cannot be closed by existing automation.
   sorry
 
 /--

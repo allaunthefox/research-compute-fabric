@@ -192,19 +192,27 @@ theorem famm_merge_preserves_cost (a b : FAMMCell) :
   Q16_16.add a.delayMass b.delayMass = (fammCellMerge a b).delayMass := by
   simp [fammCellMerge]
 
-/-- Proof target: total causal cost is preserved by level merge.
-    For equal-sized levels: pairwise additive merge preserves total.
-    For unequal: residual cells double their delayMass (causal depth premium).
-    Full proof requires induction on cell count. -/
-theorem total_causal_cost_invariant_target (a b : MMRLevel) :
+/-- Proof target: total causal cost is preserved by level merge for equal-size levels.
+    When a.cells.size = b.cells.size there are no residual cells, so the merge
+    is purely pairwise.  For unequal sizes the residual cells are doubled
+    (causal depth premium), so the claim would be FALSE as an equality.
+    TODO(lean-port): the equal-size equality holds by construction but the
+    formal proof requires:
+      (1) Array.foldl induction over the pairwise-merged array built via
+          List.range + Array.push;
+      (2) Q16_16 saturating-add distributivity over pairwise sums, which
+          holds because sat_fold(merge(a,b)) and
+          sat_add(sat_fold(a), sat_fold(b)) both saturate at the same
+          Q16_16.maxVal boundary — but this requires a lemma not yet in the
+          Lean 4 Mathlib port.
+    Quarantined until Array.foldl + Q16_16 sat-add distribution lemmas exist. -/
+theorem total_causal_cost_invariant_target (a b : MMRLevel)
+    (h_eq : a.cells.size = b.cells.size) :
   Q16_16.add (totalCausalCost a) (totalCausalCost b) = totalCausalCost (mmrLevelMerge a b) := by
-  -- TODO(lean-port): proof requires induction on Array cell counts.
-  -- For equal-size levels the pairwise merge is additive, but for unequal
-  -- sizes the residual cells are doubled (causal depth premium), so the
-  -- claim as stated is actually false for unequal-size levels.
-  -- A correct invariant would be: total ≤ mergedTotal ≤ 2 * total.
-  -- Full correctness proof needs Array.foldl induction lemmas and
-  -- Q16_16.add associativity / commutativity, neither of which exists yet.
+  -- TODO(lean-port): requires Array.foldl induction over pairwise merge and
+  -- Q16_16 saturating-add distribution.  Both sides are numerically equal for
+  -- all tested concrete inputs (#eval witnesses above), but the abstract proof
+  -- awaits Array.getD_foldl and Q16_16.add_foldl_distrib lemmas.
   sorry
 
 /-- The merge operation never decreases the depth (monotonic). -/

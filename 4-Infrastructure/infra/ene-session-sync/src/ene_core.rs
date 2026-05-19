@@ -6,7 +6,7 @@
 use anyhow::{anyhow, Context};
 use base64::engine::general_purpose::STANDARD as B64;
 use base64::Engine as _;
-use rusqlite::{params, Connection};
+use rusqlite::{params, Connection, OptionalExtension};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::path::{Path, PathBuf};

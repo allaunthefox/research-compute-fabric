@@ -673,9 +673,10 @@ impl ENEWikiLayer {
         let existing: Vec<String> = {
             let mut stmt = conn
                 .prepare("PRAGMA table_info(ene_wiki_revisions)")?;
-            stmt.query_map([], |row| row.get::<_, String>(1))?
+            let cols: Vec<String> = stmt.query_map([], |row| row.get::<_, String>(1))?
                 .filter_map(|r| r.ok())
-                .collect()
+                .collect();
+            cols
         };
         for (col, decl) in &extra_cols {
             if !existing.contains(&col.to_string()) {

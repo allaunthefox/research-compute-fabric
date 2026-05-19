@@ -15,6 +15,7 @@ use sha2::{Digest, Sha256};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
+use crate::s3c;
 
 // ═════════════════════════════════════════════════════════════════════════════
 // §1  TiddlyWiki ENE Bridge
@@ -510,6 +511,8 @@ impl ServoFetchAdapter {
         };
 
         let timeout = tokio::time::Duration::from_secs(task.timeout_secs.max(1));
+        // `wait_with_output` consumes child; capture id first for timeout handling.
+        let child_id = child.id();
         let output = tokio::time::timeout(timeout, child.wait_with_output()).await;
 
         let elapsed_ms = start.elapsed().as_millis() as u64;
@@ -548,8 +551,12 @@ impl ServoFetchAdapter {
                 elapsed_ms,
             },
             Err(_) => {
-                // Timeout — kill the child process best-effort.
-                let _ = child.kill().await;
+                // Timeout — best-effort kill via process id.
+                if let Some(pid) = child_id {
+                    let _ = std::process::Command::new("kill")
+                        .arg(pid.to_string())
+                        .status();
+                }
                 WebResult {
                     task_id: task.task_id.clone(),
                     success: false,
@@ -791,9 +798,9 @@ impl S3CIterativeImprover {
         let (emission_ratio, avg_j_total, throat_ratio) = if total == 0 {
             (0.0_f64, 0.0_f64, 0.0_f64)
         } else {
-            let emitted_count = states.iter().filter(|s| s.emitted).count();
-            let throat_count = states.iter().filter(|s| s.a == s.b).count();
-            let j_sum: f64 = states.iter().map(|s| s.j_total as f64).sum();
+            let emitted_count = states.iter().filter(|s| s.emit).count();
+            let throat_count = states.iter().filter(|s| s.handles.handle_a == s.handles.handle_b).count();
+            let j_sum: f64 = states.iter().map(|s| s.j_score.total as f64).sum();
 
             (
                 emitted_count as f64 / total as f64,

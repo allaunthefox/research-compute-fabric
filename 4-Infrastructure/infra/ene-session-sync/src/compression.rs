@@ -327,13 +327,17 @@ impl DeltaGclService {
         manifest_id: &str,
         use_delta: bool,
     ) -> CompressionResult {
-        let previous = if use_delta {
-            self.previous_manifests.get(manifest_id)
-        } else {
-            None
+        let (encoded, had_previous) = {
+            let previous = if use_delta {
+                self.previous_manifests.get(manifest_id)
+            } else {
+                None
+            };
+            let had = previous.is_some();
+            let enc = delta_gcl_encode(manifest, previous);
+            (enc, had)
         };
 
-        let encoded = delta_gcl_encode(manifest, previous);
         let original_json = serde_json::to_string(manifest).unwrap_or_default();
         let original_size = original_json.len();
         let compressed_size = encoded.len();
@@ -357,7 +361,7 @@ impl DeltaGclService {
             original_size,
             compressed_size,
             reduction_percent: reduction,
-            use_delta: previous.is_some(),
+            use_delta: had_previous,
             verified,
             verification_error,
         }
@@ -486,7 +490,7 @@ impl AdaptiveDeltaGcl {
                 } else {
                     let changed = shared
                         .iter()
-                        .filter(|k| cur.get(*k) != prev.get(*k))
+                        .filter(|k| cur.get(k.as_str()) != prev.get(k.as_str()))
                         .count();
                     changed as f64 / shared.len() as f64
                 }

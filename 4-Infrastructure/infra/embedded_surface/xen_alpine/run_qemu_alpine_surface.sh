@@ -17,14 +17,11 @@ HOST_PORT="${HOST_PORT:-18081}"
 GUEST_PORT="${GUEST_PORT:-8080}"
 MEMORY_MB="${MEMORY_MB:-256}"
 TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-120}"
-SURFACE_IMPL="${SURFACE_IMPL:-python}"
+SURFACE_IMPL="${SURFACE_IMPL:-rust}"
 STATIC_BIN="${STATIC_BIN:-$HERE/build/rs-surface-static}"
 NOLIBC_BIN="${NOLIBC_BIN:-$HERE/build/rs-surface-nolibc}"
-if [ "$SURFACE_IMPL" = "static" ] || [ "$SURFACE_IMPL" = "nolibc" ]; then
-  BOOT_PKGS="${BOOT_PKGS:-ca-certificates}"
-else
-  BOOT_PKGS="${BOOT_PKGS:-python3,ca-certificates}"
-fi
+RUST_BIN="${RUST_BIN:-$(cd "$HERE/.." && pwd)/rs-surface/target/x86_64-unknown-linux-musl/release/rs-surface}"
+BOOT_PKGS="${BOOT_PKGS:-ca-certificates}"
 
 mkdir -p "$ASSET_DIR" "$APKOVL_DIR" "$LOG_DIR"
 
@@ -68,7 +65,9 @@ EOF
     test -x "$NOLIBC_BIN"
     cp "$NOLIBC_BIN" "$APKOVL_DIR/root/opt/rs-surface/rs-surface-nolibc"
   else
-    cp "$SURFACE_ROOT/server.py" "$APKOVL_DIR/root/opt/rs-surface/server.py"
+    # Default: Rust binary (musl-static build from rs-surface/)
+    test -x "$RUST_BIN"
+    cp "$RUST_BIN" "$APKOVL_DIR/root/opt/rs-surface/rs-surface"
   fi
   cp "$SURFACE_ROOT/profiles/xen-alpine-surface.json" "$APKOVL_DIR/root/etc/rs-surface/node.json"
 
@@ -96,17 +95,14 @@ EOF
     cat > "$APKOVL_DIR/root/opt/rs-surface/boot-rs-surface.sh" <<'EOF'
 #!/bin/sh
 set -eu
-echo "rs-surface qemu bootstrap starting" >&2
-if ! command -v python3 >/dev/null 2>&1; then
-  apk add --no-cache python3 ca-certificates >&2
-fi
+echo "rs-surface (Rust) qemu bootstrap starting" >&2
 mkdir -p /var/lib/rs-surface /var/log/rs-surface /run/rs-surface /mnt/topological-storage
 export RS_SURFACE_PROFILE="${RS_SURFACE_PROFILE:-/etc/rs-surface/node.json}"
 export RS_SURFACE_STATE="${RS_SURFACE_STATE:-/var/lib/rs-surface}"
 export RS_SURFACE_MOUNT="${RS_SURFACE_MOUNT:-/mnt/topological-storage}"
 export RS_SURFACE_HOST="${RS_SURFACE_HOST:-0.0.0.0}"
 export RS_SURFACE_PORT="${RS_SURFACE_PORT:-8080}"
-exec python3 /opt/rs-surface/server.py
+exec /opt/rs-surface/rs-surface
 EOF
   fi
 

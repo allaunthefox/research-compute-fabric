@@ -689,8 +689,8 @@ mod tests {
         let dist = all_pairs_distances(&g);
         let (_, avg) = diameter_and_avg(&dist);
         // Finite non-zero distances for chain A→B→C→D:
-        // A→B=1, A→C=2, A→D=3 → sum=6, count=3, avg=2.0
-        assert!((avg - 2.0).abs() < 1e-9);
+        // A→B=1, A→C=2, A→D=3, B→C=1, B→D=2, C→D=1 → sum=10, count=6, avg=10/6
+        assert!((avg - 10.0 / 6.0).abs() < 1e-9);
     }
 
     // ── §5 Curvature ──────────────────────────────────────────────────────────

@@ -25,12 +25,15 @@ echo "=== Deploying credential server to ${VM_IP} ==="
 # Create directories
 $SSH "mkdir -p /opt/rs-surface /etc/rs-surface"
 
-# Copy Python modules
-echo "Uploading credential_provider.py..."
-$SCP "$REPO_ROOT/4-Infrastructure/infra/credential_provider.py" ${VM_USER}@${VM_IP}:/opt/rs-surface/credential_provider.py
-
-echo "Uploading credential_server.py..."
-$SCP "$REPO_ROOT/4-Infrastructure/infra/credential_server.py" ${VM_USER}@${VM_IP}:/opt/rs-surface/credential_server.py
+# Upload rs-surface binary (credential endpoint is served by rs-surface on /credentials)
+RS_SURFACE_BIN="$REPO_ROOT/4-Infrastructure/infra/embedded_surface/rs-surface/target/x86_64-unknown-linux-musl/release/rs-surface"
+if [ ! -x "$RS_SURFACE_BIN" ]; then
+  echo "ERROR: rs-surface binary not found at $RS_SURFACE_BIN — build it first with:"
+  echo "  cd $REPO_ROOT/4-Infrastructure/infra/embedded_surface/rs-surface && cargo build --release --target x86_64-unknown-linux-musl"
+  exit 1
+fi
+echo "Uploading rs-surface binary..."
+$SCP "$RS_SURFACE_BIN" ${VM_USER}@${VM_IP}:/opt/rs-surface/rs-surface
 
 # Copy credentials config
 CRED_JSON="/tmp/rs-credentials.json"
@@ -65,10 +68,12 @@ Wants=network-online.target
 Type=simple
 User=root
 WorkingDirectory=/opt/rs-surface
-ExecStart=/usr/bin/python3 /opt/rs-surface/credential_server.py --port 8444 --bind 0.0.0.0
+ExecStart=/opt/rs-surface/rs-surface
 Restart=always
 RestartSec=5
 Environment=RS_CREDENTIAL_CONFIG=/etc/rs-surface/credentials.json
+Environment=RS_SURFACE_PORT=8444
+Environment=RS_SURFACE_HOST=0.0.0.0
 
 [Install]
 WantedBy=multi-user.target

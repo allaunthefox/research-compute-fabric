@@ -11,7 +11,7 @@ RUN_DIR="${RUN_DIR:-/run/rs-surface}"
 MOUNT_DIR="${MOUNT_DIR:-/mnt/topological-storage}"
 SOURCE_ROOT="${SOURCE_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
 PROFILE_SRC="${PROFILE_SRC:-$SOURCE_ROOT/profiles/xen-alpine-surface.json}"
-SERVER_SRC="${SERVER_SRC:-$SOURCE_ROOT/server.py}"
+SERVER_SRC="${SERVER_SRC:-$SOURCE_ROOT/rs-surface/target/x86_64-unknown-linux-musl/release/rs-surface}"
 SERVICE_SRC="${SERVICE_SRC:-$(cd "$(dirname "$0")" && pwd)/rs-surface.openrc}"
 
 need_root() {
@@ -23,7 +23,7 @@ need_root() {
 
 install_packages() {
   if command -v apk >/dev/null 2>&1; then
-    apk add --no-cache python3 ca-certificates >/dev/null
+    apk add --no-cache ca-certificates >/dev/null
   fi
 }
 
@@ -38,11 +38,12 @@ ensure_user() {
 
 install_surface() {
   test -f "$SERVER_SRC"
+  test -x "$SERVER_SRC"
   test -f "$PROFILE_SRC"
   test -f "$SERVICE_SRC"
 
   mkdir -p "$INSTALL_ROOT" "$CONFIG_DIR" "$STATE_DIR" "$LOG_DIR" "$RUN_DIR" "$MOUNT_DIR"
-  install -m 0755 "$SERVER_SRC" "$INSTALL_ROOT/server.py"
+  install -m 0755 "$SERVER_SRC" "$INSTALL_ROOT/rs-surface"
   install -m 0644 "$PROFILE_SRC" "$CONFIG_DIR/node.json"
   install -m 0755 "$SERVICE_SRC" /etc/init.d/rs-surface
   chown -R "$SERVICE_USER:$SERVICE_GROUP" "$STATE_DIR" "$LOG_DIR" "$RUN_DIR" "$MOUNT_DIR"
@@ -62,7 +63,7 @@ enable_service
 
 cat <<EOF
 installed rs-surface
-  server:  $INSTALL_ROOT/server.py
+  server:  $INSTALL_ROOT/rs-surface
   profile: $CONFIG_DIR/node.json
   service: /etc/init.d/rs-surface
 

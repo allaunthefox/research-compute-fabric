@@ -12,10 +12,12 @@ Wants=network-online.target
 Type=simple
 User=root
 WorkingDirectory=/opt/rs-surface
-ExecStart=/run/current-system/sw/bin/python3 /opt/rs-surface/credential_server.py --port 8444 --bind 0.0.0.0
+ExecStart=/opt/rs-surface/rs-surface
 Restart=always
 RestartSec=5
 Environment=RS_CREDENTIAL_CONFIG=/etc/rs-surface/credentials.json
+Environment=RS_SURFACE_PORT=8444
+Environment=RS_SURFACE_HOST=0.0.0.0
 Environment=RS_CREDENTIAL_SERVER=http://100.101.247.127:8444
 Environment=RS_SURFACE_NODE_ID=aws-nixos-node-1
 

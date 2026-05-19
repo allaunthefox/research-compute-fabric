@@ -448,25 +448,26 @@ impl ENEAPIHook {
     ) -> anyhow::Result<Option<String>> {
         let conn = self.connect()?;
 
-        let result: Option<(String, String, i64, String, Option<String>)> = {
+        let result: Option<(String, String, String, i64, String, Option<String>)> = {
             let mut stmt = conn.prepare(
-                "SELECT encrypted_payload, nonce, classification, integrity_hash, access_log
+                "SELECT encrypted_payload, nonce, pkg, classification, integrity_hash, access_log
                  FROM sensitive_data WHERE id = ?1",
             )?;
             stmt.query_row(params![data_id], |row| {
                 Ok((
                     row.get::<_, String>(0)?,
                     row.get::<_, String>(1)?,
-                    row.get::<_, i64>(2)?,
-                    row.get::<_, String>(3)?,
-                    row.get::<_, Option<String>>(4)?,
+                    row.get::<_, String>(2)?,
+                    row.get::<_, i64>(3)?,
+                    row.get::<_, String>(4)?,
+                    row.get::<_, Option<String>>(5)?,
                 ))
             })
             .optional()
             .context("query sensitive_data by id")?
         };
 
-        let (enc_payload, nonce, class_int, stored_hash, access_log_raw) = match result {
+        let (enc_payload, nonce, pkg, class_int, stored_hash, access_log_raw) = match result {
             Some(row) => row,
             None => return Ok(None),
         };
@@ -486,12 +487,8 @@ impl ENEAPIHook {
             "nonce":      nonce,
         });
 
-        // We stored `pkg` as AAD but we only have data_id here; use empty aad
-        // as the fallback (the stored `aad` field in the envelope will be used
-        // if present, but we wrote `pkg` as AAD without embedding it).  To
-        // keep decrypt deterministic, pass empty bytes — the stored envelope
-        // aad field (absent in the old path) takes precedence in decrypt_with_key.
-        let plaintext_bytes = self.security.decrypt(&envelope, b"")?;
+        // Use pkg as AAD — matches what store_sensitive_data passed to encrypt.
+        let plaintext_bytes = self.security.decrypt(&envelope, pkg.as_bytes())?;
         let plaintext = String::from_utf8(plaintext_bytes)
             .context("decrypted data is not valid UTF-8")?;
 

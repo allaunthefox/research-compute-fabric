@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SERVICE_NAME="${SERVICE_NAME:-rs-surface-api.service}"
-CURRENT_SERVER="${CURRENT_SERVER:-/opt/rs-surface/current/server.py}"
+CURRENT_SERVER="${CURRENT_SERVER:-/opt/rs-surface/current/rs-surface}"
 CURRENT_PROFILE="${CURRENT_PROFILE:-/etc/rs-surface/node.json}"
 STATE_DIR="${STATE_DIR:-/var/lib/rs-surface}"
 MOUNT_DIR="${MOUNT_DIR:-/mnt/topological-storage}"
@@ -14,12 +14,12 @@ HEALTH_URL="${HEALTH_URL:-http://127.0.0.1:8080/health}"
 usage() {
   cat <<'USAGE'
 Usage:
-  gcl_edge_in_place_upgrade.sh upgrade <server.py> <node.json>
+  gcl_edge_in_place_upgrade.sh upgrade <rs-surface-binary> <node.json>
   gcl_edge_in_place_upgrade.sh rollback <rollback-dir>
 
 Environment overrides:
   SERVICE_NAME      systemd service to restart, default rs-surface-api.service
-  CURRENT_SERVER    installed server path, default /opt/rs-surface/current/server.py
+  CURRENT_SERVER    installed server path, default /opt/rs-surface/current/rs-surface
   CURRENT_PROFILE   installed profile path, default /etc/rs-surface/node.json
   STATE_DIR         surface state dir, default /var/lib/rs-surface
   MOUNT_DIR         topology mount dir, default /mnt/topological-storage
@@ -60,8 +60,8 @@ validate_inputs() {
   local profile_src="$2"
 
   test -f "$server_src"
+  test -x "$server_src"
   test -f "$profile_src"
-  python3 -m py_compile "$server_src"
   python3 -m json.tool "$profile_src" >/dev/null
 }
 
@@ -87,7 +87,7 @@ smoke_test_candidate() {
     RS_SURFACE_MOUNT="$MOUNT_DIR" \
     RS_SURFACE_HOST="$TEMP_HOST" \
     RS_SURFACE_PORT="$TEMP_PORT" \
-    python3 "$server_src" >/tmp/rs-surface-upgrade-smoke.log 2>&1 &
+    "$server_src" >/tmp/rs-surface-upgrade-smoke.log 2>&1 &
   pid="$!"
 
   for _ in 1 2 3 4 5; do
@@ -106,7 +106,7 @@ save_current() {
   local rollback_dir="$1"
   mkdir -p "$rollback_dir"
   if [ -f "$CURRENT_SERVER" ]; then
-    install -m 0755 "$CURRENT_SERVER" "$rollback_dir/server.py"
+    install -m 0755 "$CURRENT_SERVER" "$rollback_dir/rs-surface"
   fi
   if [ -f "$CURRENT_PROFILE" ]; then
     install -m 0644 "$CURRENT_PROFILE" "$rollback_dir/node.json"
@@ -126,12 +126,12 @@ EOF
 restore_from() {
   local rollback_dir="$1"
   test -d "$rollback_dir"
-  test -f "$rollback_dir/server.py"
+  test -f "$rollback_dir/rs-surface"
   test -f "$rollback_dir/node.json"
 
   install -d -m 0755 "$(dirname "$CURRENT_SERVER")"
   install -d -m 0755 "$(dirname "$CURRENT_PROFILE")"
-  install -m 0755 "$rollback_dir/server.py" "$CURRENT_SERVER"
+  install -m 0755 "$rollback_dir/rs-surface" "$CURRENT_SERVER"
   install -m 0644 "$rollback_dir/node.json" "$CURRENT_PROFILE"
   systemctl daemon-reload
   systemctl restart "$SERVICE_NAME"

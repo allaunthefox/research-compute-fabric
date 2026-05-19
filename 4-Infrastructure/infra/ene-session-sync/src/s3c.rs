@@ -29,7 +29,7 @@ pub struct ShellCoords {
     pub b: u32,
     /// Intersection form a · b.
     pub mass: u32,
-    /// Shell width a + b + 1 = 2k + 1.
+    /// Shell width a + b = 2k + 1.
     pub width: u32,
 }
 
@@ -48,7 +48,7 @@ pub fn shell_decomposition(n: u32) -> ShellCoords {
         a,
         b,
         mass: a * b,
-        width: a + b + 1,
+        width: a + b,
     }
 }
 
@@ -600,18 +600,18 @@ mod tests {
 
     #[test]
     fn test_shell_decomp_perfect_square() {
-        // n = 9 = 3² → k=3, a=0, b=1
+        // n = 9 = 3²: k=3, a=0, b=(4²-9)=7, mass=0, width=a+b=7=2k+1
         let s = shell_decomposition(9);
         assert_eq!(s.k, 3);
         assert_eq!(s.a, 0);
-        assert_eq!(s.b, 1);
+        assert_eq!(s.b, 7);
         assert_eq!(s.mass, 0);
         assert_eq!(s.width, 2 * 3 + 1);
     }
 
     #[test]
     fn test_shell_decomp_midpoint() {
-        // n = 6 = 2² + 2; k=2, a=2, b=(9-6)=3
+        // n = 6 = 2² + 2: k=2, a=2, b=(9-6)=3, mass=6, width=5=2*2+1
         let s = shell_decomposition(6);
         assert_eq!(s.k, 2);
         assert_eq!(s.a, 2);
@@ -635,7 +635,7 @@ mod tests {
         for n in 0u32..=1000 {
             let s = shell_decomposition(n);
             assert_eq!(s.width, 2 * s.k + 1, "n={}", n);
-            assert_eq!(s.a + s.b, 2 * s.k, "n={}", n);
+            assert_eq!(s.a + s.b, 2 * s.k + 1, "n={}", n);
         }
     }
 

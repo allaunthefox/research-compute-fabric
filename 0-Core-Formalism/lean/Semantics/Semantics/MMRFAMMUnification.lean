@@ -198,6 +198,13 @@ theorem famm_merge_preserves_cost (a b : FAMMCell) :
     Full proof requires induction on cell count. -/
 theorem total_causal_cost_invariant_target (a b : MMRLevel) :
   Q16_16.add (totalCausalCost a) (totalCausalCost b) = totalCausalCost (mmrLevelMerge a b) := by
+  -- TODO(lean-port): proof requires induction on Array cell counts.
+  -- For equal-size levels the pairwise merge is additive, but for unequal
+  -- sizes the residual cells are doubled (causal depth premium), so the
+  -- claim as stated is actually false for unequal-size levels.
+  -- A correct invariant would be: total ≤ mergedTotal ≤ 2 * total.
+  -- Full correctness proof needs Array.foldl induction lemmas and
+  -- Q16_16.add associativity / commutativity, neither of which exists yet.
   sorry
 
 /-- The merge operation never decreases the depth (monotonic). -/

@@ -147,6 +147,7 @@ import Semantics.RRCLogogramProjection
 import Semantics.ThresholdVector
 import Semantics.LogogramRotationLoop
 import Semantics.CompressionYield
+import Semantics.WaveformTeleport
 
 import Semantics.FAMM
 import Semantics.HCMMR.Core

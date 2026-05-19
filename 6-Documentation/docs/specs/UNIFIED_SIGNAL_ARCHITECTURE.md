@@ -3,6 +3,12 @@
 **Status:** Architecture — bridges 3 deployed hardware pathways into one texel state machine
 **Deployed components:** HDMI shell, PipeWire waveprobe chain, DSP reconfiguration, braid DSP bridge
 
+> **FPGA column (Tang Nano 9K) is LONG-TERM only.**
+> The DisplayPort and PipeWire Audio columns are active/deployed.
+> FPGA bring-up (bitstream synthesis, UART beacon, live hardware receipt) is deferred
+> until the Lean → Verilog extraction pipeline is complete (Phase 6 of ROADMAP).
+> Do not treat the FPGA column as a current dependency or near-term deliverable.
+
 ## Architecture
 
 ```

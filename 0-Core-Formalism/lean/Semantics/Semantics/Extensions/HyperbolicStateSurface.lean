@@ -61,6 +61,10 @@ theorem ko_preserves_hyperbola (s : HyperState) (Δu : Q16_16)
     (_h : onHyperbola s) : onHyperbola (forwardStep s Δu) := by
   unfold onHyperbola forwardStep
   simp
+  -- TODO(lean-port): closing this requires a formal proof that
+  -- Q16_16.sqrt (x² - c²) satisfies (sqrt r)² = r up to 1 LSB rounding;
+  -- the current Q16_16.sqrt is an iterative Newton approximation with no
+  -- proved error bound in the formal system.
   sorry
 
 /-- The Ko rule: u > 0 and Δu > 0 ⇒ u' = u + Δu > 0.
@@ -70,7 +74,9 @@ theorem ko_rule_prevents_branch_crossing (s : HyperState)
     (forwardStep s Δu).u > 0 := by
   unfold forwardStep
   simp
-  -- TODO(lean-port): need lemma Q16_16.add_pos_of_pos
+  -- TODO(lean-port): requires Q16_16.add_pos_of_pos: for Q16_16 saturating
+  -- add over UInt32, proving a > 0 → b > 0 → a + b > 0 needs careful
+  -- case analysis on overflow; no such lemma exists in FixedPoint.lean yet.
   sorry
 
 /-- Backward retrieval: grow the DAG depth without shrinking forward depth. -/
@@ -189,6 +195,10 @@ theorem asyncFlowPreservesInvariance {n : Nat} (mesh : MeshNetwork n) (nodeIdx :
     let mesh' := asyncLocalFlow mesh nodeIdx Δu
     ∀ i : Fin n, onHyperbola (mesh'.nodes.get i) := by
   intro mesh' i
+  -- TODO(lean-port): this theorem depends on ko_preserves_hyperbola, which
+  -- itself requires a formal Q16_16.sqrt error-bound lemma. Until
+  -- ko_preserves_hyperbola is closed, this proof cannot be completed.
+  -- Additionally, Vector.set / Vector.get interaction needs a get_set lemma.
   sorry
 
 end HyperbolicStateSurface

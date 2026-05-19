@@ -142,7 +142,7 @@ The full loop adds security gates (AngrySphinx exponential gate #3, FAMM frustra
 
 - Lean 4 → Rust extraction for all 36 substrates
 - Lean 4 → C extraction for embedded targets
-- Lean 4 → Verilog extraction for FPGA targets
+- Lean 4 → Verilog extraction for FPGA targets *(LONG-TERM — prerequisite for all FPGA bring-up; Tang Nano 9K, iCE40, ECP5 hardware targets deferred until this phase completes)*
 - Universal GENSIS compiler with auto substrate selection
 - Cross-substrate benchmark suite
 - **PCIe Idle-Cycle Compute Harvester:** Formalize a substrate for scheduling computation on idle PCIe bus cycles (GPU, NVMe, DMA controller). Target: a `pcie_idle` substrate that observes bus transaction gaps, dispatches hash/verify kernels into those slots via scatter-gather DMA descriptors, and guarantees zero impact on user-facing transactions. Reference implementation: Windows SMB hash worker using RTX 4070 GPU as PCIe-attached compute engine with IDLE priority + background I/O + EcoQoS, checkpointed via DAG for kill-safe resume.

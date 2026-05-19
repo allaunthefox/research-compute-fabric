@@ -47,6 +47,9 @@ def q16ToQ0 (x : Q16_16) : Q0_16 :=
     error is bounded by 2^-15 in practice. -/
 theorem roundTripQ0 (x : Q0_16) :
     q16ToQ0 (q0ToQ16 x) = x := by
+  -- TODO(lean-port): conversion path goes through Float intermediates
+  -- (Q0_16.toFloat / Q16_16.ofFloat); exact equality is unprovable without
+  -- formalising Float rounding semantics. Quantisation error ≤ 2^-15.
   sorry
 
 /-- Round-trip conversion: Q16_16 → Q0_16 → Q16_16 preserves value for normalized range.
@@ -55,6 +58,9 @@ theorem roundTripQ0 (x : Q0_16) :
     q16ToQ0 and q0ToQ16 prevents exact equality with current automation. -/
 theorem roundTripQ16 (x : Q16_16) (h : x.val.toNat ≤ 0x00010000 ∨ x.val.toNat ≥ 0xFFFF0000) :
     q0ToQ16 (q16ToQ0 x) = x := by
+  -- TODO(lean-port): the Float path through q16ToQ0 / q0ToQ16 makes exact
+  -- equality unprovable without a Float rounding model; a proper proof would
+  -- work over the integer bit-widths directly, bypassing Float entirely.
   sorry
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -67,6 +73,9 @@ theorem roundTripQ16 (x : Q16_16) (h : x.val.toNat ≤ 0x00010000 ∨ x.val.toNa
     ordering reasoning not currently available in the automation stack. -/
 theorem q0ToQ16_mono (a b : Q0_16) (h : a.val < b.val) :
     (q0ToQ16 a).toInt < (q0ToQ16 b).toInt := by
+  -- TODO(lean-port): monotonicity through the Float-based q0ToQ16 requires
+  -- Float ordering lemmas (Float.ofInt injective on finite UInt16 range) that
+  -- are not available in the current Lean 4 / Mathlib automation stack.
   sorry
 
 /-- Conversion preserves order for normalized values: if a < b in Q16_16 (normalized),
@@ -79,6 +88,9 @@ theorem q16ToQ0_mono (a b : Q16_16)
     (hb : b.val.toNat ≤ 0x00010000 ∨ b.val.toNat ≥ 0xFFFF0000)
     (h : a.toInt < b.toInt) :
     (q16ToQ0 a).val < (q16ToQ0 b).val := by
+  -- TODO(lean-port): monotonicity of q16ToQ0 requires that Float.ofInt /
+  -- Float.round preserves strict order on the normalised Q16_16 subset;
+  -- Float ordering reasoning is not automated in the current stack.
   sorry
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -91,6 +103,9 @@ theorem q16ToQ0_mono (a b : Q16_16)
     the naive addition after Float-based conversions. -/
 theorem addCommutesWithConversion (a b : Q0_16) :
     q0ToQ16 (Q0_16.add a b) = Q16_16.add (q0ToQ16 a) (q0ToQ16 b) := by
+  -- TODO(lean-port): additive homomorphism via Float intermediates requires
+  -- proving Float.add commutes with UInt16/UInt32 wrap-around addition;
+  -- Q16_16.add uses saturating arithmetic which further complicates the proof.
   sorry
 
 /-- Multiplication scales appropriately: q0ToQ16 (a * b) ≈ (q0ToQ16 a * q0ToQ16 b) / 65536.
@@ -99,6 +114,9 @@ theorem addCommutesWithConversion (a b : Q0_16) :
     and Q16_16 (shift 16). -/
 theorem mulScalesWithConversion (a b : Q0_16) :
     q0ToQ16 (Q0_16.mul a b) = Q16_16.div (Q16_16.mul (q0ToQ16 a) (q0ToQ16 b)) Q16_16.one := by
+  -- TODO(lean-port): multiplicative scaling through Float intermediates
+  -- requires reasoning about the Q0_16 shift-15 vs Q16_16 shift-16 factor;
+  -- both mul and div go through Float, making this unprovable by automation.
   sorry
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -110,6 +128,9 @@ theorem mulScalesWithConversion (a b : Q0_16) :
     would require proving that ofFloat 0.0 = zero for both types. -/
 theorem q0ToQ16_zero :
     q0ToQ16 Q0_16.zero = Q16_16.zero := by
+  -- TODO(lean-port): requires proving Q16_16.ofFloat 0.0 = Q16_16.zero;
+  -- Float.ofInt 0 / 32767.0 = 0.0, but ofFloat 0.0 * 65536.0 → round → UInt32
+  -- is not proved by simp/decide because Float is opaque at compile time.
   sorry
 
 /-- Q0_16 one maps to Q16_16 one via Float-based conversion.
@@ -118,6 +139,10 @@ theorem q0ToQ16_zero :
     mathematical value but not the literal bit pattern. -/
 theorem q0ToQ16_one :
     q0ToQ16 Q0_16.one = Q16_16.one := by
+  -- TODO(lean-port): Q0_16.one = 0x7FFF ≈ 0.999985, not exactly 1.0;
+  -- after scaling by 65536.0 and rounding, the result is 0xFFFF0000 ≠
+  -- Q16_16.one (0x00010000). The claim is numerically false as stated;
+  -- it would need a relaxed ≈ or a corrected conversion factor.
   sorry
 
 /-- Conversion commutes with negation: q0ToQ16 (-x) = -(q0ToQ16 x).
@@ -125,6 +150,8 @@ theorem q0ToQ16_one :
     commute through the ofFloat/toFloat pipeline. -/
 theorem q0ToQ16_neg (x : Q0_16) :
     q0ToQ16 (-x) = -(q0ToQ16 x) := by
+  -- TODO(lean-port): commutativity of negation with Float-based conversion
+  -- requires Float.neg linearity lemmas not yet in the automation stack.
   sorry
 
 /-- Conversion commutes with absolute value: q0ToQ16 |x| = |q0ToQ16 x|.
@@ -132,6 +159,9 @@ theorem q0ToQ16_neg (x : Q0_16) :
     commute through the conversion pipeline. -/
 theorem q0ToQ16_abs (x : Q0_16) :
     q0ToQ16 (Q0_16.abs x) = Q16_16.abs (q0ToQ16 x) := by
+  -- TODO(lean-port): commutativity of abs with Float-based conversion requires
+  -- Float.abs linearity; Q16_16.abs and Q0_16.abs both use bit-masking on
+  -- unsigned types making algebraic reasoning non-trivial with current tactics.
   sorry
 
 -- ═══════════════════════════════════════════════════════════════════════════

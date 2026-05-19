@@ -131,7 +131,7 @@ structure NeuralRGModel where
 -/
 structure MMIPHypothesis where
   convergence (info : InformationConstraint) (beta : BetaFunction) :
-    info.mutualInfo = zero → beta.isFixedPoint
+    info.mutualInfo = zero → beta.flowVel = zero
 
 -- ============================================================
 -- 4. MANIFOLD GEOMETRY

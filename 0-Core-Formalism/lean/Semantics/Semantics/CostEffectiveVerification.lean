@@ -37,18 +37,18 @@ structure BehavioralPoint where
   system : OntologicalSystem
   operator : BehavioralOperator
   vector : Array ℝ  -- 31D behavioral vector
-  deriving Repr, Inhabited
+  deriving Inhabited
 
 /-- Domain-weighted distance between two behavioral points -/
-def domainWeightedDistance (p1 p2 : BehavioralPoint) : ℝ :=
+noncomputable def domainWeightedDistance (p1 p2 : BehavioralPoint) : ℝ :=
   let weight := if p1.system.domain = p2.system.domain then 1.0 else 0.5
-  let diff := (p1.vector.zip p2.vector).foldl (fun acc (v1, v2) => acc + Real.abs (v1 - v2)) 0
+  let diff := (p1.vector.zip p2.vector).foldl (fun acc (v1, v2) => acc + |v1 - v2|) 0
   weight * diff
 
 /-- A manifold that groups systems by behavioral similarity -/
 structure BehavioralManifold where
   points : Array BehavioralPoint
-  deriving Repr, Inhabited
+  deriving Inhabited
 
 /-- Check if two systems share the same behavioral operator -/
 def shareSameOperator (p1 p2 : BehavioralPoint) : Bool :=
@@ -74,6 +74,13 @@ theorem manifoldGroupsOntologicallyDifferentSystems (manifold : BehavioralManifo
     p2 ∈ group ∧
     ontologicallyDifferent p1 p2 ∧
     shareSameOperator p1 p2 := by
+  -- TODO(lean-port): this claim is not a tautology — a group filtered by
+  -- operatorId can contain two points with the same domain, which would make
+  -- `ontologicallyDifferent` false. The statement requires additional
+  -- hypotheses (e.g., that the manifold was populated with cross-domain
+  -- diversity) and an executable witness for that population.  Currently
+  -- there is no formal constructor for a cross-domain manifold, so the
+  -- existence proof cannot be discharged from the type alone.
   sorry
 /-
   Commented out axiom — replaced with sorry + TODO(lean-port):
@@ -100,7 +107,7 @@ structure AlternativeHypothesis where
   deriving Repr, Inhabited
 
 /-- A verification experiment to test the hypotheses -/
-struct VerificationExperiment where
+structure VerificationExperiment where
   eventBudget : Nat
   oneProjectionYield : Nat
   threeProjectionYield : Nat
@@ -119,8 +126,7 @@ def testHypothesis (exp : VerificationExperiment) : Bool :=
 theorem cheapestVerificationTarget (exp : VerificationExperiment) :
     testHypothesis exp →
     exp.threeProjectionYield > exp.oneProjectionYield := by
-  intro h
-  exact h
+  simp [testHypothesis]
 /-
   Commented out axiom — replaced with direct proof (definitional):
   testHypothesis exp := exp.threeProjectionYield > exp.oneProjectionYield

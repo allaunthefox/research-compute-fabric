@@ -319,49 +319,47 @@ theorem mul_zero (a : Q16_16) : a * zero = zero := by
 
 /-- a - a = zero -/
 theorem sub_self (a : Q16_16) : sub a a = zero := by
-  ext
-  simp [sub, zero]
-  have hsub0 : a.val - a.val = (0 : UInt32) := by
-    apply UInt32.ext; simp
-  simp [hsub0]
-  by_cases h : a.val < (0x80000000 : UInt32)
-  · have hnge : ¬ a.val ≥ (0x80000000 : UInt32) := by
-      intro hge; exact Nat.lt_irrefl _ (Nat.lt_of_lt_of_le h hge)
-    simp [h, hnge]
-  · have hge : a.val ≥ (0x80000000 : UInt32) := Nat.le_of_not_lt h
-    simp [h, hge]
+  cases a with | mk av =>
+  simp only [sub, zero]
+  -- a.val - a.val = 0; neither overflow condition fires since d = 0 < 0x80000000
+  -- and av < 0x80000000 is possible, but av ≥ 0x80000000 && d < 0x80000000 needs check
+  have hd : av - av = (0 : UInt32) := by apply UInt32.ext; simp
+  simp only [hd]
+  by_cases h : av < (0x80000000 : UInt32)
+  · have hn : ¬ av ≥ (0x80000000 : UInt32) := Nat.not_le.mpr h
+    simp [h, hn]
+  · have hge : av ≥ (0x80000000 : UInt32) := Nat.le_of_not_lt h
+    have hzlt : (0 : UInt32) < (0x80000000 : UInt32) := by native_decide
+    have hnlt : ¬ (0 : UInt32) ≥ (0x80000000 : UInt32) := by native_decide
+    simp [h, hge, hzlt, hnlt]
 
 /-- a + zero = a (right-additive identity, holds for all signed values). -/
 theorem add_zero (a : Q16_16) : add a zero = a := by
-  ext
-  simp [add, zero]
-  have hadd0 : a.val + (0 : UInt32) = a.val := by
-    apply UInt32.ext; simp
-  have h0_lt_8 : (0 : UInt32) < (0x80000000 : UInt32) := by native_decide
-  have hn0_ge_8 : ¬ (0 : UInt32) ≥ (0x80000000 : UInt32) := by native_decide
-  simp [hadd0, h0_lt_8, hn0_ge_8]
-  by_cases h : a.val < (0x80000000 : UInt32)
-  · have hnge : ¬ a.val ≥ (0x80000000 : UInt32) := by
-      intro hge; exact Nat.lt_irrefl _ (Nat.lt_of_lt_of_le h hge)
-    simp [h, hnge]
-  · have hge : a.val ≥ (0x80000000 : UInt32) := Nat.le_of_not_lt h
-    simp [h, hge]
+  cases a with | mk av =>
+  simp only [add, zero]
+  have hadd0 : av + (0 : UInt32) = av := by apply UInt32.ext; simp
+  have h0lt : (0 : UInt32) < (0x80000000 : UInt32) := by native_decide
+  have h0nge : ¬ (0 : UInt32) ≥ (0x80000000 : UInt32) := by native_decide
+  simp only [hadd0, h0lt, h0nge]
+  by_cases h : av < (0x80000000 : UInt32)
+  · have hn : ¬ av ≥ (0x80000000 : UInt32) := Nat.not_le.mpr h
+    simp [h, hn]
+  · have hge : av ≥ (0x80000000 : UInt32) := Nat.le_of_not_lt h
+    simp [h, hge, hadd0]
 
 /-- zero + a = a (left-additive identity). -/
 theorem zero_add (a : Q16_16) : add zero a = a := by
-  ext
-  simp [add, zero]
-  have hadd0 : (0 : UInt32) + a.val = a.val := by
-    apply UInt32.ext; simp
-  have h0_lt_8 : (0 : UInt32) < (0x80000000 : UInt32) := by native_decide
-  have hn0_ge_8 : ¬ (0 : UInt32) ≥ (0x80000000 : UInt32) := by native_decide
-  simp [hadd0, h0_lt_8, hn0_ge_8]
-  by_cases h : a.val < (0x80000000 : UInt32)
-  · have hnge : ¬ a.val ≥ (0x80000000 : UInt32) := by
-      intro hge; exact Nat.lt_irrefl _ (Nat.lt_of_lt_of_le h hge)
-    simp [h, hnge]
-  · have hge : a.val ≥ (0x80000000 : UInt32) := Nat.le_of_not_lt h
-    simp [h, hge]
+  cases a with | mk av =>
+  simp only [add, zero]
+  have hadd0 : (0 : UInt32) + av = av := by apply UInt32.ext; simp
+  have h0lt : (0 : UInt32) < (0x80000000 : UInt32) := by native_decide
+  have h0nge : ¬ (0 : UInt32) ≥ (0x80000000 : UInt32) := by native_decide
+  simp only [hadd0, h0lt, h0nge]
+  by_cases h : av < (0x80000000 : UInt32)
+  · have hn : ¬ av ≥ (0x80000000 : UInt32) := Nat.not_le.mpr h
+    simp [h, hn]
+  · have hge : av ≥ (0x80000000 : UInt32) := Nat.le_of_not_lt h
+    simp [h, hge, hadd0]
 
 /-- sqrt of zero is zero. -/
 theorem sqrt_zero : sqrt zero = zero := by
@@ -420,19 +418,29 @@ theorem epsilon_add_pos {r : Q16_16} (hr : r.toInt ≥ 0) :
   | mk rv =>
     have hrv_lt : rv < (0x80000000 : UInt32) := by
       by_contra! hge
-      have : toInt (mk rv) < 0 := by
-        have h_lt_full : rv.toNat < 4294967296 := UInt32.toNat_lt rv
-        simp [toInt, hge]
-        omega
+      -- When rv ≥ 0x80000000, toInt is negative; contradicts hr ≥ 0
+      have hlt_full : rv.toNat < 4294967296 := UInt32.toNat_lt rv
+      have h8 : (0x80000000 : UInt32).toNat = 2147483648 := by native_decide
+      have hge_nat : 2147483648 ≤ rv.toNat := by simpa [h8] using hge
+      have h64 : rv.toUInt64.toNat = rv.toNat := UInt32.toNat_toUInt64 rv
+      have hge' : rv ≥ (0x80000000 : UInt32) := Nat.le_of_not_lt hge
+      have hti_neg : (Q16_16.mk rv).toInt < 0 := by
+        unfold toInt
+        simp only [show (Q16_16.mk rv).val = rv from rfl, h64]
+        split_ifs with hcond
+        · -- True branch: rv ≥ 0x80000000
+          -- goal: (rv.toNat : Int) - 0x100000000 < 0
+          have hnat : (rv.toNat : Int) < 4294967296 := by exact_mod_cast hlt_full
+          norm_num; linarith
       linarith
     have h1_lt_8 : (1 : UInt32) < (0x80000000 : UInt32) := by native_decide
     have h_nge_8 : ¬ rv ≥ (0x80000000 : UInt32) := by
       intro hge; exact Nat.lt_irrefl _ (Nat.lt_of_lt_of_le hrv_lt hge)
     simp [add, epsilon, toInt, hrv_lt, h1_lt_8, h_nge_8]
     by_cases h_ov : rv + (1 : UInt32) ≥ (0x80000000 : UInt32)
-    · simp [h_ov, maxVal, toInt]
+    · simp only [h_ov, maxVal, ite_true]
       native_decide
-    · simp [h_ov, toInt]
+    · simp only [h_ov, ite_false]
       have h_no_wrap : (rv + (1 : UInt32)).toNat = rv.toNat + 1 := by
         have h_lt_max : rv.toNat + 1 < 4294967296 := by
           have h_rv_nat : rv.toNat < 2147483648 := by

@@ -236,10 +236,10 @@ After starting, pending shrinks (non-increasing).
 -/
 theorem startTask_pending_non_increasing (queue : RcloneTaskQueue) (taskId : String) :
     (queue.startTask taskId).pending.length ≤ queue.pending.length := by
-  unfold RcloneTaskQueue.startTask
-  -- TODO(lean-port): List.partition length lemmas not available in this version.
-  -- The remaining (non-matching) part of partition has length ≤ original.
-  sorry
+  simp only [RcloneTaskQueue.startTask, List.partition_eq_filter_filter]
+  -- After simp, the pending field becomes (filter (not ∘ p) queue.pending).
+  -- filter_sublist states that (filter p l) is a sublist of l.
+  exact List.Sublist.length_le List.filter_sublist
 
 /--
 Completing a task adds one entry to completed results.

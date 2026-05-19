@@ -122,7 +122,7 @@ theorem fammBindReflexive (bank : FAMMBank) (mode : FAMMAccessMode) (address : N
     (fammBind bank mode address).lawful = (fammBind bank mode address).lawful := by
   rfl
 
-/-- MORE FAMM Architecture Integration
+/- MORE FAMM Architecture Integration
     
     The unified architecture requires capability-based memory isolation
     and thermal management for safe operation. These extensions integrate
@@ -134,7 +134,7 @@ structure FAMMCapabilityCell where
   data : Q16_16
   delay : Q16_16
   owner : UInt8           -- Segment ID (capability-based access)
-  accessRights : UInt4    -- READ | WRITE | PRUNE | EXECUTE
+  accessRights : UInt8    -- READ | WRITE | PRUNE | EXECUTE
   delayMass : Q16_16
   delayWeight : Q16_16
 
@@ -183,7 +183,7 @@ deriving Repr, Inhabited
 def fammMetadataCollapse (bank : FAMMThermalBank) : FAMMCollapsedState :=
   { cellCount := bank.cells.size,
     bannedCount := 0,  -- TODO: Track pruned cells
-    energySignature := bank.cells.foldl (λ acc cell => acc + cell.delayMass) Q16_16.ofInt 0,
+    energySignature := bank.cells.foldl (λ acc cell => acc + cell.delayMass) Q16_16.zero,
     thermalResidual := bank.thermalBudget - bank.currentStress,
     ownerSegment := 0 }  -- TODO: Per-segment ownership
 

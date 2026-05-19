@@ -1,6 +1,6 @@
 # Sovereign Research Stack — Authoritative Roadmap
 
-> **This is the single authoritative roadmap.** Other roadmap files (`docs/roadmaps/UNIVERSAL_SUBSTRATE_ROADMAP.md`, `docs/roadmaps/RESEARCH_STACK_FOREST_MAP_WATERFALL.md`) are retained for historical reference. Task-level granularity lives in `TODO_MAP.md` at the repository root.
+> **This is the single authoritative roadmap.** `docs/roadmaps/RESEARCH_STACK_FOREST_MAP_WATERFALL.md` is retained for historical reference. `docs/roadmaps/UNIVERSAL_SUBSTRATE_ROADMAP.md` no longer exists on disk (contents absorbed into this file). Task-level granularity lives in `TODO_MAP.md` at the repository root (note: TODO_MAP.md may lag the current state; this roadmap is the authoritative source).
 
 **Framework:** USTSM (Universal Substrate Topological State Machine)
 **Timeline:** 7 phases / 7 months
@@ -11,7 +11,7 @@
 
 ## 1. The Core Idea
 
-The Sovereign Research Stack is a formalized system where Lean 4 is the single source of truth, all computation is Q16.16 fixed-point (with Q0_64 scalars as the universal interface), and architectural invariants derive from cross-domain equation analysis spanning 2,634 mathematical models across 40+ families. Every transformation must declare what changed, what survived, what was lost, what it cost, at what scale, and what receipt proves it. This is not an opinionated workflow — it is a receipt-bounded law stack (GCCL) executed by a manifold compression engine (MISC) generalized to n-dimensional genetic shells (GENSIS), all unified under one substrate machine (USTSM). The operational goal is a hardware-extractable formal kernel with FPGA-verified invariants and Lean-proven correctness.
+The Sovereign Research Stack is a formalized system where Lean 4 is the single source of truth, all computation is Q16.16 fixed-point (with Q0_64 scalars as the universal interface), and architectural invariants derive from cross-domain equation analysis spanning 1,126 ingested equation rows across 40+ families (source: `shared-data/data/ingested_datasets/2026-05-18/equations.csv`; the previously cited "2,634 models" figure was unverified and has been retracted). Every transformation must declare what changed, what survived, what was lost, what it cost, at what scale, and what receipt proves it. This is not an opinionated workflow — it is a receipt-bounded law stack (GCCL) executed by a manifold compression engine (MISC) generalized to n-dimensional genetic shells (GENSIS), all unified under one substrate machine (USTSM). The operational goal is a hardware-extractable formal kernel with FPGA-verified invariants and Lean-proven correctness.
 
 ---
 
@@ -73,13 +73,16 @@ The full loop adds security gates (AngrySphinx exponential gate #3, FAMM frustra
 
 ## 5. Master Timeline — Phases 0–7
 
-### Phase 0 — Unification (Month 1) | **Status: IN PROGRESS**
+### Phase 0 — Unification (Month 1) | **Status: IN PROGRESS (infrastructure bootstrapped; USTSM Lean type pending)**
 
-- Define `USTSM_State` as discriminated union of all 36 substrate states
+Infrastructure plumbing completed: ENE private connector, Graph.lean authority, Obsidian+Neo4j connector, ENE RDS 8-crate Rust workspace, ene-session-sync crate (26 modules, 145 tests passing).
+
+Lean formalization not yet started:
+- Define `USTSM_State` as discriminated union of all 36 substrate states *(type does not yet exist in Lean)*
 - Implement USTSM kernel (scalar → gate → route → transition → assess → update → check)
 - Implement `reductionFilter` for every substrate (state → Q0_64)
 - Prove cross-substrate resonances (mass = entropy = scalar)
-- **Forest Map absorption:** Lock authority and substrate plumbing (Forest Phase 0), including ENE private connector, Graph.lean authority, Obsidian+Neo4j connector
+- **Forest Map absorption:** Lock authority and substrate plumbing (Forest Phase 0) — infrastructure complete; Lean DAG tables created (DDL committed), data population pending
 
 ### Phase 1 — Primordial Substrates (Month 2) | **Status: PARTIAL (some Lean exists)**
 
@@ -107,7 +110,9 @@ The full loop adds security gates (AngrySphinx exponential gate #3, FAMM frustra
 - STDP weight update as GWL coupling replacement
 - **Forest Map absorption:** Semantic Number Pattern Search (Forest Phase 3), COUCH coupling degeneracy fix (Forest Phase 4)
 
-### Phase 4 — Thermodynamic & Security (Month 3–4, parallel) | **Status: PARTIAL (AngrySphinx in Lean)**
+### Phase 4 — Thermodynamic & Security (Month 3–4, concurrent with Phases 2–3) | **Status: PARTIAL (AngrySphinx in Lean)**
+
+> **Note:** Phase 4 runs concurrently with Phases 2–3. AngrySphinx Lean work can proceed independently of the geometric substrate proofs.
 
 - Trixal State Carnot efficiency in Q0_64
 - Homeostatic Governor fixed point theorem in Q0_64
@@ -168,9 +173,9 @@ The full loop adds security gates (AngrySphinx exponential gate #3, FAMM frustra
 | **4** | Frustration Monotonicity | FAMM | Triadic frustration F < threshold; frustration never spontaneously decreases without route resolution |
 | **5** | Homeostatic Fixed Point | Homeostatic Governor | `|γ + s'(p*)| < 1`; stable equilibrium pressure where surprise + regret balance decay |
 | **6** | Cognitive Load Decomposition | Cognitive Router | `L_total = λ_I·L_I + λ_E·L_E − λ_G·L_G + λ_R·L_R + λ_M·L_M`; strategy selected minimizes total load |
-| **7** | Q0_64 Scalar Universality | Q0_64 / USTSM | Every substrate state reduces to a Q0_64 scalar ∈ [0,1); scalar is the universal communication primitive |
+| **7** | Scalar Universality | Q0_64 / USTSM *(design goal)* | Every substrate state shall reduce to a dimensionless scalar ∈ [0,1); scalar is the universal inter-substrate communication primitive. **Current state:** Q0_64 type not yet in Lean; existing `bind` primitive uses Q16_16 for all cost and gradient computation (as required by `Bind.lean`: "all values require integer component for gradient computation"). Q0_64 universality is a Phase 0–1 deliverable, not a current enforced fact. |
 
-All 7 invariants are enforced by the USTSM kernel on every transition. No substrate is exempt.
+Invariants 1–6 are partially enforced by existing Lean code. Invariant 7 is a Phase 0–1 design target — the USTSM kernel that would enforce it on every transition does not yet exist.
 
 ---
 
@@ -199,8 +204,8 @@ All 7 invariants are enforced by the USTSM kernel on every transition. No substr
 |------|---------|
 | `0-Core-Formalism/lean/Semantics/` | **Source of truth.** All Lean 4 formalizations, theorems, invariants |
 | `0-Core-Formalism/lean/Semantics/Foundations/` | F01–F12 foundation kernel definitions (Shannon, Carnot, Landauer, etc.) |
-| `0-Core-Formalism/lean/Semantics/Semantics/` | Domain modules: PIST, FAMM, AngrySphinx, Burgers, GWL, Q16_16, FixedPoint |
-| `4-Infrastructure/infra/` | Infrastructure shims (Python): ENE distributed node, surface server |
+| `0-Core-Formalism/lean/Semantics/Semantics/` | Domain modules: 946+ entries including PIST, FAMM, AngrySphinx, Burgers (7 files), GWL, Q16_16, FixedPoint, HCMMR, FNWH subdirs, and many more |
+| `4-Infrastructure/infra/` | Infrastructure shims (Rust): ENE distributed node (`ene-session-sync` 26-module crate, 145 tests), `rs-surface` Axum HTTP daemon; Python shims removed |
 | `5-Applications/out/verilog/` | FPGA RTL (Verilog): Tang Nano 9K router, sim testbenches, bitstreams |
 | `5-Applications/scripts/` | Python tools: formula canonicalizer, P9 query, compression demos |
 | `6-Documentation/docs/` | All documentation: roadmaps, research theory, semantics specs, AGENTS.md |
@@ -263,7 +268,7 @@ No promotion without domain-appropriate evidence. Compression claims require SI 
 | **L4 Security** | 🔄 Partial | AngrySphinx Lean exists; Anti-FAMM + Anti-BraidStorm adversarial harnesses added; 16D anchor packs operational; 20+ gate library entries added |
 | **L5 Semantic** | 🔄 Partial | RRC equation projection receipt exists; 278 surfaces projected, 249 HOLD pending scale-band/negative-control witnesses |
 | **L6 Meta** | 🔄 Partial | Cognitive load receipts exist; connectome-protective overflow needs Lean witness surface |
-| **FPGA Hardware** | ✅ Synthesized | Tang Nano 9K: Yosys pass (614 cells), P&R pass (162 MHz), bitstream (2 MB) |
+| **FPGA Hardware** | 🔄 Bitstream ready | Tang Nano 9K: Yosys pass (614 cells), P&R pass (162 MHz), bitstream (2 MB) generated. **Live hardware receipt pending** — physical board + programmer required to flash and verify LED/UART behavior (see action #8 below) |
 | **Surface** | 📋 TODO | FastAPI/WebSocket skeleton spec'd in TODO_MAP Phase F |
 | **Integration** | 📋 TODO | Lean→Verilog extraction, equivalence checking spec'd |
 
@@ -275,13 +280,13 @@ No promotion without domain-appropriate evidence. Compression claims require SI 
 5. Bootstrap Garage replication (cupfox-4gb-2cpu + nixos nodes → replication_factor=3)
 6. UART packet format design (start byte + 3-byte payload + checksum)
 7. Create `4-Infrastructure/surface/` FastAPI skeleton
-8. Flash Tang Nano 9K with generated bitstream; verify LED behavior
+8. Flash Tang Nano 9K with generated bitstream; verify LED behavior *(blocked: requires physical Tang Nano 9K board + USB programmer attached to host)*
 
 ---
 
 ## 11. Substrate Census Summary
 
-The USTSM unifies all 36 substrates across 7 abstraction levels. Every substrate has: state space, metric, transition function, invariant, guard, Q0_64 reduction, and AngrySphinx gate compatibility. For the complete census table, see `docs/roadmaps/UNIVERSAL_SUBSTRATE_ROADMAP.md` §1.
+The USTSM design targets 36 substrates across 7 abstraction levels. Every substrate will have: state space, metric, transition function, invariant, guard, Q0_64 reduction, and AngrySphinx gate compatibility. The substrate census file (`UNIVERSAL_SUBSTRATE_ROADMAP.md`) no longer exists on disk; the list below captures the key substrates for active work. Full census reconstruction is a Phase 0 deliverable.
 
 **Key substrates for current work:**
 - #1 (PIST/DIAT Shell): mass conservation, Burgers energy Lyapunov
@@ -335,7 +340,7 @@ Data flow: `git commit → post-commit hook → restic snap → Garage:research-
 
 ### Credential Gateway
 
-`4-Infrastructure/infra/credential_server.py`: apiProvider service kind, cupfox routing. EC2 recovery backup includes NixOS config and AppFlowy compose/env template.
+Credential endpoint is served by the `rs-surface` Rust binary (`/credentials` route, port 8444) on each node. The Python `credential_server.py` has been removed — all credential logic is now in the `credential.rs` module of `ene-session-sync`. Deploy scripts (`recover_credential_server.sh`, `nixos-setup-cred-server.sh`) updated to launch the binary. EC2 recovery backup includes NixOS config and AppFlowy compose/env template.
 
 ---
 

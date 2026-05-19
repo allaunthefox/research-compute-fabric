@@ -1,0 +1,28 @@
+[Unit]
+Description=Storage agent — observe / optimize / act (restic + Garage + rclone)
+After=network-online.target garage.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=allaun
+
+# Load Garage credentials at runtime (never committed)
+EnvironmentFile=/etc/garage/garage.env
+
+# Include user-local bin in PATH so aws cli and restic are found
+Environment="PATH=/home/allaun/.local/bin:/usr/local/bin:/usr/bin:/bin"
+
+# Map GARAGE_* → AWS_* before the Python script runs
+ExecStart=/bin/bash -c '\
+    export AWS_ACCESS_KEY_ID="$GARAGE_ACCESS_KEY_ID"; \
+    export AWS_SECRET_ACCESS_KEY="$GARAGE_SECRET_ACCESS_KEY"; \
+    export AWS_DEFAULT_REGION=garage; \
+    export AWS_ENDPOINT_URL=http://localhost:3900; \
+    export RESTIC_REPOSITORY=s3:http://localhost:3900/research-stack; \
+    export RESTIC_PASSWORD_FILE=/etc/garage/restic-password; \
+    exec python3 "/home/allaun/Research Stack/4-Infrastructure/storage/storage_agent.py" --once'
+
+StandardOutput=append:/home/allaun/.cache/storage-agent.log
+StandardError=append:/home/allaun/.cache/storage-agent.log
+TimeoutStartSec=30min

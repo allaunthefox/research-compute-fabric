@@ -1,0 +1,15 @@
+[Unit]
+Description=Storage agent — 15-minute observation + corrective-action timer
+Documentation=file:///home/allaun/Research Stack/4-Infrastructure/storage/storage_agent.py
+
+[Timer]
+# Fire every 15 minutes.  RandomizedDelaySec spreads load when multiple nodes
+# eventually run this (±60 s jitter so they don't all probe Garage at once).
+OnCalendar=*:0/15
+RandomizedDelaySec=60
+# Persistent=true: if the machine was off at a scheduled fire time, catch up
+# once on next boot rather than skipping silently.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

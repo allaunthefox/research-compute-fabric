@@ -1,4 +1,5 @@
 import Std
+import Mathlib.Data.Vector.Basic
 import Semantics.FixedPoint
 
 /-! # HyperbolicStateSurface.lean — The DAG as Hyperbolic Geometry
@@ -47,6 +48,11 @@ structure HyperState where
 def onHyperbola (s : HyperState) : Prop :=
   s.u * s.u - s.v * s.v = s.c * s.c
 
+/-- Approximate hyperbola membership: |u² - v² - c²| ≤ ε.
+    Needed because Q16_16.sqrt is a Newton approximation with rounding error. -/
+def onHyperbolaApprox (s : HyperState) (ε : Q16_16) : Prop :=
+  Q16_16.abs (s.u * s.u - s.v * s.v - s.c * s.c) ≤ ε
+
 /-- Forward step: move along upper branch.
     Δu > 0.  v adjusts via fixed-point sqrt to keep u² - v² = c². -/
 def forwardStep (s : HyperState) (Δu : Q16_16) : HyperState :=
@@ -54,17 +60,18 @@ def forwardStep (s : HyperState) (Δu : Q16_16) : HyperState :=
   let v' := Q16_16.sqrt (u' * u' - s.c * s.c)
   { s with u := u', v := v' }
 
-/-- TODO(lean-port): formal sqrt error bound ≤ 1 LSB for Q16_16.sqrt
-    is needed before `ko_preserves_hyperbola` can be closed.
-    Currently the invariant holds up to the fixed-point rounding of sqrt. -/
-theorem ko_preserves_hyperbola (s : HyperState) (Δu : Q16_16)
-    (_h : onHyperbola s) : onHyperbola (forwardStep s Δu) := by
-  unfold onHyperbola forwardStep
-  simp
-  -- TODO(lean-port): closing this requires a formal proof that
-  -- Q16_16.sqrt (x² - c²) satisfies (sqrt r)² = r up to 1 LSB rounding;
-  -- the current Q16_16.sqrt is an iterative Newton approximation with no
-  -- proved error bound in the formal system.
+/-- Q16_16.sqrt has rounding error; exact hyperbola preservation is false.
+    We state approximate preservation up to one epsilon (1 LSB).
+    TODO(lean-port): needs a formal Q16_16.sqrt error-bound lemma. -/
+theorem ko_preserves_hyperbola_approx (s : HyperState) (Δu : Q16_16) :
+    onHyperbolaApprox s Q16_16.epsilon →
+    onHyperbolaApprox (forwardStep s Δu) Q16_16.epsilon := by
+  intro h
+  unfold onHyperbolaApprox forwardStep
+  simp [Q16_16.abs, Q16_16.epsilon] at h ⊢
+  -- Closing this requires a formal proof that Q16_16.sqrt satisfies
+  -- (sqrt r)² = r up to 1 LSB rounding; the current implementation uses
+  -- Float.sqrt with no proved error bound in the formal system.
   sorry
 
 /-- The Ko rule: u > 0 and Δu > 0 ⇒ u' = u + Δu > 0.
@@ -74,10 +81,7 @@ theorem ko_rule_prevents_branch_crossing (s : HyperState)
     (forwardStep s Δu).u > 0 := by
   unfold forwardStep
   simp
-  -- TODO(lean-port): requires Q16_16.add_pos_of_pos: for Q16_16 saturating
-  -- add over UInt32, proving a > 0 → b > 0 → a + b > 0 needs careful
-  -- case analysis on overflow; no such lemma exists in FixedPoint.lean yet.
-  sorry
+  exact Q16_16.add_pos_of_pos s.u Δu h_u h_delta
 
 /-- Backward retrieval: grow the DAG depth without shrinking forward depth. -/
 def backwardRetrieve (s : HyperState) (dagDepth : Q16_16) : HyperState :=
@@ -191,14 +195,25 @@ def asyncLocalFlow {n : Nat} (mesh : MeshNetwork n) (nodeIdx : Fin n) (Δu : Q16
 /-- TODO(lean-port): depends on ko_preserves_hyperbola which requires a
     formal sqrt error bound before this can be closed. -/
 theorem asyncFlowPreservesInvariance {n : Nat} (mesh : MeshNetwork n) (nodeIdx : Fin n) (Δu : Q16_16)
-    (h_inv : ∀ i : Fin n, onHyperbola (mesh.nodes.get i)) :
+    (h_inv : ∀ i : Fin n, onHyperbolaApprox (mesh.nodes.get i) Q16_16.epsilon) :
     let mesh' := asyncLocalFlow mesh nodeIdx Δu
-    ∀ i : Fin n, onHyperbola (mesh'.nodes.get i) := by
+    ∀ i : Fin n, onHyperbolaApprox (mesh'.nodes.get i) Q16_16.epsilon := by
   intro mesh' i
-  -- TODO(lean-port): this theorem depends on ko_preserves_hyperbola, which
-  -- itself requires a formal Q16_16.sqrt error-bound lemma. Until
-  -- ko_preserves_hyperbola is closed, this proof cannot be completed.
-  -- Additionally, Vector.set / Vector.get interaction needs a get_set lemma.
-  sorry
+  by_cases h_eq : i = nodeIdx
+  · -- Updated node: approximate preservation via ko_preserves_hyperbola_approx
+    rw [h_eq]
+    have h_same : mesh'.nodes.get nodeIdx = forwardStep (mesh.nodes.get nodeIdx) Δu := by
+      simp [mesh', asyncLocalFlow]
+      exact List.Vector.get_set_same mesh.nodes nodeIdx (forwardStep (mesh.nodes.get nodeIdx) Δu)
+    rw [h_same]
+    apply ko_preserves_hyperbola_approx
+    exact h_inv nodeIdx
+  · -- Unchanged node: use original invariant via get_set_of_ne
+    have h_ne : i ≠ nodeIdx := by intro h; contradiction
+    have h_same : mesh'.nodes.get i = mesh.nodes.get i := by
+      simp [mesh', asyncLocalFlow]
+      exact List.Vector.get_set_of_ne h_ne (forwardStep (mesh.nodes.get nodeIdx) Δu)
+    rw [h_same]
+    exact h_inv i
 
 end HyperbolicStateSurface

@@ -1,0 +1,7 @@
+keys:
+  - &admin AGE_PUBLIC_KEY_HERE
+creation_rules:
+  - path_regex: secrets/.*\.age$
+    key_groups:
+      - age:
+          - *admin

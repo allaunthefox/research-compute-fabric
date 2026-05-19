@@ -25,14 +25,26 @@
       "env": {}
     },
     "wolfram-alpha": {
-      "_comment": "Wolfram Alpha symbolic verification. Required to discharge the `Verified with Wolfram Alpha` comments enforced by .github/workflows/wolfram-verification.yml. Provide a Short Answers API key via WOLFRAM_ALPHA_APPID at runtime; the server is otherwise dormant.",
+      "_comment": "Wolfram Alpha symbolic verification. Provide WOLFRAM_ALPHA_APPID in the shell environment before starting Devin/opencode. The server starts regardless and will error on individual tool calls if the key is absent — MCP startup is not blocked.",
       "command": "npx",
       "args": [
         "-y",
         "@wolfram-alpha/mcp-server"
       ],
+      "env": {}
+    },
+    "notion": {
+      "_comment": "Notion integration via official Notion MCP (Streamable HTTP + OAuth). Run `devin mcp login notion` once to complete the OAuth flow; tokens are stored locally and auto-refreshed.",
+      "url": "https://mcp.notion.com/mcp",
+      "transport": "http"
+    },
+    "aws": {
+      "_comment": "AWS API MCP server (awslabs.aws-api-mcp-server). Provides broad AWS CLI/API access via boto3 credential chain (default profile, us-east-1). Credentials are read from ~/.aws — no secrets embedded here.",
+      "command": "uvx",
+      "args": ["awslabs.aws-api-mcp-server@latest"],
       "env": {
-        "WOLFRAM_ALPHA_APPID": "${WOLFRAM_ALPHA_APPID}"
+        "AWS_REGION": "us-east-1",
+        "FASTMCP_LOG_LEVEL": "ERROR"
       }
     },
     "lean": {

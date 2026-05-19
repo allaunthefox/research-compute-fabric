@@ -18,7 +18,16 @@ structure DPGState where
   kappa    : UInt64       -- checksum / integrity hash
   lambda   : Nat            -- block size used for delta computation
   h_gamma_nonzero : gamma ≠ 0  -- proof-carrying: gamma must be non-zero
-deriving Inhabited
+
+instance : Inhabited DPGState where
+  default :=
+    { source := []
+      delta := []
+      phi := 0
+      gamma := 1
+      kappa := 0
+      lambda := 1
+      h_gamma_nonzero := by decide }
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §2  DPG Transform and Invariant
@@ -32,6 +41,9 @@ def dpgInvariant (s : DPGState) : Prop :=
 /-- Simple byte-array hash (placeholder — use proper hash in production). -/
 def hashBytes (bs : List UInt8) : UInt64 :=
   bs.foldl (fun acc b => acc * 31 + b.toUInt64) 0
+
+def hashInts (xs : List Int) : UInt64 :=
+  xs.foldl (fun acc x => acc * 31 + x.natAbs.toUInt64) 0
 
 /-- Combine two hashes. -/
 def MixHash (h1 h2 : UInt64) : UInt64 :=
@@ -52,10 +64,10 @@ def dpgTransform (a b : DPGState) : Outcome DPGState :=
   if newDelta.length ≤ a.source.length then
     Outcome.ok { b with
       delta := newDelta,
-      kappa := MixHash (hashBytes a.source) (hashBytes newDelta)
+      kappa := MixHash (hashBytes a.source) (hashInts newDelta)
     }
   else
-    Outcome.quarantined ⟨"DPG-expansion-violation", #[], a.kappa⟩
+    Outcome.quarantined ⟨"DPG-expansion-violation", ByteArray.empty, a.kappa⟩
 
 /-- K_DPG: cost = encoded size (in bytes). -/
 def dpgCost (a b : DPGState) : Int :=
@@ -85,7 +97,7 @@ def dpgValidAtScale (band : DPGScaleBand) (s : DPGState) : Prop :=
   | DPGScaleBand.Block256   => s.lambda = 256
   | DPGScaleBand.Block4096  => s.lambda = 4096
   | DPGScaleBand.Block65536 => s.lambda = 65536
-  | DPGScaleBand.Stream     => True
+  | DPGScaleBand.Stream     => s.lambda > 0 ∧ s.source.length ≥ s.delta.length
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §4  ModelUpgrade Instance
@@ -119,7 +131,10 @@ theorem Th4_compression_admissibility_skeleton
   (h_phi_zero : s.phi = 0) (h_gamma_one : s.gamma = 1) :
   DoctrineAdmissible s ↔ dpgInvariant s :=
 by
-  subst h_phi_zero; subst h_gamma_one
-  simp [DoctrineAdmissible, dpgInvariant]
+  constructor
+  · intro h
+    exact ⟨h.1, by rw [h_gamma_one]; decide⟩
+  · intro h
+    exact ⟨h.1, by rw [h_phi_zero, h_gamma_one]; decide⟩
 
 end InvariantReceipt.DPG

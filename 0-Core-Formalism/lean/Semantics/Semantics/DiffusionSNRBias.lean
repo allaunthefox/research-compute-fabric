@@ -74,6 +74,13 @@ def clip (x lo hi : Q1616) : Q1616 :=
   else if x > hi then hi
   else x
 
+theorem mul_le_mul_of_nonneg_right {a b c : Q1616}
+    (hle : a.raw ≤ b.raw) (hc : c.raw ≥ 0) :
+    (a * c).raw ≤ (b * c).raw := by
+  have h : a.raw * c.raw ≤ b.raw * c.raw := Int.mul_le_mul_of_nonneg_right hle hc
+  apply Int.ediv_le_ediv (by norm_num)
+  exact h
+
 end Q1616
 
 -- ════════════════════════════════════════════════════════════
@@ -278,11 +285,26 @@ theorem snrBoundedByModelParams (model : ReconstructionModel)
       Int.ediv_le_ediv (by norm_num) h
     norm_num at h2
     exact h2
-  -- TODO(lean-port): BLOCKER — Q1616.mul monotonicity lemmas missing.
-  -- Goal: γ²·s ≤ γ·s  given γ² ≤ 1 and s ≥ 0.
-  -- Needs: Q1616.mul_le_mul_of_nonneg_right (a ≤ b → 0 ≤ c → a*c ≤ b*c)
-  -- and Q1616.mul_comm / mul_assoc. None exist in Mathlib 4.30.
-  sorry
+  have hGammaRaw : (model.gamma_t * model.gamma_t).raw ≤ model.gamma_t.raw := by
+    rcases model.wf_gamma with ⟨hpos, hle⟩
+    simp only [LE.le] at hle ⊢
+    have h1 : model.gamma_t.raw * model.gamma_t.raw ≤ model.gamma_t.raw * 65536 := by
+      apply Int.mul_le_mul_of_nonneg_left
+      · exact hle
+      · omega
+    have h2 : model.gamma_t.raw * model.gamma_t.raw / 65536 ≤ model.gamma_t.raw * 65536 / 65536 := by
+      apply Int.ediv_le_ediv (by norm_num)
+      exact h1
+    have h3 : model.gamma_t.raw * 65536 / 65536 = model.gamma_t.raw := by
+      rw [Int.mul_comm]
+      rw [Int.mul_ediv_cancel_left _ (by norm_num)]
+    rw [h3] at h2
+    exact h2
+  have h : (model.gamma_t * model.gamma_t * signalNorm).raw ≤ (model.gamma_t * signalNorm).raw := by
+    apply Q1616.mul_le_mul_of_nonneg_right
+    · exact hGammaRaw
+    · exact hSignalNonneg
+  exact h
 
 end ReconstructionModel
 

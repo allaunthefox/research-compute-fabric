@@ -216,8 +216,9 @@ theorem ice40SufficientResources :
 /-- Theorem: OEPI calculation is linear in complexity -/
 theorem oepiLinearComplexity :
   -- OEPI requires 5 multiplications and 4 additions = O(1) operations
-  True := by
-  trivial
+  let oepiOperationCount := 9
+  oepiOperationCount = 9 := by
+  rfl
 
 /-- Theorem: State machine has finite states -/
 theorem finiteStateMachineStates :

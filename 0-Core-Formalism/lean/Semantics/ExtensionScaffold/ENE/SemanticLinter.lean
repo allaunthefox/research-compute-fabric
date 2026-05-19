@@ -31,14 +31,14 @@ structure ClaimProfile where
 
 /-- Lightweight implementation profile inferred from code artifacts. -/
 structure ImplProfile where
-  hasConsistentPrevHashSemantics : Bool := true
+  hasConsistentPrevHashSemantics : Bool := false
   hasExplicitConformanceCheck : Bool := false
-  hasPureMerkleRoot : Bool := true
-  hasCanonicalDigestSerialization : Bool := true
+  hasPureMerkleRoot : Bool := false
+  hasCanonicalDigestSerialization : Bool := false
   preMarksVerified : Bool := false
   usesEmptyCryptoFallback : Bool := false
-  heuristicClearlyLabeled : Bool := true
-  runtimeDepsAtModuleScope : Bool := true
+  heuristicClearlyLabeled : Bool := false
+  runtimeDepsAtModuleScope : Bool := false
   deriving Repr, BEq
 
 /-- General semantic rule interface. -/

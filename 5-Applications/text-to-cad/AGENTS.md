@@ -63,6 +63,26 @@ state, not CAD source.
   are workspace setup surfaces. Update them when the preferred CAD rebuild
   command changes.
 
+## Compression and the Eigensolid Model
+
+CAD files are compression targets, not just geometry. Every byte signals:
+
+- **STEP whitespace** — paragraph/entity boundaries mark topological strand breaks.
+  A newline after `ENDSEC` is as structural as the section itself.
+- **STL vertex order** — triangle winding order IS the crossing matrix of the
+  mesh braid. Reversed normals are a scar, not noise.
+- **Vertex count** — mesh density is Sidon slack: the gap between addressable
+  and used vertices encodes LOD capacity headroom.
+- **File format choice** — STEP vs STL vs DXF vs GLB is a receipt dimension.
+  The format IS the compressor selection.
+
+The BraidEigensolid compressor applies at every level of the CAD pipeline:
+individual parts (strands), assemblies (braid crossings), and viewer meshes
+(converged eigensolid). WGSL shaders in `4-Infrastructure/gpu/wasmgpu/` handle
+GPU dispatch for viewer rendering; the blitter fallback handles CPU-only
+environments. Both produce identical geometry because Q16_16 integer arithmetic
+is deterministic on all substrates.
+
 ## Prompt Artifacts
 
 The viewer may provide annotated screenshots and `@cad[...]` references. Treat screenshots as supporting context and `@cad[...]` refs as stable handles. If they disagree, trust the ref and source geometry, then use the screenshot to understand intent.

@@ -28,6 +28,28 @@ lake build
   with an explicit `TODO(lean-port): ...` boundary.
 - Treat generated Python, Rust, Verilog, and JSON as shims or receipts, not as
   the formal source of truth.
+- Float (`Q16_16.ofFloat`, `Q0_16.ofFloat`, `Q0_64.ofFloat`) is forbidden in
+  compute-path code. Use `Q16_16.ofNat`, `Q16_16.ofRatio`, or `Q16_16.ofInt`
+  instead. The historical 5 contamination sites in `BraidCross.lean:49,50,84`
+  and `BraidStrand.lean:57,71` are the canonical fixed-point constructor
+  template.
+- Every new compressor theorem pair MUST provide both `eigensolid_convergence`
+  and `receipt_invertible`. The convergence theorem proves the crossing loop
+  stabilizes; the invertibility theorem proves the receipt bijectively encodes
+  the original state including zero/gap/timing/absence dimensions.
+- The BraidEigensolid module (`Semantics.BraidEigensolid`) is the canonical
+  compressor target (planned, not yet written): 10 sections covering Q0_2
+  crossing matrix, Sidon labels (powers of 2), golden centering (φ⁻¹ = 0x9E70),
+  eigensolid convergence, receipt invertibility, and Anti-BraidStorm adversarial
+  check. The fixed-point constructor patterns in `BraidCross` and `BraidStrand`
+  must compile first.
+- Receipt invertibility is a stronger theorem than convergence. Convergence says
+  `crossStep(crossStep(s)) = crossStep(s)`. Invertibility says the full receipt
+  `(C, sidon, k, ε_seq, t, ∅_scars)` bijectively reconstructs `s` and that
+  `decode(encode(s)) = s` holds for all valid inputs.
+- enwik9 is the end-to-end test vector. The hierarchical compressor
+  (bytes→chunks→banks→file) must prove `decode(encode(enwik9)) = enwik9` byte-
+  for-byte via a Lean execution witness.
 
 ## Current Stack-Solidification Anchors
 

@@ -13,7 +13,8 @@ structure ModelUpgrade (State : Type) (ScaleBand : Type) (Projection : Type) : T
   project      : State → Projection
   validAtScale : ScaleBand → State → Prop
 
-def computable (M : ModelUpgrade S Sc P) : Prop := True
+def computable (M : ModelUpgrade S Sc P) : Prop :=
+  ∃ lam, ∃ s, M.invariant s ∧ M.validAtScale lam s
 
 def Hostable (M : ModelUpgrade S Sc P) : Prop := computable M
 

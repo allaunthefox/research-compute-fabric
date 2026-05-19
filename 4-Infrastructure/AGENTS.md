@@ -140,15 +140,6 @@ Daily timer: `restic-backup.timer` fires at 03:00 ±30 min, runs `backup.sh full
 |--------|---------|
 | `zfs-pool-setup.sh` | Create ZFS pool on local NVMe (run after reboot into 7.0.9 kernel) |
 | `garage-node-bootstrap.sh <ip>` | Install Garage on a new node, register in node-registry.json |
-| `garage-cluster-init.sh` | Connect nodes, assign zones, bump replication_factor to 3 |
-| `db-consolidate.sh` | Direct Garage offload/consolidate (used by backup.sh internally) |
-
-All scripts live in `4-Infrastructure/storage/garage/`:
-
-| Script | Purpose |
-|--------|---------|
-| `zfs-pool-setup.sh` | Create ZFS pool on local NVMe (run after reboot into 7.0.9 kernel) |
-| `garage-node-bootstrap.sh <ip>` | Install Garage on a new node, register in node-registry.json |
 | `garage-cluster-init.sh` | Connect nodes, assign layout, bump replication_factor to 3 |
 | `db-consolidate.sh offload [dir]` | Push SQLite DBs → s3://db-scratch/ |
 | `db-consolidate.sh rds-dump <table>` | Dump RDS table → s3://rds-overflow/ |
@@ -308,3 +299,47 @@ python3 4-Infrastructure/storage/storage_agent.py --loop --interval 900
 - `4-Infrastructure/shim/tang9k_uart_beacon_probe.py`
 - `4-Infrastructure/shim/hutter_jxl_starfield_eigenprobe.py`
 - `4-Infrastructure/shim/hutter_jxl_starfield_replay_verify.py`
+
+## Compute Dispatch (WGSL → any substrate)
+
+All compute shaders live as WGSL source. Dispatch follows a single pattern:
+
+  RDS SELECT (input strands, weights) → wgpu SSBO → WGSL compute → readback → RDS INSERT
+
+The wgpu Rust dispatch (pattern: `5-Applications/parquet_compressor/src/gpu.rs`)
+probes the adapter and chooses the best available backend transparently:
+
+  Adapter probe:
+    └── Vulkan → GPU (discrete or integrated)
+    └── Vulkan (lavapipe/SwiftShader) → CPU blitter (L1 cache, ~112 ops/step)
+    └── WebGPU (WASM) → Browser GPU or WASM CPU fallback
+
+The algorithm is always WGSL. The dispatch is always wgpu. The backend is
+transparent. No path specialization is needed because Q16_16 integer arithmetic
+is deterministic across all substrates.
+
+Known dispatch entry points:
+- `5-Applications/parquet_compressor/src/gpu.rs` — Rust wgpu compute + XOR/S-box
+- `5-Applications/scripts/rgflow_gpu_pipeline.py` — Python wgpu with Vulkan backend
+- `4-Infrastructure/gpu/wasmgpu/` — TypeScript WebGPU engine with 47 WGSL shaders
+- `4-Infrastructure/shim/erdos_surface_orchestrator/src/main.rs` — WGSL generator
+
+For the braid eigensolid compressor, the dispatch is planned at:
+`4-Infrastructure/shim/braid_blitter/` (Rust, following `parquet_compressor/src/gpu.rs`)
+
+### ENE schema additions for braid eigensolid compressor (planned)
+
+These tables extend `ene_substrate_schema.sql` (not yet created):
+
+- `ene.prover_state` — Lean theorem registry: theorem_name, module_path,
+  statement_hash, status (pending/verified/failed), dependency DAG
+- `ene.prover_instances` — Concrete theorem instantiations: theorem_id,
+  input_hash, output_hash, verified boolean
+- `ene.sidon_labels` — Powers of 2 (1,2,4,8,16,32,64,128) per strand index
+- `ene.crossing_weights` — Q0_2 values encoded as INTEGER with CHECK constraint,
+  contractive matrix trigger (row sum < 65536)
+- `ene.braid_strands` — Per-snapshot strand state: phase_x, phase_y in Q16_16
+- `ene.eigensolid_snapshots` — Converged state: matrix_id, convergence_step,
+  phase_hash, residual_total, is_stable
+- `ene.receipts ADD theorem_id` — FK to prover_state
+- `ene.receipts ADD dispatch_path` — CHECK(vulkan_gpu, cpu_blitter)

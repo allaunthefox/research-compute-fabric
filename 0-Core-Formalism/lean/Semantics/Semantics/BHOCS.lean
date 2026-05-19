@@ -70,16 +70,16 @@ def lookup (coords : UV) (state : BHOCS) : Option Result :=
 /-- Hash integrity theorem: outer hash commits to inner structure -/
 -- GPU-verified: 65536 tests, 0 failures, 6.5 sigma achieved
 -- See scripts/gpu_bhocs_integrity_verify.py for verification details
-theorem integrity_preserved (_state : BHOCS) : 
-  True := by
-  trivial
+def integrity_preserved (state : BHOCS) : Prop :=
+  state.outer.hash = computeHash state.outer.innerCommitments
 
 /-- Lookup termination theorem: lookup always terminates due to depth bound -/
 -- GPU-verified via depth_bound theorem (65536 tests, 0 failures, 6.5 sigma)
 -- Since depth ≤ TREE(3) and TREE(3) is finite, lookup must terminate
-theorem lookup_terminates (_coords : UV) (_state : BHOCS) :
-  True := by
-  trivial
+theorem lookup_terminates (coords : UV) (state : BHOCS) :
+  ∃ result, lookup coords state = some result := by
+  unfold lookup
+  simp [state.boundProof]
 
 /-- Cost function for BHOCS operations (geometric_bind) -/
 def bhocsCost (state : BHOCS) : Q16_16 :=

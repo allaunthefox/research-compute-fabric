@@ -298,38 +298,36 @@ def scheduleDecompression (tasks : Array DecompressionTask) : Array Decompressio
 -- §6  Theorems
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Theorem: Energy is non-negative. -/
-theorem energyNonneg (block : SampleBlock) : zero = zero := by
-  rfl
+/-- Claim boundary: computed sample energy should be non-negative. -/
+def energyNonneg (block : SampleBlock) : Prop :=
+  computeEnergy block ≥ zero
 
-/-- Theorem: Variance is non-negative. -/
-theorem varianceNonneg (block : SampleBlock) : zero = zero := by
-  rfl
+/-- Claim boundary: computed sample variance should be non-negative. -/
+def varianceNonneg (block : SampleBlock) : Prop :=
+  computeVariance block ≥ zero
 
-/-- Theorem: Spectral redundancy is in [0, 1]. -/
-theorem redundancyBounded (band total : Q16_16) (hPos : total > zero) :
-    zero = zero ∧ Q16_16.one = Q16_16.one := by
-  constructor <;> rfl
+/-- Claim boundary: spectral redundancy should stay in [0, 1]. -/
+def redundancyBounded (band total : Q16_16) (_hPos : total > zero) : Prop :=
+  zero ≤ spectralRedundancy band total ∧ spectralRedundancy band total ≤ Q16_16.one
 
-/-- Theorem: Compression ratio ≥ 1 (no expansion). -/
-theorem compressionRatioAtLeastOne 
+/-- Claim boundary: compression ratio should be ≥ 1 (no expansion). -/
+def compressionRatioAtLeastOne
     (block : SampleBlock) 
     (params : DspCompressionParams) 
-    (mode : CompressionMode) :
-    Q16_16.one = Q16_16.one := by
-  rfl
+    (mode : CompressionMode) : Prop :=
+  Q16_16.one ≤ (compressBlock block params mode).2
 
-/-- Theorem: Combined cost is non-negative (energy + curvature penalty). -/
-theorem combinedCostNonneg (task : DecompressionTask) : zero = zero := by
-  rfl
+/-- Claim boundary: combined cost should be non-negative (energy + curvature penalty). -/
+def combinedCostNonneg (task : DecompressionTask) : Prop :=
+  combinedCost task ≥ zero
 
-/-- Theorem: Higher κ² increases scheduling priority (combined cost). -/
-theorem curvatureIncreasesPriority 
+/-- Claim boundary: higher κ² should increase scheduling priority (combined cost). -/
+def curvatureIncreasesPriority
     (task : DecompressionTask) 
     (kappa1 kappa2 : Q16_16) 
-    (h : kappa1 > kappa2) :
-    kappa1 = kappa1 := by
-  rfl
+    (_h : kappa1 > kappa2) : Prop :=
+  combinedCost { task with kappaSquared := kappa1 } >
+    combinedCost { task with kappaSquared := kappa2 }
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §8  Swarm Design Review Integration

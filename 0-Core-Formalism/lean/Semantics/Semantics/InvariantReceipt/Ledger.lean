@@ -10,6 +10,7 @@ structure CostEntry where
 
 def Ledger : Type := List CostEntry
 
-def deterministic (l : Ledger) : Prop := True
+def deterministic (l : Ledger) : Prop :=
+  ∀ entry : CostEntry, List.Mem entry (l : List CostEntry) → entry.cost ≥ 0
 
 end InvariantReceipt

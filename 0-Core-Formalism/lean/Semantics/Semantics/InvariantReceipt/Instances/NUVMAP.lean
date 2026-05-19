@@ -29,7 +29,7 @@ structure Coordinate (n : Nat) where
   density      : Q0_16           -- Sampling density [0,1] in Q0.16
   confidence   : Q0_16           -- Certainty of this coordinate
   semanticLoad : Q0_16           -- Information content
-deriving Inhabited
+deriving Inhabited, DecidableEq, BEq
 
 inductive RegionType : Type where
   | Contiguous  -- Arrays, buffers, DMA regions
@@ -67,9 +67,9 @@ def invariant {n : Nat} (s : NUVMAPState n) : Prop :=
   -- No duplicate active coordinates (uniqueness)
   s.active.Nodup
   -- Hot set is subset of active coordinates
-  ∧ ∀ c ∈ s.hotSet, c ∈ s.active
+  ∧ (∀ c, c ∈ s.hotSet → c ∈ s.active)
   -- Cold set is subset of active coordinates
-  ∧ ∀ c ∈ s.coldSet, c ∈ s.active
+  ∧ (∀ c, c ∈ s.coldSet → c ∈ s.active)
   -- Total semantic load is bounded
   ∧ s.totalLoad.val ≤ 0xFFFF
 
@@ -80,9 +80,9 @@ def invariant {n : Nat} (s : NUVMAPState n) : Prop :=
 /-- Density reallocation: move coordinates between hot/cold sets
     based on activity threshold. -/
 def transform {n : Nat} (threshold : Q0_16)
-  (a b : NUVMAPState n) : Outcome (NUVMAPState n) :=
+  (a _b : NUVMAPState n) : Outcome (NUVMAPState n) :=
   let newHot  := a.active.filter (fun c => c.density.val > threshold.val)
-  let newCold := a.active.filter (fun c => c.density.val ≤ threshold.val)
+  let newCold := a.active.filter (fun c => ¬ c.density.val > threshold.val)
   let newState := { a with
     hotSet  := newHot
     coldSet := newCold
@@ -100,7 +100,10 @@ structure HardwareCoordinate where
   deriving Inhabited
 
 def project {n : Nat} (c : Coordinate n) : HardwareCoordinate where
-  deviceId   := c.address.head?.getD 0 |>.val.toUInt16
+  deviceId   :=
+    match c.address.head? with
+    | some idx => idx.val.toUInt16
+    | none => 0
   busAddr    := c.address.foldl (fun acc idx => acc * 256 + idx.val.toUInt64) 0
   spectralMode := c.spectralMode
 
@@ -163,24 +166,18 @@ theorem Th6_nuvmap_invariant_preservation
   (n : Nat) (thresh : Q0_16) (a : NUVMAPState n)
   (h_inv : invariant a) :
   let b := (nuvmapModel n thresh).transform a a
-  match b with
-  | Outcome.ok s => invariant s
-  | _ => True :=
+  ∃ s, b = Outcome.ok s ∧ invariant s :=
 by
   simp [invariant, transform, nuvmapModel]
-  rcases h_inv with ⟨h_nd, h_hot, h_cold, h_load⟩
-  simp_all [List.Nodup, List.filter, List.mem_filter]
-  -- Filter preserves nodup
+  rcases h_inv with ⟨h_nd, _h_hot, _h_cold, h_load⟩
   constructor
-  · apply List.Nodup.filter
+  · exact h_nd
   constructor
-  · intro c hc
-    apply h_hot
-    exact hc.1
+  · intro c hc _h_density
+    exact hc
   constructor
-  · intro c hc
-    apply h_cold
-    exact hc.1
+  · intro c hc _h_density
+    exact hc
   · exact h_load
 
 /-- Th7: NUVMAP hardware projection is deterministic.
@@ -197,15 +194,20 @@ by
 theorem Th8_nuvmap_partition_complete
   (n : Nat) (thresh : Q0_16) (s : NUVMAPState n)
   (h_inv : invariant s) :
-  ∀ c ∈ s.active, c ∈ s.hotSet ∨ c ∈ s.coldSet :=
+  let b := (nuvmapModel n thresh).transform s s
+  ∃ t, b = Outcome.ok t ∧ ∀ c ∈ t.active, c ∈ t.hotSet ∨ c ∈ t.coldSet :=
 by
-  rcases h_inv with ⟨h_nd, h_hot_sub, h_cold_sub, h_load⟩
+  simp [invariant, transform, nuvmapModel] at h_inv ⊢
   intro c hc
-  simp [transform] at *
   by_cases h : c.density.val > thresh.val
   · left
     simp [List.mem_filter, hc, h]
   · right
-    simp [List.mem_filter, hc, h]
+    have h_le : c.density.val ≤ thresh.val := by
+      change c.density.val.toNat ≤ thresh.val.toNat
+      apply Nat.le_of_not_gt
+      change ¬thresh.val.toNat < c.density.val.toNat at h
+      exact h
+    simp [List.mem_filter, hc, h_le]
 
 end InvariantReceipt.NUVMAP

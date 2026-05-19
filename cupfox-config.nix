@@ -27,7 +27,7 @@ in
   time.timeZone = "America/Chicago";
 
   users.users.root.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZGEyNTU5AAAAL1RhaWxzY2FsZSBkZXZpY2U6IGNhbiB5b3UgcmVhZCB0aGlzPw== root@cupfox"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICqbOp63zWXWcHcFXxuGw9h/WNDLWRVVFTXDd4ZtPaj3 allaun@QFox"
   ];
 
   services.openssh = {

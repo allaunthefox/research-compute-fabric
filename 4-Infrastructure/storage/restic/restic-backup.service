@@ -1,0 +1,26 @@
+[Unit]
+Description=Restic backup — snap + cold-copy to gdrive + sync gdrive-mirror
+After=network-online.target garage.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=allaun
+EnvironmentFile=/etc/garage/garage.env
+
+# Map GARAGE_* names to what restic/AWS SDK expect at runtime
+ExecStartPre=/bin/bash -c 'echo "AWS_ACCESS_KEY_ID=$GARAGE_ACCESS_KEY_ID" > /run/user/1000/restic-aws.env'
+ExecStart=/bin/bash -c '\
+    source /etc/garage/garage.env; \
+    export AWS_ACCESS_KEY_ID="$GARAGE_ACCESS_KEY_ID"; \
+    export AWS_SECRET_ACCESS_KEY="$GARAGE_SECRET_ACCESS_KEY"; \
+    export AWS_DEFAULT_REGION=garage; \
+    export AWS_ENDPOINT_URL=http://localhost:3900; \
+    export RESTIC_REPOSITORY=s3:http://localhost:3900/research-stack; \
+    export RESTIC_PASSWORD_FILE=/etc/garage/restic-password; \
+    exec /usr/local/lib/restic-backup/backup.sh full'
+
+StandardOutput=append:/home/allaun/.cache/restic-backup.log
+StandardError=append:/home/allaun/.cache/restic-backup.log
+
+TimeoutStartSec=3h

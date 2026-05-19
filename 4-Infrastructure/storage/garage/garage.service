@@ -1,0 +1,36 @@
+[Unit]
+Description=Garage S3 Object Store
+Documentation=https://garagehq.deuxfleurs.fr/documentation/
+After=network-online.target tailscaled.service
+Wants=network-online.target
+# Restart if Tailscale restarts (RPC binds to Tailscale IP)
+BindsTo=tailscaled.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/garage -c /etc/garage/garage.toml server
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Security
+User=garage
+Group=garage
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/garage /var/log/garage
+
+# Secrets — admin token read from env file, never in the unit itself
+EnvironmentFile=-/etc/garage/garage.env
+
+# Restart policy — tolerate brief Tailscale flaps
+Restart=on-failure
+RestartSec=5s
+StartLimitIntervalSec=60s
+StartLimitBurst=5
+
+# Resource limits — Garage is a single binary, keep it bounded
+LimitNOFILE=65536
+MemoryMax=512M
+
+[Install]
+WantedBy=multi-user.target

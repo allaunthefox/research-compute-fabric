@@ -24,23 +24,24 @@ theorem Th2_adapter_round_trip
 by
   exact A.roundTrip s h
 
--- Th3: avm_closure
--- AVM model is defined in Instances/AVM.lean; hostability is trivial
--- since computable ≡ True for all ModelUpgrade instances.
-theorem Th3_avm_closure (M : ModelUpgrade S Sc P) :
+-- Th3: hostability requires an explicit invariant/scale witness.
+theorem Th3_hostable_from_witness
+  (M : ModelUpgrade S Sc P) (lam : Sc) (s : S)
+  (h : M.invariant s ∧ M.validAtScale lam s) :
   Hostable M := by
   unfold Hostable computable
-  trivial
+  exact ⟨lam, s, h⟩
 
 -- Th4: compression_admissibility
 -- DoctrineAdmissible ↔ dpgInvariant proven in DeltaPhiGammaKLambda.lean.
-theorem Th4_compression_admissibility : True := by
-  trivial
+def Th4_compression_admissibility : Prop :=
+  ∀ {S Sc P} (M : ModelUpgrade S Sc P) (lam : Sc) (eps : Int) (a b : S),
+    lawfulStep M lam eps a b → M.invariant b ∧ M.validAtScale lam b
 
 -- Th5: grw_receipt_soundness
 -- Soundness follows from the construction in Receipt.lean:
 -- every receipt carries an integrity hash binding payload + topology.
-theorem Th5_grw_receipt_soundness : True := by
-  trivial
+def Th5_grw_receipt_soundness (r : Receipt) : Prop :=
+  r.hash ≠ 0 ∧ r.payload.size > 0
 
 end InvariantReceipt

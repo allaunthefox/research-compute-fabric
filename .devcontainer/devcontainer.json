@@ -1,9 +1,6 @@
 {
-  "name": "Research Stack (OTOM)",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".."
-  },
+  "name": "Research Stack (OTOM) — NixOS/Podman",
+  "image": "localhost/research-stack-otom:latest",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -14,7 +11,7 @@
       ],
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash",
-        "python.defaultInterpreterPath": "/home/researcher/venv/bin/python",
+        "python.defaultInterpreterPath": "/nix/store/python",
         "python.analysis.extraPaths": [
           "/home/researcher/stack"
         ],
@@ -24,11 +21,26 @@
   },
   "remoteUser": "researcher",
   "containerEnv": {
-    "PATH": "/home/researcher/.elan/bin:/home/researcher/venv/bin:/home/researcher/.local/bin:${containerEnv:PATH}"
+    "HOME": "/home/researcher",
+    "XDG_CACHE_HOME": "/home/researcher/.cache",
+    "AWS_ENDPOINT_URL": "http://host.containers.internal:3900",
+    "AWS_DEFAULT_REGION": "garage",
+    "GARAGE_ENDPOINT": "http://host.containers.internal:3900",
+    "GARAGE_REGION": "garage"
   },
+  "_comment_garage_creds": "AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY: source /etc/garage/garage.env on host; bind-mount into container or set in .bashrc",
+  "forwardPorts": [3900],
   "runArgs": [
-    "--userns=keep-id"
+    "--userns=keep-id",
+    "--security-opt=label=disable",
+    "--group-add=keep-groups"
   ],
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/researcher/stack,type=bind,Z",
-  "workspaceFolder": "/home/researcher/stack"
+  "workspaceFolder": "/home/researcher/stack",
+  "mounts": [
+    "source=${localEnv:HOME}/.config/rclone/rclone.conf,target=/home/researcher/.config/rclone/rclone.conf,type=bind,readonly,Z"
+  ],
+  "containerEngine": {
+    "podmanPath": "/usr/bin/podman"
+  }
 }

@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homer-config
+  namespace: services
+data:
+  config.yml: |
+    title: "Research Stack"
+    subtitle: "Unified Topology"
+    header: true
+    footer: false
+    columns: "3"
+    services:
+      - name: "Identity"
+        icon: "fas fa-id-card"
+        items:
+          - name: "Authentik"
+            logo: "https://auth.YOUR_DOMAIN/static/dist/assets/icons/authentik.svg"
+            subtitle: "Single sign-on"
+            url: "https://auth.YOUR_DOMAIN"
+            target: "_blank"
+
+      - name: "Monitoring"
+        icon: "fas fa-heartbeat"
+        items:
+          - name: "Uptime Kuma"
+            logo: "https://status.YOUR_DOMAIN/favicon.ico"
+            subtitle: "Service status & uptime"
+            url: "https://status.YOUR_DOMAIN"
+            target: "_blank"
+          - name: "Pulse Receiver"
+            subtitle: "Edge node heartbeats"
+            url: "https://pulse.YOUR_DOMAIN"
+            target: "_blank"
+
+      - name: "Applications"
+        icon: "fas fa-th"
+        items:
+          - name: "Heimdall"
+            subtitle: "Application dashboard"
+            url: "https://apps.YOUR_DOMAIN"
+            target: "_blank"

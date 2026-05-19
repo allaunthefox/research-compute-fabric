@@ -1,0 +1,29 @@
+# Garage v2.3.0 — config TEMPLATE for non-primary storage nodes
+# Substitute: NODE_TAILSCALE_IP, DATA_DIR, META_DIR, PRIMARY_NODE_ID
+# Deploy with: bash garage-node-bootstrap.sh <tailscale-ip>
+
+metadata_dir = "META_DIR"
+data_dir     = "DATA_DIR"
+
+db_engine = "sqlite"
+
+replication_factor = 3
+consistency_mode   = "consistent"
+
+rpc_secret_file = "/etc/garage/cluster-secret"
+
+rpc_bind_addr   = "NODE_TAILSCALE_IP:3901"
+rpc_public_addr = "NODE_TAILSCALE_IP:3901"
+
+# qfox-1 is always a bootstrap peer; node_id filled in by bootstrap script
+bootstrap_peers = [
+    "PRIMARY_NODE_ID@100.88.57.96:3901",
+]
+
+[s3_api]
+# Non-primary nodes: S3 API loopback only; traffic enters cluster via qfox-1
+api_bind_addr = "127.0.0.1:3900"
+s3_region     = "garage"
+
+[admin]
+api_bind_addr = "127.0.0.1:3903"

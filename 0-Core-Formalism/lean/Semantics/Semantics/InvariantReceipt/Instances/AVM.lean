@@ -39,7 +39,7 @@ def avmTransform (a b : AVMState) : Outcome AVMState :=
   if b = avmStep a then
     Outcome.ok b
   else
-    Outcome.quarantined ⟨"AVM-step-mismatch", #[], a.pc⟩
+    Outcome.quarantined ⟨"AVM-step-mismatch", ByteArray.empty, a.pc⟩
 
 /-- K_AVM: cost = number of steps taken (PC delta). -/
 def avmCost (a b : AVMState) : Int :=
@@ -59,8 +59,8 @@ inductive AVMScaleBand : Type where
 
 def avmValidAtScale (band : AVMScaleBand) (s : AVMState) : Prop :=
   match band with
-  | AVMScaleBand.SingleStep => True
-  | AVMScaleBand.MultiStep  => True
+  | AVMScaleBand.SingleStep => avmInvariant s
+  | AVMScaleBand.MultiStep  => avmInvariant s ∧ s.mem.length > 0 ∧ s.halted = false
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §3  ModelUpgrade Instance
@@ -78,10 +78,12 @@ def avmModel : ModelUpgrade AVMState AVMScaleBand UInt64 where
 -- §4  Th3: AVM Closure — Self-Hosting Proof
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- AVM is Hostable because it is computable (trivially, per definitional equality). -/
+/-- AVM is Hostable via an explicit halted-state witness. -/
 theorem Th3_avm_closure : Hostable avmModel :=
 by
-  unfold Hostable computable
-  trivial
+  unfold Hostable computable avmModel
+  refine ⟨AVMScaleBand.SingleStep, { pc := 0, mem := [], halted := true }, ?_, ?_⟩
+  · simp [avmInvariant]
+  · simp [avmValidAtScale, avmInvariant]
 
 end InvariantReceipt.AVM

@@ -43,7 +43,7 @@ def createHardenedReceipt : OpenWormBenchmarkReceipt :=
     "receipt_root_placeholder_hash"
     "baseline_comparison_placeholder"
     "witness_status_pending"
-    true
+    false
 
 /-- Determine benchmark gate level based on verification status. -/
 def determineBenchmarkGate 

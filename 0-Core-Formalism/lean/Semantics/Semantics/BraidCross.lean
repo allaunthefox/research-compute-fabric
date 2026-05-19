@@ -46,8 +46,8 @@ def braidCross (sᵢ sⱼ : BraidStrand) : BraidStrand × BraidBracket :=
   let zᵢⱼ := PhaseVec.add sᵢ.phaseAcc sⱼ.phaseAcc
 
   -- Crossing slot operator
-  let μᵢ := Q16_16.ofFloat sᵢ.slot.toFloat
-  let μⱼ := Q16_16.ofFloat sⱼ.slot.toFloat
+  let μᵢ := Q16_16.ofNat sᵢ.slot.toNat
+  let μⱼ := Q16_16.ofNat sⱼ.slot.toNat
   let μᵢⱼ := crossSlot μᵢ μⱼ
 
   -- Derive new bracket from merged state (NOT from merging brackets)
@@ -81,7 +81,7 @@ def parallelCross (strands : List BraidStrand) : BraidStrand :=
   let totalSlot := strands.foldl (fun acc s => acc.xor s.slot) 0
   let totalJitter := strands.foldl (fun acc s => acc + s.jitter) Q16_16.zero
 
-  let μ := Q16_16.ofFloat totalSlot.toFloat
+  let μ := Q16_16.ofNat totalSlot.toNat
   let B := BraidBracket.fromPhaseVec totalPhase μ
 
   { phaseAcc := totalPhase

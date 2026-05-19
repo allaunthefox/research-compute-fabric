@@ -1,0 +1,19 @@
+[package]
+name = "ene-api"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+anyhow = { workspace = true }
+axum = { version = "0.7", features = ["json"] }
+ene-rds-chat = { path = "../ene-rds-chat" }
+ene-rds-core = { workspace = true }
+ene-rds-ephemeral = { path = "../ene-rds-ephemeral" }
+ene-rds-wiki = { path = "../ene-rds-wiki" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+tower = "0.5"
+tracing = { workspace = true }

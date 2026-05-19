@@ -54,7 +54,7 @@ def fromLeaf (Φ : PhaseVec) (slot : UInt32) (μ : Q16_16) : BraidStrand :=
   This is the correct pattern: merge linearly, then derive bracket.
 -/
 def updateBracket (s : BraidStrand) : BraidStrand :=
-  let μ := Q16_16.ofFloat s.slot.toFloat  -- slot as Q16.16 fraction
+  let μ := Q16_16.ofNat s.slot.toNat
   { s with bracket := BraidBracket.fromPhaseVec s.phaseAcc μ }
 
 /-- Add AMMR contribution to strand (linear accumulation)
@@ -68,7 +68,7 @@ def addContribution (s : BraidStrand) (Φ : PhaseVec) : BraidStrand :=
 /-- Zero strand (identity element for merge) -/
 def zero (slot : UInt32) : BraidStrand :=
   let z := PhaseVec.zero
-  let μ := Q16_16.ofFloat slot.toFloat
+  let μ := Q16_16.ofNat slot.toNat
   { phaseAcc := z
   , parity := true
   , slot := slot

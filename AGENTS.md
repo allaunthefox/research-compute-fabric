@@ -4,7 +4,18 @@ This file is the first stop for coding agents working in this repository.
 
 ## Ground Rules
 
-- Use `/home/allaun/Documents/Research Stack` as the active checkout unless a task explicitly points elsewhere.
+- Use `/home/allaun/Research Stack` as the active host checkout and git root.
+  When the `research-stack` dev container is available, run Lean builds,
+  WGSL shader work, and research execution through `podman exec research-stack`
+  from the container-local checkout at `/home/researcher/repo/`. Treat the
+  host checkout and container checkout as synchronized views of the same repo;
+  verify paths before copying artifacts between them.
+- The dev container is `research-stack` (podman, `research-stack-otom:latest`).
+- **Research artifacts (design docs, experimental Lean files, exploration output)
+  must be written to container-local paths under `/home/researcher/research/`**.
+  These are not in the git tree and do not pollute the working tree. Use
+  `podman cp` to extract research artifacts when they are ready for promotion
+  to production.
 - Read the nearest nested `AGENTS.md` before editing a subtree.
 - Preserve user work. The working tree is often intentionally dirty; do not revert, delete, or stage unrelated files.
 - Prefer repo-native tools and receipt generators over ad hoc summaries.
@@ -83,6 +94,64 @@ git ls-remote --heads github <branch>
 - Dependabot banners printed by GitHub after push may be stale relative to the
   live alert API. Treat the push result and remote-head hash separately from
   dependency-alert remediation.
+
+## Glossary (before reading further)
+
+These terms appear throughout all AGENTS.md files and the codebase:
+
+- **Sidon label** — an address from a set where all pairwise sums are unique.
+  Powers of 2 (1,2,4,8,16,32,64,128) are the canonical Sidon set for 8 strands.
+  Sidon slack = address budget − max label used (encodes capacity headroom).
+- **BraidStorm** — the 8-strand braid topology used by the eigensolid compressor.
+  Strands cross pairwise; each crossing merges phase and produces a residual.
+- **eigensolid** — the converged, stable state of a braid crossing loop.
+  Detected when `crossStep(s) = s`. The DC baseline in the TNT BraidCarrier model.
+- **scar** — a FAMM failure record in `ene.scars`. Stores scar_pressure, failure_mode,
+  and optional coarsening_agent for remediation path. Scar absence (∅) is a
+  positive receipt dimension.
+- **Yang-Baxter** — the braid relation `βij βjk βij = βjk βij βjk` that defines
+  braid-order invariance. Represented in `BraidedFieldPaths.lean`; operational
+  braid-action proofs must state their exact evaluation model.
+- **Anti-BraidStorm** — adversarial dual that tests Yang-Baxter invariance and
+  receipt aliasing as a validation layer for the compressor.
+- **MORE FAMM** — Memory-Optimized Recursive Entropy Fractal Aggregate Memory Model.
+  Capability-based memory isolation for the runtime stack.
+- **TSM** — Topological S3C Manifold. Thermodynamic safety monitor with
+  Builder/Warden/Judge clock domains.
+- **GCL** — Genetic Code Language. Self-improving evolutionary program representation.
+- **AVM** — Adaptive Virtual Machine. Universal bridge between math languages and
+  Python bytecode (status: core ISA rebuild pending — see §7.4 in
+  `6-Documentation/docs/AGENTS.md`).
+- **enwik9** — the Hutter Prize 1GB Wikipedia XML corpus, used as the canonical
+  end-to-end test vector for the hierarchical compressor.
+- **receipt** — a machine-readable attestation record stored in `ene.receipts`.
+  Receipt dimensions (C, σ, k, ε_seq, t, ∅_scars) together form the encoding
+  of the compressed state. Every gate generates a receipt; a receipt proves only
+  the gate it actually checks.
+
+## Compression First Principles
+
+- Zero-gap-timing-spacing-silence IS signal. No byte, no space, no absent row is noise.
+  The compressor encodes everything; the decompressor must reconstruct everything,
+  including the gaps, because the gaps ARE the compression.
+- The receipt IS the compressed state — not metadata around it. Receipt dimensions
+  (crossing matrix C, Sidon slack σ, step count k, residual series ε_seq, write
+  timing t, scar absence ∅) together form the encoding. Invertibility of this
+  receipt is the definition of lossless compression.
+- Every compute substrate denies being a CPU: GPU (WGSL/wgpu), ASIC (SHA-256),
+  FPGA (Verilog), PCIe/DMA (bus mastering), storage (NVMe/BTRFS), blitter
+  (6502 OISC), hydraulic (pipes). All compute identically because Q16_16 integer
+  arithmetic is deterministic across all of them. No substrate is privileged.
+- The database IS the test field. enwik9 (1GB) and 259 TiddlyWiki tiddlers live
+  in the same `ene.packages` table. The compressor does not distinguish between
+  them. The schema is the substrate.
+- Two distinct Lean theorems are required for every compressor:
+  1. `eigensolid_convergence` — the braid crossing loop stabilizes
+  2. `receipt_invertible` — given the receipt, the original state is reconstructible
+     within bounded error, including all gap/timing/absence dimensions
+- Float (`ofFloat`) is forbidden in compute paths. `Q16_16.ofNat` and `Q16_16.ofRatio`
+  are the canonical constructors. `ofFloat` is only permitted at the external
+  boundary (parsing JSON, reading sensor data) and must be immediately bracketed.
 
 ## Legacy Recovery Trigger
 

@@ -1,0 +1,38 @@
+# Garage v2.3.0 — node config for qfox-1 (100.88.57.96)
+# Primary node: largest disk (1.8 TB NVMe), exposes S3 API on all interfaces.
+#
+# Cluster topology (all nodes communicate over Tailscale mesh):
+#   qfox-1           100.88.57.96    this machine — primary S3 endpoint
+#   cupfox-4gb-2cpu  100.126.242.5   storage node
+#   nixos            100.119.165.120 storage node
+#   microvm-racknerd 100.101.247.127 storage node (VPS)
+
+metadata_dir = "/var/lib/garage/meta"
+data_dir     = "/var/lib/garage/data"
+
+# SQLite is fine for <10 nodes; lmdb is faster for larger clusters
+db_engine = "sqlite"
+
+replication_factor = 3
+consistency_mode   = "consistent"
+
+# Shared across all nodes — lives in /etc/garage/cluster-secret (chmod 600)
+rpc_secret_file = "/etc/garage/cluster-secret"
+
+# Tailscale IP — nodes find each other via bootstrap_peers, no mDNS needed
+rpc_bind_addr   = "100.88.57.96:3901"
+rpc_public_addr = "100.88.57.96:3901"
+
+# Other nodes join via this peer list (node_id@ip:port filled in after first boot)
+# Run: garage node id  → paste result here for each node after bootstrap
+bootstrap_peers = []
+
+[s3_api]
+# Bind all interfaces: devcontainer reaches at localhost:3900,
+# other nodes reach at 100.88.57.96:3900 for cross-node ops
+api_bind_addr = "0.0.0.0:3900"
+s3_region     = "garage"
+
+[admin]
+api_bind_addr = "127.0.0.1:3903"
+# GARAGE_ADMIN_TOKEN set via /etc/garage/garage.env (EnvironmentFile in systemd unit)

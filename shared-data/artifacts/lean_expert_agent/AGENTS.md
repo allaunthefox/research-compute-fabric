@@ -12,7 +12,7 @@ For every file inspected, the agent MUST report:
 
 ### 1. Structural Health
 - Count of `theorem` vs `def` vs `#eval` vs `#eval!`
-- Count of `sorry` axioms (⚠️ flag if > 0)
+- Count of `sorry` proof holes and axiom declarations (⚠️ flag if > 0)
 - Count of `native_decide` proofs vs hand-written proofs
 - Count of empty theorem bodies (`:= by` with no following tactic)
 - Count of tautological theorems (`X = X`, `v ≤ v`)

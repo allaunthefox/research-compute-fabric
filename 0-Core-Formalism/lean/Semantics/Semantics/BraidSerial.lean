@@ -243,4 +243,50 @@ theorem directCodecRoundtripBytes :
 #eval (decodeFrame (encodePacket witnessPacket 12)).1.payload.bytes.length
 #eval (decodeFrame { strands := [], frameNum := 0, phiPhase := Q16_16.zero }).2
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Boundedness Theorems (prevent silent truncation)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+/-- Maximum serialized bytes that fit in one braid frame (8 lanes). -/
+def maxFrameBytes : Nat := BraidFrame.maxWires
+
+/-- Header serializes to exactly 4 bytes (fixed-width). -/
+theorem headerBytes_length (h : PacketHeader) : (headerBytes h).length = 4 := by
+  unfold headerBytes
+  simp
+
+/--
+Upper bound on serialized packet size: header (4) + payload length.
+Used to prove that small packets fit in one frame without truncation.
+-/
+theorem packetBytes_length_bound (pkt : SerialPacket) :
+    (packetBytes pkt).length ≤ 4 + pkt.payload.bytes.length := by
+  unfold packetBytes
+  simp
+
+/--
+A packet fits in one frame iff its serialized bytes ≤ maxFrameBytes.
+Truncation via laneBytes is explicit but silent; this predicate detects it.
+-/
+def packetFitsOneFrame (pkt : SerialPacket) : Bool :=
+  (packetBytes pkt).length ≤ maxFrameBytes
+
+/--
+The witness packet (4 header bytes + 4 payload bytes = 8 bytes) fits
+in exactly one braid frame with zero truncation.
+-/
+theorem PacketFitsOneFrame : packetFitsOneFrame witnessPacket := by
+  unfold packetFitsOneFrame witnessPacket
+  unfold packetBytes headerBytes
+  native_decide
+
+/--
+One-frame envelope is lossless: the decoded payload length equals the
+original payload length when the packet fits.
+-/
+theorem oneFramePayloadPreserved :
+  let decoded := (decodeFrame (encodePacket witnessPacket 12)).1
+  decoded.payload.bytes.length = witnessPacket.payload.bytes.length := by
+  native_decide
+
 end Semantics.BraidSerial

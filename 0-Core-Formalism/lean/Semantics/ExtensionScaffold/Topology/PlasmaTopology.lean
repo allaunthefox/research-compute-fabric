@@ -33,11 +33,11 @@ def isPersistent (regime : PlasmaTopologyRegime) : Bool :=
   | _ => false
 
 theorem PlasmaTopologyRegime_total (r : PlasmaTopologyRegime) :
-  ∃ r', r = r' :=
-  ⟨r, rfl⟩
+  isPersistent r = true ∨ isPersistent r = false := by
+  cases r <;> simp [isPersistent]
 
 theorem PlasmaTopologyInvariantSurvivor_total (s : PlasmaTopologyInvariantSurvivor) :
-  ∃ s', s = s' :=
-  ⟨s, rfl⟩
+  s = .difference ∨ s = .composition ∨ s = .transport ∨ s = .gate := by
+  cases s <;> simp
 
 end Semantics.PlasmaTopology

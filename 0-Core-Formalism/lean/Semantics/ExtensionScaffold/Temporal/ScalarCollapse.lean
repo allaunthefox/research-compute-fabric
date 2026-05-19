@@ -102,11 +102,10 @@ theorem no_scalar_without_load_visibility
 In this formalization, capability is tracked via the witness's resultCapability. -/
 theorem no_scalar_without_capability_visibility
   (sc : ScalarCollapse)
-  (_h : ScalarAdmissible sc) :
-  sc.sourcePath.length ≥ 0 := by
-  -- Path length is always nonnegative by definition.
-  -- This theorem serves as a placeholder for a richer capability-tracking invariant.
-  simp
+  (h : ScalarAdmissible sc) :
+  sc.policy.respectsConstitution = true ∧ sc.policy.preservesUniversality = true := by
+  unfold ScalarAdmissible at h
+  exact h.2.2.2.2
 
 /-- A collapse exactly matches its policy if every required invariant is present and certified. -/
 theorem exact_collapse_matches_policy

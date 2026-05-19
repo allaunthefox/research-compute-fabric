@@ -59,13 +59,13 @@ def tmarpAtomize (s : TMARPState) : TMARPState :=
     Quarantine if stream is empty (nothing to atomize). -/
 def tmarpTransform (a b : TMARPState) : Outcome TMARPState :=
   if a.stream = [] then
-    Outcome.quarantined ⟨"TMARP-empty-stream", #[], 0⟩
+    Outcome.quarantined ⟨"TMARP-empty-stream", ByteArray.empty, 0⟩
   else
     let aAtom := tmarpAtomize a
     if b = aAtom then
       Outcome.ok b
     else
-      Outcome.quarantined ⟨"TMARP-reassembly-failed", #[], a.totalMass⟩
+      Outcome.quarantined ⟨"TMARP-reassembly-failed", ByteArray.empty, a.totalMass⟩
 
 /-- K_TMARP: cost = number of tokens processed. -/
 def tmarpCost (a b : TMARPState) : Int :=
@@ -93,9 +93,9 @@ inductive TMARPScaleBand : Type where
 def tmarpValidAtScale (band : TMARPScaleBand) (s : TMARPState) : Prop :=
   match band with
   | TMARPScaleBand.TokenLevel    => s.stream.length ≥ 1
-  | TMARPScaleBand.PhraseLevel   => s.stream.length ≤ 10
-  | TMARPScaleBand.SentenceLevel => s.stream.length ≤ 100
-  | TMARPScaleBand.DocumentLevel => True
+  | TMARPScaleBand.PhraseLevel   => s.stream.length ≥ 2 ∧ s.stream.length ≤ 10
+  | TMARPScaleBand.SentenceLevel => s.stream.length ≥ 1 ∧ s.stream.length ≤ 100
+  | TMARPScaleBand.DocumentLevel => s.stream.length ≥ 1 ∧ s.atomized = true
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §4  ModelUpgrade Instance

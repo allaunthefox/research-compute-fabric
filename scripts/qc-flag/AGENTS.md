@@ -1,7 +1,7 @@
 # QC Flagger — AGENTS.md
 
 ## Purpose
-Automated code quality inspection for Lean files, implementing the Lean Expert Agent's 5-point inspection protocol.
+Automated code quality inspection for Lean files, implementing the Lean Expert Agent's 7-check inspection protocol.
 
 ## Usage
 
@@ -26,9 +26,11 @@ bash scripts/qc-flag/run_qc_flag.sh path/to/dir/ --verbose
 |---|-------|----------------|
 | 1 | Structural Health | theorem/def/eval/sorry counts, empty theorems, tautologies, unused imports, `set_option` suppressions |
 | 2 | Naming Conventions | PascalCase files/types, camelCase functions/theorems, banned prefixes/suffixes |
-| 3 | Q16_16 Compliance | Float usage in hot-path code |
+| 3 | Q16_16 Compliance | Float usage in hot-path code. Historical contamination sites at `BraidCross.lean:49,50,84` and `BraidStrand.lean:57,71` are the canonical fixed-point constructor template. Flag any `ofFloat` outside JSON/sensor boundary shims. |
 | 4 | Proof Quality | defs without companion theorems, `.get!` without `.isSome`, native_decide coverage |
 | 5 | Dependency Analysis | Unused imports, circular and transitive circular dependencies |
+| 6 | Compression Theorem Pair | Every module defining a compression path MUST provide both `eigensolid_convergence` (crossing loop stabilizes) and `receipt_invertible` (receipt bijectively reconstructs original including zero/gap/timing dimensions). Flag missing pairs. |
+| 7 | AGENTS.md Compliance | Root `AGENTS.md` Compression First Principles apply to all Lean code. Check that no compute path uses `ofFloat` and that receipt dimensions are explicitly captured (C, σ, k, ε_seq, t, ∅_scars). |
 
 ## Output
 

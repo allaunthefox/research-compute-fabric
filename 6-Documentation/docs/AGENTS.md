@@ -190,7 +190,7 @@ If you cannot write a test or theorem, you do not understand the specification. 
 
 ### 5.1 Wolfram Alpha Verification
 
-**All mathematical formulas, equations, and numerical computations must be verified against Wolfram Alpha when possible.**
+**All mathematical formulas, equations, and numerical computations must be verified against Wolfram Alpha when possible.** (NOTE: Requires an active `WOLFRAM_ALPHA_API_KEY`. If none is set, this check is deferred and the formula MUST reference a peer-reviewed paper or Lean proof instead.)
 
 **Requirements:**
 - Before implementing any new mathematical formula, verify the formula structure and behavior using Wolfram Alpha
@@ -333,6 +333,8 @@ Do not leave `.bak`, `.tmp`, `Copy of`, or experimental files in the working tre
 **Forbidden:** Ad-hoc state machines that lack a Lean theorem.
 
 ### 7.4 AVM (Adaptive Virtual Machine) — Universal Math Language Adapter
+**STATUS:** HOLD — core ISA rebuild required per AVM bulletproofing plan. AVM.lean has 5/7 NOPs, no `run`/`fuel`/`halted` state. Do not implement against this spec until Phase 1 (ISA rebuild) is complete.
+
 **Purpose:** AVM is the ONLY bridge between math languages and Python bytecode. Zero manual Python code is written.
 
 **Core Principle:**
@@ -570,10 +572,10 @@ All Q16_16 operations must satisfy:
 
 ### 13.2 Conversion Guidelines
 
-- **Q0_16 → Q16_16**: Use `Q16_16.ofFloat (Q0_16.toFloat x)` for compatibility with APIs expecting Q16_16
-- **Q16_16 → Q0_16**: Normalize to [-1, 1] range first, then use `Q0_16.ofFloat normalizedValue`
-- **Float → Q0_16**: Clamp to [-1, 1] before conversion: `Q0_16.ofFloat (if f > 1.0 then 1.0 else if f < -1.0 then -1.0 else f)`
-- **Q0_16 → Float**: Use `Q0_16.toFloat x`
+- **Q0_16 → Q16_16**: Use `Q16_16.ofRatio (q.val.toNat) 0x7FFF` for dimensionless→mixed conversion
+- **Q16_16 → Q0_16**: Normalize to [-1, 1] range first, then use `Q0_16.ofNat (n * 0x7FFF / scale)` where scale is the Q16_16 value's range divisor
+- **Float → Q0_16** (boundary only): Clamp to [-1, 1] before conversion; use `Q0_16.ofFloat` ONLY in JSON/sensor boundary shims
+- **Q0_16 → Float** (boundary only): Use `Q0_16.toFloat x` ONLY in boundary shims for human-readable output
 
 ### 13.3 Refactoring Priority (Dimensionless-First)
 
@@ -601,6 +603,29 @@ For each remaining Q16_16 usage, prove or document:
 ### 13.4 Implementation Location
 
 Both Q16_16 and Q0_16 are defined in `0-Core-Formalism/lean/Semantics/Semantics/FixedPoint.lean` to avoid naming conflicts. The separate `0-Core-Formalism/lean/Semantics/Semantics/Q16_16.lean` file contains additional Q16_16-specific operations but should not be imported directly in most cases.
+
+### 13.5 Every gap is a Q16_16 value (not an absence of data)
+
+Q16_16 arithmetic is deterministic on every substrate — GPU, FPGA, ASIC, PCIe,
+blitter, CPU. A zero crossing weight `C[i][j] = 0` is as structurally significant
+as `C[i][j] = 0x0000C000` (¾). The compressor encodes both; the decompressor
+reconstructs both. No value, including zero, is an omission.
+
+### 13.6 ofFloat is a once-per-boundary conversion
+
+`Q16_16.ofFloat`, `Q0_16.ofFloat`, and `Q0_64.ofFloat` may appear ONLY in
+boundary shim code (JSON parsing, sensor input, RDS row reading). They must
+NOT appear in any Lean theorem's compute path. The canonical replacements are:
+
+| Pattern                        | Replacement                        |
+|-------------------------------|-------------------------------------|
+| `Q16_16.ofFloat n.toFloat`    | `Q16_16.ofNat n.toNat`             |
+| `Q16_16.ofFloat (a/b)`        | `Q16_16.ofRatio a b`               |
+| `Q16_16.ofFloat (f)` (sensor) | `Q16_16.ofInt (Int.snapToBounds f)` |
+
+The historical 5 contamination sites at `BraidCross.lean:49,50,84` and
+`BraidStrand.lean:57,71` are the canonical fixed-point constructor template.
+All new code must pass a Float-free compute-path scan.
 
 ---
 
@@ -969,8 +994,33 @@ All components must be implemented together. Partial implementation is **unsafe*
 - **Without pruning**: NP-hard search intractable for real-time
 - **Without domain-appropriate verification**: Detection unreliable, proof claims unaudited, safety violations possible
 
+### 16.6 The eigensolid compressor (BraidEigensolid)
+
+Every compression path follows this invariant:
+
+  1. Raw bytes are projected onto 8 braid strands (16 real dims via PhaseVec).
+  2. A Q0_2 crossing matrix C (8×8, entries in {0,¼,½,¾} encoded as
+     Q16_16 ofNat values) defines strand interaction topology.
+  3. Sidon labels (powers of 2: 1,2,4,8,16,32,64,128) give collision-free
+     crossing addresses. Sidon slack (budget - max_label) is a receipt dimension.
+  4. Golden centering: `s(t+1) = c + φ⁻¹(s(t) - c)`, φ⁻¹ = 0x00009E70,
+     determines strand contraction toward eigensolid.
+  5. Convergence is detected when `crossStep(s) = s`. Step count k is a
+     receipt dimension encoding contraction strength.
+  6. The receipt `(C, σ, k, ε_seq, t, ∅_scars)` IS the compressed state.
+     Invertibility is the Lean theorem that proves reconstruction.
+  7. Anti-BraidStorm adversarial check (Yang-Baxter triple) tests
+     braid-order invariance. Scar absence is a positive receipt dimension.
+
+The compressor is hierarchical: bytes→1KB chunks (level 0), chunks→1MB banks
+(level 1), banks→whole file (level 2). Each level generates an eigensolid
+receipt. The total compressed size is the receipt structure depth.
+
+enwik9 is the canonical test. The Lean theorem `decode(encode(enwik9)) = enwik9`
+must hold byte-for-byte.
+
 **Enforcement:** Violations of this document are treated as invariant violations. They will be reverted.
 **Authority:** Human architect. No overrides.
 **Document ID:** AGENTS_LEAN_PORT_STRICT
-**Version:** 2.1
-**Date:** 2026-04-29
+**Version:** 2.2
+**Date:** 2026-05-19

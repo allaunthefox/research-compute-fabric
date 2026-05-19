@@ -11,6 +11,10 @@
     "probe-science": "sh -c 'if [ -x .venv-science/bin/python ]; then .venv-science/bin/python scripts/probe_science_toolbelt.py; else python3 scripts/probe_science_toolbelt.py; fi'"
   },
   "dependencies": {
-    "better-sqlite3": "^12.4.1"
+    "@cline/sdk": "^0.0.41",
+    "@modelcontextprotocol/inspector": "^0.21.2",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "better-sqlite3": "^12.4.1",
+    "cline": "^3.0.7"
   }
 }

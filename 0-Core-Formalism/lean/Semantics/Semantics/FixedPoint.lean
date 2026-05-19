@@ -268,7 +268,100 @@ def lt (a b : Q16_16) : Bool := a.toInt < b.toInt
     cases is infeasible; a symbolic proof needs a signed-integer model of
     Q16_16.add that omega can reason about. -/
 theorem add_pos_of_pos (a b : Q16_16) (ha : a > 0) (hb : b > 0) : a + b > 0 := by
-  sorry
+  change toInt (add a b) > 0
+  cases a with | mk av =>
+  cases b with | mk bv =>
+  -- Unfold a > 0 and b > 0 to get a.toInt > 0 and b.toInt > 0
+  have ha' : (Q16_16.mk av).toInt > 0 := by
+    have h := ha
+    simp [GT.gt, LT.lt, toInt] at h
+    exact h
+  have hb' : (Q16_16.mk bv).toInt > 0 := by
+    have h := hb
+    simp [GT.gt, LT.lt, toInt] at h
+    exact h
+  -- a.toInt > 0 implies av < 0x80000000 and av.toNat > 0
+  have hav_lt : av < (0x80000000 : UInt32) := by
+    by_contra! hge
+    have hge' : av ≥ (0x80000000 : UInt32) := Nat.le_of_not_lt hge
+    have hti_nonpos : (Q16_16.mk av).toInt ≤ 0 := by
+      unfold toInt
+      simp [hge']
+      have hlt := UInt32.toNat_lt av
+      omega
+    linarith
+  have hav_pos : av.toNat > 0 := by
+    have h : (Q16_16.mk av).toInt = (av.toNat : Int) := by
+      unfold toInt
+      simp [hav_lt]
+    rw [h] at ha'
+    exact_mod_cast ha'
+  -- b.toInt > 0 implies bv < 0x80000000 and bv.toNat > 0
+  have hbv_lt : bv < (0x80000000 : UInt32) := by
+    by_contra! hge
+    have hge' : bv ≥ (0x80000000 : UInt32) := Nat.le_of_not_lt hge
+    have hti_nonpos : (Q16_16.mk bv).toInt ≤ 0 := by
+      unfold toInt
+      simp [hge']
+      have hlt := UInt32.toNat_lt bv
+      omega
+    linarith
+  have hbv_pos : bv.toNat > 0 := by
+    have h : (Q16_16.mk bv).toInt = (bv.toNat : Int) := by
+      unfold toInt
+      simp [hbv_lt]
+    rw [h] at hb'
+    exact_mod_cast hb'
+  -- negative overflow branch is impossible
+  have h_nge_a : ¬ av ≥ (0x80000000 : UInt32) := by
+    intro hge; exact Nat.lt_irrefl _ (Nat.lt_of_lt_of_le hav_lt hge)
+  have h_nge_b : ¬ bv ≥ (0x80000000 : UInt32) := by
+    intro hge; exact Nat.lt_irrefl _ (Nat.lt_of_lt_of_le hbv_lt hge)
+  by_cases h_ov : av + bv ≥ (0x80000000 : UInt32)
+  · -- Positive overflow: result = maxVal
+    have h_eq : add (Q16_16.mk av) (Q16_16.mk bv) = maxVal := by
+      unfold add
+      simp [hav_lt, hbv_lt, h_nge_a, h_nge_b, h_ov]
+      try { native_decide }
+    rw [h_eq]
+    unfold toInt
+    native_decide
+  · -- No positive overflow
+    have h_lt : av + bv < (0x80000000 : UInt32) := Nat.not_le.mp h_ov
+    have h_not_neg_ov : ¬ (av ≥ (0x80000000 : UInt32) ∧ bv ≥ (0x80000000 : UInt32) ∧ av + bv < (0x80000000 : UInt32)) := by
+      intro h
+      exact h_nge_a h.1
+    have h_eq : add (Q16_16.mk av) (Q16_16.mk bv) = ⟨av + bv⟩ := by
+      unfold add
+      simp [hav_lt, hbv_lt, h_nge_a, h_nge_b, h_ov, h_not_neg_ov]
+      try { native_decide }
+    rw [h_eq]
+    unfold toInt
+    have hval : (Q16_16.mk (av + bv)).val = (av + bv) := rfl
+    rw [hval]
+    have h_not_ov_fl : ¬ ((av + bv : UInt32) ≥ (0x80000000 : UInt32)) := by
+      intro hge
+      have hlt_nat : (av + bv).toNat < 0x80000000 := by
+        simpa using (UInt32.lt_iff_toNat_lt_toNat.mp h_lt)
+      have hge_nat : 0x80000000 ≤ (av + bv).toNat := by
+        simpa using (UInt32.le_iff_toNat_le_toNat.mp hge)
+      omega
+    simp [h_not_ov_fl, UInt32.toNat_toUInt64]
+    have hav_nat_lt : av.toNat < 0x80000000 := by
+      simpa using (UInt32.lt_iff_toNat_lt_toNat.mp hav_lt)
+    have hbv_nat_lt : bv.toNat < 0x80000000 := by
+      simpa using (UInt32.lt_iff_toNat_lt_toNat.mp hbv_lt)
+    have h_add_nat : av.toNat + bv.toNat < 4294967296 := by
+      omega
+    have h_add : (av + bv).toNat = av.toNat + bv.toNat := by
+      calc
+        (av + bv).toNat = (av.toNat + bv.toNat) % 4294967296 := by
+          simp [UInt32.toNat_add]
+        _ = av.toNat + bv.toNat := Nat.mod_eq_of_lt h_add_nat
+    have hpos : (av + bv).toNat > 0 := by
+      rw [h_add]
+      omega
+    exact_mod_cast hpos
 
 def isNeg (q : Q16_16) : Bool := q.val ≥ 0x80000000
 

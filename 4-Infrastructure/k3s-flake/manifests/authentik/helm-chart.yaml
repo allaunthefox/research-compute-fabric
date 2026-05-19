@@ -1,0 +1,67 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: authentik
+  namespace: services
+spec:
+  chart: authentik
+  repo: https://helm.goauthentik.io
+  targetNamespace: services
+  version: "2024.12.0"
+  valuesContent: |
+    authentik:
+      secret_key:
+        valueFrom:
+          secretKeyRef:
+            name: authentik-secrets
+            key: secret-key
+      postgresql:
+        password:
+          valueFrom:
+            secretKeyRef:
+              name: authentik-secrets
+              key: postgresql-password
+    postgresql:
+      enabled: true
+      global:
+        postgresql:
+          auth:
+            existingSecret: authentik-secrets
+            secretKeys:
+              adminPasswordKey: postgresql-password
+      primary:
+        persistence:
+          size: 8Gi
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.researchstack.io/role
+                    operator: In
+                    values:
+                      - core
+                      - server
+    redis:
+      enabled: true
+      master:
+        persistence:
+          size: 2Gi
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.researchstack.io/role
+                    operator: In
+                    values:
+                      - core
+                      - server
+    server:
+      service:
+        type: NodePort
+        nodePort: 30800
+    worker:
+      service:
+        type: NodePort
+        nodePort: 30800
+    ingress:
+      enabled: false

@@ -234,14 +234,16 @@ structure ShannonLandauerParams where
 -- it from information-theoretic axioms. We make the bridge explicit.
 structure ShannonBridge {Xi Xj Ci Cj : Type}
     {Si : DynSystem Xi Ci} {Sj : DynSystem Xj Cj}
+    (params : ShannonLandauerParams)
     (A : Adapter Xi Xj Ci Cj Si Sj) where
-  sourceLeReconErr : R_le (sourceH Si) (reconErr A)
+  sourceLeReconErr : R_le (params.sourceH Si) (params.reconErr A)
 
 theorem shannon_floor {Xi Xj Ci Cj : Type}
     {Si : DynSystem Xi Ci} {Sj : DynSystem Xj Cj}
+    (params : ShannonLandauerParams)
     (A : Adapter Xi Xj Ci Cj Si Sj)
-    (bridge : ShannonBridge A) :
-    R_le (sourceH Si) (reconErr A) := by
+    (bridge : ShannonBridge params A) :
+    R_le (params.sourceH Si) (params.reconErr A) := by
   exact bridge.sourceLeReconErr
 
 -- PhysicalSystem predicate: the paper refers to "physical systems" without
@@ -267,22 +269,27 @@ def MStarConcept {C : Type} (chainV : C → VoidClass) (c : C) : Prop :=
 
 theorem mstar_shrinks_under_composition {C : Type}
     (V₁ V₂ : C → VoidClass) (c : C)
-    (h : MStarConcept V₁ c) :
-    MStarConcept (fun x => VoidClass.comp (V₁ x) (V₂ x)) c
-    ∨ ¬ MStarConcept (fun x => VoidClass.comp (V₁ x) (V₂ x)) c :=
-  Classical.em _
+    (h₁ : MStarConcept V₁ c)
+    (h₂ : MStarConcept V₂ c) :
+    MStarConcept (fun x => VoidClass.comp (V₁ x) (V₂ x)) c := by
+  unfold MStarConcept at h₁ h₂ ⊢
+  simp [VoidClass.comp, h₁, h₂]
 
 -- SORRY 7: M* = ←lim in Dyn (limit existence not proved)
 -- SORRY 8-10: Sheaf cohomology — H¹ claim (not constructed)
 structure SheavyGap where
-  topology_on_C : True
-  sheaf_F : True
-  gluing_axiom : True
-  H1_computed : True
-  correspondence : True
+  topologyClass : VoidClass
+  H1_computed : R
+  colimit_gap : R
+  topology_on_C : topologyClass = .Check
+  sheaf_F : R_le R_zero H1_computed
+  gluing_axiom : R_le R_zero colimit_gap
+  correspondence : R_le H1_computed colimit_gap
 
 -- SORRY 11: NP-hardness (entire proof absent from paper)
-theorem optimal_chain_NP_hard_CONJECTURE : True := trivial
+def optimal_chain_NP_hard_CONJECTURE {Problem : Type}
+    (cost : Problem → Nat) (certificate : Problem → VoidClass) : Prop :=
+  ∀ problem, certificate problem = .Check → cost problem ≥ 1
 
 
 -- ════════════════════════════════════════════════════════════════

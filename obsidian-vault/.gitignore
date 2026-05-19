@@ -1,0 +1,33 @@
+# Obsidian vault gitignore
+
+# Obsidian system files
+.obsidian/workspace*
+.obsidian/cache
+.obsidian/graph.json
+
+# Plugin data (user-specific)
+.obsidian/plugins/*/data.json
+
+# Workspace layouts (user-specific)
+.obsidian/workspaces.json
+
+# Daily notes (auto-generated)
+07-RESEARCH/04-Daily-Notes/
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Large assets
+*.mp4
+*.mov
+*.avi
+*.zip
+*.tar.gz
+*.rar

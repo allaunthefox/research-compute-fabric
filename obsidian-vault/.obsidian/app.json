@@ -1,0 +1,26 @@
+{
+  "promptDelete": false,
+  "showLineNumber": true,
+  "foldHeading": true,
+  "foldIndent": true,
+  "showFrontmatter": false,
+  "alwaysUpdateLinks": true,
+  "useMarkdownLinks": false,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "07-RESEARCH/01-Attack-Plans",
+  "attachmentFolderPath": "09-REFERENCES/assets",
+  "userIgnoreFilters": [
+    ".git/",
+    ".obsidian/",
+    "node_modules/",
+    "*.olean",
+    ".lake/"
+  ],
+  "readableLineLength": false,
+  "strictLineBreaks": false,
+  "vimMode": false,
+  "livePreview": true,
+  "propertiesInDocument": "visible",
+  "showInlineTitle": true,
+  "showUnsupportedFiles": false
+}

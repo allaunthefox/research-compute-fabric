@@ -1,0 +1,104 @@
+{
+  "choices": [
+    {
+      "name": "Create Formal Proof",
+      "type": "Template",
+      "command": "createNewNote",
+      "template": "08-TOOLS/01-Templates/Formal Proof.md",
+      "folder": "01-LAYERS/01-Formal-Proofs"
+    },
+    {
+      "name": "Create Attack Plan",
+      "type": "Template",
+      "command": "createNewNote",
+      "template": "08-TOOLS/01-Templates/Attack Plan.md",
+      "folder": "07-RESEARCH/01-Attack-Plans"
+    },
+    {
+      "name": "Create Milestone",
+      "type": "Template",
+      "command": "createNewNote",
+      "template": "08-TOOLS/01-Templates/Milestone.md",
+      "folder": "07-RESEARCH/00-Milestones"
+    },
+    {
+      "name": "Create Receipt",
+      "type": "Template",
+      "command": "createNewNote",
+      "template": "08-TOOLS/01-Templates/Receipt.md",
+      "folder": "01-LAYERS/03-Receipts"
+    },
+    {
+      "name": "Create Conjecture",
+      "type": "Multi",
+      "command": "createMultiLine",
+      "items": [
+        {
+          "name": "Conjecture Name",
+          "type": "Input"
+        },
+        {
+          "name": "Layer",
+          "type": "Choice",
+          "choices": ["L0", "L1", "L2", "L3", "L4", "L5", "L6"]
+        }
+      ]
+    },
+    {
+      "name": "Capture Research Note",
+      "type": "Capture",
+      "command": "captureToActiveFile",
+      "format": "\n\n## {{date:YYYY-MM-DD HH:mm}}\n{{value}}\n\nTags: #research-note #{{value:layer}}"
+    },
+    {
+      "name": "Generate Lean Stub",
+      "type": "Macro",
+      "command": "insertText",
+      "text": "theorem {{value:theorem_name}} [hypotheses] : conclusion :=\n  sorry"
+    },
+    {
+      "name": "Generate Receipt Stub",
+      "type": "Macro",
+      "command": "insertText",
+      "text": "def {{value:receipt_name}}Receipt (state : State) : String :=\n  \"{{value:receipt_name}}:\" ++ toString state.val ++ \",\""
+    },
+    {
+      "name": "Add Progress Update",
+      "type": "Capture",
+      "command": "captureToActiveFile",
+      "format": "\n- **{{date:YYYY-MM-DD}}:** {{value:progress}} ({{value:status}})"
+    },
+    {
+      "name": "Create Daily Standup",
+      "type": "Template",
+      "command": "createNewNote",
+      "template": "08-TOOLS/01-Templates/Daily Standup.md",
+      "folder": "07-RESEARCH/04-Daily-Notes",
+      "fileNameFormat": "{{date:YYYY-MM-DD}}-Standup"
+    }
+  ],
+  "macros": [
+    {
+      "name": "Insert Current Timestamp",
+      "type": "Macro",
+      "command": "insertText",
+      "text": "{{date:YYYY-MM-DDTHH:mm:ssZ}}"
+    },
+    {
+      "name": "Insert Lean Code Block",
+      "type": "Macro",
+      "command": "insertText",
+      "text": "```lean\n{{value:lean_code}}\n```"
+    },
+    {
+      "name": "Insert Receipt Block",
+      "type": "Macro",
+      "command": "insertText",
+      "text": "```receipt\n{{value:receipt_content}}\n```"
+    }
+  ],
+  "settings": {
+    "showInMenu": true,
+    "hotkey": "Ctrl+Shift+P"
+  }
+}

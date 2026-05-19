@@ -1,0 +1,51 @@
+{
+  "command": "tp.inject",
+  "template_path": "Templates/research-helpers.js",
+  "file": {
+    "folder": "08-TOOLS/01-Templates",
+    "name": "{{value:filename}}",
+    "format": "{{value:filename}}"
+  },
+  "settings": {
+    "enable_system_commands": true,
+    "shell_path": "",
+    "user_scripts_folder": "",
+    "enable_file_templates": true,
+    "templates_folder": "08-TOOLS/01-Templates",
+    "template_hotkeys": [
+      {
+        "modifiers": ["Alt", "Shift"],
+        "key": "F"
+      }
+    ],
+    "enable_folder_templates": true,
+    "folder_templates": [
+      {
+        "folder": "01-LAYERS/*/01-Formal-Proofs",
+        "template": "08-TOOLS/01-Templates/Formal Proof.md"
+      },
+      {
+        "folder": "07-RESEARCH/01-Attack-Plans",
+        "template": "08-TOOLS/01-Templates/Attack Plan.md"
+      },
+      {
+        "folder": "07-RESEARCH/00-Milestones",
+        "template": "08-TOOLS/01-Templates/Milestone.md"
+      },
+      {
+        "folder": "01-LAYERS/*/03-Receipts",
+        "template": "08-TOOLS/01-Templates/Receipt.md"
+      }
+    ],
+    "enable_syntax_highlighting": true,
+    "enabled_templates_hotkeys": [
+      {
+        "modifiers": ["Alt", "Shift"],
+        "key": "F"
+      }
+    ],
+    "startup_templates": [
+      "Templates/research-helpers.js"
+    ]
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "corePlugins": [
+    "file-explorer",
+    "search",
+    "switcher",
+    "graph",
+    "backlink",
+    "page-preview",
+    "command-palette",
+    "settings",
+    "file-recovery"
+  ],
+  "communityPlugins": [
+    "dataview",
+    "templater",
+    "quickadd",
+    "advanced-tables",
+    "excalidraw",
+    "canvas",
+    "tag-wrangler",
+    "folder-note",
+    "breadcrumbs",
+    "workspaces"
+  ],
+  "enabledPlugins": [
+    "file-explorer",
+    "search",
+    "switcher",
+    "graph",
+    "backlink",
+    "page-preview",
+    "command-palette",
+    "settings",
+    "file-recovery",
+    "dataview",
+    "templater",
+    "quickadd",
+    "advanced-tables",
+    "excalidraw",
+    "canvas",
+    "tag-wrangler",
+    "folder-note",
+    "breadcrumbs",
+    "workspaces"
+  ],
+  "fileExplorer": {
+    "sortOrder": "alphabetical",
+    "sortDirection": "ascending"
+  },
+  "graph": {
+    "local": "network",
+    "global": "network",
+    "hover": false,
+    "drag": true,
+    "zoom": true,
+    "force": "force",
+    "attachStrength": 1,
+    "linkStrength": 1,
+    "linkDistance": 10,
+    "repulsionStrength": 10,
+    "centerForce": 0.1,
+    "linkRadius": 5,
+    "showTags": true,
+    "showAttachments": false,
+    "showOrphans": true,
+    "textSize": 8,
+    "nodeSize": 5,
+    "arrowSize": 2.5,
+    "colors": {
+      "background": "#000000",
+      "text": "#ffffff",
+      "line": "#498af3",
+      "node": "#498af3",
+      "nodeFocused": "#498af3",
+      "nodeHighlighted": "#498af3",
+      "nodeTag": "#498af3",
+      "nodeAttachment": "#498af3",
+      "nodeUnresolved": "#498af3"
+    }
+  },
+  "prompts": {
+    "knowledge": "Knowledge Management",
+    "research": "Research & Analysis",
+    "formal": "Formal Methods",
+    "hardware": "Hardware Extraction",
+    "receipt": "Receipt Generation",
+    "milestone": "Milestone Tracking"
+  },
+  "workspaces": {
+    "formal-methods": {
+      "name": "Formal Methods",
+      "files": [
+        "01-LAYERS/01-Formal-Proofs",
+        "01-LAYERS/03-Receipts"
+      ]
+    },
+    "research-planning": {
+      "name": "Research Planning",
+      "files": [
+        "07-RESEARCH/00-Milestones",
+        "07-RESEARCH/01-Attack-Plans",
+        "07-RESEARCH/02-Conjectures"
+      ]
+    },
+    "hardware-design": {
+      "name": "Hardware Design",
+      "files": [
+        "01-LAYERS/04-Hardware",
+        "08-TOOLS/00-Scripts"
+      ]
+    }
+  }
+}

@@ -1,0 +1,162 @@
+/* Research Stack Obsidian Theme */
+
+/* Dark theme optimized for mathematical formalism */
+.theme-dark {
+  --background-primary: #0a0a0a;
+  --background-secondary: #1a1a1a;
+  --background tertiary: #2a2a2a;
+  --text-normal: #e0e0e0;
+  --text-muted: #a0a0a0;
+  --text-faint: #707070;
+  --accent-color: #00d4aa;
+  --accent-color-hover: #00f5cc;
+  --interactive-normal: #2a2a2a;
+  --interactive-hover: #3a3a3a;
+  --mono-rgb: 200, 200, 200;
+  --font-monospace: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* Layer-specific colors */
+.layer-L0 { color: #ff6b6b; }  /* Primordial - Red */
+.layer-L1 { color: #4ecdc4; }  /* Geometric - Cyan */
+.layer-L2 { color: #45b7d1; }  /* Biological - Blue */
+.layer-L3 { color: #96ceb4; }  /* Thermodynamic - Green */
+.layer-L4 { color: #feca57; }  /* Security - Yellow */
+.layer-L5 { color: #ff9ff3; }  /* Semantic - Pink */
+.layer-L6 { color: #a29bfe; }  /* Meta - Purple */
+
+/* Formal proof highlighting */
+.proof-theorem { border-left: 4px solid #00d4aa; padding-left: 1em; }
+.proof-lemma { border-left: 4px solid #4ecdc4; padding-left: 1em; }
+.proof-corollary { border-left: 4px solid #feca57; padding-left: 1em; }
+.proof-axiom { border-left: 4px solid #ff6b6b; padding-left: 1em; }
+
+/* Receipt styling */
+.receipt {
+  background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 1em;
+  margin: 1em 0;
+  font-family: var(--font-monospace);
+  font-size: 0.9em;
+}
+
+.receipt.valid { border-color: #00d4aa; }
+.receipt.pending { border-color: #feca57; }
+.receipt.failed { border-color: #ff6b6b; }
+
+/* Lean code blocks */
+.language-lean {
+  background: #0f0f0f;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 1em;
+  font-family: var(--font-monospace);
+  font-size: 0.9em;
+}
+
+/* Mathematical expressions */
+.math-inline {
+  color: #00d4aa;
+  font-weight: 500;
+}
+
+.math-block {
+  background: #1a1a1a;
+  border-left: 3px solid #00d4aa;
+  padding: 1em;
+  margin: 1em 0;
+  font-family: 'Computer Modern', serif;
+}
+
+/* Graph view customization */
+.graph-view.color-fill-focused {
+  color: #00d4aa;
+}
+
+.graph-view.color-fill-tag {
+  color: #feca57;
+}
+
+.graph-view.color-fill-unresolved {
+  color: #ff6b6b;
+}
+
+/* Breadcrumb navigation */
+.breadcrumb {
+  background: #1a1a1a;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  margin: 0.5em 0;
+  font-size: 0.9em;
+}
+
+.breadcrumb-item {
+  color: #00d4aa;
+  text-decoration: none;
+}
+
+.breadcrumb-item:hover {
+  color: #00f5cc;
+}
+
+/* Status indicators */
+.status-completed { color: #00d4aa; }
+.status-in-progress { color: #feca57; }
+.status-blocked { color: #ff6b6b; }
+.status-speculative { color: #a29bfe; }
+
+/* Callouts for different research artifacts */
+.callout {
+  border-left: 4px solid;
+  padding: 1em;
+  margin: 1em 0;
+}
+
+.callout.milestone { border-color: #00d4aa; background: rgba(0, 212, 170, 0.1); }
+.callout.attack-plan { border-color: #ff6b6b; background: rgba(255, 107, 107, 0.1); }
+.callout.conjecture { border-color: #a29bfe; background: rgba(162, 155, 254, 0.1); }
+.callout.experiment { border-color: #4ecdc4; background: rgba(78, 205, 196, 0.1); }
+.callout.hardware { border-color: #feca57; background: rgba(254, 202, 87, 0.1); }
+
+/* Table styling for formal specifications */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+}
+
+th, td {
+  border: 1px solid #444;
+  padding: 0.5em;
+  text-align: left;
+}
+
+th {
+  background: #2a2a2a;
+  font-weight: 600;
+}
+
+tr:nth-child(even) {
+  background: #1a1a1a;
+}
+
+/* Canvas for diagram creation */
+.canvas-node-group {
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 8px;
+}
+
+.canvas-node-formal {
+  border-color: #00d4aa;
+}
+
+.canvas-node-hardware {
+  border-color: #feca57;
+}
+
+.canvas-node-research {
+  border-color: #4ecdc4;
+}

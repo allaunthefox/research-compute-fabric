@@ -161,6 +161,8 @@
         rEnv             # R + tidyverse / ggplot2 (see rEnv binding above)
         # ── Typesetting ────────────────────────────────────────────────────────
         typst            # modern markup-based typesetting (LaTeX alternative)
+        # ── CAS ────────────────────────────────────────────────────────────────
+        sage             # SageMath 10.5 — full open-source mathematics system
       ];
 
       # ── customEtc provides standard etc configuration with researcher user ──
@@ -210,7 +212,7 @@
           User       = "1000";
           WorkingDir = "/home/researcher/stack";
           Env = [
-            "PATH=/home/researcher/.elan/bin:${pythonEnv}/bin:${pkgs.uv}/bin:${pkgs.git}/bin:${pkgs.ripgrep}/bin:${pkgs.jq}/bin:${pkgs.coreutils}/bin:${pkgs.bashInteractive}/bin:${pkgs.binutils}/bin:${pkgs.glibc.bin}/bin:${pkgs.gzip}/bin:${pkgs.pkg-config}/bin:${pkgs.openssl.bin}/bin:${pkgs.texliveFull}/bin:${pkgs.typst}/bin:${pkgs.gnuplot}/bin:${pkgs.maxima}/bin:${pkgs.octave}/bin:${rEnv}/bin:/usr/bin:/bin"
+            "PATH=/home/researcher/.elan/bin:${pythonEnv}/bin:${pkgs.uv}/bin:${pkgs.git}/bin:${pkgs.ripgrep}/bin:${pkgs.jq}/bin:${pkgs.coreutils}/bin:${pkgs.bashInteractive}/bin:${pkgs.binutils}/bin:${pkgs.glibc.bin}/bin:${pkgs.gzip}/bin:${pkgs.pkg-config}/bin:${pkgs.openssl.bin}/bin:${pkgs.texliveFull}/bin:${pkgs.typst}/bin:${pkgs.gnuplot}/bin:${pkgs.maxima}/bin:${pkgs.octave}/bin:${rEnv}/bin:${pkgs.sage}/bin:/usr/bin:/bin"
             "LD_LIBRARY_PATH=${pkgs.gcc.cc.lib}/lib:${pkgs.glibc}/lib:${pkgs.libglvnd}/lib:${pkgs.xorg.libX11}/lib:${pkgs.xorg.libXext}/lib:${pkgs.xorg.libXrender}/lib:${pkgs.mesa}/lib:${pkgs.openssl}/lib"
             "PYTHONUNBUFFERED=1"
             "XDG_CACHE_HOME=/home/researcher/.cache"

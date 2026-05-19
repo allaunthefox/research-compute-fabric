@@ -1,63 +1,78 @@
-FROM alpine:3.19
+FROM nixos/nix:latest
 
-# ── System packages ───────────────────────────────────────────────────────────
-# Core build + dev tools
-RUN apk add --no-cache \
-    bash \
-    build-base \
-    git \
-    curl \
-    wget \
-    openssh-client \
-    rsync \
-    zstd \
-    jq \
-    ripgrep \
-    # Graphviz for visualisation helpers
-    graphviz \
-    # Node / npm for JS tooling
-    nodejs \
-    npm \
-    # Python runtime + package managers
-    python3 \
-    py3-pip \
-    pipx \
-    # PostgreSQL client libs (needed by psycopg2 --no-binary build)
-    postgresql16-client \
-    postgresql16-dev \
-    libpq-dev \
-    # SSL / crypto headers (boto3, requests, psycopg2)
-    openssl-dev \
-    # CFFI / ffi headers
-    libffi-dev \
-    # Needed for some science packages (scipy, etc.)
-    gfortran \
-    openblas-dev \
-    lapack-dev \
-    # Misc compression
-    xz \
-    bzip2-dev \
-    # rclone (Google Drive / S3 / etc.)
-    rclone \
-    # ip / iproute2 needed by tailscaled
-    iproute2 \
-    # ── LaTeX + typesetting ───────────────────────────────────────────────────
-    texlive-full \
-    # ── Math / science CLI ────────────────────────────────────────────────────
-    gnuplot \
-    maxima \
-    # wxmaxima requires a display; skip in headless image
-    octave \
-    R \
-    && :
+# ── Nix configuration: enable flakes + nix-command ───────────────────────────
+RUN mkdir -p /etc/nix && \
+    echo 'experimental-features = nix-command flakes' >> /etc/nix/nix.conf && \
+    echo 'sandbox = false' >> /etc/nix/nix.conf
 
-# ── Typst (static binary — not in Alpine apk) ────────────────────────────────
-RUN TYPST_VER=$(curl -fsSL https://api.github.com/repos/typst/typst/releases/latest \
-      | grep '"tag_name"' | grep -oP 'v[\d.]+') \
-    && curl -fsSL "https://github.com/typst/typst/releases/download/${TYPST_VER}/typst-x86_64-unknown-linux-musl.tar.xz" \
-       | tar -xJ -C /tmp/ \
-    && install -m 755 /tmp/typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst \
-    && rm -rf /tmp/typst-x86_64-unknown-linux-musl
+# ── System packages via nix profile ──────────────────────────────────────────
+# This mirrors the devPkgs set in flake.nix (authoritative build path).
+# The canonical image is produced by `nix build .#devcontainer` on the host;
+# this Dockerfile is a self-contained fallback that produces an equivalent env.
+RUN nix profile install \
+    nixpkgs#bash \
+    nixpkgs#bashInteractive \
+    nixpkgs#coreutils \
+    nixpkgs#findutils \
+    nixpkgs#gnugrep \
+    nixpkgs#gnused \
+    nixpkgs#gawk \
+    nixpkgs#util-linux \
+    nixpkgs#git \
+    nixpkgs#git-lfs \
+    nixpkgs#curl \
+    nixpkgs#wget \
+    nixpkgs#rsync \
+    nixpkgs#zstd \
+    nixpkgs#xz \
+    nixpkgs#gnutar \
+    nixpkgs#gzip \
+    nixpkgs#ripgrep \
+    nixpkgs#jq \
+    nixpkgs#gnumake \
+    nixpkgs#nodejs_20 \
+    nixpkgs#uv \
+    nixpkgs#elan \
+    nixpkgs#postgresql_16 \
+    nixpkgs#graphviz \
+    nixpkgs#openssh \
+    nixpkgs#cacert \
+    nixpkgs#less \
+    nixpkgs#which \
+    nixpkgs#file \
+    nixpkgs#procps \
+    nixpkgs#htop \
+    nixpkgs#rclone \
+    nixpkgs#iproute2 \
+    nixpkgs#pkg-config \
+    nixpkgs#openssl \
+    nixpkgs#gcc \
+    nixpkgs#binutils \
+    nixpkgs#glibc \
+    nixpkgs#libglvnd \
+    nixpkgs#xorg.libX11 \
+    nixpkgs#xorg.libXext \
+    nixpkgs#xorg.libXrender \
+    nixpkgs#mesa \
+    && nix-collect-garbage -d
+
+# ── LaTeX + typesetting ───────────────────────────────────────────────────────
+RUN nix profile install \
+    nixpkgs#texliveFull \
+    nixpkgs#typst \
+    && nix-collect-garbage -d
+
+# ── Math / science CLI ────────────────────────────────────────────────────────
+RUN nix profile install \
+    nixpkgs#gnuplot \
+    nixpkgs#maxima \
+    nixpkgs#wxmaxima \
+    nixpkgs#octave \
+    nixpkgs#sage \
+    && nix-collect-garbage -d
+
+# ── Typst (already installed above via nix) ───────────────────────────────────
+# typst is available from nixpkgs#typst — no separate binary download needed.
 
 # ── Tailscale (static binary — userspace networking, no root required) ────────
 RUN TSVER=$(curl -fsSL https://pkgs.tailscale.com/stable/ \
@@ -69,15 +84,14 @@ RUN TSVER=$(curl -fsSL https://pkgs.tailscale.com/stable/ \
     && install -m 755 /tmp/tailscale_${TSVER}_amd64/tailscaled /usr/local/bin/tailscaled \
     && rm -rf /tmp/tailscale_${TSVER}_amd64
 
-# ── uv package manager ────────────────────────────────────────────────────────
-RUN pipx install uv && cp /root/.local/bin/uv /usr/local/bin/uv && cp /root/.local/bin/uvx /usr/local/bin/uvx
-
 # ── Non-root developer user 'researcher' (UID 1000) ──────────────────────────
-RUN adduser -D -u 1000 researcher
+RUN useradd -m -u 1000 -s /bin/bash researcher
 
 ENV PYTHONUNBUFFERED=1 \
     XDG_CACHE_HOME=/home/researcher/.cache \
-    UV_LINK_MODE=copy
+    UV_LINK_MODE=copy \
+    SSL_CERT_FILE=/root/.nix-profile/etc/ssl/certs/ca-bundle.crt \
+    NIX_SSL_CERT_FILE=/root/.nix-profile/etc/ssl/certs/ca-bundle.crt
 
 USER researcher
 WORKDIR /home/researcher/stack
@@ -86,7 +100,6 @@ WORKDIR /home/researcher/stack
 RUN uv python install 3.11.15 \
     && uv venv --clear --python 3.11.15 /home/researcher/venv
 
-# Core infrastructure / ingestion dependencies
 RUN uv pip install --python /home/researcher/venv/bin/python3 \
     # AWS + RDS IAM auth
     boto3 \
@@ -106,14 +119,13 @@ RUN uv pip install --python /home/researcher/venv/bin/python3 \
     python-dotenv \
     pyyaml \
     rich \
-    # Science / math baseline (from requirements-optional-science.txt)
+    # Science / math baseline
     biopython \
     networkx \
     pycryptodome \
     zstandard \
     z3-solver \
     PyWavelets \
-    # galois>=0.4 needs numba->llvmlite which requires LLVM; install separately on host if needed
     # Numerics
     numpy \
     scipy \
@@ -143,7 +155,7 @@ RUN curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -
 # ── PATH ──────────────────────────────────────────────────────────────────────
 ENV PATH="/home/researcher/.elan/bin:/home/researcher/venv/bin:/home/researcher/.local/bin:${PATH}"
 
-# ── Tailscale userspace auto-start snippet (written as researcher) ────────────
+# ── Tailscale userspace auto-start snippet ────────────────────────────────────
 RUN mkdir -p /home/researcher/.local/share/tailscale && \
     printf '%s\n' \
       '# ── Tailscale (userspace, no root required) ─────────────────────────────' \

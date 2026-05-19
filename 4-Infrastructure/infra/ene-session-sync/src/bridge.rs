@@ -1,16 +1,27 @@
+/// PythonBridge — adaptation layer that calls existing Python infra surfaces
+/// from the Rust sync daemon.
+///
+/// The bridge works by spawning `python3 bridge_wrapper.py <infra_dir>`,
+/// writing a JSON request to stdin, and reading a JSON response from stdout.
+/// This lets the Rust binary transparently delegate to any Python module that
+/// exposes a `handle_request(payload: dict) -> dict` method without knowing
+/// the internal module structure at compile time.
+///
+/// # Protocol
+/// Request  (stdin):  `{"module": "<name>", "payload": { ... }}`
+/// Response (stdout): `{"ok": true, "data": { ... }}`
+///                or  `{"ok": false, "error": "<message>"}`
 use crate::models::{BridgeRequest, BridgeResponse};
 use anyhow::{Context, Result};
 use std::io::Write;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use tracing::{debug, warn};
 
-/// Bridge to existing Python surfaces in the infra directory.
-///
-/// Each Python module is expected to expose a `handle_request(request: dict) -> dict`
-/// function (the protocol used by ene_rds_wiki_layer, ene_rds_fractal_fold, etc.).
 pub struct PythonBridge {
+    /// Directory containing the Python infra modules *and* `bridge_wrapper.py`.
     infra_dir: PathBuf,
+    /// Python executable (default: `python3`).
     python_cmd: String,
 }
 
@@ -18,90 +29,150 @@ impl PythonBridge {
     pub fn new(infra_dir: PathBuf) -> Self {
         Self {
             infra_dir,
-            python_cmd: "python3".into(),
+            python_cmd: std::env::var("PYTHON_CMD").unwrap_or_else(|_| "python3".into()),
         }
     }
 
+    /// Resolve `bridge_wrapper.py` — first look next to the infra dir, then
+    /// fall back to the canonical repo path relative to the executable.
+    fn wrapper_path(&self) -> PathBuf {
+        // Preferred: bridge_wrapper.py lives in infra_dir itself.
+        let candidate = self.infra_dir.join("bridge_wrapper.py");
+        if candidate.exists() {
+            return candidate;
+        }
+        // Fallback: look in the parent of infra_dir (e.g. ene-session-sync/).
+        if let Some(parent) = self.infra_dir.parent() {
+            let alt = parent.join("bridge_wrapper.py");
+            if alt.exists() {
+                return alt;
+            }
+        }
+        // Last resort: crate-relative path used in development.
+        let dev = Path::new(env!("CARGO_MANIFEST_DIR")).join("bridge_wrapper.py");
+        if dev.exists() {
+            return dev;
+        }
+        candidate // may not exist — caller will get a clear error
+    }
+
     /// Call a Python module's `handle_request` with the given JSON payload.
-    pub fn call(&self, module: &str, request: &serde_json::Value) -> Result<serde_json::Value> {
-        let infra = self.infra_dir.to_str().context("infra_dir path is not UTF-8")?;
-        let script = format!(
-            r#"import sys, json, os
-sys.path.insert(0, {!r})
-os.chdir({!r})
-mod = __import__({!r})
-req = json.load(sys.stdin)
-resp = mod.handle_request(req)
-json.dump(resp, sys.stdout)
-"#,
-            infra, infra, module
-        );
+    ///
+    /// Spawns `python3 <bridge_wrapper.py> <infra_dir>`, writes the request
+    /// JSON to stdin, and parses the response JSON from stdout.
+    pub fn call(&self, module: &str, payload: &serde_json::Value) -> Result<serde_json::Value> {
+        let wrapper = self.wrapper_path();
+        let infra_str = self
+            .infra_dir
+            .to_str()
+            .context("infra_dir is not valid UTF-8")?;
+
+        let request = serde_json::json!({
+            "module": module,
+            "payload": payload,
+        });
+        let request_bytes = serde_json::to_vec(&request)?;
+
         let mut child = Command::new(&self.python_cmd)
-            .arg("-c")
-            .arg(&script)
+            .arg(&wrapper)
+            .arg(infra_str)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()
-            .with_context(|| format!("spawn python3 for module {}", module))?;
+            .with_context(|| {
+                format!(
+                    "spawn {} {:?} for module {}",
+                    self.python_cmd,
+                    wrapper.display(),
+                    module
+                )
+            })?;
 
-        let stdin = child.stdin.take().context("take stdin")?;
-        let request_json = serde_json::to_string(request)?;
+        // Write stdin in a thread to avoid deadlock on large payloads.
+        let mut stdin = child.stdin.take().context("take child stdin")?;
         std::thread::spawn(move || {
-            let mut stdin = stdin;
-            let _ = stdin.write_all(request_json.as_bytes());
+            let _ = stdin.write_all(&request_bytes);
         });
 
         let output = child
             .wait_with_output()
-            .with_context(|| format!("wait for python3 module {}", module))?;
+            .with_context(|| format!("wait for bridge process (module {})", module))?;
 
         if !output.status.success() {
             let stderr = String::from_utf8_lossy(&output.stderr);
-            warn!(
-                "Python bridge error for module {}: {}",
-                module,
-                stderr.trim()
-            );
+            warn!("Python bridge stderr ({}): {}", module, stderr.trim());
             anyhow::bail!(
-                "Python module {} exited with {}: {}",
+                "bridge for module `{}` exited {}: {}",
                 module,
                 output.status,
-                stderr.trim()
+                stderr.chars().take(400).collect::<String>()
             );
         }
 
         let stdout = String::from_utf8_lossy(&output.stdout);
         let trimmed = stdout.trim();
         if trimmed.is_empty() {
-            anyhow::bail!("Python module {} returned empty stdout", module);
+            anyhow::bail!("bridge for module `{}` returned empty stdout", module);
         }
-        let value: serde_json::Value =
-            serde_json::from_str(trimmed).with_context(|| {
-                format!(
-                    "parse JSON from Python module {}: got {}",
-                    module,
-                    trimmed.chars().take(200).collect::<String>()
-                )
-            })?;
-        debug!("bridge {} -> ok", module);
+
+        let value: serde_json::Value = serde_json::from_str(trimmed).with_context(|| {
+            format!(
+                "parse bridge JSON for module `{}`: got {:?}",
+                module,
+                trimmed.chars().take(300).collect::<String>()
+            )
+        })?;
+
+        // Unwrap {"ok":true,"data":{...}} envelope.
+        if let Some(ok) = value.get("ok").and_then(|v| v.as_bool()) {
+            if ok {
+                return Ok(value
+                    .get("data")
+                    .cloned()
+                    .unwrap_or(serde_json::Value::Null));
+            }
+            let err = value
+                .get("error")
+                .and_then(|v| v.as_str())
+                .unwrap_or("unknown error");
+            anyhow::bail!("Python bridge reported error for `{}`: {}", module, err);
+        }
+
+        debug!("bridge `{}` -> ok (no envelope)", module);
         Ok(value)
     }
 
-    /// Convenience: call with a typed BridgeRequest.
+    /// Typed convenience wrapper over [`call`].
     pub fn call_typed(&self, req: &BridgeRequest) -> Result<BridgeResponse> {
-        let value = self.call(&req.module, &req.payload)?;
-        let resp: BridgeResponse = serde_json::from_value(value)?;
-        Ok(resp)
+        let data = self.call(&req.module, &req.payload)?;
+        Ok(BridgeResponse {
+            ok: true,
+            data,
+            error: None,
+        })
     }
 
-    /// Quick health check: can we import a known module?
-    pub fn health_check(&self) -> Result<bool> {
-        match self.call("ene_rds_wiki_layer", &serde_json::json!({"op": "ping"})) {
-            Ok(_) => Ok(true),
+    /// Health check: verify that python3 and bridge_wrapper.py are reachable.
+    pub fn health_check(&self) -> bool {
+        let wrapper = self.wrapper_path();
+        if !wrapper.exists() {
+            warn!(
+                "bridge_wrapper.py not found at {:?}",
+                wrapper.display()
+            );
+            return false;
+        }
+        // Try a cheap import-only check.
+        let result = Command::new(&self.python_cmd)
+            .arg("-c")
+            .arg("import sys; sys.exit(0)")
+            .output();
+        match result {
+            Ok(o) => o.status.success(),
             Err(e) => {
-                warn!("Python bridge health check failed: {}", e);
-                Ok(false)
+                warn!("python3 not runnable: {}", e);
+                false
             }
         }
     }

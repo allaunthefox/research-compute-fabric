@@ -1,0 +1,37 @@
+[Unit]
+Description=ENE Session Sync — OpenCode→RDS chat log ingestion daemon
+Documentation=file:///home/researcher/stack/4-Infrastructure/infra/ene-session-sync/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# Run as the developer user so ~/.local/share/opencode/opencode.db is reachable.
+User=researcher
+Group=researcher
+
+# Binary is installed to ~/.cargo/bin after `cargo install --path .` or
+# symlinked from target/release/.
+ExecStart=/home/researcher/.cargo/bin/ene-session-sync \
+    --db /home/researcher/.local/share/opencode/opencode.db \
+    sync
+
+# Embedding is opt-in; set OLLAMA_HOST + OLLAMA_EMBED_MODEL env vars and
+# add --embed to ExecStart if Ollama is available.
+
+EnvironmentFile=-/etc/ene-session-sync/env
+EnvironmentFile=-/home/researcher/.config/ene-session-sync/env
+
+# Credentials (RDS_HOST, RDS_PORT, RDS_USER, RDS_PASSWORD or RDS_IAM_TOKEN)
+# live in the EnvironmentFile above. Never hard-code them here.
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ene-session-sync
+
+# Restart on failure with backoff — the DB may be temporarily locked.
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

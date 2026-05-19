@@ -5,7 +5,7 @@ mod normalize;
 mod sink;
 mod source;
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 use std::time::Duration;
@@ -63,6 +63,23 @@ enum Commands {
         #[arg(default_value = "ene_rds_wiki_layer")]
         module: String,
     },
+    /// List recent sessions from RDS
+    List {
+        /// Number of sessions to return
+        #[arg(long, default_value = "20")]
+        limit: i64,
+    },
+    /// Retrieve a single session with all messages
+    Get {
+        /// Session ID
+        session_id: String,
+    },
+    /// Sync Claw JSONL session files from a .claw/sessions/ directory
+    ClawSync {
+        /// Path to the .claw/sessions/ directory
+        #[arg(long)]
+        sessions_dir: PathBuf,
+    },
     /// Initialize RDS schema only (no data)
     InitSchema,
 }
@@ -98,11 +115,17 @@ fn build_dsn() -> String {
     )
 }
 
+/// FNV-1a 64-bit hash rendered as 16 hex chars — lightweight receipt digest.
+/// (Not a cryptographic hash — use only for shim deduplication keys.)
 fn sha256_text(text: &str) -> String {
-    use std::hash::{Hash, Hasher};
-    let mut s = std::collections::hash_map::DefaultHasher::new();
-    text.hash(&mut s);
-    format!("{:016x}", s.finish())
+    const FNV_OFFSET: u64 = 0xcbf2_9ce4_8422_2325;
+    const FNV_PRIME: u64 = 0x0000_0001_0000_01b3;
+    let mut hash = FNV_OFFSET;
+    for byte in text.bytes() {
+        hash ^= u64::from(byte);
+        hash = hash.wrapping_mul(FNV_PRIME);
+    }
+    format!("{:016x}", hash)
 }
 
 #[tokio::main]
@@ -119,10 +142,17 @@ async fn main() -> Result<()> {
     match cli.command {
         Commands::Sync { since } => cmd_sync(&db_path, &dsn, cli.embed, since).await,
         Commands::Watch { interval } => cmd_watch(&db_path, &dsn, cli.embed, interval).await,
-        Commands::Search { query, limit, semantic } => {
-            cmd_search(&dsn, &query, limit, semantic).await
-        }
+        Commands::Search {
+            query,
+            limit,
+            semantic,
+        } => cmd_search(&dsn, &query, limit, semantic).await,
         Commands::BridgeTest { module } => cmd_bridge_test(&infra_dir, &module),
+        Commands::List { limit } => cmd_list(&dsn, limit).await,
+        Commands::Get { session_id } => cmd_get(&dsn, &session_id).await,
+        Commands::ClawSync { sessions_dir } => {
+            cmd_claw_sync(&sessions_dir, &dsn, cli.embed).await
+        }
         Commands::InitSchema => cmd_init_schema(&dsn).await,
     }
 }
@@ -186,7 +216,12 @@ async fn cmd_sync(
         let mut chat_session = normalize::normalize_session(sess, &chat_messages, compaction_summary);
 
         if let Some(ref emb) = embedder {
-            let session_text = format!("{} {} {}", sess.title, sess.agent.as_deref().unwrap_or(""), sess.model.as_deref().unwrap_or(""));
+            let session_text = format!(
+                "{} {} {}",
+                sess.title,
+                sess.agent.as_deref().unwrap_or(""),
+                sess.model.as_deref().unwrap_or("")
+            );
             match emb.embed(&session_text).await {
                 Ok(v) => chat_session.embedding = Some(v),
                 Err(e) => warn!("session embedding failed: {}", e),
@@ -290,8 +325,103 @@ fn cmd_bridge_test(infra_dir: &PathBuf, module: &str) -> Result<()> {
     }
 }
 
-async fn cmd_init_schema(dsn: &str) -> Result<()> {
+async fn cmd_list(dsn: &str, limit: i64) -> Result<()> {
     let sink = sink::RdsSink::connect(dsn).await?;
-    println!("RDS schema initialized (ene.chat_sessions, ene.chat_messages, ene.ingestion_receipts)");
+    let sessions = sink.list_sessions(limit).await?;
+    println!("{}", serde_json::to_string_pretty(&sessions)?);
+    Ok(())
+}
+
+async fn cmd_get(dsn: &str, session_id: &str) -> Result<()> {
+    let sink = sink::RdsSink::connect(dsn).await?;
+    match sink.get_session(session_id).await? {
+        Some(v) => println!("{}", serde_json::to_string_pretty(&v)?),
+        None => {
+            eprintln!("Session not found: {}", session_id);
+            std::process::exit(1);
+        }
+    }
+    Ok(())
+}
+
+async fn cmd_claw_sync(sessions_dir: &PathBuf, dsn: &str, enable_embed: bool) -> Result<()> {
+    info!("loading Claw sessions from {:?}", sessions_dir);
+    let claw = source::ClawSource::new(sessions_dir);
+    let pairs = claw.load_all()?;
+
+    if pairs.is_empty() {
+        info!("no Claw sessions found (all may be LFS stubs)");
+        return Ok(());
+    }
+
+    info!("connecting to RDS");
+    let sink = sink::RdsSink::connect(dsn).await?;
+
+    let embedder = if enable_embed {
+        let e = embed::Embedder::from_env();
+        if !e.health_check().await.unwrap_or(false) {
+            warn!("Ollama not reachable — embeddings disabled");
+            None
+        } else {
+            info!("Ollama embedding enabled");
+            Some(e)
+        }
+    } else {
+        None
+    };
+
+    let total = pairs.len();
+    let mut synced = 0;
+    for (i, (mut session, mut messages)) in pairs.into_iter().enumerate() {
+        info!(
+            "[{}/{}] syncing Claw session {}",
+            i + 1,
+            total,
+            session.session_id
+        );
+
+        if let Some(ref emb) = embedder {
+            let text = format!(
+                "{} {}",
+                session.session_id,
+                session.workspace_root.as_deref().unwrap_or("")
+            );
+            if let Ok(v) = emb.embed(&text).await {
+                session.embedding = Some(v);
+            }
+            for cm in &mut messages {
+                if !cm.text_content.is_empty() {
+                    if let Ok(v) = emb.embed(&cm.text_content).await {
+                        cm.embedding = Some(v);
+                    }
+                }
+            }
+        }
+
+        sink.delete_messages_for_session(&session.session_id)
+            .await?;
+        sink.upsert_session(&session).await?;
+        sink.upsert_messages(&session.session_id, &messages).await?;
+        synced += 1;
+    }
+
+    let receipt = models::IngestionReceipt {
+        shim_name: "ene-session-sync/claw".into(),
+        status: "ok".into(),
+        sha256: sha256_text(&sessions_dir.to_string_lossy()),
+        record_count: synced as i64,
+        source_path: sessions_dir.to_string_lossy().into(),
+        meta: serde_json::json!({"sessions": total, "source": "claw"}),
+    };
+    sink.write_receipt(&receipt).await?;
+    info!("Claw sync complete: {} sessions written", synced);
+    Ok(())
+}
+
+async fn cmd_init_schema(dsn: &str) -> Result<()> {
+    let _sink = sink::RdsSink::connect(dsn).await?; // schema init happens in connect()
+    println!(
+        "RDS schema initialized (ene.chat_sessions, ene.chat_messages, ene.ingestion_receipts)"
+    );
     Ok(())
 }

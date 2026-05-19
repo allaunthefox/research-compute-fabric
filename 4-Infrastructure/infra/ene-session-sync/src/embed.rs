@@ -1,4 +1,3 @@
-use crate::models::OllamaEmbedRequest;
 use anyhow::{Context, Result};
 use reqwest::Client;
 use serde_json::json;

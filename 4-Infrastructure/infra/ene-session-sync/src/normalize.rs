@@ -47,6 +47,9 @@ pub fn normalize_session(
     });
     ChatSession {
         session_id: sess.id.clone(),
+        title: Some(sess.title.clone()),
+        agent: sess.agent.clone(),
+        model: sess.model.clone(),
         workspace_fingerprint: Some(fingerprint),
         workspace_root: Some(sess.directory.clone()),
         fork_parent_session_id: sess.parent_id.clone(),

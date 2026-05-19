@@ -1,4 +1,3 @@
-use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
 /// Raw session row from opencode.db.
@@ -152,6 +151,9 @@ pub struct OpenCodeSessionMessage {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ChatSession {
     pub session_id: String,
+    pub title: Option<String>,
+    pub agent: Option<String>,
+    pub model: Option<String>,
     pub workspace_fingerprint: Option<String>,
     pub workspace_root: Option<String>,
     pub fork_parent_session_id: Option<String>,

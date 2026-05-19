@@ -1,0 +1,15 @@
+[Unit]
+Description=ENE Session Sync — fire every 5 minutes
+Requires=ene-session-sync.service
+
+[Timer]
+# Run 2 minutes after boot, then every 5 minutes.
+OnBootSec=2min
+OnUnitActiveSec=5min
+# Spread the load — avoids a thundering herd when multiple timers wake up.
+RandomizedDelaySec=30
+# Catch up missed runs (e.g. after suspend).
+Persistent=true
+
+[Install]
+WantedBy=timers.target

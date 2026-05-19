@@ -16,7 +16,7 @@ sysinfo = "0.30"
 tokio = { version = "1.35", features = ["sync", "rt", "rt-multi-thread"] }
 anyhow = "1.0"
 divsufsort = "2.0"
-itertools = "0.12"
+itertools = "0.14"
 flate2 = "1.0" # For Gzip if needed
 zstd = "0.13" # For high-quality compression
 wgpu = "0.19"

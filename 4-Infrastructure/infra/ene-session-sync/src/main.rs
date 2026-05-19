@@ -5,6 +5,7 @@ mod embed;
 mod ene_core;
 mod fractal_fold;
 mod math;
+mod meta_autotype;
 mod misc;
 mod models;
 mod normalize;

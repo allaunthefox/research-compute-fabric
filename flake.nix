@@ -43,6 +43,16 @@
         numpy
         scipy
         sympy
+        # Arbitrary-precision arithmetic
+        mpmath
+        # Plotting / visualisation
+        matplotlib
+        seaborn
+        # Data frames
+        pandas
+        polars
+        # Machine learning
+        scikit-learn
         # Web scraping
         beautifulsoup4
         lxml
@@ -55,7 +65,28 @@
         urllib3
       ]);
 
-      # ── Dev shell packages ──────────────────────────────────────────────────
+      # ── R environment with tidyverse + ggplot2 ─────────────────────────────
+      rEnv = pkgs.rWrapper.override {
+        packages = with pkgs.rPackages; [
+          tidyverse
+          ggplot2
+          dplyr
+          tidyr
+          readr
+          purrr
+          stringr
+          forcats
+          lubridate
+          # Statistical extras
+          MASS
+          Matrix
+          survival
+          # Output
+          knitr
+          rmarkdown
+        ];
+      };
+
       devPkgs = with pkgs; [
         # Version control
         git
@@ -117,6 +148,19 @@
         # pkg-config for Rust native dependency discovery (openssl-sys, etc.)
         pkg-config
         openssl
+        # ── LaTeX ──────────────────────────────────────────────────────────────
+        # texliveFull: complete TeX Live distribution (~5 GB) — every package
+        # pre-cached in the image so latex/xelatex/lualatex/latexmk all work
+        # offline. Use texliveMedium to trade completeness for image size.
+        texliveFull
+        # ── Math / science CLI ─────────────────────────────────────────────────
+        gnuplot          # publication-quality 2-D/3-D scientific plotting
+        maxima           # full CAS: symbolic algebra, calculus, ODEs
+        wxmaxima         # GUI front-end for maxima
+        octave           # GNU Octave — MATLAB-compatible numerics
+        rEnv             # R + tidyverse / ggplot2 (see rEnv binding above)
+        # ── Typesetting ────────────────────────────────────────────────────────
+        typst            # modern markup-based typesetting (LaTeX alternative)
       ];
 
       # ── customEtc provides standard etc configuration with researcher user ──
@@ -166,7 +210,7 @@
           User       = "1000";
           WorkingDir = "/home/researcher/stack";
           Env = [
-            "PATH=/home/researcher/.elan/bin:${pythonEnv}/bin:${pkgs.uv}/bin:${pkgs.git}/bin:${pkgs.ripgrep}/bin:${pkgs.jq}/bin:${pkgs.coreutils}/bin:${pkgs.bashInteractive}/bin:${pkgs.binutils}/bin:${pkgs.glibc.bin}/bin:${pkgs.gzip}/bin:${pkgs.pkg-config}/bin:${pkgs.openssl.bin}/bin:/usr/bin:/bin"
+            "PATH=/home/researcher/.elan/bin:${pythonEnv}/bin:${pkgs.uv}/bin:${pkgs.git}/bin:${pkgs.ripgrep}/bin:${pkgs.jq}/bin:${pkgs.coreutils}/bin:${pkgs.bashInteractive}/bin:${pkgs.binutils}/bin:${pkgs.glibc.bin}/bin:${pkgs.gzip}/bin:${pkgs.pkg-config}/bin:${pkgs.openssl.bin}/bin:${pkgs.texliveFull}/bin:${pkgs.typst}/bin:${pkgs.gnuplot}/bin:${pkgs.maxima}/bin:${pkgs.octave}/bin:${rEnv}/bin:/usr/bin:/bin"
             "LD_LIBRARY_PATH=${pkgs.gcc.cc.lib}/lib:${pkgs.glibc}/lib:${pkgs.libglvnd}/lib:${pkgs.xorg.libX11}/lib:${pkgs.xorg.libXext}/lib:${pkgs.xorg.libXrender}/lib:${pkgs.mesa}/lib:${pkgs.openssl}/lib"
             "PYTHONUNBUFFERED=1"
             "XDG_CACHE_HOME=/home/researcher/.cache"

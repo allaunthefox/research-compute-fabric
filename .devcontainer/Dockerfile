@@ -41,7 +41,23 @@ RUN apk add --no-cache \
     rclone \
     # ip / iproute2 needed by tailscaled
     iproute2 \
+    # ── LaTeX + typesetting ───────────────────────────────────────────────────
+    texlive-full \
+    # ── Math / science CLI ────────────────────────────────────────────────────
+    gnuplot \
+    maxima \
+    # wxmaxima requires a display; skip in headless image
+    octave \
+    R \
     && :
+
+# ── Typst (static binary — not in Alpine apk) ────────────────────────────────
+RUN TYPST_VER=$(curl -fsSL https://api.github.com/repos/typst/typst/releases/latest \
+      | grep '"tag_name"' | grep -oP 'v[\d.]+') \
+    && curl -fsSL "https://github.com/typst/typst/releases/download/${TYPST_VER}/typst-x86_64-unknown-linux-musl.tar.xz" \
+       | tar -xJ -C /tmp/ \
+    && install -m 755 /tmp/typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst \
+    && rm -rf /tmp/typst-x86_64-unknown-linux-musl
 
 # ── Tailscale (static binary — userspace networking, no root required) ────────
 RUN TSVER=$(curl -fsSL https://pkgs.tailscale.com/stable/ \
@@ -101,6 +117,16 @@ RUN uv pip install --python /home/researcher/venv/bin/python3 \
     # Numerics
     numpy \
     scipy \
+    # Arbitrary-precision arithmetic
+    mpmath \
+    # Plotting / visualisation
+    matplotlib \
+    seaborn \
+    # Data frames
+    pandas \
+    polars \
+    # Machine learning
+    scikit-learn \
     # Search / web
     beautifulsoup4 \
     lxml \

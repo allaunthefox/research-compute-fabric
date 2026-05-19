@@ -188,6 +188,81 @@
         mkdir -p -m 1777 $out/tmp
       '';
 
+      # ── rs-surface binary ───────────────────────────────────────────────────
+      # Rust port of 4-Infrastructure/infra/embedded_surface/server.py.
+      # Build the binary hermetically via rustPlatform.buildRustPackage.
+      #
+      # cargoHash: run `nix build .#rs-surface 2>&1 | grep "got:"` to get the
+      # real hash after any Cargo.lock change, then replace lib.fakeHash below.
+      rsSurface = pkgs.rustPlatform.buildRustPackage {
+        pname   = "rs-surface";
+        version = "0.1.0";
+
+        src = pkgs.lib.cleanSource ./4-Infrastructure/infra/embedded_surface/rs-surface;
+
+        cargoLock.lockFile = ./4-Infrastructure/infra/embedded_surface/rs-surface/Cargo.lock;
+
+        nativeBuildInputs = [ pkgs.pkg-config ];
+        buildInputs       = [ pkgs.openssl ];
+
+        meta = {
+          description = "Embedded node surface daemon (Rust)";
+          license     = pkgs.lib.licenses.mit;
+          mainProgram = "rs-surface";
+        };
+      };
+
+      # ── Minimal OCI image for the embedded node surface ────────────────────
+      # Built entirely from the Nix store — no Dockerfile, no Alpine, no musl.
+      # The closure contains only the binary + its glibc runtime deps.
+      #
+      # Build:  nix build .#rs-surface-image
+      # Load:   docker load < result
+      # Run:    docker run --rm -p 8080:8080 -v /etc/rs-surface:/etc/rs-surface rs-surface:latest
+      rsSurfaceImage = pkgs.dockerTools.buildLayeredImage {
+        name = "rs-surface";
+        tag  = "latest";
+
+        contents = [
+          rsSurface
+          pkgs.cacert          # TLS roots (for any outbound HTTPS)
+          pkgs.coreutils       # minimal shell utilities for healthcheck
+        ];
+
+        # /etc/rs-surface/node.json is volume-mounted at runtime; create the
+        # directory so the mount point exists in the image.
+        extraCommands = ''
+          mkdir -p etc/rs-surface var/lib/rs-surface mnt/topological-storage
+        '';
+
+        config = {
+          Entrypoint = [ "${rsSurface}/bin/rs-surface" ];
+          Env = [
+            "RS_SURFACE_PROFILE=/etc/rs-surface/node.json"
+            "RS_SURFACE_STATE=/var/lib/rs-surface"
+            "RS_SURFACE_MOUNT=/mnt/topological-storage"
+            "RS_SURFACE_HOST=0.0.0.0"
+            "RS_SURFACE_PORT=8080"
+            "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+          ];
+          ExposedPorts = { "8080/tcp" = {}; };
+          Healthcheck = {
+            Test        = [ "CMD" "${pkgs.coreutils}/bin/sh" "-c"
+              "wget -qO- http://127.0.0.1:8080/health || exit 1" ];
+            Interval    = 10000000000;   # 10 s in nanoseconds
+            Timeout     = 3000000000;    # 3 s
+            StartPeriod = 3000000000;    # 3 s
+            Retries     = 3;
+          };
+          Labels = {
+            "org.opencontainers.image.description" = "rs-surface embedded node daemon";
+            "org.opencontainers.image.source"      = "4-Infrastructure/infra/embedded_surface/rs-surface";
+          };
+        };
+
+        maxLayers = 10;
+      };
+
     in {
       # ── Layered OCI image for the devcontainer ──────────────────────────────
       packages.${system}.devcontainer = pkgs.dockerTools.buildLayeredImage {
@@ -225,6 +300,10 @@
 
         maxLayers = 120;
       };
+
+      # rs-surface binary and OCI image
+      packages.${system}.rs-surface       = rsSurface;
+      packages.${system}.rs-surface-image = rsSurfaceImage;
 
       # Convenience alias: `nix build .#devcontainer`
       defaultPackage.${system} = self.packages.${system}.devcontainer;

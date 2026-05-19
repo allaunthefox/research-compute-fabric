@@ -23,13 +23,13 @@ Citations:
 -/
 
 import Semantics.FixedPoint
-import Semantics.Biology.QuaternionGenomic
+import Semantics.UnitQuaternion
 import Mathlib.Data.Fin.Basic
 import Mathlib.Algebra.Quaternion
 
 namespace Semantics.ResonanceGradient
 
-open Q16_16 Biology.QuaternionGenomic
+open Q16_16
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §1  Resonance Amplitude Type
@@ -77,9 +77,9 @@ def resonanceDifferential (grad : ResonanceGradient) (domega : Q16_16) (dt : Q16
   grad.dR_domega * domega + grad.dR_dt * dt
 
 #eval resonanceDifferential 
-  { dR_domega := toQ16_16 0.5, dR_dt := toQ16_16 0.3, dR_dx := toQ16_16 0.0, dR_dy := toQ16_16 0.0, dR_dz := toQ16_16 0.0 }
-  (toQ16_16 0.1)
-  (toQ16_16 0.01)
+  { dR_domega := ofRatio 1 2, dR_dt := ofRatio 3 10, dR_dx := zero, dR_dy := zero, dR_dz := zero }
+  (ofRatio 1 10)
+  (ofRatio 1 100)
 -- Expected: 0.5 * 0.1 + 0.3 * 0.01 = 0.053
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -93,7 +93,7 @@ def stochasticDifferential (stoch : StochasticDifferential) : Q16_16 :=
   stoch.noise * stoch.dt  -- Simplified: noise * dt instead of sqrt(dt) * noise
 
 #eval stochasticDifferential 
-  { dt := toQ16_16 0.01, noise := toQ16_16 0.5 }
+  { dt := ofRatio 1 100, noise := ofRatio 1 2 }
 -- Expected: 0.5 * 0.01 = 0.005 (simplified from sqrt(0.01) * 0.5)
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -105,11 +105,11 @@ def stochasticDifferential (stoch : StochasticDifferential) : Q16_16 :=
 def itoCorrection (grad : ResonanceGradient) (dt : Q16_16) : Q16_16 :=
   -- Simplified Laplacian: sum of second derivatives
   -- In full implementation, this would compute actual Laplacian
-  (grad.dR_domega + grad.dR_dt + grad.dR_dx + grad.dR_dy + grad.dR_dz) * dt / (toQ16_16 2.0)
+  (grad.dR_domega + grad.dR_dt + grad.dR_dx + grad.dR_dy + grad.dR_dz) * dt / (ofNat 2)
 
 #eval itoCorrection 
-  { dR_domega := toQ16_16 0.5, dR_dt := toQ16_16 0.3, dR_dx := toQ16_16 0.0, dR_dy := toQ16_16 0.0, dR_dz := toQ16_16 0.0 }
-  (toQ16_16 0.01)
+  { dR_domega := ofRatio 1 2, dR_dt := ofRatio 3 10, dR_dx := zero, dR_dy := zero, dR_dz := zero }
+  (ofRatio 1 100)
 -- Expected: (0.5 + 0.3) * 0.01 / 2 = 0.004
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -133,11 +133,10 @@ def quaternionStochasticEvolution (q : UnitQuaternion) (grad : ResonanceGradient
   q
 
 #eval quaternionStochasticEvolution
-  { w := toQ16_16 1.0, x := toQ16_16 0.0, y := toQ16_16 0.0, z := toQ16_16 0.0, 
-    wf_unit := by simp [toQ16_16] }
-  { dR_domega := toQ16_16 0.5, dR_dt := toQ16_16 0.3, dR_dx := toQ16_16 0.0, dR_dy := toQ16_16 0.0, dR_dz := toQ16_16 0.0 }
-  { dt := toQ16_16 0.01, noise := toQ16_16 0.5 }
-  (toQ16_16 0.1)
+  UnitQuaternion.identity
+  { dR_domega := ofRatio 1 2, dR_dt := ofRatio 3 10, dR_dx := zero, dR_dy := zero, dR_dz := zero }
+  { dt := ofRatio 1 100, noise := ofRatio 1 2 }
+  (ofRatio 1 10)
 -- Expected: unchanged quaternion (placeholder)
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -152,7 +151,8 @@ theorem quaternionStochasticEvolutionPreservesUnitNorm
     (stoch : StochasticDifferential) (domega : Q16_16) :
     let q' := quaternionStochasticEvolution q grad stoch domega in
     q'.w * q'.w + q'.x * q'.x + q'.y * q'.y + q'.z * q'.z = one := by
-  -- Placeholder proof
+  -- TODO: Replaced placeholder 'trivial' tautology. Real proof of unit norm preservation needed.
+  sorry
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §9  Resonance Gradient from Spherion
@@ -170,13 +170,13 @@ def spherionResonanceGradient (amplitude : Q16_16) (frequency : Q16_16)
   -- 2. Compute derivative of phase
   -- 3. Compute derivative of pyramid height coupling
   -- 4. Combine into gradient vector
-  { dR_domega := amplitude * (toQ16_16 0.1),  -- Simplified
-    dR_dt := amplitude * (toQ16_16 0.05),
-    dR_dx := toQ16_16 0.0,
-    dR_dy := toQ16_16 0.0,
-    dR_dz := toQ16_16 0.0 }
+  { dR_domega := amplitude * (ofRatio 1 10),  -- Simplified
+    dR_dt := amplitude * (ofRatio 1 20),
+    dR_dx := zero,
+    dR_dy := zero,
+    dR_dz := zero }
 
-#eval spherionResonanceGradient (toQ16_16 1.0) (toQ16_16 10.0) [toQ16_16 1.0, toQ16_16 2.0]
+#eval spherionResonanceGradient one (ofNat 10) [one, ofNat 2]
 -- Expected: gradient with dR_domega = 0.1, dR_dt = 0.05
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -194,10 +194,9 @@ def sluqQuaternionTriage (q : UnitQuaternion) (grad : ResonanceGradient)
   gradMagnitude < stability_threshold
 
 #eval sluqQuaternionTriage
-  { w := toQ16_16 1.0, x := toQ16_16 0.0, y := toQ16_16 0.0, z := toQ16_16 0.0, 
-    wf_unit := by simp [toQ16_16] }
-  { dR_domega := toQ16_16 0.5, dR_dt := toQ16_16 0.3, dR_dx := toQ16_16 0.0, dR_dy := toQ16_16 0.0, dR_dz := toQ16_16 0.0 }
-  (toQ16_16 1.0)
+  UnitQuaternion.identity
+  { dR_domega := ofRatio 1 2, dR_dt := ofRatio 3 10, dR_dx := zero, dR_dy := zero, dR_dz := zero }
+  one
 -- Expected: true (gradient magnitude 0.34 < 1.0)
 
 end Semantics.ResonanceGradient

@@ -19,6 +19,7 @@ Citations:
 -/
 
 import Semantics.FixedPoint
+import Semantics.UnitQuaternion
 import Semantics.Biology.QuaternionGenomic
 import Semantics.ResonanceGradient
 import Mathlib.Data.Fin.Basic
@@ -26,7 +27,7 @@ import Mathlib.Algebra.Quaternion
 
 namespace Semantics.SLUQQuaternionIntegration
 
-open Q16_16 Biology.QuaternionGenomic ResonanceGradient
+open Q16_16 Biology.QuaternionGenomic ResonanceGradient UnitQuaternion
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §1  Quaternion Trajectory State
@@ -62,8 +63,8 @@ def cacheLocalQuaternionTriage (traj : QuaternionTrajectory) (localCacheSize : N
 
 #eval cacheLocalQuaternionTriage
   { quaternion := identity,
-    gradient := { dR_domega := toQ16_16 0.5, dR_dt := toQ16_16 0.3, dR_dx := toQ16_16 0.0, dR_dy := toQ16_16 0.0, dR_dz := toQ16_16 0.0 },
-    stabilityScore := toQ16_16 0.8,
+    gradient := { dR_domega := ofRatio 1 2, dR_dt := ofRatio 3 10, dR_dx := zero, dR_dy := zero, dR_dz := zero },
+    stabilityScore := ofRatio 4 5,
     iteration := 5 }
   10
 -- Expected: true (gradient magnitude 0.34 < stability threshold 2)
@@ -92,7 +93,7 @@ def sluqQuaternionOptimizationStep (traj : QuaternionTrajectory)
     -- Stable: apply stochastic evolution
     let newQuaternion := stochasticEvolution traj.quaternion traj.gradient stoch domega
     -- Update stability score (improve if stable)
-    let newStabilityScore := traj.stabilityScore + (toQ16_16 0.1)
+    let newStabilityScore := traj.stabilityScore + (ofRatio 1 10)
     -- Increment iteration
     let newIteration := traj.iteration + 1
     { quaternion := newQuaternion,
@@ -105,11 +106,11 @@ def sluqQuaternionOptimizationStep (traj : QuaternionTrajectory)
 
 #eval sluqQuaternionOptimizationStep
   { quaternion := identity,
-    gradient := { dR_domega := toQ16_16 0.5, dR_dt := toQ16_16 0.3, dR_dx := toQ16_16 0.0, dR_dy := toQ16_16 0.0, dR_dz := toQ16_16 0.0 },
-    stabilityScore := toQ16_16 0.8,
+    gradient := { dR_domega := ofRatio 1 2, dR_dt := ofRatio 3 10, dR_dx := zero, dR_dy := zero, dR_dz := zero },
+    stabilityScore := ofRatio 4 5,
     iteration := 5 }
-  { dt := toQ16_16 0.01, noise := toQ16_16 0.5 }
-  (toQ16_16 0.1)
+  { dt := ofRatio 1 100, noise := ofRatio 1 2 }
+  (ofRatio 1 10)
   10
 -- Expected: trajectory with updated quaternion and stability score
 
@@ -143,11 +144,11 @@ def quaternionTrajectoryConverged (traj : QuaternionTrajectory)
 
 #eval quaternionTrajectoryConverged
   { quaternion := identity,
-    gradient := { dR_domega := toQ16_16 0.1, dR_dt := toQ16_16 0.1, dR_dx := toQ16_16 0.0, dR_dy := toQ16_16 0.0, dR_dz := toQ16_16 0.0 },
-    stabilityScore := toQ16_16 0.9,
+    gradient := { dR_domega := ofRatio 1 10, dR_dt := ofRatio 1 10, dR_dx := zero, dR_dy := zero, dR_dz := zero },
+    stabilityScore := ofRatio 9 10,
     iteration := 100 }
-  (toQ16_16 0.8)
-  (toQ16_16 0.5)
+  (ofRatio 4 5)
+  (ofRatio 1 2)
 -- Expected: true (stability 0.9 ≥ 0.8, gradient 0.02 < 0.5)
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -164,8 +165,9 @@ theorem sluqQuaternionOptimizationPreservesUnitNorm
     traj'.quaternion.w * traj'.quaternion.w +
     traj'.quaternion.x * traj'.quaternion.x +
     traj'.quaternion.y * traj'.quaternion.y +
-    traj'.quaternion.z * traj'.quaternion.z = one :=
-  trivial
+    traj'.quaternion.z * traj'.quaternion.z = one := by
+  -- TODO: Replaced placeholder 'trivial' tautology. Real proof of unit norm preservation needed.
+  sorry
 
 /-- Theorem: Pruning preserves unit norm.
     Since we only filter trajectories without modifying them, unit norm is preserved. -/

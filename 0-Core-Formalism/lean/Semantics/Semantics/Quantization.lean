@@ -14,7 +14,6 @@ This module formalizes:
 
 import Semantics.FixedPoint
 import Mathlib.Data.Fin.Basic
-import Mathlib.Algebra.Order.Interval.Set
 
 namespace Semantics.Quantization
 
@@ -113,7 +112,7 @@ def activationScale (η ε : Q16_16) : Q16_16 :=
 /-- Clip operation for activations -/
 def clipActivation (x scale : Q16_16) (ε : Q16_16) : Q16_16 :=
   let Qb_val := ofNat (2 ^ Q_b - 1)
-  let lower := negQ Qb_val + ε
+  let lower := neg Qb_val + ε
   let upper := Qb_val - ε
   let scaled := x * scale
   if scaled < lower then lower

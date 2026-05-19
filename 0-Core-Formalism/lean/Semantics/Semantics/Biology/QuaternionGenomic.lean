@@ -24,244 +24,13 @@ import Semantics.FixedPoint
 import Semantics.SLUG3
 import Semantics.GenomicCompression
 import Semantics.ResonanceGradient
+import Semantics.UnitQuaternion
 import Mathlib.Data.Fin.Basic
 import Mathlib.Algebra.Quaternion
 
 namespace Semantics.QuaternionGenomic
 
 open Q16_16 SLUG3 GenomicCompression
-
--- ═══════════════════════════════════════════════════════════════════════════
--- §1  Unit Quaternion Type (S³ Embedding)
--- ═══════════════════════════════════════════════════════════════════════════
-
-/-- Unit quaternion representing a point on the 3-sphere S³.
-    Stored as (w, x, y, z) with constraint w² + x² + y² + z² = 1.
-    Uses Q16_16 fixed-point for hardware extraction. -/
-structure UnitQuaternion where
-  w : Q16_16  -- scalar (real) part
-  x : Q16_16  -- i component
-  y : Q16_16  -- j component
-  z : Q16_16  -- k component
-  wf_unit : w * w + x * x + y * y + z * z = one  -- unit norm constraint
-  deriving Repr
-
--- ═══════════════════════════════════════════════════════════════════════════
--- §0  Fixed-Point Trigonometry Placeholders (for Q16_16)
--- ═══════════════════════════════════════════════════════════════════════════
-
-/-- Cosine lookup for Q16_16 (placeholder: use CORDIC or polynomial approx).
-    Input: angle in radians, scaled to Q16_16.
-    Output: cos(angle) in Q16_16 ∈ [-1.0, 1.0]. -/
-def cos (x : Q16_16) : Q16_16 :=
-  -- Placeholder: polynomial approximation or LUT
-  -- Full implementation: Chebyshev polynomial or CORDIC
-  q16_one - (x * x) / ofNat 2  -- Taylor: 1 - x²/2
-
-/-- Sine lookup for Q16_16 (placeholder: use CORDIC or polynomial approx).
-    Input: angle in radians, scaled to Q16_16.
-    Output: sin(angle) in Q16_16 ∈ [-1.0, 1.0]. -/
-def sin (x : Q16_16) : Q16_16 :=
-  -- Placeholder: Taylor series approximation
-  x - (x * x * x) / ofNat 6  -- Taylor: x - x³/6
-
-/-- Arccosine lookup for Q16_16 (placeholder: use inverse trig LUT).
-    Input: value in [-1.0, 1.0], scaled to Q16_16.
-    Output: arccos(value) in radians [0, π], scaled to Q16_16. -/
-def acos (x : Q16_16) : Q16_16 :=
-  -- Placeholder: linear approximation
-  -- Full implementation: use precomputed LUT or polynomial
-  q16_one - x  -- Approximation: arccos(x) ≈ 1 - x (for small angles)
-
-namespace UnitQuaternion
-
-/-- Identity quaternion (1, 0, 0, 0) - neutral element -/
-def identity : UnitQuaternion :=
-  { w := one
-    x := zero
-    y := zero
-    z := zero
-    wf_unit := by simp [one, zero] }
-
-/-- Quaternion multiplication (Hamilton product).
-    For unit quaternions, product remains unit (S³ is a group under ×). -/
-def mul (a b : UnitQuaternion) : UnitQuaternion :=
-  let w' := a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z
-  let x' := a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y
-  let y' := a.w * b.y - a.x * b.z + a.y * b.w + a.z * b.x
-  let z' := a.w * b.z + a.x * b.y - a.y * b.x + a.z * b.w
-  -- Note: wf_unit proof omitted for computational use
-  -- In production: verify norm preservation
-  { w := w', x := x', y := y', z := z',
-    wf_unit := by trivial }
-
-/-- Dot product as scalar part of a × b* (conjugate product).
-    For unit quaternions: a · b = cos(θ) where θ = great circle distance. -/
-def dot (a b : UnitQuaternion) : Q16_16 :=
-  a.w * b.w + a.x * b.x + a.y * b.y + a.z * b.z
-
-/-- Great circle distance on S³: arccos(a · b).
-    For compression: distance ∈ [0, π] maps to dissimilarity metric. -/
-def distance (a b : UnitQuaternion) : Q16_16 :=
-  -- arccos approximation via lookup table (hardware-efficient)
-  -- Full implementation would use cordic or polynomial approximation
-  let d := dot a b
-  -- Map [-1, 1] to [0, π] using piecewise linear approx
-  if d.val ≥ 0x00010000 then  -- d ≥ 1.0
-    zero  -- distance = 0 (identical)
-  else if d.val ≤ 0xFFFF0000 then  -- d ≤ -1.0
-    ofUInt32 0x0003243F  -- π ≈ 3.14159 in Q16_16
-  else
-    -- Linear interpolation: distance ≈ arccos(d)
-    -- Simplified: use precomputed LUT for arccos values
-    q16_one - d  -- Approximation: arccos(d) ≈ 1 - d for small angles
-
-/-- Quaternion conjugate: q* = [w, -x, -y, -z].
-    For unit quaternions, q⁻¹ = q*. -/
-def conjugate (q : UnitQuaternion) : UnitQuaternion :=
-  { w := q.w, x := negQ q.x, y := negQ q.y, z := negQ q.z,
-    wf_unit := by simp [one, q.wf_unit] }
-
-/-- Quaternion inverse: q⁻¹ = q* / ||q||².
-    For unit quaternions, q⁻¹ = q* (conjugate). -/
-def inv (q : UnitQuaternion) : UnitQuaternion :=
-  q.conjugate  -- Unit quaternion: inverse = conjugate
-
-/-- Rotation of point p (pure quaternion [0, px, py, pz]) by unit quaternion q.
-    Formula: p' = q · p · q⁻¹ (conjugation).
-    Preserves vector norm: ||p'|| = ||p||. -/
-def rotateVector (q : UnitQuaternion) (v : Q16_16 × Q16_16 × Q16_16) : Q16_16 × Q16_16 × Q16_16 :=
-  let (vx, vy, vz) := v
-  -- Represent v as pure quaternion [0, vx, vy, vz]
-  let p := { w := zero, x := vx, y := vy, z := vz, wf_unit := by trivial }
-  -- Compute q · p · q⁻¹
-  let rotated := (q.mul p).mul q.inv
-  -- Extract vector part
-  (rotated.x, rotated.y, rotated.z)
-
-/-- Construct unit quaternion from axis-angle representation.
-    q = [cos(θ/2), sin(θ/2) · (ux, uy, uz)] where (ux,uy,uz) is unit axis.
-    Standard robotics/computer graphics convention.
---
--- Arithmetic sanity check:
--- quaternion from axis-angle formula.
---
--- External CAS provenance:
--- Not Wolfram-verified in this chain. Do not mark as Wolfram-verified
--- unless an API result, saved query output, or reproducible external artifact
--- is attached.
--/
-def fromAxisAngle (axis : Q16_16 × Q16_16 × Q16_16) (angle : Q16_16) : UnitQuaternion :=
-  let (ux, uy, uz) := axis
-  -- Arithmetic sanity check:
-  -- cos(θ/2) for quaternion rotation.
-  let cosHalf := Q16_16.cos (angle / ofInt 2)
-  -- Arithmetic sanity check:
-  -- sin(θ/2) for quaternion rotation.
-  let sinHalf := Q16_16.sin (angle / ofInt 2)
-  -- Arithmetic sanity check:
-  -- √(x² + y² + z²) for vector normalization.
-  let norm := Q16_16.sqrt (ux * ux + uy * uy + uz * uz)
-  let cosTheta := cosHalf
-  let sinTheta := sinHalf * norm
-  { w := cosTheta, x := sinTheta * ux, y := sinTheta * uy, z := sinTheta * uz,
-    wf_unit := by trivial }
-
-/-- Extract axis-angle from unit quaternion.
-    Returns (axis, angle) where axis is unit vector and angle ∈ [0, 2π). -/
-def toAxisAngle (q : UnitQuaternion) : (Q16_16 × Q16_16 × Q16_16) × Q16_16 :=
-  let angle := ofNat 2 * acos q.w  -- θ = 2·arccos(w)
-  let sinHalf := sin (angle / ofNat 2)
-  let axis := if sinHalf.val > 0x00000100 then  -- sin(θ/2) ≠ 0
-    (q.x / sinHalf, q.y / sinHalf, q.z / sinHalf)
-  else
-    (one, zero, zero)  -- Identity rotation: arbitrary axis
-  (axis, angle)
-
-/-- Spherical Linear Interpolation (SLERP) between two unit quaternions.
-    Formula: slerp(q1, q2, t) = sin((1-t)·Ω)/sin(Ω) · q1 + sin(t·Ω)/sin(Ω) · q2
-    where Ω = arccos(q1 · q2) and t ∈ [0, 1].
-    Used for smooth DNA backbone interpolation between nucleotide states. -/
-def slerp (a b : UnitQuaternion) (t : Q16_16) : UnitQuaternion :=
-  let dotAB := a.dot b
-  -- Ensure we take the shortest path (flip sign if dot < 0)
-  let (b', dotAB') := if dotAB.val < 0x00008000 then
-    ({ b with w := negQ b.w, x := negQ b.x, y := negQ b.y, z := negQ b.z,
-       wf_unit := b.wf_unit }, negQ dotAB)
-  else
-    (b, dotAB)
-
-  let omega := acos dotAB'  -- Angle between quaternions
-  let sinOmega := sin omega
-
-  if sinOmega.val < 0x00000100 then  -- Quaternions nearly parallel
-    -- Use linear interpolation (LERP) to avoid division by near-zero
-    let w1 := one - t
-    let w2 := t
-    { w := w1 * a.w + w2 * b'.w,
-      x := w1 * a.x + w2 * b'.x,
-      y := w1 * a.y + w2 * b'.y,
-      z := w1 * a.z + w2 * b'.z,
-      wf_unit := by trivial }
-  else
-    -- Full SLERP
-    let w1 := sin ((one - t) * omega) / sinOmega
-    let w2 := sin (t * omega) / sinOmega
-    { w := w1 * a.w + w2 * b'.w,
-      x := w1 * a.x + w2 * b'.x,
-      y := w1 * a.y + w2 * b'.y,
-      z := w1 * a.z + w2 * b'.z,
-      wf_unit := by trivial }
-
-/-- Convert unit quaternion to 3×3 rotation matrix (row-major).
-    Matrix entries derived from Hamilton product algebra.
-    Used for rendering DNA backbone in 3D visualization. -/
-def toRotationMatrix (q : UnitQuaternion) : Q16_16 × Q16_16 × Q16_16 ×
-                                               Q16_16 × Q16_16 × Q16_16 ×
-                                               Q16_16 × Q16_16 × Q16_16 :=
-  let w := q.w; let x := q.x; let y := q.y; let z := q.z
-  let two := ofNat 2
-
-  -- First row
-  let m00 := one - two * (y * y + z * z)
-  let m01 := two * (x * y - z * w)
-  let m02 := two * (x * z + y * w)
-
-  -- Second row
-  let m10 := two * (x * y + z * w)
-  let m11 := one - two * (x * x + z * z)
-  let m12 := two * (y * z - x * w)
-
-  -- Third row
-  let m20 := two * (x * z - y * w)
-  let m21 := two * (y * z + x * w)
-  let m22 := one - two * (x * x + y * y)
-
-  (m00, m01, m02, m10, m11, m12, m20, m21, m22)
-
-/-- Check chiral compatibility: D+L→W collapse detection.
-    Two quaternions are "incompatible" if their product has negative scalar part.
-    This corresponds to right-hand vs left-hand chirality mismatch. -/
-def chiralIncompatible (a b : UnitQuaternion) : Bool :=
-  let product := mul a b
-  product.w.val < 0x00008000  -- scalar part < 0 (negative)
-
-/-- Ternary classification from quaternion dot product (SLUG-3 gate).
-    Maps dot product threshold to ternary state:
-    - dot ≥ threshold: high (compatible)
-    - |dot| < threshold: mid (uncertain)
-    - dot ≤ -threshold: low (incompatible/collapse)
-    -/
-def toTernary (a b : UnitQuaternion) (threshold : Q16_16) : Ternary :=
-  let d := dot a b
-  if d ≥ threshold then
-    Ternary.high
-  else if d ≤ negQ threshold then
-    Ternary.low
-  else
-    Ternary.mid
-
-end UnitQuaternion
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §2  Nucleotide-to-Quaternion Mapping (Prime-Addressed)
@@ -427,10 +196,7 @@ def primeIndexedQuaternion (primeIdx : Nat) (hPrime : Nat.Prime primeIdx) : Unit
   let axisZ := ofNat (primeIdx + 6)
 
   -- Normalize axis
-  let norm := Float.sqrt (axisX.toFloat * axisX.toFloat +
-                          axisY.toFloat * axisY.toFloat +
-                          axisZ.toFloat * axisZ.toFloat)
-  let n := ofFloat norm
+  let n := Q16_16.sqrt (axisX * axisX + axisY * axisY + axisZ * axisZ)
 
   { w := cos angle,  -- Approximation: use lookup
     x := sin angle * axisX / n,
@@ -516,9 +282,9 @@ def stochasticEvolution (q : UnitQuaternion) (grad : ResonanceGradient.Resonance
 
 #eval stochasticEvolution
   identity
-  { dR_domega := toQ16_16 0.5, dR_dt := toQ16_16 0.3, dR_dx := toQ16_16 0.0, dR_dy := toQ16_16 0.0, dR_dz := toQ16_16 0.0 }
-  { dt := toQ16_16 0.01, noise := toQ16_16 0.5 }
-  (toQ16_16 0.1)
+  { dR_domega := ofRatio 1 2, dR_dt := ofRatio 3 10, dR_dx := zero, dR_dy := zero, dR_dz := zero }
+  { dt := ofRatio 1 100, noise := ofRatio 1 2 }
+  (ofRatio 1 10)
 -- Expected: unchanged quaternion (placeholder)
 
 /-- Resonance-tuned quaternion rotation.
@@ -531,7 +297,7 @@ def resonanceTunedRotation (q : UnitQuaternion) (axis : Q16_16 × Q16_16 × Q16_
   let (ax, ay, az) := axis
   -- Gradient magnitude determines rotation angle
   let gradMagnitude := grad.dR_domega * grad.dR_domega + grad.dR_dt * grad.dR_dt
-  let optimalAngle := gradMagnitude * (toQ16_16 0.5)  -- Simplified scaling
+  let optimalAngle := gradMagnitude * (ofRatio 1 2)  -- Simplified scaling
 
   -- Apply rotation with optimal angle
   fromAxisAngle axis optimalAngle
@@ -539,7 +305,7 @@ def resonanceTunedRotation (q : UnitQuaternion) (axis : Q16_16 × Q16_16 × Q16_
 #eval resonanceTunedRotation
   identity
   (one, zero, zero)
-  { dR_domega := toQ16_16 0.5, dR_dt := toQ16_16 0.3, dR_dx := toQ16_16 0.0, dR_dy := toQ16_16 0.0, dR_dz := toQ16_16 0.0 }
+  { dR_domega := ofRatio 1 2, dR_dt := ofRatio 3 10, dR_dx := zero, dR_dy := zero, dR_dz := zero }
 -- Expected: rotation around x-axis with angle proportional to gradient magnitude
 
 /-- Stochastic quaternion optimization.
@@ -552,16 +318,16 @@ def stochasticQuaternionOptimization (q : UnitQuaternion) (grad : ResonanceGradi
   -- Check stability via SLUQ triage
   if ResonanceGradient.sluqQuaternionTriage q grad stabilityThreshold then
     -- Stable: apply stochastic evolution
-    stochasticEvolution q grad stoch (toQ16_16 0.1)
+    stochasticEvolution q grad stoch (ofRatio 1 10)
   else
     -- Unstable: skip update (prune trajectory)
     q
 
 #eval stochasticQuaternionOptimization
   identity
-  { dR_domega := toQ16_16 0.5, dR_dt := toQ16_16 0.3, dR_dx := toQ16_16 0.0, dR_dy := toQ16_16 0.0, dR_dz := toQ16_16 0.0 }
-  { dt := toQ16_16 0.01, noise := toQ16_16 0.5 }
-  (toQ16_16 1.0)
+  { dR_domega := ofRatio 1 2, dR_dt := ofRatio 3 10, dR_dx := zero, dR_dy := zero, dR_dz := zero }
+  { dt := ofRatio 1 100, noise := ofRatio 1 2 }
+  one
 -- Expected: unchanged quaternion (stable check passes, but evolution is placeholder)
 
 /-- Theorem: Stochastic quaternion evolution preserves unit norm.
@@ -574,7 +340,7 @@ theorem stochasticEvolutionPreservesUnitNorm
     q'.w * q'.w + q'.x * q'.x + q'.y * q'.y + q'.z * q'.z = one := by
   -- Proof: Quaternion exponential map preserves unit norm
   -- Stochastic increment is applied via rotation, which preserves norm
-  trivial
+  sorry
 
 /-- Theorem: Resonance-tuned rotation preserves unit norm.
     Axis-angle representation always produces unit quaternions. -/

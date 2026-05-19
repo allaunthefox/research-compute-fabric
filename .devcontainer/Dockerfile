@@ -39,7 +39,19 @@ RUN apk add --no-cache \
     bzip2-dev \
     # rclone (Google Drive / S3 / etc.)
     rclone \
+    # ip / iproute2 needed by tailscaled
+    iproute2 \
     && :
+
+# ── Tailscale (static binary — userspace networking, no root required) ────────
+RUN TSVER=$(curl -fsSL https://pkgs.tailscale.com/stable/ \
+      | grep -oP 'tailscale_\K[0-9]+\.[0-9]+\.[0-9]+(?=_amd64\.tgz)' \
+      | sort -V | tail -1) \
+    && curl -fsSL "https://pkgs.tailscale.com/stable/tailscale_${TSVER}_amd64.tgz" \
+       | tar -xz -C /tmp/ \
+    && install -m 755 /tmp/tailscale_${TSVER}_amd64/tailscale  /usr/local/bin/tailscale \
+    && install -m 755 /tmp/tailscale_${TSVER}_amd64/tailscaled /usr/local/bin/tailscaled \
+    && rm -rf /tmp/tailscale_${TSVER}_amd64
 
 # ── uv package manager ────────────────────────────────────────────────────────
 RUN pipx install uv && cp /root/.local/bin/uv /usr/local/bin/uv && cp /root/.local/bin/uvx /usr/local/bin/uvx
@@ -104,6 +116,27 @@ RUN curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -
 
 # ── PATH ──────────────────────────────────────────────────────────────────────
 ENV PATH="/home/researcher/.elan/bin:/home/researcher/venv/bin:/home/researcher/.local/bin:${PATH}"
+
+# ── Tailscale userspace auto-start snippet (written as researcher) ────────────
+RUN mkdir -p /home/researcher/.local/share/tailscale && \
+    printf '%s\n' \
+      '# ── Tailscale (userspace, no root required) ─────────────────────────────' \
+      'export TAILSCALE_SOCKET=/home/researcher/.local/share/tailscale/tailscaled.sock' \
+      'alias tailscale="tailscale --socket=$TAILSCALE_SOCKET"' \
+      '_ts_start() {' \
+      '  if ! /usr/local/bin/tailscale --socket=$TAILSCALE_SOCKET status &>/dev/null; then' \
+      '    mkdir -p /home/researcher/.local/share/tailscale' \
+      '    /usr/local/bin/tailscaled \\' \
+      '      --tun=userspace-networking \\' \
+      '      --socket=$TAILSCALE_SOCKET \\' \
+      '      --statedir=/home/researcher/.local/share/tailscale/ \\' \
+      '      --outbound-http-proxy-listen=localhost:1055 \\' \
+      '      &>>/home/researcher/.local/share/tailscale/tailscaled.log &' \
+      '    sleep 2' \
+      '  fi' \
+      '}' \
+      '_ts_start' \
+      >> /home/researcher/.bashrc
 
 # ── rclone S3 gateway init script ─────────────────────────────────────────────
 COPY --chown=researcher:researcher .devcontainer/init-rclone-s3.sh /home/researcher/init-rclone-s3.sh

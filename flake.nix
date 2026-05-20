@@ -263,50 +263,53 @@
         maxLayers = 10;
       };
 
-    in {
-      # ── Layered OCI image for the devcontainer ──────────────────────────────
-      packages.${system}.devcontainer = pkgs.dockerTools.buildLayeredImage {
-        name   = "research-stack-otom";
-        tag    = "latest";
+    in rec {
+      packages.${system} = {
 
-        contents = [
-          customEtc                  # Custom etc configuration containing researcher user
-          pkgs.dockerTools.usrBinEnv # /usr/bin/env
-          pkgs.dockerTools.binSh     # /bin/sh -> bash
-          researcherSetup
-        ] ++ devPkgs;
+        # ── Layered OCI image for the devcontainer ────────────────────────────
+        devcontainer = pkgs.dockerTools.buildLayeredImage {
+          name   = "research-stack-otom";
+          tag    = "latest";
 
-        # Ensure home is owned by researcher
-        fakeRootCommands = ''
-          chown -R 1000:1000 ./home/researcher || true
-          chmod 1777 ./tmp || true
-        '';
-        enableFakechroot = true;
+          contents = [
+            customEtc                  # Custom etc configuration containing researcher user
+            pkgs.dockerTools.usrBinEnv # /usr/bin/env
+            pkgs.dockerTools.binSh     # /bin/sh -> bash
+            researcherSetup
+          ] ++ devPkgs;
 
-        config = {
-          User       = "1000";
-          WorkingDir = "/home/researcher/stack";
-          Env = [
-            "PATH=/home/researcher/.elan/bin:${pythonEnv}/bin:${pkgs.uv}/bin:${pkgs.git}/bin:${pkgs.ripgrep}/bin:${pkgs.jq}/bin:${pkgs.coreutils}/bin:${pkgs.bashInteractive}/bin:${pkgs.binutils}/bin:${pkgs.glibc.bin}/bin:${pkgs.gzip}/bin:${pkgs.pkg-config}/bin:${pkgs.openssl.bin}/bin:${pkgs.texliveFull}/bin:${pkgs.typst}/bin:${pkgs.gnuplot}/bin:${pkgs.maxima}/bin:${pkgs.octave}/bin:${rEnv}/bin:${pkgs.sage}/bin:/usr/bin:/bin"
-            "LD_LIBRARY_PATH=${pkgs.gcc.cc.lib}/lib:${pkgs.glibc}/lib:${pkgs.libglvnd}/lib:${pkgs.xorg.libX11}/lib:${pkgs.xorg.libXext}/lib:${pkgs.xorg.libXrender}/lib:${pkgs.mesa}/lib:${pkgs.openssl}/lib"
-            "PYTHONUNBUFFERED=1"
-            "XDG_CACHE_HOME=/home/researcher/.cache"
-            "HOME=/home/researcher"
-            "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
-            "NIX_SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
-          ];
-          Cmd = [ "${pkgs.bashInteractive}/bin/bash" ];
+          # Ensure home is owned by researcher
+          fakeRootCommands = ''
+            chown -R 1000:1000 ./home/researcher || true
+            chmod 1777 ./tmp || true
+          '';
+          enableFakechroot = true;
+
+          config = {
+            User       = "1000";
+            WorkingDir = "/home/researcher/stack";
+            Env = [
+              "PATH=/home/researcher/.elan/bin:${pythonEnv}/bin:${pkgs.uv}/bin:${pkgs.git}/bin:${pkgs.ripgrep}/bin:${pkgs.jq}/bin:${pkgs.coreutils}/bin:${pkgs.bashInteractive}/bin:${pkgs.binutils}/bin:${pkgs.glibc.bin}/bin:${pkgs.gzip}/bin:${pkgs.pkg-config}/bin:${pkgs.openssl.bin}/bin:${pkgs.texliveFull}/bin:${pkgs.typst}/bin:${pkgs.gnuplot}/bin:${pkgs.maxima}/bin:${pkgs.octave}/bin:${rEnv}/bin:${pkgs.sage}/bin:/usr/bin:/bin"
+              "LD_LIBRARY_PATH=${pkgs.gcc.cc.lib}/lib:${pkgs.glibc}/lib:${pkgs.libglvnd}/lib:${pkgs.xorg.libX11}/lib:${pkgs.xorg.libXext}/lib:${pkgs.xorg.libXrender}/lib:${pkgs.mesa}/lib:${pkgs.openssl}/lib"
+              "PYTHONUNBUFFERED=1"
+              "XDG_CACHE_HOME=/home/researcher/.cache"
+              "HOME=/home/researcher"
+              "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+              "NIX_SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+            ];
+            Cmd = [ "${pkgs.bashInteractive}/bin/bash" ];
+          };
+
+          maxLayers = 120;
         };
 
-        maxLayers = 120;
+        # rs-surface binary and OCI image
+        rs-surface       = rsSurface;
+        rs-surface-image = rsSurfaceImage;
       };
 
-      # rs-surface binary and OCI image
-      packages.${system}.rs-surface       = rsSurface;
-      packages.${system}.rs-surface-image = rsSurfaceImage;
-
       # Convenience alias: `nix build .#devcontainer`
-      defaultPackage.${system} = self.packages.${system}.devcontainer;
+      defaultPackage.${system} = packages.${system}.devcontainer;
 
       # ── Dev shell — `nix develop` on the host (if nix is installed) ─────────
       devShells.${system}.default = pkgs.mkShell {

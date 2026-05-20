@@ -16,5 +16,8 @@
     "@modelcontextprotocol/sdk": "^1.29.0",
     "better-sqlite3": "^12.4.1",
     "cline": "^3.0.7"
+  },
+  "overrides": {
+    "@openai/codex": "0.132.0"
   }
 }

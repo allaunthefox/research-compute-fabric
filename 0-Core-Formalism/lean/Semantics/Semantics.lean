@@ -71,6 +71,8 @@ import Semantics.Surface
 import Semantics.BraidBracket
 import Semantics.BraidStrand
 import Semantics.BraidCross
+import Semantics.Q0_2
+import Semantics.BraidEigensolid
 import Semantics.MasterEquation
 import ExtensionScaffold.Physics.VideoWeirdMachine
 import Semantics.OrderedFieldTokens

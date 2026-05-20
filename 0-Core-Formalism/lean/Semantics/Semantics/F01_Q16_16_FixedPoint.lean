@@ -25,7 +25,7 @@ namespace Q16_16
 def fromInt (n : Int) : Q16_16 := Int32.ofInt (n * SCALE)
 
 -- Convert Float to Q16.16 (for constants)
-def ofFloat (x : Float) : Q16_16 := 
+def ofFloat (x : Float) : Q16_16 :=
   let scaled := x * 65536.0
   let rounded := scaled + (if scaled ≥ 0 then 0.5 else -0.5)
   rounded.toInt32
@@ -33,7 +33,7 @@ def ofFloat (x : Float) : Q16_16 :=
 -- Rigid addition
 def add (a b : Q16_16) : Q16_16 := a + b
 
--- Rigid subtraction  
+-- Rigid subtraction
 def sub (a b : Q16_16) : Q16_16 := a - b
 
 -- Rigid multiplication with overflow protection
@@ -95,7 +95,7 @@ theorem round_valid (a : Q16_16) : ∃ c, round a = c := by
 
 -- Theorem: Multiplication preserves bounds (no overflow beyond Int32)
 -- Wolfram: max Q16.16 value = 32767.999985, square = ~1e9 < 2^31
-theorem mul_no_overflow (a b : Q16_16) 
+theorem mul_no_overflow (a b : Q16_16)
   (ha : a.toInt ≥ -32768 * SCALE ∧ a.toInt ≤ 32767 * SCALE)
   (hb : b.toInt ≥ -32768 * SCALE ∧ b.toInt ≤ 32767 * SCALE) :
   ∃ c, mul a b = c := by
@@ -123,12 +123,12 @@ def E_0_encode (N_0_i : Q16_16) : Q16_16 :=
   round scaled
 
 -- Theorem: E_0 is deterministic
-theorem E_0_deterministic (n : Q16_16) : 
+theorem E_0_deterministic (n : Q16_16) :
   E_0_encode n = E_0_encode n := by
   rfl
 
 -- Theorem: E_0 preserves bounds (no overflow)
-theorem E_0_bounds (n : Q16_16) 
+theorem E_0_bounds (n : Q16_16)
   (hn : n.toInt ≥ 0 ∧ n.toInt ≤ 200 * SCALE) :
   ∃ c, E_0_encode n = c := by
   exact ⟨E_0_encode n, rfl⟩
@@ -373,6 +373,70 @@ theorem eigensolid_stabilize (s : IterationState) (h_nonneg : ∀ x ∈ s.N_7, x
     _ = s.N_7.map E_0_encode := by
       refine Array_map_congr (λ x hx => ?_)
       exact E_0_encode_idempotent x (h_nonneg x hx) (h_bound x hx)
+
+-- =============================================================================
+-- RECEIPT INVERTIBILITY
+-- =============================================================================
+--
+-- The "receipt" of an eigensolid state is its stabilized N_7 array:
+--   receipt(s) = (stepExact s).N_7 = s.N_7.map E_0_encode
+--
+-- Receipt invertibility: two eigensolid states with identical receipts
+-- are indistinguishable on their value components.  Since E_0_encode is
+-- idempotent, the stabilized array IS the eigensolid; the mapping from
+-- eigensolid states to their receipts is injective on N_7.
+--
+-- This is the invertibility companion to eigensolid_stabilize required
+-- by AGENTS.md: every compressor needs both `eigensolid_convergence`
+-- and `receipt_invertible`.
+
+/-- Eigensolid receipt: the stabilized N_7 array after one stepExact. -/
+def eigensolidReceipt (s : IterationState) : Array Q16_16 :=
+  (stepExact s).N_7
+
+/-- Receipt Invertibility: Two eigensolid states with the same receipt
+    have identical N_7 value components.
+
+    Formally: if both s1 and s2 are already stabilized (N_7 is a fixed
+    point of E_0_encode map), and their receipts are equal, then their
+    N_7 arrays are equal.
+
+    This is the `receipt_invertible` theorem required alongside
+    `eigensolid_stabilize` for every compressor (per AGENTS.md §Compression).
+    Receipt dimensions: N_7 encodes the full eigensolid state; equality of
+    receipts implies equality of the value components that matter for
+    decode(encode(s)) = s. -/
+theorem receipt_invertible
+    (s1 s2 : IterationState)
+    -- s1 is already an eigensolid (N_7 is stabilized)
+    (h1 : s1.N_7 = s1.N_7.map E_0_encode)
+    -- s2 is already an eigensolid (N_7 is stabilized)
+    (h2 : s2.N_7 = s2.N_7.map E_0_encode)
+    -- their receipts are equal
+    (h_receipt : eigensolidReceipt s1 = eigensolidReceipt s2) :
+    s1.N_7 = s2.N_7 := by
+  -- receipts are (stepExact si).N_7 = si.N_7.map E_0_encode
+  have hr1 : eigensolidReceipt s1 = s1.N_7.map E_0_encode := by
+    simp [eigensolidReceipt, stepExact, mul_fromInt_one]
+  have hr2 : eigensolidReceipt s2 = s2.N_7.map E_0_encode := by
+    simp [eigensolidReceipt, stepExact, mul_fromInt_one]
+  -- From stability: s1.N_7 = s1.N_7.map E_0_encode, so s1.N_7 = receipt(s1)
+  -- Similarly s2.N_7 = receipt(s2). Combined with receipt equality: s1.N_7 = s2.N_7.
+  have heq : s1.N_7.map E_0_encode = s2.N_7.map E_0_encode := by
+    rw [← hr1, ← hr2]; exact h_receipt
+  rw [h1, h2]; exact heq
+
+/-- Corollary: decode ∘ encode is the identity on eigensolid states.
+    `encode` maps a stabilized state to its receipt (N_7.map E_0_encode).
+    `decode` reconstructs N_7 from the receipt (receipt IS the eigensolid).
+    For stabilized states, encode then decode recovers the original N_7. -/
+theorem eigensolid_encode_decode
+    (s : IterationState)
+    (h_stable : s.N_7 = s.N_7.map E_0_encode) :
+    (stepExact s).N_7 = s.N_7 := by
+  -- stepExact maps N_7 to N_7.map E_0_encode = N_7 (by stability hypothesis)
+  simp [stepExact, mul_fromInt_one]
+  exact h_stable.symm
 
 -- =============================================================================
 -- CORRECTED: Why the original convergence_to_fixed_point was FALSE

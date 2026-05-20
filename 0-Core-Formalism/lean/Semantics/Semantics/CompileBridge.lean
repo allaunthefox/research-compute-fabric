@@ -38,6 +38,9 @@ inductive TheoremID
   | addComm       -- a + b = b + a
   | negInvolutive -- -(-a) = a
   | subViaNeg     -- a - b = a + (-b)
+  | q0_2_mulSelfNonneg  -- q0_2_mul_self_nonneg (4 cases)
+  | q0_2_mulNonneg      -- q0_2_mul_nonneg (16 cases)
+  | q0_2_addNonneg      -- q0_2_add_nonneg (16 cases)
   deriving Repr, DecidableEq, BEq, Inhabited
 
 instance : ToString TheoremID where
@@ -52,6 +55,9 @@ instance : ToString TheoremID where
     | .addComm       => "add_comm"
     | .negInvolutive => "neg_involutive"
     | .subViaNeg     => "sub_via_neg"
+    | .q0_2_mulSelfNonneg => "q0_2_mul_self_nonneg"
+    | .q0_2_mulNonneg     => "q0_2_mul_nonneg"
+    | .q0_2_addNonneg     => "q0_2_add_nonneg"
 
 namespace TheoremID
 
@@ -67,6 +73,9 @@ def toKernelName : TheoremID → String
   | .addComm       => "check_add_comm"
   | .negInvolutive => "check_neg_involutive"
   | .subViaNeg     => "check_sub_via_neg"
+  | .q0_2_mulSelfNonneg => "check_q0_2_mul_self_nonneg"
+  | .q0_2_mulNonneg     => "check_q0_2_mul_nonneg"
+  | .q0_2_addNonneg     => "check_q0_2_add_nonneg"
 
 /-- Map theorem ID to numeric dispatch index (matches WGSL switch). -/
 def toDispatchIndex : TheoremID → Nat
@@ -80,9 +89,12 @@ def toDispatchIndex : TheoremID → Nat
   | .addComm       => 7
   | .negInvolutive => 8
   | .subViaNeg     => 9
+  | .q0_2_mulSelfNonneg => 10
+  | .q0_2_mulNonneg     => 11
+  | .q0_2_addNonneg     => 12
 
 /-- Number of GPU-verifiable theorems. -/
-def count : Nat := 10
+def count : Nat := 13
 
 end TheoremID
 
@@ -190,6 +202,9 @@ def promoteToClaim (receipt : VerificationReceipt) (idx : Nat) : Option Verified
       | 7 => TheoremID.addComm
       | 8 => TheoremID.negInvolutive
       | 9 => TheoremID.subViaNeg
+      | 10 => TheoremID.q0_2_mulSelfNonneg
+      | 11 => TheoremID.q0_2_mulNonneg
+      | 12 => TheoremID.q0_2_addNonneg
       | _ => TheoremID.zeroMul
     some {
       theoremId := theoremId
@@ -225,13 +240,15 @@ def emptyReceipt : VerificationReceipt :=
 #eval List.map TheoremID.toDispatchIndex
   [TheoremID.zeroMul, TheoremID.mulZero, TheoremID.addZero, TheoremID.zeroAdd,
    TheoremID.subSelf, TheoremID.oneMul, TheoremID.mulOne, TheoremID.addComm,
-   TheoremID.negInvolutive, TheoremID.subViaNeg]
-  -- Expected: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+   TheoremID.negInvolutive, TheoremID.subViaNeg,
+   TheoremID.q0_2_mulSelfNonneg, TheoremID.q0_2_mulNonneg, TheoremID.q0_2_addNonneg]
+  -- Expected: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
 #eval (List.map TheoremID.toDispatchIndex
   [TheoremID.zeroMul, TheoremID.mulZero, TheoremID.addZero, TheoremID.zeroAdd,
    TheoremID.subSelf, TheoremID.oneMul, TheoremID.mulOne, TheoremID.addComm,
-   TheoremID.negInvolutive, TheoremID.subViaNeg]).all (fun idx => idx < TheoremID.count)
+   TheoremID.negInvolutive, TheoremID.subViaNeg,
+   TheoremID.q0_2_mulSelfNonneg, TheoremID.q0_2_mulNonneg, TheoremID.q0_2_addNonneg]).all (fun idx => idx < TheoremID.count)
   -- Expected: true
 
 end Semantics.CompileBridge

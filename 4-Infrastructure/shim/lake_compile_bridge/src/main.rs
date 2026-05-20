@@ -21,27 +21,38 @@ use clap::Parser;
 use serde::Serialize;
 
 mod gpu;
+mod q02_dispatch;
 
 // ── Theorem Registry ────────────────────────────────────────────────────
 
 /// FixedPoint theorems that can be GPU-verified.
 const THEOREMS: &[(&str, u32)] = &[
-    ("zero_mul",       0),
-    ("mul_zero",       1),
-    ("add_zero",       2),
-    ("zero_add",       3),
-    ("sub_self",       4),
-    ("one_mul",        5),
-    ("mul_one",        6),
-    ("add_comm",       7),
+    ("zero_mul", 0),
+    ("mul_zero", 1),
+    ("add_zero", 2),
+    ("zero_add", 3),
+    ("sub_self", 4),
+    ("one_mul", 5),
+    ("mul_one", 6),
+    ("add_comm", 7),
     ("neg_involutive", 8),
-    ("sub_via_neg",    9),
+    ("sub_via_neg", 9),
+];
+
+/// Q0_2 theorems for exhaustive GPU verification.
+const Q02_THEOREMS: &[(&str, u32)] = &[
+    ("q0_2_mul_self_nonneg", 10),
+    ("q0_2_mul_nonneg", 11),
+    ("q0_2_add_nonneg", 12),
 ];
 
 // ── CLI ─────────────────────────────────────────────────────────────────
 
 #[derive(Parser, Debug)]
-#[command(name = "lake_compile_bridge", about = "GPU-accelerated Lean build bridge")]
+#[command(
+    name = "lake_compile_bridge",
+    about = "GPU-accelerated Lean build bridge"
+)]
 struct Args {
     /// Lake build target (default: "Semantics.FixedPoint")
     #[arg(short, long, default_value = "Semantics.FixedPoint")]
@@ -58,6 +69,10 @@ struct Args {
     /// Write receipt to this path
     #[arg(short, long, default_value = "build_receipt.json")]
     receipt: String,
+
+    /// Run Q0_2 exhaustive enumeration instead of FixedPoint random sampling
+    #[arg(long, default_value_t = false)]
+    q02: bool,
 
     /// Dry run: print what would be done without running
     #[arg(long, default_value_t = false)]
@@ -139,19 +154,39 @@ fn main() -> anyhow::Result<()> {
     };
 
     // ── Stage 3: GPU theorem verification ─────────────────────────────
-    let theorems = if gpu_available && !args.dry_run {
+    let theorems = if args.q02 {
+        if gpu_available && !args.dry_run {
+            eprintln!(
+                "  dispatching {} Q0_2 theorems to GPU...",
+                Q02_THEOREMS.len()
+            );
+            q02_dispatch::verify_q02_on_gpu()?
+        } else {
+            eprintln!("  (GPU unavailable or dry-run; marking all Q0_2 theorems as untested)");
+            Q02_THEOREMS
+                .iter()
+                .map(|(name, id)| TheoremReceipt {
+                    name: name.to_string(),
+                    theorem_id: *id,
+                    tested: 0,
+                    passed: false,
+                })
+                .collect::<Vec<_>>()
+        }
+    } else if gpu_available && !args.dry_run {
         eprintln!("  dispatching {} theorems to GPU...", THEOREMS.len());
         gpu::verify_theorems_on_gpu(THEOREMS, args.vectors)?
     } else {
         eprintln!("  (GPU unavailable or dry-run; marking all theorems as untested)");
-        THEOREMS.iter().map(|(name, id)| {
-            TheoremReceipt {
+        THEOREMS
+            .iter()
+            .map(|(name, id)| TheoremReceipt {
                 name: name.to_string(),
                 theorem_id: *id,
                 tested: 0,
                 passed: false,
-            }
-        }).collect::<Vec<_>>()
+            })
+            .collect::<Vec<_>>()
     };
 
     let total = theorems.len();

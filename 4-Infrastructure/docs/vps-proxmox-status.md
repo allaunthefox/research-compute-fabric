@@ -53,6 +53,27 @@
 - **Scope**: CT 100 (authentik)
 - **Command to verify**: `pvesh get /cluster/backup`
 
+#### 7. BraidRouter - Distributed Inference Mesh
+- **Location**: LXC 100, Docker container `braid-router-braid-router-1`
+- **Endpoint**: `http://192.168.100.100:9200/api/generate`
+- **Caddy**: `braid.researchstack.info` (internal/Caddy), Tailscale serve `361395-1.tail4e7094.ts.net/braid/`
+- **Topology**: 3-strand braid with Sidon labels (1, 2, 4)
+- **Compute nodes**:
+  | Node | Host | Port | Capacity | Status |
+  |------|------|------|----------|--------|
+  | `vps-local` | `192.168.100.1` | 11434 | 0.5 (small) | Online - Ollama on Proxmox host |
+  | `qfox-1` | `100.88.57.96` | 11434 | 0.0 (offline) | Offline - no open SSH ports |
+  | `nixos-laptop` | `192.168.100.1:11435` (proxied) | - | 1.5 (large) | Online - Ollama via socat proxy |
+- **Proxy**: `ollama-nixos-proxy.service` on Proxmox host forwards `*:11435` -> `100.119.165.120:11434` via `socat`
+- **Crossing matrix**: 50/50 split between `vps-local` and `nixos-laptop`
+- **Test model**: `qwen2.5:0.5b` (397MB) deployed on both nodes
+- **Verification**:
+  ```bash
+  curl -s -X POST http://192.168.100.100:9200/api/generate \
+    -H "Content-Type: application/json" \
+    -d '{"prompt": "Say hello", "options": {"model": "qwen2.5:0.5b"}}'
+  ```
+
 ### Blockers
 
 #### 1. Netcup Upstream Port Filtering
@@ -105,3 +126,8 @@ sops 4-Infrastructure/infra/secrets/credentials.json
 4. **Change Authentik default password** (`akadmin` / `authentik`) on first login
 5. **Configure Authentik** as identity provider for Proxmox (OIDC)
 6. **Reboot VPS** to activate `amd_pstate` and IOMMU (optional, if VM passthrough desired)
+7. **Pull larger models** on `nixos-laptop` (e.g., `qwen2.5:7b`, `llama3.1:8b`) for heavier inference
+8. **Fix qfox-1 access** - enable SSH or Tailscale SSH server on the node for Ollama deployment
+9. **Install Tailscale in LXC 100** to eliminate the socat proxy hop for nixos-laptop
+10. **Add `vps-local` Ollama to systemd** - currently running as manual `ollama serve` on Proxmox host
+11. **Monitor BraidRouter** - consider adding health checks and automatic node failover

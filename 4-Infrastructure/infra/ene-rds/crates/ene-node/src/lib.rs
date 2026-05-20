@@ -57,7 +57,12 @@ impl GossipMessage {
     pub fn new(sender: &str, msg_type: &str, payload: serde_json::Value) -> Self {
         let id = format!(
             "gossip_{}",
-            &sha256_hex(&format!("{}:{}:{}", sender, msg_type, Utc::now().timestamp_millis()))[..16]
+            &sha256_hex(&format!(
+                "{}:{}:{}",
+                sender,
+                msg_type,
+                Utc::now().timestamp_millis()
+            ))[..16]
         );
         Self {
             message_id: id,
@@ -88,8 +93,8 @@ impl GossipMessage {
         use hmac::{Hmac, Mac};
         use sha2::Sha256;
         type HmacSha256 = Hmac<Sha256>;
-        let mut mac = HmacSha256::new_from_slice(secret.as_bytes())
-            .expect("HMAC can take key of any size");
+        let mut mac =
+            HmacSha256::new_from_slice(secret.as_bytes()).expect("HMAC can take key of any size");
         mac.update(&self.canonical_bytes());
         let result = mac.finalize();
         self.signature = Some(hex::encode(result.into_bytes()));
@@ -97,7 +102,9 @@ impl GossipMessage {
 
     /// Verify the HMAC signature against the cluster secret.
     pub fn verify(&self, secret: &str) -> bool {
-        let Some(ref sig) = self.signature else { return false };
+        let Some(ref sig) = self.signature else {
+            return false;
+        };
         use hmac::{Hmac, Mac};
         use sha2::Sha256;
         type HmacSha256 = Hmac<Sha256>;
@@ -231,10 +238,16 @@ CREATE INDEX IF NOT EXISTS idx_replications_target ON ene_replications(target_no
               replication_version, capabilities, health_score_q16, is_active) \
              VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
             rusqlite::params![
-                &peer.node_id, &peer.public_key, &peer.ip_address, &peer.port,
-                &peer.first_seen, &peer.last_seen, &peer.replication_version,
+                &peer.node_id,
+                &peer.public_key,
+                &peer.ip_address,
+                &peer.port,
+                &peer.first_seen,
+                &peer.last_seen,
+                &peer.replication_version,
                 serde_json::to_string(&peer.capabilities)?,
-                &peer.health_score_q16, &peer.is_active as &dyn rusqlite::ToSql,
+                &peer.health_score_q16,
+                &peer.is_active as &dyn rusqlite::ToSql,
             ],
         )?;
         Ok(())
@@ -244,7 +257,7 @@ CREATE INDEX IF NOT EXISTS idx_replications_target ON ene_replications(target_no
         let mut stmt = self.conn.prepare(
             "SELECT node_id, public_key, ip_address, port, first_seen, last_seen, \
              replication_version, capabilities, health_score_q16, is_active \
-             FROM ene_peers WHERE is_active = 1"
+             FROM ene_peers WHERE is_active = 1",
         )?;
         let rows = stmt.query_map([], |row| {
             let caps: String = row.get(7)?;
@@ -263,7 +276,9 @@ CREATE INDEX IF NOT EXISTS idx_replications_target ON ene_replications(target_no
             })
         })?;
         let mut out = Vec::new();
-        for r in rows { out.push(r?); }
+        for r in rows {
+            out.push(r?);
+        }
         Ok(out)
     }
 
@@ -273,8 +288,11 @@ CREATE INDEX IF NOT EXISTS idx_replications_target ON ene_replications(target_no
              (message_id, sender_node, message_type, payload, timestamp) \
              VALUES (?1, ?2, ?3, ?4, ?5)",
             rusqlite::params![
-                &msg.message_id, &msg.sender_node, &msg.message_type,
-                &serde_json::to_string(&msg.payload)?, &msg.timestamp,
+                &msg.message_id,
+                &msg.sender_node,
+                &msg.message_type,
+                &serde_json::to_string(&msg.payload)?,
+                &msg.timestamp,
             ],
         )?;
         Ok(())
@@ -286,8 +304,11 @@ CREATE INDEX IF NOT EXISTS idx_replications_target ON ene_replications(target_no
              (proposal_id, credential_id, proposer, timestamp, votes, resolved) \
              VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
             rusqlite::params![
-                &prop.proposal_id, &prop.credential_id, &prop.proposer,
-                &prop.timestamp, &serde_json::to_string(&prop.votes)?,
+                &prop.proposal_id,
+                &prop.credential_id,
+                &prop.proposer,
+                &prop.timestamp,
+                &serde_json::to_string(&prop.votes)?,
                 &prop.resolved as &dyn rusqlite::ToSql,
             ],
         )?;
@@ -297,19 +318,21 @@ CREATE INDEX IF NOT EXISTS idx_replications_target ON ene_replications(target_no
     pub fn load_proposal(&self, proposal_id: &str) -> Result<Option<ConsensusProposal>> {
         let mut stmt = self.conn.prepare(
             "SELECT proposal_id, credential_id, proposer, timestamp, votes, resolved \
-             FROM ene_proposals WHERE proposal_id = ?1"
+             FROM ene_proposals WHERE proposal_id = ?1",
         )?;
-        let row = stmt.query_row([proposal_id], |row| {
-            let votes_str: String = row.get(4)?;
-            Ok(ConsensusProposal {
-                proposal_id: row.get(0)?,
-                credential_id: row.get(1)?,
-                proposer: row.get(2)?,
-                timestamp: row.get(3)?,
-                votes: serde_json::from_str(&votes_str).unwrap_or_default(),
-                resolved: row.get::<_, i32>(5)? != 0,
+        let row = stmt
+            .query_row([proposal_id], |row| {
+                let votes_str: String = row.get(4)?;
+                Ok(ConsensusProposal {
+                    proposal_id: row.get(0)?,
+                    credential_id: row.get(1)?,
+                    proposer: row.get(2)?,
+                    timestamp: row.get(3)?,
+                    votes: serde_json::from_str(&votes_str).unwrap_or_default(),
+                    resolved: row.get::<_, i32>(5)? != 0,
+                })
             })
-        }).optional()?;
+            .optional()?;
         Ok(row)
     }
 
@@ -329,7 +352,9 @@ CREATE INDEX IF NOT EXISTS idx_replications_target ON ene_replications(target_no
             })
         })?;
         let mut out = Vec::new();
-        for r in rows { out.push(r?); }
+        for r in rows {
+            out.push(r?);
+        }
         Ok(out)
     }
 
@@ -353,10 +378,15 @@ CREATE INDEX IF NOT EXISTS idx_replications_target ON ene_replications(target_no
               usage_count, last_rotated, health_score_q16, is_active) \
              VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
             rusqlite::params![
-                &frag.credential_id, &frag.provider, &frag.fragment,
-                &frag.access_level, &serde_json::to_string(&frag.node_assignments)?,
-                &frag.usage_count, &frag.last_rotated,
-                &frag.health_score_q16, &frag.is_active as &dyn rusqlite::ToSql,
+                &frag.credential_id,
+                &frag.provider,
+                &frag.fragment,
+                &frag.access_level,
+                &serde_json::to_string(&frag.node_assignments)?,
+                &frag.usage_count,
+                &frag.last_rotated,
+                &frag.health_score_q16,
+                &frag.is_active as &dyn rusqlite::ToSql,
             ],
         )?;
         Ok(())
@@ -388,7 +418,10 @@ impl EneNode {
         let loaded_peers = db.load_peers().unwrap_or_default();
         let mut identity = NodeIdentity::default();
         identity.node_id = node_id.unwrap_or_else(|| {
-            format!("ene_{}", &sha256_hex(&Utc::now().timestamp_millis().to_string())[..16])
+            format!(
+                "ene_{}",
+                &sha256_hex(&Utc::now().timestamp_millis().to_string())[..16]
+            )
         });
         identity.public_key = sha256_hex(&identity.node_id)[..32].to_string();
         db.save_peer(&identity)?;
@@ -439,8 +472,15 @@ impl EneNode {
         drop(peers_guard);
 
         self.with_db(|db| db.save_gossip(&msg))?;
-        self.seen_message_ids.write().await.insert(msg.message_id.clone());
-        info!("gossip {} -> {} peers", msg.message_type, self.peers.read().await.len());
+        self.seen_message_ids
+            .write()
+            .await
+            .insert(msg.message_id.clone());
+        info!(
+            "gossip {} -> {} peers",
+            msg.message_type,
+            self.peers.read().await.len()
+        );
         Ok(())
     }
 
@@ -455,7 +495,10 @@ impl EneNode {
         if self.seen_message_ids.read().await.contains(&msg.message_id) {
             return Ok(());
         }
-        self.seen_message_ids.write().await.insert(msg.message_id.clone());
+        self.seen_message_ids
+            .write()
+            .await
+            .insert(msg.message_id.clone());
         self.with_db(|db| db.save_gossip(&msg))?;
 
         match msg.message_type.as_str() {
@@ -471,9 +514,15 @@ impl EneNode {
 
     async fn handle_discovery(&self, msg: &GossipMessage, from: SocketAddr) -> Result<()> {
         let node_id = msg.payload.get("node_id").and_then(|v| v.as_str());
-        let caps = msg.payload.get("capabilities")
+        let caps = msg
+            .payload
+            .get("capabilities")
             .and_then(|v| v.as_array())
-            .map(|arr| arr.iter().filter_map(|v| v.as_str().map(|s| s.to_string())).collect())
+            .map(|arr| {
+                arr.iter()
+                    .filter_map(|v| v.as_str().map(|s| s.to_string()))
+                    .collect()
+            })
             .unwrap_or_else(|| vec!["storage".into(), "compute".into()]);
 
         if let Some(nid) = node_id {
@@ -517,9 +566,18 @@ impl EneNode {
         if let (Some(id), Some(b64)) = (cred_id, fragment_b64) {
             let frag = CredentialFragment {
                 credential_id: id.into(),
-                provider: msg.payload.get("provider").and_then(|v| v.as_str()).unwrap_or("unknown").into(),
+                provider: msg
+                    .payload
+                    .get("provider")
+                    .and_then(|v| v.as_str())
+                    .unwrap_or("unknown")
+                    .into(),
                 fragment: base64_decode(b64),
-                access_level: msg.payload.get("access_level").and_then(|v| v.as_i64()).unwrap_or(0) as i32,
+                access_level: msg
+                    .payload
+                    .get("access_level")
+                    .and_then(|v| v.as_i64())
+                    .unwrap_or(0) as i32,
                 node_assignments: vec![msg.sender_node.clone()],
                 usage_count: 0,
                 last_rotated: Utc::now().timestamp_millis(),
@@ -569,7 +627,8 @@ impl EneNode {
 
     pub async fn vote(&self, proposal_id: &str, approve: bool) -> Result<bool> {
         let total = self.peers.read().await.len() + 1;
-        let mut prop = self.with_db(|db| db.load_proposal(proposal_id))?
+        let mut prop = self
+            .with_db(|db| db.load_proposal(proposal_id))?
             .context("proposal not found")?;
         prop.votes.insert(self.identity.node_id.clone(), approve);
         self.with_db(|db| db.save_proposal(&prop))?;
@@ -579,7 +638,10 @@ impl EneNode {
         if approve_count >= threshold && !prop.resolved {
             prop.resolved = true;
             self.with_db(|db| db.save_proposal(&prop))?;
-            info!("consensus reached on {} ({} of {})", proposal_id, approve_count, total);
+            info!(
+                "consensus reached on {} ({} of {})",
+                proposal_id, approve_count, total
+            );
             return Ok(true);
         }
         Ok(false)
@@ -588,7 +650,11 @@ impl EneNode {
     pub async fn propose_rotation(&self, credential_id: &str) -> Result<String> {
         let proposal_id = format!(
             "prop_{}",
-            &sha256_hex(&format!("{}:{}", credential_id, Utc::now().timestamp_millis()))[..12]
+            &sha256_hex(&format!(
+                "{}:{}",
+                credential_id,
+                Utc::now().timestamp_millis()
+            ))[..12]
         );
         let payload = serde_json::json!({
             "proposal_id": &proposal_id,
@@ -596,7 +662,11 @@ impl EneNode {
             "proposer": &self.identity.node_id,
             "timestamp": Utc::now().timestamp_millis(),
         });
-        let msg = GossipMessage::new(&self.identity.node_id, "credential_rotation_proposal", payload);
+        let msg = GossipMessage::new(
+            &self.identity.node_id,
+            "credential_rotation_proposal",
+            payload,
+        );
         self.gossip(msg).await?;
         Ok(proposal_id)
     }
@@ -627,7 +697,10 @@ impl EneNode {
 
     pub async fn get_mesh_health(&self) -> serde_json::Value {
         let peers = self.peers.read().await;
-        let healthy = peers.values().filter(|p| p.health_score_q16 > 32768).count();
+        let healthy = peers
+            .values()
+            .filter(|p| p.health_score_q16 > 32768)
+            .count();
         let mesh_size = peers.len() + 1;
         serde_json::json!({
             "mesh_size": mesh_size,
@@ -639,7 +712,9 @@ impl EneNode {
 
 fn base64_decode(s: &str) -> Vec<u8> {
     use base64::Engine;
-    base64::engine::general_purpose::STANDARD.decode(s.as_bytes()).unwrap_or_default()
+    base64::engine::general_purpose::STANDARD
+        .decode(s.as_bytes())
+        .unwrap_or_default()
 }
 
 #[cfg(test)]
@@ -648,7 +723,8 @@ mod tests {
 
     #[test]
     fn gossip_sign_and_verify_roundtrip() {
-        let mut msg = GossipMessage::new("ene_alpha", "heartbeat", serde_json::json!({"health": 1}));
+        let mut msg =
+            GossipMessage::new("ene_alpha", "heartbeat", serde_json::json!({"health": 1}));
         assert!(msg.signature.is_none());
         msg.sign("secret-key");
         assert!(msg.signature.is_some());
@@ -670,7 +746,8 @@ mod tests {
 
     #[test]
     fn gossip_tamper_payload_invalidates_signature() {
-        let mut msg = GossipMessage::new("ene_alpha", "heartbeat", serde_json::json!({"health": 1}));
+        let mut msg =
+            GossipMessage::new("ene_alpha", "heartbeat", serde_json::json!({"health": 1}));
         msg.sign("secret-key");
         assert!(msg.verify("secret-key"));
         // Tamper with payload after signing

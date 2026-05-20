@@ -29,7 +29,9 @@ struct SearchQuery {
     semantic: bool,
 }
 
-fn default_limit() -> i64 { 10 }
+fn default_limit() -> i64 {
+    10
+}
 
 #[derive(Serialize)]
 struct HealthResponse {
@@ -58,7 +60,11 @@ async fn main() -> anyhow::Result<()> {
     let ephemeral = EphemeralSurface::new(ephemeral_client);
     ephemeral.init_tables().await?;
 
-    let state = Arc::new(Mutex::new(AppState { chat, wiki, ephemeral }));
+    let state = Arc::new(Mutex::new(AppState {
+        chat,
+        wiki,
+        ephemeral,
+    }));
 
     let app = Router::new()
         .route("/health", get(health_handler))
@@ -88,7 +94,10 @@ async fn list_sessions(
     State(state): State<Arc<Mutex<AppState>>>,
     Query(params): Query<HashMap<String, String>>,
 ) -> Result<Json<serde_json::Value>, String> {
-    let limit = params.get("limit").and_then(|s| s.parse().ok()).unwrap_or(10i64);
+    let limit = params
+        .get("limit")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(10i64);
     let guard = state.lock().await;
     match guard.chat.list_sessions(limit).await {
         Ok(v) => Ok(Json(json!({"ok": true, "data": v}))),
@@ -128,7 +137,10 @@ async fn wiki_search(
     Query(params): Query<HashMap<String, String>>,
 ) -> Result<Json<serde_json::Value>, String> {
     let query = params.get("q").cloned().unwrap_or_default();
-    let limit = params.get("limit").and_then(|s| s.parse().ok()).unwrap_or(10i64);
+    let limit = params
+        .get("limit")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(10i64);
     let guard = state.lock().await;
     match guard.wiki.search(&query, limit).await {
         Ok(v) => Ok(Json(json!({"ok": true, "data": v}))),
@@ -153,7 +165,10 @@ async fn list_ephemeral_nodes(
     Query(params): Query<HashMap<String, String>>,
 ) -> Result<Json<serde_json::Value>, String> {
     let zone = params.get("zone").cloned().unwrap_or_else(|| "cold".into());
-    let limit = params.get("limit").and_then(|s| s.parse().ok()).unwrap_or(100i64);
+    let limit = params
+        .get("limit")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(100i64);
     let guard = state.lock().await;
     match guard.ephemeral.list_nodes_by_zone(&zone, limit).await {
         Ok(v) => Ok(Json(json!({"ok": true, "data": v}))),

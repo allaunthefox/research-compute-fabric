@@ -1,9 +1,8 @@
 use anyhow::{Context, Result};
-use chrono::Utc;
 use clap::Parser;
 use ene_storage::{
     build_receipt, decide, load_garage_env, observe, resume_chain, ActionResult, Decision,
-    Observation, GARAGE_BUCKET, GARAGE_ENDPOINT, RECEIPT_PREFIX,
+    GARAGE_BUCKET, GARAGE_ENDPOINT, RECEIPT_PREFIX,
 };
 use serde_json::json;
 use std::collections::HashMap;
@@ -25,13 +24,10 @@ async fn run_cmd(
     for (k, v) in env_extra {
         cmd.env(k, v);
     }
-    let output = tokio::time::timeout(
-        std::time::Duration::from_secs(timeout_secs),
-        cmd.output(),
-    )
-    .await
-    .context("command timed out")?
-    .context("command failed to run")?;
+    let output = tokio::time::timeout(std::time::Duration::from_secs(timeout_secs), cmd.output())
+        .await
+        .context("command timed out")?
+        .context("command failed to run")?;
     let rc = output.status.code().unwrap_or(-1);
     let stdout = String::from_utf8_lossy(&output.stdout).into_owned();
     let stderr = String::from_utf8_lossy(&output.stderr).into_owned();
@@ -51,8 +47,18 @@ async fn act_one(
     match run_cmd(args, env_extra, timeout_secs).await {
         Ok((0, stdout, _)) => {
             ar.actions_succeeded.push(label.to_string());
-            let tail = stdout.chars().rev().take(500).collect::<Vec<_>>().into_iter().rev().collect::<String>();
-            ar.details.insert(label.to_string(), json!({"rc": 0, "stdout_tail": tail.trim() }));
+            let tail = stdout
+                .chars()
+                .rev()
+                .take(500)
+                .collect::<Vec<_>>()
+                .into_iter()
+                .rev()
+                .collect::<String>();
+            ar.details.insert(
+                label.to_string(),
+                json!({"rc": 0, "stdout_tail": tail.trim() }),
+            );
         }
         Ok((rc, stdout, stderr)) => {
             ar.actions_failed.push(label.to_string());
@@ -67,7 +73,10 @@ async fn act_one(
         }
         Err(e) => {
             ar.actions_failed.push(label.to_string());
-            ar.details.insert(label.to_string(), json!({"rc": -1, "error": e.to_string() }));
+            ar.details.insert(
+                label.to_string(),
+                json!({"rc": -1, "error": e.to_string() }),
+            );
         }
     }
 }
@@ -81,7 +90,10 @@ async fn act(
     let mut ar = ActionResult::default();
 
     if probe_only || dry_run {
-        ar.details.insert("mode".into(), json!(if probe_only { "probe_only" } else { "dry_run" }));
+        ar.details.insert(
+            "mode".into(),
+            json!(if probe_only { "probe_only" } else { "dry_run" }),
+        );
         return ar;
     }
 
@@ -94,16 +106,35 @@ async fn act(
     let consolidate_sh = storage_dir.join("garage/db-consolidate.sh");
 
     if d.trigger_garage_restart {
-        act_one("garage_restart", &["systemctl", "--user", "restart", "garage.service"], &mut ar, creds, 30).await;
+        act_one(
+            "garage_restart",
+            &["systemctl", "--user", "restart", "garage.service"],
+            &mut ar,
+            creds,
+            30,
+        )
+        .await;
         if ar.actions_failed.contains(&"garage_restart".to_string()) {
-            act_one("garage_restart_system", &["sudo", "systemctl", "restart", "garage.service"], &mut ar, creds, 30).await;
+            act_one(
+                "garage_restart_system",
+                &["sudo", "systemctl", "restart", "garage.service"],
+                &mut ar,
+                creds,
+                30,
+            )
+            .await;
         }
     }
 
     if d.trigger_snap {
         act_one(
             "restic_snap",
-            &["bash", &backup_sh.to_string_lossy(), "snap", "agent-triggered"],
+            &[
+                "bash",
+                &backup_sh.to_string_lossy(),
+                "snap",
+                "agent-triggered",
+            ],
             &mut ar,
             creds,
             3600,
@@ -177,7 +208,10 @@ fn emit_local(receipt: &serde_json::Value) -> Result<()> {
     Ok(())
 }
 
-async fn emit_s3(receipt: &serde_json::Value, creds: &HashMap<String, String>) -> Result<(bool, String)> {
+async fn emit_s3(
+    receipt: &serde_json::Value,
+    creds: &HashMap<String, String>,
+) -> Result<(bool, String)> {
     let ts = receipt["generated_at_utc"]
         .as_str()
         .unwrap_or("")
@@ -196,7 +230,10 @@ async fn emit_s3(receipt: &serde_json::Value, creds: &HashMap<String, String>) -
     let tmp = tempfile::NamedTempFile::with_suffix(".json")?;
     tokio::fs::write(tmp.path(), &payload).await?;
 
-    let endpoint = creds.get("AWS_ENDPOINT_URL").cloned().unwrap_or_else(|| GARAGE_ENDPOINT.into());
+    let endpoint = creds
+        .get("AWS_ENDPOINT_URL")
+        .cloned()
+        .unwrap_or_else(|| GARAGE_ENDPOINT.into());
     let (rc, _, _) = run_cmd(
         &[
             "aws",
@@ -251,7 +288,9 @@ async fn run_cycle(
     let _ = emit_local(&receipt);
 
     let (s3_ok, s3_key) = if !no_s3 && obs.garage.up {
-        emit_s3(&receipt, creds).await.unwrap_or((false, String::new()))
+        emit_s3(&receipt, creds)
+            .await
+            .unwrap_or((false, String::new()))
     } else {
         (false, String::new())
     };
@@ -286,10 +325,7 @@ async fn run_cycle(
         warn!("! {}", alert);
     }
 
-    receipt["receipt_hash"]
-        .as_str()
-        .unwrap_or("")
-        .to_string()
+    receipt["receipt_hash"].as_str().unwrap_or("").to_string()
 }
 
 #[tokio::main]
@@ -305,7 +341,10 @@ async fn main() -> Result<()> {
     tick += 1;
 
     if cli.loop_mode {
-        info!("loop mode, interval={}s, resuming tick={}", cli.interval, tick);
+        info!(
+            "loop mode, interval={}s, resuming tick={}",
+            cli.interval, tick
+        );
         loop {
             match tokio::time::timeout(
                 std::time::Duration::from_secs(cli.interval + 300),
@@ -327,7 +366,15 @@ async fn main() -> Result<()> {
             tokio::time::sleep(std::time::Duration::from_secs(cli.interval)).await;
         }
     } else {
-        run_cycle(tick, &parent_hash, &creds, cli.probe_only, cli.dry_run, cli.no_s3).await;
+        run_cycle(
+            tick,
+            &parent_hash,
+            &creds,
+            cli.probe_only,
+            cli.dry_run,
+            cli.no_s3,
+        )
+        .await;
     }
 
     Ok(())

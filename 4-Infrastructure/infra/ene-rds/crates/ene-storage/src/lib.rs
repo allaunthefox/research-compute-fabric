@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::HashMap;
 use std::path::PathBuf;
+use std::time::Duration;
 
 // ── constants ──────────────────────────────────────────────────────────────
 
@@ -125,6 +126,49 @@ impl Observation {
     }
 }
 
+pub async fn observe(creds: &HashMap<String, String>) -> Observation {
+    let mut obs = Observation::new();
+    let endpoint = creds
+        .get("AWS_ENDPOINT_URL")
+        .cloned()
+        .unwrap_or_else(|| GARAGE_ENDPOINT.to_string());
+
+    match tokio::time::timeout(Duration::from_secs(2), reqwest::get(&endpoint)).await {
+        Ok(Ok(response)) => {
+            obs.garage.up = true;
+            obs.garage.buckets.push(GARAGE_BUCKET.to_string());
+            if !response.status().is_success() {
+                obs.errors.push(format!(
+                    "garage endpoint responded with non-success status {}",
+                    response.status()
+                ));
+            }
+        }
+        Ok(Err(err)) => {
+            obs.errors
+                .push(format!("garage endpoint probe failed: {err}"));
+        }
+        Err(_) => {
+            obs.errors
+                .push("garage endpoint probe timed out after 2s".to_string());
+        }
+    }
+
+    let backup_log = dirs::cache_dir()
+        .unwrap_or_else(|| PathBuf::from("/tmp"))
+        .join("garage-post-commit.log");
+    if let Ok(text) = std::fs::read_to_string(&backup_log) {
+        obs.backup_log.last_ts = std::fs::metadata(&backup_log)
+            .and_then(|metadata| metadata.modified())
+            .ok()
+            .map(|modified| chrono::DateTime::<Utc>::from(modified).to_rfc3339());
+        obs.backup_log.last_ok =
+            text.contains("completed") || text.contains("success") || text.contains("succeeded");
+    }
+
+    obs
+}
+
 // ── Decision ───────────────────────────────────────────────────────────────
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -145,19 +189,23 @@ pub fn decide(obs: &Observation) -> Decision {
     if !obs.garage.up {
         d.alerts.push("ALERT: Garage S3 is unreachable".into());
         d.trigger_garage_restart = true;
-        d.rationale.push("garage_up=false → trigger_garage_restart".into());
+        d.rationale
+            .push("garage_up=false → trigger_garage_restart".into());
     }
 
     if obs.restic.snapshot_count == 0 && obs.garage.up {
-        d.alerts.push("ALERT: restic repo has zero snapshots — initial backup needed".into());
+        d.alerts
+            .push("ALERT: restic repo has zero snapshots — initial backup needed".into());
         d.trigger_snap = true;
         d.rationale.push("snapshot_count=0 → trigger_snap".into());
     }
 
     if !obs.backup_log.last_ok && obs.garage.up {
-        d.alerts.push("WARN: No successful restic snapshot found in backup log".into());
+        d.alerts
+            .push("WARN: No successful restic snapshot found in backup log".into());
         d.trigger_snap = true;
-        d.rationale.push("backup_log_last_ok=false → trigger_snap".into());
+        d.rationale
+            .push("backup_log_last_ok=false → trigger_snap".into());
     }
 
     if obs.restic.dedup_ratio_q16 > 0
@@ -180,14 +228,18 @@ pub fn decide(obs: &Observation) -> Decision {
     }
 
     if obs.cold_copy_needed {
-        d.alerts.push("WARN: Newest restic snapshot is >26 h old — cold copy to gdrive appears stale".into());
+        d.alerts.push(
+            "WARN: Newest restic snapshot is >26 h old — cold copy to gdrive appears stale".into(),
+        );
         d.trigger_cold_copy = true;
-        d.rationale.push("cold_copy_needed=true → trigger_cold_copy".into());
+        d.rationale
+            .push("cold_copy_needed=true → trigger_cold_copy".into());
     }
 
     if obs.garage.up {
         d.trigger_offload = true;
-        d.rationale.push("garage_up=true → trigger_offload (idempotent)".into());
+        d.rationale
+            .push("garage_up=true → trigger_offload (idempotent)".into());
     }
 
     d
@@ -261,7 +313,10 @@ pub fn resume_chain() -> (i64, String) {
     let mut last_hash = String::new();
     for line in text.lines() {
         if let Ok(entry) = serde_json::from_str::<serde_json::Value>(line) {
-            last_tick = entry.get("tick").and_then(|v| v.as_i64()).unwrap_or(last_tick);
+            last_tick = entry
+                .get("tick")
+                .and_then(|v| v.as_i64())
+                .unwrap_or(last_tick);
             last_hash = entry
                 .get("receipt_hash")
                 .and_then(|v| v.as_str())

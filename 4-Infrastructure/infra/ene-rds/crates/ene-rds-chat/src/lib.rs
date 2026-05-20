@@ -63,7 +63,11 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_receipt ON ene.chat_messages(receip
 CREATE INDEX IF NOT EXISTS idx_chat_messages_text_search ON ene.chat_messages USING GIN(to_tsvector('english', text_content));
 CREATE INDEX IF NOT EXISTS idx_chat_messages_tool_search ON ene.chat_messages USING GIN(tool_calls jsonb_path_ops);
         "#;
-        self.client.inner().batch_execute(ddl).await.context("init chat DDL")?;
+        self.client
+            .inner()
+            .batch_execute(ddl)
+            .await
+            .context("init chat DDL")?;
         info!("chat log schema initialized");
         Ok(())
     }
@@ -159,8 +163,13 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_tool_search ON ene.chat_messages US
     }
 
     pub async fn delete_messages_for_session(&self, session_id: &str) -> Result<u64> {
-        let rows = self.client.inner()
-            .execute("DELETE FROM ene.chat_messages WHERE session_id = $1", &[&session_id])
+        let rows = self
+            .client
+            .inner()
+            .execute(
+                "DELETE FROM ene.chat_messages WHERE session_id = $1",
+                &[&session_id],
+            )
             .await
             .context("delete messages")?;
         Ok(rows)
@@ -181,19 +190,30 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_tool_search ON ene.chat_messages US
             )
             .await
             .context("keyword search")?;
-        Ok(rows.iter().map(|r| serde_json::json!({
-            "session_id": r.get::<_, String>(0),
-            "title": r.get::<_, String>(1),
-            "agent": r.get::<_, Option<String>>(2),
-            "model": r.get::<_, Option<String>>(3),
-            "match_count": r.get::<_, i64>(4),
-            "rank": r.get::<_, f32>(5),
-        })).collect())
+        Ok(rows
+            .iter()
+            .map(|r| {
+                serde_json::json!({
+                    "session_id": r.get::<_, String>(0),
+                    "title": r.get::<_, String>(1),
+                    "agent": r.get::<_, Option<String>>(2),
+                    "model": r.get::<_, Option<String>>(3),
+                    "match_count": r.get::<_, i64>(4),
+                    "rank": r.get::<_, f32>(5),
+                })
+            })
+            .collect())
     }
 
-    pub async fn search_similar(&self, embedding: &[f32], limit: i64) -> Result<Vec<serde_json::Value>> {
+    pub async fn search_similar(
+        &self,
+        embedding: &[f32],
+        limit: i64,
+    ) -> Result<Vec<serde_json::Value>> {
         let vec_str = vec_to_pgtext(embedding);
-        let rows = self.client.inner()
+        let rows = self
+            .client
+            .inner()
             .query(
                 "SELECT session_id, title, agent, model, \
                  1 - (embedding <=> $1::vector) AS similarity \
@@ -203,17 +223,24 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_tool_search ON ene.chat_messages US
             )
             .await
             .context("similarity search")?;
-        Ok(rows.iter().map(|r| serde_json::json!({
-            "session_id": r.get::<_, String>(0),
-            "title": r.get::<_, String>(1),
-            "agent": r.get::<_, Option<String>>(2),
-            "model": r.get::<_, Option<String>>(3),
-            "similarity": r.get::<_, f32>(4),
-        })).collect())
+        Ok(rows
+            .iter()
+            .map(|r| {
+                serde_json::json!({
+                    "session_id": r.get::<_, String>(0),
+                    "title": r.get::<_, String>(1),
+                    "agent": r.get::<_, Option<String>>(2),
+                    "model": r.get::<_, Option<String>>(3),
+                    "similarity": r.get::<_, f32>(4),
+                })
+            })
+            .collect())
     }
 
     pub async fn list_sessions(&self, limit: i64) -> Result<Vec<serde_json::Value>> {
-        let rows = self.client.inner()
+        let rows = self
+            .client
+            .inner()
             .query(
                 "SELECT session_id, title, agent, model, message_count, \
                  token_input_total, token_output_total, created_at_ms, updated_at_ms \
@@ -222,21 +249,28 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_tool_search ON ene.chat_messages US
             )
             .await
             .context("list sessions")?;
-        Ok(rows.iter().map(|r| serde_json::json!({
-            "session_id": r.get::<_, String>(0),
-            "title": r.get::<_, String>(1),
-            "agent": r.get::<_, Option<String>>(2),
-            "model": r.get::<_, Option<String>>(3),
-            "message_count": r.get::<_, i32>(4),
-            "token_input_total": r.get::<_, i64>(5),
-            "token_output_total": r.get::<_, i64>(6),
-            "created_at_ms": r.get::<_, i64>(7),
-            "updated_at_ms": r.get::<_, i64>(8),
-        })).collect())
+        Ok(rows
+            .iter()
+            .map(|r| {
+                serde_json::json!({
+                    "session_id": r.get::<_, String>(0),
+                    "title": r.get::<_, String>(1),
+                    "agent": r.get::<_, Option<String>>(2),
+                    "model": r.get::<_, Option<String>>(3),
+                    "message_count": r.get::<_, i32>(4),
+                    "token_input_total": r.get::<_, i64>(5),
+                    "token_output_total": r.get::<_, i64>(6),
+                    "created_at_ms": r.get::<_, i64>(7),
+                    "updated_at_ms": r.get::<_, i64>(8),
+                })
+            })
+            .collect())
     }
 
     pub async fn get_session(&self, session_id: &str) -> Result<Option<serde_json::Value>> {
-        let sess = self.client.inner()
+        let sess = self
+            .client
+            .inner()
             .query_opt(
                 "SELECT session_id, title, agent, model, message_count, \
                  token_input_total, token_output_total, created_at_ms, updated_at_ms, meta \
@@ -246,7 +280,9 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_tool_search ON ene.chat_messages US
             .await
             .context("get session")?;
         let Some(sess) = sess else { return Ok(None) };
-        let msgs = self.client.inner()
+        let msgs = self
+            .client
+            .inner()
             .query(
                 "SELECT message_index, role, blocks, text_content, token_input, \
                  token_output, tool_calls, created_at_ms \
@@ -255,16 +291,21 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_tool_search ON ene.chat_messages US
             )
             .await
             .context("get messages")?;
-        let messages: Vec<_> = msgs.iter().map(|r| serde_json::json!({
-            "message_index": r.get::<_, i32>(0),
-            "role": r.get::<_, String>(1),
-            "blocks": r.get::<_, serde_json::Value>(2),
-            "text_content": r.get::<_, String>(3),
-            "token_input": r.get::<_, i64>(4),
-            "token_output": r.get::<_, i64>(5),
-            "tool_calls": r.get::<_, serde_json::Value>(6),
-            "created_at_ms": r.get::<_, i64>(7),
-        })).collect();
+        let messages: Vec<_> = msgs
+            .iter()
+            .map(|r| {
+                serde_json::json!({
+                    "message_index": r.get::<_, i32>(0),
+                    "role": r.get::<_, String>(1),
+                    "blocks": r.get::<_, serde_json::Value>(2),
+                    "text_content": r.get::<_, String>(3),
+                    "token_input": r.get::<_, i64>(4),
+                    "token_output": r.get::<_, i64>(5),
+                    "tool_calls": r.get::<_, serde_json::Value>(6),
+                    "created_at_ms": r.get::<_, i64>(7),
+                })
+            })
+            .collect();
         Ok(Some(serde_json::json!({
             "session_id": sess.get::<_, String>(0),
             "title": sess.get::<_, String>(1),

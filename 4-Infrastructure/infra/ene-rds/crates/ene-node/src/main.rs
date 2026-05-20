@@ -35,11 +35,23 @@ async fn main() -> Result<()> {
         let _ = std::fs::create_dir_all(parent);
     }
 
-    let cluster_secret = cli.cluster_secret.or_else(|| std::env::var("ENE_CLUSTER_SECRET").ok());
-    let node = EneNode::new(cli.node_id, &cli.db, cli.bind, cli.seed.clone(), cluster_secret).await?;
+    let cluster_secret = cli
+        .cluster_secret
+        .or_else(|| std::env::var("ENE_CLUSTER_SECRET").ok());
+    let node = EneNode::new(
+        cli.node_id,
+        &cli.db,
+        cli.bind,
+        cli.seed.clone(),
+        cluster_secret,
+    )
+    .await?;
     let node = std::sync::Arc::new(node);
 
-    info!("ENE node {} starting on {}", node.identity.node_id, cli.bind);
+    info!(
+        "ENE node {} starting on {}",
+        node.identity.node_id, cli.bind
+    );
 
     // ── UDP listener task ────────────────────────────────────────────────
     let listen_node = node.clone();
@@ -82,7 +94,8 @@ async fn main() -> Result<()> {
     // ── Heartbeat loop ────────────────────────────────────────────────────
     let beat_node = node.clone();
     let heartbeat = tokio::spawn(async move {
-        let mut interval = tokio::time::interval(std::time::Duration::from_secs(cli.heartbeat_interval));
+        let mut interval =
+            tokio::time::interval(std::time::Duration::from_secs(cli.heartbeat_interval));
         interval.tick().await; // skip immediate first tick
         loop {
             interval.tick().await;
@@ -100,8 +113,14 @@ async fn main() -> Result<()> {
             interval.tick().await;
             let status = report_node.get_status().await;
             let health = report_node.get_mesh_health().await;
-            info!("status: {}", serde_json::to_string(&status).unwrap_or_default());
-            info!("health: {}", serde_json::to_string(&health).unwrap_or_default());
+            info!(
+                "status: {}",
+                serde_json::to_string(&status).unwrap_or_default()
+            );
+            info!(
+                "health: {}",
+                serde_json::to_string(&health).unwrap_or_default()
+            );
         }
     });
 

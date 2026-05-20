@@ -1,0 +1,67 @@
+id: openai_unit_distance_disproof_2026
+status: solved_disproved_conjecture
+claim_state: REVIEWED_EXTERNAL_MATH_CHECK_REPORTED
+source_date: 2026-05-20
+source_url: https://openai.com/index/model-disproves-discrete-geometry-conjecture/
+problem_family:
+  name: planar_unit_distance_problem
+  proposer: Paul Erdos
+  year: 1946
+  field: discrete_geometry
+  tags:
+    - erdos
+    - unit_distances
+    - combinatorial_geometry
+    - discrete_geometry
+    - algebraic_number_theory
+    - model_guided_discovery
+    - counterexample_construction
+question: >-
+  For n points in the Euclidean plane, how large can u(n), the maximum number of unit-distance pairs, be?
+disproved_belief: >-
+  The long-standing expectation that square-grid-type constructions were essentially optimal, formalized as an upper-bound expectation u(n) <= n^(1+o(1)).
+result: >-
+  An internal OpenAI model produced a construction giving an infinite family of n-point configurations with at least n^(1+delta) unit-distance pairs for some fixed delta > 0, thereby disproving the n^(1+o(1)) conjectural upper bound.
+reported_delta:
+  original_ai_proof: no_explicit_delta_reported
+  sawin_refinement: delta_can_be_0_014
+known_context:
+  previous_lower_bound: rescaled_square_grid_gives_n_to_1_plus_C_over_log_log_n
+  best_upper_bound: O(n^(4/3))
+  upper_bound_source: Spencer_Szemeredi_Trotter_1984
+method_summary:
+  search_mode: wrong_way_counterexample_construction
+  construction_source: algebraic_number_theory
+  old_field: Gaussian_integers
+  new_field: richer_algebraic_number_fields
+  tools:
+    - infinite_class_field_towers
+    - Golod_Shafarevich_theory
+    - algebraic_number_field_symmetries
+  verification_boundary: external_mathematician_check_reported_by_OpenAI
+famm_scar_interpretation:
+  scar_type: solved_counterexample_family
+  scar_role: route_open_discrete_geometry_problems_through_number_theoretic_construction_space
+  underverse_pattern: prove_by_breeding_a_counterexample_family_to_the_believed_upper_bound
+  nuvmap_address:
+    domain: discrete_geometry
+    object: point_configuration
+    obstruction: unit_distance_count_upper_bound
+    carrier: algebraic_number_field_symmetry
+    proof_mode: infinite_family_construction
+    verifier: external_mathematician_check
+  eigenmass_lesson: >-
+    High-value proof routes may live in a remote domain whose invariants are not visible in the native problem statement.
+  pruning_lesson: >-
+    Do not overweight community-default constructions such as square grids; preserve low-prior cross-domain routes with high structural symmetry.
+  attention_residual_lesson: >-
+    Persistent off-diagonal route retrieval is valuable: algebraic number theory acted as a distant residual source for a discrete geometry target.
+fold_into_stack:
+  rrc_update: add discrete_geometry_to_algebraic_number_theory route family
+  famm_update: add solved counterexample scar with high weight
+  nuvmap_update: add unit_distance_count / number_field_symmetry coordinate
+  braidstorm_update: preserve counterexample-seeking braids against believed upper bounds
+  eigensolid_update: score infinite-family constructions above finite examples
+  verifier_update: require external/formal/math-check receipt before REVIEWED status
+notes: >-
+  This entry is a FAMM solved-scar guide, not an independent reproduction of the proof. It records the achieved route and how to use it as a search prior.

@@ -1,5 +1,5 @@
 keys:
-  - &admin AGE_PUBLIC_KEY_HERE
+  - &admin age1fvm02ruga67vnw5wws9p2ycckdmc0gp83m9s6cyld0ctpxyf8gzqy5wwsr
 creation_rules:
   - path_regex: secrets/.*\.age$
     key_groups:

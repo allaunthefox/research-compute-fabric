@@ -1,0 +1,38 @@
+# SOPS configuration for Research Stack
+# Uses age for encryption.
+# Post-quantum: standard age (X25519 + ChaCha20-Poly1305) is NOT post-quantum.
+# PQC adoption tracked in 4-Infrastructure/docs/pqc-posture.md
+#
+# Usage:
+#   sops --encrypt --in-place <file>
+#   sops <file>                    # decrypt, edit, re-encrypt
+#   sops --decrypt <file>          # decrypt to stdout
+
+keys:
+  - &primary age1fvm02ruga67vnw5wws9p2ycckdmc0gp83m9s6cyld0ctpxyf8gzqy5wwsr
+
+creation_rules:
+  - path_regex: 4-Infrastructure/infra/secrets/.*
+    key_groups:
+      - age:
+          - *primary
+
+  - path_regex: 4-Infrastructure/deploy/.*/.*\.env$
+    key_groups:
+      - age:
+          - *primary
+
+  - path_regex: 4-Infrastructure/storage/restic/.*\.env$
+    key_groups:
+      - age:
+          - *primary
+
+  - path_regex: API KEYS/.*
+    key_groups:
+      - age:
+          - *primary
+
+  - path_regex: \.env$
+    key_groups:
+      - age:
+          - *primary

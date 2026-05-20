@@ -32,6 +32,93 @@ UNVERIFIED:
 
 ## Items
 
+### OpenAI planar unit-distance breakthrough
+
+Status:
+
+```text
+CONFIRMED_BY_OFFICIAL_SOURCE
+EXTERNAL_EXPERT_REVIEW_REPORTED
+EXTERNAL_REFERENCE
+```
+
+Claim:
+
+```text
+OpenAI reports that an internal general-purpose reasoning model produced a proof disproving Erdős's planar unit-distance conjectured upper bound.
+The proof constructs infinitely many n-point planar sets with nu(n) >= n^(1+delta) for fixed delta > 0.
+```
+
+Source:
+
+```text
+Official post: https://openai.com/index/model-disproves-discrete-geometry-conjecture/
+Proof PDF: https://cdn.openai.com/pdf/74c24085-19b0-4534-9c90-465b8e29ad73/unit-distance-proof.pdf
+Companion remarks: https://cdn.openai.com/pdf/74c24085-19b0-4534-9c90-465b8e29ad73/unit-distance-remarks.pdf
+```
+
+Judo flip:
+
+```text
+Square-grid prior was too narrow. Algebraic number theory supplies a richer construction family for planar incidence density.
+```
+
+Stack action:
+
+```text
+Add OpenAIUnitDistance2026ExternalReference and route through all seven layers via docs/research/OPENAI_UNIT_DISTANCE_2026_IMPORT.md.
+Do not promote to internal theorem until a local formalization or executable verifier exists.
+```
+
+### Recent AI math solves import map
+
+Status:
+
+```text
+EXTERNAL_REFERENCE
+STATUS_TIERED_IMPORT
+```
+
+Claim:
+
+```text
+Several additional 2026 AI-math results now have enough source quality to track
+as external references, while keeping proof status separate from narrative
+status.
+```
+
+Source:
+
+```text
+Import note: 6-Documentation/docs/research/RECENT_AI_MATH_SOLVES_2026_IMPORT.md
+```
+
+Included targets:
+
+```text
+Fel's Conjecture on Syzygies of Numerical Semigroups:
+  PAPER_BACKED_FORMALIZED, arXiv:2602.03716
+
+Rethlas/Archon Anderson open problem:
+  PAPER_BACKED_FORMALIZED, arXiv:2604.03789
+
+OpenAI First Proof submissions:
+  OFFICIAL_REVIEW_PENDING, OpenAI official post + arXiv:2602.05192
+
+Formal Conjectures benchmark:
+  TRACKING_SURFACE, arXiv:2605.13171
+
+Tao Erdős AI contributions wiki:
+  TRACKING_SURFACE, provisional triage index only
+```
+
+Stack action:
+
+```text
+Add RecentAIMathSolves2026ExternalReference.
+Use the source-tier labels before funding any V_scope claim.
+```
+
 ### Erdős Problem #728
 
 Status:

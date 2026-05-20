@@ -71,7 +71,10 @@ findable with an honest status.
 | **Neural Type Eigenvector Coverage** | CANDIDATE | Broad neuron-type morphology/evidence graph reduced to a principal coverage direction, used to rank which biological analogues improve routing, compression, or verification efficiency. | `6-Documentation/docs/research/NEURAL_TYPE_EIGENVECTOR_COVERAGE.md` |
 | **NUVMAP** | CANONICAL | Non-uniform variable mapping and address projection. | `docs/GLOSSARY.md`, NUVMAP specs |
 | **OEPI** | ACTIVE | Operator Escalation Percentage Index. | `Semantics.OEPI` |
+| **OpenAI Unit Distance 2026** | EXTERNAL_REFERENCE | AI-generated proof/import map for the planar unit-distance breakthrough: algebraic number fields and class-field towers produce projected planar point sets with `nu(n) >= n^(1+delta)` infinitely often. | `6-Documentation/docs/research/OPENAI_UNIT_DISTANCE_2026_IMPORT.md` |
+| **Recent AI Math Solves 2026** | EXTERNAL_REFERENCE | Status-tiered watchlist for 2026 AI-assisted math solves and proof pipelines, including Fel's conjecture, Rethlas/Archon Anderson, OpenAI First Proof, Formal Conjectures, and the provisional Erdős AI contributions wiki. | `6-Documentation/docs/research/RECENT_AI_MATH_SOLVES_2026_IMPORT.md` |
 | **OTOM** | CANONICAL | Ordered Transformation and Orchestration Model. | `CONCEPTS.md`, `OTOMOntology.lean` |
+| **Physics Bootcamp Refinement Audit** | EXTERNAL_REFERENCE | Curriculum-checklist audit used to identify missing physics receipts: measurement uncertainty, coverage matrix, noninertial frames, rigid-body tensors, thermal transport, E&M boundaries, and optics routing. | `6-Documentation/docs/research/PHYSICS_BOOTCAMP_REFINEMENT_AUDIT.md` |
 | **PIST** | CANONICAL | Shell witness/address surface with mass conservation. | `docs/GLOSSARY.md`, `Semantics.PIST` |
 | **PodAccumulator** | ACTIVE | Distributed witness/signature accumulator. | `docs/GLOSSARY.md` |
 | **Q0_16 / Q0_64 / Q16_16** | CANONICAL | Fixed-point and scalar communication formats. | `Semantics.FixedPoint`, `docs/GLOSSARY.md` |

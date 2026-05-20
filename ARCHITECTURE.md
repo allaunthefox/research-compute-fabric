@@ -32,6 +32,22 @@ Level 0 — Primordial             PIST/DIAT Shells │ Q16.16 Arithmetic │ Br
 | 5 (Semantic) | Meaning-aware | CrossDimensionalFilter (12 primes), manifold networking, compression control | shared primes non-empty, flat→ordinary kernel |
 | 6 (Meta) | Self-aware | Cognitive load router, auto-adaptive metatyping (7 invariants), adaptation, SSMS_nD | efficiency ≥ 0, mass conservation across tiers |
 
+### 2.1 External Frontier Import: OpenAI Unit-Distance 2026
+
+The 2026 OpenAI planar unit-distance result is now tracked as an external reference in `6-Documentation/docs/research/OPENAI_UNIT_DISTANCE_2026_IMPORT.md`.
+
+Layer placement:
+
+| Level | Import Hook |
+|-------|-------------|
+| 0 | Norm-one algebraic elements as arithmetic witnesses for unit translations |
+| 1 | High-dimensional lattice cuts projecting to planar unit-distance graphs |
+| 2 | Structural analogy only: latent code projecting to dense interaction graph |
+| 3 | Search-cost/compression lesson for reusable construction families |
+| 4 | FAMM/AngrySphinx prior update: preserve lawful long-shot cross-domain routes |
+| 5 | Semantic bridge: algebraic number theory to discrete geometry |
+| 6 | Meta-search policy: broad machinery + persistence + verifier feedback |
+
 ---
 
 ## 3. Three-Axis Pipeline

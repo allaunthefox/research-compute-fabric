@@ -26,6 +26,9 @@
 | `docs/specs/PHI_S3C_PIST_BRIDGE_SPEC.md` | Phi–S3C–PIST bridge — witness transport for Phi-centered transforms |
 | `docs/specs/GCL_FIELD_EQUATIONS_SPEC.md` | GCL field equations — manifold-weighted field snapshot |
 | `docs/specs/MS3C_NESTED_REDUCTION_GEAR_SPEC.md` | Nested reduction gear — S³ shell gear reduction for AngrySphinx |
+| `docs/research/OPENAI_UNIT_DISTANCE_2026_IMPORT.md` | OpenAI 2026 planar unit-distance breakthrough — external import map across all stack levels |
+| `docs/research/RECENT_AI_MATH_SOLVES_2026_IMPORT.md` | Recent 2026 AI math solves — status-tiered external import map |
+| `docs/research/PHYSICS_BOOTCAMP_REFINEMENT_AUDIT.md` | Physics Bootcamp refinement audit — curriculum coverage gaps and receipt priorities |
 
 ## Research Domains
 

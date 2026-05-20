@@ -4,6 +4,18 @@
 
 The Research Stack is organized into 7 layers following the USTSM architecture, from fundamental mathematics to meta-cognitive systems.
 
+## External Frontier Import
+
+[[OpenAI Unit Distance 2026 Import]] is tracked as an external reference across all layers:
+
+- **L0:** norm-one arithmetic witnesses.
+- **L1:** projected unit-distance geometry.
+- **L2:** latent-code/contact-graph analogy guard.
+- **L3:** reusable construction family as search-cost amortization.
+- **L4:** FAMM/AngrySphinx long-shot route preservation.
+- **L5:** algebraic-number-theory to discrete-geometry semantic bridge.
+- **L6:** meta-search policy update from AI-generated proof + verifier feedback.
+
 ## Layer Structure
 
 ### Layer L0: Primordial 🟥

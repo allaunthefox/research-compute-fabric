@@ -39,6 +39,18 @@ The stack is organized into seven distinct functional tiers:
    - *Substrates*: Cognitive load router, auto-adaptive metatyping.
    - *Invariant*: `efficiency >= 0`, mass conservation across tiers.
 
+### 2.1 External Frontier Import — OpenAI Unit-Distance 2026
+
+Tracked in `6-Documentation/docs/research/OPENAI_UNIT_DISTANCE_2026_IMPORT.md`.
+
+- **L0:** norm-one algebraic elements become arithmetic witnesses for unit translations.
+- **L1:** high-dimensional lattice cuts project injectively to planar unit-distance graphs.
+- **L2:** structural analogy only: latent code can project to dense observable contact graphs.
+- **L3:** search cost can be amortized when it yields a reusable construction family.
+- **L4:** FAMM/AngrySphinx should not over-prune lawful long-shot cross-domain routes.
+- **L5:** explicit semantic bridge: algebraic number theory to discrete geometry.
+- **L6:** meta-search lesson: broad machinery, persistence, verifier feedback, external review.
+
 ---
 
 ## 3. The Seven Core Invariants

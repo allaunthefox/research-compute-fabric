@@ -20,13 +20,11 @@ pub fn probe_gpu() -> anyhow::Result<GpuInfo> {
     let instance = wgpu::Instance::default();
 
     // Synchronous adapter probe via pollster
-    let adapter = pollster::block_on(instance.request_adapter(
-        &wgpu::RequestAdapterOptions {
-            power_preference: wgpu::PowerPreference::HighPerformance,
-            compatible_surface: None,
-            force_fallback_adapter: false,
-        },
-    ))
+    let adapter = pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+        power_preference: wgpu::PowerPreference::HighPerformance,
+        compatible_surface: None,
+        force_fallback_adapter: false,
+    }))
     .ok_or_else(|| anyhow::anyhow!("No GPU adapter found"))?;
 
     let name = adapter.get_info().name.to_string();
@@ -43,13 +41,11 @@ pub fn verify_theorems_on_gpu(
 ) -> anyhow::Result<Vec<TheoremReceipt>> {
     let instance = wgpu::Instance::default();
 
-    let adapter = pollster::block_on(instance.request_adapter(
-        &wgpu::RequestAdapterOptions {
-            power_preference: wgpu::PowerPreference::HighPerformance,
-            compatible_surface: None,
-            force_fallback_adapter: false,
-        },
-    ))
+    let adapter = pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+        power_preference: wgpu::PowerPreference::HighPerformance,
+        compatible_surface: None,
+        force_fallback_adapter: false,
+    }))
     .ok_or_else(|| anyhow::anyhow!("No GPU adapter found"))?;
 
     let mut limits = wgpu::Limits::default();
@@ -79,12 +75,12 @@ pub fn verify_theorems_on_gpu(
     for i in 0..total_vectors {
         // Mix of edge cases and random values
         let a = match i % 8 {
-            0 => 0x00000000,           // zero
-            1 => 0x00010000,           // one
-            2 => 0x7FFFFFFF,           // max positive
-            3 => 0x80000000,           // min negative
-            4 => 0xFFFFFFFF,           // -1 (infinity sentinel)
-            5 => 0x00000001,           // epsilon
+            0 => 0x00000000,                 // zero
+            1 => 0x00010000,                 // one
+            2 => 0x7FFFFFFF,                 // max positive
+            3 => 0x80000000,                 // min negative
+            4 => 0xFFFFFFFF,                 // -1 (infinity sentinel)
+            5 => 0x00000001,                 // epsilon
             6 => i.wrapping_mul(0x9E3779B9), // golden ratio hash
             _ => i.wrapping_mul(0x9E3779B9).wrapping_add(0x12345678),
         };
@@ -115,10 +111,10 @@ pub fn verify_theorems_on_gpu(
     // Storage buffer: theorem batch descriptors
     let mut batch_data: Vec<u32> = Vec::with_capacity((num_theorems * 4) as usize);
     for &(_name, id) in theorems {
-        batch_data.push(id);          // theorem_id
+        batch_data.push(id); // theorem_id
         batch_data.push(num_vectors); // count
-        batch_data.push(0);           // padding
-        batch_data.push(0);           // padding
+        batch_data.push(0); // padding
+        batch_data.push(0); // padding
     }
     let batches_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
         label: Some("Theorem Batches"),
@@ -129,10 +125,10 @@ pub fn verify_theorems_on_gpu(
     // Storage buffer: results (read-write, initialized to zero)
     let mut results_init: Vec<u32> = Vec::with_capacity((num_theorems * 4) as usize);
     for &(_name, id) in theorems {
-        results_init.push(id);    // theorem_id
-        results_init.push(1);     // passed (optimistic, set to 0 on any failure)
+        results_init.push(id); // theorem_id
+        results_init.push(1); // passed (optimistic, set to 0 on any failure)
         results_init.push(num_vectors); // total
-        results_init.push(0);     // failed count
+        results_init.push(0); // failed count
     }
     let results_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
         label: Some("Results"),
@@ -154,51 +150,50 @@ pub fn verify_theorems_on_gpu(
     // ── Shader module ─────────────────────────────────────────────────
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Compile Bridge Shader"),
-        source: wgpu::ShaderSource::Wgsl(Cow::Borrowed(
-            include_str!("shaders/compile_bridge.wgsl"),
-        )),
+        source: wgpu::ShaderSource::Wgsl(Cow::Borrowed(include_str!(
+            "shaders/compile_bridge.wgsl"
+        ))),
     });
 
     // ── Bind group layout ─────────────────────────────────────────────
-    let bind_group_layout =
-        device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: None,
-            entries: &[
-                // binding 0: test vectors (read)
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: true },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
+    let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        label: None,
+        entries: &[
+            // binding 0: test vectors (read)
+            wgpu::BindGroupLayoutEntry {
+                binding: 0,
+                visibility: wgpu::ShaderStages::COMPUTE,
+                ty: wgpu::BindingType::Buffer {
+                    ty: wgpu::BufferBindingType::Storage { read_only: true },
+                    has_dynamic_offset: false,
+                    min_binding_size: None,
                 },
-                // binding 1: theorem batches (read)
-                wgpu::BindGroupLayoutEntry {
-                    binding: 1,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: true },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
+                count: None,
+            },
+            // binding 1: theorem batches (read)
+            wgpu::BindGroupLayoutEntry {
+                binding: 1,
+                visibility: wgpu::ShaderStages::COMPUTE,
+                ty: wgpu::BindingType::Buffer {
+                    ty: wgpu::BufferBindingType::Storage { read_only: true },
+                    has_dynamic_offset: false,
+                    min_binding_size: None,
                 },
-                // binding 2: results (read-write)
-                wgpu::BindGroupLayoutEntry {
-                    binding: 2,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: false },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
+                count: None,
+            },
+            // binding 2: results (read-write)
+            wgpu::BindGroupLayoutEntry {
+                binding: 2,
+                visibility: wgpu::ShaderStages::COMPUTE,
+                ty: wgpu::BindingType::Buffer {
+                    ty: wgpu::BufferBindingType::Storage { read_only: false },
+                    has_dynamic_offset: false,
+                    min_binding_size: None,
                 },
-            ],
-        });
+                count: None,
+            },
+        ],
+    });
 
     // ── Pipeline ──────────────────────────────────────────────────────
     let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -235,9 +230,8 @@ pub fn verify_theorems_on_gpu(
     });
 
     // ── Dispatch ──────────────────────────────────────────────────────
-    let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-        label: None,
-    });
+    let mut encoder =
+        device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
 
     {
         let mut compute_pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
@@ -253,13 +247,7 @@ pub fn verify_theorems_on_gpu(
     }
 
     // Copy results to staging
-    encoder.copy_buffer_to_buffer(
-        &results_buffer,
-        0,
-        &staging_buffer,
-        0,
-        staging_size,
-    );
+    encoder.copy_buffer_to_buffer(&results_buffer, 0, &staging_buffer, 0, staging_size);
 
     queue.submit(Some(encoder.finish()));
 
@@ -306,10 +294,7 @@ pub fn verify_theorems_on_gpu(
         if passed {
             eprintln!("  ✓ {} passed ({} vectors)", name, total);
         } else {
-            eprintln!(
-                "  ✗ {} FAILED ({}/{} vectors failed)",
-                name, failed, total
-            );
+            eprintln!("  ✗ {} FAILED ({}/{} vectors failed)", name, failed, total);
         }
     }
 

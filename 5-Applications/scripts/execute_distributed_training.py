@@ -20,6 +20,7 @@ from typing import Dict, List, Any
 BASE_DIR = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(BASE_DIR / "4-Infrastructure" / "infra"))
 
+# DEPRECATED: Python ENE replaced by Rust (1-Distributed-Systems/ene/src/)
 try:
     from ene_distributed_node import ENEDistributedNode, ENEMeshController
 except ImportError:

@@ -1,0 +1,20 @@
+[package]
+name = "waveprobe-adapter"
+version = "0.1.0"
+edition = "2021"
+authors = ["Research Stack <dev@research-stack.local>"]
+description = "Waveprobe adapters for ENE distributed node — Rust rewrite"
+license = "MIT"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.6", features = ["v4", "serde"] }
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Link to ENE node crate
+ene-distributed-node = { path = "../ene" }
+
+[dev-dependencies]

@@ -54,7 +54,7 @@ MOVE_MAP = {
     "core/src": "0-Core-Formalism/core/src",
 
     # 1-Distributed-Systems: ENE, mesh, gossip
-    "infra/ene_distributed_node.py": "1-Distributed-Systems/ene/ene_distributed_node.py",
+    "infra/ene_distributed_node": "1-Distributed-Systems/ene/src/",
     "data/ene_nodes": "1-Distributed-Systems/ene/nodes",
     "data/ene_provenance": "1-Distributed-Systems/ene/provenance",
     "data/ene_complete_archive": "1-Distributed-Systems/ene/archive",

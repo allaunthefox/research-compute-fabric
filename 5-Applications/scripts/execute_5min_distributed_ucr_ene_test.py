@@ -20,11 +20,14 @@ from datetime import datetime
 # Add infra directory to path for ENE modules
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "4-Infrastructure" / "infra"))
 
+# DEPRECATED: Python ENE replaced by Rust (1-Distributed-Systems/ene/src/)
 try:
     from ene_distributed_node import ENEDistributedNode, ENENodeIdentity, ENEGossipMessage
 except ImportError:
     print("ENE distributed node module not found. Using fallback simulation.")
     ENEDistributedNode = None
+    ENENodeIdentity = None
+    ENEGossipMessage = None
 
 def load_ucr_defense_results():
     """Load the UCR defense results."""

@@ -86,7 +86,7 @@ def simulate_swarm_response(request):
         "deliverables": {
             "waveprobe_adapter": {
                 "status": "ready_to_generate",
-                "file": "1-Distributed-Systems/waveprobe/otom_v4_adapter.py"
+                "file": "1-Distributed-Systems/waveprobe/src/"
             },
             "probe_generator": {
                 "status": "ready_to_generate",

@@ -19,7 +19,13 @@ from typing import List, Dict, Any
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "4-Infrastructure" / "infra"))
 
-from ene_distributed_node import ENEMeshController, ENEDistributedNode
+# DEPRECATED: Python ENE is replaced by Rust (1-Distributed-Systems/ene/src/).
+# Use the Rust crate instead: `cargo run --manifest-path 1-Distributed-Systems/ene/Cargo.toml`
+try:
+    from ene_distributed_node import ENEMeshController, ENEDistributedNode  # type: ignore
+except ImportError:
+    ENEMeshController = None
+    ENEDistributedNode = None
 from ene_cloud_credential_manager import ENETopologicalStorage
 
 
@@ -27,6 +33,11 @@ class FullMeshDeployment:
     """Deploy ENE across full Tailscale mesh and activate distributed workloads."""
     
     def __init__(self):
+        if ENEMeshController is None:
+            raise RuntimeError(
+                "Python ENE mesh controller is removed; use the Rust ENE crate under "
+                "1-Distributed-Systems/ene instead."
+            )
         self.controller = ENEMeshController()
         self.mesh_nodes: Dict[str, Any] = {}
         self.target_nodes = [

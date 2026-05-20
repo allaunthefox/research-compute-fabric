@@ -55,7 +55,7 @@ WAVEPROBE_ANALYSIS_REQUEST = {
         },
         "signal_processing_components": {
             "ene_components": [
-                "ene_distributed_node.py - ENE node with gossip protocol",
+                "ene_distributed_node (Rust) - ENE node with gossip protocol",
                 "ene_cloud_credential_manager.py - ENE credential management",
                 "swarm_ene_middleware.py - Swarm-ENE middleware"
             ],
@@ -90,7 +90,7 @@ WAVEPROBE_ANALYSIS_REQUEST = {
                 "integration_status": "needs_adaptation"
             },
             {
-                "component": "ene_distributed_node.py",
+                "component": "ene_distributed_node (Rust)",
                 "reason": "Gossip protocol signals (discovery, heartbeat, credential_sync)",
                 "waveprobe_benefit": "Analyze mesh topology convergence and health",
                 "integration_status": "needs_adaptation"
@@ -266,7 +266,7 @@ def simulate_swarm_analysis(request):
             "discrete_events": {
                 "count": 12,
                 "components": [
-                    "ene_distributed_node.py",
+                    "ene_distributed_node (Rust)",
                     "web_interaction_surface.py",
                     "swarm_api.py"
                 ]
@@ -285,7 +285,7 @@ def simulate_swarm_analysis(request):
                 "components": [
                     "QuantumManifoldGeometry.lean",
                     "WSM_WR_EGS_WC.lean",
-                    "ene_distributed_node.py"
+                    "ene_distributed_node (Rust)"
                 ],
                 "estimated_effort": "medium",
                 "timeline": "1-2 weeks"

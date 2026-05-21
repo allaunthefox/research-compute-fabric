@@ -166,8 +166,11 @@ theorem sluqQuaternionOptimizationPreservesUnitNorm
     traj'.quaternion.x * traj'.quaternion.x +
     traj'.quaternion.y * traj'.quaternion.y +
     traj'.quaternion.z * traj'.quaternion.z = one := by
-  -- TODO: Replaced placeholder 'trivial' tautology. Real proof of unit norm preservation needed.
-  sorry
+  -- TODO(lean-port): stochasticEvolution is a placeholder returning q unchanged.
+  -- Once the full quaternion exponential map is implemented, this proof will
+  -- need the isometric rotation lemma.
+  unfold sluqQuaternionOptimizationStep
+  split <;> exact traj.quaternion.prop
 
 /-- Theorem: Pruning preserves unit norm.
     Since we only filter trajectories without modifying them, unit norm is preserved. -/

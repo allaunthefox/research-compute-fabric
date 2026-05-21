@@ -87,7 +87,7 @@ deriving BEq
 structure SourceInfo where
   origin : String
   timestamp : UInt64
-  trustLevel : Float -- TODO(lean-port): port to Q16_16
+  trustLevel : Q16_16
 deriving Repr, BEq
 
 /-- Errors that can occur during normalization. -/

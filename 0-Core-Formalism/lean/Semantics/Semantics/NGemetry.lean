@@ -209,7 +209,7 @@ structure PointCloudND (n : Nat) where
   deriving Repr, Inhabited
 
 /-- N-dimensional bounding hyperbox. -/
-struct BoundingHyperbox (n : Nat) where
+structure BoundingHyperbox (n : Nat) where
   min : PointND n
   max : PointND n
   deriving Repr, Inhabited
@@ -248,10 +248,22 @@ def computeObjectDistanceND (n : Nat) (obj1 obj2 : BoundingHyperbox n) : Q1616 :
     (Array.mkArray n (Q1616.div (Q1616.add obj2.min.getCoord 0 (by trivial) obj2.max.getCoord 0 (by trivial)) Q1616.one)) n
   PointND.euclideanDistance center1 center2
 
-/-- Check if two n-dimensional bounding hyperboxes intersect. -/
+/-- Check if two n-dimensional bounding hyperboxes intersect via AABB overlap.
+    For each dimension i, boxes overlap if `box1.min[i] ≤ box2.max[i]` and `box2.min[i] ≤ box1.max[i]`. -/
 def hyperboxIntersection (n : Nat) (box1 box2 : BoundingHyperbox n) : Bool :=
-  -- Simplified: check if any dimension overlaps
-  false  -- TODO(lean-port): Implement proper n-dimensional intersection test
+  let rec checkDim (i : Nat) : Bool :=
+    if h : i < n then
+      let aMin := box1.min.coordinates.get ⟨i, h⟩
+      let aMax := box1.max.coordinates.get ⟨i, h⟩
+      let bMin := box2.min.coordinates.get ⟨i, h⟩
+      let bMax := box2.max.coordinates.get ⟨i, h⟩
+      if aMin ≤ aMax && bMin ≤ bMax && aMin ≤ bMax && bMin ≤ aMax then
+        checkDim (i + 1)
+      else
+        false
+    else
+      true
+  checkDim 0
 
 -- ════════════════════════════════════════════════════════════
 -- §4  Theorems: N-Dimensional Geometry Properties

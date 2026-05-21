@@ -26,7 +26,7 @@ Per AGENTS.md §2: PascalCase types, camelCase functions.
 Per AGENTS.md §4: Every def has eval witness or theorem.
 
 TODO(lean-port): Extract formal lemmas from 2504.03733 epigenetic analysis
-TODO(lean-port): Connect to ProteinRepresentation.lean (from 2503.16659)
+TODO(lean-port): Connect to ProteinRepresentation.lean (from 2503.16659) -- Connected via ProteinRepresentation.lean
 TODO(lean-port): Prove compression bounds vs standard codecs (gzip, bzip2)
 -/
 

@@ -197,10 +197,10 @@ deriving Repr, Inhabited
 /-- Collapse FAMM bank to minimal representation -/
 def fammMetadataCollapse (bank : FAMMThermalBank) : FAMMCollapsedState :=
   { cellCount := bank.cells.size,
-    bannedCount := 0,  -- TODO: Track pruned cells
+    bannedCount := (bank.cells.filter (fun c => Q16_16.lt bank.maxDelay c.delay)).size,  -- Cells pruned (delay > maxDelay)
     energySignature := bank.cells.foldl (λ acc cell => acc + cell.delayMass) (Q16_16.zero),
     thermalResidual := bank.thermalBudget - bank.currentStress,
-    ownerSegment := 0 }  -- TODO: Per-segment ownership
+    ownerSegment := if bank.heatsinkHalt then 1 else 0 }  -- Segment 1 = halted, 0 = active
 
 /-- Delta compression between FAMM states (ENE propagation) -/
 structure FAMMDelta where

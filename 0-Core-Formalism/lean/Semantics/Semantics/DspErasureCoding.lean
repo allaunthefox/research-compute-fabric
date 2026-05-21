@@ -11,6 +11,11 @@ This module formalizes DSP-aware erasure coding for streaming data:
 - FPGA DSP slice integration
 - Spectral-aware erasure detection
 
+TODO(lean-port): Connections to FPGA Warden Node AMMR accumulator and
+StreamCompression spectral analysis are design-level integration points.
+These don't block compilation; they describe intended hardware/dataflow wiring
+that will be formalized in a subsequent integration pass.
+
 Key insight:
 DSP erasure coding treats streams as continuous signals, not discrete bytes.
 Spectral analysis identifies erasures in frequency domain, not just bit errors.
@@ -19,8 +24,9 @@ Per AGENTS.md §1.4: Q16_16 fixed-point for hardware extraction.
 Per AGENTS.md §2: PascalCase types, camelCase functions.
 Per AGENTS.md §4: Every def has eval witness or theorem.
 
-TODO(lean-port): Connect to FPGA Warden Node AMMR accumulator
-TODO(lean-port): Integrate with StreamCompression spectral analysis
+Design-level integration points (not build-blocking):
+ - Connect to FPGA Warden Node AMMR accumulator: see `Hardware/WardenNode.lean`
+ - Integrate with StreamCompression spectral analysis: see `StreamCompression.lean`
 -/ 
 
 import Mathlib.Data.Nat.Basic

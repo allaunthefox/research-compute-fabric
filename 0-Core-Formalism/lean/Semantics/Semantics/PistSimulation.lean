@@ -646,4 +646,154 @@ def fixtureSpectralWindow : List Q16_16 := [
 #eval! spectralWindowToRegimeChaos fixtureSpectralWindow
 #eval! buildMatrixPacket fixtureSpectralWindow
 
+-- ════════════════════════════════════════════════════════════
+-- §7  TreeDIAT — Tree-to-Shell Coordinate Transform
+-- ════════════════════════════════════════════════════════════
+
+/-- Simple binary tree with Nat labels.
+    Trees are the canonical input for Kruskal/TREE(3) analysis.
+    We use a binary tree for tractability; n-ary generalisation
+    follows the same metric pattern. -/
+inductive TreeNode
+  | leaf (label : Nat)
+  | node (label : Nat) (left right : TreeNode)
+  deriving Repr
+
+/-- Structural metrics extracted from a TreeNode.
+    All metrics are Nat/UInt32 — computable in O(n).
+    - depth     : maximum root-to-leaf depth
+    - leafCount : number of leaf nodes (bushiness proxy)
+    - nodeCount : total nodes
+    - maxLabel  : largest label value seen (proxy for label diversity) -/
+def treeMetrics (t : TreeNode) : Nat × Nat × Nat × Nat :=
+  let rec go (t : TreeNode) (depth : Nat) : Nat × Nat × Nat × Nat :=
+    match t with
+    | TreeNode.leaf lbl =>
+        (depth + 1, 1, 1, lbl)
+    | TreeNode.node lbl l r =>
+        let (dL, leafL, nodeL, maxL) := go l (depth + 1)
+        let (dR, leafR, nodeR, maxR) := go r (depth + 1)
+        (max dL dR, leafL + leafR, nodeL + nodeR + 1, max (max lbl maxL) maxR)
+  go t 0
+
+/-- TreeDIAT: structural feature vector of a tree,
+    packed into the same Q16_16 space as spectral packets.
+    Enables tree-structured search traces to participate in
+    PIST spectral refinement alongside integer-shell data. -/
+structure TreeDIAT where
+  depth       : Nat
+  leafCount   : Nat
+  nodeCount   : Nat
+  labelCount  : Nat  -- maxLabel + 1, proxy for label diversity
+  embeddingScore : Q16_16  -- embeddability heuristic (0 = stringy, 1 = bushy)
+  deriving Repr
+
+/-- Embedding-score heuristic: bushy trees (many leaves, shallow)
+    with few labels are more easily homeomorphically embedded.
+    Score = width / (depth * labels + 1) in Q16_16.
+    Saturates at one (max embeddability). -/
+def treeDIATEmbeddingScore (depth leafCount labelCount nodeCount : Nat) : Q16_16 :=
+  if nodeCount = 0 then Q16_16.zero
+  else
+    let num := Q16_16.ofNat leafCount
+    let den := Q16_16.ofNat (depth * labelCount + 1)
+    Q16_16.div num den
+
+/-- Convert a TreeNode to its TreeDIAT feature vector. -/
+def treeToDIAT (t : TreeNode) : TreeDIAT :=
+  let (d, leafC, nodeC, maxLbl) := treeMetrics t
+  let lblC := maxLbl + 1
+  let score := treeDIATEmbeddingScore d leafC lblC nodeC
+  { depth := d, leafCount := leafC, nodeCount := nodeC, labelCount := lblC, embeddingScore := score }
+
+/-- Project a TreeDIAT into the 3D ChaosState space.
+    position = embeddingScore (x: embeddability)
+    height   = depth            (y: how deep)
+    width    = nodeCount        (z: how large)
+    This lets tree-structured states participate in the chaos-game
+    contraction alongside spectral peaks. -/
+def treeDIATToChaosState (td : TreeDIAT) : ChaosState :=
+  { position := td.embeddingScore
+  , height   := Q16_16.ofNat td.depth
+  , width    := Q16_16.ofNat td.nodeCount }
+
+/-- Classify a sequence of TreeDIATs by proximity to the Kruskal bound.
+    Long sequences with low embeddability → degenerate (tearing).
+    Short sequences with high embeddability → healthy (bloch). -/
+def treeSequenceRegime (seq : List TreeDIAT) : MagneticRegime :=
+  if seq.isEmpty then MagneticRegime.uglyAsymmetricPruning
+  else
+    let len := seq.length
+    if len > 1000000 then MagneticRegime.horribleManifoldTearing
+    else
+      let avgScore := Q16_16.div (seq.foldl (λ acc td => Q16_16.add acc td.embeddingScore) Q16_16.zero) (Q16_16.ofNat len)
+      if Q16_16.lt avgScore (Q16_16.ofRatio 1 10) then MagneticRegime.uglyAsymmetricPruning
+      else MagneticRegime.bloch
+
+-- ════════════════════════════════════════════════════════════
+-- §7b  TreeDIAT Verification Fixtures
+-- ════════════════════════════════════════════════════════════
+
+/-- A bushy binary tree (depth 3, 4 leaves, 7 nodes).
+    Labels all in {0,1} — easily embeddable. -/
+def fixtureBushyTree : TreeNode :=
+  TreeNode.node 0
+    (TreeNode.node 1 (TreeNode.leaf 0) (TreeNode.leaf 1))
+    (TreeNode.node 0 (TreeNode.leaf 1) (TreeNode.leaf 0))
+
+/-- A stringy/degenerate tree (depth 4, 1 leaf, 5 nodes).
+    Low embeddability — string-like, not bushy. -/
+def fixtureStringyTree : TreeNode :=
+  TreeNode.node 0
+    (TreeNode.node 1
+      (TreeNode.node 2
+        (TreeNode.node 3 (TreeNode.leaf 0) (TreeNode.leaf 0))
+        (TreeNode.leaf 0))
+      (TreeNode.leaf 0))
+    (TreeNode.leaf 0)
+
+/-- Balanced tree with 3 labels — moderate embeddability. -/
+def fixtureBalancedTree : TreeNode :=
+  TreeNode.node 2
+    (TreeNode.node 1 (TreeNode.leaf 0) (TreeNode.leaf 2))
+    (TreeNode.node 0 (TreeNode.leaf 1) (TreeNode.leaf 2))
+
+/- Bushy tree metrics and DIAT packet. -/
+#eval! treeMetrics fixtureBushyTree
+#eval! treeToDIAT fixtureBushyTree
+
+/- Stringy tree metrics and DIAT packet. -/
+#eval! treeMetrics fixtureStringyTree
+#eval! treeToDIAT fixtureStringyTree
+
+/- Balanced tree metrics and DIAT packet. -/
+#eval! treeMetrics fixtureBalancedTree
+#eval! treeToDIAT fixtureBalancedTree
+
+/- Embedding scores: bushy > balanced > stringy. -/
+#eval! (treeToDIAT fixtureBushyTree).embeddingScore
+#eval! (treeToDIAT fixtureStringyTree).embeddingScore
+#eval! (treeToDIAT fixtureBalancedTree).embeddingScore
+
+/- Project bushy tree into chaos-game space. -/
+#eval! treeDIATToChaosState (treeToDIAT fixtureBushyTree)
+
+/- Regime classification: single bushy tree → bloch. -/
+#eval! treeSequenceRegime [treeToDIAT fixtureBushyTree]
+
+/- Regime classification: stringy tree → uglyAsymmetricPruning. -/
+#eval! treeSequenceRegime [treeToDIAT fixtureStringyTree]
+
+/- Regime classification: mixed sequence → bloch (avg score > 0.1). -/
+#eval! treeSequenceRegime [treeToDIAT fixtureBushyTree, treeToDIAT fixtureBalancedTree, treeToDIAT fixtureStringyTree]
+
+/- Chaos-game refinement on a tree-structured state:
+    bushy tree DIAT as anchor, perturb 10%, contract back. -/
+#eval! let td := treeToDIAT fixtureBushyTree;
+       let anchor := treeDIATToChaosState td;
+       let perturb := { position := Q16_16.add anchor.position (Q16_16.ofRatio 1 10)
+                      , height := Q16_16.add anchor.height (Q16_16.ofRatio 1 10)
+                      , width := Q16_16.add anchor.width (Q16_16.ofRatio 1 10) };
+       chaosConverge perturb anchor [] (Q16_16.ofRatio 1 2) (Q16_16.ofRatio 1 100) 20
+
 end Semantics.PistSimulation

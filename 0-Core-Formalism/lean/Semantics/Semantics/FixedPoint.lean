@@ -848,7 +848,7 @@ end Semantics.FixedPoint
 namespace Semantics
   export FixedPoint (Q0_16 Q16_16 Q0_64)
   namespace Q16_16
-    export FixedPoint.Q16_16 (mk zero one negOne epsilon two infinity maxVal minVal ofNat satFromNat ofRatio toInt ofRawInt ofFloat toFloat scale ofInt add sub mul div abs neg sqrt ln log2 expNeg sat01 max min le ge gt lt recip ofRaw clip isNeg zero_mul mul_zero one_mul mul_one zero_toInt one_toInt epsilon_toInt epsilon_toInt_pos toInt_eq_zero_iff epsilon_add_pos zero_div mul_self_nonneg mul_toInt_nonneg ofRaw_toInt_nonneg mk_lt_half_nonneg add_one_omega_ge_one toInt_nonneg_le_maxVal)
+    export FixedPoint.Q16_16 (mk zero one negOne epsilon two infinity maxVal minVal ofNat satFromNat ofRatio toInt ofRawInt ofFloat toFloat scale ofInt add sub mul div abs neg sqrt ln log2 expNeg sat01 max min le ge gt lt recip ofRaw clip isNeg zero_mul mul_zero one_mul mul_one zero_add add_zero sub_self zero_toInt one_toInt epsilon_toInt epsilon_toInt_pos toInt_eq_zero_iff epsilon_add_pos zero_div mul_self_nonneg mul_toInt_nonneg ofRaw_toInt_nonneg mk_lt_half_nonneg add_one_omega_ge_one toInt_nonneg_le_maxVal)
   end Q16_16
   namespace Q0_16
     export FixedPoint.Q0_16 (zero one half neg add sub mul div abs lt le gt ge toFloat ofFloat log2 min)

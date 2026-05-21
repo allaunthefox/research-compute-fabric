@@ -1137,4 +1137,152 @@ def phiNUVMAPChaosRun (initial anchor : Array Q16_16) (epsilon : Array Q16_16)
 /- Scale level witness: stringy tree at scale level 3 (zoomed in). -/
 #eval! treeDIATToPhiNUVMAPState (treeToDIAT fixtureStringyTree) vec16Zero 3 PhiSpectralMode.transient
 
+-- ════════════════════════════════════════════════════════════
+-- §9  Burgers-PhiNUVMAP Bridge
+-- ════════════════════════════════════════════════════════════
+--
+-- The Burgers equation  u_t + u·u_x = ν·u_xx  exhibits two regimes:
+--   • ν large  → smooth, diffusive, oscillatory  (NÉEL / Δ < 0)
+--   • ν → 0    → shock formation, discontinuous  (BLOCH / Δ ≥ 0)
+--
+-- The spectral pipeline in PistSimulation.lean (8-bin window, quadratic
+-- fit, discriminant gate) classifies Burgers solutions directly.
+--
+-- PhiNUVMAP adds a 16D golden-ratio fractal parameter space where:
+--   • Each BurgersState maps to a 16D vector
+--   • Golden contraction s' = c + φ⁻¹·(s-c) models viscous dissipation
+--   • Shock detection = regime classification on the spectral window
+
+-- ── 9a. Burgers state → spectral window ────────────────────
+
+/-- Extract the inner N-2 lattice points of a Burgers velocity field
+    as a spectral window for PIST quadratic fitting.
+    Drops boundary points (assumed zero or fixed). -/
+def burgersStateToSpectralWindow (N : Nat) (u : Array Q16_16) : List Q16_16 :=
+  if N <= 2 then []
+  else
+    let inner := u.extract 1 (N - 1)
+    -- Pad or truncate to exactly 8 bins for the fixture
+    if inner.size >= 8 then (inner.extract 0 8).toList
+    else
+      let pad := 8 - inner.size
+      inner.toList ++ List.replicate pad Q16_16.zero
+
+/-- Classify a Burgers velocity profile via spectral discriminant.
+    Fits quadratic to the velocity field; Δ < 0 → smooth (NÉEL),
+    Δ ≥ 0 → shock-prone (BLOCH). -/
+def burgersStateToRegime (N : Nat) (u : Array Q16_16) : MagneticRegime :=
+  let window := burgersStateToSpectralWindow N u
+  if window.length < 3 then MagneticRegime.uglyAsymmetricPruning
+  else spectralWindowToRegime window
+
+-- ── 9b. Burgers state → 16D φ-NUVMAP projection ───────────
+
+/-- Project a Burgers velocity field into the 16D φ-NUVMAP space.
+    Dimensions:
+      0-7  : velocity field samples (8 bins, spectral coefficients)
+      8    : viscosity ν
+      9    : time t
+      10   : max |u| (shock strength proxy)
+      11   : kinetic energy Σu²/2
+      12   : energy dissipation rate (heuristic)
+      13   : CFL-like number = max|u|·dt/dx
+      14-15: reserved (boundary condition flags) -/
+def burgersFieldToPhiNUVMAP (N : Nat) (u : Array Q16_16) (ν t dx dt : Q16_16)
+    : Array Q16_16 :=
+  let window := burgersStateToSpectralWindow N u
+  let padded := window ++ List.replicate (8 - window.length) Q16_16.zero
+  let w8 := padded.take 8
+  let maxU := u.foldl (λ acc ui =>
+    let abs_ui := if Q16_16.lt ui Q16_16.zero then Q16_16.neg ui else ui
+    if Q16_16.gt abs_ui acc then abs_ui else acc) Q16_16.zero
+  let ke := Q16_16.div (u.foldl (λ acc ui => Q16_16.add acc (Q16_16.mul ui ui)) Q16_16.zero) (Q16_16.ofNat 2)
+  let diss := Q16_16.mul ν ke  -- heuristic: dissipation ∝ ν·E
+  let cfl := if dx = Q16_16.zero then Q16_16.zero
+             else Q16_16.div (Q16_16.mul maxU dt) dx
+  -- Build 16D vector from components
+  let base := w8 ++ [ν, t, maxU, ke, diss, cfl, Q16_16.zero, Q16_16.zero]
+  -- Ensure exactly 16 elements
+  let base16 := if base.length >= 16 then List.take 16 base else
+                  base ++ List.replicate (16 - base.length) Q16_16.zero
+  base16.toArray
+
+-- ── 9c. Golden contraction as viscous dissipation ──────────
+
+/-- Apply one golden-contraction dissipation step to a Burgers field.
+    Conceptually: u' = u_smooth + φ⁻¹·(u - u_smooth)
+    where u_smooth is a low-pass filtered version (the "center").
+    For this witness, the center is a parabolic fit to the field. -/
+def burgersPhiDissipationStep (N : Nat) (u : Array Q16_16) (ν dx dt : Q16_16)
+    : Array Q16_16 :=
+  let state16 := burgersFieldToPhiNUVMAP N u ν Q16_16.zero dx dt
+  -- The "center" is a smoothed version: for this witness, we use
+  -- a simple moving average (3-point stencil) as the attractor.
+  let smooth i :=
+    if i > 0 ∧ i + 1 < u.size then
+      Q16_16.div (Q16_16.add (Q16_16.add u[i-1]! u[i]!) u[i+1]!) (Q16_16.ofNat 3)
+    else u[i]!
+  let center := Array.ofFn (n := N) (fun i : Fin N => smooth i.val)
+  let center16 := burgersFieldToPhiNUVMAP N center ν Q16_16.zero dx dx
+  phiContract state16 center16
+
+-- ── 9d. Verification witnesses ───────────────────────────
+
+/- Smooth velocity field: parabola u(x) = x·(4-x) on [0,4].
+    Quadratic, symmetric, no shock. Should classify as BLOCH
+    (real discriminant, single smooth basin). -/
+def fixtureBurgersSmooth : Array Q16_16 := #[
+  Q16_16.zero,                    -- u[0] = 0
+  Q16_16.ofNat 3,                 -- u[1] = 3
+  Q16_16.ofNat 4,                 -- u[2] = 4
+  Q16_16.ofNat 3,                 -- u[3] = 3
+  Q16_16.zero                     -- u[4] = 0
+]
+
+/- Shock-like velocity field: step function u = [0,0,2,2,0].
+    Sharp discontinuity, high gradient. Should classify as NÉEL
+    (complex discriminant, oscillatory/underresolved). -/
+def fixtureBurgersShock : Array Q16_16 := #[
+  Q16_16.zero,                    -- u[0] = 0
+  Q16_16.zero,                    -- u[1] = 0
+  Q16_16.ofNat 2,                 -- u[2] = 2
+  Q16_16.ofNat 2,                 -- u[3] = 2
+  Q16_16.zero                     -- u[4] = 0
+]
+
+/- Spectral window extraction from smooth field. -/
+#eval! burgersStateToSpectralWindow 5 fixtureBurgersSmooth
+
+/- Spectral window extraction from shock field. -/
+#eval! burgersStateToSpectralWindow 5 fixtureBurgersShock
+
+/- Regime classification: smooth parabola → bloch. -/
+#eval! burgersStateToRegime 5 fixtureBurgersSmooth
+
+/- Regime classification: shock step → neel. -/
+#eval! burgersStateToRegime 5 fixtureBurgersShock
+
+/- 16D φ-NUVMAP projection of smooth Burgers field. -/
+#eval! burgersFieldToPhiNUVMAP 5 fixtureBurgersSmooth
+  (Q16_16.ofRatio 1 10) Q16_16.zero (Q16_16.ofNat 1) (Q16_16.ofRatio 1 100)
+
+/- 16D φ-NUVMAP projection of shock Burgers field. -/
+#eval! burgersFieldToPhiNUVMAP 5 fixtureBurgersShock
+  (Q16_16.ofRatio 1 10) Q16_16.zero (Q16_16.ofNat 1) (Q16_16.ofRatio 1 100)
+
+/- Golden dissipation step on smooth field. -/
+#eval! burgersPhiDissipationStep 5 fixtureBurgersSmooth
+  (Q16_16.ofRatio 1 10) (Q16_16.ofNat 1) (Q16_16.ofRatio 1 100)
+
+/- Golden dissipation step on shock field. -/
+#eval! burgersPhiDissipationStep 5 fixtureBurgersShock
+  (Q16_16.ofRatio 1 10) (Q16_16.ofNat 1) (Q16_16.ofRatio 1 100)
+
+/- Compare 16D states: smooth vs shock. -/
+#eval! let smooth16 := burgersFieldToPhiNUVMAP 5 fixtureBurgersSmooth
+         (Q16_16.ofRatio 1 10) Q16_16.zero (Q16_16.ofNat 1) (Q16_16.ofRatio 1 100);
+       let shock16 := burgersFieldToPhiNUVMAP 5 fixtureBurgersShock
+         (Q16_16.ofRatio 1 10) Q16_16.zero (Q16_16.ofNat 1) (Q16_16.ofRatio 1 100);
+       phiContract smooth16 shock16
+
 end Semantics.PistSimulation

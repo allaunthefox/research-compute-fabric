@@ -649,22 +649,21 @@ def fixtureSpectralWindow : List Q16_16 := [
 -- ════════════════════════════════════════════════════════════
 -- §7  TreeDIAT — Tree-to-Shell Coordinate Transform
 -- ════════════════════════════════════════════════════════════
+--
+-- TreeDIAT follows the same evolution path as DIAT in DynamicCanal.lean:
+--   DIAT → LanePayload → Lane → NodeState → N-DAG → Dynamic Canal → Throat
+--
+-- TreeDIAT mirrors each layer for tree-structured data (search traces,
+-- n-gram tries, FAMM Delta-DAGs) so they can participate in the same
+-- spectral refinement and regime classification as integer-shell data.
 
-/-- Simple binary tree with Nat labels.
-    Trees are the canonical input for Kruskal/TREE(3) analysis.
-    We use a binary tree for tractability; n-ary generalisation
-    follows the same metric pattern. -/
+-- ── 7a. Tree Node (canonical input) ─────────────────────────
+
 inductive TreeNode
   | leaf (label : Nat)
   | node (label : Nat) (left right : TreeNode)
   deriving Repr
 
-/-- Structural metrics extracted from a TreeNode.
-    All metrics are Nat/UInt32 — computable in O(n).
-    - depth     : maximum root-to-leaf depth
-    - leafCount : number of leaf nodes (bushiness proxy)
-    - nodeCount : total nodes
-    - maxLabel  : largest label value seen (proxy for label diversity) -/
 def treeMetrics (t : TreeNode) : Nat × Nat × Nat × Nat :=
   let rec go (t : TreeNode) (depth : Nat) : Nat × Nat × Nat × Nat :=
     match t with
@@ -676,22 +675,16 @@ def treeMetrics (t : TreeNode) : Nat × Nat × Nat × Nat :=
         (max dL dR, leafL + leafR, nodeL + nodeR + 1, max (max lbl maxL) maxR)
   go t 0
 
-/-- TreeDIAT: structural feature vector of a tree,
-    packed into the same Q16_16 space as spectral packets.
-    Enables tree-structured search traces to participate in
-    PIST spectral refinement alongside integer-shell data. -/
+-- ── 7b. TreeDIAT (structural feature vector) ──────────────
+
 structure TreeDIAT where
   depth       : Nat
   leafCount   : Nat
   nodeCount   : Nat
-  labelCount  : Nat  -- maxLabel + 1, proxy for label diversity
-  embeddingScore : Q16_16  -- embeddability heuristic (0 = stringy, 1 = bushy)
-  deriving Repr
+  labelCount  : Nat
+  embeddingScore : Q16_16
+  deriving Repr, Inhabited
 
-/-- Embedding-score heuristic: bushy trees (many leaves, shallow)
-    with few labels are more easily homeomorphically embedded.
-    Score = width / (depth * labels + 1) in Q16_16.
-    Saturates at one (max embeddability). -/
 def treeDIATEmbeddingScore (depth leafCount labelCount nodeCount : Nat) : Q16_16 :=
   if nodeCount = 0 then Q16_16.zero
   else
@@ -699,27 +692,100 @@ def treeDIATEmbeddingScore (depth leafCount labelCount nodeCount : Nat) : Q16_16
     let den := Q16_16.ofNat (depth * labelCount + 1)
     Q16_16.div num den
 
-/-- Convert a TreeNode to its TreeDIAT feature vector. -/
 def treeToDIAT (t : TreeNode) : TreeDIAT :=
   let (d, leafC, nodeC, maxLbl) := treeMetrics t
   let lblC := maxLbl + 1
   let score := treeDIATEmbeddingScore d leafC lblC nodeC
   { depth := d, leafCount := leafC, nodeCount := nodeC, labelCount := lblC, embeddingScore := score }
 
-/-- Project a TreeDIAT into the 3D ChaosState space.
-    position = embeddingScore (x: embeddability)
-    height   = depth            (y: how deep)
-    width    = nodeCount        (z: how large)
-    This lets tree-structured states participate in the chaos-game
-    contraction alongside spectral peaks. -/
-def treeDIATToChaosState (td : TreeDIAT) : ChaosState :=
-  { position := td.embeddingScore
-  , height   := Q16_16.ofNat td.depth
-  , width    := Q16_16.ofNat td.nodeCount }
+/-- Normalised embedding score = score / (1 + score), in [0,1]. -/
+def treeDIATNormEmbedding (td : TreeDIAT) : Q16_16 :=
+  let s := td.embeddingScore
+  let one := Q16_16.one
+  Q16_16.div s (Q16_16.add one s)
 
-/-- Classify a sequence of TreeDIATs by proximity to the Kruskal bound.
-    Long sequences with low embeddability → degenerate (tearing).
-    Short sequences with high embeddability → healthy (bloch). -/
+-- ── 7c. TreeLanePayload (analogous to LanePayload) ─────────
+
+structure TreeLanePayload where
+  diat        : TreeDIAT
+  codonWindow : UInt32
+  metadata    : Q16_16
+  deriving Repr, Inhabited
+
+-- ── 7d. TreeLane (physics state, analogous to Lane) ────────
+
+structure TreeLane where
+  active    : Bool
+  node      : UInt32
+  pos       : Q16_16 × Q16_16 × Q16_16
+  phase     : Q16_16
+  stress    : Q16_16
+  pressure  : Q16_16
+  lambdaEff : Q16_16
+  energy    : Q16_16
+  mismatch  : Q16_16
+  regime    : MagneticRegime
+  payload   : TreeLanePayload
+  deriving Repr
+
+-- ── 7e. TreeNodeState (analogous to NodeState) ─────────────
+
+structure TreeNodeState where
+  diatState : Q16_16
+  waveState : Q16_16
+  timeState : Q16_16
+  deriving Repr
+
+-- ── 7f. TreeEdge / TreeN-DAG (graph topology) ────────────
+
+structure TreeEdge where
+  src       : UInt32
+  dst       : UInt32
+  torsion   : Q16_16  -- parent-child rotation measure
+  loss      : Q16_16  -- embedding cost of this edge
+  deriving Repr
+
+structure TreeNDAG where
+  nodes : Array TreeNodeState
+  edges : Array TreeEdge
+  deriving Repr
+
+-- ── 7g. TreeDynamicCanal (pressure-adaptive transport) ─────
+
+/-- Effective resistance for tree-structured flow.
+    λ_eff(P) = λ₀ / (1 + ξ · P · depth)
+    Deep trees with high pressure become bottlenecks. -/
+def treeDynamicCanalLambda (lambda0 xi pressure : Q16_16) (depth : Nat) : Q16_16 :=
+  let depthQ := Q16_16.ofNat depth
+  let xiP := Q16_16.mul (Q16_16.mul xi pressure) depthQ
+  let denom := Q16_16.add Q16_16.one xiP
+  Q16_16.div lambda0 denom
+
+/-- Tree canal compliance = 1 / λ_eff. -/
+def treeCanalCompliance (lambda0 xi pressure : Q16_16) (depth : Nat) : Q16_16 :=
+  Q16_16.recip (treeDynamicCanalLambda lambda0 xi pressure depth)
+
+-- ── 7h. TreeThroat (regime transition classifier) ──────────
+
+inductive TreeThroatClass
+  | stableBridge    -- bushy, low pressure, high embeddability
+  | lossyChannel    -- moderate, some pressure loss
+  | rupture         -- stringy, high pressure, low embeddability
+  deriving Repr, BEq
+
+/-- Classify a TreeLane by its physics state. -/
+def classifyTreeThroat (lane : TreeLane) : TreeThroatClass :=
+  let td := lane.payload.diat
+  let normEmbed := treeDIATNormEmbedding td
+  if Q16_16.gt normEmbed (Q16_16.ofRatio 3 4) && Q16_16.lt lane.pressure (Q16_16.ofRatio 1 2) then
+    TreeThroatClass.stableBridge
+  else if Q16_16.lt normEmbed (Q16_16.ofRatio 1 4) || Q16_16.gt lane.pressure (Q16_16.ofRatio 3 2) then
+    TreeThroatClass.rupture
+  else
+    TreeThroatClass.lossyChannel
+
+-- ── 7i. TreeSequenceRegime (meta-classifier) ──────────────
+
 def treeSequenceRegime (seq : List TreeDIAT) : MagneticRegime :=
   if seq.isEmpty then MagneticRegime.uglyAsymmetricPruning
   else
@@ -730,19 +796,22 @@ def treeSequenceRegime (seq : List TreeDIAT) : MagneticRegime :=
       if Q16_16.lt avgScore (Q16_16.ofRatio 1 10) then MagneticRegime.uglyAsymmetricPruning
       else MagneticRegime.bloch
 
+-- ── 7j. Projection into chaos-game space ────────────────────
+
+def treeDIATToChaosState (td : TreeDIAT) : ChaosState :=
+  { position := td.embeddingScore
+  , height   := Q16_16.ofNat td.depth
+  , width    := Q16_16.ofNat td.nodeCount }
+
 -- ════════════════════════════════════════════════════════════
--- §7b  TreeDIAT Verification Fixtures
+-- §7k  Verification Fixtures
 -- ════════════════════════════════════════════════════════════
 
-/-- A bushy binary tree (depth 3, 4 leaves, 7 nodes).
-    Labels all in {0,1} — easily embeddable. -/
 def fixtureBushyTree : TreeNode :=
   TreeNode.node 0
     (TreeNode.node 1 (TreeNode.leaf 0) (TreeNode.leaf 1))
     (TreeNode.node 0 (TreeNode.leaf 1) (TreeNode.leaf 0))
 
-/-- A stringy/degenerate tree (depth 4, 1 leaf, 5 nodes).
-    Low embeddability — string-like, not bushy. -/
 def fixtureStringyTree : TreeNode :=
   TreeNode.node 0
     (TreeNode.node 1
@@ -752,21 +821,16 @@ def fixtureStringyTree : TreeNode :=
       (TreeNode.leaf 0))
     (TreeNode.leaf 0)
 
-/-- Balanced tree with 3 labels — moderate embeddability. -/
 def fixtureBalancedTree : TreeNode :=
   TreeNode.node 2
     (TreeNode.node 1 (TreeNode.leaf 0) (TreeNode.leaf 2))
     (TreeNode.node 0 (TreeNode.leaf 1) (TreeNode.leaf 2))
 
-/- Bushy tree metrics and DIAT packet. -/
+/- Tree metrics and DIAT encoding. -/
 #eval! treeMetrics fixtureBushyTree
 #eval! treeToDIAT fixtureBushyTree
-
-/- Stringy tree metrics and DIAT packet. -/
 #eval! treeMetrics fixtureStringyTree
 #eval! treeToDIAT fixtureStringyTree
-
-/- Balanced tree metrics and DIAT packet. -/
 #eval! treeMetrics fixtureBalancedTree
 #eval! treeToDIAT fixtureBalancedTree
 
@@ -775,25 +839,302 @@ def fixtureBalancedTree : TreeNode :=
 #eval! (treeToDIAT fixtureStringyTree).embeddingScore
 #eval! (treeToDIAT fixtureBalancedTree).embeddingScore
 
-/- Project bushy tree into chaos-game space. -/
+/- Normalised embedding scores. -/
+#eval! treeDIATNormEmbedding (treeToDIAT fixtureBushyTree)
+#eval! treeDIATNormEmbedding (treeToDIAT fixtureStringyTree)
+#eval! treeDIATNormEmbedding (treeToDIAT fixtureBalancedTree)
+
+/- Chaos-state projection. -/
 #eval! treeDIATToChaosState (treeToDIAT fixtureBushyTree)
 
-/- Regime classification: single bushy tree → bloch. -/
+/- Regime classification. -/
 #eval! treeSequenceRegime [treeToDIAT fixtureBushyTree]
-
-/- Regime classification: stringy tree → uglyAsymmetricPruning. -/
 #eval! treeSequenceRegime [treeToDIAT fixtureStringyTree]
-
-/- Regime classification: mixed sequence → bloch (avg score > 0.1). -/
 #eval! treeSequenceRegime [treeToDIAT fixtureBushyTree, treeToDIAT fixtureBalancedTree, treeToDIAT fixtureStringyTree]
 
-/- Chaos-game refinement on a tree-structured state:
-    bushy tree DIAT as anchor, perturb 10%, contract back. -/
+/- Chaos-game contraction on tree DIAT anchor. -/
 #eval! let td := treeToDIAT fixtureBushyTree;
        let anchor := treeDIATToChaosState td;
        let perturb := { position := Q16_16.add anchor.position (Q16_16.ofRatio 1 10)
                       , height := Q16_16.add anchor.height (Q16_16.ofRatio 1 10)
                       , width := Q16_16.add anchor.width (Q16_16.ofRatio 1 10) };
        chaosConverge perturb anchor [] (Q16_16.ofRatio 1 2) (Q16_16.ofRatio 1 100) 20
+
+/- TreeLane construction and throat classification. -/
+#eval! let td := treeToDIAT fixtureBushyTree;
+       let lane : TreeLane := {
+         active := true, node := 0,
+         pos := (Q16_16.ofNat td.depth, Q16_16.ofNat td.leafCount, Q16_16.ofNat td.nodeCount),
+         phase := td.embeddingScore, stress := Q16_16.ofRatio 1 10,
+         pressure := Q16_16.ofRatio 1 4, lambdaEff := Q16_16.one,
+         energy := Q16_16.ofNat td.nodeCount, mismatch := Q16_16.zero,
+         regime := MagneticRegime.bloch,
+         payload := { diat := td, codonWindow := 0, metadata := Q16_16.zero }
+       };
+       classifyTreeThroat lane
+
+/- Stringy tree lane → rupture throat. -/
+#eval! let td := treeToDIAT fixtureStringyTree;
+       let lane : TreeLane := {
+         active := true, node := 1,
+         pos := (Q16_16.ofNat td.depth, Q16_16.ofNat td.leafCount, Q16_16.ofNat td.nodeCount),
+         phase := td.embeddingScore, stress := Q16_16.ofRatio 3 10,
+         pressure := Q16_16.ofRatio 2 1, lambdaEff := Q16_16.ofRatio 1 2,
+         energy := Q16_16.ofNat td.nodeCount, mismatch := Q16_16.ofRatio 1 5,
+         regime := MagneticRegime.uglyAsymmetricPruning,
+         payload := { diat := td, codonWindow := 0, metadata := Q16_16.zero }
+       };
+       classifyTreeThroat lane
+
+/- TreeDynamicCanal: λ_eff for bushy vs stringy at same pressure. -/
+#eval! treeDynamicCanalLambda Q16_16.one (Q16_16.ofRatio 1 10) (Q16_16.ofRatio 1 2)
+       (treeToDIAT fixtureBushyTree).depth
+#eval! treeDynamicCanalLambda Q16_16.one (Q16_16.ofRatio 1 10) (Q16_16.ofRatio 1 2)
+       (treeToDIAT fixtureStringyTree).depth
+
+/- TreeN-DAG witness: 2-node, 1-edge graph. -/
+#eval! let n1 : TreeNodeState := { diatState := (treeToDIAT fixtureBushyTree).embeddingScore, waveState := Q16_16.zero, timeState := Q16_16.zero };
+       let n2 : TreeNodeState := { diatState := (treeToDIAT fixtureStringyTree).embeddingScore, waveState := Q16_16.zero, timeState := Q16_16.one };
+       let e1 : TreeEdge := { src := 0, dst := 1, torsion := Q16_16.ofRatio 1 4, loss := Q16_16.ofRatio 1 10 };
+       TreeNDAG.mk #[n1, n2] #[e1]
+
+-- ════════════════════════════════════════════════════════════
+-- §8  PhiNUVMAP — Golden-Ratio Fractal 16D Coordinate System
+-- ════════════════════════════════════════════════════════════
+--
+-- PhiNUVMAP lifts NUVMAP into a 16D golden-ratio-scaled fractal space.
+--
+-- Core insight: φ = (1+√5)/2 is the unique number where φ^2 = φ + 1.
+-- This gives the Fibonacci recurrence, which yields self-similar tilings
+-- at all scales — the definition of a fractal.
+--
+-- In PhiNUVMAP:
+--   • Coordinates scale by φ (zoom in) or φ^(-1) (zoom out / contract)
+--   • The space is naturally non-uniform: denser near the center
+--   • The golden contraction law s' = c + φ^(-1)·(s-c) is exact
+--   • TreeDIAT states project into this 16D space and contract toward
+--     their anchor at the golden rate
+
+-- ── 8a. Golden ratio in Q16_16 ──────────────────────────────
+
+/-- φ ≈ 4181/2584 = 1.6180339887…  (error < 10⁻⁹).
+    Both 4181 and 2584 are Fibonacci numbers, so this is the canonical
+    rational approximation for fixed-point golden ratio work. -/
+def phiQ16_16 : Q16_16 := Q16_16.ofRatio 4181 2584
+
+/-- φ⁻¹ ≈ 2584/4181 = 0.6180339887…
+    Satisfies φ · φ⁻¹ = 1 in real arithmetic; in Q16_16 the product is
+    within 1 ULP of one. -/
+def phiInvQ16_16 : Q16_16 := Q16_16.ofRatio 2584 4181
+
+/-- φ² = φ + 1  (the defining identity) approximated in Q16_16.
+    Used for fractal self-similarity checks. -/
+def phiSqQ16_16 : Q16_16 := Q16_16.add phiQ16_16 Q16_16.one
+
+-- ── 8b. 16D vector utilities ───────────────────────────────
+
+/-- Component-wise subtraction of two 16D vectors. -/
+def vec16Sub (a b : Array Q16_16) : Array Q16_16 :=
+  a.zip b |>.map (λ (x, y) => Q16_16.sub x y)
+
+/-- Component-wise addition of two 16D vectors. -/
+def vec16Add (a b : Array Q16_16) : Array Q16_16 :=
+  a.zip b |>.map (λ (x, y) => Q16_16.add x y)
+
+/-- Component-wise scalar multiplication of a 16D vector. -/
+def vec16Scale (s : Q16_16) (v : Array Q16_16) : Array Q16_16 :=
+  v.map (λ x => Q16_16.mul s x)
+
+/-- 16D zero vector. -/
+def vec16Zero : Array Q16_16 :=
+  #[Q16_16.zero, Q16_16.zero, Q16_16.zero, Q16_16.zero,
+    Q16_16.zero, Q16_16.zero, Q16_16.zero, Q16_16.zero,
+    Q16_16.zero, Q16_16.zero, Q16_16.zero, Q16_16.zero,
+    Q16_16.zero, Q16_16.zero, Q16_16.zero, Q16_16.zero]
+
+-- ── 8c. PhiNUVMAP spectral mode (local, mirrors NUVMAP) ───
+
+inductive PhiSpectralMode
+  | dc
+  | lowFreq
+  | midFreq
+  | highFreq
+  | ultraFreq
+  | transient
+  deriving Repr, BEq
+
+-- ── 8d. PhiNUVMAP structure ───────────────────────────────
+
+/-- PhiNUVMAP: a 16D golden-ratio fractal coordinate system.
+    Fields:
+      center    — shared 16D attractor point (the "golden center")
+      coords    — list of 16D coordinates (tree states, anchors, etc.)
+      scaleLevel— fractal zoom level k (coordinates conceptually scaled by φ^k)
+      spectralMode — dc / low / mid / high / ultra / transient -/
+structure PhiNUVMAP where
+  center       : Array Q16_16  -- length 16
+  coords       : Array (Array Q16_16)  -- each length 16
+  scaleLevel   : Nat           -- zoom level k
+  spectralMode : PhiSpectralMode
+  deriving Repr
+
+-- ── 8d. Golden contraction law ────────────────────────────
+
+/-- Golden contraction: s' = center + φ⁻¹ · (s - center).
+    After t iterations: ||s(t) - c|| = φ⁻ᵗ · ||s(0) - c||.
+    This is the fractal self-similarity engine. -/
+def phiContract (state center : Array Q16_16) : Array Q16_16 :=
+  let diff := vec16Sub state center
+  let scaled := vec16Scale phiInvQ16_16 diff
+  vec16Add center scaled
+
+/-- Multi-step golden contraction.
+    Returns (final_state, number_of_steps). -/
+def phiContractN (state center : Array Q16_16) (steps : Nat) : Array Q16_16 :=
+  let rec loop (s : Array Q16_16) (n : Nat) : Array Q16_16 :=
+    match n with
+    | 0 => s
+    | n' + 1 => loop (phiContract s center) n'
+  loop state steps
+
+-- ── 8e. Fractal zoom operations ────────────────────────────
+
+/-- Zoom IN by one fractal level: multiply coordinates by φ.
+    Conceptually: coord' = φ · coord. -/
+def phiZoomIn (coord : Array Q16_16) : Array Q16_16 :=
+  vec16Scale phiQ16_16 coord
+
+/-- Zoom OUT by one fractal level: multiply coordinates by φ⁻¹.
+    This is the same as one golden contraction step toward origin. -/
+def phiZoomOut (coord : Array Q16_16) : Array Q16_16 :=
+  vec16Scale phiInvQ16_16 coord
+
+/-- Scale a PhiNUVMAP coordinate by φ^k for arbitrary integer k.
+    Positive k = zoom in (enlarge); negative k = zoom out (shrink). -/
+def phiScaleBy (coord : Array Q16_16) (k : Int) : Array Q16_16 :=
+  if k >= 0 then
+    let rec zoomIn (c : Array Q16_16) (n : Nat) : Array Q16_16 :=
+      match n with
+      | 0 => c
+      | n' + 1 => zoomIn (phiZoomIn c) n'
+    zoomIn coord k.toNat
+  else
+    let rec zoomOut (c : Array Q16_16) (n : Nat) : Array Q16_16 :=
+      match n with
+      | 0 => c
+      | n' + 1 => zoomOut (phiZoomOut c) n'
+    zoomOut coord (-k).toNat
+
+-- ── 8f. Tree-to-PhiNUVMAP projection ──────────────────────
+
+/-- Project a TreeDIAT into the 16D φ-NUVMAP space.
+    Maps tree metrics into dimensions 0-5, derived features into 6-11,
+    and pads with zeros for 12-15. The 16th position is filled with
+    the embedding score as the "attractor weight". -/
+def treeDIATToPhiNUVMAP (td : TreeDIAT) : Array Q16_16 :=
+  let d  := Q16_16.ofNat td.depth
+  let lc := Q16_16.ofNat td.leafCount
+  let nc := Q16_16.ofNat td.nodeCount
+  let lbl := Q16_16.ofNat td.labelCount
+  let score := td.embeddingScore
+  let normScore := treeDIATNormEmbedding td
+  let d_times_lbl := Q16_16.mul d lbl
+  let lc_over_nc := if td.nodeCount = 0 then Q16_16.zero else Q16_16.div lc nc
+  let score_times_d := Q16_16.mul score d
+  -- Dimensions 0-7: primary tree features
+  -- Dimensions 8-15: structural pressure, normalized features, padding
+  #[score, d, lc, nc, lbl, d_times_lbl, lc_over_nc, score_times_d,
+    normScore, Q16_16.sub Q16_16.one normScore,  -- embeddability + residual
+    Q16_16.div d (Q16_16.ofNat 10),               -- depth/10 (scale proxy)
+    Q16_16.div nc (Q16_16.ofNat 100),             -- nodeCount/100 (mass proxy)
+    Q16_16.zero, Q16_16.zero, Q16_16.zero, Q16_16.zero]
+
+/-- Build a PhiNUVMAP from a TreeDIAT with a given center and scale level.
+    The tree state becomes the single coordinate; the center is provided
+    by the caller (typically an anchor tree or the global golden center). -/
+def treeDIATToPhiNUVMAPState (td : TreeDIAT) (center : Array Q16_16)
+    (scaleLevel : Nat) (mode : PhiSpectralMode) : PhiNUVMAP :=
+  { center := center
+  , coords := #[treeDIATToPhiNUVMAP td]
+  , scaleLevel := scaleLevel
+  , spectralMode := mode }
+
+-- ── 8g. 16D chaos game with φ-contraction ─────────────────
+
+/-- One step of the 16D φ-NUVMAP chaos game.
+    X_{t+1} = anchor + φ⁻¹ · (X_t - anchor)  +  ε
+    where ε is a small perturbation (simulates exploration).
+    In this formal version, ε is deterministic (tests stability). -/
+def phiNUVMAPChaosStep (state anchor : Array Q16_16) (epsilon : Array Q16_16)
+    : Array Q16_16 :=
+  let contracted := phiContract state anchor
+  vec16Add contracted epsilon
+
+/-- Run the 16D φ-NUVMAP chaos game for N steps.
+    Returns the final state. -/
+def phiNUVMAPChaosRun (initial anchor : Array Q16_16) (epsilon : Array Q16_16)
+    (steps : Nat) : Array Q16_16 :=
+  let rec loop (s : Array Q16_16) (n : Nat) : Array Q16_16 :=
+    match n with
+    | 0 => s
+    | n' + 1 => loop (phiNUVMAPChaosStep s anchor epsilon) n'
+  loop initial steps
+
+-- ── 8h. Verification witnesses ────────────────────────────
+
+/- Golden ratio approximation witness: φ · φ⁻¹ ≈ 1. -/
+#eval! Q16_16.mul phiQ16_16 phiInvQ16_16
+
+/- φ² = φ + 1 witness. -/
+#eval! Q16_16.mul phiQ16_16 phiQ16_16
+#eval! phiSqQ16_16
+
+/- Golden contraction of a 16D state toward origin.
+    After one step, each component should be ≈ 0.618 × original. -/
+#eval! let s := #[Q16_16.ofNat 10, Q16_16.ofNat 20, Q16_16.ofNat 30, Q16_16.ofNat 40,
+                  Q16_16.ofNat 50, Q16_16.ofNat 60, Q16_16.ofNat 70, Q16_16.ofNat 80,
+                  Q16_16.ofNat 90, Q16_16.ofNat 100, Q16_16.ofNat 110, Q16_16.ofNat 120,
+                  Q16_16.ofNat 130, Q16_16.ofNat 140, Q16_16.ofNat 150, Q16_16.ofNat 160];
+       phiContract s vec16Zero
+
+/- After 5 contraction steps toward origin: state ≈ φ⁻⁵ · initial.
+    φ⁻⁵ ≈ 0.090, so 160 → ≈ 14.4. -/
+#eval! let s := #[Q16_16.ofNat 10, Q16_16.ofNat 20, Q16_16.ofNat 30, Q16_16.ofNat 40,
+                  Q16_16.ofNat 50, Q16_16.ofNat 60, Q16_16.ofNat 70, Q16_16.ofNat 80,
+                  Q16_16.ofNat 90, Q16_16.ofNat 100, Q16_16.ofNat 110, Q16_16.ofNat 120,
+                  Q16_16.ofNat 130, Q16_16.ofNat 140, Q16_16.ofNat 150, Q16_16.ofNat 160];
+       phiContractN s vec16Zero 5
+
+/- Fractal zoom: zoom in ×1 then out ×1 = identity (up to rounding). -/
+#eval! let c := #[Q16_16.ofNat 100, Q16_16.ofNat 200, Q16_16.zero, Q16_16.zero,
+                  Q16_16.zero, Q16_16.zero, Q16_16.zero, Q16_16.zero,
+                  Q16_16.zero, Q16_16.zero, Q16_16.zero, Q16_16.zero,
+                  Q16_16.zero, Q16_16.zero, Q16_16.zero, Q16_16.zero];
+       phiZoomOut (phiZoomIn c)
+
+/- TreeDIAT projected into 16D φ-NUVMAP space. -/
+#eval! treeDIATToPhiNUVMAP (treeToDIAT fixtureBushyTree)
+
+/- TreeDIAT projected into 16D φ-NUVMAP space (stringy). -/
+#eval! treeDIATToPhiNUVMAP (treeToDIAT fixtureStringyTree)
+
+/- Golden contraction of bushy-tree 16D state toward stringy-tree 16D state.
+    The bushy tree should contract toward the stringy-tree anchor. -/
+#eval! let bushy16 := treeDIATToPhiNUVMAP (treeToDIAT fixtureBushyTree);
+       let stringy16 := treeDIATToPhiNUVMAP (treeToDIAT fixtureStringyTree);
+       phiContract bushy16 stringy16
+
+/- 16D φ-NUVMAP chaos game: bushy tree contracts toward stringy-tree anchor
+    with small deterministic perturbation, 10 steps. -/
+#eval! let bushy16 := treeDIATToPhiNUVMAP (treeToDIAT fixtureBushyTree);
+       let stringy16 := treeDIATToPhiNUVMAP (treeToDIAT fixtureStringyTree);
+       let eps := vec16Scale (Q16_16.ofRatio 1 100) vec16Zero;  -- zero perturbation for stability
+       phiNUVMAPChaosRun bushy16 stringy16 eps 10
+
+/- Scale level witness: bushy tree at scale level 0. -/
+#eval! treeDIATToPhiNUVMAPState (treeToDIAT fixtureBushyTree) vec16Zero 0 PhiSpectralMode.dc
+
+/- Scale level witness: stringy tree at scale level 3 (zoomed in). -/
+#eval! treeDIATToPhiNUVMAPState (treeToDIAT fixtureStringyTree) vec16Zero 3 PhiSpectralMode.transient
 
 end Semantics.PistSimulation

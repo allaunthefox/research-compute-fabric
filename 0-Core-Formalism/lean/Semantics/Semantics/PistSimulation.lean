@@ -1178,6 +1178,23 @@ def burgersStateToRegime (N : Nat) (u : Array Q16_16) : MagneticRegime :=
 
 -- ── 9b. Burgers state → 16D φ-NUVMAP projection ───────────
 
+/-- Spatial winding number: net circulation Σ u[i]·dx across inner lattice.
+    For a torus carrier, this is the net winding around the spatial cycle.
+    Zero for symmetric/periodic fields; non-zero for directed flow. -/
+def burgersSpatialWinding (N : Nat) (u : Array Q16_16) (dx : Q16_16) : Q16_16 :=
+  if N <= 2 then Q16_16.zero
+  else
+    let inner := Array.ofFn (n := N - 2) (fun i : Fin (N - 2) =>
+      Q16_16.mul u[i.val + 1]! dx)
+    inner.foldl Q16_16.add Q16_16.zero
+
+/-- Temporal winding number: torsion step count scaled by dt.
+    On the torus carrier, each time step is a quarter-turn of the phase cycle.
+    The C2 = 6k+1 lane counts torsion steps; here we use t/dt as proxy. -/
+def burgersTemporalWinding (dt t : Q16_16) : Q16_16 :=
+  if dt = Q16_16.zero then Q16_16.zero
+  else Q16_16.div t dt
+
 /-- Project a Burgers velocity field into the 16D φ-NUVMAP space.
     Dimensions:
       0-7  : velocity field samples (8 bins, spectral coefficients)
@@ -1187,7 +1204,8 @@ def burgersStateToRegime (N : Nat) (u : Array Q16_16) : MagneticRegime :=
       11   : kinetic energy Σu²/2
       12   : energy dissipation rate (heuristic)
       13   : CFL-like number = max|u|·dt/dx
-      14-15: reserved (boundary condition flags) -/
+      14   : spatial winding w_space = Σ u[i]·dx (torus spatial cycle)
+      15   : temporal winding w_time = t/dt (torus phase cycle) -/
 def burgersFieldToPhiNUVMAP (N : Nat) (u : Array Q16_16) (ν t dx dt : Q16_16)
     : Array Q16_16 :=
   let window := burgersStateToSpectralWindow N u
@@ -1200,8 +1218,10 @@ def burgersFieldToPhiNUVMAP (N : Nat) (u : Array Q16_16) (ν t dx dt : Q16_16)
   let diss := Q16_16.mul ν ke  -- heuristic: dissipation ∝ ν·E
   let cfl := if dx = Q16_16.zero then Q16_16.zero
              else Q16_16.div (Q16_16.mul maxU dt) dx
+  let wSpace := burgersSpatialWinding N u dx
+  let wTime := burgersTemporalWinding dt t
   -- Build 16D vector from components
-  let base := w8 ++ [ν, t, maxU, ke, diss, cfl, Q16_16.zero, Q16_16.zero]
+  let base := w8 ++ [ν, t, maxU, ke, diss, cfl, wSpace, wTime]
   -- Ensure exactly 16 elements
   let base16 := if base.length >= 16 then List.take 16 base else
                   base ++ List.replicate (16 - base.length) Q16_16.zero
@@ -1269,6 +1289,15 @@ def fixtureBurgersShock : Array Q16_16 := #[
 /- 16D φ-NUVMAP projection of shock Burgers field. -/
 #eval! burgersFieldToPhiNUVMAP 5 fixtureBurgersShock
   (Q16_16.ofRatio 1 10) Q16_16.zero (Q16_16.ofNat 1) (Q16_16.ofRatio 1 100)
+
+/- Spatial winding: smooth parabola is symmetric → net zero. -/
+#eval! burgersSpatialWinding 5 fixtureBurgersSmooth (Q16_16.ofNat 1)
+
+/- Spatial winding: shock step has net rightward circulation. -/
+#eval! burgersSpatialWinding 5 fixtureBurgersShock (Q16_16.ofNat 1)
+
+/- Temporal winding at t=0, dt=0.01 → 0 steps. -/
+#eval! burgersTemporalWinding (Q16_16.ofRatio 1 100) Q16_16.zero
 
 /- Golden dissipation step on smooth field. -/
 #eval! burgersPhiDissipationStep 5 fixtureBurgersSmooth

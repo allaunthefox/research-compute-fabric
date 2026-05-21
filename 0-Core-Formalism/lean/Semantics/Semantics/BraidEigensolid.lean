@@ -296,4 +296,91 @@ theorem receipt_invertible
     simpa [encodeReceipt] using h_k
   refine ⟨h_res_all, h_bracket_0, h_slot_7, h_step⟩
 
+-- ============================================================
+-- §7. TORUS SURFACE-BRAID ENRICHMENT  (Genus-1 carrier)
+-- ============================================================
+--
+-- The 8-strand braid lives on a genus-1 torus T², not the plane.
+-- The surface braid group B_n(T²) extends the Artin braid group
+-- by two global generators a, b for winding around the torus cycles.
+--
+-- Homology: H₁(T²; Z) = Z⟨a⟩ ⊕ Z⟨b⟩  (two independent cycles)
+--   a = spatial winding (C1 lane, 6k−1)
+--   b = phase/torsion winding (C2 lane, 6k+1)
+
+/-- Winding counts around the two fundamental cycles of T².
+    a = winding around the spatial (latitude) cycle
+    b = winding around the phase/torsion (longitude) cycle -/
+structure TorusWinding where
+  a : Q16_16  -- spatial cycle winding
+  b : Q16_16  -- phase cycle winding
+  deriving Repr, DecidableEq, BEq
+
+namespace TorusWinding
+
+def zero : TorusWinding := ⟨Q16_16.zero, Q16_16.zero⟩
+
+def add (w1 w2 : TorusWinding) : TorusWinding :=
+  ⟨Q16_16.add w1.a w2.a, Q16_16.add w1.b w2.b⟩
+
+/-- Increment spatial winding by one lattice step. -/
+def stepA (w : TorusWinding) (dx : Q16_16) : TorusWinding :=
+  { w with a := Q16_16.add w.a dx }
+
+/-- Increment phase winding by one torsion step.
+    Each C2 = 6k+1 step is a quarter-turn of the torus phase cycle.
+    One full wrap = 4 steps = 2π in phase. -/
+def stepB (w : TorusWinding) (dt : Q16_16) : TorusWinding :=
+  { w with b := Q16_16.add w.b dt }
+
+end TorusWinding
+
+/-- A BraidState enriched with torus carrier topology.
+    Wraps the planar braid state with winding counts around T² cycles. -/
+structure TorusBraidCarrier where
+  state   : BraidState
+  winding : TorusWinding
+  deriving Repr
+
+namespace TorusBraidCarrier
+
+/-- Apply crossStep and update torus winding.
+    On a torus carrier, each crossing of strands i and j
+    increments phase winding if the crossing is non-trivial
+    (different parity → one full twist around the phase cycle). -/
+def torusCrossStep (carrier : TorusBraidCarrier) : TorusBraidCarrier :=
+  let newState := crossStep carrier.state
+  -- Each full crossStep round (4 adjacent pairs) counts as
+  -- one phase increment proportional to step_count mod 4.
+  let phaseStep :=
+    if carrier.state.step_count % 4 = 0 then Q16_16.one
+    else Q16_16.zero
+  let newWinding :=
+    TorusWinding.stepB carrier.winding phaseStep
+  { state := newState, winding := newWinding }
+
+/-- The spatial winding of a strand on the torus carrier
+    is the accumulated phase vector x-component (latitude). -/
+def spatialWinding (carrier : TorusBraidCarrier) : Q16_16 :=
+  carrier.winding.a
+
+/-- The phase winding of a strand on the torus carrier
+    is the accumulated phase vector y-component (longitude). -/
+def phaseWinding (carrier : TorusBraidCarrier) : Q16_16 :=
+  carrier.winding.b
+
+end TorusBraidCarrier
+
+-- ------------------------------------------------------------
+-- Witness: torus carrier with zero winding, after 1 crossStep
+-- ------------------------------------------------------------
+
+#eval TorusBraidCarrier.torusCrossStep {
+  state := {
+    strands := fun i => BraidStrand.zero (1 <<< i.val).toUInt32
+    step_count := 0
+  }
+  winding := TorusWinding.zero
+}
+
 end Semantics.BraidEigensolid

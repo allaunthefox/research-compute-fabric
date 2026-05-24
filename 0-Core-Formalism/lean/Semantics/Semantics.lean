@@ -150,6 +150,7 @@ import Semantics.ThresholdVector
 import Semantics.LogogramRotationLoop
 import Semantics.CompressionYield
 import Semantics.WaveformTeleport
+import Semantics.TreeDIATKruskal
 
 import Semantics.FAMM
 import Semantics.HCMMR.Core

@@ -1,0 +1,8 @@
+[Unit]
+Description=EC2 Idle Watchdog — power off instance after idle period
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /opt/language-proof-server/ec2_idle_watchdog.py
+Environment=IDLE_MINUTES=15

@@ -14,6 +14,7 @@ import json
 import os
 import shlex
 import subprocess
+import threading
 import time
 from datetime import datetime, timezone
 from http import HTTPStatus
@@ -30,9 +31,20 @@ DEFAULT_REPO = "/srv/research-stack"
 DEFAULT_LEAN_ROOT = "0-Core-Formalism/lean/Semantics"
 MAX_BODY_BYTES = 2_000_000
 
+last_activity: float = time.time()
+_ACTIVITY_FILE = Path("/var/lib/language-proof-server/.last_activity")
+
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def _bump_activity_file() -> None:
+    try:
+        _ACTIVITY_FILE.parent.mkdir(parents=True, exist_ok=True)
+        _ACTIVITY_FILE.write_text(str(last_activity))
+    except Exception:
+        pass
 
 
 def sha256_bytes(data: bytes) -> str:
@@ -180,6 +192,7 @@ def health() -> dict[str, Any]:
         "server": SERVER_NAME,
         "version": SERVER_VERSION,
         "time_utc": now_iso(),
+        "last_activity_utc": datetime.fromtimestamp(last_activity, tz=timezone.utc).isoformat(),
         "checks": checks,
     }
 
@@ -252,12 +265,18 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self) -> None:
+        global last_activity
+        last_activity = time.time()
+        _bump_activity_file()
         if self.path.rstrip("/") in ("", "/health"):
             self.send_json(HTTPStatus.OK, health())
             return
         self.send_json(HTTPStatus.NOT_FOUND, {"ok": False, "error": "not found"})
 
     def do_POST(self) -> None:
+        global last_activity
+        last_activity = time.time()
+        _bump_activity_file()
         if not require_token(self):
             self.send_json(HTTPStatus.UNAUTHORIZED, {"ok": False, "error": "unauthorized"})
             return
@@ -292,6 +311,14 @@ def main() -> None:
     host = os.environ.get("PROOF_SERVER_HOST", DEFAULT_HOST)
     port = int(os.environ.get("PROOF_SERVER_PORT", str(DEFAULT_PORT)))
     server = ThreadingHTTPServer((host, port), Handler)
+    _bump_activity_file()
+
+    def _heartbeat() -> None:
+        while True:
+            time.sleep(60)
+            _bump_activity_file()
+
+    threading.Thread(target=_heartbeat, daemon=True).start()
     print(f"{SERVER_NAME} listening on {host}:{port}", flush=True)
     server.serve_forever()
 

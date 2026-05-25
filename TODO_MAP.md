@@ -234,6 +234,37 @@ PCIe FPGA           = future math-hell router (VU9P-class)
 - **Status:** ✅ DONE
 - **Result:** EigensolidConvergence.lean proof complete (commit `d84569a5`)
 
+### B12. Language & Information Transfer Probes (6 modules)
+- **What:** Formalize information transfer via media, language substrates, genetic thermodynamic limits, and expanded genetic alphabets
+- **Deliverables:**
+  - `0-Core-Formalism/lean/Semantics/Semantics/MediaTransferProbe.lean` — 7 media channels, Shannon bandwidths
+  - `0-Core-Formalism/lean/Semantics/Semantics/LanguageTransferProbe.lean` — 7 language substrates, strict ordering proved
+  - `0-Core-Formalism/lean/Semantics/Semantics/LanguageZoologyProbe.lean` — 6 non-human languages, substrate assignments
+  - `0-Core-Formalism/lean/Semantics/Semantics/GeneticThermodynamicLimitProbe.lean` — 10 polymer types, Landauer limit
+  - `0-Core-Formalism/lean/Semantics/Semantics/ExpandedGeneticAlphabetProbe.lean` — hachimoji + supernumerary DNA
+  - `0-Core-Formalism/lean/Semantics/Semantics/GeneticAnchorProbe.lean` — codon ratio `64/21 ≈ 3.047`
+- **Owner:** L0 Formal
+- **Status:** ✅ DONE (2026-05-22)
+- **Result:** All 6 modules compile; 3592 build jobs green; 10 theorems with `native_decide` receipts
+
+### B13. Thermodynamic Language & Landauer-Shannon Probes
+- **What:** Semantic basin capacity, encoding/decoding mismatch, Landauer limit formalization
+- **Deliverables:**
+  - `0-Core-Formalism/lean/Semantics/Semantics/ThermodynamicLanguageProbe.lean` — basin overflow theorem (M = 50,000,000×)
+  - `0-Core-Formalism/lean/Semantics/Semantics/LandauerShannonProbe.lean` — Heisenberg time `1.8×10^-14 s`
+  - `0-Core-Formalism/lean/Semantics/Semantics/SemanticBasinOverflowProbe.lean` — consistency between 100× and 50,000,000× mismatch
+  - `0-Core-Formalism/lean/Semantics/Semantics/InformationBottleneckLanguageProbe.lean` — `I(X;T) ≤ R` for 7 substrates
+- **Owner:** L0 Formal
+- **Status:** ✅ DONE (2026-05-22)
+- **Result:** All 4 modules compile with `#eval` witnesses
+
+### B14. Citation Provenance File
+- **What:** CFF file with 29 verified DOIs for all referenced papers
+- **Deliverable:** `6-Documentation/docs/provenance/LANGUAGE_MATH_MODEL_SOURCES.cff`
+- **Owner:** L0 Formal / Agentic Coder
+- **Status:** ✅ DONE (2026-05-22)
+- **Result:** 29 references parsed OK; all Lean probe modules updated with inline REFERENCES blocks
+
 ---
 
 ## Phase C — Compression Layer
@@ -561,13 +592,19 @@ F1 + F2 + F3 + F5
 
 ## Immediate Next Actions (This Session)
 
-1. **Repair RRC projection HOLDs** — Add `scale_band_declared` witnesses for equation records; rerun `4-Infrastructure/shim/rrc_equation_classifier.py`
-2. **Add negative controls** — Add negative-control strength witnesses for the 39 rows exposing weak control evidence
-3. **Audit Lean for `sorry`** — `grep -rn "sorry\|admit\|axiom" 0-Core-Formalism/lean/Semantics/`; file count and locations
-4. **Extract Genome18** — Move from `CooperativeLUT.lean` to standalone `Genome18.lean`
-5. **Design UART packet format** — 1-byte start, 3-byte payload (18-bit state + 6-bit flags), 1-byte checksum
-6. **Create `4-Infrastructure/surface/` skeleton** — FastAPI app with `/health` and `/ws` endpoints
-7. **Flash the board** — Install `openFPGALoader`; program `tangnano9k.fs`; verify LEDs
+### Priority: Language-Genetic-Thermodynamic Bridge (Completed 2026-05-22)
+1. ✅ **GeneticSignalTransformProbe.lean** — Formalize unified power law `P ∝ S^{1/2} · λ_φ^{D_f} · exp(-γ·ΔE_eff/kT)` from SIGNAL_ANALYSIS_GENETIC_IMPLICATIONS.md; bridge Drake's Rule + LTEE fitness
+2. ✅ **SemanticBasinOverflowProbe.lean** — Prove generative singularity consistency: `LanguageTransferProbe` 100× bandwidth jump is lower bound on `ThermodynamicLanguageProbe` 50,000,000× mismatch
+3. ✅ **GeneticErrorMinimizationProbe.lean** — Formalize Freeland & Hurst claim: standard code is `~10^6×` better than random; connect to `ExpandedGeneticAlphabetProbe` optimality proof
+4. ✅ **InformationBottleneckLanguageProbe.lean** — Formalize Tishby's IB `I(X;T) ≤ R` as constraint on all 7 language substrates
+5. ✅ **CrossModalGeneticLanguageProbe.lean** — Bridge `CrossModalCompression` with language framework: morphogenesis as cross-modal genetic language flow
+6. ✅ **LandauerGeneticClockProbe.lean** — Calculate minimum thermodynamic cost of maintaining genetic info across generations; answer `GeneticAnchorProbe` P0 anchoring question
+
+### Ongoing Infrastructure
+7. **Repair RRC projection HOLDs** — Add `scale_band_declared` witnesses for equation records; rerun `4-Infrastructure/shim/rrc_equation_classifier.py`
+8. **Add negative controls** — Add negative-control strength witnesses for the 39 rows exposing weak control evidence
+9. **Audit Lean for `sorry`** — `grep -rn "sorry\|admit\|axiom" 0-Core-Formalism/lean/Semantics/`; file count and locations
+10. **Design UART packet format** — 1-byte start, 3-byte payload (18-bit state + 6-bit flags), 1-byte checksum
 
 ---
 
@@ -575,6 +612,9 @@ F1 + F2 + F3 + F5
 
 | Metric | Target | Current |
 |--------|--------|---------|
+| Lean build jobs green | 3585+ | ✅ 3592 |
+| Language-genetic-thermodynamic probes | 14 | ✅ 14 (MediaTransfer, LanguageTransfer, LanguageZoology, GeneticThermodynamicLimit, ExpandedGeneticAlphabet, GeneticAnchor, ThermodynamicLanguage, LandauerShannon, GeneticSignalTransform, SemanticBasinOverflow, GeneticErrorMinimization, InformationBottleneckLanguage, CrossModalGeneticLanguage, LandauerGeneticClock) |
+| CFF provenance files with DOIs | 3 | ✅ 3 (DNA_CODEC_FILTER, ALPHAFOLD_BULK, LANGUAGE_MATH_MODEL) |
 | Lean files with zero `sorry` | 100% | TBD |
 | FPGA build passing | 100% | ✅ |
 | FPGA timing margin | >2× | ✅ 6× |
@@ -617,7 +657,7 @@ F1 + F2 + F3 + F5
 - **What:** Self-hosted S3-compatible object store (Garage v2.3.0) over Tailscale mesh with 5 buckets
 - **Deliverable:** `4-Infrastructure/storage/garage/`
 - **Status:** ✅ DONE (single-node, replication_factor=1)
-- **Next action:** Bootstrap additional nodes (cupfox-4gb-2cpu, nixos) and bump replication_factor to 3
+- **Next action:** Bootstrap nixos-laptop and microvm-racknerd into Garage; 361395-1 needs SSH recovery first
 
 ### I3. Storage Observer/Optimizer Agent
 - **What:** Observe → Decide → Act loop with Q16_16 thresholds, JSONL hash-chain receipts, dual S3+local sinks
@@ -636,11 +676,11 @@ F1 + F2 + F3 + F5
 - **Status:** ✅ DONE
 
 ### I6. Garage Replication Scale-Out (3 nodes)
-- **What:** Bootstrap cupfox-4gb-2cpu and nixos nodes, run garage-cluster-init.sh, set replication_factor=3
+- **What:** Bootstrap nixos-laptop and microvm-racknerd, run garage-cluster-init.sh, set replication_factor=3; 361395-1 after SSH recovery
 - **Deliverable:** Updated `4-Infrastructure/storage/garage/node-registry.json` + cluster receipt
 - **Status:** 📋 TODO
 - **Blocked by:** Node provisioning
-- **Next action:** Run `garage-node-bootstrap.sh 100.126.242.5` then `garage-cluster-init.sh`
+- **Next action:** Run `garage-node-bootstrap.sh 100.119.165.120`, `garage-node-bootstrap.sh 100.101.247.127`, then `garage-cluster-init.sh`; 361395-1 (100.110.163.82) needs SSH password recovery before bootstrap
 
 ---
 

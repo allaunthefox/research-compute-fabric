@@ -26,7 +26,7 @@ set_option linter.dupNamespace false
 
 namespace Semantics.CompressionYield
 
-open Semantics.FixedPoint (Q0_16)
+open Semantics.FixedPoint (Q0_16 Q0_16.ofRawInt)
 open Semantics.LogogramRotationLoop (ThresholdBand inBand)
 
 /--
@@ -178,7 +178,7 @@ theorem delta_half_gives_two_bands :
   native_decide
 
 theorem delta_small_gives_many_bands :
-    maxLambdaBands ⟨0x0010⟩ = 2047 := by
+    maxLambdaBands (Q0_16.ofRawInt 0x0010) = 2047 := by
   native_decide
 
 /- =======================================================================
@@ -195,6 +195,6 @@ theorem delta_small_gives_many_bands :
 #eval maxLambdaBands Q0_16.zero
 #eval maxLambdaBands Q0_16.half
 #eval maxLambdaBands Q0_16.one
-#eval maxLambdaBands ⟨0x0010⟩
+#eval maxLambdaBands (Q0_16.ofRawInt 0x0010)
 
 end Semantics.CompressionYield

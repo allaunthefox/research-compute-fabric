@@ -31,7 +31,7 @@ def stabilityPenalty (w : UInt32) (historyAvg : UInt32) (lambdaStab : Q16_16) : 
   if historyAvg == 0 then 0
   else
     let drift := if w > historyAvg then w - historyAvg else historyAvg - w
-    let driftQ : Q16_16 := ⟨UInt32.ofNat ((drift.toNat * Q16_16.scale) / 0xFFFFFFFF)⟩
+    let driftQ : Q16_16 := Q16_16.ofBits (UInt32.ofNat ((drift.toNat * Q16_16.scale) / 0xFFFFFFFF))
     Q16_16.mul lambdaStab (Q16_16.mul driftQ driftQ)
 
 def fieldInvariant (state : FieldSolverState) : String :=

@@ -30,7 +30,7 @@ set_option linter.dupNamespace false
 
 namespace Semantics.ThresholdVector
 
-open Semantics.FixedPoint (Q0_16 Q16_16)
+open Semantics.FixedPoint (Q0_16 Q16_16 Q0_16.ofRawInt)
 open Semantics.Transition (Regime)
 
 /-- The index identifying which threshold component is being referenced. -/
@@ -109,51 +109,51 @@ inductive ActivationVerdict
     Set to just below 0.2 so that a single uniform-weighted component at
     full strength (0x1998) clears the gate. -/
 def criticalActivationThreshold : Q0_16 :=
-  ⟨0x1997⟩  -- just below 0.2
+  Q0_16.ofRawInt 0x1997  -- just below 0.2
 
 /--
 Default threshold vector with hierarchical separation between regimes.
 Stress threshold lowest (easiest to cross), residual highest (hardest).
 -/
 def defaultThresholds : ThresholdVector :=
-  { sigma   := ⟨0x2CCC⟩   -- approx 0.35 : stress -> fracture
-  , eta     := ⟨0x4000⟩   -- approx 0.50 : coupling -> ignition
-  , beta    := ⟨0x5555⟩   -- approx 0.67 : topology -> percolation
-  , lambda  := ⟨0x6AAA⟩   -- approx 0.83 : eigenmode -> regime switch
-  , epsilon := ⟨0x7333⟩ } -- approx 0.90 : residual -> divergence
+  { sigma   := Q0_16.ofRawInt 0x2CCC   -- approx 0.35 : stress -> fracture
+  , eta     := Q0_16.ofRawInt 0x4000   -- approx 0.50 : coupling -> ignition
+  , beta    := Q0_16.ofRawInt 0x5555   -- approx 0.67 : topology -> percolation
+  , lambda  := Q0_16.ofRawInt 0x6AAA   -- approx 0.83 : eigenmode -> regime switch
+  , epsilon := Q0_16.ofRawInt 0x7333 } -- approx 0.90 : residual -> divergence
 
 /--
 Uniform activation weights — each component contributes equally.
 Sum approx 1.0 so B approx mean(phi_i).
 -/
 def uniformWeights : ActivationWeight :=
-  { sigma   := ⟨0x1999⟩   -- approx 0.20
-  , eta     := ⟨0x1999⟩   -- approx 0.20
-  , beta    := ⟨0x1999⟩   -- approx 0.20
-  , lambda  := ⟨0x1999⟩   -- approx 0.20
-  , epsilon := ⟨0x1999⟩ } -- approx 0.20
+  { sigma   := Q0_16.ofRawInt 0x1999   -- approx 0.20
+  , eta     := Q0_16.ofRawInt 0x1999   -- approx 0.20
+  , beta    := Q0_16.ofRawInt 0x1999   -- approx 0.20
+  , lambda  := Q0_16.ofRawInt 0x1999   -- approx 0.20
+  , epsilon := Q0_16.ofRawInt 0x1999 } -- approx 0.20
 
 /--
 Stress-dominant weights — stress contributes most to activation.
 Useful for modeling fracture/shock-dominated boundary regimes.
 -/
 def stressDominantWeights : ActivationWeight :=
-  { sigma   := ⟨0x3333⟩   -- approx 0.40
-  , eta     := ⟨0x1999⟩   -- approx 0.20
-  , beta    := ⟨0x0CCD⟩   -- approx 0.10
-  , lambda  := ⟨0x0CCD⟩   -- approx 0.10
-  , epsilon := ⟨0x1999⟩ } -- approx 0.20
+  { sigma   := Q0_16.ofRawInt 0x3333   -- approx 0.40
+  , eta     := Q0_16.ofRawInt 0x1999   -- approx 0.20
+  , beta    := Q0_16.ofRawInt 0x0CCD   -- approx 0.10
+  , lambda  := Q0_16.ofRawInt 0x0CCD   -- approx 0.10
+  , epsilon := Q0_16.ofRawInt 0x1999 } -- approx 0.20
 
 /--
 Coupling-dominant weights — coupling contributes most to activation.
 Useful for modeling atmospheric-ignition-dominated regimes.
 -/
 def couplingDominantWeights : ActivationWeight :=
-  { sigma   := ⟨0x0CCD⟩   -- approx 0.10
-  , eta     := ⟨0x3333⟩   -- approx 0.40
-  , beta    := ⟨0x1999⟩   -- approx 0.20
-  , lambda  := ⟨0x0CCD⟩   -- approx 0.10
-  , epsilon := ⟨0x1999⟩ } -- approx 0.20
+  { sigma   := Q0_16.ofRawInt 0x0CCD   -- approx 0.10
+  , eta     := Q0_16.ofRawInt 0x3333   -- approx 0.40
+  , beta    := Q0_16.ofRawInt 0x1999   -- approx 0.20
+  , lambda  := Q0_16.ofRawInt 0x0CCD   -- approx 0.10
+  , epsilon := Q0_16.ofRawInt 0x1999 } -- approx 0.20
 
 /- =======================================================================
     Activation evaluation functions
@@ -341,11 +341,11 @@ theorem full_state_is_critical :
   native_decide
 
 theorem threshold_crossed_gt_works :
-    thresholdCrossed ⟨0x6FFF⟩ ⟨0x2CCC⟩ = true := by
+    thresholdCrossed (Q0_16.ofRawInt 0x6FFF) (Q0_16.ofRawInt 0x2CCC) = true := by
   native_decide
 
 theorem threshold_crossed_lt_works :
-    thresholdCrossed Q0_16.zero ⟨0x2CCC⟩ = false := by
+    thresholdCrossed Q0_16.zero (Q0_16.ofRawInt 0x2CCC) = false := by
   native_decide
 
 theorem total_activation_zero_state_is_zero :

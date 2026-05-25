@@ -39,7 +39,7 @@ def toInt := Q16_16.toInt
 def ofFloat := Q16_16.ofFloat
 def toFloat := Q16_16.toFloat
 def neg := Q16_16.neg
-def mk (raw : UInt32) : Fix16 := { val := raw }
+def mk (raw : UInt32) : Fix16 := Q16_16.ofBits raw
 end Fix16
 
 -- ============================================================
@@ -152,7 +152,7 @@ def shellWidth (d : DIAT) : UInt32 := 2 * d.shell + 1
 
 /-- Normalized a: a / (2k+1) -/
 def normA (d : DIAT) : Q16_16 :=
-  Q16_16.div ⟨d.a⟩ ⟨((2 * d.shell + 1) * 0x10000)⟩
+  Q16_16.div (Q16_16.ofBits d.a) (Q16_16.ofBits ((2 * d.shell + 1) * 0x10000))
 
 end DIAT
 
@@ -658,10 +658,10 @@ def stepThroat (p : KernelParams) (sec : CanalSection) (thr : ThroatState) : Thr
                  (Q16_16.sub thr.dynWeight lossδ)
                  (Q16_16.sub gainP lossS))
   let cls' := classifyThroat
-                ⟨0x00018000⟩  -- stable weight threshold (~1.5)
-                ⟨0x00008000⟩  -- rupture weight threshold (~0.5)
-                ⟨0x00010000⟩  -- stable mismatch threshold (1.0)
-                ⟨0x00030000⟩  -- rupture mismatch threshold (3.0)
+                (Q16_16.ofRawInt 0x00018000)  -- stable weight threshold (~1.5)
+                (Q16_16.ofRawInt 0x00008000)  -- rupture weight threshold (~0.5)
+                (Q16_16.ofRawInt 0x00010000)  -- stable mismatch threshold (1.0)
+                (Q16_16.ofRawInt 0x00030000)  -- rupture mismatch threshold (3.0)
                 w' thr.mismatchNorm
   { thr with dynWeight := w', cls := cls' }
 

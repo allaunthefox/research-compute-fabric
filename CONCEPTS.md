@@ -341,12 +341,13 @@ settlement: FORMING
 
 **Topology:**
 
-| Node | Tailscale IP | Role |
-|------|-------------|------|
-| qfox-1 | 100.88.57.96 | primary, S3 endpoint (1.8 TB NVMe) |
-| cupfox-4gb-2cpu | 100.126.242.5 | storage node (planned) |
-| nixos | 100.119.165.120 | storage node (planned) |
-| microvm-racknerd | 100.101.247.127 | storage node VPS (planned) |
+| Node | Tailscale IP | Role | Status |
+|------|-------------|------|--------|
+| qfox-1 | 100.88.57.96 | primary, S3 endpoint (1.8 TB NVMe) | active |
+| 361395-1 (old cupfox) | 100.110.163.82 | Debian 13 / Netcup VPS | SSH key denied |
+| nixos-laptop | 100.119.165.120 | NixOS / storage node (459 GB) | active |
+| microvm-racknerd | 100.101.247.127 | Debian VM / RackNerd VPS (9 GB) | active |
+| dracocomp | 100.100.140.27 | — | offline (2d)
 
 **Buckets:** `research-stack`, `db-scratch`, `rds-overflow`, `snap-zone`, `gdrive-mirror`.
 

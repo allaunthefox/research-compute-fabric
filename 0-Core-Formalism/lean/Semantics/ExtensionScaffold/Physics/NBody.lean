@@ -305,7 +305,7 @@ def stateToManifoldPoint (state : NBodyState) : ExtensionScaffold.Topology.Manif
   ) #[Semantics.Q16_16.zero, Semantics.Q16_16.zero, Semantics.Q16_16.zero]
   let totalMass := state.particles.foldl (fun acc p => acc + p.mass) Semantics.Q16_16.zero
   let _ := if totalMass.val == 0 then #[Semantics.Q16_16.zero, Semantics.Q16_16.zero, Semantics.Q16_16.zero] else vecScale com (Semantics.Q16_16.one / totalMass)
-  ExtensionScaffold.Topology.ManifoldPoint.mk #[(com[0]!).val, (com[1]!).val, (com[2]!).val] (Fin.mk 3 (by simp))
+  ExtensionScaffold.Topology.ManifoldPoint.mk #[(com[0]!).toBits, (com[1]!).toBits, (com[2]!).toBits] (Fin.mk 3 (by simp))
 
 /-- Compute energy variance across recent history (placeholder) -/
 def computeEnergyVariance (state : NBodyState) : Semantics.Q16_16 :=
@@ -408,8 +408,8 @@ def energyGradientToNUVMap (prevEnergy currEnergy : Semantics.Q16_16) (particleI
   if gradient.val > GRADIENT_THRESHOLD.val then
     some {
       u := (particleIdx % 65536).toUInt16,
-      v := (currEnergy.val % 65536).toUInt16,
-      priority := (gradient.val / 256).toUInt8  -- Higher gradient = higher priority
+      v := (currEnergy.toBits % 65536).toUInt16,
+      priority := (gradient.toBits / 256).toUInt8  -- Higher gradient = higher priority
     }
   else
     none
@@ -723,8 +723,8 @@ def batchNUVMapCache (state : NUVMapCacheState) (nuvs : List NUVMap) (seed : UIn
 /-- Calculate NUVMap cache hit rate -/
 def nuvMapCacheHitRate (state : NUVMapCacheState) : Semantics.Q16_16 :=
   let total := state.nuvHits + state.nuvMisses
-  if total == (0 : UInt64) then Semantics.Q16_16.mk (0 : UInt32)
-  else Semantics.Q16_16.mk ((state.nuvHits.toNat * 65536) / total.toNat).toUInt32
+  if total == (0 : UInt64) then Q16_16.zero
+  else Q16_16.ofRawInt ((state.nuvHits.toNat * 65536) / total.toNat : Int)
 
 /-- Test: Compare NUVMap caching with and without quantum erasure -/
 def testNUVMapCacheNoErasure : NUVMapCacheState :=
@@ -797,11 +797,11 @@ def nuvToColorStrand (nuv : NUVMap) : BraidStrand × CMYKFrequencyCore.Channel :
   let hexVal := nuvToHexNibble nuv
   let freqVal := CMYKFrequencyCore.freq ch hexVal
   let phaseVec : BraidBracket.PhaseVec := {
-    x := Semantics.Q16_16.mk freqVal.toUInt32,  -- Use frequency as x phase
-    y := Semantics.Q16_16.mk (nuv.priority.toUInt32 * 256)  -- Priority as y phase
+    x := Q16_16.ofBits freqVal.toUInt32,  -- Use frequency as x phase
+    y := Q16_16.ofBits (nuv.priority.toUInt32 * 256)  -- Priority as y phase
   }
   let slot := nuv.u.toUInt32
-  let strand := { phaseAcc := phaseVec, parity := true, slot := slot, residue := Semantics.Q16_16.mk freqVal.toUInt32, jitter := Semantics.Q16_16.zero, bracket := { lower := Semantics.Q16_16.zero, upper := Semantics.Q16_16.zero, gap := Semantics.Q16_16.zero, kappa := Semantics.Q16_16.zero, phi := Semantics.Q16_16.zero, admissible := true } }
+  let strand := { phaseAcc := phaseVec, parity := true, slot := slot, residue := Q16_16.ofBits freqVal.toUInt32, jitter := Q16_16.zero, bracket := { lower := Q16_16.zero, upper := Q16_16.zero, gap := Q16_16.zero, kappa := Q16_16.zero, phi := Q16_16.zero, admissible := true } }
   (strand, ch)
 
 /-- Braid multiple NUVMap assignments into color-coded strands -/
@@ -996,7 +996,7 @@ theorem hardwarePipelinePreservesCount (macroblocks : List H264Macroblock) :
       omega
 
 /-- Conceptual speedup: 16x macroblock parallelism via hardware decode -/
-def theoreticalSpeedup : Semantics.Q16_16 := Semantics.Q16_16.mk 0x00100000  -- 16.0x in Q16.16
+def theoreticalSpeedup : Semantics.Q16_16 := Q16_16.ofRawInt 0x00100000  -- 16.0x in Q16.16
 
 -- ============================================================
 -- 9f. SLUG-3 TERNARY DEVICE (Simple Logical Unit Gate)
@@ -1078,11 +1078,11 @@ def slug3Decompress (block : H264Macroblock) : List (BraidStrand × CMYKFrequenc
     let hexVal : CMYKFrequencyCore.HexNibble := match CMYKFrequencyCore.mkHexNibble? (node.priority.toNat % 16) with | some h => h | none => { val := 0, isValid := by omega }
     let freqVal := CMYKFrequencyCore.freq node.channel hexVal
     let phaseVec : BraidBracket.PhaseVec := {
-      x := Semantics.Q16_16.mk freqVal.toUInt32,
-      y := Semantics.Q16_16.mk (node.priority.toUInt32 * 256)
+      x := Q16_16.ofBits freqVal.toUInt32,
+      y := Q16_16.ofBits (node.priority.toUInt32 * 256)
     }
     let slot := node.priority.toUInt32
-    let strand := { phaseAcc := phaseVec, parity := true, slot := slot, residue := Semantics.Q16_16.mk freqVal.toUInt32, jitter := Semantics.Q16_16.zero, bracket := { lower := Semantics.Q16_16.zero, upper := Semantics.Q16_16.zero, gap := Semantics.Q16_16.zero, kappa := Semantics.Q16_16.zero, phi := Semantics.Q16_16.zero, admissible := true } }
+    let strand := { phaseAcc := phaseVec, parity := true, slot := slot, residue := Q16_16.ofBits freqVal.toUInt32, jitter := Q16_16.zero, bracket := { lower := Q16_16.zero, upper := Q16_16.zero, gap := Q16_16.zero, kappa := Q16_16.zero, phi := Q16_16.zero, admissible := true } }
     (strand, node.channel))
 
 /-- Witness: SLUG-3 sort preserves all nodes -/
@@ -1313,7 +1313,7 @@ deriving Repr
 def simulationToMKV (steps : List (List OISC_SLUG3_Inst)) (solveSheet : SolveSheet) : MKVOISCContainer :=
   let clusters := (steps.zip (List.range steps.length)).map (fun (step, idx) =>
     oiscProgramToMKV step idx)
-  let solveSheetBytes : List UInt8 := (solveSheet.entries.map (fun e => e.dtAdjustment.val.toUInt8))
+  let solveSheetBytes : List UInt8 := (solveSheet.entries.map (fun e => e.dtAdjustment.toBits.toUInt8))
   let attachments := [("solve_sheet.bin", solveSheetBytes)]
   let metadata := [("solver", "OISC-SLUG3"), ("version", "1.0"), ("steps", toString steps.length)]
   { clusters := clusters, attachments := attachments, metadata := metadata }

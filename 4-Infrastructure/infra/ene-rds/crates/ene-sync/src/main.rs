@@ -24,14 +24,8 @@ struct Cli {
 
 #[derive(Subcommand, Debug)]
 enum Commands {
-    Sync {
-        #[arg(long)]
-        since: Option<i64>,
-    },
-    Watch {
-        #[arg(long, default_value = "60")]
-        interval: u64,
-    },
+    Sync { #[arg(long)] since: Option<i64> },
+    Watch { #[arg(long, default_value = "60")] interval: u64 },
     InitSchema,
 }
 
@@ -58,12 +52,7 @@ async fn main() -> Result<()> {
     }
 }
 
-async fn cmd_sync(
-    db_path: &PathBuf,
-    dsn: &str,
-    enable_embed: bool,
-    since: Option<i64>,
-) -> Result<()> {
+async fn cmd_sync(db_path: &PathBuf, dsn: &str, enable_embed: bool, since: Option<i64>) -> Result<()> {
     info!("opening opencode.db at {:?}", db_path);
     let sqlite = Connection::open(db_path)?;
     sqlite.busy_timeout(Duration::from_secs(5))?;
@@ -102,12 +91,9 @@ async fn cmd_sync(
         let mut chat_session = normalize_session(sess, &chat_msgs, None);
 
         if let Some(ref emb) = embedder {
-            let text = format!(
-                "{} {} {}",
-                sess.title,
+            let text = format!("{} {} {}", sess.title,
                 sess.agent.as_deref().unwrap_or(""),
-                sess.model.as_deref().unwrap_or("")
-            );
+                sess.model.as_deref().unwrap_or(""));
             if let Ok(v) = emb.embed(&text).await {
                 chat_session.embedding = Some(v);
             }
@@ -170,25 +156,16 @@ async fn cmd_init_schema(dsn: &str) -> Result<()> {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct OpenCodeSession {
-    id: String,
-    project_id: String,
-    parent_id: Option<String>,
-    slug: String,
-    directory: String,
-    title: String,
-    agent: Option<String>,
-    model: Option<String>,
-    time_created: i64,
-    time_updated: i64,
-    tokens_input: i64,
-    tokens_output: i64,
+    id: String, project_id: String, parent_id: Option<String>,
+    slug: String, directory: String, title: String,
+    agent: Option<String>, model: Option<String>,
+    time_created: i64, time_updated: i64,
+    tokens_input: i64, tokens_output: i64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct OpenCodeMessage {
-    id: String,
-    session_id: String,
-    time_created: i64,
+    id: String, session_id: String, time_created: i64,
     #[serde(rename = "role")]
     data_role: String,
     #[serde(default)]
@@ -217,22 +194,15 @@ fn load_sessions(conn: &Connection) -> Result<Vec<OpenCodeSession>> {
     let mut stmt = conn.prepare(
         "SELECT id, project_id, parent_id, slug, directory, title, \
          agent, model, time_created, time_updated, tokens_input, tokens_output \
-         FROM session ORDER BY time_created",
+         FROM session ORDER BY time_created"
     )?;
     let rows = stmt.query_map([], |row| {
         Ok(OpenCodeSession {
-            id: row.get(0)?,
-            project_id: row.get(1)?,
-            parent_id: row.get(2)?,
-            slug: row.get(3)?,
-            directory: row.get(4)?,
-            title: row.get(5)?,
-            agent: row.get(6)?,
-            model: row.get(7)?,
-            time_created: row.get(8)?,
-            time_updated: row.get(9)?,
-            tokens_input: row.get(10)?,
-            tokens_output: row.get(11)?,
+            id: row.get(0)?, project_id: row.get(1)?, parent_id: row.get(2)?,
+            slug: row.get(3)?, directory: row.get(4)?, title: row.get(5)?,
+            agent: row.get(6)?, model: row.get(7)?,
+            time_created: row.get(8)?, time_updated: row.get(9)?,
+            tokens_input: row.get(10)?, tokens_output: row.get(11)?,
         })
     })?;
     rows.collect::<Result<Vec<_>, _>>().map_err(|e| e.into())
@@ -242,84 +212,56 @@ fn sessions_since(conn: &Connection, since_ms: i64) -> Result<Vec<OpenCodeSessio
     let mut stmt = conn.prepare(
         "SELECT id, project_id, parent_id, slug, directory, title, \
          agent, model, time_created, time_updated, tokens_input, tokens_output \
-         FROM session WHERE time_updated > ?1 ORDER BY time_created",
+         FROM session WHERE time_updated > ?1 ORDER BY time_created"
     )?;
     let rows = stmt.query_map([since_ms], |row| {
         Ok(OpenCodeSession {
-            id: row.get(0)?,
-            project_id: row.get(1)?,
-            parent_id: row.get(2)?,
-            slug: row.get(3)?,
-            directory: row.get(4)?,
-            title: row.get(5)?,
-            agent: row.get(6)?,
-            model: row.get(7)?,
-            time_created: row.get(8)?,
-            time_updated: row.get(9)?,
-            tokens_input: row.get(10)?,
-            tokens_output: row.get(11)?,
+            id: row.get(0)?, project_id: row.get(1)?, parent_id: row.get(2)?,
+            slug: row.get(3)?, directory: row.get(4)?, title: row.get(5)?,
+            agent: row.get(6)?, model: row.get(7)?,
+            time_created: row.get(8)?, time_updated: row.get(9)?,
+            tokens_input: row.get(10)?, tokens_output: row.get(11)?,
         })
     })?;
     rows.collect::<Result<Vec<_>, _>>().map_err(|e| e.into())
 }
 
 fn max_session_updated(conn: &Connection) -> Result<Option<i64>> {
-    conn.query_row("SELECT MAX(time_updated) FROM session", [], |row| {
-        row.get(0)
-    })
-    .optional()
-    .map_err(|e| e.into())
+    conn.query_row("SELECT MAX(time_updated) FROM session", [], |row| row.get(0))
+        .optional()
+        .map_err(|e| e.into())
 }
 
 fn messages_for_session(conn: &Connection, session_id: &str) -> Result<Vec<OpenCodeMessage>> {
     let mut stmt = conn.prepare(
         "SELECT id, session_id, time_created, data FROM message \
-         WHERE session_id = ?1 ORDER BY time_created, id",
+         WHERE session_id = ?1 ORDER BY time_created, id"
     )?;
     let rows = stmt.query_map([session_id], |row| {
         let data_str: String = row.get(3)?;
-        let data: serde_json::Value =
-            serde_json::from_str(&data_str).unwrap_or(serde_json::Value::Null);
-        let role = data
-            .get("role")
-            .and_then(|v| v.as_str())
-            .unwrap_or("unknown")
-            .to_string();
-        Ok(OpenCodeMessage {
-            id: row.get(0)?,
-            session_id: row.get(1)?,
-            time_created: row.get(2)?,
-            data_role: role,
-            data,
-        })
+        let data: serde_json::Value = serde_json::from_str(&data_str).unwrap_or(serde_json::Value::Null);
+        let role = data.get("role").and_then(|v| v.as_str()).unwrap_or("unknown").to_string();
+        Ok(OpenCodeMessage { id: row.get(0)?, session_id: row.get(1)?, time_created: row.get(2)?, data_role: role, data })
     })?;
     rows.collect::<Result<Vec<_>, _>>().map_err(|e| e.into())
 }
 
 fn parts_for_message(conn: &Connection, message_id: &str) -> Result<Vec<OpenCodePart>> {
-    let mut stmt =
-        conn.prepare("SELECT data FROM part WHERE message_id = ?1 ORDER BY time_created, id")?;
+    let mut stmt = conn.prepare(
+        "SELECT data FROM part WHERE message_id = ?1 ORDER BY time_created, id"
+    )?;
     let rows = stmt.query_map([message_id], |row| {
         let data_str: String = row.get(0)?;
         let part: OpenCodePart = serde_json::from_str(&data_str).unwrap_or(OpenCodePart {
-            part_type: "unknown".into(),
-            text: None,
-            tool: None,
-            call_id: None,
-            input: None,
-            output: None,
-            is_error: None,
+            part_type: "unknown".into(), text: None, tool: None, call_id: None,
+            input: None, output: None, is_error: None,
         });
         Ok(part)
     })?;
     rows.collect::<Result<Vec<_>, _>>().map_err(|e| e.into())
 }
 
-fn normalize_session(
-    sess: &OpenCodeSession,
-    msgs: &[ChatMessage],
-    _compaction: Option<String>,
-) -> ChatSession {
+fn normalize_session(sess: &OpenCodeSession, msgs: &[ChatMessage], _compaction: Option<String>) -> ChatSession {
     ChatSession {
         session_id: sess.id.clone(),
         workspace_fingerprint: Some(workspace_fingerprint(&sess.directory)),
@@ -343,11 +285,7 @@ fn normalize_session(
     }
 }
 
-fn normalize_message(
-    msg: &OpenCodeMessage,
-    parts: &[OpenCodePart],
-    index: i32,
-) -> Result<ChatMessage> {
+fn normalize_message(msg: &OpenCodeMessage, parts: &[OpenCodePart], index: i32) -> Result<ChatMessage> {
     let mut blocks = Vec::new();
     let mut text_parts = Vec::new();
     let mut tool_calls = Vec::new();
@@ -357,55 +295,23 @@ fn normalize_message(
             "text" => {
                 if let Some(ref t) = part.text {
                     text_parts.push(t.clone());
-                    blocks.push(MessageBlock {
-                        block_type: "text".into(),
-                        text: Some(t.clone()),
-                        tool_name: None,
-                        tool_input: None,
-                        tool_output: None,
-                        is_error: None,
-                    });
+                    blocks.push(MessageBlock { block_type: "text".into(), text: Some(t.clone()), tool_name: None, tool_input: None, tool_output: None, is_error: None });
                 }
             }
             "reasoning" => {
                 if let Some(ref t) = part.text {
                     text_parts.push(format!("[reasoning] {}", t));
-                    blocks.push(MessageBlock {
-                        block_type: "reasoning".into(),
-                        text: Some(t.clone()),
-                        tool_name: None,
-                        tool_input: None,
-                        tool_output: None,
-                        is_error: None,
-                    });
+                    blocks.push(MessageBlock { block_type: "reasoning".into(), text: Some(t.clone()), tool_name: None, tool_input: None, tool_output: None, is_error: None });
                 }
             }
             "tool" => {
                 let call_id = part.call_id.clone().unwrap_or_default();
                 let tool_name = part.tool.clone().unwrap_or_default();
-                blocks.push(MessageBlock {
-                    block_type: "tool_use".into(),
-                    text: None,
-                    tool_name: Some(tool_name.clone()),
-                    tool_input: part.input.clone(),
-                    tool_output: part.output.clone(),
-                    is_error: part.is_error,
-                });
-                tool_calls.push(ToolCall {
-                    call_id: call_id.clone(),
-                    tool_name,
-                    input: part.input.clone().unwrap_or(serde_json::json!({})),
-                });
+                blocks.push(MessageBlock { block_type: "tool_use".into(), text: None, tool_name: Some(tool_name.clone()), tool_input: part.input.clone(), tool_output: part.output.clone(), is_error: part.is_error });
+                tool_calls.push(ToolCall { call_id: call_id.clone(), tool_name, input: part.input.clone().unwrap_or(serde_json::json!({})) });
             }
             "tool-result" => {
-                blocks.push(MessageBlock {
-                    block_type: "tool_result".into(),
-                    text: part.text.clone(),
-                    tool_name: part.tool.clone(),
-                    tool_input: None,
-                    tool_output: part.output.clone(),
-                    is_error: part.is_error,
-                });
+                blocks.push(MessageBlock { block_type: "tool_result".into(), text: part.text.clone(), tool_name: part.tool.clone(), tool_input: None, tool_output: part.output.clone(), is_error: part.is_error });
             }
             _ => {}
         }
@@ -417,10 +323,8 @@ fn normalize_message(
         role: msg.data_role.clone(),
         blocks,
         text_content: text_parts.join("\n"),
-        token_input: 0,
-        token_output: 0,
-        token_cache_creation: 0,
-        token_cache_read: 0,
+        token_input: 0, token_output: 0,
+        token_cache_creation: 0, token_cache_read: 0,
         tool_calls,
         embedding: None,
         receipt_hash: None,
@@ -450,34 +354,19 @@ struct Embedder {
 impl Embedder {
     fn new() -> Self {
         let base = std::env::var("OLLAMA_HOST").unwrap_or_else(|_| "http://localhost:11434".into());
-        let model =
-            std::env::var("OLLAMA_EMBED_MODEL").unwrap_or_else(|_| "nomic-embed-text".into());
-        Self {
-            client: reqwest::Client::new(),
-            url: format!("{}/api/embeddings", base.trim_end_matches('/')),
-            model,
-        }
+        let model = std::env::var("OLLAMA_EMBED_MODEL").unwrap_or_else(|_| "nomic-embed-text".into());
+        Self { client: reqwest::Client::new(), url: format!("{}/api/embeddings", base.trim_end_matches('/')), model }
     }
 
     async fn embed(&self, text: &str) -> Result<Vec<f32>> {
-        let resp = self
-            .client
-            .post(&self.url)
+        let resp = self.client.post(&self.url)
             .json(&serde_json::json!({"model": self.model, "prompt": text}))
-            .send()
-            .await
-            .context("embed POST")?;
+            .send().await.context("embed POST")?;
         if !resp.status().is_success() {
             anyhow::bail!("embed HTTP {}", resp.status());
         }
         let json: serde_json::Value = resp.json().await.context("embed JSON")?;
-        let arr = json
-            .get("embedding")
-            .and_then(|v| v.as_array())
-            .context("missing embedding")?;
-        Ok(arr
-            .iter()
-            .map(|v| v.as_f64().unwrap_or(0.0) as f32)
-            .collect())
+        let arr = json.get("embedding").and_then(|v| v.as_array()).context("missing embedding")?;
+        Ok(arr.iter().map(|v| v.as_f64().unwrap_or(0.0) as f32).collect())
     }
 }

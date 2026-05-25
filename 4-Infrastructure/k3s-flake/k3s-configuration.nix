@@ -14,8 +14,11 @@
   #   4. For agents, set the token from step 1.
   ##########################################################################
 
+  sops.age.keyFile = "/var/lib/sops-nix/key.txt";
+
   sops.secrets.k3s-token = {
     sopsFile = ./secrets/k3s-token.age;
+    format = "yaml";
   };
 
   systemd.services.k3s.serviceConfig.EnvironmentFile = [
@@ -26,7 +29,7 @@
   networking.networkmanager.enable = true;
   networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
 
-  time.timeZone = "UTC";
+  time.timeZone = lib.mkDefault "UTC";
 
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
@@ -38,39 +41,28 @@
     options = "--delete-older-than 7d";
   };
 
-  users.users.root.openssh.authorizedKeys.keys = [
-    # add your SSH public key(s) here
-  ];
-
-  services.openssh = {
-    enable = true;
-    settings = {
-      PermitRootLogin = "prohibit-password";
-      PasswordAuthentication = false;
-    };
-  };
-
   services.tailscale.enable = true;
 
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 22 6443 ];
+    allowedTCPPorts = [ 22 80 443 6443 2379 2380 10250 10259 10257 30800 30801 30802 30803 30804 ];
     trustedInterfaces = [ "tailscale0" ];
-    allowedUDPPorts = [ 51820 ];
+    allowedUDPPorts = [ 51820 8472 ];
   };
 
   environment.systemPackages = with pkgs; [
     curl
+    ffmpeg
+    flac
     git
     htop
     jq
     k3s
     kubectl
+    openssl
     ripgrep
     tailscale
     vim
     wget
   ];
-
-  system.stateVersion = "25.05";
 }

@@ -87,7 +87,7 @@ Canonical hash for one basis vector.
 -/
 def basisVectorHash (v : BasisVector) : UInt64 :=
   v.entries.foldl
-    (fun acc q => acc + q.val.toUInt64 + 0x9e3779b97f4a7c15)
+    (fun acc q => acc + q.toBits.toUInt64 + 0x9e3779b97f4a7c15)
     0
 
 /--
@@ -100,12 +100,12 @@ def summaryHash (summary : AmmrSummary) : UInt64 :=
       0
   let coeffHash :=
     summary.rCoeff.foldl
-      (fun acc q => acc + q.val.toUInt64 + 0x94d049bb133111eb)
+      (fun acc q => acc + q.toBits.toUInt64 + 0x94d049bb133111eb)
       0
   basisHash + coeffHash +
     summary.shape.ambientDim.toUInt64 +
     summary.shape.basisDim.toUInt64 +
-    summary.energy.val.toUInt64
+    summary.energy.toBits.toUInt64
 
 /--
 Deterministic parent commitment law.

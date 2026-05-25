@@ -21,10 +21,10 @@ namespace Semantics.Q0_2
 open Semantics.Q16_16
 
 /-- The 4 canonical Q0_2 values as Q16_16 encodings. -/
-def q0_2_zero : Q16_16 := ⟨0x00000000⟩
-def q0_2_quarter : Q16_16 := ⟨0x00004000⟩
-def q0_2_half : Q16_16 := ⟨0x00008000⟩
-def q0_2_three_quarter : Q16_16 := ⟨0x0000C000⟩
+def q0_2_zero : Q16_16 := Q16_16.ofRawInt 0x00000000
+def q0_2_quarter : Q16_16 := Q16_16.ofRawInt 0x00004000
+def q0_2_half : Q16_16 := Q16_16.ofRawInt 0x00008000
+def q0_2_three_quarter : Q16_16 := Q16_16.ofRawInt 0x0000C000
 
 /-- All 4 Q0_2 values as a list (for enumeration). -/
 def allValues : List Q16_16 := [q0_2_zero, q0_2_quarter, q0_2_half, q0_2_three_quarter]

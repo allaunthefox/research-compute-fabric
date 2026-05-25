@@ -14,7 +14,7 @@
 ///   12=WIKI 13=FRACTAL_FOLD 14=META_AUTOTYPE 15=CREDENTIALS
 use anyhow::{anyhow, Result};
 use axum::extract::ws::{Message, WebSocket, WebSocketUpgrade};
-use axum::extract::State;
+use axum::extract::{ConnectInfo, Query, State};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Json, Response};
 use axum::routing::{get, post};
@@ -25,11 +25,15 @@ use serde_json::{json, Value};
 use sha2::Digest as _;
 use std::collections::BTreeMap;
 use std::io::{Read, Write};
+use std::net::SocketAddr;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tokio::net::TcpListener;
 use tracing::{info, warn};
+
+mod audit;
+mod hoxel;
 
 // ──────────────────────────────────────────────
 // Op codes
@@ -65,6 +69,8 @@ struct AppState {
     state_dir: PathBuf,
     mount_dir: PathBuf,
     started_at: u64, // unix seconds
+    audit: audit::AuditLogger,
+    hoxel: Option<hoxel::HoxelStore>,
 }
 
 // ──────────────────────────────────────────────
@@ -681,6 +687,43 @@ fn resolve_credential(provider: &str) -> Option<Value> {
 }
 
 // ──────────────────────────────────────────────
+// Audit helpers for credential operations
+// ──────────────────────────────────────────────
+
+/// Parse a credentials payload and return (action, provider).
+fn extract_credential_action(payload: &[u8]) -> (String, Option<String>) {
+    let request: Value = if payload.is_empty() {
+        json!({})
+    } else {
+        serde_json::from_slice(payload).unwrap_or(json!({}))
+    };
+    let action = request
+        .get("action")
+        .and_then(|v| v.as_str())
+        .unwrap_or("status")
+        .to_string();
+    let provider = request
+        .get("provider")
+        .and_then(|v| v.as_str())
+        .map(|s| s.to_string());
+    (action, provider)
+}
+
+/// Determine outcome from a credential operation result.
+fn credential_outcome(result: &Value) -> String {
+    if result.get("ok").and_then(|v| v.as_bool()).unwrap_or(false) {
+        "success".to_string()
+    } else {
+        "failure".to_string()
+    }
+}
+
+/// Extract error message from a failed credential result.
+fn credential_error(result: &Value) -> Option<String> {
+    result.get("error").and_then(|v| v.as_str()).map(|s| s.to_string())
+}
+
+// ──────────────────────────────────────────────
 // Surface op dispatch (mirrors handle_surface_op in Python)
 // ──────────────────────────────────────────────
 
@@ -880,12 +923,34 @@ async fn get_primitives(State(state): State<AppState>) -> Json<Value> {
     Json(primitive_payload(&state))
 }
 
-async fn get_credentials(State(_state): State<AppState>) -> Json<Value> {
-    Json(credential_status())
+async fn get_credentials(
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    State(state): State<AppState>,
+) -> Json<Value> {
+    let result = credential_status();
+    state.audit.log(audit::AuditEvent {
+        actor: state.profile.get("node_id").and_then(|v| v.as_str()).map(|s| s.to_string()),
+        action: "status".to_string(),
+        resource: None,
+        resource_type: Some("credentials".to_string()),
+        outcome: "success".to_string(),
+        ip_address: Some(addr.ip().to_string()),
+        user_agent: None,
+        request_id: None,
+        details: json!({
+            "request_method": "GET",
+            "request_path": "/credentials"
+        }),
+    });
+    Json(result)
 }
 
 /// POST /surface — JSON envelope: { "op": <int>, "payload_b64": "<base64>" }
-async fn post_surface(State(state): State<AppState>, body: axum::body::Bytes) -> Response {
+async fn post_surface(
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    State(state): State<AppState>,
+    body: axum::body::Bytes,
+) -> Response {
     let req: Value = match serde_json::from_slice(&body) {
         Ok(v) => v,
         Err(e) => {
@@ -912,24 +977,72 @@ async fn post_surface(State(state): State<AppState>, body: axum::body::Bytes) ->
         .and_then(|s| base64::engine::general_purpose::STANDARD.decode(s).ok())
         .unwrap_or_default();
     let result = handle_surface_op(op, &payload, &state);
+
+    // Audit credential operations.
+    if op == OP_CREDENTIALS {
+        let (action, provider) = extract_credential_action(&payload);
+        state.audit.log(audit::AuditEvent {
+            actor: state.profile.get("node_id").and_then(|v| v.as_str()).map(|s| s.to_string()),
+            action,
+            resource: provider,
+            resource_type: Some("credential".to_string()),
+            outcome: credential_outcome(&result),
+            ip_address: Some(addr.ip().to_string()),
+            user_agent: None,
+            request_id: None,
+            details: json!({
+                "request_method": "POST",
+                "request_path": "/surface",
+                "error_message": credential_error(&result).unwrap_or_default()
+            }),
+        });
+    }
+
     Json(result).into_response()
 }
 
 /// GET /ws — WebSocket upgrade (binary surface-frame protocol)
 async fn ws_handler(
     ws: WebSocketUpgrade,
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
     State(state): State<AppState>,
 ) -> Response {
-    ws.on_upgrade(move |socket| handle_socket(socket, state))
+    let client_ip = addr.ip().to_string();
+    ws.on_upgrade(move |socket| handle_socket(socket, state, client_ip))
 }
 
-async fn handle_socket(mut socket: WebSocket, state: AppState) {
+async fn handle_socket(mut socket: WebSocket, state: AppState, client_ip: String) {
     loop {
         match socket.recv().await {
             Some(Ok(Message::Binary(data))) => {
                 match parse_surface_frame(&data) {
                     Ok(frame) => {
                         let result = handle_surface_op(frame.op, &frame.payload, &state);
+
+                        // Audit credential operations over WebSocket.
+                        if frame.op == OP_CREDENTIALS {
+                            let (action, provider) = extract_credential_action(&frame.payload);
+                            state.audit.log(audit::AuditEvent {
+                                actor: state
+                                    .profile
+                                    .get("node_id")
+                                    .and_then(|v| v.as_str())
+                                    .map(|s| s.to_string()),
+                                action,
+                                resource: provider,
+                                resource_type: Some("credential".to_string()),
+                                outcome: credential_outcome(&result),
+                                ip_address: Some(client_ip.clone()),
+                                user_agent: None,
+                                request_id: Some(frame.request_id.to_string()),
+                                details: json!({
+                                    "request_method": "WS",
+                                    "request_path": "/ws",
+                                    "error_message": credential_error(&result).unwrap_or_default()
+                                }),
+                            });
+                        }
+
                         let response = build_surface_frame(frame.request_id, frame.op, &result, frame.codec);
                         if socket.send(Message::Binary(response)).await.is_err() {
                             return;
@@ -953,8 +1066,306 @@ async fn handle_socket(mut socket: WebSocket, state: AppState) {
     }
 }
 
+// ──────────────────────────────────────────────
+// Hoxel API handlers
+// ──────────────────────────────────────────────
+
+/// POST /v1/hoxels/record — record a hoxel transition (the computation unit).
+async fn post_record_hoxel(
+    State(state): State<AppState>,
+    body: axum::body::Bytes,
+) -> Response {
+    let store = match &state.hoxel {
+        Some(s) => s,
+        None => {
+            return (
+                StatusCode::SERVICE_UNAVAILABLE,
+                Json(json!({"error": "hoxel store not initialized (no RDS)"})),
+            )
+                .into_response();
+        }
+    };
+
+    let record: hoxel::HoxelTransition = match serde_json::from_slice(&body) {
+        Ok(r) => r,
+        Err(e) => {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(json!({"error": format!("invalid hoxel record: {}", e)})),
+            )
+                .into_response();
+        }
+    };
+
+    // Goxel admission gate — reject if thermal or residual exceed thresholds.
+    let iso_threshold: f64 = std::env::var("RS_HOXEL_ISO_THRESHOLD")
+        .ok().and_then(|s| s.parse().ok()).unwrap_or(0.95);
+    let residual_max: f64 = std::env::var("RS_HOXEL_RESIDUAL_MAX")
+        .ok().and_then(|s| s.parse().ok()).unwrap_or(1.0);
+    if record.thermal_score > iso_threshold {
+        return (
+            StatusCode::UNPROCESSABLE_ENTITY,
+            Json(json!({
+                "error": "goxel_admission_rejected",
+                "reason": "thermal_score exceeds isoThreshold",
+                "thermal_score": record.thermal_score,
+                "threshold": iso_threshold,
+            })),
+        ).into_response();
+    }
+    if record.residual > residual_max {
+        return (
+            StatusCode::UNPROCESSABLE_ENTITY,
+            Json(json!({
+                "error": "goxel_admission_rejected",
+                "reason": "residual exceeds residualMax",
+                "residual": record.residual,
+                "threshold": residual_max,
+            })),
+        ).into_response();
+    }
+
+    match store.record_transition(&record).await {
+        Ok(response) => {
+            state.audit.log(audit::AuditEvent {
+                actor: state.profile.get("node_id").and_then(|v| v.as_str()).map(|s| s.to_string()),
+                action: "record_hoxel".to_string(),
+                resource: Some(record.obj_key.clone()),
+                resource_type: Some("hoxel".to_string()),
+                outcome: "success".to_string(),
+                ip_address: None,
+                user_agent: None,
+                request_id: Some(response.hoxel_id.clone()),
+                details: json!({
+                    "tx_seq": response.tx_seq,
+                    "tier": record.to_tier,
+                    "thermal_score": record.thermal_score,
+                    "witness_hash": response.witness_hash,
+                }),
+            });
+            (StatusCode::CREATED, Json(response)).into_response()
+        }
+        Err(e) => {
+            (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"error": e}))).into_response()
+        }
+    }
+}
+
+/// GET /v1/hoxels/:id — retrieve a hoxel by ID or witness hash.
+async fn get_hoxel_by_id(
+    State(state): State<AppState>,
+    axum::extract::Path(id): axum::extract::Path<String>,
+) -> Response {
+    let store = match &state.hoxel {
+        Some(s) => s,
+        None => {
+            return (
+                StatusCode::SERVICE_UNAVAILABLE,
+                Json(json!({"error": "hoxel store not initialized (no RDS)"})),
+            )
+                .into_response();
+        }
+    };
+    match store.get_hoxel(&id).await {
+        Ok(hoxel) => Json(hoxel).into_response(),
+        Err(e) => {
+            if e.contains("no rows") {
+                (StatusCode::NOT_FOUND, Json(json!({"error": "hoxel not found"}))).into_response()
+            } else {
+                (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"error": e}))).into_response()
+            }
+        }
+    }
+}
+
+/// GET /v1/hoxels — query hoxels with filters.
+async fn get_query_hoxels(
+    State(state): State<AppState>,
+    Query(params): Query<BTreeMap<String, String>>,
+) -> Response {
+    let store = match &state.hoxel {
+        Some(s) => s,
+        None => {
+            return (
+                StatusCode::SERVICE_UNAVAILABLE,
+                Json(json!({"error": "hoxel store not initialized (no RDS)"})),
+            )
+                .into_response();
+        }
+    };
+
+    let query = hoxel::HoxelQuery {
+        node: params.get("node").cloned(),
+        tier: params.get("tier").cloned(),
+        obj_key: params.get("obj_key").cloned(),
+        thermal_min: params.get("thermal_min").and_then(|v| v.parse().ok()),
+        thermal_max: params.get("thermal_max").and_then(|v| v.parse().ok()),
+        semantic_min: params.get("semantic_min").and_then(|v| v.parse().ok()),
+        semantic_max: params.get("semantic_max").and_then(|v| v.parse().ok()),
+        since: params.get("since").cloned(),
+        limit: params.get("limit").and_then(|v| v.parse().ok()),
+        offset: params.get("offset").and_then(|v| v.parse().ok()),
+    };
+
+    match store.query_hoxels(&query).await {
+        Ok(hoxels) => Json(json!({"hoxels": hoxels, "count": hoxels.len()})).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"error": e}))).into_response(),
+    }
+}
+
+/// GET /v1/hoxels/inflight — inflight compute summary.
+async fn get_inflight_compute(
+    State(state): State<AppState>,
+    Query(params): Query<BTreeMap<String, String>>,
+) -> Response {
+    let store = match &state.hoxel {
+        Some(s) => s,
+        None => {
+            return (
+                StatusCode::SERVICE_UNAVAILABLE,
+                Json(json!({"error": "hoxel store not initialized (no RDS)"})),
+            )
+                .into_response();
+        }
+    };
+    let window_minutes: i64 = params
+        .get("window_minutes")
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(30);
+    match store.inflight_summary(window_minutes).await {
+        Ok(summary) => Json(summary).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"error": e}))).into_response(),
+    }
+}
+
+/// GET /v1/hoxels/clock — global transaction clock reading.
+async fn get_hoxel_clock(State(state): State<AppState>) -> Response {
+    let store = match &state.hoxel {
+        Some(s) => s,
+        None => {
+            return (
+                StatusCode::SERVICE_UNAVAILABLE,
+                Json(json!({"error": "hoxel store not initialized (no RDS)"})),
+            )
+                .into_response();
+        }
+    };
+    match store.current_tx_seq().await {
+        Ok(tx_seq) => Json(json!({"tx_seq": tx_seq, "node": state.profile["node_id"]})).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"error": e}))).into_response(),
+    }
+}
+
+/// POST /v1/hoxels/defrag — merge cold hoxels into coarser aggregates.
+async fn post_defrag_hoxels(
+    State(state): State<AppState>,
+    body: axum::body::Bytes,
+) -> Response {
+    let store = match &state.hoxel {
+        Some(s) => s,
+        None => {
+            return (
+                StatusCode::SERVICE_UNAVAILABLE,
+                Json(json!({"error": "hoxel store not initialized (no RDS)"})),
+            )
+                .into_response();
+        }
+    };
+
+    let req: Value = match serde_json::from_slice(&body) {
+        Ok(v) => v,
+        Err(_) => json!({}),
+    };
+    let cold_threshold: f64 = req
+        .get("cold_threshold")
+        .and_then(|v| v.as_f64())
+        .unwrap_or(0.2);
+    let window_hours: i64 = req
+        .get("window_hours")
+        .and_then(|v| v.as_i64())
+        .unwrap_or(24);
+
+    match store.defrag_hoxels(cold_threshold, window_hours).await {
+        Ok(result) => Json(result).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"error": e}))).into_response(),
+    }
+}
+
 async fn not_found() -> impl IntoResponse {
     (StatusCode::NOT_FOUND, Json(json!({"error": "not-found"})))
+}
+
+/// Attempt to connect the hoxel store to RDS.
+/// Falls back to local-only (JSONL) when no DSN is available.
+async fn connect_hoxel_store() -> Option<hoxel::HoxelStore> {
+    let dsn = std::env::var("RS_HOXEL_DSN")
+        .or_else(|_| std::env::var("RDS_DSN"))
+        .or_else(|_| std::env::var("CREDENTIAL_AUDIT_DSN"))
+        .ok();
+
+    match dsn {
+        Some(ref dsn_str) => {
+            // Build a Rustls TLS connector using webpki roots (Mozilla CA bundle).
+            let tls = {
+                let mut root_store = rustls::RootCertStore::empty();
+                root_store.extend(webpki_roots::TLS_SERVER_ROOTS.iter().cloned());
+                let config = rustls::ClientConfig::builder()
+                    .with_root_certificates(root_store)
+                    .with_no_client_auth();
+                tokio_postgres_rustls::MakeRustlsConnect::new(config)
+            };
+            match tokio_postgres::connect(dsn_str, tls).await {
+                Ok((client, connection)) => {
+                    tokio::spawn(async move {
+                        if let Err(e) = connection.await {
+                            warn!("hoxel RDS connection error: {}", e);
+                        }
+                    });
+                    // Ensure the hoxel_store schema exists.
+                    if let Err(e) = client
+                        .batch_execute(
+                            "CREATE SCHEMA IF NOT EXISTS hoxel_store;
+                             CREATE TABLE IF NOT EXISTS hoxel_store.memory_hoxels (
+                                 hoxel_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                 obj_key TEXT NOT NULL,
+                                 bucket TEXT NOT NULL,
+                                 from_node TEXT,
+                                 from_tier TEXT,
+                                 to_node TEXT,
+                                 to_tier TEXT NOT NULL,
+                                 spectral_mode TEXT NOT NULL DEFAULT 'migrate',
+                                 density DOUBLE PRECISION DEFAULT 1.0,
+                                 confidence DOUBLE PRECISION DEFAULT 1.0,
+                                 semantic_load DOUBLE PRECISION DEFAULT 0.0,
+                                 thermal_score DOUBLE PRECISION NOT NULL,
+                                 residual DOUBLE PRECISION DEFAULT 0.0,
+                                 payload_bytes BIGINT DEFAULT 0,
+                                 created_ts TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                                 accessed_ts TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                                 access_count INTEGER DEFAULT 0,
+                                 witness_prev UUID REFERENCES hoxel_store.memory_hoxels(hoxel_id),
+                                 witness_hash TEXT NOT NULL,
+                                 tx_seq BIGINT GENERATED ALWAYS AS IDENTITY
+                             )",
+                        )
+                        .await
+                    {
+                        warn!("hoxel schema bootstrap failed: {}", e);
+                    }
+                    info!("hoxel store: connected to RDS at {}", dsn_str);
+                    Some(hoxel::HoxelStore::new(Some(client)))
+                }
+                Err(e) => {
+                    warn!("hoxel RDS connect failed ({}): falling back to local-only", e);
+                    Some(hoxel::HoxelStore::new(None))
+                }
+            }
+        }
+        None => {
+            info!("hoxel store: no RDS_DSN — local-only mode (no global ordering)");
+            Some(hoxel::HoxelStore::new(None))
+        }
+    }
 }
 
 // ──────────────────────────────────────────────
@@ -992,11 +1403,17 @@ async fn main() -> Result<()> {
         .unwrap_or(8080);
 
     let started_at = now_secs();
+
+    // Connect hoxel store (RDS if available, local-only otherwise).
+    let hoxel_store = connect_hoxel_store().await;
+
     let app_state = AppState {
         profile: Arc::new(profile.clone()),
         state_dir,
         mount_dir,
         started_at,
+        audit: audit::default_logger(),
+        hoxel: hoxel_store,
     };
 
     let app = Router::new()
@@ -1007,6 +1424,13 @@ async fn main() -> Result<()> {
         .route("/credentials", get(get_credentials))
         .route("/surface", post(post_surface))
         .route("/ws", get(ws_handler))
+        // Hoxel API — spatiotemporal RAM address surface
+        .route("/v1/hoxels", get(get_query_hoxels))
+        .route("/v1/hoxels/record", post(post_record_hoxel))
+        .route("/v1/hoxels/inflight", get(get_inflight_compute))
+        .route("/v1/hoxels/clock", get(get_hoxel_clock))
+        .route("/v1/hoxels/defrag", post(post_defrag_hoxels))
+        .route("/v1/hoxels/:id", get(get_hoxel_by_id))
         .fallback(not_found)
         .with_state(app_state);
 

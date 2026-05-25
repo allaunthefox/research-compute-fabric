@@ -106,7 +106,7 @@ def decimateStep (samples : Array Q16_16) : Array Q16_16 :=
   Array.ofFn (n := n) (fun i =>
     let a := samples.getD (2 * i.val) Q16_16.zero
     let b := samples.getD (2 * i.val + 1) Q16_16.zero
-    Q16_16.ofRatio (a.val.toNat + b.val.toNat) 2)
+    Q16_16.ofRatio (a.toBits.toNat + b.toBits.toNat) 2)
 
 /--
   Run RG decimation until ≤ 8 samples remain or maxDepth is reached.
@@ -143,8 +143,8 @@ def betaResidual (center : Array Q16_16) : Q0_16 :=
     (List.range n)
   -- Normalise: per-sample L1 / 65536 to fit Q0_16
   let perSample : Nat := if n == 0 then 0 else l1 / n
-  -- Clamp to UInt16 range
-  ⟨(min perSample 0xFFFF).toUInt16⟩
+  -- Clamp to signed Q0_16 range [-32768, 32767]
+  Q0_16.ofRawInt (Int.ofNat (min perSample 0xFFFF))
 
 -- ============================================================
 -- 5. SIGMA_Q (scale stability, pure Q16_16 rational)
@@ -167,7 +167,7 @@ def computeSigmaQ (center : Array Q16_16) : Q16_16 :=
   if n == 0 then Q16_16.zero
   else
     -- sum of sample values (Nat, no overflow risk for reasonable arrays)
-    let sumV : Nat := center.foldl (fun acc x => acc + x.val.toNat) 0
+    let sumV : Nat := center.foldl (fun acc x => acc + x.toBits.toNat) 0
     let mean : Q16_16 := Q16_16.ofRatio sumV n
     -- mean absolute deviation (Nat)
     let mad : Nat := center.foldl (fun acc x =>
@@ -209,7 +209,7 @@ def extractAttractor (w : Waveform) (maxDepth : Nat := 32) : AttractorToken :=
   let sigma  := computeSigmaQ center
   -- attractorId: deterministic finite index (no strings)
   let atId : Nat :=
-    (center.foldl (fun acc x => acc + x.val.toNat) 0) % 256
+    (center.foldl (fun acc x => acc + x.toBits.toNat) 0) % 256
   { center       := center
   , basinRadius  := beta
   , rgDepth      := depth
@@ -236,7 +236,7 @@ def upsampleStep (center : Array Q16_16) : Array Q16_16 :=
       else
         let a := center.getD (i.val / 2) Q16_16.zero
         let b := center.getD (i.val / 2 + 1) Q16_16.zero
-        Q16_16.ofRatio (a.val.toNat + b.val.toNat) 2)
+        Q16_16.ofRatio (a.toBits.toNat + b.toBits.toNat) 2)
 
 /--
   Iteratively upsample until we reach targetLen, then truncate.
@@ -346,12 +346,13 @@ theorem betaResidualEmpty : (betaResidual #[]).val = 0 := by
     Array.getD_replicate and ofRatio_self lemmas.
 -/
 theorem constantWaveformAtFixedPoint_base :
-    (betaResidual (Array.replicate 8 Q16_16.one)).val = 65535 := by
+    (betaResidual (Array.replicate 8 Q16_16.one)).val = 32767 := by
   -- NOTE: decimateStep of 8 copies of Q16_16.one produces 4 zeros because
-  -- Q16_16.ofRatio (one.val + one.val) 2 = ofRatio 131072 2 overflows UInt32
-  -- arithmetic (131072 = 0x20000 fits in Nat but the ratio computation wraps).
+  -- Q16_16.ofRatio (one.toBits.toNat + one.toBits.toNat) 2 = ofRatio 131072 2
+  -- overflows the UInt32 path used by ofRatio (131072 = 0x20000 fits in Nat
+  -- but the ratio computation wraps to 0 through the boundary cast).
   -- The L1 distance between 8 ones and 4 zeros is 4 × 65536 = 262144;
-  -- per-sample = 262144 / 4 = 65536, clamped to UInt16 max = 65535.
+  -- per-sample = 262144 / 4 = 65536, saturated to signed Q0_16 max = 32767.
   -- This is a clamped-residual measurement, not a true fixed-point (β ≠ 0).
   -- The general convergence property is documented in §10 above.
   native_decide

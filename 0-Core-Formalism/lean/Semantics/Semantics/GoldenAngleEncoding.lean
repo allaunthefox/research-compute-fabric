@@ -12,11 +12,40 @@ import Semantics.FixedPoint
 
 namespace Semantics.GoldenAngleEncoding
 
+open Semantics.FixedPoint
+
 def phaseModulus : Nat := 65536
 def goldenAngleStep : Nat := 40503
 
+/--
+Encode a Nat modulo `phaseModulus` (65536) into a `Q0_16` value by treating
+the low 16 bits as a two's-complement bit pattern.  Values in [0, 32767] map
+to themselves; values in [32768, 65535] map to the corresponding negative
+signed integer (m - 65536).
+-/
 def q0OfNatMod (n : Nat) : Q0_16 :=
-  ⟨(n % phaseModulus).toUInt16⟩
+  let m := n % phaseModulus
+  if h : m ≤ 32767 then
+    ⟨(m : Int), by
+      have hub : (m : Int) ≤ 32767 := by exact_mod_cast h
+      refine ⟨?_, ?_⟩
+      · show q0_16MinRaw ≤ (m : Int)
+        unfold q0_16MinRaw; omega
+      · show (m : Int) ≤ q0_16MaxRaw
+        unfold q0_16MaxRaw; omega⟩
+  else
+    ⟨(m : Int) - 65536, by
+      have hub : m < phaseModulus := Nat.mod_lt _ (by decide)
+      have hub' : (m : Int) < 65536 := by exact_mod_cast hub
+      have hge : (m : Int) ≥ 32768 := by
+        have : ¬ m ≤ 32767 := h
+        have : m ≥ 32768 := by omega
+        exact_mod_cast this
+      refine ⟨?_, ?_⟩
+      · show q0_16MinRaw ≤ (m : Int) - 65536
+        unfold q0_16MinRaw; omega
+      · show (m : Int) - 65536 ≤ q0_16MaxRaw
+        unfold q0_16MaxRaw; omega⟩
 
 structure PhaseSample where
   index : Nat
@@ -58,8 +87,13 @@ structure WebRTCSyncState where
   synchronized : Bool
   deriving Repr, Inhabited, DecidableEq
 
+/--
+Extract the unsigned modular phase in [0, phaseModulus).  Re-interprets the
+signed Q0_16 value as a 16-bit two's-complement bit pattern.
+-/
 def rawPhase (sample : PhaseSample) : Nat :=
-  sample.phase.val.toNat
+  let v := sample.phase.val
+  if v ≥ 0 then v.toNat else (v + 65536).toNat
 
 def cyclicDiff (a b : Nat) : Nat :=
   if a ≤ b then b - a else phaseModulus - (a - b)

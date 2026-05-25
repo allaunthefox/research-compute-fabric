@@ -56,7 +56,7 @@ def intelligenceLadderMetric (g : Graph) (edges : List (Nat × Nat)) (measures :
     add acc (ollivierRicciCurvature g u v (measures u) (measures v))
   ) zero
   let count := edges.length
-  if count == 0 then zero else ⟨totalCurvature.val / count.toUInt32⟩
+  if count == 0 then zero else Q16_16.ofRawInt (totalCurvature.val / (count : Int))
 
 /-- 
   Thresholds for the Intelligence Ladder based on research papers (2025-2026).
@@ -96,12 +96,12 @@ def triangleGraph : Graph := {
 }
 
 def uniformMeasureTriad (_id : Nat) : GraphMeasure :=
-  let w : Q16_16 := ⟨21845⟩ -- 1/3 ≈ 0.3333
+  let w : Q16_16 := Q16_16.ofRawInt 21845 -- 1/3 ≈ 0.3333
   { support := [(0, w), (1, w), (2, w)] }
 
 /-- Witness check for triangle curvature. -/
 def triangleCurvatureWitness : UInt32 :=
-  (ollivierRicciCurvature triangleGraph 0 1 (uniformMeasureTriad 0) (uniformMeasureTriad 1)).val
+  (ollivierRicciCurvature triangleGraph 0 1 (uniformMeasureTriad 0) (uniformMeasureTriad 1)).toBits
 
 #eval triangleCurvatureWitness
 

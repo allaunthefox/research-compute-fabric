@@ -29,8 +29,8 @@ def peakDistance (i j : Nat) : Nat :=
 
 /-- Erdős-Hooley constant δ ≈ 0.08607 as Q16_16.
 Computed as 5643 / 65536 ≈ 0.08609 (within 0.02% of true value). -/
-def erdosHooleyDelta : Q16_16 := ⟨5643⟩  -- 5643/65536 ≈ 0.08609 (within 0.02% of true δ ≈ 0.08607)
-#eval erdosHooleyDelta  -- Expected: ⟨5643⟩
+def erdosHooleyDelta : Q16_16 := Q16_16.ofRawInt 5643  -- 5643/65536 ≈ 0.08609 (within 0.02% of true δ ≈ 0.08607)
+#eval erdosHooleyDelta  -- Expected: raw 5643
 
 /-- Verify no two active peaks are adjacent (minimum separation = 1 bin). -/
 def verifySpectralGap (sig : SpectralSignature) : Bool :=

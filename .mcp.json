@@ -41,7 +41,9 @@
     "aws": {
       "_comment": "AWS API MCP server (awslabs.aws-api-mcp-server). Provides broad AWS CLI/API access via boto3 credential chain (default profile, us-east-1). Credentials are read from ~/.aws — no secrets embedded here.",
       "command": "uvx",
-      "args": ["awslabs.aws-api-mcp-server@latest"],
+      "args": [
+        "awslabs.aws-api-mcp-server@latest"
+      ],
       "env": {
         "AWS_REGION": "us-east-1",
         "FASTMCP_LOG_LEVEL": "ERROR"
@@ -56,6 +58,76 @@
         "0-Core-Formalism/lean/Semantics/lakefile.toml"
       ],
       "env": {}
+    },
+    "remote-lean-proof": {
+      "_comment": "Hermes/OpenCode/Codex proof backend. Calls the dedicated AWS language-proof-server and returns receipt-bearing Lean/Lake results. Token is read from PROOF_SERVER_TOKEN or ~/.config/ene/language-proof-server.token.",
+      "command": "python3",
+      "args": [
+        "4-Infrastructure/infra/remote_lean_proof_mcp.py"
+      ],
+      "env": {
+        "PROOF_SERVER_URL": "http://75.101.199.58:8787",
+        "PROOF_SERVER_TOKEN_FILE": "/home/allaun/.config/ene/language-proof-server.token"
+      }
+    },
+    "service-orchestrator": {
+      "_comment": "Unified control plane: register/unregister services across Authentik + Caddy + credential server. Requires AUTHENTIK_TOKEN and CADDY_ADMIN env vars. HTTP mode on port 8338.",
+      "command": "python3",
+      "args": [
+        "4-Infrastructure/infra/service-orchestrator/service_orchestrator.py"
+      ],
+      "env": {
+        "AUTHENTIK_BASE": "http://100.102.173.61:9000",
+        "CADDY_ADMIN": "http://100.101.247.127:2019",
+        "CREDENTIAL_SERVER": "http://100.101.247.127:8444"
+      }
+    },
+    "authentik-mcp": {
+      "_comment": "Authentik SSO MCP server — user/group/application management via Authentik API v3. Requires AUTHENTIK_TOKEN env var. Built from 4-Infrastructure/shim/authentik_agent_manager/.",
+      "command": "/home/allaun/Research Stack/4-Infrastructure/shim/authentik_agent_manager/target/release/mcp_server",
+      "args": [],
+      "env": {}
+    },
+    "contextstream": {
+      "command": "npx",
+      "args": [
+        "--prefer-online",
+        "-y",
+        "@contextstream/mcp-server@latest"
+      ],
+      "env": {
+        "CONTEXTSTREAM_API_URL": "https://api.contextstream.io",
+        "CONTEXTSTREAM_ALLOW_HEADER_AUTH": "false",
+        "CONTEXTSTREAM_WORKSPACE_ID": "21c133f6-6854-4e81-b801-4037c11b7e34",
+        "CONTEXTSTREAM_PROJECT_ID": "ef91cc79-aae3-4765-ae0d-63b48f5ea6e6",
+        "CONTEXTSTREAM_USER_AGENT": "contextstream-mcp/0.4.74",
+        "CONTEXTSTREAM_TOOLSET": "complete",
+        "CONTEXTSTREAM_LOG_LEVEL": "quiet",
+        "CONTEXTSTREAM_OUTPUT_FORMAT": "compact",
+        "CONTEXTSTREAM_CONTEXT_PACK": "false",
+        "CONTEXTSTREAM_TRANSCRIPTS_ENABLED": "true",
+        "CONTEXTSTREAM_HOOK_TRANSCRIPTS_ENABLED": "true",
+        "CONTEXTSTREAM_SHOW_TIMING": "false",
+        "CONTEXTSTREAM_PROGRESSIVE_MODE": "false",
+        "CONTEXTSTREAM_ROUTER_MODE": "false",
+        "CONTEXTSTREAM_CONSOLIDATED": "true",
+        "CONTEXTSTREAM_AUTO_HIDE_INTEGRATIONS": "true",
+        "CONTEXTSTREAM_SEARCH_LIMIT": "15",
+        "CONTEXTSTREAM_SEARCH_MAX_CHARS": "2400",
+        "CONTEXTSTREAM_INCLUDE_STRUCTURED_CONTENT": "true"
+      }
+    },
+    "ene-contextstream": {
+      "_comment": "Local ENE replacement for ContextStream-like memory/search/session recall. Writes local receipt-bearing SQLite memory and reads ene-api/session-sync when running.",
+      "command": "python3",
+      "args": [
+        "4-Infrastructure/infra/ene_contextstream_mcp.py"
+      ],
+      "env": {
+        "ENE_API_URL": "http://127.0.0.1:3000",
+        "ENE_CONTEXT_STORE": "/home/allaun/.local/share/ene/contextstream.sqlite",
+        "ENE_CONTEXT_CANDIDATE_ROOT": "/home/allaun/Research Stack/shared-data/data/germane/research/github-ene-contextstream"
+      }
     }
   }
 }

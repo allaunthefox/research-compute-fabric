@@ -11,10 +11,10 @@ namespace Semantics.MISignal
 
 open Q16_16
 
-def epsilon : Q16_16 := ⟨1⟩
+def epsilon : Q16_16 := Q16_16.ofRawInt 1
 
 -- Scale constant: 8.0 in Q16.16 = 8 * 65536
-def bitsPerByteMax : Q16_16 := ⟨8 * 65536⟩
+def bitsPerByteMax : Q16_16 := Q16_16.ofRawInt (8 * 65536)
 
 structure MIRecord where
   baselineBpb : Q16_16   -- baseline bits-per-byte (uncompressed context)
@@ -81,13 +81,13 @@ def miInvariant (r : MIRecord) : String :=
 def miCost (a b : MIRecord) (_m : Metric) : Q16_16 :=
   let ma := mutualInformationSignal a
   let mb := mutualInformationSignal b
-  Q16_16.ofNat (abs (sub ma mb)).val.toNat
+  Q16_16.ofNat (abs (sub ma mb)).toBits.toNat
 
 def miSignalBind (a b : MIRecord) (m : Metric) : Bind MIRecord MIRecord :=
   informationalBind a b m miCost miInvariant miInvariant
 
 -- Verify
-#eval mutualInformationSignal { baselineBpb := ⟨5 * 65536⟩, actualBpb := ⟨3 * 65536⟩, miPredicted := ⟨2 * 65536⟩ }
-#eval surpriseMetric { baselineBpb := ⟨5 * 65536⟩, actualBpb := ⟨3 * 65536⟩, miPredicted := ⟨65536⟩ }
+#eval mutualInformationSignal { baselineBpb := Q16_16.ofRawInt (5 * 65536), actualBpb := Q16_16.ofRawInt (3 * 65536), miPredicted := Q16_16.ofRawInt (2 * 65536) }
+#eval surpriseMetric { baselineBpb := Q16_16.ofRawInt (5 * 65536), actualBpb := Q16_16.ofRawInt (3 * 65536), miPredicted := Q16_16.ofRawInt 65536 }
 
 end Semantics.MISignal

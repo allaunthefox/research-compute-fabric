@@ -4,6 +4,7 @@
 
 | Document | Purpose |
 |---|---|
+| **`wiki/LLM-Context.md`** | **Point any LLM here** — full-stack snapshot, conventions, quick commands, glossary, agent contract |
 | `docs/AGENTS.md` | Strict LLM operating rules — the one file every agent must read first |
 | `docs/VOCABULARY_LOCK.md` | Fixed terminology — Lean references, PIST/FAMM/GWL signatures |
 | `docs/GLOSSARY.md` | Project-wide glossary — all terms across all domains |
@@ -57,6 +58,9 @@
 |---|---|
 | ENE (Endless Node Edges) | `4-Infrastructure/infra/ene_distributed_node.py` |
 | **ENE RDS Rust Workspace** | **`wiki/RDS-Rust-Workspace.md`** — replaces Python RDS stack with Rust |
+| **Credential System** | **`wiki/Credential-System.md`** — 4-tier fallback (RDS → remote → JSON → env), microvm-racknerd host |
+| **Authentik Agent Management** | **`wiki/Authentik-Agent-Management.md`** — LLM-provisioned identities, service accounts, token lifecycle, API patterns |
+| **Authentik MCP Bridge** | **`wiki/Authentik-MCP-Bridge.md`** — Model Context Protocol spec for LLM→Authentik tool surface |
 | AVM ABI surface | `avm_abi.py` |
 | AVM Core | `avm_core.py` |
 | Topological Storage (Google Drive) | `RcloneIntegration.lean`, `CONCEPTS.md` §Topological Storage |

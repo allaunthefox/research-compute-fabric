@@ -29,8 +29,21 @@ deriving Repr, DecidableEq
   In the formal core, we use a sum-reduction for reachability proofs.
 -/
 def mechanicalHash (v : StressVector) : UInt32 :=
-  v.sigmaX.val ^^^ v.sigmaY.val ^^^ v.sigmaZ.val ^^^ 
-  v.tauXY.val ^^^ v.tauYZ.val ^^^ v.tauZX.val
+  v.sigmaX.toBits ^^^ v.sigmaY.toBits ^^^ v.sigmaZ.toBits ^^^ 
+  v.tauXY.toBits ^^^ v.tauYZ.toBits ^^^ v.tauZX.toBits
+
+/-- Q16.16 `toBits` is injective: distinct semantic values produce
+distinct UInt32 bit patterns. -/
+private lemma q16_toBits_injective {a b : Q16_16} (h : a.toBits = b.toBits) : a = b := by
+  apply Subtype.ext
+  have ha := a.property
+  have hb := b.property
+  simp only [Semantics.FixedPoint.q16MinRaw, Semantics.FixedPoint.q16MaxRaw] at ha hb
+  show a.val = b.val
+  have hn : (a.toBits).toNat = (b.toBits).toNat := congrArg UInt32.toNat h
+  unfold Q16_16.toBits Q16_16.toInt at hn
+  simp [UInt32.ofInt] at hn
+  omega
 
 /-- 
   A node in the Mechanical Merkle Tree.
@@ -87,7 +100,7 @@ def structuralBind (tree : MechanicalMerkleTree) (epsilon : UInt32) (g : Metric)
 def healthyLeaf : MechanicalMerkleTree := .leaf 0 { sigmaX := zero, sigmaY := zero, sigmaZ := zero, tauXY := zero, tauYZ := zero, tauZX := zero }
 def healthyTree : MechanicalMerkleTree := mkNode healthyLeaf healthyLeaf
 
-def damagedLeaf : MechanicalMerkleTree := .leaf 1 { sigmaX := ⟨0xFFFFFFFF⟩, sigmaY := zero, sigmaZ := zero, tauXY := zero, tauYZ := zero, tauZX := zero }
+def damagedLeaf : MechanicalMerkleTree := .leaf 1 { sigmaX := Q16_16.ofBits 0xFFFFFFFF, sigmaY := zero, sigmaZ := zero, tauXY := zero, tauYZ := zero, tauZX := zero }
 def damagedTree : MechanicalMerkleTree := mkNode healthyLeaf damagedLeaf
 
 #eval rootHash healthyTree
@@ -110,14 +123,11 @@ theorem structural_integrity_reflected_single_component
   simp [mechanicalHash] at *
   intro h_eq
   rw [hY, hZ, hXY, hYZ, hZX] at h_eq
-  have h_cancel : s1.sigmaX.val = s2.sigmaX.val := by
-    apply (UInt32.xor_right_inj (s2.sigmaY.val ^^^ s2.sigmaZ.val ^^^ s2.tauXY.val ^^^ s2.tauYZ.val ^^^ s2.tauZX.val)).mp
+  have h_cancel : s1.sigmaX.toBits = s2.sigmaX.toBits := by
+    apply (UInt32.xor_right_inj (s2.sigmaY.toBits ^^^ s2.sigmaZ.toBits ^^^ s2.tauXY.toBits ^^^ s2.tauYZ.toBits ^^^ s2.tauZX.toBits)).mp
     simp [UInt32.xor_comm] at h_eq ⊢
     exact h_eq
-  have h_eq_stress : s1.sigmaX = s2.sigmaX := by
-    have h1 : s1.sigmaX = ⟨s1.sigmaX.val⟩ := by cases s1.sigmaX; rfl
-    have h2 : s2.sigmaX = ⟨s2.sigmaX.val⟩ := by cases s2.sigmaX; rfl
-    rw [h1, h2, h_cancel]
+  have h_eq_stress : s1.sigmaX = s2.sigmaX := q16_toBits_injective h_cancel
   contradiction
 
 end Semantics.StructuralAttestation

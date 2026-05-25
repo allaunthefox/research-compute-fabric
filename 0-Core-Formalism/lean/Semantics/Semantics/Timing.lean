@@ -25,10 +25,10 @@ open Semantics.ManifoldFlow
 -- =============================================================================
 
 /-- Base JEDEC-adjacent constants for a 3200MT/s baseline -/
-def tBaseCAS     : Q16_16 := ⟨0x00160000⟩ -- 22 cycles
-def tBaseREF     : Q16_16 := ⟨0x1E000000⟩ -- 7.8μs (approx scaled)
-def tBaseHammer  : Q16_16 := ⟨0x00080000⟩ -- 8 cycles damping
-def tMinFactor   : Q16_16 := ⟨0x00008000⟩ -- 0.5
+def tBaseCAS     : Q16_16 := Q16_16.ofRawInt 0x00160000 -- 22 cycles
+def tBaseREF     : Q16_16 := Q16_16.ofRawInt 0x1E000000 -- 7.8μs (approx scaled)
+def tBaseHammer  : Q16_16 := Q16_16.ofRawInt 0x00080000 -- 8 cycles damping
+def tMinFactor   : Q16_16 := Q16_16.ofRawInt 0x00008000 -- 0.5
 
 /-- Clamp a scaling factor into a positive timing-safe interval. -/
 def clampFactor (value floor ceil : Q16_16) : Q16_16 :=
@@ -48,7 +48,7 @@ tTCL = tBase * (1 - λ * stress)
 -/
 def calculateTCL (stress : Q16_16) : Q16_16 :=
   -- λ = 0.2 frustration sensitivity
-  let lambda : Q16_16 := ⟨0x00003333⟩
+  let lambda : Q16_16 := Q16_16.ofRawInt 0x00003333
   let reduction := Q16_16.mul lambda stress
   let factor := Q16_16.sub Q16_16.one reduction
   -- Clamp factor between [0.5, 1.0] to prevent physical instability
@@ -63,7 +63,7 @@ tMRE = tBase * (1 + β * lockingEnergy)
 -/
 def calculateMRE (energy : Q16_16) : Q16_16 :=
   -- β = 1.5 stability gain
-  let beta : Q16_16 := ⟨0x00018000⟩
+  let beta : Q16_16 := Q16_16.ofRawInt 0x00018000
   let safeEnergy := if energy.isNeg then Q16_16.zero else energy
   let gain := Q16_16.mul beta safeEnergy
   let factor := Q16_16.add Q16_16.one gain
@@ -76,10 +76,10 @@ Based on neighbor-row "vibration" energy (Hodge-Laplacian Δϕ).
 -/
 def calculateDLL (laplacian : Q16_16) : Q16_16 :=
   -- If Laplacian energy > threshold, increase damping delay
-  let threshold : Q16_16 := ⟨0x00004000⟩ -- 0.25
+  let threshold : Q16_16 := Q16_16.ofRawInt 0x00004000 -- 0.25
   let lapEnergy := if laplacian.isNeg then Q16_16.abs laplacian else laplacian
   if lapEnergy.val > threshold.val then
-    Q16_16.add tBaseHammer ⟨0x00040000⟩ -- Add 4 cycles
+    Q16_16.add tBaseHammer (Q16_16.ofRawInt 0x00040000) -- Add 4 cycles
   else
     tBaseHammer
 
@@ -107,7 +107,7 @@ def deriveTiming (p : ManifoldPoint) (laplacian : Q16_16) : ManifoldTiming :=
 -- =============================================================================
 
 -- #eval example: Baseline timing
-#eval (calculateTCL ⟨0x00020000⟩).val -- expect slightly reduced CAS
-#eval (calculateMRE ⟨0x00010000⟩).val -- expect increased refresh epoch
+#eval (calculateTCL (Q16_16.ofRawInt 0x00020000)).val -- expect slightly reduced CAS
+#eval (calculateMRE (Q16_16.ofRawInt 0x00010000)).val -- expect increased refresh epoch
 
 end Semantics.Timing

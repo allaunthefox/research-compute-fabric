@@ -12,9 +12,11 @@ Zero Float arithmetic. All values are hardcoded Q16_16 Int literals.
 -/
 
 import Semantics.Physics.DESIInvariant
+import Semantics.Physics.UncertaintyBounds
 
 open Semantics
 open Semantics.Physics.DESIInvariant
+open Semantics.Physics.UncertaintyBounds
 
 namespace Semantics.Physics.DESIModelProjection
 
@@ -149,8 +151,12 @@ theorem modelWaDirectionAligns : predictWa < waLcdm := by
 -- §5  Theorems — Residual Bounds
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Model w₀ calibrated to DESI DR1 w₀ = -0.827 → residual = 0 -/
-theorem w0ResidualIsZero : predictW0 - desiDR1.w0 = 0 := by
+/-- w₀ is a CALIBRATION PARAMETER, not a prediction.
+    `predictW0 = desiDR1.w0` by construction (both −0.827).
+    Honest statement: residual = 0 because it was set, not derived.
+    The uncertainty is the DESI DR1 w₀_sigma = ±0.05. -/
+theorem w0IsCalibratedNotPredicted :
+  residualBounded predictW0 desiDR1.w0 predictW0Sigma 0 = true := by
   native_decide
 
 /-- Model w_a residual within 1σ of DESI DR1:
@@ -165,8 +171,12 @@ theorem omegaMResidualWithin1Sigma :
   q16Abs (predictOmegaM - desiDR1.omegaM) ≤ desiDR1.omegaM_sigma := by
   native_decide
 
-/-- Model σ₈ matches DESI DR1 exactly: both 0.812 -/
-theorem sigma8ResidualIsZero : predictSigma8 - desiDR1.sigma8 = 0 := by
+/-- Model σ₈ residual is bounded by the MODEL's own uncertainty (±0.015).
+    NOTE: predictSigma8 was set equal to DESI DR1 σ₈ = 0.812.
+    This is NOT an independent prediction. The honest claim is:
+    residual ≤ model_sigma, not residual = 0. -/
+theorem sigma8ResidualWithinModelSigma :
+  q16Abs (predictSigma8 - desiDR1.sigma8) ≤ predictSigma8Sigma := by
   native_decide
 
 /-- Model w_a residual within 1σ of DESI DR2:
@@ -191,7 +201,7 @@ theorem omegaMResidualWithin2SigmaDr2 :
 -- Receipt: DESI DR1 w₀ = -0.827 (Q16_16)
 #eval! desiDR1.w0
 
--- Receipt: w₀ residual = 0 (calibrated)
+-- Receipt: w₀ calibration identity (set equal, not predicted)
 #eval! predictW0 - desiDR1.w0
 
 -- Receipt: Model w_a = -0.55 (Q16_16)
@@ -218,7 +228,7 @@ theorem omegaMResidualWithin2SigmaDr2 :
 -- Receipt: Ω_m residual = -328 (model lower by 0.005)
 #eval! predictOmegaM - desiDR1.omegaM
 
--- Receipt: Model σ₈ = 0.812 matches DESI DR1 σ₈ = 0.812 (Q16_16)
+-- Receipt: Model σ₈ = 0.812 (set equal to DESI DR1, NOT independently predicted)
 #eval! predictSigma8
 
 -- Receipt: Menger dimension d_H (Q16_16)

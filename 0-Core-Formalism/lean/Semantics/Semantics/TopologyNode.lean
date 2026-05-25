@@ -26,8 +26,8 @@ open Semantics.Q16_16
 open Semantics.JsonLSurfaceConnector (BindClass)
 
 -- Local helpers (Semantics.Q16_16 from FixedPoint)
-def halfQ : Q16_16 := ⟨0x00008000⟩
-def quarterQ : Q16_16 := ⟨0x00004000⟩
+def halfQ : Q16_16 := Q16_16.ofRawInt 0x00008000
+def quarterQ : Q16_16 := Q16_16.ofRawInt 0x00004000
 
 def ofFracQ (num denom : Nat) : Q16_16 :=
   if denom = 0 then zero else ofNat num / ofNat denom

@@ -1,0 +1,17 @@
+[package]
+name = "proof-particles"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "proof-particles"
+path = "src/main.rs"
+
+[[bin]]
+name = "burgers-particles"
+path = "src/burgers_main.rs"
+
+[dependencies]
+wgpu = "23.0"
+bytemuck = { version = "1", features = ["derive"] }
+pollster = "0.4"

@@ -5,6 +5,7 @@ namespace Semantics.LandauerCompression
 
 open Semantics
 open Semantics.OrthogonalAmmr
+open Semantics.FixedPoint (Q0_16.ofRawInt)
 
 /--
 Abstract one-bit Landauer unit in proof-layer Q16.16 form.
@@ -152,7 +153,7 @@ def LandauerLogicalMass.massNumber (lm : LandauerLogicalMass) : Q0_16 :=
     let scaled := if lm.admissible ≥ maxVal then maxVal else lm.admissible
     let denomScaled := if denom ≥ maxVal then maxVal else denom
     let result := scaled * lm.projection.scaling / denomScaled
-    ⟨result.toUInt16⟩
+    Q0_16.ofRawInt (result : Int)
 
 /-- Mass number for reversibleZeroBound theorem -/
 def reversibleZeroBoundMass : LandauerLogicalMass :=

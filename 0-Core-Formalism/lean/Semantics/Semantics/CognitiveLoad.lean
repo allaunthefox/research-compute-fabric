@@ -13,7 +13,7 @@ namespace Semantics.CognitiveLoad
 open Q16_16
 
 -- ε = 1 LSB in Q16.16 (prevents division by zero)
-def epsilon : Q16_16 := ⟨1⟩
+def epsilon : Q16_16 := Q16_16.ofRawInt 1
 
 structure LoadVector where
   intrinsic  : Q16_16  -- L_I: germane schema processing
@@ -88,7 +88,7 @@ def cognitiveLoadBind (a b : LoadVector) (m : Metric) : Bind LoadVector LoadVect
   informationalBind a b m loadDeltaCost loadInvariant loadInvariant
 
 -- Verify
-#eval totalLoad { intrinsic := ⟨32768⟩, extraneous := ⟨16384⟩, germane := ⟨8192⟩, routing := ⟨4096⟩, memory := ⟨2048⟩ }
-#eval cognitiveEfficiency { intrinsic := ⟨32768⟩, extraneous := ⟨16384⟩, germane := ⟨8192⟩, routing := ⟨4096⟩, memory := ⟨2048⟩ }
+#eval totalLoad { intrinsic := Q16_16.ofRawInt 32768, extraneous := Q16_16.ofRawInt 16384, germane := Q16_16.ofRawInt 8192, routing := Q16_16.ofRawInt 4096, memory := Q16_16.ofRawInt 2048 }
+#eval cognitiveEfficiency { intrinsic := Q16_16.ofRawInt 32768, extraneous := Q16_16.ofRawInt 16384, germane := Q16_16.ofRawInt 8192, routing := Q16_16.ofRawInt 4096, memory := Q16_16.ofRawInt 2048 }
 
 end Semantics.CognitiveLoad

@@ -29,7 +29,7 @@ open Semantics.Q16_16
 -/
 def crossSlot (μᵢ μⱼ : Q16_16) : Q16_16 :=
   -- XOR the raw representations for unique crossing slot
-  ⟨μᵢ.val.xor μⱼ.val⟩
+  Q16_16.ofBits (μᵢ.toBits.xor μⱼ.toBits)
 
 /-- BraidCross: merge two strands into a crossing
 

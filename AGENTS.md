@@ -190,3 +190,85 @@ backup/distilled-with-vcd-history-2026-05-11
 - Lean module-local contract: `0-Core-Formalism/lean/Semantics/AGENTS.md`
 - Infrastructure contract: `4-Infrastructure/AGENTS.md`
 - CAD harness contract: `5-Applications/text-to-cad/AGENTS.md`
+
+<!-- BEGIN ContextStream -->
+## 🚨 CRITICAL RULE #1 - ENE CONTEXT FIRST 🚨
+
+**ENE is the local memory/context source of truth. BEFORE using ContextStream,
+Glob, Grep, Search, Read (for discovery), Explore, Task(Explore),
+EnterPlanMode, or ANY local file scanning:**
+
+```
+STOP → Call ene-contextstream first:
+  1. ene_context(user_message="...", save_exchange=true) on session/message start
+  2. ene_status if only health is needed
+  3. ene_search(query="...", sources=["ene_api", "local_memory"])
+  4. ene_recall(query="...") when looking for prior decisions/preferences
+```
+
+**MCP tool names by client usually look like:**
+
+- `mcp__ene-contextstream__ene_status`
+- `mcp__ene-contextstream__ene_context`
+- `mcp__ene-contextstream__ene_search`
+- `mcp__ene-contextstream__ene_recall`
+- `mcp__ene-contextstream__ene_remember`
+
+If the client cannot call the ENE MCP server, use the local fallback:
+
+```bash
+python3 4-Infrastructure/infra/ene_contextstream_mcp.py
+```
+
+## Remote Proof Agent
+
+Hermes, OpenCode, Codex, Cursor, Roo, and VS Code should use the
+`remote-lean-proof` MCP server for AWS-backed Lean checks when local Lean is
+slow or unavailable. The MCP server fronts the dedicated proof service at
+`http://75.101.199.58:8787`, requires the runtime token stored outside Git at
+`~/.config/ene/language-proof-server.token`, and returns receipt-bearing
+responses.
+
+Primary tools:
+
+- `proof_status` for health and token wiring.
+- `lean_check` for inline Lean snippets.
+- `lake_build` for allowlisted repo targets.
+
+Do not call the raw HTTP proof endpoint directly from agents. Route through the
+MCP shim so auth, receipts, and ENE memory can be centralized.
+
+ContextStream remains a fallback only:
+
+1. Try ENE first.
+2. Use ContextStream second if ENE returns no useful result, `ene-api` is down,
+   or the task specifically needs ContextStream-hosted transcript history.
+3. Use local tools only after ENE and ContextStream fail or after they return
+   exact file paths that need direct editing.
+
+## ContextStream Fallback Search
+
+**BEFORE using Glob, Grep, Search, Read (for discovery), Explore, Task(Explore), EnterPlanMode, or ANY local file scanning:**
+```
+STOP → Call search(mode="auto", query="...") FIRST
+```
+
+**Note:** PreToolUse hooks block these tools when ContextStream is available.
+**Claude Code users:** Your tool names are `mcp__contextstream__search`, `mcp__contextstream__init`, etc.
+
+❌ **NEVER DO THIS:**
+- `Glob("**/*.ts")` → Use `search(mode="pattern", query="*.ts")` instead
+- `Grep("functionName")` → Use `search(mode="keyword", query="functionName")` instead
+- `Read(file)` for discovery → Use `search(mode="auto", query="...")` instead
+- `Explore` or `Task(subagent_type="Explore")` → Use `search(mode="auto")` instead
+- `EnterPlanMode` for discovery → Use `search(mode="auto", output_format="paths")` instead
+
+✅ **ALWAYS DO THIS:**
+1. `search(mode="auto", query="what you're looking for")`
+2. Only use local tools (Glob/Grep/Read) after stale/not-indexed refresh grace window elapses (~20s) or ContextStream still returns **0 results** after retry
+3. Use Read ONLY for exact file edits after you know the file path
+
+This applies to **EVERY search** throughout the **ENTIRE conversation**, not just the first message.
+
+---
+<!-- END ContextStream -->

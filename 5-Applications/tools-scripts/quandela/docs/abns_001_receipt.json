@@ -1,0 +1,54 @@
+{
+  "gate": "ABNS-001",
+  "status": "PASS",
+  "tests": {
+    "T-1 Pure Burgers": {
+      "pass": true
+    },
+    "T-2 Attention Closure": {
+      "pass": true
+    },
+    "T-3 Uniform Flow (A_\u03b8-I)=0": {
+      "pass": true
+    },
+    "T-4 Attention Differs": {
+      "pass": true
+    },
+    "T-5 Bohm Structure": {
+      "pass": true
+    },
+    "T-6 CFL Bounded": {
+      "pass": true
+    }
+  },
+  "details": {
+    "T-1 Pure Burgers": {
+      "pass": true,
+      "E0": 15.973312377929688,
+      "Ef": 8.208847045898438,
+      "u_max": 0.753753662109375,
+      "sat": 0
+    },
+    "T-2 Attention Closure": {
+      "pass": true,
+      "Ef": 6.2489013671875,
+      "sat": 2496
+    },
+    "T-3 Uniform Flow (A_\u03b8-I)=0": {
+      "pass": true,
+      "max_closure": 1.52587890625e-05
+    },
+    "T-4 Attention Differs": {
+      "pass": true,
+      "max_diff": 0.11181640625
+    },
+    "T-5 Bohm Structure": {
+      "pass": true,
+      "max_bohm": 32768.0
+    },
+    "T-6 CFL Bounded": {
+      "pass": true,
+      "CFL": 0.078125
+    }
+  }
+}

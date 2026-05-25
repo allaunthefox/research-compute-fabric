@@ -41,9 +41,9 @@ Selects the target regime based on cellular signal and substrate feedback.
 -/
 def route (_sig : Signature) (tel : Telemetry) (prio : Priority) : Regime :=
   -- If entropy is extremely high, promote to FLAME (Emergency)
-  if Q16_16.ge tel.entropy (Q16_16.mk 0x00050000) then .FLAME -- 5.0 entropy
+  if Q16_16.ge tel.entropy (Q16_16.ofBits 0x00050000) then .FLAME -- 5.0 entropy
   -- If curvature is high or priority is elevated, enter SEISMIC (Exploration)
-  else if Q16_16.ge tel.curvature (Q16_16.mk 0x00010000) || Q16_16.ge prio.weight (Q16_16.mk 0x00020000) then .SEISMIC
+  else if Q16_16.ge tel.curvature (Q16_16.ofBits 0x00010000) || Q16_16.ge prio.weight (Q16_16.ofBits 0x00020000) then .SEISMIC
   -- Default to GROUNDED (Steady state)
   else .GROUNDED
 
@@ -53,9 +53,9 @@ Executes the state transition and generates the next canonical state.
 -/
 def apply (regime : Regime) (prev : CanonicalState) : CanonicalState :=
   match regime with
-  | .GROUNDED => { prev with mode := .commit, tau := Q16_16.mk 0x00001000 } -- Low tension
-  | .SEISMIC  => { prev with mode := .hold,   tau := Q16_16.mk 0x00008000 } -- Medium tension
-  | .FLAME    => { prev with mode := .flame,  tau := Q16_16.mk 0x00020000 } -- High tension
+  | .GROUNDED => { prev with mode := .commit, tau := Q16_16.ofBits 0x00001000 } -- Low tension
+  | .SEISMIC  => { prev with mode := .hold,   tau := Q16_16.ofBits 0x00008000 } -- Medium tension
+  | .FLAME    => { prev with mode := .flame,  tau := Q16_16.ofBits 0x00020000 } -- High tension
 
 /--
 The Dynamic Transition Law: $S_{t+1} = apply(route(sig(S_t), telemetry, priority))$

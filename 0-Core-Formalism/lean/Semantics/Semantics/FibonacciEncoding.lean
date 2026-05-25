@@ -14,6 +14,8 @@ import Semantics.FixedPoint
 
 namespace Semantics.FibonacciEncoding
 
+open Semantics.FixedPoint
+
 def fib : Nat → Nat
   | 0 => 0
   | 1 => 1
@@ -54,13 +56,13 @@ def fibonacciCodeLength (rep : ZeckendorfRep) : Nat :=
 
 def encodeDeltaFibonacci (delta : Nat) : Q0_16 :=
   if delta = 0 then Q0_16.zero
-  else ⟨(min delta 0x7FFF).toUInt16⟩
+  else Q0_16.ofRawInt ((min delta 0x7FFF : Nat) : Int)
 
 def decodeDeltaFibonacci (encoded : Q0_16) : Nat :=
   encoded.val.toNat
 
 def theoreticalCompressionRatio : Q0_16 :=
-  ⟨0x49E7⟩
+  Q0_16.ofRawInt 0x49E7
 
 theorem validSingletonFibRep (idx : Nat) (h : 2 ≤ idx) :
     isValidZeckendorf { indices := [idx] } = true := by
@@ -77,9 +79,25 @@ theorem encodeDeltaZero :
 theorem decodeEncodeSmallDelta (delta : Nat) (h : delta ≤ 0x7FFF) :
     decodeDeltaFibonacci (encodeDeltaFibonacci delta) = delta := by
   by_cases h0 : delta = 0
-  · simp [encodeDeltaFibonacci, decodeDeltaFibonacci, h0, Q0_16.zero]
-  · simp [encodeDeltaFibonacci, decodeDeltaFibonacci, h0, Nat.min_eq_left h]
-    omega
+  · subst h0; rfl
+  · -- For delta ≠ 0 with delta ≤ 0x7FFF = 32767:
+    -- encodeDeltaFibonacci delta = Q0_16.ofRawInt (delta : Int)
+    -- Q0_16.ofRawInt is saturating; since 0 ≤ delta ≤ 32767, .val = (delta : Int)
+    -- decodeDeltaFibonacci q = q.val.toNat = delta
+    simp only [encodeDeltaFibonacci, decodeDeltaFibonacci, h0, if_false, Nat.min_eq_left h]
+    show (Q0_16.ofRawInt ((delta : Nat) : Int)).val.toNat = delta
+    have hval : (Q0_16.ofRawInt ((delta : Nat) : Int)).val = ((delta : Nat) : Int) := by
+      unfold Q0_16.ofRawInt
+      have hhi : ¬ ((delta : Nat) : Int) > q0_16MaxRaw := by
+        unfold q0_16MaxRaw
+        have : (delta : Int) ≤ 32767 := by exact_mod_cast h
+        omega
+      have hlo : ¬ ((delta : Nat) : Int) < q0_16MinRaw := by
+        unfold q0_16MinRaw
+        have : (0 : Int) ≤ (delta : Int) := by exact_mod_cast Nat.zero_le _
+        omega
+      simp [hhi, hlo]
+    rw [hval, Int.toNat_natCast]
 
 #eval fib 10
 #eval zeckendorfToNat { indices := [5, 3] }

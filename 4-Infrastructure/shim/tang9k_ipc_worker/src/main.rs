@@ -280,11 +280,6 @@ impl RingMap {
         let base = record_offset(slot);
         let status = self.load_u8(base + REC_STATUS_OFFSET);
         if status != STATUS_PENDING {
-            self.store_u32(
-                HEADER_READ_INDEX_OFFSET,
-                header.read_index.wrapping_add(1),
-                Ordering::Release,
-            );
             return Ok(None);
         }
 

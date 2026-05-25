@@ -1,0 +1,82 @@
+# Node inventory — the controller's source of truth.
+#
+# Tier 1 (always-on):  361395-1, microvm-racknerd, nixos-laptop
+# Tier 2 (optional):   qfox-1, nixos-steamdeck-1
+#
+# Tier 1 nodes going down trigger CRITICAL alerts.
+# Tier 2 nodes going down are logged as info only.
+
+tier_1_required:
+  - 361395-1         # self (control plane)
+  - microvm-racknerd  # Caddy reverse proxy, public edge
+  - nixos-laptop      # k3s + Authentik SSO
+
+nodes:
+
+  361395-1:
+    tailscale_ip: 100.110.163.82
+    hostname: 361395
+    ssh_target: local
+    roles: [control-plane, storage]
+    probes: [system, garage, garage_buckets, usbip]
+    optional: false
+
+  microvm-racknerd:
+    tailscale_ip: 100.101.247.127
+    hostname: MicroVM-Racknerd
+    ssh_target: root@100.101.247.127
+    roles: [edge, static-files]
+    probes: [system, caddy, usbip]
+    optional: false
+
+  nixos-laptop:
+    tailscale_ip: 100.102.173.61
+    hostname: nixos
+    ssh_target: root@100.102.173.61
+    roles: [storage, service-host, compute]
+    probes: [system, k3s, usbip]
+    optional: false
+
+  qfox-1:
+    tailscale_ip: 100.88.57.96
+    hostname: QFox
+    ssh_target: root@100.88.57.96
+    roles: [backup, storage, compute]
+    probes: [system, restic, garage, garage_buckets, gdrive_offload, usbip]
+    optional: true
+
+  nixos-steamdeck-1:
+    tailscale_ip: 100.85.244.73
+    hostname: steamdeck
+    ssh_target: root@100.85.244.73
+    roles: [compute]
+    probes: [system, usbip]
+    optional: true
+
+# --- thresholds ---
+thresholds:
+  disk_warn_pct: 90
+  memory_warn_pct: 90
+  cert_min_days: 30
+  restic_max_age_hours: 28
+  snapshot_count_warn: 30
+  garage_nodes_min: 3
+
+# --- alerting ---
+alerting:
+  email:
+    enabled: true
+    to: "admin@researchstack.info"
+    relay_ssh_target: "root@100.101.247.127"
+  webhook:
+    enabled: false
+    url: ""
+  dashboard:
+    enabled: false
+    endpoint: "http://nixos-laptop:30801/api/push/OJm2a1kC3X"
+
+# --- schedule ---
+schedule:
+  node_probes: 300       # seconds between full probe cycles
+  backup_health: 1800    # seconds between backup checks
+  cold_copy: 43200       # seconds between cold copy attempts (12h)

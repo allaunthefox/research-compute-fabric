@@ -141,6 +141,43 @@ def _sh(
     return result.returncode, result.stdout, result.stderr
 
 
+# ── hoxel recording ───────────────────────────────────────────────────────────
+
+def _record_hoxel(
+    action: str,
+    outcome: str,
+    details: dict[str, Any] | None = None,
+) -> None:
+    """Record a hoxel transition to the rs-surface API."""
+    import urllib.request
+    endpoint = os.environ.get(
+        "RS_HOXEL_ENDPOINT",
+        "http://100.101.247.127:8444/v1/hoxels/record",
+    )
+    payload = json.dumps({
+        "obj_key": f"storage-agent/{action}",
+        "bucket": "research-stack",
+        "to_tier": "storage",
+        "spectral_mode": "backup",
+        "thermal_score": 0.0,
+        "residual": 0.0,
+        "payload_bytes": 0,
+        "density": 1.0,
+        "confidence": 1.0,
+        "semantic_load": 0.0,
+    }).encode()
+    try:
+        req = urllib.request.Request(
+            endpoint, data=payload,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            resp.read()
+    except Exception:
+        pass  # hoxel recording is advisory, never block the backup loop
+
+
 # ── hashing helpers ───────────────────────────────────────────────────────────
 
 def _sha256(data: str | bytes) -> str:
@@ -564,6 +601,8 @@ def act(
             env_extra=creds,
             timeout=3600,
         )
+        if "restic_snap" not in ar.actions_failed:
+            _record_hoxel("snap", "success")
 
     # ── Cold copy ──────────────────────────────────────────────────────────
     if d.trigger_cold_copy:
@@ -574,6 +613,8 @@ def act(
             env_extra=creds,
             timeout=3600,
         )
+        if "restic_cold_copy" not in ar.actions_failed:
+            _record_hoxel("cold_copy", "success")
 
     # ── Verify ─────────────────────────────────────────────────────────────
     if d.trigger_verify:
@@ -584,6 +625,8 @@ def act(
             env_extra=creds,
             timeout=600,
         )
+        if "restic_verify" not in ar.actions_failed:
+            _record_hoxel("verify", "success")
 
     # ── Forget / prune ─────────────────────────────────────────────────────
     if d.trigger_forget:
@@ -594,6 +637,8 @@ def act(
             env_extra=creds,
             timeout=600,
         )
+        if "restic_forget" not in ar.actions_failed:
+            _record_hoxel("forget", "success")
 
     # ── DB offload ─────────────────────────────────────────────────────────
     if d.trigger_offload:
@@ -604,6 +649,8 @@ def act(
             env_extra=creds,
             timeout=300,
         )
+        if "db_offload" not in ar.actions_failed:
+            _record_hoxel("offload", "success")
 
     return ar
 

@@ -191,7 +191,7 @@ def serializeCanonicalValue (v : CanonicalValue) : NormalizeResult ByteArray :=
       else
         .error (NormalizeError.overflow (toString n) ("uint" ++ toString bits))
   | CanonicalValue.q16_16 q =>
-      .ok (encodeU32BE q.val)
+      .ok (encodeU32BE q.toBits)
   | CanonicalValue.float64 f =>
       .ok (encodeU64BE (Float.toUInt64 f))
   | CanonicalValue.text s =>

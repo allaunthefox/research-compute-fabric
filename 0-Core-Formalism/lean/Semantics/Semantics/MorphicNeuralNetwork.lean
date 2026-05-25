@@ -115,11 +115,11 @@ def canSatisfyLocally (goal : OperationGoal) (state : NodeState) (carrier : Carr
   | OperationGoal.health => true
   | OperationGoal.recover => state.recoveryMode  -- only in recovery mode
   | OperationGoal.compress =>
-      let required := ⟨0x00000400⟩  -- 1KB in Q16_16 (1024 / 65536)
+      let required := Q16_16.ofRawInt 0x00000400  -- 1KB in Q16_16 (1024 / 65536)
       let available := state.memoryBudget - state.memoryUsed
       available > required
-  | OperationGoal.attest => state.trustScore > ⟨0x00008000⟩  -- 0.5 in Q16_16
-  | OperationGoal.route => carrier.lossRate < ⟨0x0000199A⟩  -- 0.1 in Q16_16
+  | OperationGoal.attest => state.trustScore > Q16_16.ofRawInt 0x00008000  -- 0.5 in Q16_16
+  | OperationGoal.route => carrier.lossRate < Q16_16.ofRawInt 0x0000199A  -- 0.1 in Q16_16
 
 /-- Compute routing decision based on goal, state, and carrier -/
 def selectPath (goal : OperationGoal) (state : NodeState) (carrier : CarrierMetrics) : RoutingDecision :=
@@ -128,12 +128,12 @@ def selectPath (goal : OperationGoal) (state : NodeState) (carrier : CarrierMetr
     {
       action := RoutingAction.atlas,
       gclCodon := goalToCodon goal,
-      cost := { energy := ⟨0x0000A000⟩, time := carrier.latency, bandwidth := ⟨0x00020000⟩ },  -- energy=10, bw=128
+      cost := { energy := Q16_16.ofRawInt 0x0000A000, time := carrier.latency, bandwidth := Q16_16.ofRawInt 0x00020000 },  -- energy=10, bw=128
       reason := RoutingReason.recoveryDefer
     }
   else if goal = OperationGoal.compress then
     -- Hard constraint: memory critically low for compress
-    let required := ⟨0x00000400⟩  -- 1KB in Q16_16
+    let required := Q16_16.ofRawInt 0x00000400  -- 1KB in Q16_16
     let available := state.memoryBudget - state.memoryUsed
     if available < required then
       {
@@ -144,55 +144,55 @@ def selectPath (goal : OperationGoal) (state : NodeState) (carrier : CarrierMetr
       }
     else if canSatisfyLocally goal state carrier then
       -- High trust + good carrier: local execution
-      if state.trustScore > ⟨0x0000CCCC⟩ ∧ carrier.lossRate < ⟨0x00000CD0⟩ then  -- trust>0.8, loss<0.05
+      if state.trustScore > Q16_16.ofRawInt 0x0000CCCC ∧ carrier.lossRate < Q16_16.ofRawInt 0x00000CD0 then  -- trust>0.8, loss<0.05
         {
           action := RoutingAction.local,
           gclCodon := goalToCodon goal,
-          cost := { energy := ⟨0x00010000⟩, time := ⟨0x00010000⟩, bandwidth := zero },  -- energy=1, time=1
+          cost := { energy := Q16_16.ofRawInt 0x00010000, time := Q16_16.ofRawInt 0x00010000, bandwidth := zero },  -- energy=1, time=1
           reason := RoutingReason.localTrusted
         }
-      else if state.trustScore > ⟨0x00008000⟩ then  -- trust>0.5
+      else if state.trustScore > Q16_16.ofRawInt 0x00008000 then  -- trust>0.5
         {
           action := RoutingAction.local,
           gclCodon := goalToCodon goal,
-          cost := { energy := ⟨0x00020000⟩, time := ⟨0x00020000⟩, bandwidth := zero },  -- energy=2, time=2
+          cost := { energy := Q16_16.ofRawInt 0x00020000, time := Q16_16.ofRawInt 0x00020000, bandwidth := zero },  -- energy=2, time=2
           reason := RoutingReason.localVerified
         }
       else
         {
           action := RoutingAction.atlas,
           gclCodon := goalToCodon goal,
-          cost := { energy := ⟨0x00050000⟩, time := carrier.latency, bandwidth := ⟨0x00010000⟩ },  -- energy=5, bw=64
+          cost := { energy := Q16_16.ofRawInt 0x00050000, time := carrier.latency, bandwidth := Q16_16.ofRawInt 0x00010000 },  -- energy=5, bw=64
           reason := RoutingReason.deferToAtlas
         }
     else
       {
         action := RoutingAction.atlas,
         gclCodon := goalToCodon goal,
-        cost := { energy := ⟨0x00050000⟩, time := carrier.latency, bandwidth := ⟨0x00010000⟩ },
+        cost := { energy := Q16_16.ofRawInt 0x00050000, time := carrier.latency, bandwidth := Q16_16.ofRawInt 0x00010000 },
         reason := RoutingReason.deferToAtlas
       }
   else if canSatisfyLocally goal state carrier then
     -- High trust + good carrier: local execution
-    if state.trustScore > ⟨0x0000CCCC⟩ ∧ carrier.lossRate < ⟨0x00000CD0⟩ then
+    if state.trustScore > Q16_16.ofRawInt 0x0000CCCC ∧ carrier.lossRate < Q16_16.ofRawInt 0x00000CD0 then
       {
         action := RoutingAction.local,
         gclCodon := goalToCodon goal,
-        cost := { energy := ⟨0x00010000⟩, time := ⟨0x00010000⟩, bandwidth := zero },
+        cost := { energy := Q16_16.ofRawInt 0x00010000, time := Q16_16.ofRawInt 0x00010000, bandwidth := zero },
         reason := RoutingReason.localTrusted
       }
-    else if state.trustScore > ⟨0x00008000⟩ then
+    else if state.trustScore > Q16_16.ofRawInt 0x00008000 then
       {
         action := RoutingAction.local,
         gclCodon := goalToCodon goal,
-        cost := { energy := ⟨0x00020000⟩, time := ⟨0x00020000⟩, bandwidth := zero },
+        cost := { energy := Q16_16.ofRawInt 0x00020000, time := Q16_16.ofRawInt 0x00020000, bandwidth := zero },
         reason := RoutingReason.localVerified
       }
     else
       {
         action := RoutingAction.atlas,
         gclCodon := goalToCodon goal,
-        cost := { energy := ⟨0x00050000⟩, time := carrier.latency, bandwidth := ⟨0x00010000⟩ },
+        cost := { energy := Q16_16.ofRawInt 0x00050000, time := carrier.latency, bandwidth := Q16_16.ofRawInt 0x00010000 },
         reason := RoutingReason.deferToAtlas
       }
   else
@@ -200,7 +200,7 @@ def selectPath (goal : OperationGoal) (state : NodeState) (carrier : CarrierMetr
     {
       action := RoutingAction.atlas,
       gclCodon := goalToCodon goal,
-      cost := { energy := ⟨0x00050000⟩, time := carrier.latency, bandwidth := ⟨0x00010000⟩ },
+      cost := { energy := Q16_16.ofRawInt 0x00050000, time := carrier.latency, bandwidth := Q16_16.ofRawInt 0x00010000 },
       reason := RoutingReason.deferToAtlas
     }
 

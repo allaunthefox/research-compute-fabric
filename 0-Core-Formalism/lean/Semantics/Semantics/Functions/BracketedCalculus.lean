@@ -58,8 +58,8 @@ def bracketMulConservative (x y : BracketedDIAT) : BracketedDIAT :=
   let v2 := x.lower * y.upper
   let v3 := x.upper * y.lower
   let v4 := x.upper * y.upper
-  let newLower := min (min v1 v2) (min v3 v4)
-  let newUpper := max (max v1 v2) (max v3 v4)
+  let newLower := Q16_16.min (Q16_16.min v1 v2) (Q16_16.min v3 v4)
+  let newUpper := Q16_16.max (Q16_16.max v1 v2) (Q16_16.max v3 v4)
   let newValue := x.value * y.value
   encode newLower newValue newUpper (UInt32.ofNat (Nat.max x.scale.toNat y.scale.toNat))
 
@@ -70,7 +70,7 @@ def bracketNeg (b : BracketedDIAT) : BracketedDIAT :=
   encode newLower newValue newUpper b.scale
 
 def taylorWithinTolerance (b : BracketedDIAT) (tolerance : Q16_16) : Bool :=
-  let maxError := max b.lowerGap b.upperGap
+  let maxError := Q16_16.max b.lowerGap b.upperGap
   maxError.val <= tolerance.val
 
 def derivativeEstimate (b : BracketedDIAT) (h : Q16_16) : Q16_16 :=

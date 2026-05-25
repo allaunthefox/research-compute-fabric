@@ -1,5 +1,15 @@
 # Proxmox VPS Deployment Status
 
+> **REALITY CHECK — 2026-05-21:** This document describes a historical state.
+> The Netcup VPS (46.232.249.226) was reinstalled to **Debian 13** and now
+> appears in Tailscale as **361395-1** (100.110.163.82). The Proxmox/LXC/Authentik
+> stack described below no longer exists on this machine. The current state is:
+> - OS: Debian 13 (OpenSSH_10.0p2 Debian-7+deb13u4)
+> - Tailscale: 361395-1 / 100.110.163.82
+> - SSH: key auth denied (needs root password or provider console recovery)
+> - Public IP: 46.232.249.226 (netcup upstream filtering ports 80/443)
+> Keep this file as archive only.
+
 ## Netcup VPS (46.232.249.226 / 2a03:4000:2b:468:980e:3bff:fea5:65aa)
 
 ### Completed
@@ -35,7 +45,7 @@
 
 #### 5. age / SOPS Secret Management
 - **Keypair**: Generated at `~/.config/sops/age/keys.txt`
-- **Public key**: `age1fvm02ruga67vnw5wws9p2ycckdmc0gp83m9s6cyld0ctpxyf8gzqy5wwsr`
+- **Public key**: `age1tp4vr565zkmvnyulatpyaj6z8zrz7q9mpaypz85yz8rty99crdasualxyr`
 - **Encrypted files**:
   - `.env`
   - `4-Infrastructure/storage/restic/restic.env`

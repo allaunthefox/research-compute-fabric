@@ -81,26 +81,13 @@ CREATE INDEX IF NOT EXISTS idx_wiki_pages_slug ON ene.wiki_pages(slug);
 CREATE INDEX IF NOT EXISTS idx_wiki_pages_title ON ene.wiki_pages USING gin(to_tsvector('english', title));
 CREATE INDEX IF NOT EXISTS idx_wiki_revisions_page ON ene.wiki_revisions(page_id, created_at DESC);
         "#;
-        self.client
-            .inner()
-            .batch_execute(ddl)
-            .await
-            .context("init wiki DDL")?;
+        self.client.inner().batch_execute(ddl).await.context("init wiki DDL")?;
         info!("wiki schema initialized");
         Ok(())
     }
 
-    pub async fn put_page(
-        &self,
-        title: &str,
-        content: &str,
-        editor: &str,
-        summary: &str,
-    ) -> Result<WikiPage> {
-        let slug = title
-            .to_lowercase()
-            .replace(' ', "-")
-            .replace(|c: char| !c.is_alphanumeric() && c != '-', "");
+    pub async fn put_page(&self, title: &str, content: &str, editor: &str, summary: &str) -> Result<WikiPage> {
+        let slug = title.to_lowercase().replace(' ', "-").replace(|c: char| !c.is_alphanumeric() && c != '-', "");
         let row = self.client.inner()
             .query_one(
                 "INSERT INTO ene.wiki_pages (title, slug, content, updated_at) \
@@ -132,9 +119,7 @@ CREATE INDEX IF NOT EXISTS idx_wiki_revisions_page ON ene.wiki_revisions(page_id
     }
 
     pub async fn get_page(&self, slug: &str) -> Result<Option<WikiPage>> {
-        let row = self
-            .client
-            .inner()
+        let row = self.client.inner()
             .query_opt(
                 "SELECT id, title, slug, content, concept_anchor, concept_vector, \
                  created_at::text, updated_at::text FROM ene.wiki_pages WHERE slug = $1",
@@ -165,17 +150,12 @@ CREATE INDEX IF NOT EXISTS idx_wiki_revisions_page ON ene.wiki_revisions(page_id
             )
             .await
             .context("search wiki")?;
-        Ok(rows
-            .iter()
-            .map(|r| {
-                json!({
-                    "id": r.get::<_, i64>(0),
-                    "title": r.get::<_, String>(1),
-                    "slug": r.get::<_, String>(2),
-                    "rank": r.get::<_, f32>(3),
-                })
-            })
-            .collect())
+        Ok(rows.iter().map(|r| json!({
+            "id": r.get::<_, i64>(0),
+            "title": r.get::<_, String>(1),
+            "slug": r.get::<_, String>(2),
+            "rank": r.get::<_, f32>(3),
+        })).collect())
     }
 
     pub async fn recent(&self, limit: i64) -> Result<Vec<WikiPage>> {
@@ -187,18 +167,15 @@ CREATE INDEX IF NOT EXISTS idx_wiki_revisions_page ON ene.wiki_revisions(page_id
             )
             .await
             .context("recent wiki pages")?;
-        Ok(rows
-            .iter()
-            .map(|r| WikiPage {
-                id: r.get(0),
-                title: r.get(1),
-                slug: r.get(2),
-                content: r.get(3),
-                concept_anchor: r.get(4),
-                concept_vector: r.get(5),
-                created_at: r.get(6),
-                updated_at: r.get(7),
-            })
-            .collect())
+        Ok(rows.iter().map(|r| WikiPage {
+            id: r.get(0),
+            title: r.get(1),
+            slug: r.get(2),
+            content: r.get(3),
+            concept_anchor: r.get(4),
+            concept_vector: r.get(5),
+            created_at: r.get(6),
+            updated_at: r.get(7),
+        }).collect())
     }
 }

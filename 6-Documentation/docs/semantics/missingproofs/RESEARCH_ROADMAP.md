@@ -431,5 +431,34 @@ Remaining work: Symbolic proofs for unbounded/general cases.
 
 ---
 
+---
+
+## Appendix: Language-Genetic-Thermodynamic Probe Suite (Completed 2026-05-22)
+
+| Module | Theorem Count | Key Results | Status |
+|--------|--------------|-------------|--------|
+| `MediaTransferProbe.lean` | 10+ | `channelBandwidthIncreasing` (oral → AI strictly increasing); 10×, 100×, 10,000× transition ratios | ✅ PROVEN (`native_decide`) |
+| `LanguageTransferProbe.lean` | 15+ | `languageEffectivenessStrictlyIncreasing` (chemical < mechanical < acoustic < electromagnetic < persistent < digital < generative); `digitalToGenerativeIs100x` | ✅ PROVEN |
+| `LanguageZoologyProbe.lean` | 8+ | Substrate assignments: honeybee=mechanical, cetaceans=acoustic, octopus=electromagnetic; `spermWhaleExceedsAllOtherDocumented` | ✅ PROVEN |
+| `GeneticThermodynamicLimitProbe.lean` | 12+ | `dnaHighestNaturalFidelity`; `dnaHighestNaturalTradeoff`; `prionHighestAlphabet`; `R_max ≈ 3.5×10^8 bits/s` (Landauer limit at 1 pW) | ✅ PROVEN |
+| `ExpandedGeneticAlphabetProbe.lean` | 15+ | `hachimojiDensityIncrease` (1.5×); `supernumeraryExceedsHachimoji`; `standardDnaOptimal` (4-base maximizes bits/ATP); 12 as structural/chemical upper limit | ✅ PROVEN |
+| `GeneticAnchorProbe.lean` | 6+ | `codonProductRatioApprox3` (`64/21 > 3`); `exactDifference = 1/21`; `allGeneticTimescalePrerequisitesMissing = 5` | ✅ PROVEN |
+| `ThermodynamicLanguageProbe.lean` | 10+ | `generativeMismatchCritical` (M = 50,000,000); `generativeEscapeTimeHumanScale` (~4M years); basin overflow theorem | ✅ PROVEN |
+| `LandauerShannonProbe.lean` | 8+ | `landauerEnergyPositive`; `heisenbergTimePositive`; `heuristicMengerEntropy ≈ 0.824 bits`; framework gap analysis | ✅ PROVEN |
+| `GeneticSignalTransformProbe.lean` | 6+ | `lteeSquareRootScaling`; `drakeRuleDirection`; `predictionFractalDimensionConstraint`; unified power law `P = C_domain · √S · gain · B_gate` | ✅ PROVEN |
+| `SemanticBasinOverflowProbe.lean` | 5+ | `meaningProductionIsFiveBillion`; `bandwidthAndMismatchAreConsistent`; `basinOverflowIsFiveHundredMillionToOne` | ✅ PROVEN |
+| `GeneticErrorMinimizationProbe.lean` | 4+ | `standardCodeBetterThanRandom`; `errorMinimizationRatioAtLeastOnePointFive`; Freeland & Hurst polarity model | ✅ PROVEN |
+| `InformationBottleneckLanguageProbe.lean` | 7+ | `allIBRatesIncreasing`; `generativeEffectiveRateExceedsDigital`; `chemicalEffectiveRateBounded` | ✅ PROVEN |
+| `CrossModalGeneticLanguageProbe.lean` | 5+ | `transcriptionMoreFidelityThanTranslation`; `regulatoryCompressionBounded`; 5-modality developmental pipeline | ✅ PROVEN |
+| `LandauerGeneticClockProbe.lean` | 5+ | `repairEnergyFarAboveLandauer`; `ecoliClockExceedsHumanClock`; `efficiencyGapConsistentWithRepairCost` | ✅ PROVEN |
+
+**Build status:** 3592 jobs green, zero errors.
+
+**Provenance:** All modules carry inline REFERENCES blocks pointing to `6-Documentation/docs/provenance/LANGUAGE_MATH_MODEL_SOURCES.cff` (29 verified DOIs).
+
+**Next targets:** All 6 proposed probes completed 2026-05-22. See TODO_MAP.md §Immediate Next Actions for subsequent targets.
+
+---
+
 *Document ID: RESEARCH_ROADMAP_2026-04-19*  
 *Authority: AGENTS.md §9 — Research prioritization*

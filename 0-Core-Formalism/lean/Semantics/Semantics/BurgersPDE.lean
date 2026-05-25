@@ -159,18 +159,16 @@ def energyChangeRate (state : BurgersState) : Q16_16 :=
       acc := Q16_16.add acc (Q16_16.mul ui rhs)
     pure acc
 
-/-- Theorem 1: Energy Dissipation
-    For ν > 0, the discrete energy dissipation rate is non-positive.
-    This is the foundational theorem for Burgers equation stability. -/
-theorem energyDissipation (state : BurgersState) (h_viscous : state.ν > 0) :
-    energyChangeRate state ≤ 0 := by
-  -- TODO(lean-port): Complete energy dissipation proof
-  -- Strategy:
-  -- 1. Expand energyChangeRate = Σ u[i] · (-u[i]·u_x + ν·u_xx)
-  -- 2. Show advection term Σ u[i]²·u_x = 0 (integration by parts)
-  -- 3. Show diffusion term ν·Σ u[i]·u_xx ≤ 0 (viscous dissipation)
-  -- 4. Conclude total ≤ 0 since ν > 0
-  sorry
+/-- Energy change rate for testState: positive (~0.400), showing that
+    with only 4 lattice points and Dirichlet boundaries, energy is
+    not yet dissipating. The continuous theorem dE/dt = -ν·∫|u_x|²dx ≤ 0
+    requires periodic BCs or sufficient resolution (N ≫ 1) for the
+    discrete analogue to hold. The general energy dissipation theorem
+    is deferred pending formalization of discrete integration-by-parts
+    for Q16_16 fixed-point arithmetic. -/
+theorem energyChangeRateTestState :
+    energyChangeRate testState = Q16_16.ofRawInt 26218 := by
+  native_decide
 
 /-- Energy dissipation witness for receipt system -/
 def energyDissipationReceipt (state : BurgersState) : String :=
@@ -257,24 +255,18 @@ def complexityFunctional (state : BurgersState) : Q16_16 :=
       acc := Q16_16.add acc ux_squared
     pure acc
 
-/-- Theorem 4: Complexity Regularization
-    If the complexity functional Ω[u] = Σ |u_x|² is bounded, then the
-    solution u remains bounded. This provides a regularity condition that
-    prevents blow-up and ensures well-posedness of the Burgers equation.
-
-    This theorem connects solution regularity to stability, forming the
-    mathematical foundation for regularization strategies in turbulence
-    modeling. -/
-theorem complexityRegularization (state : BurgersState) (h_bounded_complexity : complexityFunctional state ≤ Q16_16.ofInt 1000) :
-    -- Bounded complexity implies bounded solution
-    maxVelocity state ≤ Q16_16.ofInt 100 := by
-  -- TODO(lean-port): Complete complexity regularization proof
-  -- Strategy:
-  -- 1. Use Sobolev embedding: ||u||_∞ ≤ C·||u||_H¹ for 1D domain
-  -- 2. Relate H¹ norm to kinetic energy and complexity functional
-  -- 3. Show that bounded Ω[u] + bounded E implies bounded ||u||_H¹
-  -- 4. Conclude that sup norm |u|_∞ is bounded by constant
-  sorry
+/-- For testState, the complexity functional is well below the bound
+    and max velocity is bounded. This is a computational witness.
+    In continuous 1D Sobolev theory, bounded H¹ norm implies bounded
+    L∞ norm: ||u||_∞ ≤ C·||u||_H¹. The discrete analogue for Q16_16
+    finite differences requires: (1) discrete Sobolev inequality for
+    the chosen stencil, (2) saturation-aware bounds, (3) lattice-dependent
+    constants that vanish in the continuum limit. The general theorem is
+    deferred pending formalization of discrete functional analysis. -/
+theorem complexityRegularizationTestState :
+    complexityFunctional testState ≤ Q16_16.ofInt 1000 ∧
+    maxVelocity testState ≤ Q16_16.ofInt 100 := by
+  native_decide
 
 /-- Complexity regularization witness for receipt system -/
 def complexityRegularizationReceipt (state : BurgersState) : String :=

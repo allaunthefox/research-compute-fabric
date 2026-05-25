@@ -14,13 +14,13 @@ namespace Semantics.NonEuclideanGeometry
 open Q16_16
 
 -- PHI = (1 + √5)/2 ≈ 1.6180339887 → 1.6180 * 65536 = 106039
-def phi : Q16_16 := ⟨106039⟩
+def phi : Q16_16 := Q16_16.ofRawInt 106039
 
 -- cos(π/4) ≈ 0.7071 → 46341 in Q16.16
-def cosQtrPi : Q16_16 := ⟨46341⟩
+def cosQtrPi : Q16_16 := Q16_16.ofRawInt 46341
 
 -- 0.5 in Q16.16
-def half : Q16_16 := ⟨32768⟩
+def half : Q16_16 := Q16_16.ofRawInt 32768
 
 -- Oblique projection offset: cos(π/4) * 0.5
 def dOblique : Q16_16 := mul cosQtrPi half
@@ -56,7 +56,7 @@ def parallelTransportWrithe (history : Array Point3) : Q16_16 :=
       else acc
     ) zero (Array.range (deltas.size))
     let divisor := (n - 1)
-    if divisor == 0 then zero else ⟨total.val / divisor.toUInt32⟩
+    if divisor == 0 then zero else Q16_16.ofRawInt (total.val / (divisor : Int))
 
 -- Row 136: NE Path Validation
 -- PHI-weighted distance: d = √(Σ w_i · (a_i - b_i)²), w_i = PHI^(-i)
@@ -80,9 +80,9 @@ def phiWeightedDistSq (a b : Array Q16_16) : Q16_16 :=
   ) zero (Array.range n)
 
 -- Threshold: 5.0 in Q16.16 = 327680
-def maxJumpThreshold : Q16_16 := ⟨327680⟩
+def maxJumpThreshold : Q16_16 := Q16_16.ofRawInt 327680
 -- Writhe bound: 2.0 in Q16.16 = 131072
-def maxWrithe : Q16_16 := ⟨131072⟩
+def maxWrithe : Q16_16 := Q16_16.ofRawInt 131072
 
 inductive PathValidity | Valid | JumpTooLarge | WritheTooLarge | Unstable
   deriving Repr, DecidableEq, Inhabited
@@ -110,9 +110,9 @@ def nEGeomBind (a b : Array Point3) (m : Metric) : Bind (Array Point3) (Array Po
 
 -- Verify
 #eval parallelTransportWrithe #[
-  Point3.mk ⟨65536⟩ ⟨0⟩ ⟨0⟩,
-  Point3.mk ⟨0⟩ ⟨65536⟩ ⟨0⟩,
-  Point3.mk ⟨0⟩ ⟨0⟩ ⟨65536⟩
+  Point3.mk (Q16_16.ofRawInt 65536) (Q16_16.ofRawInt 0) (Q16_16.ofRawInt 0),
+  Point3.mk (Q16_16.ofRawInt 0) (Q16_16.ofRawInt 65536) (Q16_16.ofRawInt 0),
+  Point3.mk (Q16_16.ofRawInt 0) (Q16_16.ofRawInt 0) (Q16_16.ofRawInt 65536)
 ]
 
 end Semantics.NonEuclideanGeometry

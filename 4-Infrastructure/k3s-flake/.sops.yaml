@@ -1,5 +1,5 @@
 keys:
-  - &admin age1fvm02ruga67vnw5wws9p2ycckdmc0gp83m9s6cyld0ctpxyf8gzqy5wwsr
+  - &admin age1tp4vr565zkmvnyulatpyaj6z8zrz7q9mpaypz85yz8rty99crdasualxyr
 creation_rules:
   - path_regex: secrets/.*\.age$
     key_groups:

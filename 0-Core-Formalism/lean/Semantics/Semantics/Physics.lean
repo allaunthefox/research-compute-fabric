@@ -10,3 +10,6 @@ import Semantics.Physics.BindPhysics
 import Semantics.Physics.DESIInvariant
 import Semantics.Physics.DESIModelProjection
 import Semantics.Physics.Tests
+import Semantics.Physics.UncertaintyBounds
+import Semantics.Physics.RydbergExperimentalTest
+import Semantics.Physics.PreRegisteredPredictions

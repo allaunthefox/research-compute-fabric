@@ -1,0 +1,37 @@
+{
+  "mcp": {
+    "contextstream": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@contextstream/mcp-server@latest"
+      ],
+      "environment": {
+        "CONTEXTSTREAM_API_URL": "https://api.contextstream.io",
+        "CONTEXTSTREAM_ALLOW_HEADER_AUTH": "false",
+        "CONTEXTSTREAM_WORKSPACE_ID": "21c133f6-6854-4e81-b801-4037c11b7e34",
+        "CONTEXTSTREAM_PROJECT_ID": "ef91cc79-aae3-4765-ae0d-63b48f5ea6e6",
+        "CONTEXTSTREAM_USER_AGENT": "contextstream-mcp/0.4.74",
+        "CONTEXTSTREAM_TOOLSET": "complete",
+        "CONTEXTSTREAM_LOG_LEVEL": "quiet",
+        "CONTEXTSTREAM_OUTPUT_FORMAT": "compact",
+        "CONTEXTSTREAM_CONTEXT_PACK": "false",
+        "CONTEXTSTREAM_TRANSCRIPTS_ENABLED": "true",
+        "CONTEXTSTREAM_HOOK_TRANSCRIPTS_ENABLED": "true",
+        "CONTEXTSTREAM_SHOW_TIMING": "false",
+        "CONTEXTSTREAM_PROGRESSIVE_MODE": "false",
+        "CONTEXTSTREAM_ROUTER_MODE": "false",
+        "CONTEXTSTREAM_CONSOLIDATED": "true",
+        "CONTEXTSTREAM_AUTO_HIDE_INTEGRATIONS": "true",
+        "CONTEXTSTREAM_SEARCH_LIMIT": "15",
+        "CONTEXTSTREAM_SEARCH_MAX_CHARS": "2400",
+        "CONTEXTSTREAM_INCLUDE_STRUCTURED_CONTENT": "true"
+      },
+      "enabled": true
+    }
+  },
+  "instructions": [
+    ".kilo/rules/*.md"
+  ]
+}

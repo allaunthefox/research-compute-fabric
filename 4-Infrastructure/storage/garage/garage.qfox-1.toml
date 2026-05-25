@@ -3,9 +3,10 @@
 #
 # Cluster topology (all nodes communicate over Tailscale mesh):
 #   qfox-1           100.88.57.96    this machine — primary S3 endpoint
-#   cupfox-4gb-2cpu  100.126.242.5   storage node
-#   nixos            100.119.165.120 storage node
-#   microvm-racknerd 100.101.247.127 storage node (VPS)
+#   361395-1         100.110.163.82  Debian 13 / Netcup VPS (old cupfox, reinstalled)
+#   nixos-laptop     100.119.165.120 NixOS / storage node
+#   microvm-racknerd 100.101.247.127 Debian VM / RackNerd VPS
+#   dracocomp        100.100.140.27  offline (last seen 2d ago)
 
 metadata_dir = "/var/lib/garage/meta"
 data_dir     = "/var/lib/garage/data"
@@ -13,7 +14,7 @@ data_dir     = "/var/lib/garage/data"
 # SQLite is fine for <10 nodes; lmdb is faster for larger clusters
 db_engine = "sqlite"
 
-replication_factor = 3
+replication_factor = 1
 consistency_mode   = "consistent"
 
 # Shared across all nodes — lives in /etc/garage/cluster-secret (chmod 600)

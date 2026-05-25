@@ -45,7 +45,7 @@ def mechanicalBalance (a b c : LinkState) : LinkState :=
   In our Q16_16 model, we use a normalized 'Entropy Cost' where 1.0 = Landauer Limit.
 -/
 def landauerLimit : Q16_16 := one
-def merkleDissipation : Q16_16 := ⟨65⟩ -- ~0.001 * Landauer Limit (approx 10^-24 vs 10^-21)
+def merkleDissipation : Q16_16 := Q16_16.ofRawInt 65 -- ~0.001 * Landauer Limit (approx 10^-24 vs 10^-21)
 
 /-- 
   Verification: Is the operation 'Ultra-Efficient' (below Landauer)?

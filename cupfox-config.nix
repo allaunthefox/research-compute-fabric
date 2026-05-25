@@ -1,3 +1,9 @@
+# STALE / LEGACY — 2026-05-21
+# This NixOS configuration was for the original cupfox node (Tailscale IP
+# 100.126.151.57, later 100.126.242.5). That machine was reinstalled to Debian 13
+# and now appears in the tailnet as 361395-1 (100.110.163.82). None of the IPs,
+# hostnames, or service definitions below match current reality. Keep as archive
+# only; do not deploy or build from this file.
 { config, pkgs, lib, ... }:
 
 let

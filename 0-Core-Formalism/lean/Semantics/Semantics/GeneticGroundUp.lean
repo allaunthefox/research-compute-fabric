@@ -391,12 +391,12 @@ def totalSpeedupTarget : Nat := 100000
 /-- Use Q0_16 for quantum nucleotide quality scoring (2-byte pure fraction). -/
 def nucleotideQuality (n : Nucleotide) : Q0_16 :=
   -- Map expression probability to Q0_16 (normalized [0, 1])
-  let probFloat := (Nucleotide.expressionProb n |>.val).toFloat / 65536.0
+  let probFloat := Float.ofInt (Nucleotide.expressionProb n |>.val) / 65536.0
   Q0_16.ofFloat probFloat
 
 /-- Integration: GeneKernel uses Q0_16 for fitness scoring (2-byte pure fraction). -/
 def kernelFitnessQFactor (gk : GeneKernel) : Q0_16 :=
-  let fitnessFloat := gk.fitnessScore.val.toFloat / 65536.0
+  let fitnessFloat := Float.ofInt gk.fitnessScore.val / 65536.0
   Q0_16.ofFloat fitnessFloat
 
 -- ═══════════════════════════════════════════════════════════════════════════

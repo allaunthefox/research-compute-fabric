@@ -79,12 +79,14 @@ Dynamo-style S3-compatible store written in Rust. Replaced rclone serve s3.
 
 ### Node topology (Tailscale mesh)
 
-| Node | Tailscale IP | Role | Disk |
-|------|-------------|------|------|
-| qfox-1 (this machine) | 100.88.57.96 | primary, S3 endpoint | 1.8 TB NVMe |
-| cupfox-4gb-2cpu | 100.126.242.5 | storage node | TBD |
-| nixos | 100.119.165.120 | storage node | TBD |
-| microvm-racknerd | 100.101.247.127 | storage node (VPS) | TBD |
+| Node | Tailscale IP | Role | Disk | SSH Status |
+|------|-------------|------|------|----------|
+| qfox-1 (this machine) | 100.88.57.96 | primary, S3 endpoint, GPU compute | 1.8 TB NVMe | local |
+| 361395-1 (old cupfox) | 100.110.163.82 | Netcup VPS, 2 vCPU EPYC-Genoa | 125 GB | key OK (recovered) |
+| nixos-laptop | 100.119.165.120 | Authentik SSO, Uptime Kuma, storage node, AMD GPU compute | 459 GB NVMe | key OK |
+| microvm-racknerd | 100.101.247.127 | Caddy reverse proxy, Homer dashboard, chat placeholder, auth alias | 9.1 GB | root password OK |
+| nixos-steamdeck-1 | 100.85.244.73 | GPU compute, planned edge LLM (3B-7B), RDNA 2 | NixOS | just onboarded |
+| dracocomp | 100.100.140.27 | offline | — | unreachable (3+ days)
 
 - RPC port: **3901** (Tailscale-only, not exposed to internet)
 - S3 API port: **3900** (qfox-1 only; other nodes bind loopback)
@@ -152,7 +154,7 @@ Daily timer: `restic-backup.timer` fires at 03:00 ±30 min, runs `backup.sh full
 Currently `replication_factor = 1` (single node, qfox-1 only).
 Bump to 3 after bootstrapping 3 nodes:
 ```bash
-bash 4-Infrastructure/storage/garage/garage-node-bootstrap.sh 100.126.242.5
+bash 4-Infrastructure/storage/garage/garage-node-bootstrap.sh 100.110.163.82
 bash 4-Infrastructure/storage/garage/garage-node-bootstrap.sh 100.119.165.120
 bash 4-Infrastructure/storage/garage/garage-cluster-init.sh
 ```

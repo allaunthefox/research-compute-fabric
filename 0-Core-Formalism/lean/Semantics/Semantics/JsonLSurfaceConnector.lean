@@ -161,7 +161,7 @@ def connectorInvariant (e : JsonLEvent) : String :=
   s!"jsonl:{e.src.toTag}:{e.op.toTag}:{e.id}:bucket={genomeBucket e.genome}"
 
 def connectorCost (_connector : SurfaceConnector) (event : JsonLEvent) (_metric : Metric) : Semantics.Q16_16 :=
-  ⟨event.bind.cost + UInt32.ofNat (genomeBucket event.genome)⟩
+  Semantics.Q16_16.ofBits (event.bind.cost + UInt32.ofNat (genomeBucket event.genome))
 
 def bindConnectorEvent (connector : SurfaceConnector) (event : JsonLEvent) : Bind SurfaceConnector JsonLEvent :=
   let metric := { Metric.euclidean with reference := "jsonl_surface_connector", history_len := connector.tools.length }

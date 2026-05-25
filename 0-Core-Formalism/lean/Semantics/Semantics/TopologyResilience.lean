@@ -70,7 +70,7 @@ def utilization (seg : NetworkSegment) : Q16_16 :=
   if seg.capacityQps = zero then Q16_16.one else seg.currentLoad / seg.capacityQps
 
 /-- A segment is overloaded if utilization > 0.8 (52428 in Q16.16). -/
-def overloadedThreshold : Q16_16 := ⟨52428⟩  -- 0.8
+def overloadedThreshold : Q16_16 := Q16_16.ofRawInt 52428  -- 0.8
 
 def isOverloaded (seg : NetworkSegment) : Bool :=
   utilization seg > overloadedThreshold

@@ -25,7 +25,7 @@ set_option linter.dupNamespace false
 
 namespace Semantics.LogogramRotationLoop
 
-open Semantics.FixedPoint (Q0_16)
+open Semantics.FixedPoint (Q0_16 Q0_16.ofRawInt Q16_16.ofRawInt)
 open Semantics.ThresholdVector (ActivationState ActivationWeight
   ThresholdVector activationExcess totalActivation criticalActivationThreshold)
 open Semantics.RRCLogogramProjection (RRCShape WitnessStatus SemanticRegime
@@ -205,15 +205,15 @@ def materializedCount (structures : List ExtractedStructure) : Nat :=
 
 /-- A threshold band for low activation (density-gradient regime). -/
 def lowBand : ThresholdBand :=
-  { lower := ⟨0x0000⟩, upper := ⟨0x2CCC⟩ }
+  { lower := Q0_16.ofRawInt 0x0000, upper := Q0_16.ofRawInt 0x2CCC }
 
 /-- A threshold band for medium activation (coupling regime). -/
 def midBand : ThresholdBand :=
-  { lower := ⟨0x2CCC⟩, upper := ⟨0x5555⟩ }
+  { lower := Q0_16.ofRawInt 0x2CCC, upper := Q0_16.ofRawInt 0x5555 }
 
 /-- A threshold band for high activation (topology regime). -/
 def highBand : ThresholdBand :=
-  { lower := ⟨0x5555⟩, upper := ⟨0x7FFF⟩ }
+  { lower := Q0_16.ofRawInt 0x5555, upper := Q0_16.ofRawInt 0x7FFF }
 
 /--
 Three projection layers encoding different structures in different
@@ -221,7 +221,7 @@ threshold bands, simulating a 3-structure-per-volume rotation cycle.
 -/
 def threeStructureCycle : RotationCycle :=
   { layers := [
-      { angle := { angle := ⟨0x0000⟩ }
+      { angle := { angle := Q0_16.ofRawInt 0x0000 }
       , encoding :=
           { stressAccumulated := Q0_16.half
           , couplingAccumulated := Q0_16.zero
@@ -229,7 +229,7 @@ def threeStructureCycle : RotationCycle :=
           , eigenmodeDrift := Q0_16.zero
           , residualAccumulated := Q0_16.zero }
       , targetBand := lowBand }
-    , { angle := { angle := ⟨0x2AAA⟩ }
+    , { angle := { angle := Q0_16.ofRawInt 0x2AAA }
       , encoding :=
           { stressAccumulated := Q0_16.zero
           , couplingAccumulated := Q0_16.one
@@ -237,7 +237,7 @@ def threeStructureCycle : RotationCycle :=
           , eigenmodeDrift := Q0_16.zero
           , residualAccumulated := Q0_16.zero }
       , targetBand := midBand }
-    , { angle := { angle := ⟨0x5555⟩ }
+    , { angle := { angle := Q0_16.ofRawInt 0x5555 }
       , encoding :=
           { stressAccumulated := Q0_16.zero
           , couplingAccumulated := Q0_16.zero
@@ -310,7 +310,7 @@ theorem one_is_in_high_band :
   native_decide
 
 theorem low_and_mid_bands_are_disjoint :
-    inBand ⟨0x2CCC⟩ lowBand = true && inBand ⟨0x2CCC⟩ midBand = true := by
+    inBand (Q0_16.ofRawInt 0x2CCC) lowBand = true && inBand (Q0_16.ofRawInt 0x2CCC) midBand = true := by
   native_decide
 
 /- =======================================================================

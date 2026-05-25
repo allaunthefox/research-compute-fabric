@@ -124,7 +124,7 @@ def overlapToScalar (overlap : Nat) : Q16_16 :=
   if maxP = 0 then zero
   else
     let raw := overlap * 65536 / maxP
-    ⟨raw.toUInt32⟩
+    Q16_16.ofRawInt (raw : Int)
 
 /-- Reduction filter: collapse entity state to 1D scalar.
     The scalar encodes semantic prime overlap between sender and receiver.
@@ -310,7 +310,7 @@ theorem selfCommunicationPreservesAllPrimes
   s!"scalar={msg.scalarPayload.val}, preserved={msg.preservedPrimes.length}, ratio={msg.reductionRatio.val}"
 
 -- Receive: expand to 2D
-#eval let scalar := ⟨32768⟩  -- 0.5 in Q16.16
+#eval let scalar := Q16_16.ofRawInt 32768  -- 0.5 in Q16.16
   let coords := expansionFilter scalar 2
   coords.length
 

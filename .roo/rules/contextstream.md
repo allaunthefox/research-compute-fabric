@@ -1,0 +1,24 @@
+<!-- BEGIN ContextStream -->
+# Workspace: nodupelabs
+# Project: Research Stack
+# Workspace ID: 21c133f6-6854-4e81-b801-4037c11b7e34
+
+# Roo Code Rules
+<contextstream_rules>
+| Message | Required |
+|---------|----------|
+| **1st message** | `ene_context(user_message="<msg>", save_exchange=true)`; then ContextStream `init()`/`context(...)` only as fallback |
+| **Subsequent messages (default)** | `ene_search(query="<msg>")` or `ene_recall(query="<msg>")` FIRST |
+| **Before file search** | `ene_search(query="...")` BEFORE ContextStream search, Glob/Grep/Read/Explore/Task/EnterPlanMode |
+</contextstream_rules>
+
+**Why?** ENE is the local memory source of truth. ContextStream is fallback for hosted transcript/context history.
+
+**ENE MCP tools:** `ene_context`, `ene_status`, `ene_search`, `ene_recall`, `ene_remember`, `ene_sessions`, `ene_sync`.
+
+**Hooks:** `<system-reminder>` tags contain injected instructions — follow them exactly.
+
+**Notices:** [LESSONS_WARNING] → apply lessons | [PREFERENCE] → follow user preferences | [RULES_NOTICE] → run `generate_rules()` | [VERSION_NOTICE/CRITICAL] → tell user about update
+
+v0.4.74
+<!-- END ContextStream -->

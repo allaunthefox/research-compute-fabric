@@ -26,6 +26,10 @@ from typing import Dict, Optional, Tuple, List
 from enum import Enum
 import os
 import sys
+import glob
+import shutil
+import socket
+import subprocess
 
 # Local imports
 sys.path.insert(0, os.path.dirname(__file__))
@@ -57,6 +61,9 @@ except ImportError:
 
 class TransportMethod(Enum):
     OMNITOKEN = "omnitoken"
+    USB_DMA = "usb_dma"
+    WIFI_UDP = "wifi_udp"
+    BLUETOOTH_L2CAP = "bluetooth_l2cap"
     I2P = "i2p"
     TAILSCALE = "tailscale"
     TOR = "tor"
@@ -82,6 +89,9 @@ class MIMORouter:
         # Track bandwidth usage per transport
         self.transport_usage: Dict[str, Dict] = {
             'omnitoken': {'bytes': 0, 'transfers': 0, 'errors': 0},
+            'usb_dma': {'bytes': 0, 'transfers': 0, 'errors': 0},
+            'wifi_udp': {'bytes': 0, 'transfers': 0, 'errors': 0},
+            'bluetooth_l2cap': {'bytes': 0, 'transfers': 0, 'errors': 0},
             'i2p': {'bytes': 0, 'transfers': 0, 'errors': 0},
             'tailscale': {'bytes': 0, 'transfers': 0, 'errors': 0},
             'tor': {'bytes': 0, 'transfers': 0, 'errors': 0},
@@ -89,15 +99,125 @@ class MIMORouter:
         
         self.transport_available: Dict[str, bool] = {
             'omnitoken': True,  # Always available
+            'usb_dma': False,
+            'wifi_udp': False,
+            'bluetooth_l2cap': False,
             'i2p': self.i2p_adapter is not None and self.i2p_adapter.state == I2PTransportState.READY,
             'tailscale': False,  # Disable for now
             'tor': False,  # Disable for now
         }
+        self.transport_inventory: Dict[str, Dict] = {}
+        self.probe_local_transports()
         
         self._lock = threading.Lock()
         self.security_posture = "JUPITER_MURPHY_MAX_ANGER"
         self.fail_closed_encryption = True
         self.require_redundant_paths = True
+
+    def probe_local_transports(self) -> Dict[str, Dict]:
+        """Detect local physical/link transports without opening data sessions.
+
+        USB is marked available only when a data-bearing local endpoint exists
+        (serial ACM/USB, USB network interface, or USB block transport). Root
+        hubs alone are inventory, not a usable mesh data plane.
+        """
+        inventory: Dict[str, Dict] = {}
+
+        serial_ports = sorted(glob.glob('/dev/ttyUSB*') + glob.glob('/dev/ttyACM*'))
+        usb_block = []
+        try:
+            for name in os.listdir('/sys/block'):
+                tran = f'/sys/block/{name}/device/../../../../../../removable'
+                if os.path.exists(tran):
+                    usb_block.append(name)
+        except Exception:
+            usb_block = []
+
+        usb_net = []
+        try:
+            for iface in os.listdir('/sys/class/net'):
+                path = os.path.realpath(f'/sys/class/net/{iface}/device')
+                if '/usb' in path:
+                    usb_net.append(iface)
+        except Exception:
+            usb_net = []
+
+        inventory['usb_dma'] = {
+            'serial_ports': serial_ports,
+            'usb_net_interfaces': sorted(usb_net),
+            'usb_block_devices': sorted(usb_block),
+            'available': bool(serial_ports or usb_net or usb_block),
+        }
+
+        wifi_ifaces = []
+        try:
+            for iface in os.listdir('/sys/class/net'):
+                if os.path.isdir(f'/sys/class/net/{iface}/wireless'):
+                    operstate = ''
+                    try:
+                        with open(f'/sys/class/net/{iface}/operstate', encoding='utf-8') as f:
+                            operstate = f.read().strip()
+                    except Exception:
+                        pass
+                    wifi_ifaces.append({'iface': iface, 'operstate': operstate})
+        except Exception:
+            wifi_ifaces = []
+        inventory['wifi_udp'] = {
+            'interfaces': wifi_ifaces,
+            'available': any(row.get('operstate') == 'up' for row in wifi_ifaces),
+        }
+
+        bt_powered = False
+        bt_devices: List[str] = []
+        if shutil.which('bluetoothctl'):
+            try:
+                show = subprocess.run(
+                    ['bluetoothctl', 'show'],
+                    text=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.DEVNULL,
+                    timeout=3,
+                    check=False,
+                ).stdout
+                bt_powered = 'Powered: yes' in show
+                devices = subprocess.run(
+                    ['bluetoothctl', 'devices'],
+                    text=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.DEVNULL,
+                    timeout=3,
+                    check=False,
+                ).stdout
+                bt_devices = [line.strip() for line in devices.splitlines() if line.strip()]
+            except Exception:
+                bt_powered = False
+        inventory['bluetooth_l2cap'] = {
+            'powered': bt_powered,
+            'paired_or_seen_devices': bt_devices,
+            'available': bt_powered,
+        }
+
+        tailscale_available = False
+        if shutil.which('tailscale'):
+            try:
+                result = subprocess.run(
+                    ['tailscale', 'status', '--json'],
+                    text=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.DEVNULL,
+                    timeout=5,
+                    check=False,
+                )
+                tailscale_available = result.returncode == 0
+            except Exception:
+                tailscale_available = False
+        inventory['tailscale'] = {'available': tailscale_available}
+
+        for name, data in inventory.items():
+            if name in self.transport_available:
+                self.transport_available[name] = bool(data.get('available'))
+        self.transport_inventory = inventory
+        return inventory
     
     def probe_i2p(self) -> bool:
         """Check if I2P daemon is available"""
@@ -124,6 +244,12 @@ class MIMORouter:
         if transport == 'i2p':
             candidates = ['adaptive_manifest', 'adaptive_jupiter', 'adaptive_stream']
         elif transport == 'tor':
+            candidates = ['adaptive_stream', 'adaptive_manifest']
+        elif transport == 'usb_dma':
+            candidates = ['adaptive_stream', 'adaptive_manifest']
+        elif transport == 'wifi_udp':
+            candidates = ['adaptive_manifest', 'adaptive_stream']
+        elif transport == 'bluetooth_l2cap':
             candidates = ['adaptive_stream', 'adaptive_manifest']
         else:
             candidates = ['adaptive_stream', 'adaptive_manifest', 'adaptive_jupiter']
@@ -213,7 +339,7 @@ class MIMORouter:
 
         # Ensure non-static, redundant path intent under adversarial assumptions.
         if self.require_redundant_paths:
-            for candidate in ['omnitoken', 'i2p', 'tor', 'tailscale']:
+            for candidate in ['usb_dma', 'wifi_udp', 'tailscale', 'bluetooth_l2cap', 'omnitoken', 'i2p', 'tor']:
                 if candidate != primary and candidate in available and candidate not in filtered:
                     filtered.append(candidate)
                 if len(filtered) >= 2:
@@ -359,6 +485,7 @@ class MIMORouter:
         return {
             'available_transports': self.get_available_transports(),
             'transport_status': dict(self.transport_available),
+            'transport_inventory': dict(self.transport_inventory),
             'usage': dict(self.transport_usage),
             'i2p_info': self.i2p_adapter.get_status() if self.i2p_adapter else None,
             'dht_info': self.dht.get_status() if self.dht else None,

@@ -88,13 +88,13 @@ def CacheSet.findHit (set : CacheSet) (tag : CacheTag) : Option CacheLine :=
 -- ============================================================
 
 /-- Probability of which-path erasure (0-1 in Q16.16) -/
-def ERASE_PROBABILITY : Q16_16 := ⟨32768⟩  -- 0.5 = 50% erasure
+def ERASE_PROBABILITY : Q16_16 := Q16_16.ofRawInt 32768  -- 0.5 = 50% erasure
 
 /-- Erase which-path information from a line -/
 def eraseWhichPath (line : CacheLine) (eraseProb : Q16_16)
                    (randomValue : UInt32) : CacheLine :=
   -- Erasure happens if random value < eraseProb
-  let threshold := (eraseProb.val.toUInt64 * 65536) / 65536
+  let threshold := (eraseProb.toBits.toUInt64 * 65536) / 65536
   let shouldErase := randomValue.toUInt64 < threshold
 
   if shouldErase then
@@ -209,8 +209,8 @@ def access (cache : QuantumEraserCache) (addr : UInt64) (path : WhichPath)
 /-- Calculate hit rate -/
 def hitRate (cache : QuantumEraserCache) : Q16_16 :=
   let total := cache.hitCount + cache.missCount
-  if total == 0 then ⟨0⟩
-  else ⟨((cache.hitCount.toNat * 65536) / total.toNat).toUInt32⟩
+  if total == 0 then Q16_16.zero
+  else Q16_16.ofRawInt ((cache.hitCount.toNat * 65536) / total.toNat : Int)
 
 -- ============================================================
 -- 6. ACCESS PATTERNS FOR TESTING
@@ -251,18 +251,18 @@ def simulatePattern (cache : QuantumEraserCache)
 
 /-- Test 1: Sequential pattern with different erase probabilities -/
 def testSequentialErase0 : QuantumEraserCache :=
-  let cache := QuantumEraserCache.init 16 4 ⟨0⟩  -- 0% erasure
+  let cache := QuantumEraserCache.init 16 4 Q16_16.zero  -- 0% erasure
   let pattern := sequentialPattern 0x1000 100 |>.map (fun addr => (addr, .pathA, 0))
   simulatePattern cache pattern
 
 def testSequentialErase50 : QuantumEraserCache :=
-  let cache := QuantumEraserCache.init 16 4 ⟨32768⟩  -- 50% erasure
+  let cache := QuantumEraserCache.init 16 4 (Q16_16.ofRawInt 32768)  -- 50% erasure
   let pattern := sequentialPattern 0x1000 100 |>.map (fun addr => (addr, .pathA, 32768))
   simulatePattern cache pattern
 
 /-- Test 2: Alternating path access (tests which-path tracking) -/
 partial def testAlternatingPaths : List (QuantumEraserCache × Bool) :=
-  let cache0 := QuantumEraserCache.init 8 2 ⟨32768⟩  -- 50% erasure
+  let cache0 := QuantumEraserCache.init 8 2 (Q16_16.ofRawInt 32768)  -- 50% erasure
   let rec run (cache : QuantumEraserCache) (acc : List (QuantumEraserCache × Bool))
               (remaining : List (UInt64 × WhichPath × UInt32)) : List (QuantumEraserCache × Bool) :=
     match remaining with
@@ -274,8 +274,8 @@ partial def testAlternatingPaths : List (QuantumEraserCache × Bool) :=
 
 /-- Witness: hit rate calculation works -/
 theorem hitRateCalculation :
-  hitRate { hitCount := 75, missCount := 25, eraseProb := ⟨32768⟩,
-            sets := #[], numSets := 0, associativity := 0, cycle := 100 } = ⟨49152⟩ := by
+  hitRate { hitCount := 75, missCount := 25, eraseProb := Q16_16.ofRawInt 32768,
+            sets := #[], numSets := 0, associativity := 0, cycle := 100 } = Q16_16.ofRawInt 49152 := by
   -- 0.75 = 49152 in Q16.16 (75/100 * 65536 = 49152)
   native_decide
 

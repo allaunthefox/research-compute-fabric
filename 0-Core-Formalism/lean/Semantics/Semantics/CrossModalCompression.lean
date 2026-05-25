@@ -13,6 +13,11 @@ This module formalizes compression across multiple biological modalities:
 Key insight from MIRROR (2503.00374):
 Multi-modal learning requires alignment between modalities, not just concatenation.
 
+  REFERENCES:
+    See 6-Documentation/docs/provenance/LANGUAGE_MATH_MODEL_SOURCES.cff
+    for full DOIs. MIRROR: arxiv 2503.00374 (lookup current status at
+    https://arxiv.org/abs/2503.00374).
+
 The unified cross-modal field:
 Φ_cross(x₁, x₂, ..., xₙ) = Σᵢ Φᵢ(xᵢ) + Σᵢ<ⱼ Φ_align(xᵢ, xⱼ)
 

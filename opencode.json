@@ -1,0 +1,40 @@
+{
+  "mcp": {
+    "contextstream": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "contextstream-mcp"
+      ],
+      "environment": {
+        "CONTEXTSTREAM_API_KEY": "{env:CONTEXTSTREAM_API_KEY}",
+        "CONTEXTSTREAM_TOOLSET": "complete",
+        "CONTEXTSTREAM_LOG_LEVEL": "quiet",
+        "CONTEXTSTREAM_OUTPUT_FORMAT": "compact",
+        "CONTEXTSTREAM_TRANSCRIPTS_ENABLED": "true",
+        "CONTEXTSTREAM_HOOK_TRANSCRIPTS_ENABLED": "true",
+        "CONTEXTSTREAM_CONSOLIDATED": "true",
+        "CONTEXTSTREAM_AUTO_HIDE_INTEGRATIONS": "true",
+        "CONTEXTSTREAM_SEARCH_LIMIT": "15",
+        "CONTEXTSTREAM_SEARCH_MAX_CHARS": "2400",
+        "CONTEXTSTREAM_INCLUDE_STRUCTURED_CONTENT": "true",
+        "CONTEXTSTREAM_CONTEXT_PACK": "false"
+      },
+      "enabled": true
+    },
+    "remote-lean-proof": {
+      "type": "local",
+      "command": [
+        "python3",
+        "4-Infrastructure/infra/remote_lean_proof_mcp.py"
+      ],
+      "environment": {
+        "PROOF_SERVER_URL": "http://75.101.199.58:8787",
+        "PROOF_SERVER_TOKEN_FILE": "/home/allaun/.config/ene/language-proof-server.token"
+      },
+      "enabled": true
+    }
+  },
+  "$schema": "https://opencode.ai/config.json"
+}

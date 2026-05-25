@@ -349,7 +349,7 @@ def jPhantom
     (s   : CoarseSignal) : Q16_16 :=
   let base := couplingOf p vis sig  _topo  s
   let v    := velocityOf s
-  let c30  : Q16_16 := ⟨19660⟩  -- 0.3 in Q16.16
+  let c30  : Q16_16 := Q16_16.ofRawInt 19660  -- 0.3 in Q16.16
   let one  := Q16_16.one
   -- (1 − 0.3 · v) as Q16.16
   let damp := Q16_16.sub one (Q16_16.mul c30 v)
@@ -392,7 +392,7 @@ def hodge0 {N : Nat} (K : DirSimplicialComplex N)
     (f : Fin N → Q16_16) (i : Fin N) : Q16_16 :=
   let nbrs    := outNbrs K i
   let nbrSum  := nbrs.foldl (fun acc j => Q16_16.add acc (f j)) Q16_16.zero
-  let degQ    : Q16_16 := ⟨(nbrs.length * 65536).toUInt32⟩
+  let degQ    : Q16_16 := Q16_16.ofRawInt ((nbrs.length * 65536) : Int)
   Q16_16.sub nbrSum (Q16_16.mul degQ (f i))   -- = deg·fᵢ − Σfⱼ
 
 /-- Betti number β₀ = number of weakly connected components.
@@ -419,7 +419,7 @@ def beta0Approx {N : Nat} (K : DirSimplicialComplex N)
 def potentialV (nd : ScalarNode) (v : Q16_16) : Q16_16 :=
   if nd.sigma
   then
-    let lambda : Q16_16 := ⟨45875⟩ -- 0.7 in Q16.16
+    let lambda : Q16_16 := Q16_16.ofRawInt 45875 -- 0.7 in Q16.16
     let vMod   := Q16_16.sub Q16_16.one (Q16_16.mul lambda v)
     Q16_16.mul vMod (Q16_16.mul nd.energy (Q16_16.mul nd.s nd.s))
   else Q16_16.zero

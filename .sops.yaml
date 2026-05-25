@@ -9,7 +9,7 @@
 #   sops --decrypt <file>          # decrypt to stdout
 
 keys:
-  - &primary age1fvm02ruga67vnw5wws9p2ycckdmc0gp83m9s6cyld0ctpxyf8gzqy5wwsr
+  - &primary age1tp4vr565zkmvnyulatpyaj6z8zrz7q9mpaypz85yz8rty99crdasualxyr
 
 creation_rules:
   - path_regex: 4-Infrastructure/infra/secrets/.*

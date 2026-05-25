@@ -69,7 +69,7 @@ deriving Repr, Inhabited, DecidableEq
 inductive DCVNParticipation | Full | Partial | Observer | Absent
   deriving Repr, DecidableEq, Inhabited
 
-def dcvnThreshold : Q16_16 := ⟨52429⟩ -- 0.8 * 65536
+def dcvnThreshold : Q16_16 := Q16_16.ofRawInt 52429 -- 0.8 * 65536
 
 def dcvnSurvivalMask (s : DCVNState) : UInt8 :=
   (if s.completeness.val >= dcvnThreshold.val then 0b1000 else 0) |||
@@ -90,10 +90,10 @@ def dcvnParticipation (s : DCVNState) : DCVNParticipation :=
 -- TC ≈ (0.4 · kolmogorov + 0.4 · entropy/8 + 0.2 · CV) in Q16.16
 def totalCorrelationEstimate (kolmogorov entropy cv : Q16_16) : Q16_16 :=
   -- 0.4 = 26214; 0.2 = 13107
-  let w1 : Q16_16 := ⟨26214⟩
-  let w2 : Q16_16 := ⟨26214⟩
-  let w3 : Q16_16 := ⟨13107⟩
-  let entropyNorm := div entropy ⟨8 * 65536⟩
+  let w1 : Q16_16 := Q16_16.ofRawInt 26214
+  let w2 : Q16_16 := Q16_16.ofRawInt 26214
+  let w3 : Q16_16 := Q16_16.ofRawInt 13107
+  let entropyNorm := div entropy (Q16_16.ofRawInt (8 * 65536))
   add (add (mul w1 kolmogorov) (mul w2 entropyNorm)) (mul w3 cv)
 
 -- Row 128: Relation Sieve 5-Symbol packing
@@ -136,15 +136,15 @@ def proxyExtractCoherence (torsion : UInt8) : UInt8 :=
 
 -- Row 130: SEISMIC Shell Detection bounds
 -- 0.35 ≤ φ_corr < 0.47 in Q16.16: [22938, 30801]
-def seismicLow  : UInt32 := 22938  -- 0.35 * 65536
-def seismicHigh : UInt32 := 30801  -- 0.47 * 65536
+def seismicLow  : Int := 22938  -- 0.35 * 65536
+def seismicHigh : Int := 30801  -- 0.47 * 65536
 
 def isSeismicShell (phiCorr : Q16_16) : Bool :=
   phiCorr.val >= seismicLow && phiCorr.val < seismicHigh
 
 -- Row 131: Half Möbius Closure Integral ∮τ·ds = π
 -- Accumulate until torsion integral reaches π (≈205887 in Q16.16)
-def piQ : Q16_16 := ⟨205887⟩  -- π * 65536
+def piQ : Q16_16 := Q16_16.ofRawInt 205887  -- π * 65536
 
 def halfMobiusClosure (torsionSamples : Array Q16_16) (stepSize : Q16_16) : Option Nat :=
   let rec go (i : Nat) (acc : Q16_16) : Option Nat :=
@@ -156,9 +156,9 @@ def halfMobiusClosure (torsionSamples : Array Q16_16) (stepSize : Q16_16) : Opti
   go 0 zero
 
 -- Row 132: Regret Field — engramLength ℓ in SSS
-def baselineMs : Q16_16 := ⟨500 * 65536⟩  -- 500ms biological anchor
-def regretMs   : Q16_16 := ⟨700 * 65536⟩  -- 700ms biological anchor
-def decayLambda : Q16_16 := ⟨2 * 65536⟩   -- λ = 2.0
+def baselineMs : Q16_16 := Q16_16.ofRawInt (500 * 65536)  -- 500ms biological anchor
+def regretMs   : Q16_16 := Q16_16.ofRawInt (700 * 65536)  -- 700ms biological anchor
+def decayLambda : Q16_16 := Q16_16.ofRawInt (2 * 65536)   -- λ = 2.0
 
 def engramLengthMs (regretMagnitude : Q16_16) : Q16_16 :=
   let range := sub regretMs baselineMs
@@ -173,7 +173,7 @@ def regretDecay (regret dt : Q16_16) : Q16_16 :=
 -- Row 133: Hugoniot Shock — kinetic energy harvesting
 -- E_kinetic = ½ · I · ω²; E_harvested = E_stored · efficiency (Q16.16)
 def kineticEnergy (momentOfInertia omega : Q16_16) : Q16_16 :=
-  mul ⟨32768⟩ (mul momentOfInertia (mul omega omega))  -- ½ * I * ω²
+  mul (Q16_16.ofRawInt 32768) (mul momentOfInertia (mul omega omega))  -- ½ * I * ω²
 
 def harvestedEnergy (stored efficiency : Q16_16) : Q16_16 :=
   mul stored efficiency
@@ -201,6 +201,6 @@ def sieveControlBind (a b : SieveSymbols) (m : Metric) : Bind SieveSymbols Sieve
 #eval encodeVoxel 0 0 0
 #eval decodeVoxel (encodeVoxel 100 (-50) 200)  -- expect (100, -50, 200)
 #eval classifySieve { torsion := 3, drift := 0, coherence := 0, angmom := 0, radius := 0 }
-#eval isSeismicShell ⟨26214⟩  -- 0.4 * 65536 → should be true
+#eval isSeismicShell (Q16_16.ofRawInt 26214)  -- 0.4 * 65536 → should be true
 
 end Semantics.VoxelEncoding

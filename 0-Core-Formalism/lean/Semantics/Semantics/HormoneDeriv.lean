@@ -11,9 +11,9 @@ namespace Semantics.HormoneDeriv
 
 open Q16_16
 
-def epsilon : Q16_16 := ⟨1⟩
+def epsilon : Q16_16 := Q16_16.ofRawInt 1
 -- ln(2) ≈ 0.6931 in Q16.16 = 45426
-def ln2 : Q16_16 := ⟨45426⟩
+def ln2 : Q16_16 := Q16_16.ofRawInt 45426
 
 -- Row 121: k = ln(2) / t_half   (decay rate from half-life)
 -- t_half in Q16.16 seconds; k in Q16.16 per-second
@@ -29,8 +29,8 @@ def halfLifeToDecayRate (tHalf : Q16_16) : Q16_16 :=
 -- For full logit: logit(x) = log(x) - log(1-x).
 -- Here we use a 4-segment piecewise linear approximation.
 def logitApprox (x : Q16_16) : Q16_16 :=
-  let half : Q16_16 := ⟨32768⟩  -- 0.5
-  let four : Q16_16 := ⟨4 * 65536⟩
+  let half : Q16_16 := Q16_16.ofRawInt 32768  -- 0.5
+  let four : Q16_16 := Q16_16.ofRawInt (4 * 65536)
   if x.val ≥ half.val
   then mul four (sub x half)
   else neg (mul four (sub half x))
@@ -60,20 +60,20 @@ deriving Repr, Inhabited, DecidableEq
 def advanceHormone (h : HormoneState) (dt : Q16_16) : HormoneState :=
   let decayed := concentrationDecay h.concentration h.decayRate dt
   let stim := mul h.stimulation dt
-  let newC := min one (add decayed stim)
+  let newC := Q16_16.min one (add decayed stim)
   { h with concentration := newC }
 
 def hormoneInvariant (h : HormoneState) : String :=
   s!"hormone:c={h.concentration.val},k={h.decayRate.val}"
 
 def hormoneCost (a b : HormoneState) (_m : Metric) : Q16_16 :=
-  Q16_16.ofNat (abs (sub a.concentration b.concentration)).val.toNat
+  Q16_16.ofNat (abs (sub a.concentration b.concentration)).toBits.toNat
 
 def hormoneBind (a b : HormoneState) (m : Metric) : Bind HormoneState HormoneState :=
   controlBind a b m hormoneCost hormoneInvariant hormoneInvariant
 
 -- Verify
-#eval halfLifeToDecayRate ⟨65536⟩        -- t_half = 1.0s → k ≈ ln(2)
-#eval concentrationDecay ⟨65536⟩ ⟨45426⟩ ⟨6554⟩  -- C=1.0, k=ln2, dt=0.1s
+#eval halfLifeToDecayRate (Q16_16.ofRawInt 65536)        -- t_half = 1.0s → k ≈ ln(2)
+#eval concentrationDecay (Q16_16.ofRawInt 65536) (Q16_16.ofRawInt 45426) (Q16_16.ofRawInt 6554)  -- C=1.0, k=ln2, dt=0.1s
 
 end Semantics.HormoneDeriv

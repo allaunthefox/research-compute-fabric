@@ -209,63 +209,64 @@ def cmd_produce(args: argparse.Namespace) -> dict:
 
 def consume_one(mm: mmap.mmap, port: str | None, baud: int, retries: int = 5) -> dict | None:
     header = read_header(mm)
-    for idx in range(header["slots"]):
-        slot = (header["read_index"] + idx) % header["slots"]
-        record = read_record(mm, slot)
-        if record["status"] != STATUS_PENDING:
-            continue
+    if header["read_index"] == header["write_index"]:
+        return None
 
-        payload = record["payload"]
-        expected = tang.receipt_for_payload(payload)
-        hw_status = 0
-        note = ""
-        receipt_hash = expected["hash16"]
-        mapped = expected["mapped_count"]
-        literal = expected["literal_count"]
+    slot = header["read_index"] % header["slots"]
+    record = read_record(mm, slot)
+    if record["status"] != STATUS_PENDING:
+        return None
 
-        if record["mode"] == MODE_SERIAL and port:
-            frame = tang.build_frame(record["seq"], payload)
-            raw = tang.send_serial(port, baud, frame, retries=retries)
-            try:
-                parsed = tang.parse_receipt(raw)
-                hw_status = parsed["status"]
-                receipt_hash = parsed["hash16"]
-                mapped = parsed["mapped_count"]
-                literal = parsed["literal_count"]
-            except ValueError as exc:
-                hw_status = 0xEE
-                note = f"non-surface UART response: {exc}"
+    payload = record["payload"]
+    expected = tang.receipt_for_payload(payload)
+    hw_status = 0
+    note = ""
+    receipt_hash = expected["hash16"]
+    mapped = expected["mapped_count"]
+    literal = expected["literal_count"]
 
-        status = STATUS_DONE if receipt_hash == record["expected_hash"] and hw_status == 0 else STATUS_ERROR
-        write_record(
-            mm,
-            slot,
-            status=status,
-            mode=record["mode"],
-            seq=record["seq"],
-            payload=payload,
-            expected_hash=record["expected_hash"],
-            receipt_hash=receipt_hash,
-            mapped=mapped,
-            literal=literal,
-            hw_status=hw_status,
-        )
-        update_indices(mm, header["write_index"], slot + 1)
-        mm.flush()
-        return {
-            "slot": slot,
-            "seq": record["seq"],
-            "mode": "serial" if record["mode"] == MODE_SERIAL else "software",
-            "status": "done" if status == STATUS_DONE else "error",
-            "payload_hex": payload.hex(),
-            "expected_hash": record["expected_hash"],
-            "receipt_hash": receipt_hash,
-            "mapped_count": mapped,
-            "literal_count": literal,
-            "hardware_status": hw_status,
-            "note": note,
-        }
-    return None
+    if record["mode"] == MODE_SERIAL and port:
+        frame = tang.build_frame(record["seq"], payload)
+        raw = tang.send_serial(port, baud, frame, retries=retries)
+        try:
+            parsed = tang.parse_receipt(raw)
+            hw_status = parsed["status"]
+            receipt_hash = parsed["hash16"]
+            mapped = parsed["mapped_count"]
+            literal = parsed["literal_count"]
+        except ValueError as exc:
+            hw_status = 0xEE
+            note = f"non-surface UART response: {exc}"
+
+    status = STATUS_DONE if receipt_hash == record["expected_hash"] and hw_status == 0 else STATUS_ERROR
+    write_record(
+        mm,
+        slot,
+        status=status,
+        mode=record["mode"],
+        seq=record["seq"],
+        payload=payload,
+        expected_hash=record["expected_hash"],
+        receipt_hash=receipt_hash,
+        mapped=mapped,
+        literal=literal,
+        hw_status=hw_status,
+    )
+    update_indices(mm, header["write_index"], header["read_index"] + 1)
+    mm.flush()
+    return {
+        "slot": slot,
+        "seq": record["seq"],
+        "mode": "serial" if record["mode"] == MODE_SERIAL else "software",
+        "status": "done" if status == STATUS_DONE else "error",
+        "payload_hex": payload.hex(),
+        "expected_hash": record["expected_hash"],
+        "receipt_hash": receipt_hash,
+        "mapped_count": mapped,
+        "literal_count": literal,
+        "hardware_status": hw_status,
+        "note": note,
+    }
 
 
 def cmd_consume(args: argparse.Namespace) -> dict:

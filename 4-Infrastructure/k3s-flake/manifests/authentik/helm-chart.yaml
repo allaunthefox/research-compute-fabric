@@ -5,22 +5,13 @@ metadata:
   namespace: services
 spec:
   chart: authentik
-  repo: https://helm.goauthentik.io
+  repo: https://goauthentik.github.io/helm
   targetNamespace: services
-  version: "2024.12.0"
+  version: "2026.5.0"
   valuesContent: |
     authentik:
-      secret_key:
-        valueFrom:
-          secretKeyRef:
-            name: authentik-secrets
-            key: secret-key
-      postgresql:
-        password:
-          valueFrom:
-            secretKeyRef:
-              name: authentik-secrets
-              key: postgresql-password
+      existingSecret:
+        secretName: authentik-env
     postgresql:
       enabled: true
       global:
@@ -40,7 +31,11 @@ spec:
                     operator: In
                     values:
                       - core
-                      - server
+        tolerations:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Equal
+            value: "true"
+            effect: NoSchedule
     redis:
       enabled: true
       master:
@@ -54,14 +49,32 @@ spec:
                     operator: In
                     values:
                       - core
-                      - server
+        tolerations:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Equal
+            value: "true"
+            effect: NoSchedule
     server:
+      nodeSelector:
+        kubernetes.io/hostname: steamdeck
+      resources:
+        requests:
+          memory: 256Mi
+          cpu: 100m
+        limits:
+          memory: 512Mi
       service:
         type: NodePort
-        nodePort: 30800
+        nodePort: 30080
     worker:
+      nodeSelector:
+        kubernetes.io/hostname: steamdeck
+      resources:
+        requests:
+          memory: 256Mi
+          cpu: 100m
+        limits:
+          memory: 512Mi
       service:
         type: NodePort
-        nodePort: 30800
-    ingress:
-      enabled: false
+        nodePort: 30080

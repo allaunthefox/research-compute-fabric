@@ -19,10 +19,10 @@ The Sovereign Research Stack is a formalized system where Lean 4 is the single s
 
 | Level | Name | Domain | Status | Key Components |
 |-------|------|--------|--------|----------------|
-| **L0** | Primordial | Pure math, fixed-point arithmetic, braid fields | **Implemented** (746 modules, 3529 build jobs, 0 errors) | Q16_16 FixedPoint, Q0_64 Scalar, PIST/DIAT Shell, BraidField, SSMS_nD, EigensolidConvergence |
+| **L0** | Primordial | Pure math, fixed-point arithmetic, braid fields | **Implemented** (746 modules, 3592 build jobs, 0 errors) | Q16_16 FixedPoint, Q0_64 Scalar, PIST/DIAT Shell, BraidField, SSMS_nD, EigensolidConvergence |
 | **L1** | Geometric | Shape-aware topology, coupling geometry | **Partial** (docs migrated, partial Lean; eigensolid convergence proven) | GWL 5-factor Coupling, TorsionalPIST (quaternion), HybridTSMPISTTorus, GWL Throat, BodegaFlow horn-fiber |
-| **L2** | Biological | Genetic codes, spiking neurons, STDP | **Speculative** (docs exist, minor Lean) | 30+ Genetic Code Tables, Codon Optimization, SpikingDynamics (Izhikevich), GenomicCompression |
-| **L3** | Thermodynamic | Energy-aware quality, homeostatic governance | **Speculative** (docs migrated) | Trixal Quality (thermal/work/irreversibility), Homeostatic Governor, HyperFlow (Navier-Stokes) |
+| **L2** | Biological | Genetic codes, language zoology, expanded alphabets | **Partial** (12 Lean probes, 3592 jobs green) | GeneticCode, CodonOptimization, GenomicCompression, CrossModalCompression, GeneticThermodynamicLimitProbe, ExpandedGeneticAlphabetProbe, LanguageZoologyProbe, GeneticAnchorProbe, GeneticSignalTransformProbe, GeneticErrorMinimizationProbe, CrossModalGeneticLanguageProbe, LandauerGeneticClockProbe |
+| **L3** | Thermodynamic | Energy-aware quality, semantic basin capacity, Landauer limits | **Partial** (5 Lean probes formalized) | Trixal Quality, Homeostatic Governor, HyperFlow, ThermodynamicLanguageProbe, LandauerShannonProbe, MediaTransferProbe, LanguageTransferProbe, SemanticBasinOverflowProbe, InformationBottleneckLanguageProbe |
 | **L4** | Security | Attack-aware gating, frustration memory | **Partial** (AngrySphinx in Lean) | AngrySphinx (exponential PoD), FAMM Frustration, ASICTopology |
 | **L5** | Semantic | Meaning-aware filtering, manifold routing, compression governance | **Partial** (projection receipts exist) | CrossDimensionalFilter (12 semantic primes), Manifold Networking, BracketedCalculus, CompressionControl, RRC Equation Projection |
 | **L6** | Meta | Self-aware adaptation, cognitive routing, auto-adaptive metatyping | **Partial** (cognitive receipts + projection holds) | Cognitive Load Decomposition (5-factor), Adaptation, DynamicCanal, CompressionMechanics, Connectome-Protective Load Reweighting |
@@ -101,8 +101,22 @@ Lean formalization not yet started:
 - **Forest Map absorption:** Complete equation inventory by domain (Forest Phase 2) — equation packs with required fields
 - **Active milestone: BURGERS_READINESS_ASSESSMENT.md — Day 1-4 theorems (Energy Dissipation, FNWH Regularization, Shock Width, KdV Soliton)**
 
-### Phase 3 — Biological Substrates (Month 4) | **Status: SPECULATIVE (GENSIS doc exists)**
+### Phase 3 — Biological Substrates (Month 4) | **Status: PARTIAL (12 probes formalized, 3592 jobs)**
 
+**COMPLETED (2026-05-22):**
+- `MediaTransferProbe.lean` — 7 media channels with Shannon bandwidths, proved `channelBandwidthIncreasing`
+- `LanguageTransferProbe.lean` — 7 language substrates (chemical → generative), proved `languageEffectivenessStrictlyIncreasing`
+- `LanguageZoologyProbe.lean` — 6 documented non-human languages (honeybee → octopus), substrate assignments proved
+- `GeneticThermodynamicLimitProbe.lean` — 10 genetic polymer types, Landauer limit calculation, `R_max ≈ 3.5×10^8 bits/s`
+- `ExpandedGeneticAlphabetProbe.lean` — hachimoji (8-base) and supernumerary DNA (12-base), proved `standardDnaOptimal`
+- `GeneticAnchorProbe.lean` — codon-product ratio `64/21 ≈ 3.047`, tested genetic clock hypothesis
+- `LANGUAGE_MATH_MODEL_SOURCES.cff` — 29 references with verified DOIs
+- `GeneticSignalTransformProbe.lean` — unified power law `P ∝ S^{1/2} · λ_φ^{D_f} · exp(-γ·ΔE_eff/kT)`, LTEE fitness sqrt scaling, Drake rule direction
+- `GeneticErrorMinimizationProbe.lean` — Freeland & Hurst error minimization, standard code better than random in polarity model
+- `CrossModalGeneticLanguageProbe.lean` — developmental biology as 5-modality cross-modal language (genome → transcript → protein → complex → tissue)
+- `LandauerGeneticClockProbe.lean` — thermodynamic cost of genetic preservation, genetic clock inversely proportional to genome size
+
+**PENDING:**
 - Genetic Code: all 30+ variant tables mapped to USTSM
 - Genomic Compression field-theoretic pass
 - Codon Optimization (CAI + GC content as state constraints)
@@ -110,10 +124,17 @@ Lean formalization not yet started:
 - STDP weight update as GWL coupling replacement
 - **Forest Map absorption:** Semantic Number Pattern Search (Forest Phase 3), COUCH coupling degeneracy fix (Forest Phase 4)
 
-### Phase 4 — Thermodynamic & Security (Month 3–4, concurrent with Phases 2–3) | **Status: PARTIAL (AngrySphinx in Lean)**
+### Phase 4 — Thermodynamic & Security (Month 3–4, concurrent with Phases 2–3) | **Status: PARTIAL (AngrySphinx + 5 thermodynamic probes in Lean)**
 
 > **Note:** Phase 4 runs concurrently with Phases 2–3. AngrySphinx Lean work can proceed independently of the geometric substrate proofs.
 
+**COMPLETED (2026-05-22):**
+- `ThermodynamicLanguageProbe.lean` — semantic basin capacity `B = C_dec / E_bit`, proved generative mismatch `M = 50,000,000×`
+- `LandauerShannonProbe.lean` — Landauer energy `2.87×10^-21 J`, Heisenberg time `1.8×10^-14 s`, framework gap analysis
+- `SemanticBasinOverflowProbe.lean` — consistency between 100× bandwidth acceleration and 50,000,000× compression asymmetry
+- `InformationBottleneckLanguageProbe.lean` — `I(X;T) ≤ R` for 7 substrates, IB rate strictly increasing, generative relevance gap positive
+
+**PENDING:**
 - Trixal State Carnot efficiency in Q0_64
 - Homeostatic Governor fixed point theorem in Q0_64
 - HyperFlow Navier-Stokes convergence in shell space
@@ -261,7 +282,7 @@ No promotion without domain-appropriate evidence. Compression claims require SI 
 
 | Layer | Status | Progress |
 |-------|--------|----------|
-| **L0 Primordial** | ✅ Lean implemented | 746 modules, 3529 build jobs, 0 errors; eigensolid convergence proven; Q16_16 signed-arithmetic bugs fixed; 9 sorrys closed; 95 inspection issues resolved |
+| **L0 Primordial** | ✅ Lean implemented | 746 modules, 3592 build jobs, 0 errors; eigensolid convergence proven; Q16_16 signed-arithmetic bugs fixed; 9 sorrys closed; 95 inspection issues resolved |
 | **L1 Geometric** | 🔄 Burgers active | Eigensolid convergence closed; BodegaFlow horn-fiber refinements committed; RG torsion physics suite (H0, DESI, BAO, Higgs, Jupiter moons); 4 Burgers theorems remain |
 | **L2 Biological** | 📋 Speculative | GENSIS doc, genetic code tables mapped; no Lean |
 | **L3 Thermodynamic** | 📋 Speculative | Trixal, Homeostatic docs; no Lean |
@@ -277,7 +298,7 @@ No promotion without domain-appropriate evidence. Compression claims require SI 
 2. Prove `receipt_invertible` for braid eigensolid compressor (second required theorem)
 3. Add RRC scale-band witness schema for equation records; rerun `4-Infrastructure/shim/rrc_equation_classifier.py`
 4. Add negative-control strength witnesses for HOLD rows before promotion
-5. Bootstrap Garage replication (cupfox-4gb-2cpu + nixos nodes → replication_factor=3)
+5. Bootstrap Garage replication (nixos-laptop + 361395-1 → replication_factor=3); 361395-1 SSH recovered
 6. UART packet format design (start byte + 3-byte payload + checksum)
 7. Create `4-Infrastructure/surface/` FastAPI skeleton
 8. Flash Tang Nano 9K with generated bitstream; verify LED behavior *(blocked: requires physical Tang Nano 9K board + USB programmer attached to host)*

@@ -38,12 +38,12 @@ def isZero (p : PhaseVec) : Bool :=
 
 /-- Octagonal norm approximation: κ ≈ max(|x|,|y|) + (3/8)·min(|x|,|y|) -/
 def normApprox (p : PhaseVec) : Q16_16 :=
-  let ax := if p.x.val < 0x80000000 then p.x else Q16_16.neg p.x
-  let ay := if p.y.val < 0x80000000 then p.y else Q16_16.neg p.y
+  let ax := if p.x.val < 0 then p.x else Q16_16.neg p.x
+  let ay := if p.y.val < 0 then p.y else Q16_16.neg p.y
   let hi := if ax.val > ay.val then ax else ay
   let lo := if ax.val > ay.val then ay else ax
   -- 3/8 = 0x00006000 in Q16.16
-  let lo38 : Q16_16 := ⟨(lo.val.toNat * 0x6000 / 0x10000).toUInt32⟩
+  let lo38 : Q16_16 := Q16_16.ofRawInt ((lo.val.toNat * 0x6000 / 0x10000) : Int)
   Q16_16.add hi lo38
 
 end PhaseVec
@@ -84,7 +84,7 @@ def fromPhaseVec (z : PhaseVec) (μ : Q16_16) : BraidBracket :=
   -- φ = 0 when z = (0,0)
   let ϕ := if z.isZero then Q16_16.zero else
     -- atan2 approximation placeholder (actual would use Cordic or table)
-    ⟨0x00008000⟩ -- π/4 placeholder
+    Q16_16.ofRawInt 0x00008000 -- π/4 placeholder
   let lo := Q16_16.sub κ μ
   let up := Q16_16.add κ μ
   let g := Q16_16.sub up lo
@@ -189,7 +189,7 @@ def phaseAccumulation (ys dxs : Array Q16_16) : Q16_16 :=
     Q16_16.add acc (Q16_16.mul ys[i]! dxs[i]!)
   ) Q16_16.zero
 
-#eval cosineSimilarity { x := ⟨65536⟩, y := Q16_16.zero }
-                       { x := ⟨65536⟩, y := Q16_16.zero }  -- expect 1.0
+#eval cosineSimilarity { x := Q16_16.ofRawInt 65536, y := Q16_16.zero }
+                       { x := Q16_16.ofRawInt 65536, y := Q16_16.zero }  -- expect 1.0
 
 end Semantics.BraidBracket

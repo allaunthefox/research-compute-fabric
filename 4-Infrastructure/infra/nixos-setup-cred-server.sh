@@ -20,6 +20,8 @@ Environment=RS_SURFACE_PORT=8444
 Environment=RS_SURFACE_HOST=0.0.0.0
 Environment=RS_CREDENTIAL_SERVER=http://100.101.247.127:8444
 Environment=RS_SURFACE_NODE_ID=aws-nixos-node-1
+# RDS credential for ENE session sync — set via SOPS secret or env file
+# Environment=CREDENTIAL_RDS_DSN=postgresql://user:pass@host:5432/db
 
 [Install]
 WantedBy=multi-user.target

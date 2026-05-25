@@ -77,7 +77,7 @@ def fammBind (bank : FAMMBank) (_mode : FAMMAccessMode) (address : Nat) : FAMMBi
   let lawful := inBounds && delayCompliant
   -- Cost function: penalize high delay mass, reward low delay
   let baseCost := 0x00001000
-  let delayPenalty := if inBounds then bank.cells[address]!.delayMass.val else 0x0000FFFF
+  let delayPenalty := if inBounds then bank.cells[address]!.delayMass.toBits else 0x0000FFFF
   let cost := if lawful then baseCost + delayPenalty else 0x0000FFFF
   let invariantStr := if inBounds
     then s!"delay={bank.cells[address]!.delay.val}, delayMass={bank.cells[address]!.delayMass.val}"

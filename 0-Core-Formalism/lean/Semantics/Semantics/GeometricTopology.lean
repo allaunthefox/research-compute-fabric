@@ -189,10 +189,7 @@ theorem flatMetricNotShore (n : Nat) :
         | zero => rfl
         | succ n => rfl
   rw [h1] at h
-  have h2 : one ≠ zero := by
-    intro h3
-    injection h3 with h4
-    simp at h4
+  have h2 : one ≠ zero := by native_decide
   contradiction
 
 /-- Every chart's origin is at its own center.

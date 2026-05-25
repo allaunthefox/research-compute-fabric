@@ -35,8 +35,8 @@ TOPOLOGY = {
         "gpu_vram_gib": 12,
         "accelerator": "cuda",
     },
-    "laptop-1": {
-        "tailscale_ip": "100.101.198.87",
+    "nixos-laptop": {
+        "tailscale_ip": "100.119.165.120",
         "role": "worker",
         "cpus": 16,
         "ram_gib": 14,
@@ -44,11 +44,20 @@ TOPOLOGY = {
         "gpu_vram_gib": 0,  # shared memory
         "accelerator": "rocm",
     },
-    "cupfox": {
-        "tailscale_ip": "100.126.151.57",
+    "microvm-racknerd": {
+        "tailscale_ip": "100.101.247.127",
+        "role": "worker",
+        "cpus": 1,
+        "ram_gib": 1,
+        "gpu": None,
+        "gpu_vram_gib": 0,
+        "accelerator": None,
+    },
+    "361395-1": {
+        "tailscale_ip": "100.110.163.82",
         "role": "worker",
         "cpus": 2,
-        "ram_gib": 4,
+        "ram_gib": 3,
         "gpu": None,
         "gpu_vram_gib": 0,
         "accelerator": None,

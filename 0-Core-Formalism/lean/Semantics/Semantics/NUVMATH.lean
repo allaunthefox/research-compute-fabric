@@ -39,8 +39,8 @@ deriving Repr, DecidableEq, BEq, Inhabited
 
 /-- Project high-dimensional state to UV coordinates using NUVMAP -/
 def projectToUV (state : HighDimState) (nmap : NUVMAP) : UV :=
-  let uVal := (Q16_16.mul nmap.uAxis state.energy).val
-  let vVal := (Q16_16.mul nmap.vAxis state.energy).val
+  let uVal := (Q16_16.mul nmap.uAxis state.energy).toBits
+  let vVal := (Q16_16.mul nmap.vAxis state.energy).toBits
   ⟨uVal, vVal⟩
 
 /-- Compute projection error (information loss) -/
@@ -154,7 +154,7 @@ def geometricDt (audit : S3CAudit) (baseDt : Q16_16) (jMax : Nat) : Q16_16 :=
       Q16_16.epsilon
     else
       let cappedJ := Nat.min audit.jScore.total jMax
-      Q16_16.satFromNat (baseDt.val.toNat * cappedJ / jMax)
+      Q16_16.satFromNat (baseDt.toBits.toNat * cappedJ / jMax)
   else
     Q16_16.epsilon
 

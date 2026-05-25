@@ -102,6 +102,152 @@ For each ARR service, repeat Steps 2-5:
 
 All can use the same embedded outpost.
 
+### Chat Subdomain (chat.researchstack.info)
+
+**Status**: Caddy configured, placeholder deployed. Authentik provider+app pending.
+
+**Provider setup** (repeat Steps 2-4 above):
+
+| Field | Value |
+|-------|-------|
+| **Provider name** | `research-stack-chat` |
+| **Authorization flow** | `default-provider-authorization-implicit-consent` |
+| **Internal host** | `http://100.101.247.127` (placeholder; will become Steam Deck Open WebUI) |
+| **External host** | `https://chat.researchstack.info` |
+| **Mode** | `Forward domain` |
+
+**Application setup**:
+
+| Field | Value |
+|-------|-------|
+| **Name** | `Research Stack Chat` |
+| **Slug** | `research-stack-chat` |
+| **Provider** | `research-stack-chat` |
+
+**Outpost**: Add `Research Stack Chat` to the **authentik Embedded Outpost**.
+
+**Caddy** (already deployed on microvm-racknerd):
+
+```caddy
+chat.researchstack.info {
+    forward_auth * http://100.119.165.120:9000 {
+        uri /outpost.goauthentik.io/auth/caddy
+        copy_headers X-Authentik-Username X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt X-Authentik-Meta-Jwt X-Authentik-Meta-App X-Authentik-Meta-Version
+    }
+    root * /var/www/researchstack/chat
+    file_server
+    try_files {path} /index.html
+}
+```
+
+**When Steam Deck is onboarded**: Change the Caddy site block from `file_server` to `reverse_proxy <steam-deck-tailscale-ip>:8080`.
+
+### Dashboard Subdomain (dash.researchstack.info)
+
+**Status**: Deployed. Homer static files on microvm-racknerd. DNS pending.
+
+**Provider setup**:
+
+| Field | Value |
+|-------|-------|
+| **Provider name** | `research-stack-dash` |
+| **Authorization flow** | `default-provider-authorization-implicit-consent` |
+| **Internal host** | `http://100.101.247.127` |
+| **External host** | `https://dash.researchstack.info` |
+| **Mode** | `Forward domain` |
+
+**Application setup**:
+
+| Field | Value |
+|-------|-------|
+| **Name** | `Research Stack Dashboard` |
+| **Slug** | `research-stack-dash` |
+| **Provider** | `research-stack-dash` |
+
+**Caddy**:
+
+```caddy
+dash.researchstack.info {
+    forward_auth * http://100.119.165.120:9000 {
+        uri /outpost.goauthentik.io/auth/caddy
+        copy_headers ...
+    }
+    root * /var/www/researchstack/dash
+    file_server
+    try_files {path} /index.html
+}
+```
+
+### Status Monitoring Subdomain (status.researchstack.info)
+
+**Status**: Deployed. Uptime Kuma on nixos-laptop via podman. DNS pending.
+
+**Provider setup**:
+
+| Field | Value |
+|-------|-------|
+| **Provider name** | `research-stack-status` |
+| **Authorization flow** | `default-provider-authorization-implicit-consent` |
+| **Internal host** | `http://100.119.165.120:3001` |
+| **External host** | `https://status.researchstack.info` |
+| **Mode** | `Forward domain` |
+
+**Application setup**:
+
+| Field | Value |
+|-------|-------|
+| **Name** | `Research Stack Status` |
+| **Slug** | `research-stack-status` |
+| **Provider** | `research-stack-status` |
+
+**Caddy**:
+
+```caddy
+status.researchstack.info {
+    forward_auth * http://100.119.165.120:9000 {
+        uri /outpost.goauthentik.io/auth/caddy
+        copy_headers ...
+    }
+    reverse_proxy http://100.119.165.120:3001
+}
+```
+
+### Auth Alias (auth.researchstack.info)
+
+**Status**: Deployed. Clean alias redirect to main Authentik interface.
+
+**Provider setup**:
+
+| Field | Value |
+|-------|-------|
+| **Provider name** | `research-stack-auth` |
+| **Authorization flow** | `default-provider-authorization-implicit-consent` |
+| **Internal host** | `http://100.119.165.120:9000` |
+| **External host** | `https://auth.researchstack.info` |
+| **Mode** | `Forward domain` |
+
+**Application setup**:
+
+| Field | Value |
+|-------|-------|
+| **Name** | `Research Stack Auth` |
+| **Slug** | `research-stack-auth` |
+| **Provider** | `research-stack-auth` |
+
+**Caddy**:
+
+```caddy
+auth.researchstack.info {
+    forward_auth * http://100.119.165.120:9000 {
+        uri /outpost.goauthentik.io/auth/caddy
+        copy_headers ...
+    }
+    redir / https://researchstack.info/ permanent
+}
+```
+
+**Behavior**: Visiting `https://auth.researchstack.info` triggers Authentik login (if not authenticated), then redirects to `https://researchstack.info/`.
+
 ### Troubleshooting
 
 **Certificate errors?**

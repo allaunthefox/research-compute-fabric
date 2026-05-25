@@ -1,0 +1,27 @@
+{
+  "servers": {
+    "contextstream": {
+      "type": "http",
+      "url": "https://mcp.contextstream.io/mcp?default_context_mode=fast",
+      "headers": {
+        "X-ContextStream-Toolset": "complete",
+        "X-ContextStream-Output-Format": "compact",
+        "X-ContextStream-Search-Limit": "15",
+        "X-ContextStream-Search-Max-Chars": "2400",
+        "X-ContextStream-Transcripts-Enabled": "true",
+        "X-ContextStream-Consolidated": "true"
+      }
+    },
+    "remote-lean-proof": {
+      "type": "stdio",
+      "command": "python3",
+      "args": [
+        "4-Infrastructure/infra/remote_lean_proof_mcp.py"
+      ],
+      "env": {
+        "PROOF_SERVER_URL": "http://75.101.199.58:8787",
+        "PROOF_SERVER_TOKEN_FILE": "/home/allaun/.config/ene/language-proof-server.token"
+      }
+    }
+  }
+}

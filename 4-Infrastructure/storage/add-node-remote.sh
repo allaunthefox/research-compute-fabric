@@ -6,9 +6,11 @@
 #   2. A ZFS replication target (zfs-send → rclone sftp)
 #
 # Known nodes (from tailscale status):
-#   cupfox-4gb-2cpu   100.126.242.5
-#   nixos             100.119.165.120
-#   microvm-racknerd  100.101.247.127
+#   qfox-1            100.88.57.96    this machine — primary S3 endpoint
+#   361395-1          100.110.163.82  Debian 13 / Netcup VPS (old cupfox, reinstalled, SSH TBD)
+#   nixos-laptop      100.119.165.120 NixOS / storage node (SSH OK)
+#   microvm-racknerd  100.101.247.127 Debian VM / RackNerd VPS (root password OK)
+#   dracocomp         100.100.140.27  offline (last seen 2d ago)
 #
 # Usage:
 #   bash add-node-remote.sh <tailscale-ip> [ssh-user] [ssh-port]

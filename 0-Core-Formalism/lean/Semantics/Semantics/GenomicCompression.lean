@@ -18,8 +18,13 @@ Sub-modules:
 
 Key insights from literature:
 - 2504.03733: AI for Epigenetic Sequence Analysis → Methylation pattern compression
-- 2503.16659: Protein Representation Learning → Structural compression in latent space  
+- 2503.16659: Protein Representation Learning → Structural compression in latent space
 - 2504.12610: Gene Regulatory Network Inference → Network topology compression
+
+  REFERENCES:
+    See 6-Documentation/docs/provenance/LANGUAGE_MATH_MODEL_SOURCES.cff
+    for full DOIs. Arxiv IDs above correspond to recent preprints;
+    lookup at https://arxiv.org/abs/<id> for current status.
 
 Per AGENTS.md §1.4: Q16_16 fixed-point for hardware extraction.
 Per AGENTS.md §2: PascalCase types, camelCase functions.

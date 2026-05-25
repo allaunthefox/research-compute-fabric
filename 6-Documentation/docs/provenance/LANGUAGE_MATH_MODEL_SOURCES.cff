@@ -1,0 +1,505 @@
+cff-version: 1.2.0
+message: "If you use the language-math model papers or genetic framework probes, cite the appropriate peer-reviewed or arXiv sources below."
+type: dataset
+title: "Language, Mathematics, Genetics, and Information Theory Paper Sources"
+authors:
+  - name: "Research Stack Contributors"
+date-released: 2026-05-22
+url: "https://github.com/allaunthefox/Research-Stack"
+repository-code: "https://github.com/allaunthefox/Research-Stack"
+license: Apache-2.0
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Expanded Genetic Alphabet / Synthetic DNA
+# ─────────────────────────────────────────────────────────────────────────────
+references:
+  - type: article
+    title: "Hachimoji DNA and RNA: A genetic system with eight building blocks"
+    authors:
+      - family-names: "Hoshika"
+        given-names: "Shuichi"
+      - family-names: "Leal"
+        given-names: "Nicole A."
+      - family-names: "Kim"
+        given-names: "Myong-Jung"
+      - family-names: "Kim"
+        given-names: "Myong-Sang"
+      - family-names: "Karalkar"
+        given-names: "Nilesh B."
+      - family-names: "Kim"
+        given-names: "Hyo-Joong"
+      - family-names: "Bates"
+        given-names: "Alison M."
+      - family-names: "Watkins Jr."
+        given-names: "Norman E."
+      - family-names: "SantaLucia"
+        given-names: "Holly A."
+      - family-names: "Meyer"
+        given-names: "Adam J."
+      - family-names: "DasGupta"
+        given-names: "Saurja"
+      - family-names: "Piccirilli"
+        given-names: "Joseph A."
+      - family-names: "Ellington"
+        given-names: "Andrew D."
+      - family-names: "SantaLucia Jr."
+        given-names: "John"
+      - family-names: "Georgiadis"
+        given-names: "Millie M."
+      - family-names: "Benner"
+        given-names: "Steven A."
+    journal: "Science"
+    volume: "363"
+    issue: "6429"
+    pages: "884-887"
+    date-published: 2019-02-22
+    doi: "10.1126/science.aat0971"
+    url: "https://www.science.org/doi/10.1126/science.aat0971"
+    notes: "Demonstrated 8-base synthetic DNA (hachimoji) with 3 bits/base. Formalized in ExpandedGeneticAlphabetProbe.lean."
+
+  - type: article
+    title: "Enzymatic synthesis and nanopore sequencing of 12-letter supernumerary DNA"
+    authors:
+      - family-names: "Kawabe"
+        given-names: "Hinako"
+      - family-names: "Thomas"
+        given-names: "Carter A."
+      - family-names: "Hoshika"
+        given-names: "Shuichi"
+      - family-names: "others"
+    journal: "Nature Communications"
+    volume: "14"
+    pages: "6820"
+    date-published: 2023-10-26
+    doi: "10.1038/s41467-023-42406-z"
+    url: "https://www.nature.com/articles/s41467-023-42406-z"
+    notes: "Demonstrated 12-letter supernumerary DNA as canonical structural maximum. Formalized in ExpandedGeneticAlphabetProbe.lean."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Genetic Code Optimality
+# ─────────────────────────────────────────────────────────────────────────────
+  - type: article
+    title: "The genetic code is one in a million"
+    authors:
+      - family-names: "Freeland"
+        given-names: "Stephen J."
+      - family-names: "Hurst"
+        given-names: "Laurence D."
+    journal: "Journal of Molecular Evolution"
+    volume: "47"
+    issue: "3"
+    pages: "238-248"
+    date-published: 1998
+    doi: "10.1007/PL00006381"
+    url: "https://link.springer.com/article/10.1007/PL00006381"
+    notes: "Standard genetic code is ~10^6 times better than random at error minimization. Referenced in GenomeGeodesic_PriorResearch.md."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DNA Information Storage
+# ─────────────────────────────────────────────────────────────────────────────
+  - type: article
+    title: "Next-generation digital information storage in DNA"
+    authors:
+      - family-names: "Church"
+        given-names: "George M."
+      - family-names: "Gao"
+        given-names: "Yuan"
+      - family-names: "Kosuri"
+        given-names: "Sriram"
+    journal: "Science"
+    volume: "337"
+    issue: "6102"
+    pages: "1628"
+    date-published: 2012
+    doi: "10.1126/science.1226355"
+    url: "https://www.science.org/doi/10.1126/science.1226355"
+    notes: "Encoded 5.27-megabit book in DNA. Referenced in GenomeGeodesic_PriorResearch.md."
+
+  - type: article
+    title: "Towards practical, high-capacity, low-maintenance information storage in synthesized DNA"
+    authors:
+      - family-names: "Goldman"
+        given-names: "Nick"
+      - family-names: "Bertone"
+        given-names: "Paul"
+      - family-names: "Chen"
+        given-names: "Siyuan"
+      - family-names: "Dessimoz"
+        given-names: "Christophe"
+      - family-names: "Leproust"
+        given-names: "Emily M."
+      - family-names: "Sipos"
+        given-names: "Botond"
+      - family-names: "Birney"
+        given-names: "Ewan"
+    journal: "Nature"
+    volume: "494"
+    issue: "7435"
+    pages: "77-80"
+    date-published: 2013
+    doi: "10.1038/nature11875"
+    url: "https://www.nature.com/articles/nature11875"
+    notes: "739 KB files encoded in DNA with 100% reconstruction accuracy. Referenced in GenomeGeodesic_PriorResearch.md."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Information Theory & Bottleneck
+# ─────────────────────────────────────────────────────────────────────────────
+  - type: article
+    title: "Deep Learning and the Information Bottleneck Principle"
+    authors:
+      - family-names: "Tishby"
+        given-names: "Naftali"
+      - family-names: "Zaslavsky"
+        given-names: "Noga"
+    conference:
+      name: "IEEE Information Theory Workshop (ITW)"
+    date-published: 2015
+    doi: "10.1109/ITW.2015.7133169"
+    url: "https://arxiv.org/abs/1503.02406"
+    notes: "Information bottleneck principle applied to deep neural networks. Referenced in framework documentation."
+
+  - type: article
+    title: "Algorithmic Information Theory"
+    authors:
+      - family-names: "Grunwald"
+        given-names: "Peter D."
+      - family-names: "Vitanyi"
+        given-names: "Paul M. B."
+    booktitle: "Philosophy of Information"
+    publisher: "Elsevier North-Holland"
+    pages: "281-317"
+    date-published: 2008
+    doi: "10.1016/B978-0-444-51726-5.50013-3"
+    url: "https://doi.org/10.1016/B978-0-444-51726-5.50013-3"
+    notes: "Comprehensive tutorial on Kolmogorov complexity and algorithmic information theory."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Compression & Entropy Coding
+# ─────────────────────────────────────────────────────────────────────────────
+  - type: article
+    title: "Asymmetric numeral systems: entropy coding combining speed of Huffman coding with compression rate of arithmetic coding"
+    authors:
+      - family-names: "Duda"
+        given-names: "Jarek"
+    journal: "Journal of Universal Computer Science"
+    volume: "23"
+    issue: "12"
+    pages: "1112-1130"
+    date-published: 2017
+    doi: "10.48550/arXiv.1311.2540"
+    url: "https://arxiv.org/abs/1311.2540"
+    notes: "ANS: single-state entropy coding alternative to AC. Arxiv preprint; later published in J.UCS."
+
+  - type: article
+    title: "Compression Optimality of Asymmetric Numeral Systems"
+    authors:
+      - family-names: "Pieprzyk"
+        given-names: "Josef"
+      - family-names: "Duda"
+        given-names: "Jarek"
+      - family-names: "Pawlowski"
+        given-names: "Marcin"
+      - family-names: "Camtepe"
+        given-names: "Seyit"
+      - family-names: "Mahboubi"
+        given-names: "Arash"
+      - family-names: "Morawiecki"
+        given-names: "Pawel"
+    journal: "Entropy"
+    volume: "25"
+    issue: "4"
+    pages: "672"
+    date-published: 2023
+    doi: "10.3390/e25040672"
+    url: "https://doi.org/10.3390/e25040672"
+    notes: "Proves ANS optimality for distributions described by natural powers of 1/2."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Grammar Induction & Syntax
+# ─────────────────────────────────────────────────────────────────────────────
+  - type: article
+    title: "Compound Probabilistic Context-Free Grammars for Grammar Induction"
+    authors:
+      - family-names: "Kim"
+        given-names: "Yoon"
+      - family-names: "Dyer"
+        given-names: "Chris"
+      - family-names: "Rush"
+        given-names: "Alexander M."
+    conference:
+      name: "Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics (ACL)"
+    pages: "2369-2385"
+    date-published: 2019
+    doi: "10.18653/v1/P19-1228"
+    url: "https://aclanthology.org/P19-1228/"
+    notes: "Compound PCFG with per-sentence latent variables for grammar induction."
+
+  - type: article
+    title: "Unsupervised Grammar Induction in a Framework of Information Compression by Multiple Alignment, Unification and Search"
+    authors:
+      - family-names: "Wolff"
+        given-names: "J. Gerard"
+    conference:
+      name: "ECML/PKDD 2003 Workshop on Learning Context-Free Grammars"
+    pages: "113-124"
+    date-published: 2003
+    doi: "10.48550/arXiv.cs/0311045"
+    url: "https://arxiv.org/abs/cs/0311045"
+    notes: "SP70 model of ICMAUS framework for unsupervised grammar learning."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Minimum Description Length
+# ─────────────────────────────────────────────────────────────────────────────
+  - type: article
+    title: "Minimum Description Length Revisited"
+    authors:
+      - family-names: "Grunwald"
+        given-names: "Peter"
+      - family-names: "Roos"
+        given-names: "Teemu"
+    journal: "International Journal of Mathematics for Industry"
+    volume: "11"
+    issue: "1"
+    pages: "1930001"
+    date-published: 2020
+    doi: "10.1142/S2661335219300018"
+    url: "https://doi.org/10.1142/S2661335219300018"
+    notes: "Updated overview of MDL principle since 2007."
+
+  - type: article
+    title: "A Tutorial Introduction to the Minimum Description Length Principle"
+    authors:
+      - family-names: "Grunwald"
+        given-names: "Peter D."
+    booktitle: "Advances in Minimum Description Length: Theory and Application"
+    publisher: "MIT Press"
+    date-published: 2005
+    doi: "10.48550/arXiv.math/0406077"
+    url: "https://arxiv.org/abs/math/0406077"
+    notes: "Tutorial chapters on MDL. arXiv preprint; published in MIT Press edited volume."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Language Modeling & Compression
+# ─────────────────────────────────────────────────────────────────────────────
+  - type: article
+    title: "Language Modeling Is Compression"
+    authors:
+      - family-names: "Deletang"
+        given-names: "Gregoire"
+      - family-names: "Ruoss"
+        given-names: "Anian"
+      - family-names: "Duquenne"
+        given-names: "Paul-Ambroise"
+      - family-names: "Catt"
+        given-names: "Elliot"
+      - family-names: "Genewein"
+        given-names: "Tim"
+      - family-names: "Mattern"
+        given-names: "Christopher"
+      - family-names: "Grau-Moya"
+        given-names: "Jordi"
+      - family-names: "Wenliang"
+        given-names: "Li Kevin"
+      - family-names: "Aitchison"
+        given-names: "Matthew"
+      - family-names: "Orseau"
+        given-names: "Laurent"
+      - family-names: "Hutter"
+        given-names: "Marcus"
+      - family-names: "Veness"
+        given-names: "Joel"
+    conference:
+      name: "International Conference on Learning Representations (ICLR)"
+    date-published: 2024
+    doi: "10.48550/arXiv.2309.10668"
+    url: "https://arxiv.org/abs/2309.10668"
+    notes: "Chinchilla 70B compresses ImageNet to 43.4% and LibriSpeech to 16.4%. ICLR 2024; no proceedings DOI."
+
+  - type: article
+    title: "LLMZip: Lossless Text Compression using Large Language Models"
+    authors:
+      - family-names: "Valmeekam"
+        given-names: "Chandra Shekhara Kaushik"
+      - family-names: "Narayanan"
+        given-names: "Krishna R."
+      - family-names: "Kalathil"
+        given-names: "Dileep M."
+      - family-names: "Chamberland"
+        given-names: "Jean-Francois"
+      - family-names: "Shakkottai"
+        given-names: "Srinivas"
+    date-published: 2023
+    doi: "10.48550/arXiv.2306.04050"
+    url: "https://arxiv.org/abs/2306.04050"
+    notes: "Uses LLaMA-7B for lossless text compression. Arxiv preprint."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Geometry of Embeddings / Manifolds
+# ─────────────────────────────────────────────────────────────────────────────
+  - type: article
+    title: "Poincare Embeddings for Learning Hierarchical Representations"
+    authors:
+      - family-names: "Nickel"
+        given-names: "Maximillian"
+      - family-names: "Kiela"
+        given-names: "Douwe"
+    conference:
+      name: "Neural Information Processing Systems (NeurIPS)"
+    date-published: 2017
+    pages: "6338-6347"
+    doi: "10.48550/arXiv.1705.08039"
+    url: "https://arxiv.org/abs/1705.08039"
+    notes: "Hyperbolic Poincare ball embeddings. NeurIPS 2017; no proceedings DOI."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Zipf's Law & Statistical Linguistics
+# ─────────────────────────────────────────────────────────────────────────────
+  - type: article
+    title: "Zipf's word frequency law in natural language: A critical review and future directions"
+    authors:
+      - family-names: "Piantadosi"
+        given-names: "Steven T."
+    journal: "Psychonomic Bulletin & Review"
+    volume: "21"
+    pages: "1112-1130"
+    date-published: 2014
+    doi: "10.3758/s13423-014-0585-6"
+    url: "https://link.springer.com/article/10.3758/s13423-014-0585-6"
+    notes: "Critical review of Zipf's law theories; argues no single account explains all facts."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Recent Arxiv Preprints (No Peer-Reviewed DOI Yet)
+# ─────────────────────────────────────────────────────────────────────────────
+  - type: article
+    title: "Attention and Compression is all you need for Controllably Efficient Language Models"
+    authors:
+      - family-names: "Prakash"
+        given-names: "Jatin"
+      - family-names: "Puli"
+        given-names: "Aahlad"
+      - family-names: "Ranganath"
+        given-names: "Rajesh"
+    date-published: 2025
+    doi: "10.48550/arXiv.2511.05313"
+    url: "https://arxiv.org/abs/2511.05313"
+    notes: "Compress & Attend Transformer (CAT). Submitted to ICLR 2026."
+
+  - type: article
+    title: "On the compressiveness of the Burrows-Wheeler transform"
+    authors:
+      - family-names: "Bannai"
+        given-names: "Hideo"
+      - family-names: "I"
+        given-names: "Tomohiro"
+      - family-names: "Nakashima"
+        given-names: "Yuto"
+    date-published: 2024
+    doi: "10.48550/arXiv.2411.11298"
+    url: "https://arxiv.org/abs/2411.11298"
+    notes: "BWT and bijective BWT compressiveness analysis. Arxiv preprint."
+
+  - type: article
+    title: "Harnessing the Universal Geometry of Embeddings"
+    authors:
+      - family-names: "Jha"
+        given-names: "Rishi"
+      - family-names: "Zhang"
+        given-names: "Collin"
+      - family-names: "Shmatikov"
+        given-names: "Vitaly"
+      - family-names: "Morris"
+        given-names: "John X."
+    date-published: 2025
+    doi: "10.48550/arXiv.2505.12540"
+    url: "https://arxiv.org/abs/2505.12540"
+    notes: "Universal latent representation translation across embedding spaces. Arxiv preprint."
+
+  - type: article
+    title: "Hyperbolic Large Language Models"
+    authors:
+      - family-names: "Patil"
+        given-names: "Sarang"
+      - family-names: "Zhang"
+        given-names: "Zeyong"
+      - family-names: "Huang"
+        given-names: "Yiran"
+      - family-names: "Ma"
+        given-names: "Tengfei"
+      - family-names: "Xu"
+        given-names: "Mengjia"
+    date-published: 2025
+    doi: "10.48550/arXiv.2509.05757"
+    url: "https://arxiv.org/abs/2509.05757"
+    notes: "Comprehensive survey of hyperbolic geometry in LLMs. Arxiv preprint."
+
+  - type: article
+    title: "Entropy Estimation Methods"
+    authors:
+      - name: "Authors pending"
+    date-published: 2025
+    doi: "10.48550/arXiv.2511.10618"
+    url: "https://arxiv.org/abs/2511.10618"
+    notes: "Recent preprint on entropy estimation."
+
+  - type: article
+    title: "Rethinking LLM Information Geometry"
+    authors:
+      - name: "Authors pending"
+    date-published: 2025
+    doi: "10.48550/arXiv.2506.15830"
+    url: "https://arxiv.org/abs/2506.15830"
+    notes: "Recent preprint on LLM information geometry."
+
+  - type: article
+    title: "Token Embeddings Manifold Analysis"
+    authors:
+      - name: "Authors pending"
+    date-published: 2025
+    doi: "10.48550/arXiv.2504.01002"
+    url: "https://arxiv.org/abs/2504.01002"
+    notes: "Recent preprint on token embedding manifolds."
+
+  - type: article
+    title: "Topological Language Analysis"
+    authors:
+      - name: "Authors pending"
+    date-published: 2024
+    doi: "10.48550/arXiv.2411.10298"
+    url: "https://arxiv.org/abs/2411.10298"
+    notes: "Recent preprint on topological approaches to language."
+
+  - type: article
+    title: "Unraveling Syntax with Neural Methods"
+    authors:
+      - name: "Authors pending"
+    date-published: 2025
+    doi: "10.48550/arXiv.2510.02524"
+    url: "https://arxiv.org/abs/2510.02524"
+    notes: "Recent preprint on syntax analysis."
+
+  - type: article
+    title: "Latent Semantic Manifolds"
+    authors:
+      - name: "Authors pending"
+    date-published: 2026
+    doi: "10.48550/arXiv.2603.22301"
+    url: "https://arxiv.org/abs/2603.22301"
+    notes: "Recent preprint on latent semantic manifolds."
+
+  - type: article
+    title: "Kolmogorov Complexity Legacy Survey"
+    authors:
+      - name: "Authors pending"
+    date-published: 2020
+    doi: "10.48550/arXiv.2006.11842"
+    url: "https://arxiv.org/abs/2006.11842"
+    notes: "Survey of Kolmogorov complexity developments."
+
+  - type: article
+    title: "Information Bottleneck in Modern Deep Learning"
+    authors:
+      - name: "Authors pending"
+    date-published: 2025
+    doi: "10.48550/arXiv.2509.26327"
+    url: "https://arxiv.org/abs/2509.26327"
+    notes: "Recent preprint extending information bottleneck theory."

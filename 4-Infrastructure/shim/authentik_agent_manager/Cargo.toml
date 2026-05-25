@@ -1,0 +1,29 @@
+[package]
+name = "authentik_agent_manager"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+dirs = "5"
+reqwest = { version = "0.12", features = ["json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[[bin]]
+name = "authentik_agent_manager"
+path = "src/main.rs"
+
+[[bin]]
+name = "mcp_server"
+path = "src/bin/mcp_server.rs"
+
+[profile.release]
+opt-level = 3
+lto = true

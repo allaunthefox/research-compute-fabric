@@ -19,3 +19,22 @@ You are assisting the user within the `Research-Stack` repository. You must stri
 *   **Hardware Claims**: Distinguish between software witness, bitstream presence, SRAM load, flash persistence, UART beacon, and live hardware receipt.
 
 *Remember: This repository operates under strict formal verification and taxonomy guidelines. Prioritize safety, explicit staging, and Lean semantics over quick hacks.*
+
+<!-- BEGIN ContextStream -->
+## ENE-First Context Rule
+
+Before using ContextStream or local repository search, check the local ENE MCP
+server first:
+
+1. `ene_status`
+2. `ene_context(user_message="...", save_exchange=true)` on session/message start
+3. `ene_search(query="...")`
+4. `ene_recall(query="...")` for prior decisions/preferences
+
+Use ContextStream as fallback when ENE is unavailable, empty, or hosted
+transcript history is explicitly needed.
+
+## ContextStream MCP Integration
+
+This project uses [ContextStream](https://contextstream.io) for persistent AI memory across sessions. Use the `contextstream-workflow` skill for detailed examples and reference material.
+<!-- END ContextStream -->

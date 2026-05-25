@@ -1,6 +1,3 @@
-[submodule "4-Infrastructure/gpu/wasmgpu"]
-	path = 4-Infrastructure/gpu/wasmgpu
-	url = https://github.com/Zushah/WasmGPU.git
 [submodule "6-Documentation/docs/nlab"]
 	path = 6-Documentation/docs/nlab
 	url = https://github.com/ncatlab/nlab-content.git

@@ -3,6 +3,17 @@
 optimized_basis_v3.bin
 4-Infrastructure/deploy/
 
+# Virtual environments (root-level)
+.venv/
+.venv-*/
+
+# Third-party research repos (vendored, not authored here)
+ai-math-discovery-systems/
+
+# Scratch tests at root
+Agda_Test.agda
+test.lean
+
 **/node_modules/
 **/__pycache__/
 *.db

@@ -60,5 +60,24 @@
         "scratch": true,
         "shared-data": true
     },
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "remoteLeanProof.url": "http://75.101.199.58:8787",
+    "remoteLeanProof.tokenFile": "/home/allaun/.config/ene/language-proof-server.token",
+    "remoteLeanProof.checkOnSave": true,
+    "remoteLeanProof.checkOnOpen": true,
+    "lean4.envPathExtensions": [
+        "/home/allaun/.local/bin/lean4-remote-proxy",
+        "/home/allaun/.elan/bin"
+    ],
+    "lean4.automaticallyBuildDependencies": false,
+    "lean4.alwaysAskBeforeInstallingLeanVersions": true,
+    "lean4.input.enabled": true,
+    "lean4.input.languages": [
+        "lean4",
+        "lean",
+        "markdown"
+    ],
+    "lean4.infoview.autoOpen": true,
+    "lean4.autofocusOutput": false,
+    "lean4.trace.server": "off"
 }

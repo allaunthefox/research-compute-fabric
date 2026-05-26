@@ -20,6 +20,59 @@ receipt_density populated == route has structural/witness evidence for RRC use
 
 ---
 
+## Phase 2.1 verification sequence
+
+Run the local regression harness first:
+
+```bash
+python3 4-Infrastructure/shim/test_pist_receipt_density_injector.py
+```
+
+Expected result: all tests print `PASS`.
+
+Then emit the audit JSON only:
+
+```bash
+python3 4-Infrastructure/shim/pist_receipt_density_injector.py
+```
+
+Inspect:
+
+```text
+shared-data/rrc_receipt_density_backfill.json
+```
+
+Only after inspection, run the guarded sidecar write:
+
+```bash
+python3 4-Infrastructure/shim/pist_receipt_density_injector.py --write-rds
+```
+
+Finally validate the sidecar table:
+
+```bash
+python3 4-Infrastructure/shim/validate_receipt_density_sidecar.py
+```
+
+Optional validation report:
+
+```bash
+python3 4-Infrastructure/shim/validate_receipt_density_sidecar.py \
+  --out shared-data/rrc_receipt_density_sidecar_validation.json
+```
+
+The validator fails if:
+
+```text
+sidecar table is empty
+any row has promotion != not_promoted
+any density/confidence is null or outside [0, 1]
+any receipt hash/source is missing
+any receipt_density_status is not CANDIDATE or HOLD
+```
+
+---
+
 ## Default inputs
 
 ```text
@@ -81,6 +134,29 @@ python3 4-Infrastructure/shim/pist_receipt_density_injector.py \
   --out shared-data/rrc_receipt_density_backfill.json
 ```
 
+Guarded RDS sidecar write:
+
+```bash
+python3 4-Infrastructure/shim/pist_receipt_density_injector.py \
+  --write-rds \
+  --rds-table ene.rrc_receipt_density
+```
+
+The writer uses:
+
+```text
+4-Infrastructure/shim/rds_connect.py
+```
+
+so connection parameters resolve through the shared RDS path:
+
+```text
+DATABASE_URL
+RDS_* env vars
+IAM token / boto3 / AWS CLI
+password fallback
+```
+
 ---
 
 ## Record schema
@@ -120,6 +196,45 @@ Each record has the form:
   "warnings": []
 }
 ```
+
+---
+
+## RDS sidecar schema
+
+The guarded writer creates or upserts into:
+
+```text
+ene.rrc_receipt_density
+```
+
+Fields:
+
+```text
+equation_id
+rrc_shape
+domain
+source_status
+receipt_density
+receipt_density_source
+receipt_density_hash
+receipt_density_status
+receipt_density_warnings
+confidence
+top_axes
+shape_prediction
+density_components
+promotion
+payload
+updated_at
+```
+
+The table has a check constraint:
+
+```sql
+promotion = 'not_promoted'
+```
+
+This makes promotion drift fail at the database boundary.
 
 ---
 
@@ -186,25 +301,16 @@ Promotion still requires external receipts, Lean/kernel verification where appli
 
 ---
 
-## Next integration step
+## CI candidate
 
-Once the JSON output is inspected, the next safe step is an explicit DB writer guarded by a flag such as:
+A minimal CI step should run:
 
 ```bash
---write-rds
+python3 4-Infrastructure/shim/test_pist_receipt_density_injector.py
+python3 4-Infrastructure/shim/pist_receipt_density_injector.py --fail-on-missing-pist
 ```
 
-That writer should upsert only these fields:
-
-```text
-receipt_density
-receipt_density_source
-receipt_density_hash
-receipt_density_status
-receipt_density_warnings
-```
-
-and should not alter theorem truth, promotion state, or claim ladder status.
+The sidecar validator should run only in environments with RDS credentials.
 
 ---
 

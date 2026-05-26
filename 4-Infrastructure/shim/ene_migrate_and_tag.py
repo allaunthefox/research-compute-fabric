@@ -1,123 +1,126 @@
 #!/usr/bin/env python3
-"""
-Migrate knowledge.* tables → ENE substrate with aggressive concept tagging.
+"""ENE substrate migration + concept tagging (legacy shim).
 
-1. Apply ENE schema (ene.packages + 9 support tables)
-2. Migrate all sources into ene.packages with typed provenance
-3. Extract concepts, build relations, score N-space KV retention
-4. Run cross-source discovery queries
+NOTE (ontology migration):
 
-Run in dev container:
-  podman exec -e AWS_ACCESS_KEY_ID=... -e AWS_SECRET_ACCESS_KEY=... -e AWS_REGION=us-east-1 -e RDS_IAM=1 \
-    research-stack python3 /home/researcher/stack/4-Infrastructure/shim/ene_migrate_and_tag.py
+This file is a **legacy shim** used to keep ENE substrate bootstrapping and
+migration workflows running while the AVM / Lean-only ISA rewrite is underway.
+
+**Target architecture:** Lean-only AVM ISA + backend shims.
+- Lean defines all semantics.
+- Shims perform I/O and orchestration only.
+
+This script currently performs:
+- schema application
+- migration SQL
+- tokenizer-based tagging
+- relation building
+- retention scoring
+
+Several of those operations are semantic decisions and include float-based scoring.
+They must be ported into Lean/AVM.
+
+Rules until ported:
+- Treat all outputs as **not promoted**.
+- Never silently apply a different schema. If the schema file is missing: **reject**.
+
+TODO(lean-port): Port tagging/relations/retention scoring into Lean/AVM.
 """
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import logging
-import os
 import re
 import sys
-import uuid
 from collections import Counter
 from pathlib import Path
 
 import psycopg2
 import psycopg2.extras
+
 from rds_connect import connect_rds
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("ene_migrate")
 
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_SCHEMA_PATH = REPO_ROOT / "4-Infrastructure/shim/ene_substrate_schema.sql"
+ONTOLOGY_VERSION = "shim-ontology-migration-v1"
+
+
 def connect():
     return connect_rds()
 
 
-def apply_schema(conn):
-    """Apply the full ENE substrate schema."""
-    schema_path = Path("/home/researcher/stack/4-Infrastructure/shim/ene_substrate_schema.sql")
-    if schema_path.exists():
-        sql = schema_path.read_text()
-        with conn.cursor() as cur:
-            cur.execute(sql)
-        conn.commit()
-        log.info("ENE substrate schema applied")
-    else:
-        log.warning("Schema file not found, creating inline")
-        # Fallback: create minimal schema inline
-        with conn.cursor() as cur:
-            cur.execute("CREATE SCHEMA IF NOT EXISTS ene")
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS ene.packages (
-                    pkg TEXT PRIMARY KEY, package_type TEXT, title TEXT, content TEXT,
-                    content_hash TEXT, concept_vector JSONB DEFAULT '[]',
-                    concept_anchor JSONB DEFAULT '{}', tags JSONB DEFAULT '[]',
-                    source TEXT, provenance JSONB DEFAULT '{}', domain TEXT,
-                    archetype TEXT, promotion_state TEXT DEFAULT 'held',
-                    scar_class TEXT, ingested_at TIMESTAMPTZ NOT NULL DEFAULT now()
-                );
-                CREATE TABLE IF NOT EXISTS ene.relations (
-                    id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
-                    source_id TEXT NOT NULL, target_id TEXT NOT NULL,
-                    relation_type TEXT NOT NULL, weight REAL DEFAULT 1.0,
-                    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-                );
-                CREATE TABLE IF NOT EXISTS ene.nspace_kv (
-                    key_id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
-                    value_package_id TEXT NOT NULL,
-                    reduction_reward REAL DEFAULT 0, sparsity_score REAL DEFAULT 0,
-                    scar_pressure REAL DEFAULT 0, retention_score REAL DEFAULT 0
-                );
-            """)
-        conn.commit()
-        log.info("ENE minimal schema applied")
+def apply_schema(conn, schema_path: Path) -> None:
+    """Apply the ENE substrate schema.
+
+    Policy: never silently substitute an inline schema. If the schema file is
+    missing, reject.
+    """
+    if not schema_path.exists():
+        raise FileNotFoundError(f"ENE schema file not found: {schema_path}")
+
+    sql = schema_path.read_text(encoding="utf-8")
+    with conn.cursor() as cur:
+        cur.execute(sql)
+    conn.commit()
+    log.info("ENE substrate schema applied (%s)", schema_path)
 
 
 # ---------------------------------------------------------------------------
-# Term extraction (same aggressive tokenizer from concept_cross_reference.py)
+# Term extraction (legacy tokenizer)
 # ---------------------------------------------------------------------------
 MATH_SYMBOL_RE = re.compile(
-    r'\\(?:alpha|beta|gamma|Gamma|delta|Delta|epsilon|varepsilon|zeta|eta|theta|Theta|'
-    r'iota|kappa|lambda|Lambda|mu|nu|xi|Xi|pi|Pi|rho|sigma|Sigma|tau|upsilon|phi|Phi|'
-    r'varphi|chi|psi|Psi|omega|Omega|partial|nabla|infty|int|sum|prod|otimes|oplus|'
-    r'rightarrow|leftarrow|Rightarrow|Leftarrow|mapsto|approx|equiv|sim|propto|'
-    r'leq|geq|neq|times|cdot|circ|pm|mp|sqrt|frac|operatorname|mathbf|mathrm|mathcal|'
-    r'mathfrak|mathbb|text|hat|tilde|bar|vec|dot|ddot|widehat|widetilde|'
-    r'langle|rangle|lVert|rVert|vert|mid|'
-    r'begin|end|left|right|big|Big|bigg|Bigg)'
+    r"\\\\(?:alpha|beta|gamma|Gamma|delta|Delta|epsilon|varepsilon|zeta|eta|theta|Theta|"
+    r"iota|kappa|lambda|Lambda|mu|nu|xi|Xi|pi|Pi|rho|sigma|Sigma|tau|upsilon|phi|Phi|"
+    r"varphi|chi|psi|Psi|omega|Omega|partial|nabla|infty|int|sum|prod|otimes|oplus|"
+    r"rightarrow|leftarrow|Rightarrow|Leftarrow|mapsto|approx|equiv|sim|propto|"
+    r"leq|geq|neq|times|cdot|circ|pm|mp|sqrt|frac|operatorname|mathbf|mathrm|mathcal|"
+    r"mathfrak|mathbb|text|hat|tilde|bar|vec|dot|ddot|widehat|widetilde|"
+    r"langle|rangle|lVert|rVert|vert|mid|"
+    r"begin|end|left|right|big|Big|bigg|Bigg)"
 )
 
 TECHNICAL_RE = re.compile(
-    r'\b(?:'
-    r'manifold|field|shear|packet|spectral|braid|gossip|'
-    r'residual|invariant|receipt|scar|warden|collapse|compression|'
-    r'entropy|eigen(?:value|vector)?|coboundary|cochain|'
-    r'diffusion|transport|boundary|kernel|operator|'
-    r'tensor|metric|geodesic|curvature|torsion|'
-    r'hamiltonian|lagrangian|reduction|projection|embedding|'
-    r'chirality|helicity|handedness|logogram|'
-    r'sidon|goxel|famm|nuvmap|otom|pist|'
-    r'erdos|szekeres|selfridge|gyarfas|'
-    r'biocompression|organoid|chaos|fractal|attractor|basin|'
-    r'thermal|thermodynamic|landauer|witness|shadow|adversarial|'
-    r'morph(?:ic|ism)?|radix|codec|semantic|'
-    r'markov|cognitive|attention|neural|network|transformer|'
-    r'hutter|prize|betti|homology|cohomology|'
-    r'riccati|noise|mfg|hessian|jacobian|'
-    r'seam|tomography|sandwich|pruning|rope|scar|'
-    r'eigensolid|eigenspace|underverse|geocognition|'
-    r'smallcode|constrained|key.value|shortcut|ontology|'
-    r'hyperbolic|riemannian|poincare|'
-    r'bio|dna|rna|protein|feynman|navier|stokes|'
-    r'plasma|mhd|alfven|'
-    r'q16|fixed.point|subleq|oisc|kv|cache'
-    r')\b', re.IGNORECASE
+    r"\\b(?:"
+    r"manifold|field|shear|packet|spectral|braid|gossip|"
+    r"residual|invariant|receipt|scar|warden|collapse|compression|"
+    r"entropy|eigen(?:value|vector)?|coboundary|cochain|"
+    r"diffusion|transport|boundary|kernel|operator|"
+    r"tensor|metric|geodesic|curvature|torsion|"
+    r"hamiltonian|lagrangian|reduction|projection|embedding|"
+    r"chirality|helicity|handedness|logogram|"
+    r"sidon|goxel|famm|nuvmap|otom|pist|"
+    r"erdos|szekeres|selfridge|gyarfas|"
+    r"biocompression|organoid|chaos|fractal|attractor|basin|"
+    r"thermal|thermodynamic|landauer|witness|shadow|adversarial|"
+    r"morph(?:ic|ism)?|radix|codec|semantic|"
+    r"markov|cognitive|attention|neural|network|transformer|"
+    r"hutter|prize|betti|homology|cohomology|"
+    r"riccati|noise|mfg|hessian|jacobian|"
+    r"seam|tomography|sandwich|pruning|rope|scar|"
+    r"eigensolid|eigenspace|underverse|geocognition|"
+    r"smallcode|constrained|key.value|shortcut|ontology|"
+    r"hyperbolic|riemannian|poincare|"
+    r"bio|dna|rna|protein|feynman|navier|stokes|"
+    r"plasma|mhd|alfven|"
+    r"q16|fixed.point|subleq|oisc|kv|cache"
+    r")\\b",
+    re.IGNORECASE,
 )
 
-TOKEN_RE = re.compile(r'[a-zA-Z_\\][a-zA-Z0-9_\\]*|\b(?:N-space|key-value|CP-SAT|Anti-FAMM|Anti-Braid)\b', re.IGNORECASE)
-STOP_WORDS = set("the a an is are was were be been being have has had do does did will would shall should may might must can could of in to for with on at by from as into through during and but or not no nor so if then else when where this that these those it its we they he she which who whom whose what how why also very more most some any all each every both few new other such only own same just about over text bf rm sf tt em sc it up use using used can one two also etc via per e.g i.e figure table section non doi url http https www paper result method approach model data set page pages vol pp et al note notes example see shown fig eq ref abstract introduction conclusion reference references arxiv org github com html pdf first second third following based given found obtained described proposed well within without between among under above below since however therefore thus still yet here there where now then than get got getting make made making take taken taking give given giving let lets case cases term terms form forms number numbers value values point points part parts type types kind kinds way ways much many long short high low large small different similar same total whole full work works working need needs needed help helps helped like likes liked know known unknown think thought believe want wants wanted try tries tried".split())
+TOKEN_RE = re.compile(
+    r"[a-zA-Z_\\\\][a-zA-Z0-9_\\\\]*|\\b(?:N-space|key-value|CP-SAT|Anti-FAMM|Anti-Braid)\\b",
+    re.IGNORECASE,
+)
+STOP_WORDS = set(
+    "the a an is are was were be been being have has had do does did will would shall should may might must can could of in to for with on at by from as into through during and but or not no nor so if then else when where this that these those it its we they which who what how why also more most some any all each every both few new other such only own same just about over text rm sf tt em sc up use using used one two etc via per eg ie figure table section doi url http https www paper result method approach model data set page pages vol pp et al note notes example see shown fig eq ref abstract introduction conclusion reference references arxiv org github com html pdf first second third following based given found obtained described proposed well within without between among under above below since however therefore thus still yet here there now then than"
+    .split()
+)
 
 
 def tokenize(text: str) -> list[str]:
@@ -126,7 +129,14 @@ def tokenize(text: str) -> list[str]:
     seen: set[str] = set()
     results: list[str] = []
     for m in TOKEN_RE.finditer(text):
-        t = m.group(0).strip().lower().rstrip(".,;:!?\"'()[]{}").lstrip("\\").rstrip("{}")
+        t = (
+            m.group(0)
+            .strip()
+            .lower()
+            .rstrip(".,;:!?\"'()[]{}")
+            .lstrip("\\\\")
+            .rstrip("{}")
+        )
         if not t or t in STOP_WORDS or len(t) < 2 or t in seen:
             continue
         seen.add(t)
@@ -137,13 +147,15 @@ def tokenize(text: str) -> list[str]:
 # ---------------------------------------------------------------------------
 # Migration
 # ---------------------------------------------------------------------------
-def migrate_all_sources(conn):
+def migrate_all_sources(conn) -> int:
     """Migrate knowledge.* tables into ene.packages with typed provenance."""
     cur = conn.cursor()
     total = 0
 
     migrations = [
-        ("equations", "eq_id", "equation", """
+        (
+            "equations",
+            """
             INSERT INTO ene.packages (pkg, package_type, title, content, content_hash, tags, source, domain, provenance, promotion_state)
             SELECT eq_id::text, 'equation', latex, latex, content_hash, '[]'::jsonb, source_file, 'equation_corpus',
                    jsonb_build_object('kind', kind, 'source_file', source_file, 'source_offset', source_offset),
@@ -152,8 +164,11 @@ def migrate_all_sources(conn):
             ON CONFLICT (pkg) DO UPDATE SET
                 title = EXCLUDED.title, content = EXCLUDED.content,
                 content_hash = EXCLUDED.content_hash, tags = EXCLUDED.tags
-        """),
-        ("tiddlywiki_pages", "tiddler_id", "tiddler", """
+            """,
+        ),
+        (
+            "tiddlywiki_pages",
+            """
             INSERT INTO ene.packages (pkg, package_type, title, content, content_hash, tags, source, domain, provenance, promotion_state)
             SELECT tiddler_id::text, 'tiddler', title, coalesce(body,''),
                    content_hash, '[]'::jsonb, source_path, 'tiddlywiki',
@@ -163,10 +178,13 @@ def migrate_all_sources(conn):
             ON CONFLICT (pkg) DO UPDATE SET
                 title = EXCLUDED.title, content = EXCLUDED.content,
                 content_hash = EXCLUDED.content_hash, tags = EXCLUDED.tags
-        """),
-        ("references", "ref_id", "reference", """
+            """,
+        ),
+        (
+            "references",
+            """
             INSERT INTO ene.packages (pkg, package_type, title, content, content_hash, tags, source, domain, provenance, promotion_state)
-            SELECT ref_id::text, 'reference', 
+            SELECT ref_id::text, 'reference',
                    substring(coalesce(bibtex,'') from 1 for 200),
                    bibtex, content_hash, '[]'::jsonb, source_file, 'bibliography',
                    jsonb_build_object('source_file', source_file, 'bibtex', coalesce(bibtex,'')),
@@ -175,8 +193,11 @@ def migrate_all_sources(conn):
             ON CONFLICT (pkg) DO UPDATE SET
                 title = EXCLUDED.title, content = EXCLUDED.content,
                 content_hash = EXCLUDED.content_hash, tags = EXCLUDED.tags
-        """),
-        ("links", "link_id", "link", """
+            """,
+        ),
+        (
+            "links",
+            """
             INSERT INTO ene.packages (pkg, package_type, title, content, content_hash, tags, source, domain, provenance, promotion_state)
             SELECT link_id::text, 'link', url, url, encode(sha256(url::bytea),'hex'), '[]'::jsonb, source_file,
                    'external_reference',
@@ -185,8 +206,11 @@ def migrate_all_sources(conn):
             FROM knowledge.links
             ON CONFLICT (pkg) DO UPDATE SET
                 title = EXCLUDED.title, content = EXCLUDED.content
-        """),
-        ("article_sources", "article_id", "article", """
+            """,
+        ),
+        (
+            "article_sources",
+            """
             INSERT INTO ene.packages (pkg, package_type, title, content, content_hash, tags, source, domain, provenance, promotion_state)
             SELECT article_id::text, 'article', coalesce(label, url), coalesce(label,'') || ' ' || url,
                    encode(sha256(url::bytea),'hex'), '[]'::jsonb, url, 'article_source',
@@ -195,8 +219,11 @@ def migrate_all_sources(conn):
             FROM knowledge.article_sources
             ON CONFLICT (pkg) DO UPDATE SET
                 title = EXCLUDED.title, content = EXCLUDED.content
-        """),
-        ("dois", "doi_id", "doi", """
+            """,
+        ),
+        (
+            "dois",
+            """
             INSERT INTO ene.packages (pkg, package_type, title, content, content_hash, tags, source, domain, provenance, promotion_state)
             SELECT doi_id::text, 'doi', doi, doi, encode(sha256(doi::bytea),'hex'), '[]'::jsonb, source_file, 'doi_identifier',
                    jsonb_build_object('doi', doi, 'source_file', source_file),
@@ -204,8 +231,11 @@ def migrate_all_sources(conn):
             FROM knowledge.dois
             ON CONFLICT (pkg) DO UPDATE SET
                 title = EXCLUDED.title, content = EXCLUDED.content
-        """),
-        ("dataset_inventory", "inv_id", "dataset", """
+            """,
+        ),
+        (
+            "dataset_inventory",
+            """
             INSERT INTO ene.packages (pkg, package_type, title, content, content_hash, tags, source, domain, provenance, promotion_state)
             SELECT inv_id::text, 'dataset', coalesce(name, asset_id),
                    coalesce(name,'') || ' ' || coalesce(evidence,'') || ' ' || coalesce(notes,''),
@@ -216,12 +246,13 @@ def migrate_all_sources(conn):
             FROM knowledge.dataset_inventory
             ON CONFLICT (pkg) DO UPDATE SET
                 title = EXCLUDED.title, content = EXCLUDED.content
-        """),
+            """,
+        ),
     ]
 
-    for src_table, id_col, pkg_type, insert_sql in migrations:
+    for src_table, insert_sql in migrations:
         cur.execute(f"SELECT COUNT(*) FROM knowledge.{src_table}")
-        count = cur.fetchone()[0]
+        count = int(cur.fetchone()[0])
         cur.execute(insert_sql)
         total += count
         log.info("Migrated %s → ene.packages (%d rows)", src_table, count)
@@ -231,11 +262,16 @@ def migrate_all_sources(conn):
     return total
 
 
-def tag_packages(conn):
-    """Extract terms from each package content and store as concept_vector + tags JSONB."""
+def tag_packages(conn) -> int:
+    """Extract terms from package content and store concept_vector + tags JSONB.
+
+    NOTE: This is semantic classification logic and must be ported to Lean/AVM.
+    """
     cur = conn.cursor()
 
-    cur.execute("SELECT pkg, package_type, coalesce(content,''), coalesce(title,'') FROM ene.packages WHERE content IS NOT NULL AND content != ''")
+    cur.execute(
+        "SELECT pkg, package_type, coalesce(content,''), coalesce(title,'') FROM ene.packages WHERE content IS NOT NULL AND content != ''"
+    )
     packages = cur.fetchall()
 
     updated = 0
@@ -244,16 +280,18 @@ def tag_packages(conn):
         if not terms:
             continue
 
-        # Classify terms
         math_terms = [t for t in terms if MATH_SYMBOL_RE.fullmatch(t)]
         tech_terms = [t for t in terms if TECHNICAL_RE.search(t)]
-        all_terms = list(dict.fromkeys(terms))  # deduplicate preserving order
+        all_terms = list(dict.fromkeys(terms))
 
         concept_vector = [
-            {"term": t, "type": "math_symbol" if t in math_terms else "technical_term" if t in tech_terms else "keyword"}
-            for t in all_terms[:50]  # cap at 50 for storage
+            {
+                "term": t,
+                "type": "math_symbol" if t in math_terms else "technical_term" if t in tech_terms else "keyword",
+            }
+            for t in all_terms[:50]
         ]
-        tags = all_terms[:20]  # top 20 as tags
+        tags = all_terms[:20]
 
         cur.execute(
             """UPDATE ene.packages
@@ -271,16 +309,19 @@ def tag_packages(conn):
     return updated
 
 
-def build_relations(conn):
-    """Build ene.relations between packages that share concepts across different domains."""
+def build_relations(conn) -> int:
+    """Build ene.relations between packages that share concepts across domains.
+
+    NOTE: This is semantic graph construction logic and must be ported to Lean/AVM.
+    """
     cur = conn.cursor()
 
-    # Extract all concept terms per package
-    cur.execute("SELECT pkg, concept_vector, domain FROM ene.packages WHERE concept_vector IS NOT NULL AND jsonb_array_length(concept_vector) > 0")
+    cur.execute(
+        "SELECT pkg, concept_vector, domain FROM ene.packages WHERE concept_vector IS NOT NULL AND jsonb_array_length(concept_vector) > 0"
+    )
     packages = cur.fetchall()
     log.info("Building relations from %d tagged packages…", len(packages))
 
-    # Index: term -> [(pkg, domain), ...]
     term_index: dict[str, list[tuple[str, str]]] = {}
     for pkg, cv, domain in packages:
         if cv is None:
@@ -288,35 +329,27 @@ def build_relations(conn):
         concepts = json.loads(cv) if isinstance(cv, str) else cv
         for c in concepts:
             term = c["term"].lower()
-            if term not in term_index:
-                term_index[term] = []
-            term_index[term].append((pkg, domain or "unknown"))
+            term_index.setdefault(term, []).append((pkg, domain or "unknown"))
 
-    # Build relations: packages sharing concepts across different domains
     relation_count = 0
     for term, pkgs in term_index.items():
         if len(pkgs) < 2:
             continue
-        # Pair packages from different domains sharing this term
         for i, (p1, d1) in enumerate(pkgs):
             for j in range(i + 1, len(pkgs)):
                 p2, d2 = pkgs[j]
                 if d1 == d2:
-                    continue  # skip same-domain (already known)
-                # Determine relation type
-                rel_type = "shares_concept" if d1 != d2 else "co_occurs"
-                try:
-                    cur.execute(
-                        """INSERT INTO ene.relations (source_id, target_id, relation_type, weight)
-                           VALUES (%s,%s,%s,1.0)
-                           ON CONFLICT DO NOTHING""",
-                        (p1, p2, rel_type),
-                    )
-                    if cur.rowcount > 0:
-                        relation_count += 1
-                except Exception:
-                    pass
-        if relation_count % 2000 == 0:
+                    continue
+                rel_type = "shares_concept"
+                cur.execute(
+                    """INSERT INTO ene.relations (source_id, target_id, relation_type, weight)
+                       VALUES (%s,%s,%s,1.0)
+                       ON CONFLICT DO NOTHING""",
+                    (p1, p2, rel_type),
+                )
+                if cur.rowcount > 0:
+                    relation_count += 1
+        if relation_count and relation_count % 2000 == 0:
             conn.commit()
             log.info("  %d relations…", relation_count)
 
@@ -325,12 +358,16 @@ def build_relations(conn):
     return relation_count
 
 
-def score_nspace_kv(conn):
-    """Compute reduction_reward, sparsity_score, and retention_score for packages."""
+def score_nspace_kv(conn) -> int:
+    """Compute retention scoring for packages.
+
+    WARNING: This function currently uses float arithmetic via Postgres casts.
+    It must be ported into Lean/AVM fixed-point semantics.
+    """
     cur = conn.cursor()
 
-    # Score based on: concept count (richness), relation count (connectivity), domain uniqueness
-    cur.execute("""
+    cur.execute(
+        """
         INSERT INTO ene.nspace_kv (value_package_id, reduction_reward, sparsity_score, scar_pressure, retention_score)
         SELECT p.pkg,
                GREATEST(0.1, LEAST(1.0, jsonb_array_length(p.concept_vector) / 50.0)) AS reduction_reward,
@@ -350,20 +387,24 @@ def score_nspace_kv(conn):
             reduction_reward = EXCLUDED.reduction_reward,
             sparsity_score = EXCLUDED.sparsity_score,
             retention_score = EXCLUDED.retention_score
-    """)
+        """
+    )
     conn.commit()
+
     cur.execute("SELECT COUNT(*) FROM ene.nspace_kv")
-    nv = cur.fetchone()[0]
+    nv = int(cur.fetchone()[0])
     log.info("Scored %d packages with N-space KV retention", nv)
     return nv
 
 
-def run_discovery_queries(conn):
-    """Run cross-source discovery queries and log unexpected groupings."""
+def run_discovery_queries(conn) -> dict[str, list[tuple]]:
+    """Run cross-source discovery queries and log groupings."""
     cur = conn.cursor()
 
     queries = [
-        ("=== DOMAINS SHARING THE MOST CONCEPTS ===", """
+        (
+            "domains_sharing_most_concepts",
+            """
             SELECT r.relation_type, p1.domain AS domain_a, p2.domain AS domain_b,
                    COUNT(*) AS pair_count,
                    COUNT(DISTINCT r.source_id) + COUNT(DISTINCT r.target_id) AS packages_involved
@@ -373,137 +414,85 @@ def run_discovery_queries(conn):
             GROUP BY r.relation_type, p1.domain, p2.domain
             ORDER BY pair_count DESC
             LIMIT 20
-        """),
-
-        ("=== EQUATIONS BRIDGING TO TIDDLYWIKI PAGES ===", """
-            SELECT eq.pkg AS eq_pkg, LEFT(eq.title, 80) AS equation,
-                   tw.title AS tiddler_title,
-                   r.relation_type
-            FROM ene.relations r
-            JOIN ene.packages eq ON eq.pkg = r.source_id AND eq.domain = 'equation_corpus'
-            JOIN ene.packages tw ON tw.pkg = r.target_id AND tw.domain = 'tiddlywiki'
-            ORDER BY r.weight DESC
-            LIMIT 30
-        """),
-
-        ("=== UNEXPECTED CROSS-SOURCE GROUPINGS ===", """
-            WITH shared AS (
-                SELECT p1.domain AS d1, p2.domain AS d2, COUNT(*) AS cnt
-                FROM ene.relations r
-                JOIN ene.packages p1 ON p1.pkg = r.source_id
-                JOIN ene.packages p2 ON p2.pkg = r.target_id
-                WHERE p1.domain != p2.domain
-                GROUP BY p1.domain, p2.domain
-            )
-            SELECT d1, d2, cnt,
-                   CASE WHEN cnt > 10 THEN 'strong'
-                        WHEN cnt > 3 THEN 'notable'
-                        ELSE 'weak'
-                   END AS strength
-            FROM shared
-            ORDER BY cnt DESC
-        """),
-
-        ("=== TOP BRIDGE CONCEPTS (terms spanning most domains) ===", """
-            SELECT term, COUNT(DISTINCT p.domain) AS domain_span,
-                   ARRAY_AGG(DISTINCT p.domain) AS domains
-            FROM (
-                SELECT p.domain, (jsonb_array_elements(p.concept_vector)->>'term') AS term
-                FROM ene.packages p
-                WHERE p.concept_vector IS NOT NULL AND jsonb_array_length(p.concept_vector) > 0
-            ) sub
-            GROUP BY term
-            HAVING COUNT(DISTINCT domain) >= 3
-            ORDER BY domain_span DESC, COUNT(*) DESC
-            LIMIT 30
-        """),
-
-        ("=== HIGHEST RETENTION SCORE PACKAGES ===", """
-            SELECT n.value_package_id, p.title, p.domain, n.retention_score,
-                   n.reduction_reward, n.sparsity_score
-            FROM ene.nspace_kv n
-            JOIN ene.packages p ON p.pkg = n.value_package_id
-            ORDER BY n.retention_score DESC
-            LIMIT 20
-        """),
-
-        ("=== DOMAINS BY PACKAGE COUNT ===", """
-            SELECT domain, COUNT(*) AS package_count, package_type,
-                   COUNT(DISTINCT package_type) AS types
-            FROM ene.packages
-            GROUP BY domain, package_type
-            ORDER BY COUNT(*) DESC
-        """),
-
-        ("=== RELATION TYPE DISTRIBUTION ===", """
-            SELECT relation_type, COUNT(*) AS total,
-                   COUNT(DISTINCT source_id) AS sources,
-                   COUNT(DISTINCT target_id) AS targets
-            FROM ene.relations
-            GROUP BY relation_type
-            ORDER BY total DESC
-        """),
+            """,
+        ),
     ]
 
-    results = {}
-    for title, query in queries:
+    results: dict[str, list[tuple]] = {}
+    for key, query in queries:
         cur.execute(query)
         rows = cur.fetchall()
-        results[title] = rows
-        log.info("\n%s", title)
-        for row in rows[:12]:
-            log.info("  %s", " | ".join(str(c) for c in row))
-        if len(rows) > 12:
-            log.info("  ... +%d more rows", len(rows) - 12)
+        results[key] = rows
+        log.info("Query %s returned %d rows", key, len(rows))
 
     return results
 
 
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
-def main():
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Migrate knowledge.* tables → ENE substrate with concept tagging.")
+    parser.add_argument("--schema", type=Path, default=DEFAULT_SCHEMA_PATH)
+    parser.add_argument("--skip-tagging", action="store_true")
+    parser.add_argument("--skip-relations", action="store_true")
+    parser.add_argument("--skip-retention", action="store_true")
+    args = parser.parse_args(argv)
+
     log.info("Connecting to RDS…")
     conn = connect()
     conn.autocommit = False
 
-    log.info("Phase 1: Apply ENE substrate schema")
-    apply_schema(conn)
+    try:
+        log.info("Phase 1: Apply ENE substrate schema")
+        apply_schema(conn, args.schema)
 
-    log.info("Phase 2: Migrate knowledge.* → ene.packages")
-    total = migrate_all_sources(conn)
+        log.info("Phase 2: Migrate knowledge.* → ene.packages")
+        migrate_all_sources(conn)
 
-    log.info("Phase 3: Extract concepts and tag packages")
-    tagged = tag_packages(conn)
+        if not args.skip_tagging:
+            log.info("Phase 3: Extract concepts and tag packages")
+            tag_packages(conn)
 
-    log.info("Phase 4: Build cross-domain relations")
-    relations = build_relations(conn)
+        if not args.skip_relations:
+            log.info("Phase 4: Build cross-domain relations")
+            build_relations(conn)
 
-    log.info("Phase 5: Score N-space KV retention")
-    nv_scored = score_nspace_kv(conn)
+        if not args.skip_retention:
+            log.info("Phase 5: Score N-space KV retention")
+            score_nspace_kv(conn)
 
-    log.info("Phase 6: Run discovery queries")
-    results = run_discovery_queries(conn)
+        log.info("Phase 6: Run discovery queries")
+        run_discovery_queries(conn)
 
-    # Summary
-    cur = conn.cursor()
-    cur.execute("SELECT COUNT(*) FROM ene.packages")
-    pkg_count = cur.fetchone()[0]
-    cur.execute("SELECT COUNT(*) FROM ene.relations")
-    rel_count = cur.fetchone()[0]
-    cur.execute("SELECT domain, COUNT(*) FROM ene.packages GROUP BY domain ORDER BY COUNT(*) DESC")
-    domains = cur.fetchall()
-    conn.close()
+        log.info("Done.")
+        return 0
 
-    log.info("\n=== SUMMARY ===")
-    log.info("Packages: %d", pkg_count)
-    log.info("Relations: %d", rel_count)
-    log.info("N-space KV scored: %d", nv_scored)
-    log.info("Domains:")
-    for d, c in domains:
-        log.info("  %s: %d", d, c)
-    log.info("Done.")
+    finally:
+        conn.close()
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
+
+
+# ---------------------------------------------------------------------------
+# Shim strip receipt (non-authoritative conversion surface)
+# ---------------------------------------------------------------------------
+STRIP_RECEIPT = {
+    "ontology_version": ONTOLOGY_VERSION,
+    "shim_role": "legacy_ene_migration_and_tagging_pending_avm",
+    "computed_in_shim": [
+        "tokenize / concept tagging",
+        "relation building",
+        "retention scoring",
+        "schema orchestration",
+    ],
+    "must_port_to_lean_avm": [
+        "tokenization policy (finite types, no open strings)",
+        "relation scoring (fixed-point)",
+        "retention scoring (fixed-point)",
+        "all semantic decisions",
+    ],
+    "float_policy": {
+        "status": "float_present_in_sql_scoring",
+        "reason": "ene.nspace_kv scoring uses Postgres float casts; must be ported",
+    },
+}

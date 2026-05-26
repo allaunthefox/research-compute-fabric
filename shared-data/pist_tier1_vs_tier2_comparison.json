@@ -1,150 +1,116 @@
 {
   "n_samples": 24,
-  "tier2_accuracy": {
-    "proof_status": 0.7083
-  },
-  "results": {
-    "proof_status_centroid": {
-      "tier2_accuracy": 0.7083,
-      "tier2_top2": 1.0,
-      "tier1_accuracy": null,
-      "majority_baseline": 0.8333,
-      "tier2_beats_tier1": true,
-      "improves_over_baseline": -0.15,
-      "n_samples": 24,
-      "distribution": {
-        "verified": 20,
-        "failed": 4
+  "n_features": 6,
+  "tier2_results": {
+    "proof_status": {
+      "centroid": {
+        "accuracy": 0.6667,
+        "top2_accuracy": 1.0,
+        "baseline": 0.5
+      },
+      "knn_1": {
+        "accuracy": 0.7917,
+        "top2_accuracy": 0.9167,
+        "baseline": 0.5
+      },
+      "knn_3": {
+        "accuracy": 0.8333,
+        "top2_accuracy": 0.9167,
+        "baseline": 0.5
       }
     },
-    "proof_status_knn_3": {
-      "tier2_accuracy": 0.7083,
-      "tier2_top2": 1.0,
-      "tier1_accuracy": null,
-      "majority_baseline": 0.8333,
-      "tier2_beats_tier1": true,
-      "improves_over_baseline": -0.15,
-      "n_samples": 24,
-      "distribution": {
-        "verified": 20,
-        "failed": 4
+    "proof_method_label": {
+      "centroid": {
+        "accuracy": 0.2083,
+        "top2_accuracy": 0.25,
+        "baseline": 0.2083
+      },
+      "knn_1": {
+        "accuracy": 0.2083,
+        "top2_accuracy": 0.2083,
+        "baseline": 0.2083
+      },
+      "knn_3": {
+        "accuracy": 0.125,
+        "top2_accuracy": 0.2083,
+        "baseline": 0.2083
       }
     },
-    "proof_method_label_centroid": {
-      "tier2_accuracy": 0.2083,
-      "tier2_top2": 0.25,
-      "tier1_accuracy": 0.0952,
-      "majority_baseline": 0.2083,
-      "tier2_beats_tier1": true,
-      "improves_over_baseline": 0.0,
-      "n_samples": 24,
-      "distribution": {
-        "apply": 2,
-        "ring": 1,
-        "cases": 2,
-        "constructor": 1,
-        "rfl": 2,
-        "rewrite": 5,
-        "omega": 5,
-        "have": 1,
-        "induction": 3,
-        "simp": 1,
-        "intro": 1
+    "domain_label": {
+      "centroid": {
+        "accuracy": 0.625,
+        "top2_accuracy": 0.75,
+        "baseline": 0.3333
+      },
+      "knn_1": {
+        "accuracy": 0.5,
+        "top2_accuracy": 0.5833,
+        "baseline": 0.3333
+      },
+      "knn_3": {
+        "accuracy": 0.5417,
+        "top2_accuracy": 0.5833,
+        "baseline": 0.3333
       }
     },
-    "proof_method_label_knn_3": {
-      "tier2_accuracy": 0.2083,
-      "tier2_top2": 0.25,
-      "tier1_accuracy": 0.0714,
-      "majority_baseline": 0.2083,
-      "tier2_beats_tier1": true,
-      "improves_over_baseline": 0.0,
-      "n_samples": 24,
-      "distribution": {
-        "apply": 2,
-        "ring": 1,
-        "cases": 2,
-        "constructor": 1,
-        "rfl": 2,
-        "rewrite": 5,
-        "omega": 5,
-        "have": 1,
-        "induction": 3,
-        "simp": 1,
-        "intro": 1
+    "joint_label": {
+      "centroid": {
+        "accuracy": 0.0,
+        "top2_accuracy": 0.0,
+        "baseline": 0.0417
+      },
+      "knn_1": {
+        "accuracy": 0.0,
+        "top2_accuracy": 0.0,
+        "baseline": 0.0417
+      },
+      "knn_3": {
+        "accuracy": 0.0,
+        "top2_accuracy": 0.0,
+        "baseline": 0.0417
       }
     },
-    "domain_label_centroid": {
-      "tier2_accuracy": 0.625,
-      "tier2_top2": 0.75,
-      "tier1_accuracy": 0.1905,
-      "majority_baseline": 0.3333,
-      "tier2_beats_tier1": true,
-      "improves_over_baseline": 0.875,
-      "n_samples": 24,
-      "distribution": {
-        "logic": 7,
-        "algebra": 2,
-        "type_error": 2,
-        "arithmetic": 8,
-        "order": 3,
-        "equality": 2
+    "obstruction_label": {
+      "centroid": {
+        "accuracy": 0.5833,
+        "top2_accuracy": 0.7917,
+        "baseline": 0.7917
+      },
+      "knn_1": {
+        "accuracy": 0.625,
+        "top2_accuracy": 0.75,
+        "baseline": 0.7917
+      },
+      "knn_3": {
+        "accuracy": 0.75,
+        "top2_accuracy": 0.75,
+        "baseline": 0.7917
       }
     },
-    "domain_label_knn_3": {
-      "tier2_accuracy": 0.625,
-      "tier2_top2": 0.75,
-      "tier1_accuracy": 0.3095,
-      "majority_baseline": 0.3333,
-      "tier2_beats_tier1": true,
-      "improves_over_baseline": 0.875,
-      "n_samples": 24,
-      "distribution": {
-        "logic": 7,
-        "algebra": 2,
-        "type_error": 2,
-        "arithmetic": 8,
-        "order": 3,
-        "equality": 2
-      }
-    },
-    "manual_rrc_shape_centroid": {
-      "tier2_accuracy": 0.6667,
-      "tier2_top2": 0.9167,
-      "tier1_accuracy": 0.381,
-      "majority_baseline": 0.2917,
-      "tier2_beats_tier1": true,
-      "improves_over_baseline": 1.286,
-      "n_samples": 24,
-      "distribution": {
-        "LogogramProjection": 7,
-        "SignalShapedRouteCompiler": 4,
-        "HoldForUnlawfulOrUnderspecifiedShape": 5,
-        "ProjectableGeometryTopology": 3,
-        "CognitiveLoadField": 1,
-        "CadForceProbeReceipt": 4
-      }
-    },
-    "manual_rrc_shape_knn_3": {
-      "tier2_accuracy": 0.6667,
-      "tier2_top2": 0.9167,
-      "tier1_accuracy": 0.3333,
-      "majority_baseline": 0.2917,
-      "tier2_beats_tier1": true,
-      "improves_over_baseline": 1.286,
-      "n_samples": 24,
-      "distribution": {
-        "LogogramProjection": 7,
-        "SignalShapedRouteCompiler": 4,
-        "HoldForUnlawfulOrUnderspecifiedShape": 5,
-        "ProjectableGeometryTopology": 3,
-        "CognitiveLoadField": 1,
-        "CadForceProbeReceipt": 4
+    "manual_rrc_shape": {
+      "centroid": {
+        "accuracy": 0.6667,
+        "top2_accuracy": 0.9167,
+        "baseline": 0.2917
+      },
+      "knn_1": {
+        "accuracy": 0.5417,
+        "top2_accuracy": 0.7083,
+        "baseline": 0.2917
+      },
+      "knn_3": {
+        "accuracy": 0.5833,
+        "top2_accuracy": 0.7083,
+        "baseline": 0.2917
       }
     }
   },
-  "conclusion": {
-    "tier2_wins": 8,
-    "total_comparable": 6
+  "tier1_baselines": {
+    "proof_method_label_centroid": 0.0952,
+    "proof_method_label_knn_3": 0.0714,
+    "domain_label_centroid": 0.1905,
+    "domain_label_knn_3": 0.3095,
+    "manual_rrc_shape_centroid": 0.381,
+    "manual_rrc_shape_knn_3": 0.3333
   }
 }

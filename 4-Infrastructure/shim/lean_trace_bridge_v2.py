@@ -46,8 +46,19 @@ def instrument_theorem(code: str) -> tuple[str, list[str]]:
     if by_start < 0:
         return code, []
     
-    # header is everything up to and including ':= by' or '= by'
-    header = code[:by_start].rstrip()
+    # header is everything up to ':= by' or '= by'
+    raw_header = code[:by_start].strip()
+    
+    # Strip import lines from the header (they'll be placed at the top)
+    header_parts = []
+    header_imports = []
+    for line in raw_header.split("\n"):
+        if line.strip().startswith("import "):
+            header_imports.append(line.strip())
+        else:
+            header_parts.append(line.strip())
+    header = "\n".join(header_parts)
+    
     if header.endswith(":=") or header.endswith("="):
         header += " by"
     elif ":" in code[:by_start]:
@@ -85,7 +96,19 @@ def instrument_theorem(code: str) -> tuple[str, list[str]]:
         tags.append(atag)
     
     instrumented = "\n".join(lines)
-    full = TRACE_PREAMBLE + "\n" + instrumented
+    
+    # Extract existing imports from the original code and place them first
+    existing_imports = header_imports[:]  # imports from the header
+    for line in code.split("\n"):
+        stripped = line.strip()
+        if stripped.startswith("import ") and stripped not in existing_imports:
+            existing_imports.append(stripped)
+    
+    if existing_imports:
+        full = "\n".join(existing_imports) + "\n" + TRACE_PREAMBLE + "\n" + instrumented
+    else:
+        full = TRACE_PREAMBLE + "\n" + instrumented
+    
     return full, tags
 
 

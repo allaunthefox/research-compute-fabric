@@ -27,6 +27,7 @@ pub mod mcp_server;
 mod mcp_stdio;
 mod lean_mcp_manifest;
 mod ene_context_tools;
+mod mcp_surface_router;
 pub mod mcp_tool_bridge;
 mod oauth;
 pub mod permission_enforcer;

@@ -1,0 +1,7 @@
+{
+  "scaled_batch_n": 21,
+  "loocv_rrc_shape": 0.714,
+  "loocv_proof_method": 0.429,
+  "loocv_domain": 0.143,
+  "conclusion": "Tier 2B proof-path spectra maintain ~70% RRCShape accuracy at ~3x baseline"
+}

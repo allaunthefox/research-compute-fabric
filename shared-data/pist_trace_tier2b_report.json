@@ -1,0 +1,467 @@
+{
+  "n": 24,
+  "avg_matrix_size": 3.6,
+  "avg_rank": 2.62,
+  "avg_spectral_gap": -0.8021,
+  "avg_density": 0.1375,
+  "unique_gaps": 7,
+  "unique_ranks": 7,
+  "records": [
+    {
+      "name": "apply_chain",
+      "proof_status": "verified",
+      "trace_tags": 6,
+      "unique_states": 6,
+      "matrix_size": 6,
+      "rank": 5,
+      "spectral_gap": -1.434362,
+      "laplacian_zero_count": 6,
+      "density": 0.138889,
+      "eigenvalue_max": 0.900969,
+      "symmetric_eigenvalues": [
+        0.900969
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 2.236068
+    },
+    {
+      "name": "calc_chain",
+      "proof_status": "failed",
+      "trace_tags": 1,
+      "unique_states": 1,
+      "matrix_size": 1,
+      "rank": 0,
+      "spectral_gap": 0.0,
+      "laplacian_zero_count": 1,
+      "density": 0.0,
+      "eigenvalue_max": 0.0,
+      "symmetric_eigenvalues": [
+        0.0
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 0.0
+    },
+    {
+      "name": "cases_and_elim",
+      "proof_status": "verified",
+      "trace_tags": 6,
+      "unique_states": 6,
+      "matrix_size": 6,
+      "rank": 5,
+      "spectral_gap": -1.434362,
+      "laplacian_zero_count": 6,
+      "density": 0.138889,
+      "eigenvalue_max": 0.900969,
+      "symmetric_eigenvalues": [
+        0.900969
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 2.236068
+    },
+    {
+      "name": "cases_or_swap",
+      "proof_status": "failed",
+      "trace_tags": 7,
+      "unique_states": 7,
+      "matrix_size": 7,
+      "rank": 6,
+      "spectral_gap": -1.752772,
+      "laplacian_zero_count": 7,
+      "density": 0.122449,
+      "eigenvalue_max": 0.920991,
+      "symmetric_eigenvalues": [
+        0.920991
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 2.44949
+    },
+    {
+      "name": "constructor_example",
+      "proof_status": "verified",
+      "trace_tags": 6,
+      "unique_states": 6,
+      "matrix_size": 6,
+      "rank": 5,
+      "spectral_gap": -1.434362,
+      "laplacian_zero_count": 6,
+      "density": 0.138889,
+      "eigenvalue_max": 0.900969,
+      "symmetric_eigenvalues": [
+        0.900969
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 2.236068
+    },
+    {
+      "name": "fail_bad_coercion",
+      "proof_status": "failed",
+      "trace_tags": 2,
+      "unique_states": 2,
+      "matrix_size": 2,
+      "rank": 1,
+      "spectral_gap": 0.05,
+      "laplacian_zero_count": 2,
+      "density": 0.25,
+      "eigenvalue_max": 0.5,
+      "symmetric_eigenvalues": [
+        0.5
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 1.0
+    },
+    {
+      "name": "fail_missing_lemma",
+      "proof_status": "failed",
+      "trace_tags": 1,
+      "unique_states": 1,
+      "matrix_size": 1,
+      "rank": 0,
+      "spectral_gap": 0.0,
+      "laplacian_zero_count": 1,
+      "density": 0.0,
+      "eigenvalue_max": 0.0,
+      "symmetric_eigenvalues": [
+        0.0
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 0.0
+    },
+    {
+      "name": "fail_type_mismatch",
+      "proof_status": "failed",
+      "trace_tags": 1,
+      "unique_states": 1,
+      "matrix_size": 1,
+      "rank": 0,
+      "spectral_gap": 0.0,
+      "laplacian_zero_count": 1,
+      "density": 0.0,
+      "eigenvalue_max": 0.0,
+      "symmetric_eigenvalues": [
+        0.0
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 0.0
+    },
+    {
+      "name": "fail_unsat",
+      "proof_status": "failed",
+      "trace_tags": 1,
+      "unique_states": 1,
+      "matrix_size": 1,
+      "rank": 0,
+      "spectral_gap": 0.0,
+      "laplacian_zero_count": 1,
+      "density": 0.0,
+      "eigenvalue_max": 0.0,
+      "symmetric_eigenvalues": [
+        0.0
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 0.0
+    },
+    {
+      "name": "have_chain",
+      "proof_status": "verified",
+      "trace_tags": 6,
+      "unique_states": 6,
+      "matrix_size": 6,
+      "rank": 5,
+      "spectral_gap": -1.434362,
+      "laplacian_zero_count": 6,
+      "density": 0.138889,
+      "eigenvalue_max": 0.900969,
+      "symmetric_eigenvalues": [
+        0.900969
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 2.236068
+    },
+    {
+      "name": "induct_add_succ",
+      "proof_status": "failed",
+      "trace_tags": 3,
+      "unique_states": 3,
+      "matrix_size": 3,
+      "rank": 2,
+      "spectral_gap": -1.307107,
+      "laplacian_zero_count": 3,
+      "density": 0.222222,
+      "eigenvalue_max": 0.666667,
+      "symmetric_eigenvalues": [
+        0.666667
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 1.414214
+    },
+    {
+      "name": "induct_add_zero",
+      "proof_status": "failed",
+      "trace_tags": 3,
+      "unique_states": 3,
+      "matrix_size": 3,
+      "rank": 2,
+      "spectral_gap": -1.307107,
+      "laplacian_zero_count": 3,
+      "density": 0.222222,
+      "eigenvalue_max": 0.666667,
+      "symmetric_eigenvalues": [
+        0.666667
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 1.414214
+    },
+    {
+      "name": "induct_factorial",
+      "proof_status": "verified",
+      "trace_tags": 2,
+      "unique_states": 2,
+      "matrix_size": 2,
+      "rank": 1,
+      "spectral_gap": 0.05,
+      "laplacian_zero_count": 2,
+      "density": 0.25,
+      "eigenvalue_max": 0.5,
+      "symmetric_eigenvalues": [
+        0.5
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 1.0
+    },
+    {
+      "name": "induct_mul_zero",
+      "proof_status": "failed",
+      "trace_tags": 3,
+      "unique_states": 3,
+      "matrix_size": 3,
+      "rank": 2,
+      "spectral_gap": -1.307107,
+      "laplacian_zero_count": 3,
+      "density": 0.222222,
+      "eigenvalue_max": 0.666667,
+      "symmetric_eigenvalues": [
+        0.666667
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 1.414214
+    },
+    {
+      "name": "intro_all",
+      "proof_status": "verified",
+      "trace_tags": 8,
+      "unique_states": 8,
+      "matrix_size": 8,
+      "rank": 7,
+      "spectral_gap": -1.611768,
+      "laplacian_zero_count": 8,
+      "density": 0.109375,
+      "eigenvalue_max": 0.939693,
+      "symmetric_eigenvalues": [
+        0.939693
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 2.645751
+    },
+    {
+      "name": "intro_apply",
+      "proof_status": "verified",
+      "trace_tags": 8,
+      "unique_states": 8,
+      "matrix_size": 8,
+      "rank": 7,
+      "spectral_gap": -1.611768,
+      "laplacian_zero_count": 8,
+      "density": 0.109375,
+      "eigenvalue_max": 0.939693,
+      "symmetric_eigenvalues": [
+        0.939693
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 2.645751
+    },
+    {
+      "name": "omega_chain_ineq",
+      "proof_status": "verified",
+      "trace_tags": 2,
+      "unique_states": 2,
+      "matrix_size": 2,
+      "rank": 1,
+      "spectral_gap": 0.05,
+      "laplacian_zero_count": 2,
+      "density": 0.25,
+      "eigenvalue_max": 0.5,
+      "symmetric_eigenvalues": [
+        0.5
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 1.0
+    },
+    {
+      "name": "omega_chain_unsat",
+      "proof_status": "failed",
+      "trace_tags": 1,
+      "unique_states": 1,
+      "matrix_size": 1,
+      "rank": 0,
+      "spectral_gap": 0.0,
+      "laplacian_zero_count": 1,
+      "density": 0.0,
+      "eigenvalue_max": 0.0,
+      "symmetric_eigenvalues": [
+        0.0
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 0.0
+    },
+    {
+      "name": "omega_distrib",
+      "proof_status": "failed",
+      "trace_tags": 1,
+      "unique_states": 1,
+      "matrix_size": 1,
+      "rank": 0,
+      "spectral_gap": 0.0,
+      "laplacian_zero_count": 1,
+      "density": 0.0,
+      "eigenvalue_max": 0.0,
+      "symmetric_eigenvalues": [
+        0.0
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 0.0
+    },
+    {
+      "name": "omega_reorder_sum",
+      "proof_status": "verified",
+      "trace_tags": 2,
+      "unique_states": 2,
+      "matrix_size": 2,
+      "rank": 1,
+      "spectral_gap": 0.05,
+      "laplacian_zero_count": 2,
+      "density": 0.25,
+      "eigenvalue_max": 0.5,
+      "symmetric_eigenvalues": [
+        0.5
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 1.0
+    },
+    {
+      "name": "rw_chain_3step",
+      "proof_status": "verified",
+      "trace_tags": 6,
+      "unique_states": 6,
+      "matrix_size": 6,
+      "rank": 5,
+      "spectral_gap": -1.434362,
+      "laplacian_zero_count": 6,
+      "density": 0.138889,
+      "eigenvalue_max": 0.900969,
+      "symmetric_eigenvalues": [
+        0.900969
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 2.236068
+    },
+    {
+      "name": "rw_chain_eq",
+      "proof_status": "verified",
+      "trace_tags": 4,
+      "unique_states": 4,
+      "matrix_size": 4,
+      "rank": 3,
+      "spectral_gap": -1.037132,
+      "laplacian_zero_count": 4,
+      "density": 0.1875,
+      "eigenvalue_max": 0.809017,
+      "symmetric_eigenvalues": [
+        0.809017
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 1.732051
+    },
+    {
+      "name": "rw_chain_mixed",
+      "proof_status": "verified",
+      "trace_tags": 4,
+      "unique_states": 4,
+      "matrix_size": 4,
+      "rank": 3,
+      "spectral_gap": -1.037132,
+      "laplacian_zero_count": 4,
+      "density": 0.1875,
+      "eigenvalue_max": 0.809017,
+      "symmetric_eigenvalues": [
+        0.809017
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 1.732051
+    },
+    {
+      "name": "rw_then_omega",
+      "proof_status": "failed",
+      "trace_tags": 3,
+      "unique_states": 3,
+      "matrix_size": 3,
+      "rank": 2,
+      "spectral_gap": -1.307107,
+      "laplacian_zero_count": 3,
+      "density": 0.222222,
+      "eigenvalue_max": 0.666667,
+      "symmetric_eigenvalues": [
+        0.666667
+      ],
+      "laplacian_eigenvalues": [
+        0.0
+      ],
+      "frobenius_norm": 1.414214
+    }
+  ]
+}

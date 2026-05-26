@@ -1,5 +1,5 @@
 created: 20260506130000000
-modified: 20260506130000000
+modified: 20260526190000000
 tags: ResearchStack Home
 title: Research Stack Home
 type: text/vnd.tiddlywiki
@@ -31,6 +31,7 @@ and temporary maps before promotion into the durable doc layer.
 
 !! Lean Formal Verification
 
+* [[PIST Route-Repair and Receipt Update]] — v1.4/v1.4a repair status, Q16.16 quaternion receipts, and genus-0 control correction
 * [[Lean Semantics Overview]] — 421 .lean files, 31 subdirectories
 * [[Fixed Point Algebra]] — Q16_16 arithmetic proofs
 * [[Mass Number Theory]] — admissibility gate (A ≤ τ·(R + ε))

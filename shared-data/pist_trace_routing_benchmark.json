@@ -1,0 +1,326 @@
+{
+  "n_predictions": 20,
+  "n_correct": 6,
+  "tactic_family_accuracy": 0.3,
+  "average_complexity_reduction": -16.399,
+  "average_size_reduction": 2.0,
+  "per_family_accuracy": {
+    "discharge": {
+      "correct": 5,
+      "total": 11,
+      "accuracy": 0.4545
+    },
+    "unknown": {
+      "correct": 0,
+      "total": 1,
+      "accuracy": 0.0
+    },
+    "lemma_introduction": {
+      "correct": 0,
+      "total": 1,
+      "accuracy": 0.0
+    },
+    "introduction": {
+      "correct": 0,
+      "total": 3,
+      "accuracy": 0.0
+    },
+    "rewrite": {
+      "correct": 0,
+      "total": 3,
+      "accuracy": 0.0
+    },
+    "normalization": {
+      "correct": 1,
+      "total": 1,
+      "accuracy": 1.0
+    }
+  },
+  "confusion_matrix": {
+    "discharge": {
+      "normalization": 4,
+      "discharge": 5,
+      "case_analysis": 2,
+      "introduction": 0,
+      "lemma_introduction": 0,
+      "rewrite": 0,
+      "unknown": 0
+    },
+    "unknown": {
+      "discharge": 1,
+      "case_analysis": 0,
+      "introduction": 0,
+      "lemma_introduction": 0,
+      "normalization": 0,
+      "rewrite": 0,
+      "unknown": 0
+    },
+    "lemma_introduction": {
+      "normalization": 1,
+      "case_analysis": 0,
+      "discharge": 0,
+      "introduction": 0,
+      "lemma_introduction": 0,
+      "rewrite": 0,
+      "unknown": 0
+    },
+    "introduction": {
+      "normalization": 2,
+      "discharge": 1,
+      "case_analysis": 0,
+      "introduction": 0,
+      "lemma_introduction": 0,
+      "rewrite": 0,
+      "unknown": 0
+    },
+    "rewrite": {
+      "normalization": 2,
+      "discharge": 1,
+      "case_analysis": 0,
+      "introduction": 0,
+      "lemma_introduction": 0,
+      "rewrite": 0,
+      "unknown": 0
+    },
+    "normalization": {
+      "normalization": 1,
+      "case_analysis": 0,
+      "discharge": 0,
+      "introduction": 0,
+      "lemma_introduction": 0,
+      "rewrite": 0,
+      "unknown": 0
+    },
+    "case_analysis": {
+      "case_analysis": 0,
+      "discharge": 0,
+      "introduction": 0,
+      "lemma_introduction": 0,
+      "normalization": 0,
+      "rewrite": 0,
+      "unknown": 0
+    }
+  },
+  "predictions": [
+    {
+      "theorem": "apply_chain",
+      "step": 1,
+      "actual_tactic": "apply h1",
+      "actual_family": "discharge",
+      "predicted_family": "normalization",
+      "correct": false,
+      "complexity_delta": -14.5643,
+      "partial_size": 2,
+      "full_size": 4
+    },
+    {
+      "theorem": "apply_chain",
+      "step": 2,
+      "actual_tactic": "exact hA",
+      "actual_family": "discharge",
+      "predicted_family": "discharge",
+      "correct": true,
+      "complexity_delta": -18.0138,
+      "partial_size": 4,
+      "full_size": 6
+    },
+    {
+      "theorem": "cases_and_elim",
+      "step": 1,
+      "actual_tactic": "apply h2",
+      "actual_family": "discharge",
+      "predicted_family": "normalization",
+      "correct": false,
+      "complexity_delta": -14.5643,
+      "partial_size": 2,
+      "full_size": 4
+    },
+    {
+      "theorem": "cases_and_elim",
+      "step": 2,
+      "actual_tactic": "assumption",
+      "actual_family": "unknown",
+      "predicted_family": "discharge",
+      "correct": false,
+      "complexity_delta": -18.0138,
+      "partial_size": 4,
+      "full_size": 6
+    },
+    {
+      "theorem": "cases_or_swap",
+      "step": 1,
+      "actual_tactic": "\u00b7 right; exact h",
+      "actual_family": "discharge",
+      "predicted_family": "normalization",
+      "correct": false,
+      "complexity_delta": -14.5643,
+      "partial_size": 2,
+      "full_size": 4
+    },
+    {
+      "theorem": "cases_or_swap",
+      "step": 2,
+      "actual_tactic": "\u00b7 left; exact h",
+      "actual_family": "discharge",
+      "predicted_family": "discharge",
+      "correct": true,
+      "complexity_delta": -18.0138,
+      "partial_size": 4,
+      "full_size": 6
+    },
+    {
+      "theorem": "constructor_example",
+      "step": 1,
+      "actual_tactic": "\u00b7 exact hA",
+      "actual_family": "discharge",
+      "predicted_family": "normalization",
+      "correct": false,
+      "complexity_delta": -14.5643,
+      "partial_size": 2,
+      "full_size": 4
+    },
+    {
+      "theorem": "constructor_example",
+      "step": 2,
+      "actual_tactic": "\u00b7 exact hB",
+      "actual_family": "discharge",
+      "predicted_family": "discharge",
+      "correct": true,
+      "complexity_delta": -18.0138,
+      "partial_size": 4,
+      "full_size": 6
+    },
+    {
+      "theorem": "have_chain",
+      "step": 1,
+      "actual_tactic": "have hC : C := hBC hB",
+      "actual_family": "lemma_introduction",
+      "predicted_family": "normalization",
+      "correct": false,
+      "complexity_delta": -14.5643,
+      "partial_size": 2,
+      "full_size": 4
+    },
+    {
+      "theorem": "have_chain",
+      "step": 2,
+      "actual_tactic": "exact hC",
+      "actual_family": "discharge",
+      "predicted_family": "discharge",
+      "correct": true,
+      "complexity_delta": -18.0138,
+      "partial_size": 4,
+      "full_size": 6
+    },
+    {
+      "theorem": "intro_all",
+      "step": 1,
+      "actual_tactic": "intro hB",
+      "actual_family": "introduction",
+      "predicted_family": "normalization",
+      "correct": false,
+      "complexity_delta": -14.5643,
+      "partial_size": 2,
+      "full_size": 4
+    },
+    {
+      "theorem": "intro_all",
+      "step": 2,
+      "actual_tactic": "intro hC",
+      "actual_family": "introduction",
+      "predicted_family": "discharge",
+      "correct": false,
+      "complexity_delta": -18.0138,
+      "partial_size": 4,
+      "full_size": 6
+    },
+    {
+      "theorem": "intro_all",
+      "step": 3,
+      "actual_tactic": "exact hA",
+      "actual_family": "discharge",
+      "predicted_family": "case_analysis",
+      "correct": false,
+      "complexity_delta": -19.113,
+      "partial_size": 6,
+      "full_size": 8
+    },
+    {
+      "theorem": "intro_apply",
+      "step": 1,
+      "actual_tactic": "intro hA",
+      "actual_family": "introduction",
+      "predicted_family": "normalization",
+      "correct": false,
+      "complexity_delta": -14.5643,
+      "partial_size": 2,
+      "full_size": 4
+    },
+    {
+      "theorem": "intro_apply",
+      "step": 2,
+      "actual_tactic": "apply h",
+      "actual_family": "discharge",
+      "predicted_family": "discharge",
+      "correct": true,
+      "complexity_delta": -18.0138,
+      "partial_size": 4,
+      "full_size": 6
+    },
+    {
+      "theorem": "intro_apply",
+      "step": 3,
+      "actual_tactic": "exact hA",
+      "actual_family": "discharge",
+      "predicted_family": "case_analysis",
+      "correct": false,
+      "complexity_delta": -19.113,
+      "partial_size": 6,
+      "full_size": 8
+    },
+    {
+      "theorem": "rw_chain_3step",
+      "step": 1,
+      "actual_tactic": "rw [h2]",
+      "actual_family": "rewrite",
+      "predicted_family": "normalization",
+      "correct": false,
+      "complexity_delta": -14.5643,
+      "partial_size": 2,
+      "full_size": 4
+    },
+    {
+      "theorem": "rw_chain_3step",
+      "step": 2,
+      "actual_tactic": "rw [h3]",
+      "actual_family": "rewrite",
+      "predicted_family": "discharge",
+      "correct": false,
+      "complexity_delta": -18.0138,
+      "partial_size": 4,
+      "full_size": 6
+    },
+    {
+      "theorem": "rw_chain_eq",
+      "step": 1,
+      "actual_tactic": "rw [h2]",
+      "actual_family": "rewrite",
+      "predicted_family": "normalization",
+      "correct": false,
+      "complexity_delta": -14.5643,
+      "partial_size": 2,
+      "full_size": 4
+    },
+    {
+      "theorem": "rw_chain_mixed",
+      "step": 1,
+      "actual_tactic": "simp",
+      "actual_family": "normalization",
+      "predicted_family": "normalization",
+      "correct": true,
+      "complexity_delta": -14.5643,
+      "partial_size": 2,
+      "full_size": 4
+    }
+  ]
+}

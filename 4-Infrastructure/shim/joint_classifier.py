@@ -10,7 +10,7 @@ import sys
 from collections import Counter, defaultdict
 from math import sqrt
 
-FLEXURE_SESSION = "d94c6353-5ed9-42a4-b2b7-d0fee8b36a8e"
+FLEXURE_SESSION = "ae31d595-0535-4a0c-9d41-af9c0357dba1"
 
 def connect():
     host = os.environ.get("RDS_HOST", "database-1-instance-1.cghu8yqogqwo.us-east-1.rds.amazonaws.com")
@@ -51,16 +51,26 @@ def main():
     if not flexures:
         return
     
-    # Build vector + labels for each
+    # Build vector + labels for each (v2: coarse + spectral)
     recs = []
     for fx in flexures:
         s = fx["signals"]
+        sp = s.get("spectral", {})
         vec = [
             float(s.get("delta_score", 0)),
             float(s.get("matrix_rank", 0)),
             float(s.get("n_unique_states", 0)),
             float(fx.get("pre_residual", 0)),
             1.0 if fx.get("converged") else 0.0,
+            # Spectral v2 additions
+            float(sp.get("spectral_gap", 0)),
+            float(sp.get("adjacency_eigenvalue_max", 0)),
+            float(sp.get("laplacian_eigenvalue_max", 0)),
+            float(sp.get("laplacian_zero_count", 0)),
+            float(sp.get("singular_value_max", 0)),
+            float(sp.get("density", 0)),
+            float(sp.get("matrix_size", 0)),
+            float(sp.get("rank", 0)),
         ]
         recs.append({
             "vec": vec,

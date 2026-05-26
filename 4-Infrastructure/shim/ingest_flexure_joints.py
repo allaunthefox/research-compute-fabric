@@ -8,6 +8,7 @@ inserts them into ene.flexures, and mines recurring patterns.
 import glob
 import hashlib
 import json
+import math
 import os
 import subprocess
 import sys
@@ -21,7 +22,63 @@ REPORT_PATH = os.path.join(os.path.dirname(__file__), "../..", "shared-data/pist
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "."))
 from trace_canary_theorems import CANARY_THEOREMS
 
-PROOF_SERVER_TOKEN = os.environ.get("PROOF_SERVER_TOKEN", "")
+def power_iteration(matrix, max_iter=100):
+    n = len(matrix)
+    if n == 0: return 0.0, [0.0]
+    v = [1.0 / math.sqrt(n)] * n
+    for _ in range(max_iter):
+        vn = [sum(matrix[i][j] * v[j] for j in range(n)) for i in range(n)]
+        nm = math.sqrt(sum(x*x for x in vn))
+        if nm < 1e-12: return 0.0, v
+        v = [x / nm for x in vn]
+    num = sum(v[i] * sum(matrix[i][j] * v[j] for j in range(n)) for i in range(n))
+    den = sum(v[i]*v[i] for i in range(n))
+    return num / den if den > 0 else 0.0, v
+
+def symmetrize(matrix):
+    n = len(matrix)
+    return [[(matrix[i][j] + matrix[j][i]) / 2.0 for j in range(n)] for i in range(n)]
+
+def build_laplacian(sym):
+    n = len(sym)
+    lap = [[0.0]*n for _ in range(n)]
+    for i in range(n):
+        d = sum(sym[i])
+        for j in range(n):
+            lap[i][j] = d if i == j else -sym[i][j]
+    return lap
+
+def compute_spectral(matrix):
+    if not matrix or len(matrix) == 0: return {}
+    n = len(matrix)
+    sym = symmetrize(matrix)
+    lap_mat = build_laplacian(sym)
+    ev_max, _ = power_iteration(sym)
+    shifted = [[sym[i][j] - 0.9*ev_max*(1 if i==j else 0) for j in range(n)] for i in range(n)]
+    ev_shift, _ = power_iteration(shifted)
+    ev_second = max(0, ev_max - ev_shift) if ev_shift < ev_max else ev_max
+    gap = ev_max - ev_second
+    lap_max, _ = power_iteration(lap_mat)
+    neg_lap = [[-lap_mat[i][j] for j in range(n)] for i in range(n)]
+    neg_max, _ = power_iteration(neg_lap)
+    lap_min = -neg_max
+    ata = [[sum(matrix[k][i]*matrix[k][j] for k in range(n)) for j in range(n)] for i in range(n)]
+    sv_max, _ = power_iteration(ata)
+    rank = sum(1 for row in matrix if sum(row) > 0)
+    total = sum(sum(row) for row in matrix)
+    frob = math.sqrt(sum(cell*cell for row in matrix for cell in row))
+    lap_zero = sum(1 for i in range(n) if abs(sum(matrix[i]) - matrix[i][i]) < 1e-9)
+    return {
+        "matrix_size": n, "rank": rank, "density": round(total/max(n*n,1), 6),
+        "spectral_gap": round(gap, 6), "frobenius_norm": round(frob, 6),
+        "adjacency_eigenvalue_max": round(ev_max, 6),
+        "adjacency_eigenvalue_second": round(ev_second, 6),
+        "laplacian_eigenvalue_max": round(lap_max, 6),
+        "laplacian_eigenvalue_min": round(lap_min, 6),
+        "laplacian_zero_count": lap_zero,
+        "singular_value_max": round(math.sqrt(max(0, sv_max)), 6),
+        "trace": sum(matrix[i][i] for i in range(n)),
+    }
 
 TACTIC_FAMILIES = {
     "rw": "rewrite", "simp": "normalization", "omega": "arithmetic",
@@ -135,6 +192,9 @@ def ingest_flexures():
         labels = get_theorem_labels(name)
         tactics = labels.get("tactics", [])
         
+        # Compute full spectral features from the transition matrix
+        spectral = compute_spectral(matrix)
+        
         # Build flexure joints from tag pairs
         joints = []
         for i in range(0, len(tags) - 1, 2):
@@ -165,6 +225,7 @@ def ingest_flexures():
                 "matrix_rank": max(0, n_unique - 1),
                 "n_unique": n_unique,
                 "status": status,
+                "spectral": spectral,  # full spectral profile
             }
             joints.append(joint)
         
@@ -182,6 +243,8 @@ def ingest_flexures():
                 "obstruction": j.get("obstruction"),
                 "matrix_rank": j["matrix_rank"],
                 "n_unique_states": j["n_unique"],
+                "spectral": j.get("spectral", {}),
+                "feature_version": "flexure-spectrum-v2",
             })
             
             chosen = json.dumps({"tactic_applied": j["tactic"], "joint_type": j["joint_label"]})

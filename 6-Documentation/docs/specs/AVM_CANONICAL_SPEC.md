@@ -100,7 +100,50 @@ up to the same observable projection.
 
 ---
 
-## 3. Serialization boundary (shim responsibility)
+## 3. Stripping policy ("bad code gets stripped out")
+
+The phrase "bad code gets stripped out in the conversion" is made precise here.
+
+### 3.1 What "bad" means
+"Bad" does NOT mean "inelegant". Bad means one of:
+
+- Not representable in the AVM closed-world ISA.
+- Violates AVM typing rules (ill-typed stack/locals).
+- Uses forbidden substrate features in core semantics (e.g. Float in hot paths).
+- Requires open string parsing or reflection to make a decision.
+- Cannot be made deterministic under the fixed-point policy.
+
+### 3.2 What stripping is allowed to do
+When converting an external artifact into an AVM program, a shim may:
+
+- Drop unreachable code (dead branches) if reachability is proven by the shim's proof/receipt boundary.
+- Inline and normalize expressions into AVM primitives.
+- Replace dynamic dispatch with finite enums (`Prim`, `Opcode`).
+- Reject unsupported constructs with a hard error.
+
+### 3.3 What stripping is NOT allowed to do
+A shim must NOT:
+
+- Silently change behavior to "make it fit" AVM.
+- Replace unknown operations with placeholders.
+- Substitute heuristic approximations without explicit residual/receipt fields.
+
+If a construct cannot be represented, the correct action is **reject**, not "strip silently".
+
+### 3.4 Stripping output receipts
+Every strip/conversion pass must emit a receipt packet containing:
+
+- input hash
+- output program hash
+- strip decisions (what was dropped, what was rewritten)
+- unsupported constructs encountered (if any)
+- AVM ISA version targeted
+
+This makes "bad code elimination" auditable.
+
+---
+
+## 4. Serialization boundary (shim responsibility)
 
 Adapters may represent AVM programs and values in JSON or binary form.
 
@@ -111,7 +154,7 @@ Rules:
 
 ---
 
-## 4. Receipt / provenance policy
+## 5. Receipt / provenance policy
 
 Every adapter execution must be able to emit a receipt packet containing:
 
@@ -125,7 +168,7 @@ This makes drift observable and auditable.
 
 ---
 
-## 5. Relationship to prior "universal adapter" language
+## 6. Relationship to prior "universal adapter" language
 
 Earlier drafts described AVM as a universal adapter from many math languages.
 
@@ -138,7 +181,7 @@ shim that produces AVM programs; but the AVM ISA itself remains Lean-only.
 
 ---
 
-## 6. Claim boundary
+## 7. Claim boundary
 
 This document defines AVM as a Lean-only ISA and a backend adapter ecosystem.
 
@@ -151,3 +194,4 @@ It does claim:
 - strict typing + closed-world opcodes is mandatory
 - all semantics live in Lean
 - all non-Lean code is an adapter shim, not a semantic authority
+- stripping must be explicit (reject or receipt), never silent behavior change

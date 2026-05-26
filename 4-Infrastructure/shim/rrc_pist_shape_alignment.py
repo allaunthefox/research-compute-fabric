@@ -28,7 +28,8 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-ROOT = Path(__file__).resolve().parents[2]
+# Repo root (this file lives at 4-Infrastructure/shim/...) 
+ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_IN = ROOT / "shared-data/rrc_receipt_density_backfill.json"
 DEFAULT_OUT = ROOT / "shared-data/rrc_receipt_density_backfill.json"
 
@@ -73,11 +74,12 @@ def determine_alignment(record: dict[str, Any]) -> dict[str, Any]:
     elif proxy == rrc_shape:
         status = "aligned_proxy"
         reason = "PIST proxy structural label matches the RRC routing shape."
-    elif (exact in COMPATIBLE_STRUCTURAL_LABELS or proxy in COMPATIBLE_STRUCTURAL_LABELS) and rrc_shape in RRC_SEMANTIC_SHAPES:
+    elif (
+        (exact in COMPATIBLE_STRUCTURAL_LABELS or proxy in COMPATIBLE_STRUCTURAL_LABELS)
+        and rrc_shape in RRC_SEMANTIC_SHAPES
+    ):
         status = "compatible_structural_projection"
-        reason = (
-            "PIST detects symbolic/logogram morphology while RRC supplies the semantic/domain routing class."
-        )
+        reason = "PIST detects symbolic/logogram morphology while RRC supplies the semantic/domain routing class."
     else:
         status = "alignment_warning"
         reason = "PIST structural label and RRC semantic shape are not in the current compatibility map."
@@ -122,7 +124,7 @@ def update_hash(record: dict[str, Any]) -> str:
     return stable_hash(payload)
 
 
-def align_payload(payload: dict[str, Any]) -> dict[str, Any]:
+def align_payload(payload: dict[str, Any]) -> tuple[dict[str, Any], Counter[str]]:
     records = payload.get("records", [])
     if not isinstance(records, list):
         raise ValueError("input JSON must contain a records array")
@@ -130,16 +132,21 @@ def align_payload(payload: dict[str, Any]) -> dict[str, Any]:
     aligned_records: list[dict[str, Any]] = []
     alignment_counts: Counter[str] = Counter()
     warning_counts: Counter[str] = Counter()
+    raw_warning_counts: Counter[str] = Counter()
 
     for record in records:
         if not isinstance(record, dict):
             continue
+
+        raw_warning_counts.update(list(record.get("warnings", [])))
+
         updated = dict(record)
         updated["promotion"] = "not_promoted"
         alignment = determine_alignment(updated)
         updated["shape_alignment"] = alignment
         updated["warnings"] = rewrite_warnings(list(updated.get("warnings", [])), alignment)
         updated["receipt_hash"] = update_hash(updated)
+
         alignment_counts[alignment["alignment_status"]] += 1
         warning_counts.update(updated["warnings"])
         aligned_records.append(updated)
@@ -148,6 +155,7 @@ def align_payload(payload: dict[str, Any]) -> dict[str, Any]:
     summary["shape_alignment_version"] = "rrc-pist-shape-alignment-v1"
     summary["shape_alignment_counts"] = dict(sorted(alignment_counts.items()))
     summary["warning_counts"] = dict(sorted(warning_counts.items()))
+    summary["raw_warning_counts"] = dict(sorted(raw_warning_counts.items()))
     summary["promotion_policy"] = "no automatic promotion; shape alignment calibrates label spaces only"
 
     out = dict(payload)
@@ -158,31 +166,41 @@ def align_payload(payload: dict[str, Any]) -> dict[str, Any]:
         "does_not_mean": "mathematical proof or claim promotion",
         "promotion_policy": "not_promoted for every record",
     }
-    return out
+    return out, raw_warning_counts
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Align RRC semantic labels with PIST structural labels.")
     parser.add_argument("--input", type=Path, default=DEFAULT_IN)
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
-    parser.add_argument("--fail-on-raw-disagreement", action="store_true")
+    parser.add_argument(
+        "--fail-on-raw-disagreement",
+        action="store_true",
+        help="Fail if the *input* JSON still contains any raw 'pist_shape_disagreement' warnings.",
+    )
     args = parser.parse_args()
 
     payload = json.loads(args.input.read_text(encoding="utf-8"))
-    aligned = align_payload(payload)
+    aligned, raw_warning_counts = align_payload(payload)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(aligned, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     summary = aligned["summary"]
-    print(json.dumps({
-        "records": summary.get("records"),
-        "shape_alignment_counts": summary.get("shape_alignment_counts"),
-        "warning_counts": summary.get("warning_counts"),
-        "promotion_policy": summary.get("promotion_policy"),
-    }, indent=2, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                "shape_alignment_counts": summary.get("shape_alignment_counts"),
+                "warning_counts": summary.get("warning_counts"),
+                "raw_warning_counts": summary.get("raw_warning_counts"),
+                "promotion_policy": summary.get("promotion_policy"),
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
     print(f"Wrote aligned receipt-density JSON: {args.out}")
 
-    if args.fail_on_raw_disagreement and summary.get("warning_counts", {}).get("pist_shape_disagreement", 0):
+    if args.fail_on_raw_disagreement and raw_warning_counts.get("pist_shape_disagreement", 0):
         return 2
     return 0
 

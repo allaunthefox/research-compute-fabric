@@ -61,9 +61,22 @@ The ISA operates over a finite type universe:
 - `Bool`
 - (Optional later) `UInt8`, `UInt16`, `UInt32`, fixed-width words for IO/register surfaces
 
-**No Float in core.** Float may exist only at boundary conversion shims.
+### 1.3 Float prohibition (strong)
+**Float must not be used anywhere if at all possible.**
 
-### 1.3 No dynamic foreign calls in ISA
+- **AVM core**: Float is forbidden.
+- **Backends**: Float is forbidden for any semantic computation.
+- **Boundary-only exception**: A backend may accept Float *only* at an external I/O boundary (JSON, sensor ingest, UI display), and must immediately convert it to `Q0_16` or `Q16_16`.
+
+If Float appears anywhere, it must carry an explicit justification comment/receipt field:
+
+- why fixed-point abstraction was not possible
+- what exact conversion policy was used (clamp/range/rounding)
+- what determinism guarantee remains
+
+Default is: **reject**.
+
+### 1.4 No dynamic foreign calls in ISA
 The ISA must not contain opcodes like `CALL("pythonMethod")` or `IMPORT("module")`.
 
 If extensibility is needed, it must be via **finite enums** (e.g. `Prim : Type`)
@@ -109,7 +122,7 @@ The phrase "bad code gets stripped out in the conversion" is made precise here.
 
 - Not representable in the AVM closed-world ISA.
 - Violates AVM typing rules (ill-typed stack/locals).
-- Uses forbidden substrate features in core semantics (e.g. Float in hot paths).
+- Uses forbidden substrate features in core semantics (e.g. Float).
 - Requires open string parsing or reflection to make a decision.
 - Cannot be made deterministic under the fixed-point policy.
 
@@ -195,3 +208,4 @@ It does claim:
 - all semantics live in Lean
 - all non-Lean code is an adapter shim, not a semantic authority
 - stripping must be explicit (reject or receipt), never silent behavior change
+- float is forbidden by default; boundary-only conversion requires justification

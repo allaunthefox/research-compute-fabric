@@ -20,6 +20,7 @@ use tokio::io::{
     stdin, stdout, AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader, Stdin, Stdout,
 };
 
+use crate::lean_mcp_manifest;
 use crate::mcp_stdio::{
     JsonRpcError, JsonRpcId, JsonRpcRequest, JsonRpcResponse, McpInitializeResult,
     McpInitializeServerInfo, McpListToolsResult, McpTool, McpToolCallContent, McpToolCallParams,
@@ -53,9 +54,26 @@ pub struct McpServerSpec {
     /// response.
     pub server_version: String,
     /// Tool descriptors returned for `tools/list`.
+    ///
+    /// If empty, the server will attempt to load the tool list from a Lean-owned
+    /// manifest via `CLAW_LEAN_MCP_MANIFEST_CMD`.
     pub tools: Vec<McpTool>,
     /// Handler invoked for `tools/call`.
     pub tool_handler: ToolCallHandler,
+}
+
+impl McpServerSpec {
+    fn resolved_tools(&self) -> Vec<McpTool> {
+        if !self.tools.is_empty() {
+            return self.tools.clone();
+        }
+
+        match lean_mcp_manifest::tools_from_env() {
+            Ok(Some(tools)) => tools,
+            Ok(None) => Vec::new(),
+            Err(_) => Vec::new(),
+        }
+    }
 }
 
 /// Minimal MCP stdio server.
@@ -178,7 +196,7 @@ impl McpServer {
 
     fn handle_tools_list(&self, id: JsonRpcId) -> JsonRpcResponse<JsonValue> {
         let result = McpListToolsResult {
-            tools: self.spec.tools.clone(),
+            tools: self.spec.resolved_tools(),
             next_cursor: None,
         };
         JsonRpcResponse {

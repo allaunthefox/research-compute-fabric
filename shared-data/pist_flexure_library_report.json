@@ -1,0 +1,47 @@
+{
+  "session_id": "d94c6353-5ed9-42a4-b2b7-d0fee8b36a8e",
+  "total_flexures_inserted": 38,
+  "total_skipped": 0,
+  "motifs_discovered": 10,
+  "joint_library_summary": {
+    "total_joints": 38,
+    "status": {
+      "verified": 30,
+      "failed": 8
+    },
+    "tactic_families": {
+      "discharge": 12,
+      "rewrite": 7,
+      "introduction": 5,
+      "induction": 3,
+      "case_analysis": 2
+    },
+    "joint_labels": {
+      "low_delta_rewrite": 5,
+      "low_delta_discharge": 4,
+      "high_delta_discharge": 4,
+      "low_delta_introduction": 4,
+      "failed_induction": 3
+    },
+    "motifs": {
+      "rewrite_low_delta_rewrite_verified": 5,
+      "discharge_low_delta_discharge_verified": 4,
+      "discharge_high_delta_discharge_verified": 4,
+      "introduction_low_delta_introduction_verified": 4,
+      "induction_failed_induction_failed": 3,
+      "discharge_failed_discharge_failed": 2,
+      "lemma_introduction_low_delta_lemma_introduction_verified": 2,
+      "normalization_low_delta_normalization_verified": 2,
+      "discharge_med_delta_discharge_verified": 2,
+      "arithmetic_low_delta_arithmetic_verified": 2,
+      "case_analysis_low_delta_case_analysis_verified": 1,
+      "unknown_high_delta_unknown_verified": 1,
+      "case_analysis_failed_case_analysis_failed": 1,
+      "constructor_low_delta_constructor_verified": 1,
+      "reflexivity_failed_reflexivity_failed": 1,
+      "introduction_high_delta_introduction_verified": 1,
+      "rewrite_high_delta_rewrite_verified": 1,
+      "rewrite_failed_rewrite_failed": 1
+    }
+  }
+}

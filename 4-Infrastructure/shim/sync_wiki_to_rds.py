@@ -7,20 +7,18 @@ import argparse
 import hashlib
 import json
 import os
-import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from rds_connect import connect_rds
+
 STACK_ROOT = Path(os.environ.get("STACK_ROOT", "/home/allaun/Research Stack"))
 WIKI_ROOT = Path(os.environ.get("WIKI_ROOT", str(STACK_ROOT / "6-Documentation" / "wiki")))
 
 HOST = os.environ.get("RDS_HOST", "database-1-instance-1.cghu8yqogqwo.us-east-1.rds.amazonaws.com")
-PORT = int(os.environ.get("RDS_PORT", "5432"))
-USER = os.environ.get("RDS_USER", "postgres")
 DB = os.environ.get("RDS_DB", os.environ.get("RDS_DBNAME", "postgres"))
-AWS_REGION = os.environ.get("AWS_REGION", "us-east-1")
 
 
 def utc_now() -> str:
@@ -31,47 +29,8 @@ def sha256_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def get_iam_token() -> str:
-    return subprocess.check_output(
-        [
-            "aws",
-            "rds",
-            "generate-db-auth-token",
-            "--region",
-            AWS_REGION,
-            "--hostname",
-            HOST,
-            "--port",
-            str(PORT),
-            "--username",
-            USER,
-        ],
-        text=True,
-        stdin=subprocess.DEVNULL,
-    ).strip()
-
-
-def get_password() -> str:
-    if os.environ.get("RDS_IAM", "1") == "1":
-        return get_iam_token()
-    password = os.environ.get("RDS_PASSWORD")
-    if not password:
-        raise RuntimeError("RDS_PASSWORD is required when RDS_IAM=0")
-    return password
-
-
 def get_conn():
-    import psycopg2
-
-    return psycopg2.connect(
-        host=HOST,
-        port=PORT,
-        user=USER,
-        password=get_password(),
-        dbname=DB,
-        sslmode="require",
-        connect_timeout=10,
-    )
+    return connect_rds()
 
 
 def title_from_slug(slug: str) -> str:

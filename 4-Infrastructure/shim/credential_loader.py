@@ -1,24 +1,13 @@
 #!/usr/bin/env python3
-"""
-credential_loader.py — Load credentials from RDS credential_store into env.
 
-Usage:
-    from credential_loader import load_credential
-    key = load_credential('quandela-api-key')
-    
-    # Or via CLI:
-    #   python3 credential_loader.py quandela-api-key
-    #   source <(python3 credential_loader.py --export quandela-api-key)
-"""
-
-import os, sys, subprocess, json
+import os, sys, json
+from rds_connect import connect_rds
 
 RDS_HOST = None
 RDS_USER = None
 
 def _init_rds():
     global RDS_HOST, RDS_USER
-    # Try bashrc first
     bashrc = os.path.expanduser('~/.bashrc')
     if os.path.exists(bashrc):
         with open(bashrc) as f:
@@ -30,24 +19,12 @@ def _init_rds():
     if not RDS_HOST or not RDS_USER:
         raise RuntimeError("RDS_HOST and RDS_USER must be set in ~/.bashrc")
 
-def _get_auth_token():
-    result = subprocess.run(
-        ['aws', 'rds', 'generate-db-auth-token',
-         '--hostname', RDS_HOST, '--port', '5432', '--username', RDS_USER],
-        capture_output=True, text=True, timeout=10)
-    if result.returncode != 0:
-        raise RuntimeError(f"AWS CLI error: {result.stderr}")
-    return result.stdout.strip()
-
 def load_credential(pkg: str, password: str = None) -> str:
-    """Load a credential from the RDS credential_store."""
     _init_rds()
-    token = _get_auth_token()
-    import psycopg2
-    conn = psycopg2.connect(host=RDS_HOST, user=RDS_USER, password=token, dbname='postgres')
+    conn = connect_rds(host=RDS_HOST, user=RDS_USER, dbname='postgres')
     cur = conn.cursor()
     if password is None:
-        password = RDS_HOST  # Default encryption key
+        password = RDS_HOST
     cur.execute(
         "SELECT pgp_sym_decrypt(encrypted_payload, %s) FROM credential_store.credentials WHERE pkg = %s",
         (password, pkg))
@@ -59,11 +36,8 @@ def load_credential(pkg: str, password: str = None) -> str:
     return row[0]
 
 def list_credentials() -> list[dict]:
-    """List all credential packages."""
     _init_rds()
-    token = _get_auth_token()
-    import psycopg2
-    conn = psycopg2.connect(host=RDS_HOST, user=RDS_USER, password=token, dbname='postgres')
+    conn = connect_rds(host=RDS_HOST, user=RDS_USER, dbname='postgres')
     cur = conn.cursor()
     cur.execute(
         "SELECT id, pkg, provider, classification, created_at, is_active "

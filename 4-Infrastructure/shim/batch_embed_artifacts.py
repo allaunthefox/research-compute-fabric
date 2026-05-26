@@ -7,13 +7,14 @@ import argparse
 import hashlib
 import json
 import os
-import subprocess
 import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from urllib import request
+
+from rds_connect import connect_rds
 
 BATCH_SIZE = 50
 TOKEN_REFRESH_SEC = 600
@@ -36,47 +37,8 @@ def sha256_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def get_token() -> str:
-    return subprocess.check_output(
-        [
-            "aws",
-            "rds",
-            "generate-db-auth-token",
-            "--region",
-            AWS_REGION,
-            "--hostname",
-            HOST,
-            "--port",
-            str(PORT),
-            "--username",
-            USER,
-        ],
-        text=True,
-        stdin=subprocess.DEVNULL,
-    ).strip()
-
-
-def get_password() -> str:
-    if os.environ.get("RDS_IAM", "1") == "1":
-        return get_token()
-    password = os.environ.get("RDS_PASSWORD")
-    if not password:
-        raise RuntimeError("RDS_PASSWORD is required when RDS_IAM=0")
-    return password
-
-
-def get_conn(password: str):
-    import psycopg2
-
-    return psycopg2.connect(
-        host=HOST,
-        port=PORT,
-        user=USER,
-        password=password,
-        dbname=DB,
-        sslmode="require",
-        connect_timeout=10,
-    )
+def get_conn():
+    return connect_rds()
 
 
 def fetch_batch(cur, batch_size: int) -> list[tuple[Any, str, str]]:
@@ -166,9 +128,8 @@ def main() -> int:
 
     started_at = utc_now()
     started = time.time()
-    password = get_password()
+    conn = get_conn()
     next_refresh = time.time() + TOKEN_REFRESH_SEC
-    conn = get_conn(password)
     cur = conn.cursor()
     processed = 0
     embedded = 0
@@ -183,9 +144,8 @@ def main() -> int:
                 break
 
             if os.environ.get("RDS_IAM", "1") == "1" and time.time() > next_refresh:
-                password = get_password()
                 conn.close()
-                conn = get_conn(password)
+                conn = get_conn()
                 cur = conn.cursor()
                 next_refresh = time.time() + TOKEN_REFRESH_SEC
 

@@ -5,7 +5,7 @@ Leave-one-flexure-out: for each joint, find the nearest motif from all other joi
 """
 import json
 import os
-import subprocess
+from rds_connect import connect_rds
 import sys
 from collections import Counter, defaultdict
 from math import sqrt
@@ -13,19 +13,7 @@ from math import sqrt
 FLEXURE_SESSION = "ae31d595-0535-4a0c-9d41-af9c0357dba1"
 
 def connect():
-    host = os.environ.get("RDS_HOST", "database-1-instance-1.cghu8yqogqwo.us-east-1.rds.amazonaws.com")
-    port = os.environ.get("RDS_PORT", "5432")
-    user = os.environ.get("RDS_USER", "postgres")
-    db = os.environ.get("RDS_DB", "postgres")
-    token = os.environ.get("RDS_IAM_TOKEN", "")
-    if not token:
-        token = subprocess.check_output([
-            "aws", "rds", "generate-db-auth-token",
-            "--region", os.environ.get("AWS_REGION", "us-east-1"),
-            "--hostname", host, "--port", port, "--username", user,
-        ], text=True).strip()
-    import psycopg2
-    return psycopg2.connect(host=host, port=port, user=user, password=token, dbname=db, sslmode="require")
+    return connect_rds()
 
 
 def main():

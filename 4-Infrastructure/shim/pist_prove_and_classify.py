@@ -8,6 +8,7 @@ Usage:
 import argparse
 import json
 import os
+from rds_connect import connect_rds
 import subprocess
 import sys
 import tempfile
@@ -219,20 +220,7 @@ def main():
 
     if args.insert:
         print("4. Inserting into RDS...", flush=True)
-        token = subprocess.check_output([
-            "aws", "rds", "generate-db-auth-token",
-            "--region", os.environ.get("AWS_REGION", "us-east-1"),
-            "--hostname", os.environ.get("RDS_HOST", "database-1-instance-1.cghu8yqogqwo.us-east-1.rds.amazonaws.com"),
-            "--port", os.environ.get("RDS_PORT", "5432"),
-            "--username", os.environ.get("RDS_USER", "postgres"),
-        ], text=True).strip()
-        import psycopg2
-        conn = psycopg2.connect(
-            host=os.environ.get("RDS_HOST", "database-1-instance-1.cghu8yqogqwo.us-east-1.rds.amazonaws.com"),
-            port=os.environ.get("RDS_PORT", "5432"),
-            user=os.environ.get("RDS_USER", "postgres"),
-            password=token, dbname=os.environ.get("RDS_DB", "postgres"), sslmode="require",
-        )
+        conn = connect_rds()
         hash_val = insert_classification(conn, receipt, pist_result)
         print(f"   Inserted as: receipts/live/{hash_val}.json", flush=True)
         conn.close()

@@ -25,21 +25,15 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
-import boto3
 import psycopg2
 import psycopg2.extras
+from rds_connect import connect_rds
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("dataset_ingest_rds")
 
 # Config
 RDS_HOST = os.environ.get("RDS_HOST", "database-1-instance-1.cghu8yqogqwo.us-east-1.rds.amazonaws.com")
-RDS_PORT = int(os.environ.get("RDS_PORT", "5432"))
-RDS_USER = os.environ.get("RDS_USER", "postgres")
-RDS_DBNAME = os.environ.get("RDS_DBNAME", "postgres")
-RDS_IAM = os.environ.get("RDS_IAM", "1") == "1"
-RDS_PW = os.environ.get("RDS_PASSWORD", "")
-AWS_REGION = os.environ.get("AWS_REGION", "us-east-1")
 
 STACK_ROOT = Path(os.environ.get("STACK_ROOT", "/home/researcher/stack"))
 DATA_DIR = STACK_ROOT / "shared-data" / "data" / "ingested_datasets" / "2026-05-18"
@@ -51,21 +45,8 @@ TIDDLYWIKI_DIR = STACK_ROOT / "6-Documentation" / "tiddlywiki-local" / "wiki" / 
 # ---------------------------------------------------------------------------
 # DB
 # ---------------------------------------------------------------------------
-def get_db_password() -> str:
-    if RDS_IAM:
-        client = boto3.client("rds", region_name=AWS_REGION)
-        return client.generate_db_auth_token(
-            DBHostname=RDS_HOST, Port=RDS_PORT, DBUsername=RDS_USER, Region=AWS_REGION,
-        )
-    return RDS_PW
-
-
 def connect():
-    pw = get_db_password()
-    return psycopg2.connect(
-        host=RDS_HOST, port=RDS_PORT, user=RDS_USER,
-        password=pw, dbname=RDS_DBNAME, sslmode="require",
-    )
+    return connect_rds()
 
 
 def ensure_schema(conn):

@@ -12,6 +12,8 @@ import sys
 import uuid
 from pathlib import Path
 
+from rds_connect import connect_rds
+
 PIST_DECOMPOSE = os.environ.get(
     "PIST_DECOMPOSE_BIN",
     "/home/allaun/.local/share/opencode/worktree/"
@@ -148,27 +150,7 @@ def main():
         return 0
 
     # Step 2: Connect to RDS
-    host = os.environ.get("RDS_HOST", "database-1-instance-1.cghu8yqogqwo.us-east-1.rds.amazonaws.com")
-    port = os.environ.get("RDS_PORT", "5432")
-    user = os.environ.get("RDS_USER", "postgres")
-    db = os.environ.get("RDS_DB", "postgres")
-
-    token = os.environ.get("RDS_IAM_TOKEN")
-    password = os.environ.get("RDS_PASSWORD")
-    if not password and os.environ.get("RDS_IAM_AUTH"):
-        region = os.environ.get("AWS_REGION", "us-east-1")
-        token = subprocess.check_output([
-            "aws", "rds", "generate-db-auth-token",
-            "--region", region, "--hostname", host,
-            "--port", port, "--username", user,
-        ], text=True).strip()
-        password = token
-
-    import psycopg2
-    conn = psycopg2.connect(
-        host=host, port=port, user=user, password=password, dbname=db,
-        sslmode="require",
-    )
+    conn = connect_rds()
 
     # Step 3: Insert artifact
     artifact_id = insert_artifact(conn, receipt_path, classification)

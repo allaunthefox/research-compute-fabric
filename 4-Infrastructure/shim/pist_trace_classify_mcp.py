@@ -16,7 +16,7 @@ With options:
 import json
 import math
 import os
-import subprocess
+from rds_connect import connect_rds
 import sys
 import uuid
 from collections import Counter, defaultdict
@@ -31,19 +31,7 @@ FEATURE_KEYS = ["matrix_size", "rank", "spectral_gap", "laplacian_zero_count", "
 
 
 def connect():
-    host = os.environ.get("RDS_HOST", "database-1-instance-1.cghu8yqogqwo.us-east-1.rds.amazonaws.com")
-    port = os.environ.get("RDS_PORT", "5432")
-    user = os.environ.get("RDS_USER", "postgres")
-    db = os.environ.get("RDS_DB", "postgres")
-    token = os.environ.get("RDS_IAM_TOKEN", "")
-    if not token:
-        token = subprocess.check_output([
-            "aws", "rds", "generate-db-auth-token",
-            "--region", os.environ.get("AWS_REGION", "us-east-1"),
-            "--hostname", host, "--port", port, "--username", user,
-        ], text=True).strip()
-    import psycopg2
-    return psycopg2.connect(host=host, port=port, user=user, password=token, dbname=db, sslmode="require")
+    return connect_rds()
 
 
 def power_iteration(matrix, max_iter=100):

@@ -24,29 +24,15 @@ import uuid
 from collections import Counter
 from pathlib import Path
 
-import boto3
 import psycopg2
 import psycopg2.extras
+from rds_connect import connect_rds
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("ene_migrate")
 
-RDS_HOST = os.environ.get("RDS_HOST", "database-1-instance-1.cghu8yqogqwo.us-east-1.rds.amazonaws.com")
-RDS_PORT = int(os.environ.get("RDS_PORT", "5432"))
-RDS_USER = os.environ.get("RDS_USER", "postgres")
-RDS_DBNAME = os.environ.get("RDS_DBNAME", "postgres")
-RDS_IAM = os.environ.get("RDS_IAM", "1") == "1"
-RDS_PW = os.environ.get("RDS_PASSWORD", "")
-AWS_REGION = os.environ.get("AWS_REGION", "us-east-1")
-
-
 def connect():
-    if RDS_IAM:
-        client = boto3.client("rds", region_name=AWS_REGION)
-        pw = client.generate_db_auth_token(DBHostname=RDS_HOST, Port=RDS_PORT, DBUsername=RDS_USER, Region=AWS_REGION)
-    else:
-        pw = RDS_PW
-    return psycopg2.connect(host=RDS_HOST, port=RDS_PORT, user=RDS_USER, password=pw, dbname=RDS_DBNAME, sslmode="require")
+    return connect_rds()
 
 
 def apply_schema(conn):

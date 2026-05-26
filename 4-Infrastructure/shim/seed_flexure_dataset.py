@@ -10,31 +10,14 @@ This gives us real training data to predict RRCShape from signal patterns.
 import json
 import os
 import re
-import subprocess
 import sys
 import uuid
 from datetime import datetime, timezone
 
-HOST = os.environ.get("RDS_HOST", "database-1-instance-1.cghu8yqogqwo.us-east-1.rds.amazonaws.com")
-PORT = os.environ.get("RDS_PORT", "5432")
-USER = os.environ.get("RDS_USER", "postgres")
-DB = os.environ.get("RDS_DB", "postgres")
+from rds_connect import connect_rds
 
-
-def get_token():
-    region = os.environ.get("AWS_REGION", "us-east-1")
-    return subprocess.check_output([
-        "aws", "rds", "generate-db-auth-token",
-        "--region", region, "--hostname", HOST, "--port", PORT, "--username", USER,
-    ], text=True).strip()
-
-
-def get_conn(token):
-    import psycopg2
-    return psycopg2.connect(
-        host=HOST, port=PORT, user=USER, password=token, dbname=DB,
-        sslmode="require",
-    )
+def get_conn():
+    return connect_rds()
 
 
 # ── Catastrophe → RRCShape mapping ──────────────────────────────
@@ -200,8 +183,7 @@ def main():
 
     print(f"Found {len(equations)} classified equations")
 
-    token = get_token()
-    conn = get_conn(token)
+    conn = get_conn()
     cur = conn.cursor()
 
     session_id = str(uuid.uuid4())

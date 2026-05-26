@@ -41,22 +41,16 @@ import uuid
 from pathlib import Path
 from typing import Optional
 
-import boto3
 import psycopg2
 import psycopg2.extras
+from rds_connect import connect_rds
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("ene_wiki_body_reingest")
 
 # ---------------------------------------------------------------------------
-# RDS connection (IAM auth)
+# RDS connection
 # ---------------------------------------------------------------------------
-RDS_HOST   = os.environ.get("RDS_HOST", "database-1-instance-1.cghu8yqogqwo.us-east-1.rds.amazonaws.com")
-RDS_PORT   = int(os.environ.get("RDS_PORT", "5432"))
-RDS_USER   = os.environ.get("RDS_USER", "postgres")
-RDS_DBNAME = os.environ.get("RDS_DBNAME", "postgres")
-AWS_REGION = os.environ.get("AWS_REGION", "us-east-1")
-
 RESEARCH_STACK = Path(os.environ.get("RESEARCH_STACK", "/home/allaun/Research Stack"))
 
 # Maximum bytes to read from a single local file (avoid ingesting huge blobs)
@@ -64,13 +58,7 @@ MAX_FILE_BYTES = 64 * 1024  # 64 KB
 
 
 def connect() -> psycopg2.extensions.connection:
-    token = boto3.client("rds", region_name=AWS_REGION).generate_db_auth_token(
-        DBHostname=RDS_HOST, Port=RDS_PORT, DBUsername=RDS_USER, Region=AWS_REGION
-    )
-    return psycopg2.connect(
-        host=RDS_HOST, port=RDS_PORT, user=RDS_USER,
-        password=token, dbname=RDS_DBNAME, sslmode="require", connect_timeout=10
-    )
+    return connect_rds()
 
 
 # ---------------------------------------------------------------------------

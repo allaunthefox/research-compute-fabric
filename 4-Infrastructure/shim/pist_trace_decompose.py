@@ -269,6 +269,7 @@ def main():
             json.dump(result, f, indent=2)
         print(f"\nDecomposition: {out_path}", flush=True)
     
+    print(json.dumps(result))
     return 0
 
 

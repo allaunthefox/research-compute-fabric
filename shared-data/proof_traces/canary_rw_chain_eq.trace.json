@@ -1,0 +1,87 @@
+{
+  "trace_version": "proof-trace-v1",
+  "receipt_hash": "fb9ee92a7900d8987e1e38d4dfadb08e55ab3c4cc759243fe3f83aa945e87789",
+  "theorem_name": "rw_chain_eq",
+  "status": "verified",
+  "tactic_count": 2,
+  "total_elapsed_ms": 2524,
+  "steps": [
+    {
+      "step": 0,
+      "tactic": "rw [h1]",
+      "before_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "after_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "before_goal_text": "\n",
+      "after_goal_text": "\n",
+      "goal_count_before": 1,
+      "goal_count_after": 1,
+      "hypothesis_count_before": 0,
+      "hypothesis_count_after": 0,
+      "operator_count_before": 0,
+      "operator_count_after": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "elapsed_ms": 1243,
+      "result": "failure",
+      "stdout_preview": "",
+      "stderr_preview": ""
+    },
+    {
+      "step": 1,
+      "tactic": "rw [h2]",
+      "before_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "after_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "before_goal_text": "\n",
+      "after_goal_text": "\n",
+      "goal_count_before": 1,
+      "goal_count_after": 1,
+      "hypothesis_count_before": 0,
+      "hypothesis_count_after": 0,
+      "operator_count_before": 0,
+      "operator_count_after": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "elapsed_ms": 1281,
+      "result": "success",
+      "stdout_preview": "",
+      "stderr_preview": ""
+    }
+  ],
+  "goal_transition_matrix": [
+    [
+      2
+    ]
+  ],
+  "flexure_joints": [
+    {
+      "step": 0,
+      "tactic": "rw [h1]",
+      "tactic_family": "rewrite",
+      "delta_score": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "result": "failure"
+    },
+    {
+      "step": 1,
+      "tactic": "rw [h2]",
+      "tactic_family": "rewrite",
+      "delta_score": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "result": "success"
+    }
+  ]
+}

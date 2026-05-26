@@ -1,0 +1,87 @@
+{
+  "trace_version": "proof-trace-v1",
+  "receipt_hash": "862ef6b1cf0e2eda6faf9968f33fc8e4147b48e614911bc996d1fb1258d23b39",
+  "theorem_name": "rw_chain_mixed",
+  "status": "verified",
+  "tactic_count": 2,
+  "total_elapsed_ms": 2194,
+  "steps": [
+    {
+      "step": 0,
+      "tactic": "rw [h]",
+      "before_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "after_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "before_goal_text": "\n",
+      "after_goal_text": "\n",
+      "goal_count_before": 1,
+      "goal_count_after": 1,
+      "hypothesis_count_before": 0,
+      "hypothesis_count_after": 0,
+      "operator_count_before": 0,
+      "operator_count_after": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "elapsed_ms": 1105,
+      "result": "failure",
+      "stdout_preview": "",
+      "stderr_preview": ""
+    },
+    {
+      "step": 1,
+      "tactic": "simp",
+      "before_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "after_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "before_goal_text": "\n",
+      "after_goal_text": "\n",
+      "goal_count_before": 1,
+      "goal_count_after": 1,
+      "hypothesis_count_before": 0,
+      "hypothesis_count_after": 0,
+      "operator_count_before": 0,
+      "operator_count_after": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "elapsed_ms": 1089,
+      "result": "success",
+      "stdout_preview": "",
+      "stderr_preview": ""
+    }
+  ],
+  "goal_transition_matrix": [
+    [
+      2
+    ]
+  ],
+  "flexure_joints": [
+    {
+      "step": 0,
+      "tactic": "rw [h]",
+      "tactic_family": "rewrite",
+      "delta_score": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "result": "failure"
+    },
+    {
+      "step": 1,
+      "tactic": "simp",
+      "tactic_family": "normalization",
+      "delta_score": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "result": "success"
+    }
+  ]
+}

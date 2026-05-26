@@ -1,0 +1,71 @@
+{
+  "trace_summary": {
+    "theorem_name": "omega_chain_unsat",
+    "status": "failed",
+    "n_steps": 1,
+    "n_unique_goal_states": 1,
+    "n_flexure_joints": 1
+  },
+  "spectral": {
+    "n_states": 1,
+    "eigenvalue_max": 1.0,
+    "spectral_gap": 1.0,
+    "laplacian_eigenvalue_max": 1.0,
+    "rank_estimate": 1,
+    "zero_rows": 0,
+    "frobenius_norm": 1.0,
+    "trace": 1,
+    "density": 1.0
+  },
+  "feature_vector": [
+    1,
+    1,
+    1.0,
+    1.0,
+    0,
+    1,
+    0.0,
+    0.0,
+    0.0,
+    -0.0,
+    0.0,
+    1141
+  ],
+  "feature_names": [
+    "n_steps",
+    "n_unique_goal_states",
+    "transition_density",
+    "spectral_gap",
+    "laplacian_zero_count",
+    "rank_estimate",
+    "avg_delta_goal_count",
+    "avg_delta_hypothesis",
+    "avg_delta_symbol",
+    "tactic_family_entropy",
+    "verified_ratio",
+    "total_elapsed"
+  ],
+  "tactic_family_distribution": {
+    "arithmetic": 1
+  },
+  "delta_stats": {
+    "avg_goal_delta": 0.0,
+    "avg_hypothesis_delta": 0.0,
+    "avg_symbol_delta": 0.0,
+    "max_delta_score": 0
+  },
+  "flexure_joints": [
+    {
+      "step": 0,
+      "tactic": "omega",
+      "tactic_family": "arithmetic",
+      "delta_score": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "result": "failure"
+    }
+  ]
+}

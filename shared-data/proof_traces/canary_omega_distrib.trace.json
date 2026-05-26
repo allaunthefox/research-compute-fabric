@@ -1,0 +1,52 @@
+{
+  "trace_version": "proof-trace-v1",
+  "receipt_hash": "caa088677ed4572fe89029b07d4184a54d71729acd710ec218f8ff1083cd390d",
+  "theorem_name": "omega_distrib",
+  "status": "failed",
+  "tactic_count": 1,
+  "total_elapsed_ms": 1071,
+  "steps": [
+    {
+      "step": 0,
+      "tactic": "omega",
+      "before_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "after_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "before_goal_text": "\n",
+      "after_goal_text": "\n",
+      "goal_count_before": 1,
+      "goal_count_after": 1,
+      "hypothesis_count_before": 0,
+      "hypothesis_count_after": 0,
+      "operator_count_before": 0,
+      "operator_count_after": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "elapsed_ms": 1071,
+      "result": "failure",
+      "stdout_preview": "",
+      "stderr_preview": ""
+    }
+  ],
+  "goal_transition_matrix": [
+    [
+      1
+    ]
+  ],
+  "flexure_joints": [
+    {
+      "step": 0,
+      "tactic": "omega",
+      "tactic_family": "arithmetic",
+      "delta_score": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "result": "failure"
+    }
+  ]
+}

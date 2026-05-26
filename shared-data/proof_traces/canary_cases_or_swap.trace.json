@@ -1,0 +1,192 @@
+{
+  "trace_version": "proof-trace-v1",
+  "receipt_hash": "a5d1516151f774e41626c35fdc80c48b283ebce812be3114261e2a0022ee7f34",
+  "theorem_name": "cases_or_swap",
+  "status": "failed",
+  "tactic_count": 5,
+  "total_elapsed_ms": 5552,
+  "steps": [
+    {
+      "step": 0,
+      "tactic": "cases h",
+      "before_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "after_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "before_goal_text": "\n",
+      "after_goal_text": "\n",
+      "goal_count_before": 1,
+      "goal_count_after": 1,
+      "hypothesis_count_before": 0,
+      "hypothesis_count_after": 0,
+      "operator_count_before": 0,
+      "operator_count_after": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "elapsed_ms": 1138,
+      "result": "failure",
+      "stdout_preview": "",
+      "stderr_preview": ""
+    },
+    {
+      "step": 1,
+      "tactic": "\u00b7 right",
+      "before_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "after_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "before_goal_text": "\n",
+      "after_goal_text": "\n",
+      "goal_count_before": 1,
+      "goal_count_after": 1,
+      "hypothesis_count_before": 0,
+      "hypothesis_count_after": 0,
+      "operator_count_before": 0,
+      "operator_count_after": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "elapsed_ms": 1140,
+      "result": "failure",
+      "stdout_preview": "",
+      "stderr_preview": ""
+    },
+    {
+      "step": 2,
+      "tactic": "exact h",
+      "before_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "after_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "before_goal_text": "\n",
+      "after_goal_text": "\n",
+      "goal_count_before": 1,
+      "goal_count_after": 1,
+      "hypothesis_count_before": 0,
+      "hypothesis_count_after": 0,
+      "operator_count_before": 0,
+      "operator_count_after": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "elapsed_ms": 1115,
+      "result": "failure",
+      "stdout_preview": "",
+      "stderr_preview": ""
+    },
+    {
+      "step": 3,
+      "tactic": "\u00b7 left",
+      "before_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "after_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "before_goal_text": "\n",
+      "after_goal_text": "\n",
+      "goal_count_before": 1,
+      "goal_count_after": 1,
+      "hypothesis_count_before": 0,
+      "hypothesis_count_after": 0,
+      "operator_count_before": 0,
+      "operator_count_after": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "elapsed_ms": 1106,
+      "result": "failure",
+      "stdout_preview": "",
+      "stderr_preview": ""
+    },
+    {
+      "step": 4,
+      "tactic": "exact h",
+      "before_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "after_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "before_goal_text": "\n",
+      "after_goal_text": "\n",
+      "goal_count_before": 1,
+      "goal_count_after": 1,
+      "hypothesis_count_before": 0,
+      "hypothesis_count_after": 0,
+      "operator_count_before": 0,
+      "operator_count_after": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "elapsed_ms": 1053,
+      "result": "failure",
+      "stdout_preview": "",
+      "stderr_preview": ""
+    }
+  ],
+  "goal_transition_matrix": [
+    [
+      5
+    ]
+  ],
+  "flexure_joints": [
+    {
+      "step": 0,
+      "tactic": "cases h",
+      "tactic_family": "case_analysis",
+      "delta_score": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "result": "failure"
+    },
+    {
+      "step": 1,
+      "tactic": "\u00b7 right",
+      "tactic_family": "unknown",
+      "delta_score": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "result": "failure"
+    },
+    {
+      "step": 2,
+      "tactic": "exact h",
+      "tactic_family": "discharge",
+      "delta_score": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "result": "failure"
+    },
+    {
+      "step": 3,
+      "tactic": "\u00b7 left",
+      "tactic_family": "unknown",
+      "delta_score": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "result": "failure"
+    },
+    {
+      "step": 4,
+      "tactic": "exact h",
+      "tactic_family": "discharge",
+      "delta_score": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "result": "failure"
+    }
+  ]
+}

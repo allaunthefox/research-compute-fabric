@@ -1,0 +1,87 @@
+{
+  "trace_version": "proof-trace-v1",
+  "receipt_hash": "d1beb5b4ad2dc2941198c6d14e781358d6d6161d7f4f9e8c4a94fc934ca5d656",
+  "theorem_name": "rw_then_omega",
+  "status": "failed",
+  "tactic_count": 2,
+  "total_elapsed_ms": 2137,
+  "steps": [
+    {
+      "step": 0,
+      "tactic": "rw [h]",
+      "before_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "after_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "before_goal_text": "\n",
+      "after_goal_text": "\n",
+      "goal_count_before": 1,
+      "goal_count_after": 1,
+      "hypothesis_count_before": 0,
+      "hypothesis_count_after": 0,
+      "operator_count_before": 0,
+      "operator_count_after": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "elapsed_ms": 1003,
+      "result": "success",
+      "stdout_preview": "",
+      "stderr_preview": ""
+    },
+    {
+      "step": 1,
+      "tactic": "omega",
+      "before_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "after_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "before_goal_text": "\n",
+      "after_goal_text": "\n",
+      "goal_count_before": 1,
+      "goal_count_after": 1,
+      "hypothesis_count_before": 0,
+      "hypothesis_count_after": 0,
+      "operator_count_before": 0,
+      "operator_count_after": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "elapsed_ms": 1134,
+      "result": "failure",
+      "stdout_preview": "",
+      "stderr_preview": ""
+    }
+  ],
+  "goal_transition_matrix": [
+    [
+      2
+    ]
+  ],
+  "flexure_joints": [
+    {
+      "step": 0,
+      "tactic": "rw [h]",
+      "tactic_family": "rewrite",
+      "delta_score": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "result": "success"
+    },
+    {
+      "step": 1,
+      "tactic": "omega",
+      "tactic_family": "arithmetic",
+      "delta_score": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "result": "failure"
+    }
+  ]
+}

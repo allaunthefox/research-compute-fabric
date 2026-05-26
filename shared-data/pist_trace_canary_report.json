@@ -1,0 +1,23 @@
+{
+  "n": 24,
+  "n_errors": 0,
+  "status_distribution": {
+    "verified": 12,
+    "failed": 12
+  },
+  "tactic_family_distribution": {
+    "rewrite": 8,
+    "normalization": 5,
+    "arithmetic": 7,
+    "case_analysis": 2,
+    "unknown": 3,
+    "discharge": 12,
+    "constructor": 1,
+    "introduction": 5,
+    "lemma_introduction": 2,
+    "algebraic": 1,
+    "reflexivity": 2
+  },
+  "unique_spectral_gaps": 5,
+  "unique_rank_estimates": 1
+}

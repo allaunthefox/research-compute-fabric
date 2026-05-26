@@ -1,0 +1,52 @@
+{
+  "trace_version": "proof-trace-v1",
+  "receipt_hash": "0361d21827da4cd215292e606e203e24b1d862d7fc08075d6cae898b04824cc7",
+  "theorem_name": "fail_bad_coercion",
+  "status": "failed",
+  "tactic_count": 1,
+  "total_elapsed_ms": 1108,
+  "steps": [
+    {
+      "step": 0,
+      "tactic": "rfl",
+      "before_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "after_goal_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "before_goal_text": "\n",
+      "after_goal_text": "\n",
+      "goal_count_before": 1,
+      "goal_count_after": 1,
+      "hypothesis_count_before": 0,
+      "hypothesis_count_after": 0,
+      "operator_count_before": 0,
+      "operator_count_after": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "elapsed_ms": 1108,
+      "result": "failure",
+      "stdout_preview": "",
+      "stderr_preview": ""
+    }
+  ],
+  "goal_transition_matrix": [
+    [
+      1
+    ]
+  ],
+  "flexure_joints": [
+    {
+      "step": 0,
+      "tactic": "rfl",
+      "tactic_family": "reflexivity",
+      "delta_score": 0,
+      "delta": {
+        "symbol_delta": 0,
+        "hypothesis_delta": 0,
+        "goal_count_delta": 0
+      },
+      "result": "failure"
+    }
+  ]
+}

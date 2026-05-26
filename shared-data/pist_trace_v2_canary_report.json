@@ -1,0 +1,11 @@
+{
+  "n": 24,
+  "n_ok": 12,
+  "n_with_traces": 24,
+  "n_matrices_gt_1x1": 18,
+  "avg_steps": 3.6,
+  "status_distribution": {
+    "verified": 12,
+    "failed": 12
+  }
+}

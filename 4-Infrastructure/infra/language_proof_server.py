@@ -55,6 +55,12 @@ def sha256_text(text: str) -> str:
     return sha256_bytes(text.encode("utf-8"))
 
 
+def json_sha256(data: Any) -> str | None:
+    if data is None:
+        return None
+    return sha256_text(json.dumps(data, sort_keys=True))
+
+
 def env_path(name: str, default: str) -> Path:
     return Path(os.environ.get(name, default)).expanduser()
 
@@ -130,6 +136,7 @@ def run_command(
         stderr += f"\ncommand timed out after {timeout_s}s"
 
     elapsed_ms = int((time.time() - started) * 1000)
+    ene_context = input_payload.get("ene_context")
     receipt = {
         "schema": "language_proof_server_receipt_v1",
         "server": SERVER_NAME,
@@ -147,6 +154,8 @@ def run_command(
         "elapsed_ms": elapsed_ms,
         "stdout_sha256": sha256_text(stdout),
         "stderr_sha256": sha256_text(stderr),
+        "ene_context": ene_context,
+        "ene_context_sha256": json_sha256(ene_context),
     }
     receipt["receipt_sha256"] = sha256_text(json.dumps(receipt, sort_keys=True))
 
@@ -159,6 +168,8 @@ def run_command(
         "receipt_path": str(receipt_path),
         "stdout": stdout,
         "stderr": stderr,
+        "ene_context": ene_context,
+        "ene_context_sha256": json_sha256(ene_context),
     }
 
 

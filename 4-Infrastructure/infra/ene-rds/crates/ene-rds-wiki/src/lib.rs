@@ -80,6 +80,11 @@ CREATE TABLE IF NOT EXISTS ene.wiki_categories (
 CREATE INDEX IF NOT EXISTS idx_wiki_pages_slug ON ene.wiki_pages(slug);
 CREATE INDEX IF NOT EXISTS idx_wiki_pages_title ON ene.wiki_pages USING gin(to_tsvector('english', title));
 CREATE INDEX IF NOT EXISTS idx_wiki_revisions_page ON ene.wiki_revisions(page_id, created_at DESC);
+
+ALTER TABLE ene.wiki_pages ADD COLUMN IF NOT EXISTS concept_anchor TEXT;
+ALTER TABLE ene.wiki_pages ADD COLUMN IF NOT EXISTS concept_vector JSONB;
+ALTER TABLE ene.wiki_pages ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT now();
+ALTER TABLE ene.wiki_pages ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT now();
         "#;
         self.client
             .inner()

@@ -100,8 +100,30 @@ def http_json(path: str, query: dict[str, Any] | None = None, timeout: float = 3
     if query:
         url = f"{url}?{urllib.parse.urlencode(query)}"
     req = urllib.request.Request(url, headers={"Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=timeout) as response:
-        return json.loads(response.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as response:
+            status = response.status
+            content_type = response.headers.get("content-type", "")
+            text = response.read().decode("utf-8", errors="replace")
+    except urllib.error.HTTPError as exc:
+        status = exc.code
+        content_type = exc.headers.get("content-type", "")
+        text = exc.read().decode("utf-8", errors="replace")
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        return {
+            "ok": False,
+            "error": "non-json response from ENE API",
+            "status": status,
+            "content_type": content_type,
+            "body": text,
+            "url": url,
+        }
+    if isinstance(data, dict):
+        data.setdefault("status", status)
+        data.setdefault("url", url)
+    return data
 
 
 def tool_status(_: dict[str, Any]) -> dict[str, Any]:
@@ -258,7 +280,7 @@ def tool_search(args: dict[str, Any]) -> dict[str, Any]:
     query = str(args["query"])
     limit = int(args.get("limit") or 10)
     semantic = bool(args.get("semantic") or False)
-    sources = args.get("sources") or ["ene_api", "local_memory"]
+    sources = args.get("sources") or ["ene_api", "wiki", "local_memory"]
     out: dict[str, Any] = {"ok": True, "query": query, "results": {}}
 
     if "ene_api" in sources:
@@ -269,6 +291,19 @@ def tool_search(args: dict[str, Any]) -> dict[str, Any]:
             )
         except Exception as exc:
             out["results"]["ene_api"] = {
+                "ok": False,
+                "error": f"{type(exc).__name__}: {exc}",
+                "url": api_url(),
+            }
+
+    if "wiki" in sources:
+        try:
+            out["results"]["wiki"] = http_json(
+                "/wiki/search",
+                {"q": query, "limit": limit},
+            )
+        except Exception as exc:
+            out["results"]["wiki"] = {
                 "ok": False,
                 "error": f"{type(exc).__name__}: {exc}",
                 "url": api_url(),

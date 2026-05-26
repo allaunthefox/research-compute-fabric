@@ -225,7 +225,7 @@ python3 4-Infrastructure/infra/ene_contextstream_mcp.py --status
 Hermes, OpenCode, Codex, Cursor, Roo, and VS Code should use the
 `remote-lean-proof` MCP server for AWS-backed Lean checks when local Lean is
 slow or unavailable. The MCP server fronts the dedicated proof service at
-`http://75.101.199.58:8787`, requires the runtime token stored outside Git at
+`http://54.236.176.28:8787`, requires the runtime token stored outside Git at
 `~/.config/ene/language-proof-server.token`, and returns receipt-bearing
 responses.
 

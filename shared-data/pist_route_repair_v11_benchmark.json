@@ -1,0 +1,850 @@
+{
+  "n": 28,
+  "recovered": 0,
+  "partial_improvement": 0,
+  "avg_delta": 0.0,
+  "failure_session_id": "a89baf86-3536-4453-8e2c-7c66d54cf389",
+  "combined_session_id": "a4a0eb20-93fe-413e-8e0b-50334bb778d8",
+  "results": [
+    {
+      "name": "rw_missing_dir_1",
+      "obstruction": "missing_rewrite_direction",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [a]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "rw_missing_dir_2",
+      "obstruction": "missing_rewrite_direction",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [a]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "rw_missing_dir_3",
+      "obstruction": "missing_rewrite_direction",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [a]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "rw_missing_dir_4",
+      "obstruction": "missing_rewrite_direction",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [a]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "rw_missing_dir_5",
+      "obstruction": "missing_rewrite_direction",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [a]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "rw_missing_dir_6",
+      "obstruction": "missing_rewrite_direction",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [a]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "rw_missing_dir_7",
+      "obstruction": "missing_rewrite_direction",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [a]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "missing_assume_1",
+      "obstruction": "missing_assumption_bridge",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [A]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "missing_assume_2",
+      "obstruction": "missing_assumption_bridge",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [A]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "missing_assume_3",
+      "obstruction": "missing_assumption_bridge",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [A]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "missing_assume_4",
+      "obstruction": "missing_assumption_bridge",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [A]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "missing_assume_5",
+      "obstruction": "missing_assumption_bridge",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [A]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "missing_assume_6",
+      "obstruction": "missing_assumption_bridge",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [A]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "missing_assume_7",
+      "obstruction": "missing_assumption_bridge",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [P]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 P]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [P]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "arith_gap_1",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [a]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "arith_gap_2",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [a]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "arith_gap_3",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [a]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "arith_gap_4",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [a]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "arith_gap_5",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [a]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "arith_gap_6",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [x]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 x]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [x]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "arith_gap_8",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 a]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [a]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "arith_gap_9",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [x]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 x]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [x]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "case_split_1",
+      "obstruction": "case_split_missing",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [A]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "case_split_2",
+      "obstruction": "case_split_missing",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [A]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "case_split_3",
+      "obstruction": "case_split_missing",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [A]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "case_split_4",
+      "obstruction": "case_split_missing",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [A]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "case_split_5",
+      "obstruction": "case_split_missing",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [A]",
+        "delta": 0,
+        "ok": false
+      }
+    },
+    {
+      "name": "case_split_6",
+      "obstruction": "case_split_missing",
+      "initial_status": "failed",
+      "predicted_family": "rewrite",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "rw [A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "rw [\u2190 A]",
+          "family": "rewrite",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "rw [A]",
+        "delta": 0,
+        "ok": false
+      }
+    }
+  ]
+}

@@ -9,3 +9,5 @@ resources:
   - pulse-receiver
   - homarr
   - authentik
+  - actual-budget
+

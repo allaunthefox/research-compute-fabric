@@ -5,7 +5,7 @@ Projects theorem structure onto a 16D modifier, chooses a local proof chart (4D)
 and generates 3D-ranked patch candidates. Focused on zero-bucket repair.
 """
 
-import json, os, re, subprocess, sys
+import json, os, re, sys
 from collections import Counter, defaultdict
 from pathlib import Path
 

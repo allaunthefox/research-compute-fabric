@@ -35,6 +35,22 @@
         "PROOF_SERVER_TOKEN_FILE": "/home/allaun/.config/ene/language-proof-server.token"
       },
       "enabled": true
+    },
+    "pist-trace-classify": {
+      "type": "local",
+      "command": [
+        "python3",
+        "4-Infrastructure/shim/pist_trace_classify_mcp.py"
+      ],
+      "environment": {
+        "RDS_HOST": "database-1-instance-1.cghu8yqogqwo.us-east-1.rds.amazonaws.com",
+        "RDS_PORT": "5432",
+        "RDS_USER": "postgres",
+        "RDS_DB": "postgres",
+        "RDS_IAM_AUTH": "true",
+        "AWS_REGION": "us-east-1"
+      },
+      "enabled": true
     }
   },
   "$schema": "https://opencode.ai/config.json"

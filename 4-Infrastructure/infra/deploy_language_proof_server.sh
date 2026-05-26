@@ -116,7 +116,7 @@ fi
 export HOME=/var/lib/language-proof-server
 export PATH="$HOME/.elan/bin:$PATH"
 cd /srv/research-stack/0-Core-Formalism/lean/Semantics
-runuser -u proofsrv -- sh -lc "cd /srv/research-stack/0-Core-Formalism/lean/Semantics && export PATH=/var/lib/language-proof-server/.elan/bin:\$PATH && elan toolchain install \"\$(cat lean-toolchain)\" && lake update"
+runuser -u proofsrv -- sh -lc "cd /srv/research-stack/0-Core-Formalism/lean/Semantics && export PATH=/var/lib/language-proof-server/.elan/bin:\$PATH && elan toolchain install \"\$(cat lean-toolchain)\" || true; lake update"
 systemctl daemon-reload
 systemctl enable --now language-proof-server.service
 systemctl --no-pager --full status language-proof-server.service | sed -n "1,18p"

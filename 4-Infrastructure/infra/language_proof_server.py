@@ -105,6 +105,11 @@ def command_env() -> dict[str, str]:
     return env
 
 
+def command_prefix() -> list[str]:
+    raw = os.environ.get("PROOF_COMMAND_PREFIX", "").strip()
+    return shlex.split(raw) if raw else []
+
+
 def run_command(
     command: list[str],
     cwd: Path,
@@ -112,10 +117,11 @@ def run_command(
     timeout_s: int,
 ) -> dict[str, Any]:
     started = time.time()
-    command_display = " ".join(shlex.quote(part) for part in command)
+    full_command = command_prefix() + command
+    command_display = " ".join(shlex.quote(part) for part in full_command)
     try:
         proc = subprocess.run(
-            command,
+            full_command,
             cwd=str(cwd),
             env=command_env(),
             text=True,
@@ -178,6 +184,7 @@ def health() -> dict[str, Any]:
     checks: dict[str, Any] = {
         "repo_dir": str(repo_dir()),
         "lean_root": str(root),
+        "proof_command_prefix": command_prefix(),
         "lean_root_exists": root.exists(),
         "lakefile_exists": (root / "lakefile.toml").exists(),
         "lean_toolchain_exists": (root / "lean-toolchain").exists(),

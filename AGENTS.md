@@ -229,6 +229,15 @@ slow or unavailable. The MCP server fronts the dedicated proof service at
 `~/.config/ene/language-proof-server.token`, and returns receipt-bearing
 responses.
 
+Active proof-worker pool:
+
+```text
+http://54.236.176.28:8787     AWS EC2 dedicated proof server
+http://100.110.163.82:8787    361395-1 Netcup proof worker
+http://100.102.173.61:8787    nixos-laptop proof worker
+http://100.85.244.73:8787     nixos-steamdeck-1 proof worker
+```
+
 Primary tools:
 
 - `proof_status` for health and token wiring.

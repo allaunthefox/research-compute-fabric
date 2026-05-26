@@ -31,6 +31,7 @@
       ],
       "environment": {
         "PROOF_SERVER_URL": "http://54.236.176.28:8787",
+        "PROOF_SERVER_URLS": "http://54.236.176.28:8787,http://100.110.163.82:8787,http://100.102.173.61:8787,http://100.85.244.73:8787",
         "PROOF_SERVER_TOKEN_FILE": "/home/allaun/.config/ene/language-proof-server.token"
       },
       "enabled": true

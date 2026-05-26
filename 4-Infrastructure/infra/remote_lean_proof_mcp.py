@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import sys
@@ -38,7 +39,29 @@ def base_url() -> str:
     return os.environ.get("PROOF_SERVER_URL", DEFAULT_URL).rstrip("/")
 
 
-def request_json(path: str, payload: dict[str, Any] | None = None, timeout: int = 120) -> dict[str, Any]:
+def proof_urls() -> list[str]:
+    raw = os.environ.get("PROOF_SERVER_URLS", "").strip()
+    urls = [item.strip().rstrip("/") for item in raw.split(",") if item.strip()]
+    if not urls:
+        urls = [base_url()]
+    return list(dict.fromkeys(urls))
+
+
+def ordered_urls(payload: dict[str, Any] | None = None) -> list[str]:
+    urls = proof_urls()
+    if len(urls) <= 1 or payload is None:
+        return urls
+    key = str(payload.get("name") or payload.get("target") or payload.get("agent") or "")
+    offset = int(hashlib.sha256(key.encode("utf-8")).hexdigest(), 16) % len(urls)
+    return urls[offset:] + urls[:offset]
+
+
+def request_json_from(
+    url: str,
+    path: str,
+    payload: dict[str, Any] | None = None,
+    timeout: int = 120,
+) -> dict[str, Any]:
     headers = {"Accept": "application/json", "User-Agent": f"{SERVER_NAME}/{SERVER_VERSION}"}
     body = None
     method = "GET"
@@ -49,10 +72,13 @@ def request_json(path: str, payload: dict[str, Any] | None = None, timeout: int 
         auth = token()
         if auth:
             headers["Authorization"] = f"Bearer {auth}"
-    req = urllib.request.Request(f"{base_url()}{path}", data=body, headers=headers, method=method)
+    req = urllib.request.Request(f"{url}{path}", data=body, headers=headers, method=method)
     try:
         with urllib.request.urlopen(req, timeout=timeout) as response:
-            return json.loads(response.read().decode("utf-8"))
+            data = json.loads(response.read().decode("utf-8"))
+            if isinstance(data, dict):
+                data.setdefault("proof_server_url", url)
+            return data
     except urllib.error.HTTPError as exc:
         text = exc.read().decode("utf-8", errors="replace")
         try:
@@ -61,20 +87,34 @@ def request_json(path: str, payload: dict[str, Any] | None = None, timeout: int 
             data = {"error": text}
         data["http_status"] = exc.code
         data["ok"] = False
+        data["proof_server_url"] = url
         return data
     except Exception as exc:
-        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}", "proof_server_url": url}
+
+
+def request_json(path: str, payload: dict[str, Any] | None = None, timeout: int = 120) -> dict[str, Any]:
+    failures = []
+    for url in ordered_urls(payload):
+        data = request_json_from(url, path, payload, timeout)
+        if data.get("ok"):
+            return data
+        failures.append(data)
+    return {"ok": False, "error": "all proof servers failed", "failures": failures}
 
 
 def tool_status(_: dict[str, Any]) -> dict[str, Any]:
-    health = request_json("/health", timeout=10)
+    nodes = [request_json_from(url, "/health", timeout=10) for url in proof_urls()]
+    healthy = [node for node in nodes if node.get("ok")]
     return {
-        "ok": bool(health.get("ok")),
+        "ok": bool(healthy),
         "server": SERVER_NAME,
         "version": SERVER_VERSION,
         "proof_server_url": base_url(),
+        "proof_server_urls": proof_urls(),
         "token_configured": bool(token()),
-        "health": health,
+        "health": healthy[0] if healthy else (nodes[0] if nodes else {"ok": False}),
+        "nodes": nodes,
     }
 
 

@@ -1,0 +1,816 @@
+{
+  "n": 28,
+  "recovered": 15,
+  "results": [
+    {
+      "name": "rw_missing_dir_1",
+      "obstruction": "missing_rewrite_direction",
+      "initial_status": "failed",
+      "recovered": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "rw_reverse_simp",
+          "patch": "rw [\u2190 {'name': 'h', 'type': 'a = b', 'is_prop': False, 'is_n",
+          "ok": false
+        },
+        {
+          "attempt": 2,
+          "tag": "rw_forward_simp",
+          "patch": "rw [{'name': 'h', 'type': 'a = b', 'is_prop': False, 'is_nat",
+          "ok": false
+        },
+        {
+          "attempt": 3,
+          "tag": "rw_reverse_rfl",
+          "patch": "rw [\u2190 {'name': 'h', 'type': 'a = b', 'is_prop': False, 'is_n",
+          "ok": false
+        },
+        {
+          "attempt": 4,
+          "tag": "rw_forward_rfl",
+          "patch": "rw [{'name': 'h', 'type': 'a = b', 'is_prop': False, 'is_nat",
+          "ok": false
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "rw_reverse_simp",
+        "patch": "rw [\u2190 {'name': 'h', 'type': 'a = b', 'is_prop': False, 'is_n",
+        "ok": false
+      },
+      "n_candidates": 4
+    },
+    {
+      "name": "rw_missing_dir_2",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "recovered": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "omega",
+          "patch": "omega",
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "omega",
+        "patch": "omega",
+        "ok": true
+      },
+      "n_candidates": 5
+    },
+    {
+      "name": "rw_missing_dir_3",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "recovered": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "omega",
+          "patch": "omega",
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "omega",
+        "patch": "omega",
+        "ok": true
+      },
+      "n_candidates": 5
+    },
+    {
+      "name": "rw_missing_dir_4",
+      "obstruction": "missing_rewrite_direction",
+      "initial_status": "failed",
+      "recovered": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "rw_reverse_simp",
+          "patch": "rw [\u2190 {'name': 'h', 'type': 'a = b', 'is_prop': False, 'is_n",
+          "ok": false
+        },
+        {
+          "attempt": 2,
+          "tag": "rw_forward_simp",
+          "patch": "rw [{'name': 'h', 'type': 'a = b', 'is_prop': False, 'is_nat",
+          "ok": false
+        },
+        {
+          "attempt": 3,
+          "tag": "rw_reverse_rfl",
+          "patch": "rw [\u2190 {'name': 'h', 'type': 'a = b', 'is_prop': False, 'is_n",
+          "ok": false
+        },
+        {
+          "attempt": 4,
+          "tag": "rw_forward_rfl",
+          "patch": "rw [{'name': 'h', 'type': 'a = b', 'is_prop': False, 'is_nat",
+          "ok": false
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "rw_reverse_simp",
+        "patch": "rw [\u2190 {'name': 'h', 'type': 'a = b', 'is_prop': False, 'is_n",
+        "ok": false
+      },
+      "n_candidates": 4
+    },
+    {
+      "name": "rw_missing_dir_5",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "recovered": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "omega",
+          "patch": "omega",
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "omega",
+        "patch": "omega",
+        "ok": true
+      },
+      "n_candidates": 5
+    },
+    {
+      "name": "rw_missing_dir_6",
+      "obstruction": "missing_rewrite_direction",
+      "initial_status": "failed",
+      "recovered": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "rw_reverse_simp",
+          "patch": "rw [\u2190 {'name': 'h', 'type': 'a = b', 'is_prop': False, 'is_n",
+          "ok": false
+        },
+        {
+          "attempt": 2,
+          "tag": "rw_forward_simp",
+          "patch": "rw [{'name': 'h', 'type': 'a = b', 'is_prop': False, 'is_nat",
+          "ok": false
+        },
+        {
+          "attempt": 3,
+          "tag": "rw_reverse_rfl",
+          "patch": "rw [\u2190 {'name': 'h', 'type': 'a = b', 'is_prop': False, 'is_n",
+          "ok": false
+        },
+        {
+          "attempt": 4,
+          "tag": "rw_forward_rfl",
+          "patch": "rw [{'name': 'h', 'type': 'a = b', 'is_prop': False, 'is_nat",
+          "ok": false
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "rw_reverse_simp",
+        "patch": "rw [\u2190 {'name': 'h', 'type': 'a = b', 'is_prop': False, 'is_n",
+        "ok": false
+      },
+      "n_candidates": 4
+    },
+    {
+      "name": "rw_missing_dir_7",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "recovered": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "omega",
+          "patch": "omega",
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "omega",
+        "patch": "omega",
+        "ok": true
+      },
+      "n_candidates": 5
+    },
+    {
+      "name": "missing_assume_1",
+      "obstruction": "missing_assumption_bridge",
+      "initial_status": "failed",
+      "recovered": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "apply_exact",
+          "patch": "apply hAB\n  exact hA",
+          "ok": false
+        },
+        {
+          "attempt": 2,
+          "tag": "exact_apply",
+          "patch": "exact hAB hA",
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 2,
+        "tag": "exact_apply",
+        "patch": "exact hAB hA",
+        "ok": true
+      },
+      "n_candidates": 5
+    },
+    {
+      "name": "missing_assume_2",
+      "obstruction": "missing_assumption_bridge",
+      "initial_status": "failed",
+      "recovered": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "apply_exact",
+          "patch": "apply hAB\n  exact hA",
+          "ok": false
+        },
+        {
+          "attempt": 2,
+          "tag": "exact_apply",
+          "patch": "exact hAB hA",
+          "ok": false
+        },
+        {
+          "attempt": 3,
+          "tag": "apply_exact_gen",
+          "patch": "apply hAB\n  exact A",
+          "ok": false
+        },
+        {
+          "attempt": 4,
+          "tag": "apply_exact_gen",
+          "patch": "apply hAB\n  exact B",
+          "ok": false
+        },
+        {
+          "attempt": 5,
+          "tag": "apply_exact_gen",
+          "patch": "apply hAB\n  exact C",
+          "ok": false
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "apply_exact",
+        "patch": "apply hAB\n  exact hA",
+        "ok": false
+      },
+      "n_candidates": 5
+    },
+    {
+      "name": "missing_assume_3",
+      "obstruction": "missing_destructuring",
+      "initial_status": "failed",
+      "recovered": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "dot_left",
+          "patch": "exact h.left",
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "dot_left",
+        "patch": "exact h.left",
+        "ok": true
+      },
+      "n_candidates": 4
+    },
+    {
+      "name": "missing_assume_4",
+      "obstruction": "case_split_missing",
+      "initial_status": "failed",
+      "recovered": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "case_same",
+          "patch": "cases h with\n  | inl h => left; exact h\n  | inr h => right; ",
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "case_same",
+        "patch": "cases h with\n  | inl h => left; exact h\n  | inr h => right; ",
+        "ok": true
+      },
+      "n_candidates": 2
+    },
+    {
+      "name": "missing_assume_5",
+      "obstruction": "missing_assumption_bridge",
+      "initial_status": "failed",
+      "recovered": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "apply_exact",
+          "patch": "apply h\n  exact hA",
+          "ok": false
+        },
+        {
+          "attempt": 2,
+          "tag": "exact_apply",
+          "patch": "exact h hA",
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 2,
+        "tag": "exact_apply",
+        "patch": "exact h hA",
+        "ok": true
+      },
+      "n_candidates": 5
+    },
+    {
+      "name": "missing_assume_6",
+      "obstruction": "intro_chain_missing",
+      "initial_status": "failed",
+      "recovered": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "intro_first",
+          "patch": "intro h0\n  intro h1\n  exact h0",
+          "ok": false
+        },
+        {
+          "attempt": 2,
+          "tag": "intro_last",
+          "patch": "intro h0\n  intro h1\n  exact h1",
+          "ok": false
+        },
+        {
+          "attempt": 3,
+          "tag": "intro_prop",
+          "patch": "intro h0\n  intro h1\n  exact A",
+          "ok": false
+        },
+        {
+          "attempt": 4,
+          "tag": "intro_single",
+          "patch": "intro h\n  exact h",
+          "ok": false
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "intro_first",
+        "patch": "intro h0\n  intro h1\n  exact h0",
+        "ok": false
+      },
+      "n_candidates": 4
+    },
+    {
+      "name": "missing_assume_7",
+      "obstruction": "intro_chain_missing",
+      "initial_status": "failed",
+      "recovered": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "intro_first",
+          "patch": "intro h0\n  exact h0",
+          "ok": false
+        },
+        {
+          "attempt": 2,
+          "tag": "intro_prop",
+          "patch": "intro h0\n  exact P",
+          "ok": false
+        },
+        {
+          "attempt": 3,
+          "tag": "intro_single",
+          "patch": "intro h\n  exact h",
+          "ok": false
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "intro_first",
+        "patch": "intro h0\n  exact h0",
+        "ok": false
+      },
+      "n_candidates": 3
+    },
+    {
+      "name": "arith_gap_1",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "recovered": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "omega",
+          "patch": "omega",
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "omega",
+        "patch": "omega",
+        "ok": true
+      },
+      "n_candidates": 4
+    },
+    {
+      "name": "arith_gap_2",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "recovered": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "omega",
+          "patch": "omega",
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "omega",
+        "patch": "omega",
+        "ok": true
+      },
+      "n_candidates": 4
+    },
+    {
+      "name": "arith_gap_3",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "recovered": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "omega",
+          "patch": "omega",
+          "ok": false
+        },
+        {
+          "attempt": 2,
+          "tag": "norm_num",
+          "patch": "norm_num",
+          "ok": false
+        },
+        {
+          "attempt": 3,
+          "tag": "rw_omega",
+          "patch": "rw [{'name': 'h', 'type': 'a + b = b + a', 'is_prop': False,",
+          "ok": false
+        },
+        {
+          "attempt": 4,
+          "tag": "simp_omega",
+          "patch": "simp\n  omega",
+          "ok": false
+        },
+        {
+          "attempt": 5,
+          "tag": "simp_norm_num",
+          "patch": "simp\n  norm_num",
+          "ok": false
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "omega",
+        "patch": "omega",
+        "ok": false
+      },
+      "n_candidates": 5
+    },
+    {
+      "name": "arith_gap_4",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "recovered": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "omega",
+          "patch": "omega",
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "omega",
+        "patch": "omega",
+        "ok": true
+      },
+      "n_candidates": 4
+    },
+    {
+      "name": "arith_gap_5",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "recovered": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "omega",
+          "patch": "omega",
+          "ok": false
+        },
+        {
+          "attempt": 2,
+          "tag": "norm_num",
+          "patch": "norm_num",
+          "ok": false
+        },
+        {
+          "attempt": 3,
+          "tag": "simp_omega",
+          "patch": "simp\n  omega",
+          "ok": false
+        },
+        {
+          "attempt": 4,
+          "tag": "simp_norm_num",
+          "patch": "simp\n  norm_num",
+          "ok": false
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "omega",
+        "patch": "omega",
+        "ok": false
+      },
+      "n_candidates": 4
+    },
+    {
+      "name": "arith_gap_6",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "recovered": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "omega",
+          "patch": "omega",
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "omega",
+        "patch": "omega",
+        "ok": true
+      },
+      "n_candidates": 4
+    },
+    {
+      "name": "arith_gap_8",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "recovered": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "omega",
+          "patch": "omega",
+          "ok": false
+        },
+        {
+          "attempt": 2,
+          "tag": "norm_num",
+          "patch": "norm_num",
+          "ok": false
+        },
+        {
+          "attempt": 3,
+          "tag": "simp_omega",
+          "patch": "simp\n  omega",
+          "ok": false
+        },
+        {
+          "attempt": 4,
+          "tag": "simp_norm_num",
+          "patch": "simp\n  norm_num",
+          "ok": false
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "omega",
+        "patch": "omega",
+        "ok": false
+      },
+      "n_candidates": 4
+    },
+    {
+      "name": "arith_gap_9",
+      "obstruction": "arithmetic_gap",
+      "initial_status": "failed",
+      "recovered": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "omega",
+          "patch": "omega",
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "omega",
+        "patch": "omega",
+        "ok": true
+      },
+      "n_candidates": 4
+    },
+    {
+      "name": "case_split_1",
+      "obstruction": "case_split_missing",
+      "initial_status": "failed",
+      "recovered": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "case_swap",
+          "patch": "cases h with\n  | inl h => right; exact h\n  | inr h => left; ",
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "case_swap",
+        "patch": "cases h with\n  | inl h => right; exact h\n  | inr h => left; ",
+        "ok": true
+      },
+      "n_candidates": 2
+    },
+    {
+      "name": "case_split_2",
+      "obstruction": "missing_destructuring",
+      "initial_status": "failed",
+      "recovered": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "dot_left",
+          "patch": "exact h.left",
+          "ok": false
+        },
+        {
+          "attempt": 2,
+          "tag": "dot_right",
+          "patch": "exact h.right",
+          "ok": false
+        },
+        {
+          "attempt": 3,
+          "tag": "cases_and_elim",
+          "patch": "cases h with\n  | intro h1 h2 => exact h1",
+          "ok": false
+        },
+        {
+          "attempt": 4,
+          "tag": "rcases_elim",
+          "patch": "rcases h with \u27e8h1, h2\u27e9\n  exact h1",
+          "ok": false
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "dot_left",
+        "patch": "exact h.left",
+        "ok": false
+      },
+      "n_candidates": 4
+    },
+    {
+      "name": "case_split_3",
+      "obstruction": "constructor_missing",
+      "initial_status": "failed",
+      "recovered": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "constructor_exact",
+          "patch": "constructor\n  \u00b7 exact hA",
+          "ok": false
+        },
+        {
+          "attempt": 2,
+          "tag": "constructor_exact",
+          "patch": "constructor\n  \u00b7 exact hB",
+          "ok": false
+        },
+        {
+          "attempt": 3,
+          "tag": "constructor_assumption",
+          "patch": "constructor\n  \u00b7 assumption\n  \u00b7 assumption",
+          "ok": false
+        },
+        {
+          "attempt": 4,
+          "tag": "constructor_props",
+          "patch": "constructor\n  \u00b7 exact A\n  \u00b7 exact B",
+          "ok": false
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "constructor_exact",
+        "patch": "constructor\n  \u00b7 exact hA",
+        "ok": false
+      },
+      "n_candidates": 4
+    },
+    {
+      "name": "case_split_4",
+      "obstruction": "case_split_missing",
+      "initial_status": "failed",
+      "recovered": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "case_same",
+          "patch": "cases h with\n  | inl h => left; exact h\n  | inr h => right; ",
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "case_same",
+        "patch": "cases h with\n  | inl h => left; exact h\n  | inr h => right; ",
+        "ok": true
+      },
+      "n_candidates": 2
+    },
+    {
+      "name": "case_split_5",
+      "obstruction": "case_split_missing",
+      "initial_status": "failed",
+      "recovered": false,
+      "attempts": [],
+      "best_attempt": null,
+      "n_candidates": 0
+    },
+    {
+      "name": "case_split_6",
+      "obstruction": "constructor_missing",
+      "initial_status": "failed",
+      "recovered": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "tag": "constructor_exact",
+          "patch": "constructor\n  \u00b7 exact hA",
+          "ok": false
+        },
+        {
+          "attempt": 2,
+          "tag": "constructor_exact",
+          "patch": "constructor\n  \u00b7 exact hB",
+          "ok": false
+        },
+        {
+          "attempt": 3,
+          "tag": "constructor_assumption",
+          "patch": "constructor\n  \u00b7 assumption\n  \u00b7 assumption",
+          "ok": false
+        },
+        {
+          "attempt": 4,
+          "tag": "constructor_props",
+          "patch": "constructor\n  \u00b7 exact A\n  \u00b7 exact B",
+          "ok": false
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "tag": "constructor_exact",
+        "patch": "constructor\n  \u00b7 exact hA",
+        "ok": false
+      },
+      "n_candidates": 4
+    }
+  ]
+}

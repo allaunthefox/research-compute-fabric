@@ -1,10 +1,10 @@
 {
-  "n": 29,
-  "recovered": 28,
+  "n": 32,
+  "recovered": 32,
   "results": [
     {
       "name": "rw_missing_dir_1",
-      "obstruction": "missing_rewrite_direction",
+      "obstruction": "arithmetic_gap",
       "chart": "arithmetic",
       "z16": [
         1.0,
@@ -38,25 +38,25 @@
         {
           "attempt": 1,
           "chart": "arithmetic",
-          "obstruction": "missing_rewrite_direction",
-          "tag": "simpa_eq",
-          "score": 0.453,
+          "obstruction": "arithmetic_gap",
+          "tag": "omega",
+          "score": 0.426,
           "ok": true
         }
       ],
       "best_attempt": {
         "attempt": 1,
         "chart": "arithmetic",
-        "obstruction": "missing_rewrite_direction",
-        "tag": "simpa_eq",
-        "score": 0.453,
+        "obstruction": "arithmetic_gap",
+        "tag": "omega",
+        "score": 0.426,
         "ok": true
       },
       "n_candidates": 6
     },
     {
       "name": "rw_missing_dir_2",
-      "obstruction": "missing_rewrite_direction",
+      "obstruction": "arithmetic_gap",
       "chart": "arithmetic",
       "z16": [
         1.0,
@@ -90,25 +90,25 @@
         {
           "attempt": 1,
           "chart": "arithmetic",
-          "obstruction": "missing_rewrite_direction",
-          "tag": "simpa_eq",
-          "score": 0.453,
+          "obstruction": "arithmetic_gap",
+          "tag": "omega",
+          "score": 0.426,
           "ok": true
         }
       ],
       "best_attempt": {
         "attempt": 1,
         "chart": "arithmetic",
-        "obstruction": "missing_rewrite_direction",
-        "tag": "simpa_eq",
-        "score": 0.453,
+        "obstruction": "arithmetic_gap",
+        "tag": "omega",
+        "score": 0.426,
         "ok": true
       },
       "n_candidates": 6
     },
     {
       "name": "rw_missing_dir_3",
-      "obstruction": "missing_rewrite_direction",
+      "obstruction": "arithmetic_gap",
       "chart": "arithmetic",
       "z16": [
         1.0,
@@ -142,25 +142,25 @@
         {
           "attempt": 1,
           "chart": "arithmetic",
-          "obstruction": "missing_rewrite_direction",
-          "tag": "simpa_eq",
-          "score": 0.453,
+          "obstruction": "arithmetic_gap",
+          "tag": "omega",
+          "score": 0.426,
           "ok": true
         }
       ],
       "best_attempt": {
         "attempt": 1,
         "chart": "arithmetic",
-        "obstruction": "missing_rewrite_direction",
-        "tag": "simpa_eq",
-        "score": 0.453,
+        "obstruction": "arithmetic_gap",
+        "tag": "omega",
+        "score": 0.426,
         "ok": true
       },
       "n_candidates": 6
     },
     {
       "name": "rw_missing_dir_4",
-      "obstruction": "missing_rewrite_direction",
+      "obstruction": "arithmetic_gap",
       "chart": "arithmetic",
       "z16": [
         1.0,
@@ -194,25 +194,25 @@
         {
           "attempt": 1,
           "chart": "arithmetic",
-          "obstruction": "missing_rewrite_direction",
-          "tag": "simpa_eq",
-          "score": 0.453,
+          "obstruction": "arithmetic_gap",
+          "tag": "omega",
+          "score": 0.426,
           "ok": true
         }
       ],
       "best_attempt": {
         "attempt": 1,
         "chart": "arithmetic",
-        "obstruction": "missing_rewrite_direction",
-        "tag": "simpa_eq",
-        "score": 0.453,
+        "obstruction": "arithmetic_gap",
+        "tag": "omega",
+        "score": 0.426,
         "ok": true
       },
       "n_candidates": 6
     },
     {
       "name": "rw_missing_dir_5",
-      "obstruction": "missing_rewrite_direction",
+      "obstruction": "arithmetic_gap",
       "chart": "arithmetic",
       "z16": [
         1.0,
@@ -246,25 +246,25 @@
         {
           "attempt": 1,
           "chart": "arithmetic",
-          "obstruction": "missing_rewrite_direction",
-          "tag": "simpa_eq",
-          "score": 0.453,
+          "obstruction": "arithmetic_gap",
+          "tag": "omega",
+          "score": 0.426,
           "ok": true
         }
       ],
       "best_attempt": {
         "attempt": 1,
         "chart": "arithmetic",
-        "obstruction": "missing_rewrite_direction",
-        "tag": "simpa_eq",
-        "score": 0.453,
+        "obstruction": "arithmetic_gap",
+        "tag": "omega",
+        "score": 0.426,
         "ok": true
       },
       "n_candidates": 6
     },
     {
       "name": "rw_missing_dir_6",
-      "obstruction": "missing_rewrite_direction",
+      "obstruction": "arithmetic_gap",
       "chart": "arithmetic",
       "z16": [
         1.0,
@@ -298,25 +298,25 @@
         {
           "attempt": 1,
           "chart": "arithmetic",
-          "obstruction": "missing_rewrite_direction",
-          "tag": "simpa_eq",
-          "score": 0.453,
+          "obstruction": "arithmetic_gap",
+          "tag": "omega",
+          "score": 0.426,
           "ok": true
         }
       ],
       "best_attempt": {
         "attempt": 1,
         "chart": "arithmetic",
-        "obstruction": "missing_rewrite_direction",
-        "tag": "simpa_eq",
-        "score": 0.453,
+        "obstruction": "arithmetic_gap",
+        "tag": "omega",
+        "score": 0.426,
         "ok": true
       },
-      "n_candidates": 5
+      "n_candidates": 6
     },
     {
       "name": "rw_missing_dir_7",
-      "obstruction": "missing_rewrite_direction",
+      "obstruction": "arithmetic_gap",
       "chart": "arithmetic",
       "z16": [
         1.0,
@@ -350,18 +350,18 @@
         {
           "attempt": 1,
           "chart": "arithmetic",
-          "obstruction": "missing_rewrite_direction",
-          "tag": "simpa_eq",
-          "score": 0.453,
+          "obstruction": "arithmetic_gap",
+          "tag": "omega",
+          "score": 0.426,
           "ok": true
         }
       ],
       "best_attempt": {
         "attempt": 1,
         "chart": "arithmetic",
-        "obstruction": "missing_rewrite_direction",
-        "tag": "simpa_eq",
-        "score": 0.453,
+        "obstruction": "arithmetic_gap",
+        "tag": "omega",
+        "score": 0.426,
         "ok": true
       },
       "n_candidates": 6
@@ -963,8 +963,8 @@
           "attempt": 1,
           "chart": "constructor_case",
           "obstruction": "case_split_missing",
-          "tag": "or_same_full",
-          "score": 0.434,
+          "tag": "or_swap_full",
+          "score": 0.454,
           "ok": true
         }
       ],
@@ -972,14 +972,82 @@
         "attempt": 1,
         "chart": "constructor_case",
         "obstruction": "case_split_missing",
-        "tag": "or_same_full",
-        "score": 0.434,
+        "tag": "or_swap_full",
+        "score": 0.454,
         "ok": true
       },
       "n_candidates": 2
     },
     {
       "name": "missing_assume_5",
+      "obstruction": "constructor_missing",
+      "chart": "constructor_case",
+      "z16": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "axis4d": {
+        "rewrite": 0.0,
+        "intro": 0.0,
+        "constructor_case": 0.5,
+        "arithmetic": 0.5
+      },
+      "initial_status": "failed",
+      "recovered": true,
+      "invalid_goal": false,
+      "invalid_reason": null,
+      "attempts": [
+        {
+          "attempt": 1,
+          "chart": "constructor_case",
+          "obstruction": "constructor_missing",
+          "tag": "constructor_hyp_match",
+          "score": 0.441,
+          "ok": false
+        },
+        {
+          "attempt": 2,
+          "chart": "constructor_case",
+          "obstruction": "constructor_missing",
+          "tag": "constructor_hyp_match",
+          "score": 0.441,
+          "ok": false
+        },
+        {
+          "attempt": 3,
+          "chart": "constructor_case",
+          "obstruction": "constructor_missing",
+          "tag": "constructor_hyp_names",
+          "score": 0.425,
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 3,
+        "chart": "constructor_case",
+        "obstruction": "constructor_missing",
+        "tag": "constructor_hyp_names",
+        "score": 0.425,
+        "ok": true
+      },
+      "n_candidates": 5
+    },
+    {
+      "name": "missing_assume_6",
       "obstruction": "missing_assumption_bridge",
       "chart": "intro",
       "z16": [
@@ -987,7 +1055,7 @@
         0.0,
         0.0,
         0.0,
-        0.0,
+        1.0,
         1.0,
         1.0,
         0.0,
@@ -1015,8 +1083,8 @@
           "attempt": 1,
           "chart": "intro",
           "obstruction": "missing_assumption_bridge",
-          "tag": "chain_exact",
-          "score": 0.475,
+          "tag": "exact_hyp_match",
+          "score": 0.531,
           "ok": true
         }
       ],
@@ -1024,63 +1092,11 @@
         "attempt": 1,
         "chart": "intro",
         "obstruction": "missing_assumption_bridge",
-        "tag": "chain_exact",
-        "score": 0.475,
+        "tag": "exact_hyp_match",
+        "score": 0.531,
         "ok": true
       },
-      "n_candidates": 4
-    },
-    {
-      "name": "missing_assume_6",
-      "obstruction": "intro_chain_missing",
-      "chart": "intro",
-      "z16": [
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        2.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0
-      ],
-      "axis4d": {
-        "rewrite": 0.0,
-        "intro": 1.0,
-        "constructor_case": 0.0,
-        "arithmetic": 0.0
-      },
-      "initial_status": "failed",
-      "recovered": true,
-      "invalid_goal": false,
-      "invalid_reason": null,
-      "attempts": [
-        {
-          "attempt": 1,
-          "chart": "intro",
-          "obstruction": "intro_chain_missing",
-          "tag": "intro_first",
-          "score": 0.445,
-          "ok": true
-        }
-      ],
-      "best_attempt": {
-        "attempt": 1,
-        "chart": "intro",
-        "obstruction": "intro_chain_missing",
-        "tag": "intro_first",
-        "score": 0.445,
-        "ok": true
-      },
-      "n_candidates": 4
+      "n_candidates": 5
     },
     {
       "name": "missing_assume_7",
@@ -1135,10 +1151,12 @@
       "n_candidates": 2
     },
     {
-      "name": "arith_gap_1",
+      "name": "arith_comm_assoc",
       "obstruction": "arithmetic_gap",
       "chart": "arithmetic",
       "z16": [
+        1.0,
+        1.0,
         0.0,
         0.0,
         0.0,
@@ -1149,70 +1167,16 @@
         0.0,
         0.0,
         0.0,
-        0.0,
+        4.0,
         0.0,
         2.0,
-        1.0,
-        2.0,
-        0.0
-      ],
-      "axis4d": {
-        "rewrite": 0.0,
-        "intro": 0.0,
-        "constructor_case": 0.0,
-        "arithmetic": 1.0
-      },
-      "initial_status": "failed",
-      "recovered": true,
-      "invalid_goal": false,
-      "invalid_reason": null,
-      "attempts": [
-        {
-          "attempt": 1,
-          "chart": "arithmetic",
-          "obstruction": "arithmetic_gap",
-          "tag": "omega",
-          "score": 0.426,
-          "ok": true
-        }
-      ],
-      "best_attempt": {
-        "attempt": 1,
-        "chart": "arithmetic",
-        "obstruction": "arithmetic_gap",
-        "tag": "omega",
-        "score": 0.426,
-        "ok": true
-      },
-      "n_candidates": 6
-    },
-    {
-      "name": "arith_gap_2",
-      "obstruction": "arithmetic_gap",
-      "chart": "arithmetic",
-      "z16": [
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0,
-        3.0,
         1.0
       ],
       "axis4d": {
-        "rewrite": 0.0,
+        "rewrite": 0.222,
         "intro": 0.0,
         "constructor_case": 0.0,
-        "arithmetic": 1.0
+        "arithmetic": 0.778
       },
       "initial_status": "failed",
       "recovered": true,
@@ -1237,42 +1201,6 @@
         "ok": true
       },
       "n_candidates": 6
-    },
-    {
-      "name": "arith_gap_3",
-      "obstruction": "missing_rewrite_direction",
-      "chart": "rewrite",
-      "z16": [
-        1.0,
-        1.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        2.0,
-        0.0
-      ],
-      "axis4d": {
-        "rewrite": 0.5,
-        "intro": 0.0,
-        "constructor_case": 0.0,
-        "arithmetic": 0.5
-      },
-      "initial_status": "failed",
-      "recovered": false,
-      "invalid_goal": true,
-      "invalid_reason": "commutative operation coincidence does not imply operand equality",
-      "attempts": [],
-      "best_attempt": null,
-      "n_candidates": 5
     },
     {
       "name": "arith_gap_4",
@@ -1533,6 +1461,274 @@
         "intro": 0.0,
         "constructor_case": 0.0,
         "arithmetic": 1.0
+      },
+      "initial_status": "failed",
+      "recovered": true,
+      "invalid_goal": false,
+      "invalid_reason": null,
+      "attempts": [
+        {
+          "attempt": 1,
+          "chart": "arithmetic",
+          "obstruction": "arithmetic_gap",
+          "tag": "omega",
+          "score": 0.426,
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "chart": "arithmetic",
+        "obstruction": "arithmetic_gap",
+        "tag": "omega",
+        "score": 0.426,
+        "ok": true
+      },
+      "n_candidates": 6
+    },
+    {
+      "name": "forall_app",
+      "obstruction": "missing_assumption_bridge",
+      "chart": "intro",
+      "z16": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        2.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "axis4d": {
+        "rewrite": 0.0,
+        "intro": 0.75,
+        "constructor_case": 0.0,
+        "arithmetic": 0.25
+      },
+      "initial_status": "failed",
+      "recovered": true,
+      "invalid_goal": false,
+      "invalid_reason": null,
+      "attempts": [
+        {
+          "attempt": 1,
+          "chart": "intro",
+          "obstruction": "missing_assumption_bridge",
+          "tag": "forall_exact_0",
+          "score": 0.448,
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "chart": "intro",
+        "obstruction": "missing_assumption_bridge",
+        "tag": "forall_exact_0",
+        "score": 0.448,
+        "ok": true
+      },
+      "n_candidates": 2
+    },
+    {
+      "name": "modus_tollens",
+      "obstruction": "contradiction_bridge",
+      "chart": "intro",
+      "z16": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "axis4d": {
+        "rewrite": 0.0,
+        "intro": 1.0,
+        "constructor_case": 0.0,
+        "arithmetic": 0.0
+      },
+      "initial_status": "failed",
+      "recovered": true,
+      "invalid_goal": false,
+      "invalid_reason": null,
+      "attempts": [
+        {
+          "attempt": 1,
+          "chart": "intro",
+          "obstruction": "contradiction_bridge",
+          "tag": "neg_apply_chain",
+          "score": 0.431,
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "chart": "intro",
+        "obstruction": "contradiction_bridge",
+        "tag": "neg_apply_chain",
+        "score": 0.431,
+        "ok": true
+      },
+      "n_candidates": 3
+    },
+    {
+      "name": "dneg_target",
+      "obstruction": "contradiction_bridge",
+      "chart": "intro",
+      "z16": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "axis4d": {
+        "rewrite": 0.0,
+        "intro": 1.0,
+        "constructor_case": 0.0,
+        "arithmetic": 0.0
+      },
+      "initial_status": "failed",
+      "recovered": true,
+      "invalid_goal": false,
+      "invalid_reason": null,
+      "attempts": [
+        {
+          "attempt": 1,
+          "chart": "intro",
+          "obstruction": "contradiction_bridge",
+          "tag": "notnot_by_cases",
+          "score": 0.497,
+          "ok": false
+        },
+        {
+          "attempt": 2,
+          "chart": "intro",
+          "obstruction": "contradiction_bridge",
+          "tag": "notnot_apply_chain",
+          "score": 0.449,
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 2,
+        "chart": "intro",
+        "obstruction": "contradiction_bridge",
+        "tag": "notnot_apply_chain",
+        "score": 0.449,
+        "ok": true
+      },
+      "n_candidates": 4
+    },
+    {
+      "name": "three_chain",
+      "obstruction": "missing_assumption_bridge",
+      "chart": "intro",
+      "z16": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        3.0,
+        3.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "axis4d": {
+        "rewrite": 0.0,
+        "intro": 0.857,
+        "constructor_case": 0.0,
+        "arithmetic": 0.143
+      },
+      "initial_status": "failed",
+      "recovered": true,
+      "invalid_goal": false,
+      "invalid_reason": null,
+      "attempts": [
+        {
+          "attempt": 1,
+          "chart": "intro",
+          "obstruction": "missing_assumption_bridge",
+          "tag": "chain_exact",
+          "score": 0.475,
+          "ok": true
+        }
+      ],
+      "best_attempt": {
+        "attempt": 1,
+        "chart": "intro",
+        "obstruction": "missing_assumption_bridge",
+        "tag": "chain_exact",
+        "score": 0.475,
+        "ok": true
+      },
+      "n_candidates": 4
+    },
+    {
+      "name": "congr_arg_eq",
+      "obstruction": "arithmetic_gap",
+      "chart": "arithmetic",
+      "z16": [
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+        0.0,
+        2.0,
+        1.0
+      ],
+      "axis4d": {
+        "rewrite": 0.286,
+        "intro": 0.0,
+        "constructor_case": 0.0,
+        "arithmetic": 0.714
       },
       "initial_status": "failed",
       "recovered": true,

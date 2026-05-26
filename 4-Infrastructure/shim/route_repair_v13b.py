@@ -89,10 +89,14 @@ def parse_theorem(code: str) -> dict:
     hyp_conjunctions = [h for h in all_hyps if "∧" in h["type"]]
     hyp_disjunctions = [h for h in all_hyps if "∨" in h["type"]]
     hyp_equalities = [h for h in all_hyps if "=" in h["type"]]
+    hyp_foralls = [h for h in all_hyps if "∀" in h["type"]]
     hyp_nat = [h for h in all_hyps if h["is_nat"]]
     
     # Find hypothesis matching goal
     goal_matches = [h for h in all_hyps if h["type"] == goal]
+    
+    # Foralls — also treat as implication-like: h: ∀ x, P x has head "∀"
+    _imp_objs = hyp_implications + hyp_foralls
     
     return {
         "goal": goal,
@@ -107,7 +111,7 @@ def parse_theorem(code: str) -> dict:
         "hyp_disjunctions": [h["name"] for h in hyp_disjunctions],
         "hyp_equalities": [h["name"] for h in hyp_equalities],
         "_all_hyp_objs": all_hyps,
-        "_imp_objs": hyp_implications,
+        "_imp_objs": _imp_objs,
         "_conj_objs": hyp_conjunctions,
         "_disj_objs": hyp_disjunctions,
         "_eq_objs": hyp_equalities,

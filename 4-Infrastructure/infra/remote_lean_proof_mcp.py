@@ -14,7 +14,7 @@ from typing import Any
 
 SERVER_NAME = "remote-lean-proof"
 SERVER_VERSION = "0.1.0"
-DEFAULT_URL = "http://75.101.199.58:8787"
+DEFAULT_URL = "http://54.236.176.28:8787"
 DEFAULT_TOKEN_FILE = Path.home() / ".config/ene/language-proof-server.token"
 
 

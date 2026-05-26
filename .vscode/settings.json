@@ -61,7 +61,7 @@
         "shared-data": true
     },
     "git.ignoreLimitWarning": true,
-    "remoteLeanProof.url": "http://75.101.199.58:8787",
+    "remoteLeanProof.url": "http://54.236.176.28:8787",
     "remoteLeanProof.tokenFile": "/home/allaun/.config/ene/language-proof-server.token",
     "remoteLeanProof.checkOnSave": true,
     "remoteLeanProof.checkOnOpen": true,

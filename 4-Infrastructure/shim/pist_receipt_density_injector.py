@@ -8,7 +8,9 @@ It is intentionally conservative:
 
 * It DOES NOT promote equations.
 * It DOES NOT mutate RDS/ENE by default.
-* It writes an audit JSON that can later be consumed by a database writer.
+* RDS writes require the explicit --write-rds flag.
+* RDS writes default to a sidecar table: ene.rrc_receipt_density.
+* Database connectivity is delegated to the shared rds_connect.connect_rds helper.
 * It filters Markdown table header/separator rows that older validation scripts
   accidentally treated as equations.
 
@@ -32,17 +34,24 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import re
 import sys
 from collections import Counter
 from dataclasses import asdict, dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+SHIM_DIR = Path(__file__).resolve().parent
+if str(SHIM_DIR) not in sys.path:
+    sys.path.insert(0, str(SHIM_DIR))
+
 DEFAULT_RRC_FILE = REPO_ROOT / "6-Documentation/docs/rrc_equation_classification.md"
 DEFAULT_PIST_REPORT = REPO_ROOT / "shared-data/rrc_pist_exact_validation.json"
 DEFAULT_OUT = REPO_ROOT / "shared-data/rrc_receipt_density_backfill.json"
+DEFAULT_RDS_TABLE = "ene.rrc_receipt_density"
 
 TARGET_AXES = {
     "projection_declared",
@@ -235,8 +244,6 @@ def compute_density(row: RRCEquationRow, pred: dict[str, Any] | None) -> tuple[f
     elif s_shape < 0.5:
         warnings.append("pist_shape_disagreement")
 
-    # Receipt density is deliberately not a proof score. It measures routing
-    # evidence density from declared axes + status + structural PIST signal.
     density = clamp01(
         0.26 * s_status
         + 0.24 * s_axes
@@ -244,7 +251,6 @@ def compute_density(row: RRCEquationRow, pred: dict[str, Any] | None) -> tuple[f
         + 0.24 * s_shape
     )
 
-    # Confidence is slightly more classifier-weighted than density.
     confidence = clamp01(
         0.20 * s_status
         + 0.20 * s_axes
@@ -342,6 +348,155 @@ def emit_jsonl(records: Iterable[ReceiptDensityRecord], path: Path) -> None:
             f.write(json.dumps(asdict(record), sort_keys=True) + "\n")
 
 
+def split_qualified_table(table: str) -> tuple[str, str]:
+    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?", table):
+        raise ValueError(f"Unsafe SQL table identifier: {table!r}")
+    if "." in table:
+        schema, name = table.split(".", 1)
+    else:
+        schema, name = "public", table
+    return schema, name
+
+
+def quote_ident(identifier: str) -> str:
+    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", identifier):
+        raise ValueError(f"Unsafe SQL identifier: {identifier!r}")
+    return '"' + identifier.replace('"', '""') + '"'
+
+
+def create_sidecar_table(cur: Any, table: str) -> None:
+    schema, name = split_qualified_table(table)
+    q_schema = quote_ident(schema)
+    q_name = quote_ident(name)
+    full = f"{q_schema}.{q_name}"
+    cur.execute(f"CREATE SCHEMA IF NOT EXISTS {q_schema}")
+    cur.execute(
+        f"""
+        CREATE TABLE IF NOT EXISTS {full} (
+          equation_id TEXT PRIMARY KEY,
+          rrc_shape TEXT NOT NULL,
+          domain TEXT NOT NULL,
+          source_status TEXT NOT NULL,
+          receipt_density DOUBLE PRECISION NOT NULL,
+          receipt_density_source TEXT NOT NULL,
+          receipt_density_hash TEXT NOT NULL,
+          receipt_density_status TEXT NOT NULL,
+          receipt_density_warnings JSONB NOT NULL,
+          confidence DOUBLE PRECISION NOT NULL,
+          top_axes JSONB NOT NULL,
+          shape_prediction JSONB NOT NULL,
+          density_components JSONB NOT NULL,
+          promotion TEXT NOT NULL CHECK (promotion = 'not_promoted'),
+          payload JSONB NOT NULL,
+          updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+        )
+        """
+    )
+
+
+def upsert_sidecar_records(conn: Any, records: list[ReceiptDensityRecord], table: str) -> dict[str, Any]:
+    schema, name = split_qualified_table(table)
+    full = f"{quote_ident(schema)}.{quote_ident(name)}"
+    now = datetime.now(timezone.utc).isoformat()
+    rows = [asdict(r) for r in records]
+    with conn.cursor() as cur:
+        create_sidecar_table(cur, table)
+        for row in rows:
+            cur.execute(
+                f"""
+                INSERT INTO {full} (
+                  equation_id,
+                  rrc_shape,
+                  domain,
+                  source_status,
+                  receipt_density,
+                  receipt_density_source,
+                  receipt_density_hash,
+                  receipt_density_status,
+                  receipt_density_warnings,
+                  confidence,
+                  top_axes,
+                  shape_prediction,
+                  density_components,
+                  promotion,
+                  payload,
+                  updated_at
+                ) VALUES (
+                  %(equation_id)s,
+                  %(rrc_shape)s,
+                  %(domain)s,
+                  %(source_status)s,
+                  %(receipt_density)s,
+                  %(source)s,
+                  %(receipt_hash)s,
+                  %(status)s,
+                  %(warnings_json)s::jsonb,
+                  %(confidence)s,
+                  %(top_axes_json)s::jsonb,
+                  %(shape_prediction_json)s::jsonb,
+                  %(density_components_json)s::jsonb,
+                  %(promotion)s,
+                  %(payload_json)s::jsonb,
+                  %(updated_at)s
+                )
+                ON CONFLICT (equation_id) DO UPDATE SET
+                  rrc_shape = EXCLUDED.rrc_shape,
+                  domain = EXCLUDED.domain,
+                  source_status = EXCLUDED.source_status,
+                  receipt_density = EXCLUDED.receipt_density,
+                  receipt_density_source = EXCLUDED.receipt_density_source,
+                  receipt_density_hash = EXCLUDED.receipt_density_hash,
+                  receipt_density_status = EXCLUDED.receipt_density_status,
+                  receipt_density_warnings = EXCLUDED.receipt_density_warnings,
+                  confidence = EXCLUDED.confidence,
+                  top_axes = EXCLUDED.top_axes,
+                  shape_prediction = EXCLUDED.shape_prediction,
+                  density_components = EXCLUDED.density_components,
+                  promotion = EXCLUDED.promotion,
+                  payload = EXCLUDED.payload,
+                  updated_at = EXCLUDED.updated_at
+                """,
+                {
+                    **row,
+                    "warnings_json": json.dumps(row["warnings"], sort_keys=True),
+                    "top_axes_json": json.dumps(row["top_axes"], sort_keys=True),
+                    "shape_prediction_json": json.dumps(row["shape_prediction"], sort_keys=True),
+                    "density_components_json": json.dumps(row["density_components"], sort_keys=True),
+                    "payload_json": json.dumps(row, sort_keys=True),
+                    "updated_at": now,
+                },
+            )
+    conn.commit()
+    return {
+        "enabled": True,
+        "mode": "sidecar",
+        "table": table,
+        "records_upserted": len(records),
+        "promotion_policy": "not_promoted only",
+    }
+
+
+def write_rds(records: list[ReceiptDensityRecord], table: str, connect_timeout: int | None) -> dict[str, Any]:
+    try:
+        from rds_connect import connect_rds
+    except ImportError as exc:
+        raise RuntimeError(
+            "--write-rds requires 4-Infrastructure/shim/rds_connect.py to be importable"
+        ) from exc
+
+    overrides: dict[str, Any] = {}
+    if connect_timeout is not None:
+        overrides["connect_timeout"] = connect_timeout
+    conn = connect_rds(**overrides)
+    try:
+        return upsert_sidecar_records(conn, records, table)
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Generate RRC receipt-density records from PIST outputs.")
     parser.add_argument("--rrc-file", type=Path, default=DEFAULT_RRC_FILE)
@@ -349,6 +504,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
     parser.add_argument("--jsonl-out", type=Path, default=None, help="Optional JSONL output path for DB import.")
     parser.add_argument("--fail-on-missing-pist", action="store_true", help="Exit nonzero if any row lacks a PIST prediction.")
+    parser.add_argument("--write-rds", action="store_true", help="Opt-in RDS write. Defaults to false / audit JSON only.")
+    parser.add_argument("--rds-table", default=DEFAULT_RDS_TABLE, help=f"Qualified sidecar table. Default: {DEFAULT_RDS_TABLE}")
+    parser.add_argument("--connect-timeout", type=int, default=10, help="RDS connection timeout override passed to rds_connect.connect_rds.")
     args = parser.parse_args(argv)
 
     rows = parse_rrc_table(args.rrc_file)
@@ -356,6 +514,13 @@ def main(argv: list[str] | None = None) -> int:
 
     records = [build_record(row, predictions.get(row.equation_id)) for row in rows]
     summary = summarize(records, total_rows=len(rows), prediction_count=len(predictions))
+
+    rds_result = None
+    if args.write_rds:
+        rds_result = write_rds(records, table=args.rds_table, connect_timeout=args.connect_timeout)
+        summary["rds_write"] = rds_result
+    else:
+        summary["rds_write"] = {"enabled": False, "reason": "--write-rds not set"}
 
     payload = {
         "summary": summary,
@@ -367,6 +532,7 @@ def main(argv: list[str] | None = None) -> int:
             "receipt_density_means": "routing evidence is populated",
             "receipt_density_does_not_mean": "mathematical proof or promotion",
             "promotion_policy": "not_promoted for every generated record",
+            "rds_policy": "--write-rds upserts sidecar receipt-density metadata only via rds_connect.connect_rds",
         },
         "records": [asdict(r) for r in records],
     }
@@ -382,6 +548,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Wrote audit JSON: {args.out}", file=sys.stderr)
     if args.jsonl_out is not None:
         print(f"Wrote JSONL import file: {args.jsonl_out}", file=sys.stderr)
+    if rds_result is not None:
+        print(f"RDS write complete: {rds_result}", file=sys.stderr)
 
     if args.fail_on_missing_pist and summary["warning_counts"].get("missing_pist_prediction", 0) > 0:
         return 2

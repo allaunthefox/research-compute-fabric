@@ -551,9 +551,23 @@ def handle(req: dict[str, Any]) -> dict[str, Any] | None:
 
 
 def main() -> int:
+    if len(sys.argv) > 1:
+        command = sys.argv[1]
+        if command in {"--status", "status"}:
+            print(json.dumps(tool_status({}), indent=2, sort_keys=True))
+            return 0
+        if command in {"--context", "context"}:
+            query = " ".join(sys.argv[2:])
+            print(json.dumps(tool_context({"user_message": query}), indent=2, sort_keys=True))
+            return 0
+        print(f"unknown command: {command}", file=sys.stderr)
+        return 2
+
+    handled = 0
     for line in sys.stdin:
         if not line.strip():
             continue
+        handled += 1
         try:
             response = handle(json.loads(line))
         except json.JSONDecodeError as exc:
@@ -565,6 +579,8 @@ def main() -> int:
         if response is not None:
             sys.stdout.write(json.dumps(response, separators=(",", ":")) + "\n")
             sys.stdout.flush()
+    if handled == 0:
+        print(json.dumps(tool_status({}), indent=2, sort_keys=True))
     return 0
 
 

@@ -121,7 +121,7 @@
       "_comment": "Local ENE replacement for ContextStream-like memory/search/session recall. Writes local receipt-bearing SQLite memory and reads ene-api/session-sync when running.",
       "command": "python3",
       "args": [
-        "4-Infrastructure/infra/ene_contextstream_mcp.py"
+        "/home/allaun/Research Stack/4-Infrastructure/infra/ene_contextstream_mcp.py"
       ],
       "env": {
         "ENE_API_URL": "http://127.0.0.1:3000",

@@ -1,5 +1,7 @@
 use anyhow::{Context, Result};
-use tokio_postgres::{Client, Config, NoTls};
+use native_tls::TlsConnector;
+use postgres_native_tls::MakeTlsConnector;
+use tokio_postgres::{Client, Config};
 use tracing::{info, warn};
 
 pub mod types;
@@ -13,7 +15,11 @@ impl RdsClient {
     /// Connect from a libpq key=value DSN string.
     pub async fn connect(dsn: &str) -> Result<Self> {
         let config: Config = dsn.parse().context("parse PostgreSQL DSN")?;
-        let (client, connection) = config.connect(NoTls).await.context("connect to RDS")?;
+        let connector = TlsConnector::builder()
+            .build()
+            .context("build native TLS connector")?;
+        let connector = MakeTlsConnector::new(connector);
+        let (client, connection) = config.connect(connector).await.context("connect to RDS")?;
         tokio::spawn(async move {
             if let Err(e) = connection.await {
                 warn!("PostgreSQL connection error: {}", e);
@@ -27,8 +33,9 @@ impl RdsClient {
         if let Ok(dsn) = std::env::var("RDS_DSN") {
             return dsn;
         }
-        let host = std::env::var("RDS_HOST")
-            .unwrap_or_else(|_| "database-1.cluster-c9i0w8eu8fnv.us-east-2.rds.amazonaws.com".into());
+        let host = std::env::var("RDS_HOST").unwrap_or_else(|_| {
+            "database-1.cluster-c9i0w8eu8fnv.us-east-2.rds.amazonaws.com".into()
+        });
         let port = std::env::var("RDS_PORT").unwrap_or_else(|_| "5432".into());
         let user = std::env::var("RDS_USER").unwrap_or_else(|_| "postgres".into());
         let password = std::env::var("RDS_PASSWORD")
@@ -42,7 +49,11 @@ impl RdsClient {
     }
 
     /// Raw query helper.
-    pub async fn execute(&self, sql: &str, params: &[&(dyn tokio_postgres::types::ToSql + Sync)]) -> Result<u64> {
+    pub async fn execute(
+        &self,
+        sql: &str,
+        params: &[&(dyn tokio_postgres::types::ToSql + Sync)],
+    ) -> Result<u64> {
         let rows = self.client.execute(sql, params).await?;
         Ok(rows)
     }
@@ -112,5 +123,11 @@ pub fn sha256_text(text: &str) -> String {
 
 /// Format a float vector as pgvector text: [0.1,0.2,...]
 pub fn vec_to_pgtext(v: &[f32]) -> String {
-    format!("[{}]", v.iter().map(|f| f.to_string()).collect::<Vec<_>>().join(","))
+    format!(
+        "[{}]",
+        v.iter()
+            .map(|f| f.to_string())
+            .collect::<Vec<_>>()
+            .join(",")
+    )
 }

@@ -11,6 +11,7 @@ use ene_rds_wiki::WikiSurface;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::collections::HashMap;
+use std::net::SocketAddr;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -29,7 +30,9 @@ struct SearchQuery {
     semantic: bool,
 }
 
-fn default_limit() -> i64 { 10 }
+fn default_limit() -> i64 {
+    10
+}
 
 #[derive(Serialize)]
 struct HealthResponse {
@@ -58,7 +61,11 @@ async fn main() -> anyhow::Result<()> {
     let ephemeral = EphemeralSurface::new(ephemeral_client);
     ephemeral.init_tables().await?;
 
-    let state = Arc::new(Mutex::new(AppState { chat, wiki, ephemeral }));
+    let state = Arc::new(Mutex::new(AppState {
+        chat,
+        wiki,
+        ephemeral,
+    }));
 
     let app = Router::new()
         .route("/health", get(health_handler))
@@ -71,8 +78,11 @@ async fn main() -> anyhow::Result<()> {
         .route("/ephemeral/nodes/:id", get(get_ephemeral_node))
         .with_state(state);
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await?;
-    tracing::info!("ENE API listening on http://0.0.0.0:3000");
+    let bind_addr: SocketAddr = std::env::var("ENE_API_BIND")
+        .unwrap_or_else(|_| "0.0.0.0:3000".into())
+        .parse()?;
+    let listener = tokio::net::TcpListener::bind(bind_addr).await?;
+    tracing::info!("ENE API listening on http://{bind_addr}");
     axum::serve(listener, app).await?;
     Ok(())
 }
@@ -88,7 +98,10 @@ async fn list_sessions(
     State(state): State<Arc<Mutex<AppState>>>,
     Query(params): Query<HashMap<String, String>>,
 ) -> Result<Json<serde_json::Value>, String> {
-    let limit = params.get("limit").and_then(|s| s.parse().ok()).unwrap_or(10i64);
+    let limit = params
+        .get("limit")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(10i64);
     let guard = state.lock().await;
     match guard.chat.list_sessions(limit).await {
         Ok(v) => Ok(Json(json!({"ok": true, "data": v}))),
@@ -128,7 +141,10 @@ async fn wiki_search(
     Query(params): Query<HashMap<String, String>>,
 ) -> Result<Json<serde_json::Value>, String> {
     let query = params.get("q").cloned().unwrap_or_default();
-    let limit = params.get("limit").and_then(|s| s.parse().ok()).unwrap_or(10i64);
+    let limit = params
+        .get("limit")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(10i64);
     let guard = state.lock().await;
     match guard.wiki.search(&query, limit).await {
         Ok(v) => Ok(Json(json!({"ok": true, "data": v}))),
@@ -153,7 +169,10 @@ async fn list_ephemeral_nodes(
     Query(params): Query<HashMap<String, String>>,
 ) -> Result<Json<serde_json::Value>, String> {
     let zone = params.get("zone").cloned().unwrap_or_else(|| "cold".into());
-    let limit = params.get("limit").and_then(|s| s.parse().ok()).unwrap_or(100i64);
+    let limit = params
+        .get("limit")
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(100i64);
     let guard = state.lock().await;
     match guard.ephemeral.list_nodes_by_zone(&zone, limit).await {
         Ok(v) => Ok(Json(json!({"ok": true, "data": v}))),

@@ -217,7 +217,7 @@ STOP → Call ene-contextstream first:
 If the client cannot call the ENE MCP server, use the local fallback:
 
 ```bash
-python3 4-Infrastructure/infra/ene_contextstream_mcp.py
+python3 4-Infrastructure/infra/ene_contextstream_mcp.py --status
 ```
 
 ## Remote Proof Agent

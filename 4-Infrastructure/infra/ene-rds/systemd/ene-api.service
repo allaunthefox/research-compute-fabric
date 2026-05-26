@@ -1,0 +1,15 @@
+[Unit]
+Description=ENE API Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/env bash "/home/allaun/Research Stack/4-Infrastructure/infra/ene-rds/systemd/ene-api-wrapper.sh"
+Restart=on-failure
+RestartSec=30
+Environment=AWS_REGION=us-east-1
+Environment=ENE_API_BIND=0.0.0.0:3000
+
+[Install]
+WantedBy=default.target

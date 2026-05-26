@@ -146,7 +146,11 @@ CREATE INDEX IF NOT EXISTS idx_ephemeral_tasks_state ON ene.ephemeral_tasks(task
 CREATE INDEX IF NOT EXISTS idx_ephemeral_tasks_session ON ene.ephemeral_tasks(session_id);
 CREATE INDEX IF NOT EXISTS idx_ephemeral_scar_node ON ene.ephemeral_scar_events(node_id, created_at_ms DESC);
         "#;
-        self.client.inner().batch_execute(ddl).await.context("init ephemeral DDL")?;
+        self.client
+            .inner()
+            .batch_execute(ddl)
+            .await
+            .context("init ephemeral DDL")?;
         info!("ephemeral node schema initialized");
         Ok(())
     }
@@ -215,23 +219,27 @@ CREATE INDEX IF NOT EXISTS idx_ephemeral_scar_node ON ene.ephemeral_scar_events(
             )
             .await
             .context("list ephemeral nodes")?;
-        Ok(rows.iter().map(|r| EphemeralNode {
-            node_id: r.get(0),
-            thermal_zone: r.get(1),
-            reliability_raw: r.get(2),
-            latency_p95_ms: r.get(3),
-            scar_count: r.get(4),
-            last_seen_ms: r.get(5),
-            reputation_raw: r.get(6),
-            quarantine_until_ms: r.get(7),
-            meta: r.get(8),
-            created_at_ms: r.get(9),
-            updated_at_ms: r.get(10),
-        }).collect())
+        Ok(rows
+            .iter()
+            .map(|r| EphemeralNode {
+                node_id: r.get(0),
+                thermal_zone: r.get(1),
+                reliability_raw: r.get(2),
+                latency_p95_ms: r.get(3),
+                scar_count: r.get(4),
+                last_seen_ms: r.get(5),
+                reputation_raw: r.get(6),
+                quarantine_until_ms: r.get(7),
+                meta: r.get(8),
+                created_at_ms: r.get(9),
+                updated_at_ms: r.get(10),
+            })
+            .collect())
     }
 
     pub async fn insert_task(&self, task: &EphemeralTask) -> Result<()> {
-        self.client.inner()
+        self.client
+            .inner()
             .execute(
                 "INSERT INTO ene.ephemeral_tasks \
                  (task_id, session_id, node_id, task_state, priority_raw, ttl_ms, \
@@ -244,9 +252,17 @@ CREATE INDEX IF NOT EXISTS idx_ephemeral_scar_node ON ene.ephemeral_scar_events(
                   result_hash = EXCLUDED.result_hash, \
                   meta = EXCLUDED.meta",
                 &[
-                    &task.task_id, &task.session_id, &task.node_id, &task.task_state,
-                    &task.priority_raw, &task.ttl_ms, &task.dispatched_at_ms,
-                    &task.completed_at_ms, &task.result_hash, &task.meta, &task.created_at_ms,
+                    &task.task_id,
+                    &task.session_id,
+                    &task.node_id,
+                    &task.task_state,
+                    &task.priority_raw,
+                    &task.ttl_ms,
+                    &task.dispatched_at_ms,
+                    &task.completed_at_ms,
+                    &task.result_hash,
+                    &task.meta,
+                    &task.created_at_ms,
                 ],
             )
             .await
@@ -275,7 +291,8 @@ CREATE INDEX IF NOT EXISTS idx_ephemeral_scar_node ON ene.ephemeral_scar_events(
     }
 
     pub async fn insert_metric(&self, metric: &EphemeralMetric) -> Result<()> {
-        self.client.inner()
+        self.client
+            .inner()
             .execute(
                 "INSERT INTO ene.ephemeral_metrics \
                  (metric_id, node_id, metric_name, metric_value_raw, metric_scale, recorded_at_ms) \
@@ -285,8 +302,12 @@ CREATE INDEX IF NOT EXISTS idx_ephemeral_scar_node ON ene.ephemeral_scar_events(
                   metric_scale = EXCLUDED.metric_scale, \
                   recorded_at_ms = EXCLUDED.recorded_at_ms",
                 &[
-                    &metric.metric_id, &metric.node_id, &metric.metric_name,
-                    &metric.metric_value_raw, &(metric.metric_scale as i32), &metric.recorded_at_ms,
+                    &metric.metric_id,
+                    &metric.node_id,
+                    &metric.metric_name,
+                    &metric.metric_value_raw,
+                    &(metric.metric_scale as i32),
+                    &metric.recorded_at_ms,
                 ],
             )
             .await
@@ -294,7 +315,11 @@ CREATE INDEX IF NOT EXISTS idx_ephemeral_scar_node ON ene.ephemeral_scar_events(
         Ok(())
     }
 
-    pub async fn get_node_scars(&self, node_id: &str, limit: i64) -> Result<Vec<EphemeralScarEvent>> {
+    pub async fn get_node_scars(
+        &self,
+        node_id: &str,
+        limit: i64,
+    ) -> Result<Vec<EphemeralScarEvent>> {
         let rows = self.client.inner()
             .query(
                 "SELECT scar_id, node_id, task_id, scar_pressure, failure_mode, coarsening_agent, created_at_ms \
@@ -303,19 +328,24 @@ CREATE INDEX IF NOT EXISTS idx_ephemeral_scar_node ON ene.ephemeral_scar_events(
             )
             .await
             .context("get node scars")?;
-        Ok(rows.iter().map(|r| EphemeralScarEvent {
-            scar_id: r.get(0),
-            node_id: r.get(1),
-            task_id: r.get(2),
-            scar_pressure: r.get(3),
-            failure_mode: r.get(4),
-            coarsening_agent: r.get(5),
-            created_at_ms: r.get(6),
-        }).collect())
+        Ok(rows
+            .iter()
+            .map(|r| EphemeralScarEvent {
+                scar_id: r.get(0),
+                node_id: r.get(1),
+                task_id: r.get(2),
+                scar_pressure: r.get(3),
+                failure_mode: r.get(4),
+                coarsening_agent: r.get(5),
+                created_at_ms: r.get(6),
+            })
+            .collect())
     }
 
     pub async fn get_task_receipt(&self, task_id: &str) -> Result<Option<EphemeralReceipt>> {
-        let row = self.client.inner()
+        let row = self
+            .client
+            .inner()
             .query_opt(
                 "SELECT receipt_id, task_id, node_id, cross_matrix, sidon_slack, \
                  step_count, residual_series, write_timing_ms, scar_absent, created_at_ms \

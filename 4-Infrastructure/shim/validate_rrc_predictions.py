@@ -15,6 +15,15 @@ import sys
 import tempfile
 from collections import Counter, defaultdict
 
+def require_path(obj, *path):
+    cur = obj
+    for key in path:
+        if key not in cur:
+            raise KeyError(f"Missing path: {'.'.join(path)} in result")
+        cur = cur[key]
+    return cur
+
+
 PIST_DECOMPOSE = os.environ.get(
     "PIST_DECOMPOSE_BIN",
     "/home/allaun/.local/share/opencode/worktree/"
@@ -103,21 +112,24 @@ def main():
             errors.append(result)
             continue
 
-        mhash = result["braid"]["matrix_hash"][:16]
-        chash = result["canonical_hash"][:16]
+        mhash = require_path(result, "braid", "matrix_hash")[:16]
+        chash = require_path(result, "canonical_hash")[:16]
+        proxy_label = require_path(result, "rrc_shape", "proxy", "label")
+        exact_label = require_path(result, "rrc_shape", "exact", "label")
+        zmp = require_path(result, "spectral", "zero_mode_proxy_count")
+        sym_ev = require_path(result, "spectral", "symmetric_eigenvalues") or [0.0] * 8
+        sv_raw = result.get("spectral", {}).get("singular_values")
+        if sv_raw is None:
+            singular_v = [0.0] * 8
+        else:
+            singular_v = [float(v) if v is not None else 0.0 for v in sv_raw]
+        lap_zero = require_path(result, "spectral", "laplacian_zero_count")
+        rank = require_path(result, "spectral", "rank_estimate")
+        cd = require_path(result, "braid", "crossing_density")
+        sent = require_path(result, "braid", "strand_entropy")
+        gap = require_path(result, "spectral", "symmetric_spectral_gap")
         matrix_hashes[mhash] += 1
         canonical_hashes[chash] += 1
-
-        proxy_label = result["rrc_shape"]["proxy"]["label"]
-        exact_label = result["rrc_shape"]["exact"]["label"]
-        zmp = result["spectral"]["zero_mode_proxy_count"]
-        sym_ev = result["spectral"]["symmetric_eigenvalues"]
-        lap_zero = result["spectral"]["laplacian_zero_count"]
-        rank = result["spectral"]["rank_estimate"]
-        cd = result["braid"]["crossing_density"]
-        sent = result["braid"]["strand_entropy"]
-        gap = result["spectral"].get("symmetric_spectral_gap", 0)
-        mhash = result["braid"]["matrix_hash"][:16]
 
         print(f"{proxy_label:35s} | exact={exact_label:30s} | ZMP={zmp} | hash={mhash} | "
               f"rank={rank} | lap_zero={lap_zero} | gap={gap:.3f}",
@@ -130,6 +142,7 @@ def main():
             "exact_pred": exact_label,
             "zmp": zmp,
             "eigenvalues": [round(v, 4) for v in sym_ev],
+            "singular_values": [round(v, 4) for v in singular_v],
             "laplacian_zero_count": lap_zero,
             "rank_estimate": rank,
             "crossing_density": cd,

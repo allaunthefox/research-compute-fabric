@@ -1,22 +1,27 @@
 #!/usr/bin/env python3
 """RRC/PIST shape-alignment calibration pass.
 
-Phase 2.2 bridge:
+NOTE (ontology migration):
 
-    PIST exact/proxy label  = structural/spectral morphology
-    RRC shape label         = semantic/domain routing class
+This file is a **legacy shim**. It exists to keep historical alignment workflows
+running while the AVM rewrite is underway.
 
-A mismatch is not automatically an error. For the current RRC equation corpus,
-PIST often detects `LogogramProjection` because the input surface is an equation
-name/logogram, while RRC supplies the semantic routing class such as
-`CognitiveLoadField` or `SignalShapedRouteCompiler`.
+**Target architecture:** Lean-only AVM ISA + backend shims.
+- Lean defines all semantics.
+- Shims do JSON I/O only.
 
-This script annotates receipt-density records with a `shape_alignment` object and
-turns known-compatible structural/semantic divergences into an explicit
-`structural_semantic_label_divergence` warning instead of a raw
-`pist_shape_disagreement` warning.
+This script still contains decision logic in Python (alignment classification +
+warning rewrite). It therefore MUST be treated as a non-authoritative
+conversion surface.
 
-It does not promote claims. Every record remains `promotion = not_promoted`.
+Rules until ported:
+- Records remain `promotion = not_promoted`.
+- Output must carry an explicit `strip_receipt` section explaining:
+  - which decisions were made in shim space
+  - what must be ported to Lean/AVM
+
+TODO(lean-port): Replace determine_alignment + rewrite_warnings + hashing payload
+with Lean/AVM execution.
 """
 
 from __future__ import annotations
@@ -28,10 +33,12 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-# Repo root (this file lives at 4-Infrastructure/shim/...) 
+# Repo root (this file lives at 4-Infrastructure/shim/...)
 ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_IN = ROOT / "shared-data/rrc_receipt_density_backfill.json"
 DEFAULT_OUT = ROOT / "shared-data/rrc_receipt_density_backfill.json"
+
+ONTOLOGY_VERSION = "shim-ontology-migration-v1"
 
 RRC_SEMANTIC_SHAPES = {
     "CognitiveLoadField",
@@ -120,6 +127,7 @@ def update_hash(record: dict[str, Any]) -> str:
         "warnings": record.get("warnings"),
         "promotion": "not_promoted",
         "source": record.get("source"),
+        "ontology_version": ONTOLOGY_VERSION,
     }
     return stable_hash(payload)
 
@@ -157,12 +165,31 @@ def align_payload(payload: dict[str, Any]) -> tuple[dict[str, Any], Counter[str]
     summary["warning_counts"] = dict(sorted(warning_counts.items()))
     summary["raw_warning_counts"] = dict(sorted(raw_warning_counts.items()))
     summary["promotion_policy"] = "no automatic promotion; shape alignment calibrates label spaces only"
+    summary["ontology_version"] = ONTOLOGY_VERSION
+    summary["shim_role"] = "legacy_alignment_surface_pending_avm"
 
     out = dict(payload)
     out["summary"] = summary
+    out["strip_receipt"] = {
+        "ontology_version": ONTOLOGY_VERSION,
+        "shim_role": "legacy_alignment_surface_pending_avm",
+        "computed_in_shim": [
+            "determine_alignment",
+            "rewrite_warnings",
+            "alignment_counts",
+            "warning_counts",
+            "receipt_hash recomputation",
+        ],
+        "must_port_to_lean_avm": [
+            "determine_alignment",
+            "rewrite_warnings",
+            "update_hash canonical payload definition",
+        ],
+        "float_policy": "no float used in this shim",
+    }
     out["records"] = aligned_records
     out["shape_alignment_claim_boundary"] = {
-        "means": "PIST structural morphology and RRC semantic routing labels have been calibrated",
+        "means": "PIST structural morphology and RRC semantic routing labels have been calibrated (legacy shim surface)",
         "does_not_mean": "mathematical proof or claim promotion",
         "promotion_policy": "not_promoted for every record",
     }

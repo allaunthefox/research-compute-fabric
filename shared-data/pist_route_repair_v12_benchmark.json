@@ -1,0 +1,847 @@
+{
+  "n": 28,
+  "recovered": 10,
+  "partial": 0,
+  "results": [
+    {
+      "name": "rw_missing_dir_1",
+      "obstruction": "arithmetic_gap",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": true,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [],
+      "best_attempt": {
+        "patch": "omega",
+        "delta": 0,
+        "ok": true
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "simp",
+      "has_equality": true,
+      "has_arithmetic": true,
+      "has_constructor": false
+    },
+    {
+      "name": "rw_missing_dir_2",
+      "obstruction": "missing_assumption_bridge",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "assumption",
+          "obstruction": "missing_assumption_bridge",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "exact h1",
+          "obstruction": "missing_assumption_bridge",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 3,
+          "patch": "apply h1",
+          "obstruction": "missing_assumption_bridge",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "assumption",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "rfl",
+      "has_equality": true,
+      "has_arithmetic": false,
+      "has_constructor": false
+    },
+    {
+      "name": "rw_missing_dir_3",
+      "obstruction": "arithmetic_gap",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": true,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [],
+      "best_attempt": {
+        "patch": "omega",
+        "delta": 0,
+        "ok": true
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "rfl",
+      "has_equality": true,
+      "has_arithmetic": true,
+      "has_constructor": false
+    },
+    {
+      "name": "rw_missing_dir_4",
+      "obstruction": "arithmetic_gap",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": true,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [],
+      "best_attempt": {
+        "patch": "omega",
+        "delta": 0,
+        "ok": true
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "simp",
+      "has_equality": true,
+      "has_arithmetic": true,
+      "has_constructor": false
+    },
+    {
+      "name": "rw_missing_dir_5",
+      "obstruction": "arithmetic_gap",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": true,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [],
+      "best_attempt": {
+        "patch": "omega",
+        "delta": 0,
+        "ok": true
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "rfl",
+      "has_equality": true,
+      "has_arithmetic": true,
+      "has_constructor": false
+    },
+    {
+      "name": "rw_missing_dir_6",
+      "obstruction": "arithmetic_gap",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": true,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [],
+      "best_attempt": {
+        "patch": "omega",
+        "delta": 0,
+        "ok": true
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "simp",
+      "has_equality": true,
+      "has_arithmetic": true,
+      "has_constructor": false
+    },
+    {
+      "name": "rw_missing_dir_7",
+      "obstruction": "arithmetic_gap",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": true,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [],
+      "best_attempt": {
+        "patch": "omega",
+        "delta": 0,
+        "ok": true
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "rfl",
+      "has_equality": true,
+      "has_arithmetic": true,
+      "has_constructor": false
+    },
+    {
+      "name": "missing_assume_1",
+      "obstruction": "case_split_missing",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "cases hA",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "constructor",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "cases hA",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "rfl",
+      "has_equality": true,
+      "has_arithmetic": false,
+      "has_constructor": true
+    },
+    {
+      "name": "missing_assume_2",
+      "obstruction": "case_split_missing",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "cases hA",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "constructor",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "cases hA",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "simp",
+      "has_equality": true,
+      "has_arithmetic": false,
+      "has_constructor": true
+    },
+    {
+      "name": "missing_assume_3",
+      "obstruction": "case_split_missing",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "cases h",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "constructor",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "cases h",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "rfl",
+      "has_equality": true,
+      "has_arithmetic": false,
+      "has_constructor": true
+    },
+    {
+      "name": "missing_assume_4",
+      "obstruction": "case_split_missing",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "cases h",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "constructor",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "cases h",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "simp",
+      "has_equality": true,
+      "has_arithmetic": false,
+      "has_constructor": true
+    },
+    {
+      "name": "missing_assume_5",
+      "obstruction": "case_split_missing",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "cases h",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "constructor",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "cases h",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "rfl",
+      "has_equality": true,
+      "has_arithmetic": false,
+      "has_constructor": true
+    },
+    {
+      "name": "missing_assume_6",
+      "obstruction": "case_split_missing",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "cases h",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "constructor",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "cases h",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "rfl",
+      "has_equality": true,
+      "has_arithmetic": false,
+      "has_constructor": true
+    },
+    {
+      "name": "missing_assume_7",
+      "obstruction": "case_split_missing",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "cases h",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "constructor",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "cases h",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "rfl",
+      "has_equality": true,
+      "has_arithmetic": false,
+      "has_constructor": true
+    },
+    {
+      "name": "arith_gap_1",
+      "obstruction": "arithmetic_gap",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": true,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [],
+      "best_attempt": {
+        "patch": "omega",
+        "delta": 0,
+        "ok": true
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "rfl",
+      "has_equality": true,
+      "has_arithmetic": true,
+      "has_constructor": false
+    },
+    {
+      "name": "arith_gap_2",
+      "obstruction": "induction_incomplete",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "induction h1",
+          "obstruction": "induction_incomplete",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "induction h1",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "simp",
+      "has_equality": true,
+      "has_arithmetic": false,
+      "has_constructor": false
+    },
+    {
+      "name": "arith_gap_3",
+      "obstruction": "arithmetic_gap",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "omega",
+          "obstruction": "arithmetic_gap",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "omega",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "rfl",
+      "has_equality": true,
+      "has_arithmetic": true,
+      "has_constructor": false
+    },
+    {
+      "name": "arith_gap_4",
+      "obstruction": "arithmetic_gap",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": true,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [],
+      "best_attempt": {
+        "patch": "omega",
+        "delta": 0,
+        "ok": true
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "simp",
+      "has_equality": true,
+      "has_arithmetic": true,
+      "has_constructor": false
+    },
+    {
+      "name": "arith_gap_5",
+      "obstruction": "arithmetic_gap",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "omega",
+          "obstruction": "arithmetic_gap",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "omega",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "simp",
+      "has_equality": true,
+      "has_arithmetic": true,
+      "has_constructor": false
+    },
+    {
+      "name": "arith_gap_6",
+      "obstruction": "arithmetic_gap",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": true,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [],
+      "best_attempt": {
+        "patch": "omega",
+        "delta": 0,
+        "ok": true
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "simp",
+      "has_equality": true,
+      "has_arithmetic": true,
+      "has_constructor": false
+    },
+    {
+      "name": "arith_gap_8",
+      "obstruction": "arithmetic_gap",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "omega",
+          "obstruction": "arithmetic_gap",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "omega",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "simp",
+      "has_equality": true,
+      "has_arithmetic": true,
+      "has_constructor": false
+    },
+    {
+      "name": "arith_gap_9",
+      "obstruction": "arithmetic_gap",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": true,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [],
+      "best_attempt": {
+        "patch": "omega",
+        "delta": 0,
+        "ok": true
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "simp",
+      "has_equality": true,
+      "has_arithmetic": true,
+      "has_constructor": false
+    },
+    {
+      "name": "case_split_1",
+      "obstruction": "case_split_missing",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "cases h",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "constructor",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "cases h",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "simp",
+      "has_equality": true,
+      "has_arithmetic": false,
+      "has_constructor": true
+    },
+    {
+      "name": "case_split_2",
+      "obstruction": "case_split_missing",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "cases h",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "constructor",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "cases h",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "simp",
+      "has_equality": true,
+      "has_arithmetic": false,
+      "has_constructor": true
+    },
+    {
+      "name": "case_split_3",
+      "obstruction": "case_split_missing",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "cases hA",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "constructor",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "cases hA",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "rfl",
+      "has_equality": true,
+      "has_arithmetic": false,
+      "has_constructor": true
+    },
+    {
+      "name": "case_split_4",
+      "obstruction": "case_split_missing",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "cases h",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "constructor",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "cases h",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "rfl",
+      "has_equality": true,
+      "has_arithmetic": false,
+      "has_constructor": true
+    },
+    {
+      "name": "case_split_5",
+      "obstruction": "case_split_missing",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "cases h",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "constructor",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "cases h",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "simp",
+      "has_equality": true,
+      "has_arithmetic": false,
+      "has_constructor": true
+    },
+    {
+      "name": "case_split_6",
+      "obstruction": "case_split_missing",
+      "routing_method": "text_fallback",
+      "initial_status": "failed",
+      "recovered": false,
+      "best_delta": 0,
+      "partial_improvement": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "patch": "cases hA",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        },
+        {
+          "attempt": 2,
+          "patch": "constructor",
+          "obstruction": "case_split_missing",
+          "ok": false,
+          "delta": 0
+        }
+      ],
+      "best_attempt": {
+        "patch": "cases hA",
+        "delta": 0,
+        "ok": false
+      },
+      "matrix_size": 2,
+      "rank": 1,
+      "tactic": "simp",
+      "has_equality": true,
+      "has_arithmetic": false,
+      "has_constructor": true
+    }
+  ],
+  "routing": {
+    "text_fallback": 28
+  }
+}

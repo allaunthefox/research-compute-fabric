@@ -1,0 +1,104 @@
+created: 20260526190000000
+modified: 20260526190000000
+tags: ResearchStack Lean PIST RouteRepair Receipts Genus
+-title: PIST Route-Repair and Receipt Update
+title: PIST Route-Repair and Receipt Update
+type: text/vnd.tiddlywiki
+
+! PIST Route-Repair and Receipt Update
+
+This card summarizes the 2026-05-26 route-repair and receipt-semantics cleanup.
+
+!! Current architecture
+
+The active proof-repair path is:
+
+```
+failed theorem
+-> parsed theorem shape
+-> 16D modifier
+-> 4D repair axis
+-> 3D ranked Lean patch
+-> retry
+-> receipt
+```
+
+The important correction is that the base control geometry is genus 0:
+
+```
+R^16 modifier     : contractible
+Delta^4 axis      : convex / contractible
+R^3_+ patch embed : convex / contractible
+S^2 shell witness : genus 0
+```
+
+Higher-genus signatures belong to residual/stress topology, not to the base repair-control manifold.
+
+!! Route-repair ladder
+
+| Version | Role |
+|---|---|
+| v1.1 | spectral-only repair; degenerate one-step traces collapsed |
+| v1.2 | hybrid text fallback baseline |
+| v1.3a | PIST-NUVMAP ranking; preserved baseline |
+| v1.3b | theorem-shape multi-step templates; proof surgery begins |
+| v1.4 | 16D -> 4D -> 3D charted repair manifold |
+| v1.4a | residual closure: destructuring, contradiction, invalid-goal detection |
+
+!! Quaternion receipt correction
+
+`Semantics.UnitQuaternion` now uses:
+
+```
+wf_unit : Bool
+```
+
+as a receipt bit instead of claiming exact Q16.16 unit-norm equality.
+
+This avoids fake exactness for approximate fixed-point trig, multiplication, SLERP, and placeholder stochastic evolution.
+
+Updated theorem style:
+
+```
+identityCarriesUnitWitness
+conjugatePreservesWitness
+mulWitness
+stochasticEvolutionPreservesUnitWitness
+sluqQuaternionOptimizationPreservesUnitWitness
+```
+
+!! Genus-0 visual bridge
+
+Demo script:
+
+```
+4-Infrastructure/shim/genus0_sphere_shell_demo.py
+```
+
+It emits a JSON witness for:
+
+```
+R^16 -> Delta^4 -> R^3_+ -> S^2 shell witness
+```
+
+!! Durable doc
+
+See:
+
+```
+6-Documentation/docs/lean/PIST_ROUTE_REPAIR_RECEIPT_UPDATE_2026_05_26.md
+```
+
+!! Keeper phrases
+
+```
+The base repair manifold is genus 0; genus belongs to residual topology.
+```
+
+```
+Q16.16 quaternion operations carry unit receipts, not fake exact unit-norm proofs.
+```
+
+```
+Route repair works when theorem shape generates local proof surgery, not when ranking merely reorders flat tactic guesses.
+```

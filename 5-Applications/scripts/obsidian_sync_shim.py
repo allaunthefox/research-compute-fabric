@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-obsidian_sync_shim.py — Bidirectional sync between Obsidian vault and JSON-L lake.
+"""obsidian_sync_shim.py — Bidirectional sync between Obsidian vault and JSON-L lake.
 
 Modes:
     ingest    : Obsidian notes → JSON-L lake (append to lake file)
@@ -9,6 +8,13 @@ Modes:
 
 Requires TOPOLOGICAL_ENGINE_URL and TOPOLOGICAL_ENGINE_TOKEN in .env.
 For local Obsidian installs, set OBSIDIAN_VAULT_PATH or use --vault.
+
+Hardcoded node/provenance assumptions were removed:
+- provenance.node uses ENE_NODE_ID (default: obsidian_sync_shim)
+- provenance.lake_seed uses ENE_LAKE_SEED (default: obsidian_lake)
+- provenance.tailscale_ip uses ENE_TAILSCALE_IP (default: 127.0.0.1)
+
+NOTE: This is a legacy ingest surface; treat outputs as non-authoritative.
 """
 
 import sys
@@ -25,6 +31,7 @@ from typing import Dict, List, Any, Optional
 project_root = Path(__file__).parent.parent.parent
 try:
     from dotenv import load_dotenv
+
     if (project_root / ".env").exists():
         load_dotenv(project_root / ".env")
 except ImportError:
@@ -34,6 +41,11 @@ sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(project_root / "4-Infrastructure" / "infra"))
 
 from infra.topological_engine_client import TopologicalEngineClient
+
+
+def env_default(name: str, default: str) -> str:
+    v = os.getenv(name)
+    return v if v is not None and v != "" else default
 
 
 DEFAULT_VAULT_PATH = project_root / "Obdisidan connector"
@@ -91,11 +103,21 @@ def _format_jsonl_entry(
     tier: str = "AUX",
     domain: str = "obsidian",
     archetype: str = "note",
-    src: str = "obsidian_sync_shim"
+    src: str = "obsidian_sync_shim",
 ) -> Dict[str, Any]:
     """Format a JSON-L entry for the Research Stack lake."""
     now = datetime.now(timezone.utc)
     timestamp = now.isoformat()
+
+    node_id = env_default("ENE_NODE_ID", "obsidian_sync_shim")
+    lake_seed = env_default("ENE_LAKE_SEED", "obsidian_lake")
+    tailscale_ip = env_default("ENE_TAILSCALE_IP", "127.0.0.1")
+
+    # Deterministic attestation over the minimal payload.
+    attestation_hash = "sha256:" + hashlib.sha256(
+        (pkg + ":" + timestamp + ":" + json.dumps(data, sort_keys=True, ensure_ascii=False)).encode("utf-8")
+    ).hexdigest()
+
     return {
         "t": now.timestamp(),
         "src": src,
@@ -107,18 +129,21 @@ def _format_jsonl_entry(
             "tier": tier,
             "domain": domain,
             "archetype": archetype,
-            **data
+            **data,
         },
         "bind": {
             "lawful": True,
             "cost": 65536,
             "invariant": "noteConsistency",
-            "class": "informational_bind"
+            "class": "informational_bind",
         },
         "provenance": {
-            "node": "obsidian_sync_shim",
-            "lake_seed": "obsidian_lake"
-        }
+            "node": node_id,
+            "lake_seed": lake_seed,
+            "tailscale_ip": tailscale_ip,
+            "attestation_hash": attestation_hash,
+            "prev_id": None,
+        },
     }
 
 
@@ -129,7 +154,7 @@ def _format_jsonl_entry(
 def ingest_obsidian(
     client: TopologicalEngineClient,
     query: str = "*",
-    lake_path: Path = LAKE_PATH
+    lake_path: Path = LAKE_PATH,
 ) -> Dict[str, Any]:
     """Pull notes from Obsidian vault and append to JSON-L lake."""
     print("[ingest] Searching Obsidian vault...")
@@ -156,11 +181,10 @@ def ingest_obsidian(
                 "links": note.get("links", []),
                 "tags": note.get("tags", []),
                 "modified": note.get("modified", note.get("mtime")),
-            }
+            },
         )
         entries.append(entry)
 
-    # Append to lake
     with open(lake_path, "a") as f:
         for entry in entries:
             f.write(json.dumps(entry) + "\n")
@@ -172,7 +196,7 @@ def ingest_obsidian(
 def ingest_local_obsidian(
     vault_path: Path,
     query: str = "*",
-    lake_path: Path = LAKE_PATH
+    lake_path: Path = LAKE_PATH,
 ) -> Dict[str, Any]:
     """Pull notes from a local Obsidian vault and append to JSON-L lake."""
     if not vault_path.exists():
@@ -223,7 +247,7 @@ def ingest_local_obsidian(
 def export_to_obsidian(
     client: TopologicalEngineClient,
     lake_path: Path = LAKE_PATH,
-    filter_domain: str = "obsidian"
+    filter_domain: str = "obsidian",
 ) -> Dict[str, Any]:
     """Read JSON-L lake and write matching entries back to Obsidian vault."""
     if not lake_path.exists():
@@ -257,19 +281,21 @@ def export_to_obsidian(
         if not path:
             continue
 
-        # Reconstruct a simple markdown note
         md = f"# {title}\n\n"
         md += f"> Synced from JSON-L lake at {datetime.now(timezone.utc).isoformat()}\n\n"
         md += content_preview
         if len(content_preview) >= 500:
             md += "\n\n...(truncated)"
 
-        # Write via topological engine
-        res = client.write_obsidian_note(path=path, body=md, metadata={
-            "source": "research_stack_lake",
-            "entry_id": entry.get("id"),
-            "synced_at": datetime.now(timezone.utc).isoformat()
-        })
+        res = client.write_obsidian_note(
+            path=path,
+            body=md,
+            metadata={
+                "source": "research_stack_lake",
+                "entry_id": entry.get("id"),
+                "synced_at": datetime.now(timezone.utc).isoformat(),
+            },
+        )
         if "error" not in res:
             written += 1
 
@@ -281,7 +307,7 @@ def export_to_local_obsidian(
     vault_path: Path,
     lake_path: Path = LAKE_PATH,
     filter_domain: str = "obsidian",
-    overwrite: bool = False
+    overwrite: bool = False,
 ) -> Dict[str, Any]:
     """Read JSON-L lake and write matching entries into a local Obsidian vault."""
     if not lake_path.exists():
@@ -339,15 +365,8 @@ def export_to_local_obsidian(
 def sync_bidirectional(
     client: TopologicalEngineClient,
     lake_path: Path = LAKE_PATH,
-    obsidian_wins: bool = True
+    obsidian_wins: bool = True,
 ) -> Dict[str, Any]:
-    """
-    Two-way sync:
-    1. Ingest current Obsidian state into lake.
-    2. Export lake entries back to Obsidian (creating any missing notes).
-
-    If obsidian_wins=True, existing Obsidian notes are not overwritten.
-    """
     print("[sync] Starting bidirectional sync...")
     ingest_res = ingest_obsidian(client, lake_path=lake_path)
     if "error" in ingest_res:
@@ -355,13 +374,11 @@ def sync_bidirectional(
 
     if obsidian_wins:
         print("[sync] Obsidian-wins mode: skipping overwrite of existing notes")
-        # In export mode, only write notes that don't already exist
         search_res = client.search_obsidian("*")
         existing_paths = set()
         for note in search_res.get("results", search_res.get("notes", [])):
             existing_paths.add(note.get("path", note.get("file_path")))
 
-        # Filter lake entries to only missing paths
         if lake_path.exists():
             entries = []
             with open(lake_path) as f:
@@ -387,23 +404,16 @@ def sync_bidirectional(
                     written += 1
             print(f"[sync] Created {written} missing notes in Obsidian")
             return {"ingested": ingest_res["ingested"], "created": written}
-    else:
-        export_res = export_to_obsidian(client, lake_path=lake_path)
-        return {"ingested": ingest_res["ingested"], **export_res}
+
+    export_res = export_to_obsidian(client, lake_path=lake_path)
+    return {"ingested": ingest_res["ingested"], **export_res}
 
 
 def sync_local_bidirectional(
     vault_path: Path,
     lake_path: Path = LAKE_PATH,
-    obsidian_wins: bool = True
+    obsidian_wins: bool = True,
 ) -> Dict[str, Any]:
-    """
-    Local two-way sync:
-    1. Ingest current local Obsidian state into lake.
-    2. Export lake entries back to the vault.
-
-    If obsidian_wins=True, existing local notes are not overwritten.
-    """
     print("[sync:local] Starting bidirectional local sync")
     ingest_res = ingest_local_obsidian(vault_path=vault_path, lake_path=lake_path)
     if "error" in ingest_res:
@@ -424,18 +434,33 @@ def sync_local_bidirectional(
 
 def main():
     parser = argparse.ArgumentParser(description="Obsidian ↔ JSON-L lake sync shim")
-    parser.add_argument("mode", choices=["ingest", "export", "sync"], default="sync", nargs="?",
-                        help="ingest=Obsidian→lake, export=lake→Obsidian, sync=both")
-    parser.add_argument("--backend", choices=["auto", "local", "engine"], default="auto",
-                        help="local=filesystem vault, engine=topological engine, auto=engine if healthy else local")
-    parser.add_argument("--vault", default=None,
-                        help="Local Obsidian vault path; defaults to OBSIDIAN_VAULT_PATH or ./Obdisidan connector")
+    parser.add_argument(
+        "mode",
+        choices=["ingest", "export", "sync"],
+        default="sync",
+        nargs="?",
+        help="ingest=Obsidian→lake, export=lake→Obsidian, sync=both",
+    )
+    parser.add_argument(
+        "--backend",
+        choices=["auto", "local", "engine"],
+        default="auto",
+        help="local=filesystem vault, engine=topological engine, auto=engine if healthy else local",
+    )
+    parser.add_argument(
+        "--vault",
+        default=None,
+        help="Local Obsidian vault path; defaults to OBSIDIAN_VAULT_PATH or ./Obdisidan connector",
+    )
     parser.add_argument("--lake", default=str(LAKE_PATH), help="Path to JSON-L lake file")
     parser.add_argument("--query", default="*", help="Obsidian search query (ingest mode)")
-    parser.add_argument("--obsidian-wins", action="store_true", default=True,
-                        help="In sync mode, don't overwrite existing Obsidian notes")
-    parser.add_argument("--lake-wins", action="store_true",
-                        help="In sync mode, overwrite Obsidian with lake contents")
+    parser.add_argument(
+        "--obsidian-wins",
+        action="store_true",
+        default=True,
+        help="In sync mode, don't overwrite existing Obsidian notes",
+    )
+    parser.add_argument("--lake-wins", action="store_true", help="In sync mode, overwrite Obsidian with lake")
     args = parser.parse_args()
 
     lake_path = Path(args.lake)
@@ -461,17 +486,9 @@ def main():
         if args.mode == "ingest":
             result = ingest_local_obsidian(vault_path=vault_path, query=args.query, lake_path=lake_path)
         elif args.mode == "export":
-            result = export_to_local_obsidian(
-                vault_path=vault_path,
-                lake_path=lake_path,
-                overwrite=not obsidian_wins,
-            )
+            result = export_to_local_obsidian(vault_path=vault_path, lake_path=lake_path, overwrite=not obsidian_wins)
         else:
-            result = sync_local_bidirectional(
-                vault_path=vault_path,
-                lake_path=lake_path,
-                obsidian_wins=obsidian_wins,
-            )
+            result = sync_local_bidirectional(vault_path=vault_path, lake_path=lake_path, obsidian_wins=obsidian_wins)
     else:
         if args.mode == "ingest":
             result = ingest_obsidian(client, query=args.query, lake_path=lake_path)
@@ -483,9 +500,9 @@ def main():
     if "error" in result:
         print(f"Error: {result['error']}")
         sys.exit(1)
-    else:
-        print(f"Done: {json.dumps(result, indent=2)}")
-        sys.exit(0)
+
+    print(f"Done: {json.dumps(result, indent=2)}")
+    sys.exit(0)
 
 
 if __name__ == "__main__":

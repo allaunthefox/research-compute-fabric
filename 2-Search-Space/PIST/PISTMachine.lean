@@ -73,14 +73,33 @@ def lambda (s : State) : Nat :=
 /-- Theorem: Mirror preserves mass. -/
 theorem mirror_preserves_mass (n : Nat) : 
   hyperbolaIndex (mirror n) = hyperbolaIndex n := by
-  -- TODO(lean-port): Prove mirror preserves hyperbolaIndex.
-  sorry
+  let k := Nat.sqrt n
+  have ha : a (mirror n) = b n := by
+    simp [a, mirror, k]
+    omega
+  have hb : b (mirror n) = a n := by
+    simp [b, mirror, k]
+    omega
+  simp [hyperbolaIndex, ha, hb, Nat.mul_comm]
 
 /-- Theorem: Zero-mass iff square. -/
 theorem zero_mass_iff_square (n : Nat) :
   hyperbolaIndex n = 0 ↔ (Nat.sqrt n)^2 = n := by
-  -- TODO(lean-port): Complete zero_mass_iff_square equivalence proof.
-  sorry
+  simp [hyperbolaIndex, a, b]
+  constructor
+  · intro h
+    cases Nat.eq_zero_or_pos (Nat.sqrt n + 1)^2 with
+    | inl h_zero => 
+      have h_pos : (Nat.sqrt n + 1)^2 > 0 := Nat.pos_of_ne_zero (by intro h_z; injection h_z)
+      exact False.elim (Nat.lt_irrefl 0 (h_pos.trans_le (Nat.zero_le _)))
+    | inr _h_pos =>
+      have hn : n < (Nat.sqrt n + 1)^2 := Nat.lt_succ_sqrt n
+      have hb_pos : (Nat.sqrt n + 1)^2 - n > 0 := Nat.sub_pos_of_lt hn
+      have ha_zero : n - (Nat.sqrt n)^2 = 0 := by
+        exact Nat.eq_zero_of_mul_eq_zero_left h (Nat.ne_of_gt hb_pos)
+      exact Nat.eq_of_sub_eq_zero ha_zero
+  · intro h
+    simp [h]
 
 /-! ## MNLOG-001 Mass Number Valuations for PISTMachine Theorems
 
@@ -128,8 +147,8 @@ def PISTLogicalMass.massNumber (lm : PISTLogicalMass) : Q0_16 :=
 def mirrorPreservesMassMass : PISTLogicalMass :=
   {
     field := { domain := "PIST state machine", contract := "hyperbola index preservation", validator := "algebraic proof" },
-    admissible := 80,  -- Strong invariant: mass preservation is core property
-    residual := { uncertainty := 2, assumptions := 3, cost := 5 },  -- Moderate proof complexity
+    admissible := 80,
+    residual := { uncertainty := 2, assumptions := 3, cost := 5 },
     projection := { name := "linear projection", scaling := 256 }
   }
 
@@ -137,8 +156,8 @@ def mirrorPreservesMassMass : PISTLogicalMass :=
 def zeroMassIffSquareMass : PISTLogicalMass :=
   {
     field := { domain := "PIST state machine", contract := "square boundary invariants", validator := "algebraic proof" },
-    admissible := 75,  -- Strong invariant: characterizes grounded phase
-    residual := { uncertainty := 3, assumptions := 3, cost := 7 },  -- Higher proof complexity
+    admissible := 75,
+    residual := { uncertainty := 3, assumptions := 3, cost := 7 },
     projection := { name := "linear projection", scaling := 256 }
   }
 

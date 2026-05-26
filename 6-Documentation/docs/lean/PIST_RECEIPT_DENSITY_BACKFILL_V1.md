@@ -73,6 +73,57 @@ any receipt_density_status is not CANDIDATE or HOLD
 
 ---
 
+## Phase 2.2 shape-alignment calibration
+
+After classifier-backed density has been generated, run the alignment pass:
+
+```bash
+python3 4-Infrastructure/shim/rrc_pist_shape_alignment.py \
+  --fail-on-raw-disagreement
+```
+
+Then inspect:
+
+```bash
+jq '.summary.shape_alignment_counts, .summary.warning_counts' \
+  shared-data/rrc_receipt_density_backfill.json
+```
+
+Expected transition for the current corpus:
+
+```text
+pist_shape_disagreement -> removed
+structural_semantic_label_divergence -> present for compatible PIST/RRC label-space divergence
+shape_alignment_counts.compatible_structural_projection -> most or all records
+```
+
+Reason:
+
+```text
+PIST exact/proxy label = structural/spectral morphology
+RRC shape label        = semantic/domain routing class
+```
+
+So a row like:
+
+```text
+PIST exact label: LogogramProjection
+RRC shape: CognitiveLoadField
+```
+
+is not necessarily an error. It can mean PIST sees a symbolic/logogram surface while RRC supplies the semantic routing class.
+
+After alignment, rerun the guarded RDS sidecar write and readback validator:
+
+```bash
+python3 4-Infrastructure/shim/pist_receipt_density_injector.py --write-rds
+python3 4-Infrastructure/shim/validate_receipt_density_sidecar.py
+```
+
+Commit the aligned JSON artifacts after validation.
+
+---
+
 ## Default inputs
 
 ```text
@@ -188,12 +239,18 @@ Each record has the form:
     "rank_estimate": 8,
     "laplacian_zero_count": 1
   },
+  "shape_alignment": {
+    "alignment_version": "rrc-pist-shape-alignment-v1",
+    "alignment_status": "compatible_structural_projection",
+    "alignment_confidence": 0.72,
+    "label_space_model": "PIST=morphology; RRC=semantic routing"
+  },
   "top_axes": ["projection_declared", "negative_control_strength"],
   "status": "CANDIDATE",
   "promotion": "not_promoted",
   "source": "pist_receipt_density_injector_v1",
   "receipt_hash": "...",
-  "warnings": []
+  "warnings": ["structural_semantic_label_divergence"]
 }
 ```
 
@@ -308,6 +365,7 @@ A minimal CI step should run:
 ```bash
 python3 4-Infrastructure/shim/test_pist_receipt_density_injector.py
 python3 4-Infrastructure/shim/pist_receipt_density_injector.py --fail-on-missing-pist
+python3 4-Infrastructure/shim/rrc_pist_shape_alignment.py --fail-on-raw-disagreement
 ```
 
 The sidecar validator should run only in environments with RDS credentials.
@@ -318,4 +376,8 @@ The sidecar validator should run only in environments with RDS credentials.
 
 ```text
 PIST stops being just a repair engine when its classifications become receipt density for the RRC corpus.
+```
+
+```text
+PIST is seeing morphology; RRC is naming semantics.
 ```

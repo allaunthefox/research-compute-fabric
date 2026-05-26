@@ -8,69 +8,81 @@ namespace Semantics
 open Q16_16
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- §0  Fixed-Point Trigonometry Placeholders (for Q16_16)
+-- §0  Fixed-Point Trigonometry Approximations (for Q16_16)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Cosine lookup for Q16_16 (placeholder: use CORDIC or polynomial approx).
+/-- Cosine approximation for Q16_16.
     Input: angle in radians, scaled to Q16_16.
-    Output: cos(angle) in Q16_16 ∈ [-1.0, 1.0]. -/
+    Output: approximate cos(angle) in Q16_16. -/
 def cos (x : Q16_16) : Q16_16 :=
   one - (x * x) / ofNat 2  -- Taylor: 1 - x²/2
 
-/-- Sine lookup for Q16_16 (placeholder: use CORDIC or polynomial approx).
+/-- Sine approximation for Q16_16.
     Input: angle in radians, scaled to Q16_16.
-    Output: sin(angle) in Q16_16 ∈ [-1.0, 1.0]. -/
+    Output: approximate sin(angle) in Q16_16. -/
 def sin (x : Q16_16) : Q16_16 :=
   x - (x * x * x) / ofNat 6  -- Taylor: x - x³/6
 
-/-- Arccosine lookup for Q16_16 (placeholder: use inverse trig LUT).
+/-- Arccosine approximation for Q16_16.
     Input: value in [-1.0, 1.0], scaled to Q16_16.
-    Output: arccos(value) in radians [0, π], scaled to Q16_16. -/
+    Output: approximate arccos(value) in radians. -/
 def acos (x : Q16_16) : Q16_16 :=
-  one - x  -- Approximation: arccos(x) ≈ 1 - x (for small angles)
+  one - x  -- Approximation: arccos(x) ≈ 1 - x for small angles
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- §1  Unit Quaternion Type (S³ Embedding)
+-- §1  Unit Quaternion Receipt Type (S³ Embedding)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Unit quaternion representing a point on the 3-sphere S³.
-    Stored as (w, x, y, z) with constraint w² + x² + y² + z² = 1.
-    Uses Q16_16 fixed-point for hardware extraction. -/
+/-- Quaternion representing a point intended to live on S³.
+
+    This module uses Q16_16 approximations for trigonometry, SLERP, and fixed-point
+    multiplication. Those operations do not currently carry exact algebraic proofs
+    that `w² + x² + y² + z² = 1`. The previous version stored that exact theorem as
+    a field and filled it with `sorry` in every nontrivial operation.
+
+    `wf_unit` is therefore an explicit receipt bit: it records that the value was
+    produced by a unit-preserving constructor or by an operation that propagates such
+    a receipt. Exact norm preservation belongs in a future real/quaternion bridge,
+    not in this approximate Q16_16 hot path. -/
 structure UnitQuaternion where
   w : Q16_16  -- scalar (real) part
   x : Q16_16  -- i component
   y : Q16_16  -- j component
   z : Q16_16  -- k component
-  wf_unit : w * w + x * x + y * y + z * z = one  -- unit norm constraint
+  wf_unit : Bool  -- approximate unit-norm receipt, not an exact theorem
   deriving Repr
 
 namespace UnitQuaternion
 
-/-- Identity quaternion (1, 0, 0, 0) - neutral element -/
+/-- Fixed-point norm-square witness value. -/
+def normSq (q : UnitQuaternion) : Q16_16 :=
+  q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z
+
+/-- Identity quaternion (1, 0, 0, 0) - neutral element. -/
 def identity : UnitQuaternion :=
   { w := one
     x := zero
     y := zero
     z := zero
-    wf_unit := by decide }
+    wf_unit := true }
 
 /-- Quaternion multiplication (Hamilton product).
-    For unit quaternions, product remains unit (S³ is a group under ×). -/
+    The unit receipt is propagated from both inputs. -/
 def mul (a b : UnitQuaternion) : UnitQuaternion :=
   let w' := a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z
   let x' := a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y
   let y' := a.w * b.y - a.x * b.z + a.y * b.w + a.z * b.x
   let z' := a.w * b.z + a.x * b.y - a.y * b.x + a.z * b.w
-  { w := w', x := x', y := y', z := z',
-    wf_unit := sorry }
+  { w := w', x := x', y := y', z := z', wf_unit := a.wf_unit && b.wf_unit }
 
 /-- Dot product as scalar part of a × b* (conjugate product).
-    For unit quaternions: a · b = cos(θ) where θ = great circle distance. -/
+    For exact unit quaternions: a · b = cos(θ). In this module it is the Q16_16
+    approximate dot product. -/
 def dot (a b : UnitQuaternion) : Q16_16 :=
   a.w * b.w + a.x * b.x + a.y * b.y + a.z * b.z
 
-/-- Great circle distance on S³: arccos(a · b).
-    For compression: distance ∈ [0, π] maps to dissimilarity metric. -/
+/-- Great circle distance on S³: approximate arccos(a · b).
+    For compression: distance maps to dissimilarity metric. -/
 def distance (a b : UnitQuaternion) : Q16_16 :=
   let d := dot a b
   if d.val ≥ 0x00010000 then  -- d ≥ 1.0
@@ -81,27 +93,27 @@ def distance (a b : UnitQuaternion) : Q16_16 :=
     one - d  -- Approximation: arccos(d) ≈ 1 - d for small angles
 
 /-- Quaternion conjugate: q* = [w, -x, -y, -z].
-    For unit quaternions, q⁻¹ = q*. -/
+    The unit receipt is preserved. -/
 def conjugate (q : UnitQuaternion) : UnitQuaternion :=
-  { w := q.w, x := neg q.x, y := neg q.y, z := neg q.z,
-    wf_unit := sorry }
+  { w := q.w, x := neg q.x, y := neg q.y, z := neg q.z, wf_unit := q.wf_unit }
 
 /-- Quaternion inverse: q⁻¹ = q* / ||q||².
-    For unit quaternions, q⁻¹ = q* (conjugate). -/
+    For receipt-carrying unit quaternions, q⁻¹ is represented by conjugate. -/
 def inv (q : UnitQuaternion) : UnitQuaternion :=
-  q.conjugate  -- Unit quaternion: inverse = conjugate
+  q.conjugate
 
-/-- Rotation of point p (pure quaternion [0, px, py, pz]) by unit quaternion q.
-    Formula: p' = q · p · q⁻¹ (conjugation).
-    Preserves vector norm: ||p'|| = ||p||. -/
+/-- Rotation of point p by unit quaternion q.
+    This implementation intentionally returns the vector part of q·p·q⁻¹, but the
+    pure-vector input is not itself a unit quaternion. Its receipt is therefore false. -/
 def rotateVector (q : UnitQuaternion) (v : Q16_16 × Q16_16 × Q16_16) : Q16_16 × Q16_16 × Q16_16 :=
   let (vx, vy, vz) := v
-  let p := { w := zero, x := vx, y := vy, z := vz, wf_unit := sorry }
+  let p := { w := zero, x := vx, y := vy, z := vz, wf_unit := false }
   let rotated := (q.mul p).mul q.inv
   (rotated.x, rotated.y, rotated.z)
 
-/-- Construct unit quaternion from axis-angle representation.
-    q = [cos(θ/2), sin(θ/2) · (ux, uy, uz)] where (ux,uy,uz) is unit axis. -/
+/-- Construct a receipt-carrying quaternion from axis-angle representation.
+    Because trigonometry is approximate in Q16_16, this carries a unit receipt rather
+    than an exact norm proof. -/
 def fromAxisAngle (axis : Q16_16 × Q16_16 × Q16_16) (angle : Q16_16) : UnitQuaternion :=
   let (ux, uy, uz) := axis
   let cosHalf := cos (angle / ofInt 2)
@@ -110,7 +122,7 @@ def fromAxisAngle (axis : Q16_16 × Q16_16 × Q16_16) (angle : Q16_16) : UnitQua
   let cosTheta := cosHalf
   let sinTheta := sinHalf * norm
   { w := cosTheta, x := sinTheta * ux, y := sinTheta * uy, z := sinTheta * uz,
-    wf_unit := sorry }
+    wf_unit := true }
 
 /-- Extract axis-angle from unit quaternion.
     Returns (axis, angle) where axis is unit vector and angle ∈ [0, 2π). -/
@@ -123,12 +135,13 @@ def toAxisAngle (q : UnitQuaternion) : (Q16_16 × Q16_16 × Q16_16) × Q16_16 :=
     (one, zero, zero)  -- Identity rotation: arbitrary axis
   (axis, angle)
 
-/-- Spherical Linear Interpolation (SLERP) between two unit quaternions. -/
+/-- Spherical Linear Interpolation (SLERP) between two unit quaternions.
+    The result receives a unit receipt when both endpoints carry one. -/
 def slerp (a b : UnitQuaternion) (t : Q16_16) : UnitQuaternion :=
   let dotAB := a.dot b
   let (b', dotAB') := if dotAB.val < 0x00008000 then
     ({ w := neg b.w, x := neg b.x, y := neg b.y, z := neg b.z,
-       wf_unit := sorry }, neg dotAB)
+       wf_unit := b.wf_unit }, neg dotAB)
   else
     (b, dotAB)
 
@@ -142,7 +155,7 @@ def slerp (a b : UnitQuaternion) (t : Q16_16) : UnitQuaternion :=
       x := w1 * a.x + w2 * b'.x,
       y := w1 * a.y + w2 * b'.y,
       z := w1 * a.z + w2 * b'.z,
-      wf_unit := sorry }
+      wf_unit := a.wf_unit && b'.wf_unit }
   else
     let w1 := sin ((one - t) * omega) / sinOmega
     let w2 := sin (t * omega) / sinOmega
@@ -150,7 +163,7 @@ def slerp (a b : UnitQuaternion) (t : Q16_16) : UnitQuaternion :=
       x := w1 * a.x + w2 * b'.x,
       y := w1 * a.y + w2 * b'.y,
       z := w1 * a.z + w2 * b'.z,
-      wf_unit := sorry }
+      wf_unit := a.wf_unit && b'.wf_unit }
 
 /-- Convert unit quaternion to 3×3 rotation matrix (row-major). -/
 def toRotationMatrix (q : UnitQuaternion) : Q16_16 × Q16_16 × Q16_16 ×
@@ -187,6 +200,18 @@ def toTernary (a b : UnitQuaternion) (threshold : Q16_16) : SLUG3.Ternary :=
     SLUG3.Ternary.low
   else
     SLUG3.Ternary.mid
+
+/-- Identity carries a unit receipt. -/
+theorem identityCarriesUnitWitness : identity.wf_unit = true := by
+  rfl
+
+/-- Conjugation preserves the unit receipt. -/
+theorem conjugatePreservesWitness (q : UnitQuaternion) : q.conjugate.wf_unit = q.wf_unit := by
+  rfl
+
+/-- Multiplication carries the conjunction of input unit receipts. -/
+theorem mulWitness (a b : UnitQuaternion) : (a.mul b).wf_unit = (a.wf_unit && b.wf_unit) := by
+  rfl
 
 end UnitQuaternion
 

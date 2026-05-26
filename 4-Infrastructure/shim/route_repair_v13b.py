@@ -69,7 +69,7 @@ def parse_theorem(code: str) -> dict:
     
     # Extract goal (last type annotation before :=)
     goal = ""
-    m = re.findall(r':\s*([^:=]+?)\s*:=', code)
+    m = re.findall(r':\s*([^:]+?)\s*:=', code)
     if m:
         goal = m[-1].strip()
     

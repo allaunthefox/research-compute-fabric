@@ -415,13 +415,17 @@ def emitFixture : EmitResult :=
 #eval determineAlignment fixtureCad    -- expect: missingPrediction
 #eval determineAlignment fixtureHold   -- expect: missingPrediction
 
--- Scores
+-- Scores: aligned_exact=100, compatibleStructuralProjection=72, missingPrediction=0
+-- expect: [("bandwidth_adjusted_threshold",72),("core_equations",72),("Stamp_Code",100),
+--          ("UQGET_Hubble_Tension",0),("DAG_Force_Equilibrium",0),("LASSO_MOGAT_GAT_Propagation",0)]
 #eval fixtureCorpus.map (fun r => (r.name, alignmentScore (determineAlignment r)))
 
--- Promotion summary
+-- Promotion summary: 6 rows total, 3 pass alignment (Clf, Ssrc = compatible; Lp = exact)
+-- expect: (6, 3)
 #eval (emitFixture.totalRows, emitFixture.candidateRows)
 
--- Full JSON bundle
+-- Full JSON bundle: schema="rrc_emit_fixture_v1", claim_boundary="admissibility-and-routing-pass-only"
+-- expect: JSON string with schema "rrc_emit_fixture_v1", 6 rows, summary.total=6, summary.passed_alignment=3
 #eval emitFixture.json
 
 end Semantics.RRC.Emit

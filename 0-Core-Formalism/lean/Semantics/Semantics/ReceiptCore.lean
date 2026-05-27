@@ -195,63 +195,68 @@ def LedgerPromotionInvariant
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- Receipt constructors
-#eval (leanBuildReceipt "test_op_001" true).valid
-#eval (leanBuildReceipt "test_op_001" false).valid
-#eval (benchmarkReceipt "test_op_001" true true).summary
-#eval (adversarialTrialReceipt "test_op_001" true).authority
-#eval (humanReviewReceipt "test_op_001" true "reviewer_alpha").kind
+#eval (leanBuildReceipt "test_op_001" true).valid   -- expect: true
+#eval (leanBuildReceipt "test_op_001" false).valid  -- expect: false
+#eval (benchmarkReceipt "test_op_001" true true).summary   -- expect: "benchmark: deltaBounded=true, phiPreserved=true"
+#eval (adversarialTrialReceipt "test_op_001" true).authority  -- expect: "adversarial_trial_runner"
+#eval (humanReviewReceipt "test_op_001" true "reviewer_alpha").kind  -- expect: Semantics.ReceiptCore.ReceiptKind.humanReview
 
 -- Empty list
-#eval emptyReceipts.length
+#eval emptyReceipts.length  -- expect: 0
 
--- Single receipt queries
-#eval hasReceiptOfKind [leanBuildReceipt "op1" true] "op1" .leanBuild
-#eval hasReceiptOfKind [leanBuildReceipt "op1" true] "op1" .benchmark
-#eval hasReceiptOfKind [leanBuildReceipt "op1" false] "op1" .leanBuild
+-- Single receipt queries: leanBuild present → true; benchmark absent → false; invalid → false
+#eval hasReceiptOfKind [leanBuildReceipt "op1" true] "op1" .leanBuild   -- expect: true
+#eval hasReceiptOfKind [leanBuildReceipt "op1" true] "op1" .benchmark   -- expect: false
+#eval hasReceiptOfKind [leanBuildReceipt "op1" false] "op1" .leanBuild  -- expect: false
 
 -- hasProofReceipt: no receipts → false
-#eval hasProofReceipt [] "any_target"
+#eval hasProofReceipt [] "any_target"  -- expect: false
 
 -- hasProofReceipt: only adversarialTrial → false (needs benchmark pair)
-#eval hasProofReceipt [adversarialTrialReceipt "op1" true] "op1"
+#eval hasProofReceipt [adversarialTrialReceipt "op1" true] "op1"  -- expect: false
 
 -- hasProofReceipt: adversarialTrial + benchmark pair → true
+-- expect: true
 #eval hasProofReceipt
   [adversarialTrialReceipt "op1" true, benchmarkReceipt "op1" true true] "op1"
 
 -- hasProofReceipt: externalProof alone → true
+-- expect: true
 #eval hasProofReceipt
   [{ kind := .externalProof, targetId := "op2", summary := "theorem proven",
      valid := true, authority := "lean_prover", timestamp := 4 }] "op2"
 
--- canPromoteFromCandidate
-#eval canPromoteFromCandidate [leanBuildReceipt "op1" true] "op1"
-#eval canPromoteFromCandidate [leanBuildReceipt "op1" false] "op1"
-#eval canPromoteFromCandidate [] "op1"
+-- canPromoteFromCandidate: valid leanBuild → true; invalid → false; empty → false
+#eval canPromoteFromCandidate [leanBuildReceipt "op1" true] "op1"   -- expect: true
+#eval canPromoteFromCandidate [leanBuildReceipt "op1" false] "op1"  -- expect: false
+#eval canPromoteFromCandidate [] "op1"                               -- expect: false
 
--- isBlocked
-#eval isBlocked [leanBuildReceipt "op1" false] "op1"
-#eval isBlocked [leanBuildReceipt "op1" true] "op1"
+-- isBlocked: invalid receipt → true; valid receipt → false
+#eval isBlocked [leanBuildReceipt "op1" false] "op1"  -- expect: true
+#eval isBlocked [leanBuildReceipt "op1" true] "op1"   -- expect: false
 
--- hasAllReceiptKinds
+-- hasAllReceiptKinds: both kinds present → true; one missing → false
+-- expect: true
 #eval hasAllReceiptKinds
   [leanBuildReceipt "op1" true, benchmarkReceipt "op1" true true] "op1"
   [.leanBuild, .benchmark]
 
+-- expect: false
 #eval hasAllReceiptKinds
   [leanBuildReceipt "op1" true] "op1"
   [.leanBuild, .benchmark]
 
 -- Ledger: empty
-#eval (ReceiptLedger.mk []).entries.length
+#eval (ReceiptLedger.mk []).entries.length  -- expect: 0
 
 -- Ledger: append receipt
-#eval (ledgerAppend (ReceiptLedger.mk []) "op1" (leanBuildReceipt "op1" true)).entries.length
+#eval (ledgerAppend (ReceiptLedger.mk []) "op1" (leanBuildReceipt "op1" true)).entries.length  -- expect: 1
 
 -- Ledger: lookup
-#eval (ledgerLookup (ledgerAppend (ReceiptLedger.mk []) "op1" (leanBuildReceipt "op1" true)) "op1").length
+#eval (ledgerLookup (ledgerAppend (ReceiptLedger.mk []) "op1" (leanBuildReceipt "op1" true)) "op1").length  -- expect: 1
 
--- Ledger: hasProofReceipt via ledger
+-- Ledger: hasProofReceipt via ledger: adversarialTrial + benchmark → true
+-- expect: true
 #eval ledgerHasProofReceipt
   (ledgerAppend
     (ledgerAppend (ReceiptLedger.mk []) "op1" (adversarialTrialReceipt "op1" true))

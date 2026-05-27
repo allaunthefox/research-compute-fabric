@@ -23,10 +23,15 @@ Rules until ported:
 TODO(lean-port): Replace determine_alignment + rewrite_warnings + hashing payload
 with Lean/AVM execution.
 
-BOUNDARY: Python thin IO shim; decision logic in Semantics.RRC.Emit.
-  - determine_alignment  → Semantics.RRC.Emit.determineAlignment
-  - rewrite_warnings     → Semantics.RRC.Emit.alignmentWarnings
-  - alignment scores     → Semantics.RRC.Emit.alignmentScore
+PARTIAL BOUNDARY: decision logic ported to Lean; Python execution path not yet replaced.
+  Ported (Lean is authoritative):
+    - determine_alignment  → Semantics.RRC.Emit.determineAlignment
+    - rewrite_warnings     → Semantics.RRC.Emit.alignmentWarnings
+    - alignment scores     → Semantics.RRC.Emit.alignmentScore
+  Still executing in Python (must be replaced with Lean bindserver call):
+    - determine_alignment(), rewrite_warnings() functions
+    - update_hash() canonical payload definition
+    - align_payload() orchestration loop
 """
 
 from __future__ import annotations

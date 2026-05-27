@@ -5,6 +5,7 @@ For each multi-step v2 trace, creates partial traces by removing the last tactic
 classifies the partial trace, and checks if the predicted tactic family matches
 the actual next tactic.
 """
+# PARTIAL BOUNDARY: contains domain logic; not a provable surface. Port to Lean/RRC before treating as authoritative.
 
 import glob
 import json

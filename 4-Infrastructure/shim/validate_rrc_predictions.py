@@ -6,6 +6,7 @@ pist-decompose, collects diagnostics:
 - Are crossing matrices unique?
 - Does exact spectrum classify better than convergence proxy?
 """
+# PARTIAL BOUNDARY: contains domain logic; not a provable surface. Port to Lean/RRC before treating as authoritative.
 
 import json
 import os

@@ -234,19 +234,21 @@ def emitRrcCorpus278 : String :=
 #eval checkTopBool (run 16 progAnd initState) false   -- expect: true
 #eval checkTopBool (run 16 progOr  initState) false   -- expect: true
 
--- Receipt validity
+-- Receipt validity: all three canaries (NOT, AND, OR) must be valid
+-- expect: [("avm.canary.not", true), ("avm.canary.and", true), ("avm.canary.or", true)]
 #eval canaryReceipts.map (fun r => (r.targetId, r.valid))
 
--- Full canary JSON bundle (the "rainbow raccoon compiler" output)
+-- Full canary JSON bundle: schema="avm_canary_emit_v1", all_canaries_passed=true, 3 receipts
+-- expect: JSON with schema "avm_canary_emit_v1", all_canaries_passed=true, projection_passed=true
 #eval emit.json
 
--- 278-equation corpus: AVM stamps the bundle, RRC.Emit classifies rows
--- (summary only — full JSON is ~200KB)
+-- 278-equation corpus: AVM stamps the bundle, RRC.Emit classifies rows.
+-- All 278 rows currently have no PIST prediction → all held (candidateRows=0).
+-- expect: (278, 0, 278)
 open Semantics.RRC.Emit in
 open Semantics.RRC.Corpus278 in
 #eval
   let r := emitCorpus "rrc_corpus278_v1" corpus278
   (r.totalRows, r.candidateRows, r.totalRows - r.candidateRows)
-  -- expect: (278, <passed_alignment>, <held>)
 
 end Semantics.AVMIsa.Emit

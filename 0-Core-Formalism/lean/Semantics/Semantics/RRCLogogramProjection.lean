@@ -119,25 +119,25 @@ def unrepairedTearReceipt : LogogramReceipt :=
 
 theorem semantic_tear_projects_after_repair :
     projectionAdmissible semanticTearReceipt = true := by
-  native_decide
+  decide
 
 theorem semantic_tear_does_not_merge :
     mergeAdmissible semanticTearReceipt = false := by
-  native_decide
+  decide
 
 theorem semantic_tear_uses_quarantine_lane :
     projectionLane semanticTearReceipt = ProjectionLane.quarantineProjection := by
-  native_decide
+  decide
 
 theorem unrepaired_tear_does_not_project :
     projectionAdmissible unrepairedTearReceipt = false := by
-  native_decide
+  decide
 
 theorem ordinary_logogram_projects_and_merges :
     projectionAdmissible ordinaryLogogramReceipt = true ∧
     mergeAdmissible ordinaryLogogramReceipt = true ∧
     projectionLane ordinaryLogogramReceipt = ProjectionLane.normalProjection := by
-  native_decide
+  decide
 
 /-- Any merge-admissible logogram is also projection-admissible. -/
 theorem merge_implies_projection (r : LogogramReceipt) :
@@ -165,10 +165,13 @@ theorem repaired_tear_separates_projection_from_merge
 
 /-! ## Eval witnesses for script/readback use. -/
 
-#eval projectionAdmissible semanticTearReceipt
-#eval mergeAdmissible semanticTearReceipt
-#eval projectionLane semanticTearReceipt
-#eval projectionAdmissible unrepairedTearReceipt
-#eval mergeAdmissible ordinaryLogogramReceipt
+-- semanticTearReceipt: repaired tear, logogram type → admissible for projection, not merge, normal lane
+#eval projectionAdmissible semanticTearReceipt   -- expect: true
+#eval mergeAdmissible semanticTearReceipt        -- expect: false
+#eval projectionLane semanticTearReceipt         -- expect: Semantics.RRCLogogramProjection.ProjectionLane.quarantineProjection
+-- unrepairedTearReceipt: unrepaired tear → not admissible for projection
+#eval projectionAdmissible unrepairedTearReceipt -- expect: false
+-- ordinaryLogogramReceipt: no tear → merge admissible
+#eval mergeAdmissible ordinaryLogogramReceipt    -- expect: true
 
 end Semantics.RRCLogogramProjection

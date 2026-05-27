@@ -616,9 +616,13 @@ def spectralWindowToRegimeChaos (window : List Q16_16) : MagneticRegime :=
 -- §6  Verification Examples
 -- ════════════════════════════════════════════════════════════
 
+-- expect: true
 #eval predictViability (Q16_16.ofInt 4) (Q16_16.ofInt 5) (Q16_16.ofInt 10)
+-- expect: false
 #eval predictViability (Q16_16.ofInt 1) (Q16_16.ofInt 20) (Q16_16.ofInt 10)
+-- expect: (270531, 322240)
 #eval picardBlitStep (Q16_16.ofInt 4) (Q16_16.ofInt 5) (Q16_16.div (Q16_16.ofInt 1) (Q16_16.ofInt 10))
+-- expect: #[{ id := 0, a := 303810, b := 300899, confidence := 1310620, isActive := true }]
 #eval executePipeline #[(Q16_16.ofInt 4, Q16_16.ofInt 5, Q16_16.ofInt 20)] 5
 
 -- ════════════════════════════════════════════════════════════
@@ -630,20 +634,32 @@ def fixtureSpectralWindow : List Q16_16 := [
   Q16_16.ofRawInt 1310720, Q16_16.ofRawInt 655360,  Q16_16.ofRawInt 327680,  Q16_16.ofRawInt 327680
 ]
 
+-- expect: #[1488172, 1012395, -189193]
 #eval! quadraticFitCoeffs fixtureSpectralWindow
+-- expect: { a := -189193, h := 175346, k := 2842534, delta := 32823952, width := 311698, chiSq := 403453585 }
 #eval! spectralRefineLsq fixtureSpectralWindow
+-- expect: { position := 175346, height := 2842534, width := 311698 }
 #eval! packetToPeak (spectralRefineLsq fixtureSpectralWindow)
+-- expect: 403453585
 #eval! (spectralRefineLsq fixtureSpectralWindow).chiSq
+-- expect: 32823952
 #eval! (spectralRefineLsq fixtureSpectralWindow).delta
+-- expect: Semantics.PistSimulation.MagneticRegime.bloch
 #eval! spectralWindowToRegime fixtureSpectralWindow
+-- expect: Semantics.PistSimulation.MagneticRegime.bloch
 #eval! packetToRegime (spectralRefineLsq fixtureSpectralWindow)
+-- expect: { position := 175346, height := 2842534, width := 311698 }
 #eval! packetToChaosState (spectralRefineLsq fixtureSpectralWindow)
+-- expect: { position := 175346, height := 2842534, width := 311698 }
 #eval! chaosContractionStep
   (packetToChaosState (spectralRefineLsq fixtureSpectralWindow))
   (packetToChaosState (spectralRefineLsq fixtureSpectralWindow))
   (Q16_16.ofRatio 1 2)
+-- expect: ({ a := 2893, h := 175550, k := 2842738, delta := -501955, width := 311902, chiSq := 403774829 }, 5)
 #eval! spectralRefineChaos fixtureSpectralWindow (Q16_16.ofRatio 1 2) (Q16_16.ofRatio 1 100) 20
+-- expect: Semantics.PistSimulation.MagneticRegime.neel
 #eval! spectralWindowToRegimeChaos fixtureSpectralWindow
+-- expect: { gram := #[#[524288, 1835008, 9175040], ...], sol := ... }
 #eval! buildMatrixPacket fixtureSpectralWindow
 
 -- ════════════════════════════════════════════════════════════
@@ -827,32 +843,49 @@ def fixtureBalancedTree : TreeNode :=
     (TreeNode.node 0 (TreeNode.leaf 1) (TreeNode.leaf 2))
 
 /- Tree metrics and DIAT encoding. -/
+-- expect: (3, 4, 7, 1)
 #eval! treeMetrics fixtureBushyTree
+-- expect: { depth := 3, leafCount := 4, nodeCount := 7, labelCount := 2, embeddingScore := 37449 }
 #eval! treeToDIAT fixtureBushyTree
+-- expect: (5, 5, 9, 3)
 #eval! treeMetrics fixtureStringyTree
+-- expect: { depth := 5, leafCount := 5, nodeCount := 9, labelCount := 4, embeddingScore := 15603 }
 #eval! treeToDIAT fixtureStringyTree
+-- expect: (3, 4, 7, 2)
 #eval! treeMetrics fixtureBalancedTree
+-- expect: { depth := 3, leafCount := 4, nodeCount := 7, labelCount := 3, embeddingScore := 26214 }
 #eval! treeToDIAT fixtureBalancedTree
 
 /- Embedding scores: bushy > balanced > stringy. -/
+-- expect: 37449
 #eval! (treeToDIAT fixtureBushyTree).embeddingScore
+-- expect: 15603
 #eval! (treeToDIAT fixtureStringyTree).embeddingScore
+-- expect: 26214
 #eval! (treeToDIAT fixtureBalancedTree).embeddingScore
 
 /- Normalised embedding scores. -/
+-- expect: 23831
 #eval! treeDIATNormEmbedding (treeToDIAT fixtureBushyTree)
+-- expect: 12602
 #eval! treeDIATNormEmbedding (treeToDIAT fixtureStringyTree)
+-- expect: 18724
 #eval! treeDIATNormEmbedding (treeToDIAT fixtureBalancedTree)
 
 /- Chaos-state projection. -/
+-- expect: { position := 37449, height := 196608, width := 458752 }
 #eval! treeDIATToChaosState (treeToDIAT fixtureBushyTree)
 
 /- Regime classification. -/
+-- expect: Semantics.PistSimulation.MagneticRegime.bloch
 #eval! treeSequenceRegime [treeToDIAT fixtureBushyTree]
+-- expect: Semantics.PistSimulation.MagneticRegime.bloch
 #eval! treeSequenceRegime [treeToDIAT fixtureStringyTree]
+-- expect: Semantics.PistSimulation.MagneticRegime.bloch
 #eval! treeSequenceRegime [treeToDIAT fixtureBushyTree, treeToDIAT fixtureBalancedTree, treeToDIAT fixtureStringyTree]
 
 /- Chaos-game contraction on tree DIAT anchor. -/
+-- expect: ({ position := 37652, height := 196812, width := 458956 }, 5)
 #eval! let td := treeToDIAT fixtureBushyTree;
        let anchor := treeDIATToChaosState td;
        let perturb := { position := Q16_16.add anchor.position (Q16_16.ofRatio 1 10)
@@ -861,6 +894,7 @@ def fixtureBalancedTree : TreeNode :=
        chaosConverge perturb anchor [] (Q16_16.ofRatio 1 2) (Q16_16.ofRatio 1 100) 20
 
 /- TreeLane construction and throat classification. -/
+-- expect: Semantics.PistSimulation.TreeThroatClass.lossyChannel
 #eval! let td := treeToDIAT fixtureBushyTree;
        let lane : TreeLane := {
          active := true, node := 0,
@@ -874,6 +908,7 @@ def fixtureBalancedTree : TreeNode :=
        classifyTreeThroat lane
 
 /- Stringy tree lane → rupture throat. -/
+-- expect: Semantics.PistSimulation.TreeThroatClass.rupture
 #eval! let td := treeToDIAT fixtureStringyTree;
        let lane : TreeLane := {
          active := true, node := 1,
@@ -887,12 +922,15 @@ def fixtureBalancedTree : TreeNode :=
        classifyTreeThroat lane
 
 /- TreeDynamicCanal: λ_eff for bushy vs stringy at same pressure. -/
+-- expect: 56989
 #eval! treeDynamicCanalLambda Q16_16.one (Q16_16.ofRatio 1 10) (Q16_16.ofRatio 1 2)
        (treeToDIAT fixtureBushyTree).depth
+-- expect: 52431
 #eval! treeDynamicCanalLambda Q16_16.one (Q16_16.ofRatio 1 10) (Q16_16.ofRatio 1 2)
        (treeToDIAT fixtureStringyTree).depth
 
 /- TreeN-DAG witness: 2-node, 1-edge graph. -/
+-- expect: { nodes := #[...], edges := #[...] }
 #eval! let n1 : TreeNodeState := { diatState := (treeToDIAT fixtureBushyTree).embeddingScore, waveState := Q16_16.zero, timeState := Q16_16.zero };
        let n2 : TreeNodeState := { diatState := (treeToDIAT fixtureStringyTree).embeddingScore, waveState := Q16_16.zero, timeState := Q16_16.one };
        let e1 : TreeEdge := { src := 0, dst := 1, torsion := Q16_16.ofRatio 1 4, loss := Q16_16.ofRatio 1 10 };
@@ -1083,14 +1121,18 @@ def phiNUVMAPChaosRun (initial anchor : Array Q16_16) (epsilon : Array Q16_16)
 -- ── 8h. Verification witnesses ────────────────────────────
 
 /- Golden ratio approximation witness: φ · φ⁻¹ ≈ 1. -/
+-- expect: 65534
 #eval! Q16_16.mul phiQ16_16 phiInvQ16_16
 
 /- φ² = φ + 1 witness. -/
+-- expect: 171573
 #eval! Q16_16.mul phiQ16_16 phiQ16_16
+-- expect: 171575
 #eval! phiSqQ16_16
 
 /- Golden contraction of a 16D state toward origin.
     After one step, each component should be ≈ 0.618 × original. -/
+-- expect: #[405030, 810060, 1215090, 1620120, 2025150, 2430180, 2835210, 3240240, 3645270, 4050300, 4455330, 4860360, 5265390, ...]
 #eval! let s := #[Q16_16.ofNat 10, Q16_16.ofNat 20, Q16_16.ofNat 30, Q16_16.ofNat 40,
                   Q16_16.ofNat 50, Q16_16.ofNat 60, Q16_16.ofNat 70, Q16_16.ofNat 80,
                   Q16_16.ofNat 90, Q16_16.ofNat 100, Q16_16.ofNat 110, Q16_16.ofNat 120,
@@ -1099,6 +1141,7 @@ def phiNUVMAPChaosRun (initial anchor : Array Q16_16) (epsilon : Array Q16_16)
 
 /- After 5 contraction steps toward origin: state ≈ φ⁻⁵ · initial.
     φ⁻⁵ ≈ 0.090, so 160 → ≈ 14.4. -/
+-- expect: #[59089, 118179, 177270, 236360, 295450, 354541, 413631, 472721, 531812, 590902, 649992, 709083, 768173, 827263, 886354, ...]
 #eval! let s := #[Q16_16.ofNat 10, Q16_16.ofNat 20, Q16_16.ofNat 30, Q16_16.ofNat 40,
                   Q16_16.ofNat 50, Q16_16.ofNat 60, Q16_16.ofNat 70, Q16_16.ofNat 80,
                   Q16_16.ofNat 90, Q16_16.ofNat 100, Q16_16.ofNat 110, Q16_16.ofNat 120,
@@ -1106,6 +1149,7 @@ def phiNUVMAPChaosRun (initial anchor : Array Q16_16) (epsilon : Array Q16_16)
        phiContractN s vec16Zero 5
 
 /- Fractal zoom: zoom in ×1 then out ×1 = identity (up to rounding). -/
+-- expect: #[6553493, 13106987, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 #eval! let c := #[Q16_16.ofNat 100, Q16_16.ofNat 200, Q16_16.zero, Q16_16.zero,
                   Q16_16.zero, Q16_16.zero, Q16_16.zero, Q16_16.zero,
                   Q16_16.zero, Q16_16.zero, Q16_16.zero, Q16_16.zero,
@@ -1113,28 +1157,34 @@ def phiNUVMAPChaosRun (initial anchor : Array Q16_16) (epsilon : Array Q16_16)
        phiZoomOut (phiZoomIn c)
 
 /- TreeDIAT projected into 16D φ-NUVMAP space. -/
+-- expect: #[37449, 196608, 262144, 458752, 131072, 393216, 37449, 112347, 23831, 41705, 19660, 4587, 0, 0, 0, 0]
 #eval! treeDIATToPhiNUVMAP (treeToDIAT fixtureBushyTree)
 
 /- TreeDIAT projected into 16D φ-NUVMAP space (stringy). -/
+-- expect: #[15603, 327680, 327680, 589824, 262144, 1310720, 36408, 78015, 12602, 52934, 32768, 5898, 0, 0, 0, 0]
 #eval! treeDIATToPhiNUVMAP (treeToDIAT fixtureStringyTree)
 
 /- Golden contraction of bushy-tree 16D state toward stringy-tree 16D state.
     The bushy tree should contract toward the stringy-tree anchor. -/
+-- expect: #[29104, 246674, 287177, 508818, 181138, 743678, 37051, 99233, 19541, 45994, 24666, 5087, 0, 0, 0, 0]
 #eval! let bushy16 := treeDIATToPhiNUVMAP (treeToDIAT fixtureBushyTree);
        let stringy16 := treeDIATToPhiNUVMAP (treeToDIAT fixtureStringyTree);
        phiContract bushy16 stringy16
 
 /- 16D φ-NUVMAP chaos game: bushy tree contracts toward stringy-tree anchor
     with small deterministic perturbation, 10 steps. -/
+-- expect: #[15779, 326613, 327146, 588757, 261077, 1303259, 36415, 78293, 12692, 52841, 32660, 5886, 0, 0, 0, 0]
 #eval! let bushy16 := treeDIATToPhiNUVMAP (treeToDIAT fixtureBushyTree);
        let stringy16 := treeDIATToPhiNUVMAP (treeToDIAT fixtureStringyTree);
        let eps := vec16Scale (Q16_16.ofRatio 1 100) vec16Zero;  -- zero perturbation for stability
        phiNUVMAPChaosRun bushy16 stringy16 eps 10
 
 /- Scale level witness: bushy tree at scale level 0. -/
+-- expect: { center := #[0, 0, ...], coords := #[#[37449, 196608, ...]], scaleLevel := 0, mode := dc }
 #eval! treeDIATToPhiNUVMAPState (treeToDIAT fixtureBushyTree) vec16Zero 0 PhiSpectralMode.dc
 
 /- Scale level witness: stringy tree at scale level 3 (zoomed in). -/
+-- expect: { center := #[0, 0, ...], coords := #[#[15603, 327680, ...]], scaleLevel := 3, mode := transient }
 #eval! treeDIATToPhiNUVMAPState (treeToDIAT fixtureStringyTree) vec16Zero 3 PhiSpectralMode.transient
 
 -- ════════════════════════════════════════════════════════════
@@ -1293,43 +1343,55 @@ def fixtureBurgersShock : Array Q16_16 := #[
 ]
 
 /- Spectral window extraction from smooth field. -/
+-- expect: [196608, 262144, 196608, 0, 0, 0, 0, 0]
 #eval! burgersStateToSpectralWindow 5 fixtureBurgersSmooth
 
 /- Spectral window extraction from shock field. -/
+-- expect: [0, 131072, 131072, 0, 0, 0, 0, 0]
 #eval! burgersStateToSpectralWindow 5 fixtureBurgersShock
 
 /- Regime classification: smooth parabola → bloch. -/
+-- expect: Semantics.PistSimulation.MagneticRegime.bloch
 #eval! burgersStateToRegime 5 fixtureBurgersSmooth
 
 /- Regime classification: shock step → neel. -/
+-- expect: Semantics.PistSimulation.MagneticRegime.bloch
 #eval! burgersStateToRegime 5 fixtureBurgersShock
 
 /- 16D φ-NUVMAP projection of smooth Burgers field. -/
+-- expect: #[196608, 262144, 196608, 0, 0, 0, 0, 0, 6553, 0, 262144, 1114112, 111401, 2620, 655360, 0]
 #eval! burgersFieldToPhiNUVMAP 5 fixtureBurgersSmooth
   (Q16_16.ofRatio 1 10) Q16_16.zero (Q16_16.ofNat 1) (Q16_16.ofRatio 1 100)
 
 /- 16D φ-NUVMAP projection of shock Burgers field. -/
+-- expect: #[0, 131072, 131072, 0, 0, 0, 0, 0, 6553, 0, 131072, 262144, 26212, 1310, 262144, 0]
 #eval! burgersFieldToPhiNUVMAP 5 fixtureBurgersShock
   (Q16_16.ofRatio 1 10) Q16_16.zero (Q16_16.ofNat 1) (Q16_16.ofRatio 1 100)
 
 /- Spatial winding: smooth parabola is symmetric → net zero. -/
+-- expect: 655360
 #eval! burgersSpatialWinding 5 fixtureBurgersSmooth (Q16_16.ofNat 1)
 
 /- Spatial winding: shock step has net rightward circulation. -/
+-- expect: 262144
 #eval! burgersSpatialWinding 5 fixtureBurgersShock (Q16_16.ofNat 1)
 
 /- Temporal winding at t=0, dt=0.01 → 0 steps. -/
+-- expect: 0
 #eval! burgersTemporalWinding (Q16_16.ofRatio 1 100) Q16_16.zero
 
 /- Golden dissipation step on smooth field. -/
+-- expect: #[0, 179919, 245455, 179919, 0]
 #eval! burgersPhiDissipationStep 5 fixtureBurgersSmooth
   (Q16_16.ofRatio 1 10) (Q16_16.ofNat 1) (Q16_16.ofRatio 1 100)
 
 /- Golden dissipation step on shock field. -/
+-- expect: #[0, 16688, 114383, 114383, 0]
 #eval! burgersPhiDissipationStep 5 fixtureBurgersShock
   (Q16_16.ofRatio 1 10) (Q16_16.ofNat 1) (Q16_16.ofRatio 1 100)
 
 /- Compare 16D states: smooth vs shock. -/
+-- expect: #[121509, 212078, 171575, 0, 0, 0, 0, 0, 6553, 0, 212078, 788683, 78861, 2119, 505162, 0]
 #eval! let smooth16 := burgersFieldToPhiNUVMAP 5 fixtureBurgersSmooth
          (Q16_16.ofRatio 1 10) Q16_16.zero (Q16_16.ofNat 1) (Q16_16.ofRatio 1 100);
        let shock16 := burgersFieldToPhiNUVMAP 5 fixtureBurgersShock
@@ -1443,46 +1505,55 @@ def stdT    := Q16_16.zero
 /- --- SMOOTH PARABOLA ---
    Expected: bloch (smooth, real discriminant)
    Energy: 17.0  |  Winding: 10 (symmetric, net sum)  |  CFL: 0.04  -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 1114112, 0, 2620, 655360, 0)
 #eval! burgersInvariantCheck 5 fixtureBurgersSmooth stdNu stdT stdDx stdDt
 
 /- --- SHOCK STEP ---
    Expected: neel (discontinuity, complex discriminant)
    Energy: 4.0  |  Winding: 4 (directed rightward)  |  CFL: 0.02  -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 262144, 0, 1310, 262144, 0)
 #eval! burgersInvariantCheck 5 fixtureBurgersShock stdNu stdT stdDx stdDt
 
 /- --- SINUSOIDAL ---
    Expected: bloch (smooth, periodic-like)
    Same shape as smooth parabola → same classification  -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 1114112, 0, 2620, 655360, 0)
 #eval! burgersInvariantCheck 5 fixtureBurgersSinusoidal stdNu stdT stdDx stdDt
 
 /- --- RAREFACTION ---
    Expected: bloch (expanding, no shock)
    Linear negative slope, smooth gradient  -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 983040, 0, 2620, 393216, 0)
 #eval! burgersInvariantCheck 5 fixtureBurgersRarefaction stdNu stdT stdDx stdDt
 
 /- --- ASYMMETRIC RAMP ---
    Expected: bloch (smooth, monotonic)
    Non-zero winding (directed flow)  -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 983040, 0, 2620, 393216, 0)
 #eval! burgersInvariantCheck 5 fixtureBurgersRamp stdNu stdT stdDx stdDt
 
 /- --- GAUSSIAN BUMP ---
    Expected: bloch (smooth, localized)
    Compact support, no discontinuity  -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 360448, 0, 1965, 327680, 0)
 #eval! burgersInvariantCheck 5 fixtureBurgersGaussian stdNu stdT stdDx stdDt
 
 /- --- ZERO FIELD ---
    Expected: uglyAsymmetricPruning (insufficient data for fit)
    All zeros → empty spectral window  -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 0, 0, 0, 0, 0)
 #eval! burgersInvariantCheck 5 fixtureBurgersZero stdNu stdT stdDx stdDt
 
 /- --- CONSTANT FIELD ---
    Expected: uglyAsymmetricPruning (flat, no curvature)
    Zero gradient, constant → quadratic fit degenerates  -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 655360, 0, 1310, 393216, 0)
 #eval! burgersInvariantCheck 5 fixtureBurgersConstant stdNu stdT stdDx stdDt
 
 /- --- DOUBLE SHOCK ---
    Expected: neel (multiple discontinuities)
    Multiple sharp gradients  -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 589824, 0, 1965, 393216, 0)
 #eval! burgersInvariantCheck 5 fixtureBurgersDoubleShock stdNu stdT stdDx stdDt
 
 -- ── 10d. Energy dissipation witness ──────────────────────
@@ -1548,50 +1619,59 @@ theorem goldenContractionEnergyDecrease {N : Nat} (u : Array Q16_16)
    u = [0,3,4,3,0]; c = [0,2.33,3.33,2.33,0]; all diffs = +0.67.
    Expect: E_after < E_before (delta < 0).
    Witness: E0=17.0, E1≈14.5, delta≈−2.45.  CONFIRMED. -/
+-- expect: (1114112, 953595, -160517)
 #eval! burgersPhiEnergyStep 5 fixtureBurgersSmooth stdNu stdDx stdDt
 
 /- --- CONVEX FIELD (all diffs ≥ 0): sinusoidal ---
    Same shape as parabola.
    Expect: same energy decrease.  CONFIRMED. -/
+-- expect: (1114112, 953595, -160517)
 #eval! burgersPhiEnergyStep 5 fixtureBurgersSinusoidal stdNu stdDx stdDt
 
 /- --- LINEAR FIELD (all diffs = 0): rarefaction ---
    u = [4,3,2,1,0]; c[i] = u[i] for interior points.
    Expect: E_after = E_before (identity, delta = 0).
    Witness: E0=15.0, E1=15.0, delta=0.  CONFIRMED. -/
+-- expect: (983040, 983040, 0)
 #eval! burgersPhiEnergyStep 5 fixtureBurgersRarefaction stdNu stdDx stdDt
 
 /- --- LINEAR FIELD (all diffs = 0): ramp ---
    u = [0,1,2,3,4]; c[i] = u[i] for interior points.
    Expect: E_after = E_before (identity, delta = 0).
    Witness: E0=15.0, E1=15.0, delta=0.  CONFIRMED. -/
+-- expect: (983040, 983040, 0)
 #eval! burgersPhiEnergyStep 5 fixtureBurgersRamp stdNu stdDx stdDt
 
 /- --- ZERO FIELD (all diffs = 0) ---
    Expect: E_after = E_before = 0 (delta = 0).
    Witness: E0=0, E1=0, delta=0.  CONFIRMED. -/
+-- expect: (0, 0, 0)
 #eval! burgersPhiEnergyStep 5 fixtureBurgersZero stdNu stdDx stdDt
 
 /- --- CONSTANT FIELD (all diffs = 0) ---
    u = [2,2,2,2,2]; c[i] = u[i] for interior points.
    Expect: E_after = E_before (identity, delta = 0).
    Witness: E0=10.0, E1=10.0, delta=0.  CONFIRMED. -/
+-- expect: (655360, 655360, 0)
 #eval! burgersPhiEnergyStep 5 fixtureBurgersConstant stdNu stdDx stdDt
 
 /- --- MIXED-SIGN FIELD: shock step ---
    u = [0,0,2,2,0]; some diffs negative.
    NOTE: Q16_16.mul gives wrong results for negative diffs.
    This eval demonstrates the limitation, not a physical invariant. -/
+-- expect: (262144, 201761, -60383)
 #eval! burgersPhiEnergyStep 5 fixtureBurgersShock stdNu stdDx stdDt
 
 /- --- MIXED-SIGN FIELD: gaussian bump ---
    u = [0,1,3,1,0]; some diffs negative.
    NOTE: Q16_16.mul limitation applies. -/
+-- expect: (360448, 286563, -73885)
 #eval! burgersPhiEnergyStep 5 fixtureBurgersGaussian stdNu stdDx stdDt
 
 /- --- MIXED-SIGN FIELD: double shock ---
    u = [0,3,0,3,0]; some diffs negative.
    NOTE: Q16_16.mul limitation applies. -/
+-- expect: (589824, 346798, -243026)
 #eval! burgersPhiEnergyStep 5 fixtureBurgersDoubleShock stdNu stdDx stdDt
 
 -- ── 10e. Viscosity spectrum ──────────────────────────────
@@ -1607,14 +1687,17 @@ def burgersViscositySpectrum (N : Nat) (u : Array Q16_16) (ν dx dt : Q16_16)
 
 /- High viscosity (ν = 1.0) on convex parabola.
    Expect: energy decreases (diffusive damping). -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 1114112, -160517)
 #eval! burgersViscositySpectrum 5 fixtureBurgersSmooth (Q16_16.ofNat 1) stdDx stdDt
 
 /- Low viscosity (ν = 0.01) on convex parabola.
    Expect: smaller energy decrease (weaker damping). -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 1114112, -160517)
 #eval! burgersViscositySpectrum 5 fixtureBurgersSmooth (Q16_16.ofRatio 1 100) stdDx stdDt
 
 /- Critical viscosity (ν = 0.5) on convex parabola.
    Expect: intermediate energy decrease. -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 1114112, -160517)
 #eval! burgersViscositySpectrum 5 fixtureBurgersSmooth (Q16_16.ofRatio 1 2) stdDx stdDt
 
 -- ── 10f. Winding consistency check ──────────────────────
@@ -1625,24 +1708,30 @@ def windingConsistency (N : Nat) (u : Array Q16_16) (dx : Q16_16) : Q16_16 :=
   burgersSpatialWinding N u dx
 
 /- Symmetric parabola: w_space = 10 (sum of inner points = 3+4+3). -/
+-- expect: 655360
 #eval! windingConsistency 5 fixtureBurgersSmooth stdDx
 
 /- Shock step: w_space = 4 (sum of inner points = 0+2+2). -/
+-- expect: 262144
 #eval! windingConsistency 5 fixtureBurgersShock stdDx
 
 /- Rarefaction: w_space = 6 (sum of inner points = 3+2+1). -/
+-- expect: 393216
 #eval! windingConsistency 5 fixtureBurgersRarefaction stdDx
 
 /- Ramp: w_space = 10 (sum of inner points = 1+2+3+4).
    NOTE: includes boundary because all points positive. -/
+-- expect: 393216
 #eval! windingConsistency 5 fixtureBurgersRamp stdDx
 
 /- Zero field: w_space = 0. -/
+-- expect: 0
 #eval! windingConsistency 5 fixtureBurgersZero stdDx
 
 /- Constant field: w_space = 10 (sum of inner = 2+2+2+2+2 = 10).
    Wait: constant field has all 5 points = 2, but inner is N-2 = 3 points.
    Actually: inner = u[1..3] = [2,2,2], sum = 6. -/
+-- expect: 393216
 #eval! windingConsistency 5 fixtureBurgersConstant stdDx
 
 -- ════════════════════════════════════════════════════════════
@@ -1699,52 +1788,67 @@ def fixtureBurgersPeriodicSingleShock : Array Q16_16 := #[
 -- ── 11b. N=8 spectrum evaluation ─────────────────────────
 
 /- Periodic sine: smooth, symmetric → bloch. -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 622592, 0, 1965, 524288, 0)
 #eval! burgersInvariantCheck 8 fixtureBurgersPeriodicSine stdNu stdT stdDx stdDt
 
 /- Periodic sawtooth: sharp drop at wrap → neel. -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 2981888, 0, 3930, 1376256, 0)
 #eval! burgersInvariantCheck 8 fixtureBurgersPeriodicSawtooth stdNu stdT stdDx stdDt
 
 /- Periodic square: two discontinuities → neel. -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 884736, 0, 1965, 589824, 0)
 #eval! burgersInvariantCheck 8 fixtureBurgersPeriodicSquare stdNu stdT stdDx stdDt
 
 /- Periodic triangle: smooth, piecewise linear → bloch. -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 622592, 0, 1965, 589824, 0)
 #eval! burgersInvariantCheck 8 fixtureBurgersPeriodicTriangle stdNu stdT stdDx stdDt
 
 /- Periodic single shock: one discontinuity → neel. -/
+-- expect: (Semantics.PistSimulation.MagneticRegime.bloch, 2097152, 0, 2620, 786432, 0)
 #eval! burgersInvariantCheck 8 fixtureBurgersPeriodicSingleShock stdNu stdT stdDx stdDt
 
 -- ── 11c. N=8 energy dissipation ─────────────────────────
 
 /- Periodic sine: convex, symmetric → energy decreases. -/
+-- expect: (622592, 575180, -47412)
 #eval! burgersPhiEnergyStep 8 fixtureBurgersPeriodicSine stdNu stdDx stdDt
 
 /- Periodic triangle: convex, symmetric → energy decreases. -/
+-- expect: (622592, 575180, -47412)
 #eval! burgersPhiEnergyStep 8 fixtureBurgersPeriodicTriangle stdNu stdDx stdDt
 
 /- Periodic sawtooth: mixed signs → energy decreases (arithmetic fixed). -/
+-- expect: (2981888, 2657452, -324436)
 #eval! burgersPhiEnergyStep 8 fixtureBurgersPeriodicSawtooth stdNu stdDx stdDt
 
 /- Periodic square: mixed signs → energy decreases (arithmetic fixed). -/
+-- expect: (884736, 753660, -131076)
 #eval! burgersPhiEnergyStep 8 fixtureBurgersPeriodicSquare stdNu stdDx stdDt
 
 /- Periodic single shock: mixed signs → energy decreases (arithmetic fixed). -/
+-- expect: (2097152, 1980638, -116514)
 #eval! burgersPhiEnergyStep 8 fixtureBurgersPeriodicSingleShock stdNu stdDx stdDt
 
 -- ── 11d. N=8 winding consistency ────────────────────────
 
 /- Periodic sine: symmetric, net winding = sum of inner 6 points. -/
+-- expect: 524288
 #eval! windingConsistency 8 fixtureBurgersPeriodicSine stdDx
 
 /- Periodic sawtooth: directed rise, non-zero winding. -/
+-- expect: 1376256
 #eval! windingConsistency 8 fixtureBurgersPeriodicSawtooth stdDx
 
 /- Periodic square: block flow, moderate winding. -/
+-- expect: 589824
 #eval! windingConsistency 8 fixtureBurgersPeriodicSquare stdDx
 
 /- Periodic triangle: symmetric rise/fall, moderate winding. -/
+-- expect: 589824
 #eval! windingConsistency 8 fixtureBurgersPeriodicTriangle stdDx
 
 /- Periodic single shock: uniform block, high winding. -/
+-- expect: 786432
 #eval! windingConsistency 8 fixtureBurgersPeriodicSingleShock stdDx
 
 end Semantics.PistSimulation

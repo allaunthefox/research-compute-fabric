@@ -4,6 +4,7 @@
 Usage:
     python3 pist_prove_and_classify.py --code 'theorem t: 1+1=2 := by omega' --name my_theorem
 """
+# PARTIAL BOUNDARY: contains domain logic; not a provable surface. Port to Lean/RRC before treating as authoritative.
 
 import argparse
 import json

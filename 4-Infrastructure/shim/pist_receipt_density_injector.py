@@ -21,12 +21,17 @@ Rules until ported:
 
 TODO(lean-port): Replace all scoring and warning decisions with Lean/AVM.
 
-BOUNDARY: Python thin IO shim; scoring logic in Semantics.RRC.ReceiptDensity.
-  - spectral_quality   → Semantics.RRC.ReceiptDensity.spectralQuality
-  - shape_agreement    → Semantics.RRC.ReceiptDensity.shapeAgreement
-  - axis_score         → Semantics.RRC.ReceiptDensity.axisScore
-  - status_score       → Semantics.RRC.ReceiptDensity.statusScore
-  - compute_density    → Semantics.RRC.ReceiptDensity.computeDensity
+PARTIAL BOUNDARY: scoring logic ported to Lean; Python execution path not yet replaced.
+  Ported (Lean is authoritative):
+    - spectral_quality   → Semantics.RRC.ReceiptDensity.spectralQuality
+    - shape_agreement    → Semantics.RRC.ReceiptDensity.shapeAgreement
+    - axis_score         → Semantics.RRC.ReceiptDensity.axisScore
+    - status_score       → Semantics.RRC.ReceiptDensity.statusScore
+    - compute_density    → Semantics.RRC.ReceiptDensity.computeDensity
+  Still executing in Python (must be replaced with Lean bindserver call):
+    - spectral_quality(), shape_agreement(), axis_score(), status_score(), compute_density()
+    - build_record(), align_payload() orchestration
+    - stable_hash() canonical payload definition
 """
 
 from __future__ import annotations

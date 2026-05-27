@@ -4,6 +4,7 @@
 Reads canary receipts + results, infers labels from Lean code and proof output.
 Outputs shared-data/pist_canary_ground_truth_labels.jsonl
 """
+# PARTIAL BOUNDARY: contains domain logic; not a provable surface. Port to Lean/RRC before treating as authoritative.
 
 import json
 import os

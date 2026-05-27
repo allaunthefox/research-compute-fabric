@@ -20,6 +20,7 @@ for residual/stress graphs or non-contractible topology witnesses.
 The output JSON is a receipt-style summary that can be consumed by docs, tests,
 or later NUVMAP/PIST routing tools.
 """
+# PARTIAL BOUNDARY: contains domain logic; not a provable surface. Port to Lean/RRC before treating as authoritative.
 
 from __future__ import annotations
 

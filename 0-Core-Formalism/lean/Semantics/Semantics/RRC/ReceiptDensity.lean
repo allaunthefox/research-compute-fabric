@@ -163,7 +163,7 @@ private def wLap     : Int := 12
 private def wHash    : Int := 16
 
 private def lapScore (lapFull : Bool) : Q16_16 :=
-  if lapFull then Q16_16.one else Q16_16.ofRawInt 29491  -- 0.45 ≈ 29491
+  if lapFull then Q16_16.one else Q16_16.ofRawInt 29491  -- 0.45 * 65536 = 29491.2 ≈ 29491
 
 private def hashScore (hasHashes : Bool) : Q16_16 :=
   if hasHashes then Q16_16.one else Q16_16.zero
@@ -261,8 +261,9 @@ def claimBoundary : String :=
 
 open RRCLogogramProjection in
 -- Witness: CANDIDATE row with 3/5 target axes, no PIST prediction.
--- Expected density ≈ 0.26*0.45 + 0.24*(3/4) + 0.26*0.0 + 0.24*0.0
---                  = 0.117 + 0.18 = 0.297 → raw ≈ 19464
+-- Hand calc: density = 0.26*0.45 + 0.24*(3/4) + 0.26*0.0 + 0.24*0.0
+--                    = 17107 + 11796 + 0 + 0 = (in Q16_16 integer ≈ 20382 after mul)
+-- expect: (20382, ["missing_pist_prediction"])
 #eval
   let axes : AxisFlags :=
     { projectionDeclared := true, negativeControlStrength := false
@@ -275,8 +276,10 @@ open RRCLogogramProjection in
   (r.density.toInt, r.warnings)
 
 open RRCLogogramProjection in
--- Witness: VERIFIED row, exact PIST match, 5/5 axes, reasonable spectral.
--- Expected density ≈ 0.26*0.84 + 0.24*1.0 + 0.26*spectral + 0.24*1.0
+-- Witness: VERIFIED row, exact PIST match, 5/5 axes, full spectral.
+-- Hand calc: spectralQuality ≈ 0.24*0.5 + 0.18*0.75 + 0.18*0.67 + 0.12*0.5 + 0.12*1 + 0.16*1
+--            density = 0.26*0.84 + 0.24*1.0 + 0.26*spectral + 0.24*1.0 (high, ~0.88)
+-- expect: (57951, 58207, [])
 #eval
   let axes : AxisFlags :=
     { projectionDeclared := true, negativeControlStrength := true

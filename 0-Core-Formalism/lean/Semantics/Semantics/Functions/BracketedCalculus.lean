@@ -93,6 +93,6 @@ def adaptiveRefine (b : BracketedDIAT) (curvatureThreshold : Q16_16)
 
 end BracketedDIAT
 
-#eval (BracketedDIAT.encode zero (Q16_16.ofFloat 5.0) (Q16_16.ofFloat 10.0) 0).value.val
+#eval (BracketedDIAT.encode zero (Q16_16.ofFloat 5.0) (Q16_16.ofFloat 10.0) 0).value.val  -- expect: 327680
 
 end Semantics.BracketedCalculus

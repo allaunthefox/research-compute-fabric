@@ -12,6 +12,7 @@ With options:
   insert: bool (default false) — store result in ene.artifacts
   top_k: int (default 5) — number of nearest motifs to return
 """
+# PARTIAL BOUNDARY: contains domain logic; not a provable surface. Port to Lean/RRC before treating as authoritative.
 
 import json
 import math

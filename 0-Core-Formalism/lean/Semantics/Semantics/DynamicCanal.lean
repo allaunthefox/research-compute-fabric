@@ -786,36 +786,40 @@ theorem stepSection_total (p : KernelParams) (sec : CanalSection)
 -- ============================================================
 
 -- Test fixed-point constructors
-#eval Q16_16.zero.val
-#eval Q16_16.one.val
+#eval Q16_16.zero.val  -- expect: 0
+#eval Q16_16.one.val   -- expect: 65536
 
 -- Test DIAT encoding
-#eval DIAT.encode 10
+#eval DIAT.encode 10  -- expect: { shell := 3, a := 1, b := 6, prod := 6, diff := -5 }
 
 -- Test regime equality
-#eval Regime.coherent == Regime.coherent
-#eval Regime.stressed == Regime.throat
+#eval Regime.coherent == Regime.coherent  -- expect: true
+#eval Regime.stressed == Regime.throat    -- expect: false
 
 -- Test coarse-graining precision metrics
+-- expect: { pressurePrecision := 65470, thermalPrecision := 65470, velocityPrecision := 65470, densityPrecision := 65470, stressPrecision := 65470 }
 #eval CoarseGraining.defaultPrecisionMetrics
 
 -- Test coarse-graining factor calculation
-#eval CoarseGraining.coarseGrainFactor 0 10  -- Loop 0 of 10: should be 1.0
-#eval CoarseGraining.coarseGrainFactor 5 10  -- Loop 5 of 10: should be 0.75
-#eval CoarseGraining.coarseGrainFactor 10 10 -- Loop 10 of 10: should be 0.5
+#eval CoarseGraining.coarseGrainFactor 0 10  -- Loop 0 of 10: expect: 65536  (1.0 in Q16_16)
+#eval CoarseGraining.coarseGrainFactor 5 10  -- Loop 5 of 10: expect: 49152  (0.75 in Q16_16)
+#eval CoarseGraining.coarseGrainFactor 10 10 -- Loop 10 of 10: expect: 32768 (0.5 in Q16_16)
 
 -- Test coarse-graining application
+-- expect: 65470
 #eval CoarseGraining.applyCoarseGraining (Q16_16.ofFloat 1.0) GradientType.pressureGradient
         CoarseGraining.defaultPrecisionMetrics 0 10
+-- expect: 49102
 #eval CoarseGraining.applyCoarseGraining (Q16_16.ofFloat 1.0) GradientType.pressureGradient
         CoarseGraining.defaultPrecisionMetrics 5 10
+-- expect: 32735
 #eval CoarseGraining.applyCoarseGraining (Q16_16.ofFloat 1.0) GradientType.pressureGradient
         CoarseGraining.defaultPrecisionMetrics 10 10
 
 -- Test coarse-graining level update
-#eval CoarseGraining.updateCoarseGrainLevel 0 0 5  -- Level 0
-#eval CoarseGraining.updateCoarseGrainLevel 0 5 5  -- Level 1
-#eval CoarseGraining.updateCoarseGrainLevel 0 10 5 -- Level 2
+#eval CoarseGraining.updateCoarseGrainLevel 0 0 5  -- Level 0: expect: 0
+#eval CoarseGraining.updateCoarseGrainLevel 0 5 5  -- Level 1: expect: 1
+#eval CoarseGraining.updateCoarseGrainLevel 0 10 5 -- Level 2: expect: 2
 
 -- Test canal section with loop iteration and coarse-graining
 def testCanalSectionWithCoarseGraining : CanalSection :=
@@ -840,5 +844,5 @@ def testCanalSectionWithCoarseGraining : CanalSection :=
     coarseGrainLevel := 0
   }
 
-#eval testCanalSectionWithCoarseGraining.loopIteration
-#eval testCanalSectionWithCoarseGraining.coarseGrainLevel
+#eval testCanalSectionWithCoarseGraining.loopIteration    -- expect: 0
+#eval testCanalSectionWithCoarseGraining.coarseGrainLevel -- expect: 0

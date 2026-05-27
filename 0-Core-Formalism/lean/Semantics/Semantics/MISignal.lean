@@ -87,7 +87,7 @@ def miSignalBind (a b : MIRecord) (m : Metric) : Bind MIRecord MIRecord :=
   informationalBind a b m miCost miInvariant miInvariant
 
 -- Verify
-#eval mutualInformationSignal { baselineBpb := Q16_16.ofRawInt (5 * 65536), actualBpb := Q16_16.ofRawInt (3 * 65536), miPredicted := Q16_16.ofRawInt (2 * 65536) }
-#eval surpriseMetric { baselineBpb := Q16_16.ofRawInt (5 * 65536), actualBpb := Q16_16.ofRawInt (3 * 65536), miPredicted := Q16_16.ofRawInt 65536 }
+#eval mutualInformationSignal { baselineBpb := Q16_16.ofRawInt (5 * 65536), actualBpb := Q16_16.ofRawInt (3 * 65536), miPredicted := Q16_16.ofRawInt (2 * 65536) }  -- expect: 131072
+#eval surpriseMetric { baselineBpb := Q16_16.ofRawInt (5 * 65536), actualBpb := Q16_16.ofRawInt (3 * 65536), miPredicted := Q16_16.ofRawInt 65536 }  -- expect: 131072
 
 end Semantics.MISignal

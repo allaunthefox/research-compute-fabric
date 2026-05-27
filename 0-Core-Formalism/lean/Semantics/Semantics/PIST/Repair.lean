@@ -183,7 +183,7 @@ def rankPatchesDefault (patches : List Patch) : List Patch :=
 theorem defaultWeights_sum :
     defaultWeights.α.toInt + defaultWeights.β.toInt +
     defaultWeights.γ.toInt + defaultWeights.δ.toInt = 65534 := by
-  native_decide
+  decide
 
 -- §6.2  Every weight is strictly positive
 theorem defaultWeights_pos :
@@ -191,7 +191,7 @@ theorem defaultWeights_pos :
     0 < defaultWeights.β.toInt ∧
     0 < defaultWeights.γ.toInt ∧
     0 < defaultWeights.δ.toInt := by
-  native_decide
+  decide
 
 -- §6.3  α is the dominant weight (α > β > γ > δ)
 -- This is what the Python comment implies: specificity matters most.
@@ -199,7 +199,7 @@ theorem defaultWeights_ordered :
     defaultWeights.δ.toInt < defaultWeights.γ.toInt ∧
     defaultWeights.γ.toInt < defaultWeights.β.toInt ∧
     defaultWeights.β.toInt < defaultWeights.α.toInt := by
-  native_decide
+  decide
 
 -- §6.4  rankScore with defaultWeights on the all-zero input is negative.
 -- Note: mkInputs zero zero zero derives residual_risk = 1 - 0 = 1 (= one).
@@ -207,15 +207,15 @@ theorem defaultWeights_ordered :
 -- The score is strictly negative, confirming δ > 0.
 theorem rankScore_zero_inputs_negative :
     (rankScoreDefault (mkInputs zero zero zero)).toInt < 0 := by
-  native_decide
+  decide
 
 -- §6.5  residualRisk complement: embedResidualRisk(1) = 0 (exact on Q16_16.one)
 theorem embedResidualRisk_one : embedResidualRisk one = zero := by
-  native_decide
+  decide
 
 -- §6.6  residualRisk complement: embedResidualRisk(0) = 1
 theorem embedResidualRisk_zero : embedResidualRisk zero = one := by
-  native_decide
+  decide
 
 -- §6.7  Monotonicity of score in specificity (all else equal):
 -- Higher specificity → higher score (net coefficient α − δ > 0).
@@ -223,7 +223,7 @@ theorem embedResidualRisk_zero : embedResidualRisk zero = one := by
 theorem rankScore_monotone_specificity_witness :
     (rankScoreDefault (mkInputs (ofRatio 91 100) (ofRatio 12 100) (ofRatio 67 100))).toInt >
     (rankScoreDefault (mkInputs (ofRatio 50 100) (ofRatio 12 100) (ofRatio 67 100))).toInt := by
-  native_decide
+  decide
 
 -- §6.8  No-promotion theorem: a zero-specificity/zero-prior patch never outscores
 -- a maximum-specificity/maximum-prior patch (same cost).
@@ -231,6 +231,6 @@ theorem rankScore_monotone_specificity_witness :
 theorem rankScore_zero_lt_full :
     (rankScoreDefault (mkInputs zero zero zero)).toInt <
     (rankScoreDefault (mkInputs one zero one)).toInt := by
-  native_decide
+  decide
 
 end Semantics.PIST.Repair

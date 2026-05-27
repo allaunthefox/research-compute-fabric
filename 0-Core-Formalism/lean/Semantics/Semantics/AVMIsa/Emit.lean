@@ -216,14 +216,18 @@ def emitRrcCorpus278 : String :=
   let total      := classified.totalRows
   let passed     := classified.candidateRows
   let held       := total - passed
-  -- 5. Emit JSON — AVM is the output boundary
+  -- 5. Emit JSON — AVM is the output boundary.
+  -- In Lean s! strings: \{ = literal {, } = literal }, {expr} = interpolation.
+  -- The summary sub-object is assembled as a plain String, then interpolated.
+  let summaryStr :=
+    s!"\{\"total\":{total},\"passed_alignment\":{passed},\"held\":{held}," ++
+    s!"\"not_promoted\":{total}}"
   s!"\{\"schema\":\"avm_rrc_corpus278_v1\"," ++
   s!"\"claim_boundary\":\"admissibility-and-routing-pass-only;not-promoted\"," ++
   s!"\"avm_canaries_passed\":{jsonBool avmOk}," ++
   s!"\"bundle_receipt_valid\":{jsonBool bundleReceipt.valid}," ++
-  s!"\"summary\":\{\"total\":{total},\"passed_alignment\":{passed},\"held\":{held}," ++
-  s!"\"not_promoted\":{total}}}," ++
-  s!"\"rows\":{classified.json}}"
+  s!"\"summary\":{summaryStr}," ++
+  s!"\"rows\":{classified.rowsJson}}"
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- §8  Proof-of-life eval witnesses
@@ -250,5 +254,10 @@ open Semantics.RRC.Corpus278 in
 #eval
   let r := emitCorpus "rrc_corpus278_v1" corpus278
   (r.totalRows, r.candidateRows, r.totalRows - r.candidateRows)
+
+-- Full end-to-end JSON: AVM-stamped, 278 rows, claim_boundary, schema=avm_rrc_corpus278_v1.
+-- Captured by emit278_extract.py → emit278.json (validated by python3 -m json.tool).
+-- expect: JSON string starting with {"schema":"avm_rrc_corpus278_v1",...}
+#eval emitRrcCorpus278
 
 end Semantics.AVMIsa.Emit

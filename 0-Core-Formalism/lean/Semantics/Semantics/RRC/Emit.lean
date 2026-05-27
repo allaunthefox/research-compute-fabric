@@ -375,7 +375,8 @@ structure EmitResult where
   rows          : List RrcRow
   totalRows     : Nat
   candidateRows : Nat     -- rows where receipt.valid = true (alignment passed)
-  json          : String
+  rowsJson      : String  -- JSON array string of all rows (for embedding in outer envelopes)
+  json          : String  -- full JSON envelope including schema/summary/rows
   deriving Repr
 
 /-- Generic corpus emitter: compile any list of FixtureRows and emit a
@@ -384,6 +385,7 @@ structure EmitResult where
 def emitCorpus (schema : String) (corpus : List FixtureRow) : EmitResult :=
   let rows       := corpus.map compileRow
   let candidates := rows.filter (·.receipt.valid)
+  let rowsJson   := jRowList rows
   let summary    :=
     s!"\{\"total\":{rows.length}," ++
     s!"\"passed_alignment\":{candidates.length}," ++
@@ -394,10 +396,11 @@ def emitCorpus (schema : String) (corpus : List FixtureRow) : EmitResult :=
     s!"\{\"schema\":{jStr schema}," ++
     s!"\"claim_boundary\":\"admissibility-and-routing-pass-only\"," ++
     s!"\"summary\":{summary}," ++
-    s!"\"rows\":{jRowList rows}}"
+    s!"\"rows\":{rowsJson}}"
   { rows          := rows
     totalRows     := rows.length
     candidateRows := candidates.length
+    rowsJson      := rowsJson
     json          := json }
 
 def emitFixture : EmitResult :=

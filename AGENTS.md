@@ -33,6 +33,9 @@ This file is the first stop for coding agents working in this repository.
 - Infrastructure shims and probes: `4-Infrastructure/shim/`
 - Hardware bring-up: `4-Infrastructure/hardware/`
 - Documentation and wiki surfaces: `6-Documentation/`
+- Citation reference map: `CITATION.cff` (external sources are provenance and
+  terminology references unless a Lean theorem or receipt explicitly promotes
+  a bounded claim)
 - Stack receipts: `shared-data/data/stack_solidification/`
 - Promoted review receipts: `shared-data/artifacts/deepseek_review/`
 - Canonical Ollama/DeepSeek review emitter:

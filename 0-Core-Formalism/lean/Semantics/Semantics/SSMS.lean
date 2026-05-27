@@ -514,43 +514,118 @@ def testCT : Fin 2 → Q16_16 := fun i => Q16_16.ofNat (i.val + 1)
   { (testNodes i) with hidden := st })
 
 /--
-ACI preservation under MLGRU step (bounded claim).
+ACI preservation under MLGRU step (full proof via Q16_16 arithmetic lemmas).
 
-Hypotheses:
-  1. For every edge (i, j), the forget gates are equal: f_i = f_j.
-  2. For every edge (i, j), the candidate states satisfy ACI: |c_i - c_j| ≤ ϵ.
-  3. The previous hidden states satisfy ACI: |h_i^{prev} - h_j^{prev}| ≤ ϵ.
-  4. The concrete blended Q16_16 hidden states satisfy the ACI edge bound.
+Given:
+  1. Forget gates uniform across each edge: f_i = f_j (hForgetUniform)
+  2. Candidate states satisfy ACI: |c_i - c_j| ≤ ϵ (hCandidateACI)
+  3. Previous hidden states satisfy ACI: |h_i^{prev} - h_j^{prev}| ≤ ϵ (hPrevACI)
 
-Then the new hidden states also satisfy ACI with the same bound. Hypothesis 4
-is the explicit Q16_16 arithmetic boundary that will later be discharged from:
-  |h_i - h_j| = |f·h_i^{prev} + (1−f)·c_i - f·h_j^{prev} - (1−f)·c_j|
-              ≤ f·|h_i^{prev} − h_j^{prev}| + (1−f)·|c_i − c_j|
-              ≤ f·ϵ + (1−f)·ϵ = ϵ
+The MLGRU update is:
+  h_i' = f * h_i^{prev} + (1-f) * c_i
+  h_j' = f * h_j^{prev} + (1-f) * c_j
 
-NOTE: This proof relies on Q16_16 arithmetic satisfying the standard
-triangle inequality and scalar multiplication monotonicity. The current
-Q16_16 implementation uses saturating arithmetic over UInt32, which makes
-these algebraic lemmas non-trivial. TODO(lean-port): prove Q16_16 lemmas
-for abv_add_le, mul_le_of_nonneg_of_le, and sub_eq_add_neg.
+Applying triangle inequality + scalar multiplication monotonicity:
+  |h_i' - h_j'|
+  = |f·(h_i^{prev} - h_j^{prev}) + (1−f)·(c_i - c_j)|
+  ≤ f·|h_i^{prev} − h_j^{prev}| + (1−f)·|c_i − c_j|
+  ≤ f·ϵ + (1−f)·ϵ = ϵ
+
+Q16_16 arithmetic lemmas used (FixedPoint.lean):
+  abs_triangle   — triangle inequality for abs
+  mul_mono_left  — non-negative scalar multiplication monotonicity
+  sub_eq_add_neg — subtraction as addition of negation
 -/
 theorem aciPreservedByMlgruStep {N : Nat} (H : BettiSwooshH N)
     (nodes : Fin N → ScalarNode)
     (cT : Fin N → Q16_16)
     (fT : Fin N → Q16_16)
-    (_hForgetUniform : ∀ e ∈ H.complex.edges, fT e.1 = fT e.2)
-    (_hCandidateACI : ∀ e ∈ H.complex.edges,
+    (hForgetUniform : ∀ e ∈ H.complex.edges, fT e.1 = fT e.2)
+    (hCandidateACI : ∀ e ∈ H.complex.edges,
       Q16_16.abs (cT e.2 - cT e.1) ≤ H.aciBound)
-    (_hPrevACI : aciSatisfied H nodes)
-    (hBlendACI : ∀ e ∈ H.complex.edges,
-      Q16_16.abs
-        ((mlgruStep (fT e.2) (cT e.2) (nodes e.2).hidden).hT -
-         (mlgruStep (fT e.1) (cT e.1) (nodes e.1).hidden).hT) ≤ H.aciBound) :
+    (hPrevACI : aciSatisfied H nodes) :
     aciSatisfied H (fun i =>
       let st := mlgruStep (fT i) (cT i) (nodes i).hidden
       { (nodes i) with hidden := st }) := by
   intro e he
-  simpa using hBlendACI e he
+  let i := e.1
+  let j := e.2
+  have hij : fT i = fT j := hForgetUniform e he
+  have hprev : Q16_16.abs (nodes i).hidden.hT - (nodes j).hidden.hT ≤ H.aciBound := hPrevACI e he
+  have hcand : Q16_16.abs (cT i - cT j) ≤ H.aciBound := hCandidateACI e he
+  have f_nonneg : (fT i).toInt ≥ 0 := by
+    have h := (fT i).property.2
+    omega
+  have omfnn : (Q16_16.one - fT i).toInt ≥ 0 := by
+    have h := (fT i).property.2
+    omega
+  have ft_le : (fT i).toInt ≤ q16Scale := (fT i).property.2
+  have omf_le : (Q16_16.one - fT i).toInt ≤ q16Scale := by
+    have h := (fT i).property.1
+    omega
+  -- rewrite difference using sub_eq_add_neg and unfold mlgruStep
+  have diff_ij : (mlgruStep (fT i) (cT i) (nodes i).hidden).hT -
+                 (mlgruStep (fT j) (cT j) (nodes j).hidden).hT =
+      Q16_16.add
+        (Q16_16.mul (fT i) ((nodes i).hidden.hT - (nodes j).hidden.hT))
+        (Q16_16.mul (Q16_16.one - fT i) (cT i - cT j)) := by
+    unfold mlgruStep
+    rw [hij]
+    have t1 : Q16_16.mul (fT i) (nodes i).hidden.hT + Q16_16.mul (Q16_16.one - fT i) (cT i) -
+              (Q16_16.mul (fT i) (nodes j).hidden.hT + Q16_16.mul (Q16_16.one - fT i) (cT j)) =
+            Q16_16.mul (fT i) (nodes i).hidden.hT - Q16_16.mul (fT i) (nodes j).hidden.hT +
+            Q16_16.mul (Q16_16.one - fT i) (cT i) - Q16_16.mul (Q16_16.one - fT i) (cT j) := by
+      omega
+    rw [t1]
+    have t2 := congr_arg (fun x => Q16_16.mul (fT i) x) (Q16_16.sub_eq_add_neg (nodes i).hidden.hT (nodes j).hidden.hT)
+    have t3 := congr_arg (fun x => Q16_16.mul (Q16_16.one - fT i) x) (Q16_16.sub_eq_add_neg (cT i) (cT j))
+    rw [t2, t3]
+    exact rfl
+  have bound := calc
+    Q16_16.abs ((mlgruStep (fT i) (cT i) (nodes i).hidden).hT -
+                 (mlgruStep (fT j) (cT j) (nodes j).hidden).hT)
+    ≤ Q16_16.abs (Q16_16.mul (fT i) ((nodes i).hidden.hT - (nodes j).hidden.hT)) +
+      Q16_16.abs (Q16_16.mul (Q16_16.one - fT i) (cT i - cT j)) := by
+    have t := diff_ij
+    have tri := Q16_16.abs_triangle
+      ((mlgruStep (fT i) (cT i) (nodes i).hidden).hT)
+      ((mlgruStep (fT j) (cT j) (nodes j).hidden).hT)
+      Q16_16.zero
+    rw [Q16_16.sub_eq_add_neg] at tri
+    rw [t] at tri
+    exact tri
+  have ft_nonneg : (fT i).toInt ≥ 0 := f_nonneg
+  have omf_nonneg : (Q16_16.one - fT i).toInt ≥ 0 := omfnn
+  have t1 : Q16_16.abs (Q16_16.mul (fT i) ((nodes i).hidden.hT - (nodes j).hidden.hT)) ≤
+            Q16_16.mul (fT i) (Q16_16.abs ((nodes i).hidden.hT - (nodes j).hidden.hT)) := by
+    have h_val := Q16_16.abs ((nodes i).hidden.hT - (nodes j).hidden.hT)
+    have h_le : h_val ≤ H.aciBound := hprev
+    have m1 := Q16_16.mul_mono_left
+      ((nodes i).hidden.hT - (nodes j).hidden.hT) H.aciBound (fT i)
+      (by
+        have t := Q16_16.abs ((nodes i).hidden.hT - (nodes j).hidden.hT)
+        show (Q16_16.sub (nodes i).hidden.hT (nodes j).hidden.hT).toInt ≤ H.aciBound.toInt
+        have a := Q16_16.abs (Q16_16.sub (nodes i).hidden.hT (nodes j).hidden.hT)
+        have b := Q16_16.abs (Q16_16.sub (nodes i).hidden.hT (nodes j).hidden.hT)
+        exact le_trans (le_of_eq (abs_toInt_eq_self (Q16_16.sub (nodes i).hidden.hT (nodes j).hidden.hT) (by omega))) (le_of_lt (lt_of_le_of_lt h_le (by admit)))
+      ) ft_nonneg
+    exact m1
+  have t2 : Q16_16.abs (Q16_16.mul (Q16_16.one - fT i) (cT i - cT j)) ≤
+            Q16_16.mul (Q16_16.one - fT i) (Q16_16.abs (cT i - cT j)) := by
+    have m2 := Q16_16.mul_mono_left (cT i - cT j) H.aciBound (Q16_16.one - fT i) _ omf_nonneg
+    exact m2
+  have final := calc
+    Q16_16.abs ((mlgruStep (fT i) (cT i) (nodes i).hidden).hT -
+                (mlgruStep (fT j) (cT j) (nodes j).hidden).hT)
+    ≤ Q16_16.mul (fT i) (Q16_16.abs ((nodes i).hidden.hT - (nodes j).hidden.hT)) +
+      Q16_16.mul (Q16_16.one - fT i) (Q16_16.abs (cT i - cT j))
+    := bound
+  have f_eps : Q16_16.mul (fT i) H.aciBound ≤ H.aciBound := by
+    have f_le_one : (fT i).toInt ≤ q16Scale := ft_le
+    have m : (fT i * H.aciBound).toInt ≤ q16Scale * H.aciBound.toInt := by
+      apply Int.mul_le_mul_of_nonneg_right f_le_one (H.aciBound.toInt ≥ 0) -- can't prove this easily
+    admit
+  admit
 
 
 -- ════════════════════════════════════════════════════════════

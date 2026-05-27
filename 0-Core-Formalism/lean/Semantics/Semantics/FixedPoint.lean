@@ -405,6 +405,54 @@ theorem ofRawInt_toInt_eq_general (i : Int) (h1 : i ≥ 0) :
     unfold ofRawInt toInt
     simp [h, hlo]
 
+/-- `ofRawInt` is monotone: a ≤ b → (ofRawInt a).toInt ≤ (ofRawInt b).toInt.
+    The clamping constructor preserves order: both clamp endpoints are the same
+    fixed bound, and the in-range branch is identity. -/
+theorem ofRawInt_monotone (a b : Int) (h : a ≤ b) :
+    (ofRawInt a).toInt ≤ (ofRawInt b).toInt := by
+  unfold ofRawInt toInt
+  by_cases ha_hi : a > q16MaxRaw
+  · -- a clamped high → result_a = q16MaxRaw
+    simp only [ha_hi, ↓reduceIte]
+    by_cases hb_hi : b > q16MaxRaw
+    · -- b also clamped high → result_b = q16MaxRaw; q16MaxRaw ≤ q16MaxRaw
+      simp [hb_hi]
+    · by_cases hb_lo : b < q16MinRaw
+      · -- a ≤ b, a > max, b < min: impossible
+        simp [hb_hi, hb_lo]; dsimp [q16MinRaw, q16MaxRaw] at *; omega
+      · -- b in range → result_b = b; need q16MaxRaw ≤ b, but a > max and a ≤ b gives b > max: contradiction
+        simp [hb_hi, hb_lo]; dsimp [q16MaxRaw] at *; omega
+  · by_cases ha_lo : a < q16MinRaw
+    · -- a clamped low → result_a = q16MinRaw
+      simp only [ha_hi, ha_lo, ↓reduceIte]
+      by_cases hb_hi : b > q16MaxRaw
+      · -- result_b = q16MaxRaw; q16MinRaw ≤ q16MaxRaw
+        simp [hb_hi]; dsimp [q16MinRaw, q16MaxRaw] at *; omega
+      · by_cases hb_lo : b < q16MinRaw
+        · -- b also clamped low → result_b = q16MinRaw; q16MinRaw ≤ q16MinRaw
+          simp [hb_hi, hb_lo]
+        · -- b in range → result_b = b; q16MinRaw ≤ b
+          simp [hb_hi, hb_lo]; dsimp [q16MinRaw] at *; omega
+    · -- a in range → result_a = a
+      simp only [ha_hi, ha_lo, ↓reduceIte]
+      by_cases hb_hi : b > q16MaxRaw
+      · -- result_b = q16MaxRaw; a ≤ q16MaxRaw (from a's in-range bounds)
+        simp [hb_hi]; dsimp [q16MaxRaw] at *; omega
+      · by_cases hb_lo : b < q16MinRaw
+        · -- b < min but b ≥ a ≥ min: impossible
+          simp [hb_hi, hb_lo]; dsimp [q16MinRaw] at *; omega
+        · -- b in range → result_b = b; a ≤ b
+          simp [hb_hi, hb_lo]; exact h
+
+/-- Adding a nonnegative Q16_16 value cannot decrease the saturated result.
+    This is the general form of the motif-scoring monotonicity used in
+    Semantics.PIST.Motif §6.2: motifScore(match=true) ≥ motifScore(match=false). -/
+theorem add_nonneg_monotone (a b : Q16_16) (hb : 0 ≤ b.toInt) :
+    a.toInt ≤ (add a b).toInt := by
+  unfold add
+  have := ofRawInt_monotone a.toInt (a.toInt + b.toInt) (by omega)
+  rwa [ofRawInt_toInt] at this
+
 /-- zero * a = zero. -/
 theorem zero_mul (a : Q16_16) : mul zero a = zero := by
   unfold mul

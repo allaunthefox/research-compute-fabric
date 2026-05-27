@@ -165,15 +165,17 @@ def topKMotifs (k : Nat) (candidates : List MotifCandidate) : List MotifCandidat
 -- §6.1  familyMatchBonus is strictly positive
 theorem motifScore_bonus_pos : 0 < familyMatchBonus.toInt := by decide
 
--- §6.2  Concrete witness: matching score ≥ non-matching score at freq=3, lib=10.
--- (A general proof over all MotifInputs requires reasoning about Q16_16.add
---  clamping behaviour; deferred as TODO(lean-port).)
--- TODO(lean-port): Generalise to all MotifInputs once Q16_16.add_nonneg_monotone
---   is proved in FixedPoint.lean (i.e., 0 ≤ bonus → (base + bonus).toInt ≥ base.toInt).
-theorem motifScore_match_ge_base_witness :
-    (motifScore { frequency := 3, librarySize := 10, familyMatch := true }).toInt ≥
-    (motifScore { frequency := 3, librarySize := 10, familyMatch := false }).toInt := by
-  decide
+-- §6.2  General theorem: matching score ≥ non-matching score for all MotifInputs.
+-- Proof: motifScore(match=true) = base + familyMatchBonus;
+--        motifScore(match=false) = base.
+--        familyMatchBonus.toInt ≥ 0 (proved by decide below), so
+--        Q16_16.add_nonneg_monotone gives base.toInt ≤ (base + bonus).toInt.
+theorem motifScore_match_ge_base (x : MotifInputs) :
+    (motifScore { x with familyMatch := true }).toInt ≥
+    (motifScore { x with familyMatch := false }).toInt := by
+  simp only [motifScore, baseScore]
+  have hbonus : 0 ≤ familyMatchBonus.toInt := by decide
+  exact Q16_16.add_nonneg_monotone _ _ hbonus
 
 -- §6.3  Zero frequency → base score is zero regardless of library size
 theorem motifScore_zero_freq_base (lib : Nat) (fm : Bool) :

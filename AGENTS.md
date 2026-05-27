@@ -119,6 +119,54 @@ Untracked files that are not generated artifacts should either be staged or
 noted as intentionally dirty. Do not claim the tree is stable if there are
 unexpected modifications.
 
+### 5. Programming choice flow (check before writing any new code)
+
+Before writing or placing any new logic, run through this decision tree in
+order. Stop at the first rule that applies.
+
+```
+New logic needed?
+│
+├── Does it make an admissibility, routing, alignment, or gating decision?
+│   └── YES → Write it in Lean. No Python equivalent allowed.
+│             File: Semantics/RRC/Emit.lean or a new Semantics.* module.
+│
+├── Does it mint, stamp, or emit a top-level receipt or JSON bundle?
+│   └── YES → It belongs in Semantics.AVMIsa.Emit ONLY.
+│             AVMIsa.Emit is the sole output boundary. No other module
+│             may call leanBuildReceipt and produce a top-level JSON.
+│
+├── Does it classify rows, run an alignment gate, or compute scores?
+│   └── YES → Lean (Semantics.RRC.Emit or a new Semantics.RRC.* module).
+│             Python may call it via #eval / lake exe but may not replicate it.
+│
+├── Does it supply raw input features (equation text, route_hint, domain_type,
+│   equation_id hashing, weak_axes count)?
+│   └── YES → Python shim is acceptable. The shim must:
+│             (a) produce only a List FixtureRow (or equivalent data structure)
+│             (b) carry no admissibility logic — every field it sets is "raw"
+│             (c) be regenerable from source (document the regeneration command)
+│             (d) live in 4-Infrastructure/shim/ with a clear TODO(lean-port) if
+│                 any logic in it could eventually move to Lean
+│
+├── Does it use floating-point arithmetic in a compute path?
+│   └── YES → STOP. Use Q16_16.ofNat / Q16_16.ofRatio / Q16_16.ofInt instead.
+│             ofFloat is only permitted at the external boundary (JSON parsing,
+│             sensor input) and must be immediately bracketed.
+│
+├── Does it advance promotion status (e.g. set promotion = "promoted")?
+│   └── YES → STOP. Promotion is always not_promoted until a Lean gate
+│             explicitly passes. Never advance it in shim space or by hand.
+│
+└── Is it pure I/O (read JSON, write JSONL, call subprocess, format output)?
+    └── YES → Python shim is fine. Keep it in 4-Infrastructure/shim/.
+              Receipt-writing Python must still route output through
+              AVMIsa.Emit (Lean stamps; Python only formats/stores).
+```
+
+**Summary rule:** Lean owns all decisions. Python owns all I/O.
+If you find yourself writing decision logic in Python, stop and port it to Lean.
+
 ### What "every interaction" means
 
 This workflow triggers whenever the user message results in:

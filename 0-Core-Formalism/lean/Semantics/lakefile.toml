@@ -19,7 +19,7 @@ name = "Semantics"
 [[lean_lib]]
 name = "PIST"
 srcDir = "../../../2-Search-Space/PIST"
-roots = ["PIST", "PistBridge", "PistSimulation", "PISTMachine", "TorsionalPIST", "HybridTSMPISTTorus"]
+roots = ["PIST", "PistBridge", "PistSimulation", "TorsionalPIST", "HybridTSMPISTTorus", "Trace"]
 
 [[lean_lib]]
 name = "FAMM"

@@ -5,15 +5,16 @@ on import — see "Calibration deltas" below.
 
 ## Layout
 
-- [snn_nii_reference.py](snn_nii_reference.py) — deterministic Python reference. Pipeline:
-  `predict → nii_step (clamp + bounded Δw + decay) → msnn_step (LIF + FAMM-modulated drive) → rgflow_step (3-verdict) → famm_update (saturating + exp decay)`.
+- [snn_nii_reference.py](snn_nii_reference.py) — Python extraction shim / golden-vector harness.
+  Pipeline: `predict → nii_step (clamp + bounded Δw + decay) → msnn_step (LIF + FAMM-modulated drive) → rgflow_step (3-verdict) → famm_update (saturating + exp decay)`.
   Writes per-record JSONL with SHA-tagged hash for golden-vector compare.
+  `TODO(lean-port)`: Port pipeline logic to Lean; Python remains I/O harness only.
 - [generate_snn_vectors.py](generate_snn_vectors.py) — 4-phase synthetic stream
   (stable / drift / repeated bad / near-miss osc) OR pulls from a
   `uc_records.jsonl` topology18 stream.
 - [snn_test_config.json](snn_test_config.json) — Q8 fixed-point + thresholds.
 - RTL siblings live at [4-Infrastructure/hardware/tangnano9k/rtl/](../../hardware/tangnano9k/rtl/) and must
-  bit-match this Python reference.
+  bit-match this Python shim (pending Lean golden vector).
 
 ## Quick start
 

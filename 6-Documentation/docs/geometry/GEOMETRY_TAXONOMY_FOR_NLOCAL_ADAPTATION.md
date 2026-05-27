@@ -209,7 +209,7 @@ We classify each geometry format on two independent axes:
 
 ### What can be wired as-is:
 1. **`geometry_noneuclidean.py`** — its log-PHI and logit functions become subroutines in the Level 4 plugin.
-2. **`GWLKernel.lean`** — its metric tensor and geodesic step formulas become the reference specification for the Python implementation.
+2. **`GWLKernel.lean`** — its metric tensor and geodesic step formulas are the source of truth; Python is an extraction shim against this spec.
 3. **`topological_tape_machine.py`** — operates at a higher layer; unchanged interface.
 4. **`tsm_perpetual_manifold.v`** — unchanged; the geometry layer feeds it, it doesn't compute geometry.
 5. **`Physics/*.lean`** — unchanged; serves as the invariant boundary.

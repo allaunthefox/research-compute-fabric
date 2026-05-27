@@ -4,8 +4,9 @@
 //! direct_swarm_probe.py, ingest_keys_to_ene.py, migrate_credentials.py,
 //! propagate_ssh_keys.py
 //!
-//! Per AGENTS.md §Infrastructure: Rust is the canonical implementation
-//! language for operational components. Python shims are deprecated.
+//! Per AGENTS.md: Lean is the source of truth. Rust is an extraction target
+//! for operational I/O components. Python shims are deprecated in favour of Rust,
+//! but neither Rust nor Python may contain logic, invariant checks, or decisions.
 
 pub mod config;
 pub mod credentials;

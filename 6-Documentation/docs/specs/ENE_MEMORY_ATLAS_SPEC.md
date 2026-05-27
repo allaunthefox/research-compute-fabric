@@ -368,7 +368,7 @@ Following the MOIM project autopsy's principle (separate REAL from DREAM):
 | MCP server fronting atlas | **NOT YET** | open work |
 | Tang Nano 9K FPGA target | **NOT YET (local)** | Kimi has it; local does not |
 
-**The combination's first real deliverable** = MCP server that exposes the existing local pieces (voxel_key lookup, regime-bin scan, Q0_16 read/write through tardy BFT, settlement state filter) over a single protocol. The MOIM-side fractal hash and Dless Ω can land as Python first (reference per `ene_ingestion_engine.py`), Lean-formal next (`ENEDatabase.lean`, `DlessScalar.lean` ports), Verilog last (Tang Nano 9K, deferred).
+**The combination's first real deliverable** = MCP server that exposes the existing local pieces (voxel_key lookup, regime-bin scan, Q0_16 read/write through tardy BFT, settlement state filter) over a single protocol. The MOIM-side fractal hash and Dless Ω must be specified in Lean first (`ENEDatabase.lean`, `DlessScalar.lean`), with Python as an extraction shim (reference I/O: `ene_ingestion_engine.py`) and Verilog as the hardware extraction target (Tang Nano 9K, deferred). Lean is the source of truth; Python and Verilog are extraction targets only.
 
 ---
 

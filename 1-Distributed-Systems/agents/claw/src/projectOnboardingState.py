@@ -7,4 +7,4 @@ from dataclasses import dataclass
 class ProjectOnboardingState:
     has_readme: bool
     has_tests: bool
-    python_first: bool = True
+    lean_first: bool = True  # Lean is always the source of truth; Python/Rust are extraction targets

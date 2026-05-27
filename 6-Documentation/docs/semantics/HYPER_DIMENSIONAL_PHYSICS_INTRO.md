@@ -553,4 +553,4 @@ The coordinates are computed, not stored. The decoder reconstructs them from `n`
 
 ---
 
-*End of walkthrough. The Python implementation is in `pist_alpha_extended.py`. The Lean formalization is in `ExtendedManifoldEncoding.lean`.*
+*End of walkthrough. The Lean specification is in `ExtendedManifoldEncoding.lean` (source of truth). The Python extraction shim is in `pist_alpha_extended.py`.*

@@ -415,8 +415,8 @@ def retrieveCompressedMetadata (ids : List RecordId) : List GCLManifest :=
 
 - **AGENTS.md v2.1** — Anti-Drift Evidence Standards
 - **DELTA_GCL_COMPRESSION_LANGUAGE_AGNOSTIC.md** — Complete specification
-- **DeltaGCLCompression.lean** — Lean implementation
-- **scripts/delta_gcl_encoder.py** — Python reference implementation
+- **DeltaGCLCompression.lean** — Lean source of truth (specification and implementation)
+- **scripts/delta_gcl_encoder.py** — Python extraction shim (I/O harness against the Lean spec)
 
 ---
 

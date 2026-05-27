@@ -11,5 +11,5 @@ class ToolDefinition:
 
 DEFAULT_TOOLS = (
     ToolDefinition('port_manifest', 'Summarize the active Python workspace'),
-    ToolDefinition('query_engine', 'Render a Python-first porting summary'),
+    ToolDefinition('query_engine', 'Render a Lean-to-Python extraction summary'),
 )

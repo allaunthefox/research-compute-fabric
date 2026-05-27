@@ -781,7 +781,7 @@ src/tm_mcp/
 ### 7.2 Data Structures (Pseudocode)
 
 ```python
-# Python reference implementation
+# Python extraction shim (Lean spec is source of truth; this is I/O scaffolding only)
 
 from dataclasses import dataclass
 from typing import List, Optional, Dict, Union
@@ -1132,7 +1132,7 @@ class BenchmarkCompression(unittest.TestCase):
 
 **Next Steps:**
 1. Implement `TMMCP/` Lean modules with `#eval` verification
-2. Create Python reference implementation (`infra/tm_mcp/`)
+2. Create Python extraction shim (`infra/tm_mcp/`) from the Lean spec
 3. Validate MVP channels against synthetic data
 4. Run `lake build` and add to CI
 5. Measure compression ratios and reconstruction error for benchmark suite

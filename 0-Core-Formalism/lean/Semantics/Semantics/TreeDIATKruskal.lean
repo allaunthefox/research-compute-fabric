@@ -53,17 +53,13 @@ def treeLabelCountExact (t : TreeNode) : Nat := treeMaxLabelExact t + 1
 theorem treeNodeCountExact_pos (t : TreeNode) : 0 < treeNodeCountExact t := by
   induction t with
   | leaf label => simp [treeNodeCountExact]
-  | node label l r ihL ihR =>
-      simp [treeNodeCountExact]
-      omega
+  | node label l r ihL ihR => simp [treeNodeCountExact, ihL, ihR]
 
 /-- Leaf count is always positive. -/
 theorem treeLeafCountExact_pos (t : TreeNode) : 0 < treeLeafCountExact t := by
   induction t with
   | leaf label => simp [treeLeafCountExact]
-  | node label l r ihL ihR =>
-      simp [treeLeafCountExact]
-      omega
+  | node label l r ihL ihR => simp [treeLeafCountExact, ihL, ihR]
 
 /-- A tree cannot have more leaves than nodes. -/
 theorem treeLeafCountExact_le_nodeCountExact (t : TreeNode) :

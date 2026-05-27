@@ -55,7 +55,8 @@ import Semantics.VecState
 import Semantics.PrimeLut
 import PIST
 import PistBridge
-import PistSimulation
+-- PistSimulation imported via Semantics.TreeDIATKruskal; bare import removed
+-- to avoid double-import collision with Semantics.PistSimulation in the glob build.
 
 import Semantics.Tape
 import Semantics.DynamicCanal
@@ -162,41 +163,43 @@ import Semantics.CrossDomainOneOverN
 import Semantics.BaselineComparison
 import Semantics.ParameterSensitivity
 import Semantics.DimensionalConsistency
-import Semantics.AtomicTimescaleProbe
-import Semantics.CosmologicalTimescaleProbe
-import Semantics.SpacetimeStretchingProbe
-import Semantics.BigBangTemporalAnchor
-import Semantics.EinsteinFrameDragProbe
-import Semantics.GeminiThreePathsProbe
-import Semantics.ProtonDecayAnchor
-import Semantics.ShortestObservableTime
-import Semantics.LandauerShannonProbe
-import Semantics.ImaginarySemanticTime
-import Semantics.AdiabaticInvariantProbe
-import Semantics.CalculusIntegralProbe
-import Semantics.AdiabaticCalculusProbe
-import Semantics.PadicCalculusProbe
-import Semantics.GapSpaceProbe
-import Semantics.ArakelovAdeleProbe
-import Semantics.AdelicStringProbe
-import Semantics.MengerUniversalProbe
-import Semantics.Genus1MengerEmbedding
-import Semantics.GeneticFieldEquation
-import Semantics.CivilizationalPulseProbe
-import Semantics.SingularityPulseProbe
-import Semantics.MediaTransferProbe
-import Semantics.LanguageTransferProbe
-import Semantics.LanguageZoologyProbe
-import Semantics.EcologicalPeriodDataProbe
-import Semantics.ThermodynamicLanguageProbe
-import Semantics.GeneticThermodynamicLimitProbe
-import Semantics.ExpandedGeneticAlphabetProbe
-import Semantics.GeneticSignalTransformProbe
-import Semantics.SemanticBasinOverflowProbe
-import Semantics.GeneticErrorMinimizationProbe
-import Semantics.InformationBottleneckLanguageProbe
-import Semantics.CrossModalGeneticLanguageProbe
-import Semantics.LandauerGeneticClockProbe
+-- QUARANTINE: Probe stubs (files not yet written). Removed from root to keep
+-- lake build non-crashing. TODO(lean-port): implement and re-enable.
+-- import Semantics.AtomicTimescaleProbe
+-- import Semantics.CosmologicalTimescaleProbe
+-- import Semantics.SpacetimeStretchingProbe
+-- import Semantics.BigBangTemporalAnchor
+-- import Semantics.EinsteinFrameDragProbe
+-- import Semantics.GeminiThreePathsProbe
+-- import Semantics.ProtonDecayAnchor
+-- import Semantics.ShortestObservableTime
+-- import Semantics.LandauerShannonProbe
+-- import Semantics.ImaginarySemanticTime
+-- import Semantics.AdiabaticInvariantProbe
+-- import Semantics.CalculusIntegralProbe
+-- import Semantics.AdiabaticCalculusProbe
+-- import Semantics.PadicCalculusProbe
+-- import Semantics.GapSpaceProbe
+-- import Semantics.ArakelovAdeleProbe
+-- import Semantics.AdelicStringProbe
+-- import Semantics.MengerUniversalProbe
+-- import Semantics.Genus1MengerEmbedding
+-- import Semantics.GeneticFieldEquation
+-- import Semantics.CivilizationalPulseProbe
+-- import Semantics.SingularityPulseProbe
+-- import Semantics.MediaTransferProbe
+-- import Semantics.LanguageTransferProbe
+-- import Semantics.LanguageZoologyProbe
+-- import Semantics.EcologicalPeriodDataProbe
+-- import Semantics.ThermodynamicLanguageProbe
+-- import Semantics.GeneticThermodynamicLimitProbe
+-- import Semantics.ExpandedGeneticAlphabetProbe
+-- import Semantics.GeneticSignalTransformProbe
+-- import Semantics.SemanticBasinOverflowProbe
+-- import Semantics.GeneticErrorMinimizationProbe
+-- import Semantics.InformationBottleneckLanguageProbe
+-- import Semantics.CrossModalGeneticLanguageProbe
+-- import Semantics.LandauerGeneticClockProbe
 import Semantics.FAMM
 import Semantics.HCMMR.Core
 import Semantics.HCMMR.Kernels.FAMMScarMemory

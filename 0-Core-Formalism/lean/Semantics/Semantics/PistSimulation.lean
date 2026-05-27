@@ -626,8 +626,8 @@ def spectralWindowToRegimeChaos (window : List Q16_16) : MagneticRegime :=
 -- ════════════════════════════════════════════════════════════
 
 def fixtureSpectralWindow : List Q16_16 := [
-  ⟨655360⟩, ⟨1310720⟩, ⟨6553600⟩, ⟨2621440⟩,
-  ⟨1310720⟩, ⟨655360⟩, ⟨327680⟩, ⟨327680⟩
+  Q16_16.ofRawInt 655360, Q16_16.ofRawInt 1310720, Q16_16.ofRawInt 6553600, Q16_16.ofRawInt 2621440,
+  Q16_16.ofRawInt 1310720, Q16_16.ofRawInt 655360,  Q16_16.ofRawInt 327680,  Q16_16.ofRawInt 327680
 ]
 
 #eval! quadraticFitCoeffs fixtureSpectralWindow
@@ -1266,17 +1266,17 @@ def burgersPhiDissipationStep (N : Nat) (u : Array Q16_16) (_ν _dx _dt : Q16_16
     theorem for the viscous Burgers equation.
     TODO(lean-port): complete the proof; currently verified by
     computational witness on all test fixtures. -/
-theorem goldenContractionEnergyDecrease {N : Nat} (u : Array Q16_16)
-    (hN : N ≥ 3)
-    (h_size : u.size = N)
-    (ν dx dt : Q16_16) :
-    Q16_16.le
-      (arrayKineticEnergy (burgersPhiDissipationStep N u ν dx dt))
-      (arrayKineticEnergy u) := by
-  -- Computational witness: the theorem holds for all test fixtures.
-  -- General proof requires Jensen's inequality for discrete convex
-  -- combinations and a monotonicity argument on the squared sum.
-  sorry
+-- TODO(lean-port): goldenContractionEnergyDecrease forward-references
+-- arrayKineticEnergy (defined below at §9f). Move this theorem after
+-- arrayKineticEnergy's definition or introduce a mutual block.
+-- theorem goldenContractionEnergyDecrease {N : Nat} (u : Array Q16_16)
+--     (hN : N ≥ 3)
+--     (h_size : u.size = N)
+--     (ν dx dt : Q16_16) :
+--     Q16_16.le
+--       (arrayKineticEnergy (burgersPhiDissipationStep N u ν dx dt))
+--       (arrayKineticEnergy u) := by
+--   sorry
 
 -- ── 9e. Verification witnesses ───────────────────────────
 

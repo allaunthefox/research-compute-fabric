@@ -9,9 +9,26 @@ set -euo pipefail
 #
 # Flow:
 #   1. Wait for k3s cluster to be healthy
-#   2. Create the K8s Secret for authentik from the sops-decrypted file
-#   3. Apply all manifests via kubectl
-#   4. k3s built-in Helm controller picks up the HelmChart CRD for authentik
+#   2. Ensure namespaces exist
+#   3. Create the K8s Secret for authentik from the sops-decrypted file
+#   4. Apply authentik HelmChart CRD
+#   5. Apply all service manifests (kustomize where available)
+#
+# URL contract (canonical paths served by internal Caddy router):
+#   /                    → Homer
+#   /apps/chat/*         → Hermes
+#   /apps/jellyfin/*     → Jellyfin
+#   /apps/books/*        → Audiobookshelf
+#   /apps/music/*        → Navidrome
+#   /apps/budget/*       → Actual Budget
+#   /server/status/*     → Uptime Kuma
+#   /server/dash/*       → Homarr
+#   /server/vault/*      → Vaultwarden
+#   /api/cred/*          → Credential Server
+#   /api/registry/*      → Registry API
+#   /api/jobs/*          → Job Router
+#   /api/blobs/*         → Blob Plane
+#   auth.researchstack.info → Authentik (stable OIDC issuer)
 ###########################################################################
 
 MANIFESTS_DIR="/etc/nixos/k3s-flake/manifests"
@@ -22,16 +39,14 @@ until kubectl cluster-info --request-timeout=5s >/dev/null 2>&1; do
 done
 echo "[deploy] cluster is healthy"
 
-echo "[deploy] ensuring CoreDNS has one schedulable replica per main workload node..."
+echo "[deploy] ensuring CoreDNS has schedulable replicas..."
 kubectl -n kube-system scale deployment/coredns --replicas=3
 
-echo "[deploy] ensuring services namespace exists..."
+echo "[deploy] ensuring namespaces exist..."
 kubectl get namespace services >/dev/null 2>&1 || kubectl create namespace services
+kubectl get namespace media >/dev/null 2>&1 || kubectl create namespace media
 
-# Authentik secrets from sops-decrypted file.
-# The file format is an env file:
-#   secret-key=<value>
-#   postgresql-password=<value>
+# ── Authentik secrets from sops ──────────────────────────────────────────
 if [ -n "${AUTHENTIK_SECRETS:-}" ] && [ -f "$AUTHENTIK_SECRETS" ]; then
   echo "[deploy] creating authentik-secrets from sops file..."
   kubectl delete secret --ignore-not-found -n services authentik-secrets
@@ -54,13 +69,13 @@ if [ -n "${AUTHENTIK_SECRETS:-}" ] && [ -f "$AUTHENTIK_SECRETS" ]; then
   fi
 fi
 
+# ── Apply manifests ──────────────────────────────────────────────────────
 echo "[deploy] applying authentik HelmChart..."
 kubectl apply -f "$MANIFESTS_DIR/authentik/helm-chart.yaml"
 
 echo "[deploy] applying all service manifests..."
 find "$MANIFESTS_DIR" -maxdepth 1 -type d | sort | while read -r dir; do
   name=$(basename "$dir")
-  # Skip root dir and authentik (managed via HelmChart)
   [ "$dir" = "$MANIFESTS_DIR" ] && continue
   [ "$name" = "authentik" ] && continue
   if [ -f "$dir/kustomization.yaml" ] || [ -f "$dir/kustomization.yml" ]; then
@@ -72,4 +87,4 @@ find "$MANIFESTS_DIR" -maxdepth 1 -type d | sort | while read -r dir; do
   fi
 done
 
-echo "[deploy] done"
+echo "[deploy] done — all services applied"

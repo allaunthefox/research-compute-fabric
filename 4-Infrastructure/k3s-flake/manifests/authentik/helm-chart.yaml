@@ -20,6 +20,7 @@ spec:
             existingSecret: authentik-secrets
             secretKeys:
               adminPasswordKey: postgresql-password
+              userPasswordKey: postgresql-password
       primary:
         persistence:
           size: 8Gi
@@ -64,8 +65,9 @@ spec:
         limits:
           memory: 512Mi
       service:
-        type: NodePort
-        nodePort: 30080
+        # ClusterIP — Traefik reaches Authentik via cluster DNS through the
+        # rs-auth Ingress (manifests/ingress/ingress.yaml). No NodePort needed.
+        type: ClusterIP
     worker:
       nodeSelector:
         kubernetes.io/hostname: steamdeck
@@ -76,5 +78,4 @@ spec:
         limits:
           memory: 512Mi
       service:
-        type: NodePort
-        nodePort: 30080
+        type: ClusterIP

@@ -3,11 +3,24 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
+  # Monitoring & dashboards
   - uptime-kuma
-  - heimdall
   - homer
-  - pulse-receiver
   - homarr
-  - authentik
+  # Apps
+  - hermes
   - actual-budget
+  - vaultwarden
+  # Identity
+  - authentik
+  # Control-plane APIs
+  - credential-server
+  - control-plane
+  # Ingress (Traefik path routing + middlewares)
+  - ingress
+  # Media (separate namespace)
+  - media
+  # Legacy (to be removed after migration)
+  - heimdall
+  - pulse-receiver
 

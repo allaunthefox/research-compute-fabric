@@ -20,6 +20,13 @@ Rules until ported:
   - what must be ported to Lean/AVM
 
 TODO(lean-port): Replace all scoring and warning decisions with Lean/AVM.
+
+BOUNDARY: Python thin IO shim; scoring logic in Semantics.RRC.ReceiptDensity.
+  - spectral_quality   → Semantics.RRC.ReceiptDensity.spectralQuality
+  - shape_agreement    → Semantics.RRC.ReceiptDensity.shapeAgreement
+  - axis_score         → Semantics.RRC.ReceiptDensity.axisScore
+  - status_score       → Semantics.RRC.ReceiptDensity.statusScore
+  - compute_density    → Semantics.RRC.ReceiptDensity.computeDensity
 """
 
 from __future__ import annotations

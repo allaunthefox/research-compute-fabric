@@ -205,7 +205,7 @@ def lowRankCollapseTemplate (rank : Nat) : CollapseOperator :=
                 (embedToSurface2D (codingFromRatio 9 10 "end") "end")
                 rank
                 (codingFromRatio 95 100 "phi_0.95")],
-    collapse := fun coord => coord.x  -- TODO: LLM implements actual collapse
+    collapse := fun coord => coord.x  -- TODO(lean-port): Compute low-rank projection of SurfaceCoordinate (x, y, z) onto a single CodingAtom using the basis perturbation directions and rank constraint
   }
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -642,7 +642,7 @@ def runAdversarialTrial
 -- §10  THEOREMS
 -- ═══════════════════════════════════════════════════════════════════════════
 
--- TODO(lean-port): Theorem projectionOrdering
+-- TODO(lean-port): Theorem projectionOrdering — projectToCoding preserves strict ordering: for positive SourceValue pairs s1 < s2, their CodingAtom Q0_64 values satisfy (projectToCoding s1 max).value < (projectToCoding s2 max).value via monotonicity of Q0_64.ofRatio
 -- Projection preserves ordering for positive values.
 -- Proof relies on ofRatio preserving ordering for positive args.
 -- theorem projectionOrdering (s1 s2 : SourceValue) (max : Q16_16)

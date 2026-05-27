@@ -311,7 +311,7 @@ theorem zeroVectorMagnitude (_n : Nat) :
       let v2 := VectorND.fromArray (#[Q1616.ofNat 4, Q1616.ofNat 5, Q1616.ofNat 6]) 3
       VectorND.dot v1 v2  -- Expected: dot product
 
--- TODO(lean-port): Add n-dimensional camera orientation example
--- TODO(lean-port): Add n-dimensional depth ordering example
+-- TODO(lean-port): Add #eval witness for computeCameraOrientationND applied to two CameraPoseND 3 poses, showing the resulting VectorND 3 direction between them
+-- TODO(lean-port): Add #eval witness for computeDepthOrderingND sorting an Array of BoundingHyperbox 3 by Euclidean distance from a camera PointND 3, returning the depth-sorted index permutation
 
 end Semantics.NGemetry

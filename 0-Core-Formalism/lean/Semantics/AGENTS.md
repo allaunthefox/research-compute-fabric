@@ -197,13 +197,13 @@ after narrowly compiling the file under a scratch target.
 - `goldenContractionEnergyDecrease` is discharged. Remaining follow-up is a
   separate premise-discharge lemma showing when the Burgers golden-contraction
   step satisfies `h_pt` and `h_u'_nonneg`.
-- `HyperbolicStateSurface.ko_preserves_hyperbola_approx` now makes the
-  forward-step approximation bound explicit. Remaining follow-up:
-  `TODO(lean-port)` discharge that premise from a formal `Q16_16.sqrt` error
-  bound.
-- `SSMS.aciPreservedByMlgruStep` now makes the blended hidden-state ACI bound
-  explicit. Remaining follow-up: discharge that premise from Q16_16 triangle,
-  multiplication monotonicity, and saturation associativity lemmas.
+- `HyperbolicStateSurface.ko_preserves_hyperbola_approx`: former sorry replaced
+  by explicit premise `onHyperbolaApprox (forwardStep s Δu) Q16_16.epsilon` (line 69).
+  Remaining: `TODO(lean-port)` discharge that premise from a formal `Q16_16.sqrt`
+  error-bound lemma.
+- `SSMS.aciPreservedByMlgruStep`: former sorry replaced by explicit premise
+  `hBlendACI` (lines 545–548). Remaining: `TODO(lean-port)` discharge from Q16_16
+  triangle inequality, multiplication monotonicity, and saturation associativity.
 
 ## Key API Notes (Lean 4.30 / this workspace)
 

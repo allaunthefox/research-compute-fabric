@@ -58,6 +58,78 @@ This file is the first stop for coding agents working in this repository.
   and `.vscode/tasks.json`, then use the pinned Python/CAD commands documented
   in `5-Applications/text-to-cad/AGENTS.md`.
 
+## Post-Interaction Workflow (mandatory after every agent session)
+
+After every interaction with the user that changes code, Lean modules,
+shim scripts, receipts, or architecture decisions, the agent MUST run the
+following steps **before claiming the session is complete**:
+
+### 1. Update AGENTS.md files
+
+Update the nearest scoped AGENTS.md for every subtree touched:
+
+| Subtree touched | AGENTS.md to update |
+|----------------|-------------------|
+| `0-Core-Formalism/lean/Semantics/` | `0-Core-Formalism/lean/Semantics/AGENTS.md` |
+| `4-Infrastructure/` | `4-Infrastructure/AGENTS.md` |
+| Root or multi-subtree | `AGENTS.md` (this file) |
+
+Minimum required updates per touched subtree:
+- **Blessed surface table** — add/remove/update module rows if Compiler roots changed
+- **Build baseline** — update job count and commit hash if `lake build` was run
+- **Architecture section** — update if data-flow or boundary rules changed
+- **Pending proof work** — add new `TODO(lean-port)` stubs; remove resolved ones
+- **Quarantine table** — add quarantined files; remove revived ones
+
+### 2. Verify the build
+
+```bash
+cd 0-Core-Formalism/lean/Semantics && lake build Compiler
+```
+
+If Lean files were touched, also run the full build:
+
+```bash
+cd 0-Core-Formalism/lean/Semantics && lake build
+```
+
+### 3. Commit
+
+Stage only explicitly touched files (never `git add .`).
+Commit message format:
+
+```
+<type>(<scope>): <summary>
+
+<body — what changed and why>
+
+Build: <N> jobs, 0 errors (lake build)
+```
+
+Types: `feat`, `fix`, `chore`, `docs`, `refactor`.
+Scope examples: `lean`, `rrc`, `avm-isa`, `infra`, `corpus278`.
+
+### 4. Check tree cleanliness
+
+```bash
+git status --branch --short --untracked-files=all
+```
+
+Untracked files that are not generated artifacts should either be staged or
+noted as intentionally dirty. Do not claim the tree is stable if there are
+unexpected modifications.
+
+### What "every interaction" means
+
+This workflow triggers whenever the user message results in:
+- Any file edit (Lean, Python, TOML, JSON, shell, Rust, etc.)
+- Any `lake build` run
+- Any architectural decision that changes the data-flow or boundary rules
+- Any new `TODO(lean-port)` or quarantine boundary
+
+It does NOT trigger for pure read-only exploration, explanation, or
+questions that result in no file changes.
+
 ## Do Not Sweep
 
 Avoid broad cleanup or staging commands such as:
@@ -120,8 +192,10 @@ These terms appear throughout all AGENTS.md files and the codebase:
   Builder/Warden/Judge clock domains.
 - **GCL** — Genetic Code Language. Self-improving evolutionary program representation.
 - **AVM** — Adaptive Virtual Machine. Universal bridge between math languages and
-  Python bytecode (status: core ISA rebuild pending — see §7.4 in
-  `6-Documentation/docs/AGENTS.md`).
+  Python bytecode. Core ISA is live in `Semantics.AVMIsa.*` (Types, Value, Instr,
+  State, Step, Run). AVM is the **sole output boundary** for RRC receipts:
+  `AVMIsa.Emit` stamps all top-level receipt JSON; `RRC.Emit` and `RRC.Corpus278`
+  feed it as classifier and raw-feature supplier respectively.
 - **enwik9** — the Hutter Prize 1GB Wikipedia XML corpus, used as the canonical
   end-to-end test vector for the hierarchical compressor.
 - **receipt** — a machine-readable attestation record stored in `ene.receipts`.

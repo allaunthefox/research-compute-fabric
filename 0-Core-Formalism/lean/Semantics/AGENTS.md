@@ -83,18 +83,16 @@ lake build
 - Generated `*_tb.v` and `*_test_vectors.json` files are build artifacts unless
   a task explicitly promotes one as a hardware receipt.
 
-## Blessed Compiler Surface (as of 2026-05-26)
+## Blessed Compiler Surface (as of 2026-05-26, commit `9928dd74`)
 
 The `Compiler` lean_lib in `lakefile.toml` gates the promoted API surface.
 Only the following roots are blessed for downstream import and receipt emission:
 
 | Root | Purpose |
 |------|---------|
-| `Semantics.RRC.Emit` | RRC record construction and JSON emission |
-| `Semantics.AVMIsa.Emit` | AVM ISA canary runner + receipt emitter (Goal A) |
-| `Semantics.AVMIsa.Run` | AVM ISA interpreter (used by Emit) |
-| `Semantics.ReceiptCore` | Shared receipt schema types |
-| `Semantics.RRCLogogramProjection` | Logogram projection predicate |
+| `Semantics.RRC.Emit` | Alignment classifier; `emitCorpus` generic entry point |
+| `Semantics.AVMIsa.Emit` | **Sole output boundary** — AVM canaries + stamps all receipts |
+| `Semantics.RRC.Corpus278` | 278-equation raw feature list (Python-supplied, Lean-gated) |
 
 Build the narrow surface with:
 
@@ -108,12 +106,26 @@ Build the full workspace with:
 lake build
 ```
 
-Full workspace build baseline: **3566 jobs, 0 errors** (commit `c20aa4be` + consolidation).
+Full workspace build baseline: **3567 jobs, 0 errors** (commit `9928dd74`).
 
-### Goal A canary receipt (AVMIsa.Emit)
+### Architecture: AVM is the sole output boundary
 
-`Semantics/AVMIsa/Emit.lean` runs three AVM ISA canaries and emits a JSON
-receipt on every `#eval`. Expected output shape:
+```
+RRC.Corpus278   — 278 FixtureRows, raw features only (no decisions)
+      ↓ emitCorpus
+RRC.Emit        — alignment gate (missingPrediction / alignedExact / etc.)
+      ↓ emitRrcCorpus278
+AVMIsa.Emit     — AVM canaries must pass; stamps avm.rrc_corpus278.bundle
+                  emits final JSON; SOLE output boundary
+```
+
+**Rule:** Nothing outside `AVMIsa.Emit` may emit a top-level receipt JSON.
+`RRC.Emit` is a classifier that feeds it. `RRC.Corpus278` supplies raw features.
+
+### Goal A canary receipt (AVMIsa.Emit §1–6)
+
+Three passing canaries: `avm.canary.not`, `avm.canary.and`, `avm.canary.or`.
+Expected `#eval emit.json` shape:
 
 ```json
 {
@@ -125,7 +137,28 @@ receipt on every `#eval`. Expected output shape:
 }
 ```
 
-Three passing canaries: `avm.canary.not`, `avm.canary.and`, `avm.canary.or`.
+### 278-equation corpus (AVMIsa.Emit §7 / RRC.Corpus278)
+
+`emitRrcCorpus278` classifies all 278 rows and stamps the bundle.
+Expected `#eval` corpus summary: `(278, <passed>, 278 - <passed>)`.
+
+Current state: `(278, 0, 278)` — all held, no PIST labels present yet.
+This is **correct and honest** — the gate reports exactly what it sees.
+
+Each row carries 5 generator fields for EN9wiki page generation:
+- `operatorTokens` — domain/operator token list (from route_hint + rrc_kind)
+- `invariantsDeclared` — declared invariant family (from domain_type)
+- `boundaryConds` — binding class (from bind_class)
+- `templateKey` — page-generator template (`definition`/`master_equation`/`gate`/`receipt`/`hold`)
+- `templateParams` — compact rendering parameter string
+
+To regenerate `Corpus278.lean` from source:
+
+```bash
+python3 4-Infrastructure/shim/build_corpus278.py
+```
+
+Python's role: raw feature extraction only. Lean's role: all gating decisions.
 
 ## Quarantined Modules (not in build surface)
 

@@ -1,31 +1,25 @@
 #!/usr/bin/env python3
 """PIST -> RRC receipt-density backfill injector.
 
-This script converts existing RRC equation projection rows plus optional PIST
-classification output into receipt-density records.
+NOTE (ontology migration):
 
-It is intentionally conservative:
+This file is a **legacy shim**. It exists to keep historical backfill workflows
+running while the AVM rewrite is underway.
 
-* It DOES NOT promote equations.
-* It DOES NOT mutate RDS/ENE by default.
-* RDS writes require the explicit --write-rds flag.
-* RDS writes default to a sidecar table: ene.rrc_receipt_density.
-* Database connectivity is delegated to the shared rds_connect.connect_rds helper.
-* It filters Markdown table header/separator rows that older validation scripts
-  accidentally treated as equations.
+**Target architecture:** Lean-only AVM ISA + backend shims.
+- Lean defines all semantics.
+- Shims do JSON/RDS I/O only.
 
-Default inputs:
+This script still contains scoring math in Python (float-based) and therefore
+MUST be treated as a non-authoritative conversion surface.
 
-    6-Documentation/docs/rrc_equation_classification.md
-    shared-data/rrc_pist_exact_validation.json
+Rules until ported:
+- Output is always `promotion = not_promoted`.
+- Output must carry an explicit `strip_receipt` section explaining:
+  - which constructs were computed in shim space
+  - what must be ported to Lean/AVM
 
-Default output:
-
-    shared-data/rrc_receipt_density_backfill.json
-
-The output is a receipt-density surface, not a truth claim. A populated density
-axis means "this equation has enough structural/witness evidence for routing";
-it does not mean the equation is mathematically proved.
+TODO(lean-port): Replace all scoring and warning decisions with Lean/AVM.
 """
 
 from __future__ import annotations
@@ -34,7 +28,6 @@ import argparse
 import hashlib
 import json
 import math
-import os
 import re
 import sys
 from collections import Counter
@@ -52,6 +45,8 @@ DEFAULT_RRC_FILE = REPO_ROOT / "6-Documentation/docs/rrc_equation_classification
 DEFAULT_PIST_REPORT = REPO_ROOT / "shared-data/rrc_pist_exact_validation.json"
 DEFAULT_OUT = REPO_ROOT / "shared-data/rrc_receipt_density_backfill.json"
 DEFAULT_RDS_TABLE = "ene.rrc_receipt_density"
+
+ONTOLOGY_VERSION = "shim-ontology-migration-v1"
 
 TARGET_AXES = {
     "projection_declared",
@@ -290,6 +285,7 @@ def build_record(row: RRCEquationRow, pred: dict[str, Any] | None) -> ReceiptDen
         "top_axes": row.top_axes,
         "promotion": "not_promoted",
         "source": "pist_receipt_density_injector_v1",
+        "ontology_version": ONTOLOGY_VERSION,
     }
     receipt_hash = stable_hash(unsigned_payload)
 
@@ -325,6 +321,8 @@ def summarize(records: list[ReceiptDensityRecord], total_rows: int, prediction_c
 
     return {
         "receipt_version": "pist-receipt-density-v1",
+        "ontology_version": ONTOLOGY_VERSION,
+        "shim_role": "legacy_scoring_surface_pending_avm",
         "input_rows": total_rows,
         "records": len(records),
         "pist_predictions_loaded": prediction_count,
@@ -339,6 +337,10 @@ def summarize(records: list[ReceiptDensityRecord], total_rows: int, prediction_c
         "by_status": dict(sorted(by_status.items())),
         "warning_counts": dict(sorted(warning_counts.items())),
         "promotion_policy": "no automatic promotion; density populates routing evidence only",
+        "float_policy": {
+            "status": "legacy_float_math_present",
+            "reason": "shim computes density components using Python float; must be ported to Lean/AVM",
+        },
     }
 
 
@@ -524,12 +526,31 @@ def main(argv: list[str] | None = None) -> int:
 
     payload = {
         "summary": summary,
+        "strip_receipt": {
+            "ontology_version": ONTOLOGY_VERSION,
+            "shim_role": "legacy_scoring_surface_pending_avm",
+            "computed_in_shim": [
+                "receipt_density",
+                "confidence",
+                "density_components",
+                "warnings",
+            ],
+            "must_port_to_lean_avm": [
+                "compute_density",
+                "spectral_quality",
+                "shape_agreement",
+                "axis_score",
+                "status_score",
+                "warning assignment",
+            ],
+            "float_policy": "legacy_float_math_present; reject once AVM port is active",
+        },
         "inputs": {
             "rrc_file": str(args.rrc_file),
             "pist_report": str(args.pist_report),
         },
         "claim_boundary": {
-            "receipt_density_means": "routing evidence is populated",
+            "receipt_density_means": "routing evidence is populated (legacy shim surface)",
             "receipt_density_does_not_mean": "mathematical proof or promotion",
             "promotion_policy": "not_promoted for every generated record",
             "rds_policy": "--write-rds upserts sidecar receipt-density metadata only via rds_connect.connect_rds",

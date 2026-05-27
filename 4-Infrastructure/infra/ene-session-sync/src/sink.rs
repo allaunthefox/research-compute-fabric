@@ -1,5 +1,6 @@
 use crate::models::{ChatMessage, ChatSession, IngestionReceipt};
 use anyhow::{Context, Result};
+use std::path::Path;
 use tokio_postgres::{Client, Config, NoTls};
 use tracing::{debug, info, warn};
 
@@ -54,93 +55,13 @@ impl RdsSink {
 
     /// Create tables and indexes if they do not exist.
     async fn init_tables(&self) -> Result<()> {
-        // Try to enable pgvector — harmless if already enabled or unavailable.
-        let _ = self
-            .client
-            .batch_execute("CREATE EXTENSION IF NOT EXISTS vector")
-            .await;
+        // Canonical DDL lives in sql/ene_chat_schema.sql.
+        // Keeping it out of Rust source reduces schema drift across services.
+        let ddl_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("sql/ene_chat_schema.sql");
+        let ddl = std::fs::read_to_string(&ddl_path)
+            .with_context(|| format!("read ENE chat schema DDL at {:?}", ddl_path))?;
 
-        let ddl = r#"
-CREATE TABLE IF NOT EXISTS ene.chat_sessions (
-    session_id              TEXT PRIMARY KEY,
-    title                   TEXT,
-    agent                   TEXT,
-    model                   TEXT,
-    workspace_fingerprint   TEXT,
-    workspace_root          TEXT,
-    fork_parent_session_id  TEXT,
-    compaction_count        INTEGER     NOT NULL DEFAULT 0,
-    compaction_summary      TEXT,
-    message_count           INTEGER     NOT NULL DEFAULT 0,
-    token_input_total       BIGINT      NOT NULL DEFAULT 0,
-    token_output_total      BIGINT      NOT NULL DEFAULT 0,
-    created_at_ms           BIGINT      NOT NULL,
-    updated_at_ms           BIGINT      NOT NULL,
-    first_message_at_ms     BIGINT,
-    last_message_at_ms      BIGINT,
-    embedding               vector(768),
-    meta                    JSONB       NOT NULL DEFAULT '{}',
-    receipt                 TEXT,
-    updated_at              TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS ene.chat_messages (
-    id                    BIGSERIAL   PRIMARY KEY,
-    session_id            TEXT        NOT NULL REFERENCES ene.chat_sessions(session_id) ON DELETE CASCADE,
-    message_index         INTEGER     NOT NULL,
-    role                  TEXT        NOT NULL,
-    blocks                JSONB       NOT NULL,
-    text_content          TEXT,
-    token_input           BIGINT      NOT NULL DEFAULT 0,
-    token_output          BIGINT      NOT NULL DEFAULT 0,
-    token_cache_creation  BIGINT      NOT NULL DEFAULT 0,
-    token_cache_read      BIGINT      NOT NULL DEFAULT 0,
-    tool_calls            JSONB       NOT NULL DEFAULT '[]',
-    embedding             vector(768),
-    receipt_hash          TEXT,
-    created_at_ms         BIGINT      NOT NULL,
-    created_at            TIMESTAMPTZ NOT NULL DEFAULT now(),
-    UNIQUE(session_id, message_index)
-);
-
-CREATE TABLE IF NOT EXISTS ene.ingestion_receipts (
-    receipt_id    UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-    shim_name     TEXT        NOT NULL,
-    status        TEXT        NOT NULL DEFAULT 'pending',
-    sha256        TEXT        NOT NULL,
-    record_count  BIGINT      NOT NULL DEFAULT 0,
-    source_path   TEXT        NOT NULL,
-    meta          JSONB       NOT NULL DEFAULT '{}',
-    created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
--- Columns may already exist after a schema migration; ADD COLUMN IF NOT EXISTS
--- is idempotent on PostgreSQL ≥ 9.6.
-ALTER TABLE ene.chat_sessions ADD COLUMN IF NOT EXISTS title TEXT;
-ALTER TABLE ene.chat_sessions ADD COLUMN IF NOT EXISTS agent TEXT;
-ALTER TABLE ene.chat_sessions ADD COLUMN IF NOT EXISTS model TEXT;
-
-CREATE INDEX IF NOT EXISTS idx_chat_sessions_updated
-    ON ene.chat_sessions(updated_at_ms DESC);
-CREATE INDEX IF NOT EXISTS idx_chat_sessions_workspace
-    ON ene.chat_sessions(workspace_fingerprint);
-CREATE INDEX IF NOT EXISTS idx_chat_messages_session_order
-    ON ene.chat_messages(session_id, message_index);
-CREATE INDEX IF NOT EXISTS idx_chat_messages_receipt
-    ON ene.chat_messages(receipt_hash);
-        "#;
-        // Full-text and JSONB indexes require non-empty text_content / tool_calls;
-        // create them separately so a pgvector-missing cluster still gets the rest.
-        let fts_ddl = r#"
-CREATE INDEX IF NOT EXISTS idx_chat_messages_text_search
-    ON ene.chat_messages USING GIN(to_tsvector('english', COALESCE(text_content, '')));
-CREATE INDEX IF NOT EXISTS idx_chat_messages_tool_search
-    ON ene.chat_messages USING GIN(tool_calls jsonb_path_ops);
-        "#;
-        self.client.batch_execute(ddl).await.context("init DDL")?;
-        if let Err(e) = self.client.batch_execute(fts_ddl).await {
-            warn!("FTS index creation skipped (non-fatal): {}", e);
-        }
+        self.client.batch_execute(&ddl).await.context("init DDL")?;
         info!("RDS schema initialized");
         Ok(())
     }
@@ -159,32 +80,32 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_tool_search
         let meta_json = serde_json::to_value(&s.meta)?;
         self.client
             .execute(
-                "INSERT INTO ene.chat_sessions \
-                 (session_id, title, agent, model, \
-                  workspace_fingerprint, workspace_root, fork_parent_session_id, \
-                  compaction_count, compaction_summary, message_count, \
-                  token_input_total, token_output_total, \
-                  created_at_ms, updated_at_ms, first_message_at_ms, last_message_at_ms, \
-                  embedding, meta, receipt, updated_at) \
-                 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17::vector,$18,$19,now()) \
-                 ON CONFLICT (session_id) DO UPDATE SET \
-                  title                  = EXCLUDED.title, \
-                  agent                  = EXCLUDED.agent, \
-                  model                  = EXCLUDED.model, \
-                  workspace_fingerprint  = EXCLUDED.workspace_fingerprint, \
-                  workspace_root         = EXCLUDED.workspace_root, \
-                  fork_parent_session_id = EXCLUDED.fork_parent_session_id, \
-                  compaction_count       = EXCLUDED.compaction_count, \
-                  compaction_summary     = EXCLUDED.compaction_summary, \
-                  message_count          = EXCLUDED.message_count, \
-                  token_input_total      = EXCLUDED.token_input_total, \
-                  token_output_total     = EXCLUDED.token_output_total, \
-                  updated_at_ms          = EXCLUDED.updated_at_ms, \
-                  first_message_at_ms    = EXCLUDED.first_message_at_ms, \
-                  last_message_at_ms     = EXCLUDED.last_message_at_ms, \
-                  embedding              = EXCLUDED.embedding, \
-                  meta                   = EXCLUDED.meta, \
-                  receipt                = EXCLUDED.receipt, \
+                "INSERT INTO ene.chat_sessions \\
+                 (session_id, title, agent, model, \\
+                  workspace_fingerprint, workspace_root, fork_parent_session_id, \\
+                  compaction_count, compaction_summary, message_count, \\
+                  token_input_total, token_output_total, \\
+                  created_at_ms, updated_at_ms, first_message_at_ms, last_message_at_ms, \\
+                  embedding, meta, receipt, updated_at) \\
+                 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17::vector,$18,$19,now()) \\
+                 ON CONFLICT (session_id) DO UPDATE SET \\
+                  title                  = EXCLUDED.title, \\
+                  agent                  = EXCLUDED.agent, \\
+                  model                  = EXCLUDED.model, \\
+                  workspace_fingerprint  = EXCLUDED.workspace_fingerprint, \\
+                  workspace_root         = EXCLUDED.workspace_root, \\
+                  fork_parent_session_id = EXCLUDED.fork_parent_session_id, \\
+                  compaction_count       = EXCLUDED.compaction_count, \\
+                  compaction_summary     = EXCLUDED.compaction_summary, \\
+                  message_count          = EXCLUDED.message_count, \\
+                  token_input_total      = EXCLUDED.token_input_total, \\
+                  token_output_total     = EXCLUDED.token_output_total, \\
+                  updated_at_ms          = EXCLUDED.updated_at_ms, \\
+                  first_message_at_ms    = EXCLUDED.first_message_at_ms, \\
+                  last_message_at_ms     = EXCLUDED.last_message_at_ms, \\
+                  embedding              = EXCLUDED.embedding, \\
+                  meta                   = EXCLUDED.meta, \\
+                  receipt                = EXCLUDED.receipt, \\
                   updated_at             = now()",
                 &[
                     &s.session_id,
@@ -230,22 +151,22 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_tool_search
             let tool_calls_json = serde_json::to_value(&msg.tool_calls)?;
             self.client
                 .execute(
-                    "INSERT INTO ene.chat_messages \
-                     (session_id, message_index, role, blocks, text_content, \
-                      token_input, token_output, token_cache_creation, token_cache_read, \
-                      tool_calls, embedding, receipt_hash, created_at_ms, created_at) \
-                     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11::vector,$12,$13,now()) \
-                     ON CONFLICT (session_id, message_index) DO UPDATE SET \
-                      role                 = EXCLUDED.role, \
-                      blocks               = EXCLUDED.blocks, \
-                      text_content         = EXCLUDED.text_content, \
-                      token_input          = EXCLUDED.token_input, \
-                      token_output         = EXCLUDED.token_output, \
-                      token_cache_creation = EXCLUDED.token_cache_creation, \
-                      token_cache_read     = EXCLUDED.token_cache_read, \
-                      tool_calls           = EXCLUDED.tool_calls, \
-                      embedding            = EXCLUDED.embedding, \
-                      receipt_hash         = EXCLUDED.receipt_hash, \
+                    "INSERT INTO ene.chat_messages \\
+                     (session_id, message_index, role, blocks, text_content, \\
+                      token_input, token_output, token_cache_creation, token_cache_read, \\
+                      tool_calls, embedding, receipt_hash, created_at_ms, created_at) \\
+                     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11::vector,$12,$13,now()) \\
+                     ON CONFLICT (session_id, message_index) DO UPDATE SET \\
+                      role                 = EXCLUDED.role, \\
+                      blocks               = EXCLUDED.blocks, \\
+                      text_content         = EXCLUDED.text_content, \\
+                      token_input          = EXCLUDED.token_input, \\
+                      token_output         = EXCLUDED.token_output, \\
+                      token_cache_creation = EXCLUDED.token_cache_creation, \\
+                      token_cache_read     = EXCLUDED.token_cache_read, \\
+                      tool_calls           = EXCLUDED.tool_calls, \\
+                      embedding            = EXCLUDED.embedding, \\
+                      receipt_hash         = EXCLUDED.receipt_hash, \\
                       created_at_ms        = EXCLUDED.created_at_ms",
                     &[
                         &session_id,
@@ -297,8 +218,8 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_tool_search
         let meta_json = serde_json::to_value(&r.meta)?;
         self.client
             .execute(
-                "INSERT INTO ene.ingestion_receipts \
-                 (shim_name, status, sha256, record_count, source_path, meta) \
+                "INSERT INTO ene.ingestion_receipts \\
+                 (shim_name, status, sha256, record_count, source_path, meta) \\
                  VALUES ($1, $2, $3, $4, $5, $6)",
                 &[
                     &r.shim_name,
@@ -323,16 +244,16 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_tool_search
         let rows = self
             .client
             .query(
-                "SELECT s.session_id, s.title, s.agent, s.model, \
-                 COUNT(m.id) AS match_count, \
-                 MAX(ts_rank(to_tsvector('english', COALESCE(m.text_content,'')), \
-                             plainto_tsquery('english', $1))) AS rank \
-                 FROM ene.chat_sessions s \
-                 JOIN ene.chat_messages m ON m.session_id = s.session_id \
-                 WHERE to_tsvector('english', COALESCE(m.text_content,'')) \
-                       @@ plainto_tsquery('english', $1) \
-                 GROUP BY s.session_id, s.title, s.agent, s.model \
-                 ORDER BY rank DESC \
+                "SELECT s.session_id, s.title, s.agent, s.model, \\
+                 COUNT(m.id) AS match_count, \\
+                 MAX(ts_rank(to_tsvector('english', COALESCE(m.text_content,'')), \\
+                             plainto_tsquery('english', $1))) AS rank \\
+                 FROM ene.chat_sessions s \\
+                 JOIN ene.chat_messages m ON m.session_id = s.session_id \\
+                 WHERE to_tsvector('english', COALESCE(m.text_content,'')) \\
+                       @@ plainto_tsquery('english', $1) \\
+                 GROUP BY s.session_id, s.title, s.agent, s.model \\
+                 ORDER BY rank DESC \\
                  LIMIT $2",
                 &[&query, &limit],
             )
@@ -369,11 +290,11 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_tool_search
         let rows = self
             .client
             .query(
-                "SELECT session_id, title, agent, model, \
-                 1 - (embedding <=> $1::vector) AS similarity \
-                 FROM ene.chat_sessions \
-                 WHERE embedding IS NOT NULL \
-                 ORDER BY embedding <=> $1::vector \
+                "SELECT session_id, title, agent, model, \\
+                 1 - (embedding <=> $1::vector) AS similarity \\
+                 FROM ene.chat_sessions \\
+                 WHERE embedding IS NOT NULL \\
+                 ORDER BY embedding <=> $1::vector \\
                  LIMIT $2",
                 &[&vec_str, &limit],
             )
@@ -397,10 +318,10 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_tool_search
         let rows = self
             .client
             .query(
-                "SELECT session_id, title, agent, model, message_count, \
-                 token_input_total, token_output_total, created_at_ms, updated_at_ms \
-                 FROM ene.chat_sessions \
-                 ORDER BY updated_at_ms DESC \
+                "SELECT session_id, title, agent, model, message_count, \\
+                 token_input_total, token_output_total, created_at_ms, updated_at_ms \\
+                 FROM ene.chat_sessions \\
+                 ORDER BY updated_at_ms DESC \\
                  LIMIT $1",
                 &[&limit],
             )
@@ -428,8 +349,8 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_tool_search
         let Some(sess) = self
             .client
             .query_opt(
-                "SELECT session_id, title, agent, model, message_count, \
-                 token_input_total, token_output_total, created_at_ms, updated_at_ms, meta \
+                "SELECT session_id, title, agent, model, message_count, \\
+                 token_input_total, token_output_total, created_at_ms, updated_at_ms, meta \\
                  FROM ene.chat_sessions WHERE session_id = $1",
                 &[&session_id],
             )
@@ -442,9 +363,9 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_tool_search
         let msg_rows = self
             .client
             .query(
-                "SELECT message_index, role, blocks, text_content, \
-                 token_input, token_output, tool_calls, created_at_ms \
-                 FROM ene.chat_messages \
+                "SELECT message_index, role, blocks, text_content, \\
+                 token_input, token_output, tool_calls, created_at_ms \\
+                 FROM ene.chat_messages \\
                  WHERE session_id = $1 ORDER BY message_index",
                 &[&session_id],
             )

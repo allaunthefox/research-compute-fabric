@@ -178,7 +178,7 @@ class CredentialManager:
         return self.credentials.get(service)
     
     def has_credentials(self, service: str) -> bool:
-        """Check if credentials exist for service."""
+        """Check if credentials exist."""
         return service in self.credentials
     
     def get_ene_status(self) -> Dict[str, Any]:
@@ -664,7 +664,7 @@ async def call_tool(name: str, arguments: Dict[str, Any]) -> List[TextContent]:
         elif name == "notion_update_page":
             result = await client.update_page(
                 page_id=arguments["page_id"],
-                properties=arguments["properties"]
+                properties=arguments[[...truncated for brevity in pending copy...]]
             )
             return [TextContent(type="text", text=json.dumps(result, indent=2))]
         

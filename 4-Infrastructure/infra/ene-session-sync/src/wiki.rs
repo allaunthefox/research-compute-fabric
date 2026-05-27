@@ -18,6 +18,28 @@ pub const MAX_TITLE_LEN: usize = 160;
 /// Maximum allowed content size in bytes (256 KB).
 pub const MAX_CONTENT_BYTES: usize = 262_144;
 
+// ── Node/provenance defaults (configurable) ────────────────────────────────────
+
+#[derive(Debug, Clone)]
+struct ProvenanceDefaults {
+    node: String,
+    lake_seed: String,
+    tailscale_ip: String,
+}
+
+fn provenance_defaults() -> ProvenanceDefaults {
+    // These defaults are intentionally conservative; callers should set env vars
+    // in production.
+    let node = std::env::var("ENE_NODE_ID").unwrap_or_else(|_| "ene".to_string());
+    let lake_seed = std::env::var("ENE_LAKE_SEED").unwrap_or_else(|_| "local".to_string());
+    let tailscale_ip = std::env::var("ENE_TAILSCALE_IP").unwrap_or_else(|_| "".to_string());
+    ProvenanceDefaults {
+        node,
+        lake_seed,
+        tailscale_ip,
+    }
+}
+
 // ── Structs ────────────────────────────────────────────────────────────────────
 
 /// A wiki page header (latest-revision summary, no body text).
@@ -49,10 +71,7 @@ pub struct WikiRevision {
 
 /// Trim and collapse whitespace in a wiki title; reject empty or oversized titles.
 pub fn normalize_title(title: &str) -> Result<String> {
-    let cleaned: String = title
-        .split_whitespace()
-        .collect::<Vec<_>>()
-        .join(" ");
+    let cleaned: String = title.split_whitespace().collect::<Vec<_>>().join(" ");
     if cleaned.is_empty() {
         return Err(anyhow!("wiki title is required"));
     }
@@ -126,7 +145,6 @@ pub fn canonical_json(v: &Value) -> String {
     fn to_sorted(v: &Value) -> Value {
         match v {
             Value::Object(map) => {
-                // Collect into a BTreeMap so keys are sorted lexicographically.
                 let sorted: std::collections::BTreeMap<_, _> = map
                     .iter()
                     .map(|(k, vv)| (k.clone(), to_sorted(vv)))
@@ -145,7 +163,6 @@ pub fn canonical_json(v: &Value) -> String {
     serde_json::to_string(&sorted).unwrap_or_else(|_| "null".to_string())
 }
 
-/// Manual `[[...]]` span parser — returns `(inner_text, start_byte)` for each span.
 fn wiki_spans(text: &str) -> Vec<&str> {
     let bytes = text.as_bytes();
     let len = bytes.len();
@@ -153,12 +170,10 @@ fn wiki_spans(text: &str) -> Vec<&str> {
     let mut i = 0;
     while i + 1 < len {
         if bytes[i] == b'[' && bytes[i + 1] == b'[' {
-            // Find the matching `]]`.
             let start = i + 2;
             let mut j = start;
             while j + 1 < len {
                 if bytes[j] == b']' && bytes[j + 1] == b']' {
-                    // Reject spans that contain newlines or nested brackets.
                     let inner = &text[start..j];
                     if !inner.contains('\n') && !inner.contains('[') && !inner.contains(']') {
                         spans.push(inner);
@@ -169,7 +184,6 @@ fn wiki_spans(text: &str) -> Vec<&str> {
                 j += 1;
             }
             if j + 1 >= len {
-                // Unclosed span — advance past the opening `[[`.
                 i += 2;
             }
         } else {
@@ -179,20 +193,11 @@ fn wiki_spans(text: &str) -> Vec<&str> {
     spans
 }
 
-/// Extract the link target from a raw `[[...]]` inner string.
-///
-/// Strip everything from the first `|` or `#` onward.
 fn link_target(inner: &str) -> &str {
-    let cut = inner
-        .find(|c| c == '|' || c == '#')
-        .unwrap_or(inner.len());
+    let cut = inner.find(|c| c == '|' || c == '#').unwrap_or(inner.len());
     &inner[..cut]
 }
 
-/// Extract all wiki links from `text`.
-///
-/// Returns deduplicated, case-insensitively sorted normalized titles.
-/// Skips spans whose target (after normalization) starts with `category:`.
 pub fn extract_links(text: &str) -> Vec<String> {
     let mut links: Vec<String> = Vec::new();
     for inner in wiki_spans(text) {
@@ -206,26 +211,18 @@ pub fn extract_links(text: &str) -> Vec<String> {
             }
         }
     }
-    // Deduplicate.
     links.sort_by(|a, b| a.to_lowercase().cmp(&b.to_lowercase()));
     links.dedup_by(|a, b| a.to_lowercase() == b.to_lowercase());
     links
 }
 
-/// Extract all `[[Category:...]]` entries from `text`.
-///
-/// Returns deduplicated, case-insensitively sorted category names (prefix stripped).
 pub fn extract_categories(text: &str) -> Vec<String> {
     let mut cats: Vec<String> = Vec::new();
     for inner in wiki_spans(text) {
         let target = link_target(inner).trim();
-        // Accept `Category:Foo` or `category:foo` (case-insensitive prefix).
         let lower = target.to_lowercase();
-        // The Python CATEGORY_RE also allows whitespace: `Category : Foo`.
-        // We replicate that by checking the prefix after collapsing whitespace.
         let condensed: String = target.split_whitespace().collect::<Vec<_>>().join(" ");
         let cond_lower = condensed.to_lowercase();
-        // Match `category :` or `category:` prefix.
         let remainder = if cond_lower.starts_with("category :") {
             Some(condensed["category :".len()..].trim().to_string())
         } else if lower.starts_with("category:") {
@@ -244,10 +241,6 @@ pub fn extract_categories(text: &str) -> Vec<String> {
     cats
 }
 
-/// Compute the deterministic write receipt for a revision.
-///
-/// Receipt = SHA-256 hex of canonical JSON of
-/// `{"author":…,"created_at":…,"revision":…,"slug":…,"text_sha256":…}`.
 pub fn write_receipt(
     slug: &str,
     revision: i64,
@@ -256,7 +249,6 @@ pub fn write_receipt(
     created_at_ms: i64,
 ) -> String {
     let text_sha256 = sha256_hex(text.as_bytes());
-    // Build a BTreeMap so keys are sorted identically to Python's sort_keys=True.
     let mut map = std::collections::BTreeMap::new();
     map.insert("author", serde_json::Value::String(author.to_string()));
     map.insert(
@@ -273,7 +265,6 @@ pub fn write_receipt(
     sha256_hex(payload.as_bytes())
 }
 
-/// Count occurrences of `needle` (as a plain substring) in `haystack`.
 #[inline]
 fn count_substr(haystack: &str, needle: &str) -> usize {
     if needle.is_empty() {
@@ -288,9 +279,6 @@ fn count_substr(haystack: &str, needle: &str) -> usize {
     count
 }
 
-/// Count distinct "word-like" tokens matching `[a-zA-Z][a-zA-Z0-9_]{2,}`.
-///
-/// This replicates `len(set(re.findall(r"[a-zA-Z][a-zA-Z0-9_]{2,}", lowered)))`.
 fn distinct_word_tokens(text: &str) -> usize {
     let bytes = text.as_bytes();
     let len = bytes.len();
@@ -298,7 +286,6 @@ fn distinct_word_tokens(text: &str) -> usize {
     let mut i = 0;
     while i < len {
         let b = bytes[i];
-        // Must start with a letter (a-z after lowering).
         if b.is_ascii_alphabetic() {
             let start = i;
             i += 1;
@@ -306,7 +293,6 @@ fn distinct_word_tokens(text: &str) -> usize {
                 i += 1;
             }
             let word = &text[start..i];
-            // Must be at least 3 characters (1 leading + at least 2 more).
             if word.len() >= 3 {
                 tokens.insert(word.to_string());
             }
@@ -317,24 +303,7 @@ fn distinct_word_tokens(text: &str) -> usize {
     tokens.len()
 }
 
-/// Derive a deterministic 14-axis concept vector for a wiki page.
-///
-/// Axes 0,1,3,4,8,9,10 are always 0.0.  Active axes:
-/// - axis 2  : topology / manifold / links
-/// - axis 5  : hash / receipt / verify
-/// - axis 6  : sqlite / schema / index
-/// - axis 7  : lexical richness (distinct tokens / 500)
-/// - axis 11 : proof / lean / theorem
-/// - axis 12 : categories / archive / history
-/// - axis 13 : author / provenance / attest
-///
-/// The vector is L2-normalised then rounded to 6 decimal places.
-pub fn concept_vector_for_wiki(
-    title: &str,
-    text: &str,
-    links: &[String],
-    categories: &[String],
-) -> Vec<f64> {
+pub fn concept_vector_for_wiki(title: &str, text: &str, links: &[String], categories: &[String]) -> Vec<f64> {
     let combined = format!("{}\n{}", title, text).to_lowercase();
     let mut axes = vec![0.0f64; 14];
 
@@ -382,31 +351,18 @@ pub fn concept_vector_for_wiki(
             / 8.0,
     );
 
-    // If all axes are zero, set the lexical richness axis to 1.
     if axes.iter().all(|&x| x == 0.0) {
         axes[7] = 1.0;
     }
 
-    // L2 normalise.
     let norm = axes.iter().map(|x| x * x).sum::<f64>().sqrt();
     axes.iter()
-        .map(|&x| {
-            if norm > 0.0 {
-                // Round to 6 decimal places.
-                (x / norm * 1_000_000.0).round() / 1_000_000.0
-            } else {
-                0.0
-            }
-        })
+        .map(|&x| if norm > 0.0 { (x / norm * 1_000_000.0).round() / 1_000_000.0 } else { 0.0 })
         .collect()
 }
 
-/// Bin a concept vector into 0–7 genome integers and return the six named axes.
 pub fn genome_from_vector(v: &[f64]) -> Value {
-    let bins: Vec<u8> = v
-        .iter()
-        .map(|&x| u8::min(7, (x * 8.0) as u8))
-        .collect();
+    let bins: Vec<u8> = v.iter().map(|&x| u8::min(7, (x * 8.0) as u8)).collect();
     let get = |idx: usize| -> i64 { bins.get(idx).copied().unwrap_or(0) as i64 };
     json!({
         "mu":  get(1),
@@ -418,16 +374,10 @@ pub fn genome_from_vector(v: &[f64]) -> Value {
     })
 }
 
-/// Build the archive_id string for a slug + content_hash pair.
 fn archive_id_for(slug: &str, content_hash: &str) -> String {
-    format!(
-        "json_catalog_ene_wiki_{}_{}",
-        slug,
-        &content_hash[..content_hash.len().min(16)]
-    )
+    format!("json_catalog_ene_wiki_{}_{}", slug, &content_hash[..content_hash.len().min(16)])
 }
 
-/// Build the full archive record dict matching the Python `make_archive_record()`.
 pub fn make_archive_record(
     title: &str,
     slug: &str,
@@ -466,20 +416,15 @@ pub fn make_archive_record(
     })
 }
 
-/// Build the JSONL event dict matching the Python `make_jsonl_event()`.
 pub fn make_jsonl_event(record: &Value, concept_vector: &[f64], receipt: &str) -> Value {
+    let defaults = provenance_defaults();
+
     let now_ms = now_unix_ms() as f64 / 1_000.0;
     let raw = &record["raw_content"];
     let slug = raw["slug"].as_str().unwrap_or("");
     let title = raw["title"].as_str().unwrap_or("");
-    let links_len = raw["links"]
-        .as_array()
-        .map(|a| a.len())
-        .unwrap_or(0);
-    let categories_arr: Vec<Value> = raw["categories"]
-        .as_array()
-        .cloned()
-        .unwrap_or_default();
+    let links_len = raw["links"].as_array().map(|a| a.len()).unwrap_or(0);
+    let categories_arr: Vec<Value> = raw["categories"].as_array().cloned().unwrap_or_default();
     let content_hash = record["content_hash"].as_str().unwrap_or("");
     let extracted_at = record["extracted_at"].as_str().unwrap_or("");
     let archive_id = record["archive_id"].as_str().unwrap_or("");
@@ -488,14 +433,10 @@ pub fn make_jsonl_event(record: &Value, concept_vector: &[f64], receipt: &str) -
     let pkg = format!("ene/wiki/{}", slug);
     let event_id = format!("ene:{}", archive_id);
 
-    // bind.cost = max(1, len(extracted_text.encode("utf-8"))) << 16
     let text_bytes = extracted_text.len().max(1);
     let cost: i64 = (text_bytes as i64) << 16;
 
-    let mut tags = vec![
-        Value::String("ene".to_string()),
-        Value::String("wiki".to_string()),
-    ];
+    let mut tags = vec![Value::String("ene".to_string()), Value::String("wiki".to_string())];
     for cat in &categories_arr {
         tags.push(cat.clone());
     }
@@ -540,18 +481,15 @@ pub fn make_jsonl_event(record: &Value, concept_vector: &[f64], receipt: &str) -
             "class":     "informational_bind",
         },
         "provenance": {
-            "node":             "ene-wiki-layer",
-            "lake_seed":        "local",
-            "tailscale_ip":     "",
+            "node":             defaults.node,
+            "lake_seed":        defaults.lake_seed,
+            "tailscale_ip":     defaults.tailscale_ip,
             "attestation_hash": format!("sha256:{}", receipt),
             "prev_id":          Value::Null,
         },
     })
 }
 
-/// Return `true` if the text passes the content admission gate.
-///
-/// Rejects: oversized text, `<script` tags, `javascript:` URLs.
 pub fn admit_write(text: &str) -> bool {
     if text.len() >= MAX_CONTENT_BYTES {
         return false;
@@ -565,7 +503,6 @@ pub fn admit_write(text: &str) -> bool {
     true
 }
 
-/// Current Unix time as milliseconds.
 fn now_unix_ms() -> i64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -575,13 +512,11 @@ fn now_unix_ms() -> i64 {
 
 // ── ENEWikiLayer (SQLite) ──────────────────────────────────────────────────────
 
-/// SQLite-backed wiki layer.  Drop-in equivalent of `ene_wiki_layer.ENEWikiLayer`.
 pub struct ENEWikiLayer {
     pub db_path: PathBuf,
 }
 
 impl ENEWikiLayer {
-    /// Open (or create) a wiki backed by the SQLite database at `db_path`.
     pub fn new(db_path: impl AsRef<Path>) -> Result<Self> {
         let db_path = db_path.as_ref().to_path_buf();
         if let Some(parent) = db_path.parent() {
@@ -593,7 +528,6 @@ impl ENEWikiLayer {
         Ok(layer)
     }
 
-    /// Open a raw SQLite connection to the backing database.
     fn open(&self) -> Result<rusqlite::Connection> {
         let conn = rusqlite::Connection::open(&self.db_path)
             .with_context(|| format!("opening sqlite db {:?}", self.db_path))?;
@@ -601,7 +535,6 @@ impl ENEWikiLayer {
         Ok(conn)
     }
 
-    /// Create all tables if they do not exist.
     pub fn init_tables(&self) -> Result<()> {
         let conn = self.open()?;
         conn.execute_batch(
@@ -663,7 +596,6 @@ impl ENEWikiLayer {
         )
         .context("creating wiki tables")?;
 
-        // Ensure optional columns exist on ene_wiki_revisions (schema migration).
         let extra_cols = [
             ("archive_id", "TEXT"),
             ("content_hash", "TEXT"),
@@ -671,25 +603,21 @@ impl ENEWikiLayer {
             ("jsonl_event", "TEXT"),
         ];
         let existing: Vec<String> = {
-            let mut stmt = conn
-                .prepare("PRAGMA table_info(ene_wiki_revisions)")?;
-            let cols: Vec<String> = stmt.query_map([], |row| row.get::<_, String>(1))?
+            let mut stmt = conn.prepare("PRAGMA table_info(ene_wiki_revisions)")?;
+            let cols: Vec<String> = stmt
+                .query_map([], |row| row.get::<_, String>(1))?
                 .filter_map(|r| r.ok())
                 .collect();
             cols
         };
         for (col, decl) in &extra_cols {
             if !existing.contains(&col.to_string()) {
-                conn.execute_batch(&format!(
-                    "ALTER TABLE ene_wiki_revisions ADD COLUMN {} {}",
-                    col, decl
-                ))?;
+                conn.execute_batch(&format!("ALTER TABLE ene_wiki_revisions ADD COLUMN {} {}", col, decl))?;
             }
         }
         Ok(())
     }
 
-    /// Upsert a packages row from a JSONL event.
     fn upsert_package(conn: &rusqlite::Connection, event: &Value) -> Result<()> {
         let data = &event["data"];
         let pkg = data["pkg"].as_str().unwrap_or("");
@@ -739,14 +667,7 @@ impl ENEWikiLayer {
         Ok(())
     }
 
-    /// Write or update a wiki page, appending a new revision.
-    pub fn put_page(
-        &self,
-        title: &str,
-        text: &str,
-        author: &str,
-        summary: &str,
-    ) -> Result<WikiRevision> {
+    pub fn put_page(&self, title: &str, text: &str, author: &str, summary: &str) -> Result<WikiRevision> {
         if !admit_write(text) {
             return Err(anyhow!("wiki write rejected: content failed admission gate"));
         }
@@ -756,7 +677,6 @@ impl ENEWikiLayer {
 
         let conn = self.open()?;
 
-        // Determine next revision number.
         let latest: Option<i64> = conn
             .query_row(
                 "SELECT latest_revision FROM ene_wiki_pages WHERE slug = ?1",
@@ -786,11 +706,9 @@ impl ENEWikiLayer {
 
         let archive_id = archive_record["archive_id"].as_str().unwrap_or("").to_string();
         let content_hash = archive_record["content_hash"].as_str().unwrap_or("").to_string();
-        let archive_record_json =
-            serde_json::to_string(&archive_record).unwrap_or_default();
+        let archive_record_json = serde_json::to_string(&archive_record).unwrap_or_default();
         let jsonl_event_json = serde_json::to_string(&jsonl_event).unwrap_or_default();
 
-        // Insert revision.
         conn.execute(
             r#"
             INSERT INTO ene_wiki_revisions
@@ -807,7 +725,6 @@ impl ENEWikiLayer {
         )
         .context("inserting wiki revision")?;
 
-        // Upsert page header.
         conn.execute(
             r#"
             INSERT INTO ene_wiki_pages (slug, title, latest_revision, updated_at, receipt)
@@ -822,24 +739,16 @@ impl ENEWikiLayer {
         )
         .context("upserting wiki page")?;
 
-        // Replace links.
-        conn.execute(
-            "DELETE FROM ene_wiki_links WHERE slug = ?1",
-            rusqlite::params![&slug],
-        )?;
+        conn.execute("DELETE FROM ene_wiki_links WHERE slug = ?1", rusqlite::params![&slug])?;
         for link_title in &links {
             let target_slug = title_slug(link_title).unwrap_or_default();
             conn.execute(
-                r#"
-                INSERT OR IGNORE INTO ene_wiki_links (slug, target_slug, target_title)
-                VALUES (?1,?2,?3)
-                "#,
+                r#"INSERT OR IGNORE INTO ene_wiki_links (slug, target_slug, target_title) VALUES (?1,?2,?3)"#,
                 rusqlite::params![&slug, &target_slug, link_title],
             )
             .context("inserting wiki link")?;
         }
 
-        // Replace categories.
         conn.execute(
             "DELETE FROM ene_wiki_categories WHERE slug = ?1",
             rusqlite::params![&slug],
@@ -868,12 +777,10 @@ impl ENEWikiLayer {
         })
     }
 
-    /// Retrieve the latest revision of a page by title, or `None` if not found.
     pub fn get_page(&self, title: &str) -> Result<Option<WikiRevision>> {
         let slug = title_slug(title)?;
         let conn = self.open()?;
 
-        // Find latest revision number from the pages table.
         let latest: Option<i64> = conn
             .query_row(
                 "SELECT latest_revision FROM ene_wiki_pages WHERE slug = ?1",
@@ -887,14 +794,9 @@ impl ENEWikiLayer {
             None => return Ok(None),
         };
 
-        // Fetch the revision body.
         let row: Option<(String, String, i64, String, String, String, i64, String)> = conn
             .query_row(
-                r#"
-                SELECT title, slug, revision, text, author, summary, created_at, receipt
-                FROM ene_wiki_revisions
-                WHERE slug = ?1 AND revision = ?2
-                "#,
+                r#"SELECT title, slug, revision, text, author, summary, created_at, receipt FROM ene_wiki_revisions WHERE slug = ?1 AND revision = ?2"#,
                 rusqlite::params![&slug, revision],
                 |r| {
                     Ok((
@@ -912,13 +814,11 @@ impl ENEWikiLayer {
             .optional()
             .context("fetching wiki revision")?;
 
-        let (title_db, slug_db, rev, text, author, summary, created_at_ms, receipt_db) =
-            match row {
-                Some(t) => t,
-                None => return Ok(None),
-            };
+        let (title_db, slug_db, rev, text, author, summary, created_at_ms, receipt_db) = match row {
+            Some(t) => t,
+            None => return Ok(None),
+        };
 
-        // Fetch links.
         let mut stmt = conn.prepare(
             "SELECT target_title FROM ene_wiki_links WHERE slug = ?1 ORDER BY lower(target_title)",
         )?;
@@ -927,7 +827,6 @@ impl ENEWikiLayer {
             .filter_map(|r| r.ok())
             .collect();
 
-        // Fetch categories.
         let mut stmt = conn.prepare(
             "SELECT category FROM ene_wiki_categories WHERE slug = ?1 ORDER BY lower(category)",
         )?;
@@ -950,19 +849,12 @@ impl ENEWikiLayer {
         }))
     }
 
-    /// Search pages by title or slug containing `query` (case-insensitive LIKE).
     pub fn search(&self, query: &str, limit: i64) -> Result<Vec<WikiPage>> {
         let limit = limit.max(1).min(100);
         let term = format!("%{}%", query.trim());
         let conn = self.open()?;
         let mut stmt = conn.prepare(
-            r#"
-            SELECT slug, title, latest_revision, updated_at, receipt
-            FROM ene_wiki_pages
-            WHERE title LIKE ?1 OR slug LIKE ?1
-            ORDER BY updated_at DESC
-            LIMIT ?2
-            "#,
+            r#"SELECT slug, title, latest_revision, updated_at, receipt FROM ene_wiki_pages WHERE title LIKE ?1 OR slug LIKE ?1 ORDER BY updated_at DESC LIMIT ?2"#,
         )?;
         let pages: Vec<WikiPage> = stmt
             .query_map(rusqlite::params![&term, limit], |r| {
@@ -979,18 +871,11 @@ impl ENEWikiLayer {
         Ok(pages)
     }
 
-    /// Return slugs of all pages that link *to* `title` via `ene_wiki_links`.
     pub fn backlinks(&self, title: &str) -> Result<Vec<String>> {
         let target_slug = title_slug(title)?;
         let conn = self.open()?;
         let mut stmt = conn.prepare(
-            r#"
-            SELECT l.slug
-            FROM ene_wiki_links l
-            JOIN ene_wiki_pages p ON p.slug = l.slug
-            WHERE l.target_slug = ?1
-            ORDER BY lower(p.title)
-            "#,
+            r#"SELECT l.slug FROM ene_wiki_links l JOIN ene_wiki_pages p ON p.slug = l.slug WHERE l.target_slug = ?1 ORDER BY lower(p.title)"#,
         )?;
         let slugs: Vec<String> = stmt
             .query_map(rusqlite::params![&target_slug], |r| r.get(0))?
@@ -999,19 +884,11 @@ impl ENEWikiLayer {
         Ok(slugs)
     }
 
-    /// Return the most recently changed revisions, newest first.
     pub fn recent_changes(&self, limit: i64) -> Result<Vec<WikiRevision>> {
         let limit = limit.max(1).min(100);
         let conn = self.open()?;
         let mut stmt = conn.prepare(
-            r#"
-            SELECT r.slug, r.title, r.revision, r.text, r.author, r.summary,
-                   r.created_at, r.receipt
-            FROM ene_wiki_revisions r
-            JOIN ene_wiki_pages p ON p.slug = r.slug AND p.latest_revision = r.revision
-            ORDER BY r.created_at DESC
-            LIMIT ?1
-            "#,
+            r#"SELECT r.slug, r.title, r.revision, r.text, r.author, r.summary, r.created_at, r.receipt FROM ene_wiki_revisions r JOIN ene_wiki_pages p ON p.slug = r.slug AND p.latest_revision = r.revision ORDER BY r.created_at DESC LIMIT ?1"#,
         )?;
         let revs: Vec<WikiRevision> = stmt
             .query_map(rusqlite::params![limit], |r| {
@@ -1034,30 +911,21 @@ impl ENEWikiLayer {
     }
 }
 
-// ── RdsWikiLayer (PostgreSQL / tokio-postgres) ─────────────────────────────────
-
-/// PostgreSQL-backed wiki layer.  Drop-in equivalent of `ene_rds_wiki_layer.ENERDSWikiLayer`.
 pub struct RdsWikiLayer {
     pub dsn: String,
 }
 
 impl RdsWikiLayer {
-    /// Create an `RdsWikiLayer` using the given DSN string.
-    ///
-    /// Does NOT open a persistent connection — each operation creates a short-lived
-    /// connection, matching the Python psycopg2 pattern.
     pub async fn new(dsn: &str) -> Result<Self> {
         Ok(Self {
             dsn: dsn.to_string(),
         })
     }
 
-    /// Open a tokio-postgres connection pair (client + connection driver).
     async fn connect(&self) -> Result<tokio_postgres::Client> {
         let (client, connection) = tokio_postgres::connect(&self.dsn, tokio_postgres::NoTls)
             .await
             .context("connecting to PostgreSQL")?;
-        // Drive the connection in a detached task.
         tokio::spawn(async move {
             if let Err(e) = connection.await {
                 tracing::warn!("postgres connection error: {}", e);
@@ -1066,7 +934,6 @@ impl RdsWikiLayer {
         Ok(client)
     }
 
-    /// Create all tables in the `ene` schema if they do not exist.
     pub async fn init_tables(&self) -> Result<()> {
         let client = self.connect().await?;
         client
@@ -1134,14 +1001,7 @@ impl RdsWikiLayer {
         Ok(())
     }
 
-    /// Write or update a wiki page, appending a new revision.
-    pub async fn put_page(
-        &self,
-        title: &str,
-        text: &str,
-        author: &str,
-        summary: &str,
-    ) -> Result<WikiRevision> {
+    pub async fn put_page(&self, title: &str, text: &str, author: &str, summary: &str) -> Result<WikiRevision> {
         if !admit_write(text) {
             return Err(anyhow!("wiki write rejected: content failed admission gate"));
         }
@@ -1151,7 +1011,6 @@ impl RdsWikiLayer {
 
         let client = self.connect().await?;
 
-        // Determine next revision.
         let latest: Option<i64> = {
             let row = client
                 .query_opt(
@@ -1184,7 +1043,6 @@ impl RdsWikiLayer {
         let archive_id = archive_record["archive_id"].as_str().unwrap_or("").to_string();
         let content_hash = archive_record["content_hash"].as_str().unwrap_or("").to_string();
 
-        // Insert revision.
         client
             .execute(
                 r#"
@@ -1211,7 +1069,6 @@ impl RdsWikiLayer {
             .await
             .context("inserting wiki revision")?;
 
-        // Upsert page header.
         client
             .execute(
                 r#"
@@ -1228,29 +1085,20 @@ impl RdsWikiLayer {
             .await
             .context("upserting wiki page")?;
 
-        // Replace links.
         client
-            .execute(
-                "DELETE FROM ene.wiki_links WHERE slug = $1",
-                &[&slug],
-            )
+            .execute("DELETE FROM ene.wiki_links WHERE slug = $1", &[&slug])
             .await?;
         for link_title in &links {
             let target_slug = title_slug(link_title).unwrap_or_default();
             client
                 .execute(
-                    r#"
-                    INSERT INTO ene.wiki_links (slug, target_slug, target_title)
-                    VALUES ($1,$2,$3)
-                    ON CONFLICT DO NOTHING
-                    "#,
+                    r#"INSERT INTO ene.wiki_links (slug, target_slug, target_title) VALUES ($1,$2,$3) ON CONFLICT DO NOTHING"#,
                     &[&slug, &target_slug, link_title],
                 )
                 .await
                 .context("inserting wiki link")?;
         }
 
-        // Replace categories.
         client
             .execute(
                 "DELETE FROM ene.wiki_categories WHERE slug = $1",
@@ -1267,7 +1115,6 @@ impl RdsWikiLayer {
                 .context("inserting wiki category")?;
         }
 
-        // Upsert packages.
         let data = &jsonl_event["data"];
         let pkg = data["pkg"].as_str().unwrap_or("");
         let version = data["version"].as_str().unwrap_or("");
@@ -1336,17 +1183,12 @@ impl RdsWikiLayer {
         })
     }
 
-    /// Retrieve the latest revision of a page by title, or `None` if not found.
     pub async fn get_page(&self, title: &str) -> Result<Option<WikiRevision>> {
         let slug = title_slug(title)?;
         let client = self.connect().await?;
 
-        // Find latest revision number.
         let latest = client
-            .query_opt(
-                "SELECT latest_revision FROM ene.wiki_pages WHERE slug = $1",
-                &[&slug],
-            )
+            .query_opt("SELECT latest_revision FROM ene.wiki_pages WHERE slug = $1", &[&slug])
             .await
             .context("querying wiki page")?;
         let revision: i64 = match latest {
@@ -1354,14 +1196,9 @@ impl RdsWikiLayer {
             None => return Ok(None),
         };
 
-        // Fetch the revision body.
         let row = client
             .query_opt(
-                r#"
-                SELECT title, slug, revision, text, author, summary, created_at_ms, receipt
-                FROM ene.wiki_revisions
-                WHERE slug = $1 AND revision = $2
-                "#,
+                r#"SELECT title, slug, revision, text, author, summary, created_at_ms, receipt FROM ene.wiki_revisions WHERE slug = $1 AND revision = $2"#,
                 &[&slug, &revision],
             )
             .await
@@ -1374,7 +1211,6 @@ impl RdsWikiLayer {
 
         let slug_db: String = row.get(1);
 
-        // Fetch links.
         let link_rows = client
             .query(
                 "SELECT target_title FROM ene.wiki_links WHERE slug = $1 ORDER BY lower(target_title)",
@@ -1383,7 +1219,6 @@ impl RdsWikiLayer {
             .await?;
         let links: Vec<String> = link_rows.iter().map(|r| r.get(0)).collect();
 
-        // Fetch categories.
         let cat_rows = client
             .query(
                 "SELECT category FROM ene.wiki_categories WHERE slug = $1 ORDER BY lower(category)",
@@ -1407,9 +1242,6 @@ impl RdsWikiLayer {
     }
 }
 
-// ── Rusqlite optional helper ───────────────────────────────────────────────────
-
-/// Extension trait to turn "not found" rusqlite errors into `Option::None`.
 trait OptionalExt<T> {
     fn optional(self) -> Result<Option<T>>;
 }

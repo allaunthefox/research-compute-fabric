@@ -20,6 +20,110 @@ receipt_density populated == route has structural/witness evidence for RRC use
 
 ---
 
+## Phase 2.1 verification sequence
+
+Run the local regression harness first:
+
+```bash
+python3 4-Infrastructure/shim/test_pist_receipt_density_injector.py
+```
+
+Expected result: all tests print `PASS`.
+
+Then emit the audit JSON only:
+
+```bash
+python3 4-Infrastructure/shim/pist_receipt_density_injector.py
+```
+
+Inspect:
+
+```text
+shared-data/rrc_receipt_density_backfill.json
+```
+
+Only after inspection, run the guarded sidecar write:
+
+```bash
+python3 4-Infrastructure/shim/pist_receipt_density_injector.py --write-rds
+```
+
+Finally validate the sidecar table:
+
+```bash
+python3 4-Infrastructure/shim/validate_receipt_density_sidecar.py
+```
+
+Optional validation report:
+
+```bash
+python3 4-Infrastructure/shim/validate_receipt_density_sidecar.py \
+  --out shared-data/rrc_receipt_density_sidecar_validation.json
+```
+
+The validator fails if:
+
+```text
+sidecar table is empty
+any row has promotion != not_promoted
+any density/confidence is null or outside [0, 1]
+any receipt hash/source is missing
+any receipt_density_status is not CANDIDATE or HOLD
+```
+
+---
+
+## Phase 2.2 shape-alignment calibration
+
+After classifier-backed density has been generated, run the alignment pass:
+
+```bash
+python3 4-Infrastructure/shim/rrc_pist_shape_alignment.py \
+  --fail-on-raw-disagreement
+```
+
+Then inspect:
+
+```bash
+jq '.summary.shape_alignment_counts, .summary.warning_counts' \
+  shared-data/rrc_receipt_density_backfill.json
+```
+
+Expected transition for the current corpus:
+
+```text
+pist_shape_disagreement -> removed
+structural_semantic_label_divergence -> present for compatible PIST/RRC label-space divergence
+shape_alignment_counts.compatible_structural_projection -> most or all records
+```
+
+Reason:
+
+```text
+PIST exact/proxy label = structural/spectral morphology
+RRC shape label        = semantic/domain routing class
+```
+
+So a row like:
+
+```text
+PIST exact label: LogogramProjection
+RRC shape: CognitiveLoadField
+```
+
+is not necessarily an error. It can mean PIST sees a symbolic/logogram surface while RRC supplies the semantic routing class.
+
+After alignment, rerun the guarded RDS sidecar write and readback validator:
+
+```bash
+python3 4-Infrastructure/shim/pist_receipt_density_injector.py --write-rds
+python3 4-Infrastructure/shim/validate_receipt_density_sidecar.py
+```
+
+Commit the aligned JSON artifacts after validation.
+
+---
+
 ## Default inputs
 
 ```text
@@ -81,6 +185,29 @@ python3 4-Infrastructure/shim/pist_receipt_density_injector.py \
   --out shared-data/rrc_receipt_density_backfill.json
 ```
 
+Guarded RDS sidecar write:
+
+```bash
+python3 4-Infrastructure/shim/pist_receipt_density_injector.py \
+  --write-rds \
+  --rds-table ene.rrc_receipt_density
+```
+
+The writer uses:
+
+```text
+4-Infrastructure/shim/rds_connect.py
+```
+
+so connection parameters resolve through the shared RDS path:
+
+```text
+DATABASE_URL
+RDS_* env vars
+IAM token / boto3 / AWS CLI
+password fallback
+```
+
 ---
 
 ## Record schema
@@ -112,14 +239,59 @@ Each record has the form:
     "rank_estimate": 8,
     "laplacian_zero_count": 1
   },
+  "shape_alignment": {
+    "alignment_version": "rrc-pist-shape-alignment-v1",
+    "alignment_status": "compatible_structural_projection",
+    "alignment_confidence": 0.72,
+    "label_space_model": "PIST=morphology; RRC=semantic routing"
+  },
   "top_axes": ["projection_declared", "negative_control_strength"],
   "status": "CANDIDATE",
   "promotion": "not_promoted",
   "source": "pist_receipt_density_injector_v1",
   "receipt_hash": "...",
-  "warnings": []
+  "warnings": ["structural_semantic_label_divergence"]
 }
 ```
+
+---
+
+## RDS sidecar schema
+
+The guarded writer creates or upserts into:
+
+```text
+ene.rrc_receipt_density
+```
+
+Fields:
+
+```text
+equation_id
+rrc_shape
+domain
+source_status
+receipt_density
+receipt_density_source
+receipt_density_hash
+receipt_density_status
+receipt_density_warnings
+confidence
+top_axes
+shape_prediction
+density_components
+promotion
+payload
+updated_at
+```
+
+The table has a check constraint:
+
+```sql
+promotion = 'not_promoted'
+```
+
+This makes promotion drift fail at the database boundary.
 
 ---
 
@@ -186,25 +358,17 @@ Promotion still requires external receipts, Lean/kernel verification where appli
 
 ---
 
-## Next integration step
+## CI candidate
 
-Once the JSON output is inspected, the next safe step is an explicit DB writer guarded by a flag such as:
+A minimal CI step should run:
 
 ```bash
---write-rds
+python3 4-Infrastructure/shim/test_pist_receipt_density_injector.py
+python3 4-Infrastructure/shim/pist_receipt_density_injector.py --fail-on-missing-pist
+python3 4-Infrastructure/shim/rrc_pist_shape_alignment.py --fail-on-raw-disagreement
 ```
 
-That writer should upsert only these fields:
-
-```text
-receipt_density
-receipt_density_source
-receipt_density_hash
-receipt_density_status
-receipt_density_warnings
-```
-
-and should not alter theorem truth, promotion state, or claim ladder status.
+The sidecar validator should run only in environments with RDS credentials.
 
 ---
 
@@ -212,4 +376,8 @@ and should not alter theorem truth, promotion state, or claim ladder status.
 
 ```text
 PIST stops being just a repair engine when its classifications become receipt density for the RRC corpus.
+```
+
+```text
+PIST is seeing morphology; RRC is naming semantics.
 ```

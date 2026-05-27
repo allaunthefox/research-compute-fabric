@@ -1,183 +1,211 @@
 # Canonical Specification for the Adaptive Virtual Machine (AVM)
 ## State: CALIBRATED_PENDING_VALIDATION
 
+This document is the canonical design for **AVM as a Lean-defined core ISA**.
 
-## 1. AVM Instruction Set Architecture (ISA)
+**Core rule:**
 
-The AVM ISA defines a language-agnostic instruction set that serves as the bridge between mathematical languages and Python execution. The ISA consists of:
+> **Lean is the source of truth. AVM is a Lean-only ISA.**
 
-### Core Instruction Set
-```python
-# Stack-based operations
-PUSH(value: Any)  # Push a value onto the stack
-POP()             # Pop the top value from the stack
-APPLY(func: Any)   # Apply a function to the top N arguments
-JUMP(label: int)   # Unconditional jump
-JUMP_IF(condition: bool, label: int)  # Conditional jump
-CALL(method: str)  # Call a Python method
-IMPORT(module: str) # Import a Python module
-RETURN()          # Return from function
+All non-Lean languages (Python, Rust, C/C++, Go, etc.) are **adapter shims** (a.k.a.
+backends) that *strip / serialize / reinterpret* into AVM programs and execute
+AVM semantics. They do not define new semantics.
 
-# Data operations
-STORE(name: str)   # Store a value in the symbol table
-LOAD(name: str)    # Load a value from the symbol table
-DUMP()            # Dump execution state for debugging
+---
 
-# Control flow
-BEGIN(label: int)  # Mark a label
-END()             # End of function
-```
+## 0. Definitions
 
-### Data Representation
-- **Values**: All values are represented as Python-compatible objects or fixed-point atoms
-- **Types**: Minimal type system (int, Q16_16, Q0_16, bool, list, dict, function)
-- **Constants**: Predefined constants for math operations (π, e, etc.) expressed in Q16_16
+### 0.1 AVM Core
+The **AVM core** is the ISA + operational semantics defined in Lean.
 
-### Execution Model
-- Stack-based virtual machine
-- Type-checking during execution
-- Error handling via Python exceptions
-- Symbol table for cross-language data sharing
+- Finite opcode set (closed-world)
+- Finite value type set (closed-world)
+- Deterministic step/run semantics
+- No open string matching in decisions
+- No dynamic "Any" values in the ISA
 
-## 2. Semantic Stripping Algorithm
+### 0.2 Adapter shims (backends)
+Adapter shims are **extraction/interop targets**, not sources of truth.
 
-```python
-def strip_semantics(source: Any, threshold: float = 0.5) -> Any:
-    """
-    Strips language-specific semantics while preserving functionality
-    """
-    if is_invariant_root(source):  # Check if already a fundamental structure
-        return source
+They may:
+- Encode/decode AVM programs and values (serialization)
+- Interpret AVM programs (runtime interpreter)
+- Emit target artifacts (Python bytecode, C, Rust, Verilog, FPGA netlists)
 
-    delta = calculate_delta(source)  # 0-1 score of language dependency
-    
-    if delta < threshold:
-        # Decompose into invariant components
-        components = decompose(source)
-        stripped_components = [strip_semantics(c, threshold) for c in components]
-        return reconstruct(stripped_components)
-    else:
-        # Preserve as invariant root
-        return source
+They may **not**:
+- Introduce new ISA meaning
+- Add ad-hoc branching policy
+- Decide invariants or costs outside Lean
 
-def calculate_delta(node: Any) -> float:
-    """
-    Computes language dependency score (0-1)
-    - 0: Pure invariant structure
-    - 1: Heavily language-specific
-    """
-    # Implementation would analyze type signatures, syntax, etc.
-    pass
-```
+---
 
-## 3. AVM Binary Interface (ABI)
+## 1. AVM Instruction Set Architecture (ISA) — Lean-only
 
-### Calling Convention
-- **Stack layout**: CPython-compatible stack layout
-- **Argument passing**: All arguments pushed in order
-- **Return value**: Single value on stack
-- **Error handling**: Python exceptions
+The AVM ISA is a **Lean inductive** instruction set.
 
-### Data Format
-```python
-class AVMValue:
-    def __init__(self, value: Any):
-        self.value = value
-        self.type = get_type(value)
+### 1.1 Closed-world opcodes
+The opcode set MUST be finite and enumerable.
 
-def get_type(value: Any) -> str:
-    """
-    Maps to CPython's internal type representation
-    """
-    if isinstance(value, int): return "int"
-    if hasattr(value, 'is_q16_16'): return "Q16_16"
-    if hasattr(value, 'is_q0_16'): return "Q0_16"
-    # ... other types
-```
+A minimal core (illustrative, not final):
 
-### Registration Protocol
-```python
-def register_primitive(name: str, func: Callable):
-    """
-    Registers a primitive function for direct AVM execution
-    """
-    _registry[name] = func
+- Stack ops: `push`, `pop`, `dup`, `swap`
+- Locals: `load`, `store` (indexed by `Fin n`)
+- Control flow: `jump`, `jumpIf`, `halt`
+- Fixed-point arithmetic primitives: `addSat`, `subSat`, `mul`, etc.
 
-_registry = {}
-```
+### 1.2 Strict typing
+The ISA operates over a finite type universe:
 
-## 4. Invariant Root Extraction Process
+- `Q0_16` (default for dimensionless scalars)
+- `Q16_16` (only when range/precision forces it)
+- `Bool`
+- (Optional later) `UInt8`, `UInt16`, `UInt32`, fixed-width words for IO/register surfaces
 
-```python
-def extract_invariants(source: Any) -> List[Any]:
-    """
-    Recursively extracts fundamental mathematical structures
-    """
-    if is_primitive(source): return [source]
-    
-    if is_container(source):
-        children = []
-        for child in source.children:
-            children.extend(extract_invariants(child))
-        return children
-    
-    raise ValueError(f"Unsupported type: {type(source)}")
-```
+### 1.3 Float prohibition (strong)
+**Float must not be used anywhere if at all possible.**
 
-## 5. Formal Specification in Lean 4
+- **AVM core**: Float is forbidden.
+- **Backends**: Float is forbidden for any semantic computation.
+- **Boundary-only exception**: A backend may accept Float *only* at an external I/O boundary (JSON, sensor ingest, UI display), and must immediately convert it to `Q0_16` or `Q16_16`.
 
-namespace Semantics.AVM
+If Float appears anywhere, it must carry an explicit justification comment/receipt field:
 
-inductive Value where
-  | int : Int → Value
-  | q16 : Q16_16 → Value
-  | q0  : Q0_16 → Value
-  | bool : Bool → Value
+- why fixed-point abstraction was not possible
+- what exact conversion policy was used (clamp/range/rounding)
+- what determinism guarantee remains
 
-instance : informational_bind State Value where
-  isLawful s := true
-  cost s := 0 -- Base transition cost
-  extract s := "AVM_STATE"
+Default is: **reject**.
 
-def compile (source : SourceLang) : Value :=
-  match source with
-  | `int n => Value.int n
-  | `fixed n => Value.q16 n
-  | `ratio n => Value.q0 n
-  | `bool b => Value.bool b
-```
+### 1.4 No dynamic foreign calls in ISA
+The ISA must not contain opcodes like `CALL("pythonMethod")` or `IMPORT("module")`.
 
-This specification provides a foundation for proving equivalence between source language semantics and AVM execution. The full implementation would include:
+If extensibility is needed, it must be via **finite enums** (e.g. `Prim : Type`)
+with semantics defined in Lean:
 
-1. Type soundness proof
-2. Preservation theorem
-3. Progress theorem
-4. Adequacy proof
+- `Prim` is finite
+- `evalPrim : Prim -> ...` is defined in Lean
+- backends implement `Prim` by matching the Lean semantics
 
-## 6. CALIBRATED State Requirements
-The AVM is considered **CALIBRATED** once the following conditions are met:
+---
 
-1. **Float Elimination**: All core primitive float references have been removed from the AVM ISA and Lean core.
-2. **Type Definition**: `Q0_16` and `Q16_16` are explicitly defined and used as the primary numeric types.
-3. **Behavioral Declaration**: Arithmetic, rounding (floor), and overflow (saturating) behaviors are formally declared and implemented.
-4. **Boundary Conversion**: Explicit paths for converting external numeric formats (Int, Float-input) into `Q16_16` are defined.
-5. **Determinism Invariant**: The AVM must achieve bit-exact reproducibility across all execution environments (Lean, Python-AVM, FPGA).
-6. **Bind Semantics**: Composition of AVM instructions must follow the `informational_bind` metric laws.
-7. **Validator Enforcement**: A pre-commit validator rejects any `f32`, `f64`, or `double` references in the `Semantics/AVM/` path.
+## 2. Execution model
 
-## 7. Determinism Invariant
-The AVM state transition function $f(S, I) \rightarrow S'$ must satisfy:
-$\forall env_1, env_2 \in \{Lean, Python, FPGA\}, f_{env_1}(S, I) = f_{env_2}(S, I)$
-This ensures that "Formal Drift" is mathematically impossible.
+### 2.1 Step semantics
+AVM execution is defined by a Lean function:
 
-## 8. Boundary Conversion
-```python
-def to_q16_16(val: Any) -> int:
-    if isinstance(val, int):
-        return val << 16
-    if isinstance(val, float):
-        # Explicit boundary clip and scale
-        clamped = max(-32768.0, min(32767.9999, val))
-        return int(clamped * 65536)
-    raise ValueError("Invalid Boundary Format")
-```
+- `step : Program -> State -> Outcome State`
+
+### 2.2 Run semantics (fuel)
+AVM execution must have a fuel-bounded run function:
+
+- `run : Fuel -> Program -> State -> Outcome State`
+
+This is required for totality and for extraction to bounded substrates.
+
+### 2.3 Determinism invariant
+The state transition must be deterministic:
+
+For any two backend environments implementing the same AVM ISA,
+
+- `run_backend1(program, state) == run_backend2(program, state)`
+
+up to the same observable projection.
+
+---
+
+## 3. Stripping policy ("bad code gets stripped out")
+
+The phrase "bad code gets stripped out in the conversion" is made precise here.
+
+### 3.1 What "bad" means
+"Bad" does NOT mean "inelegant". Bad means one of:
+
+- Not representable in the AVM closed-world ISA.
+- Violates AVM typing rules (ill-typed stack/locals).
+- Uses forbidden substrate features in core semantics (e.g. Float).
+- Requires open string parsing or reflection to make a decision.
+- Cannot be made deterministic under the fixed-point policy.
+
+### 3.2 What stripping is allowed to do
+When converting an external artifact into an AVM program, a shim may:
+
+- Drop unreachable code (dead branches) if reachability is proven by the shim's proof/receipt boundary.
+- Inline and normalize expressions into AVM primitives.
+- Replace dynamic dispatch with finite enums (`Prim`, `Opcode`).
+- Reject unsupported constructs with a hard error.
+
+### 3.3 What stripping is NOT allowed to do
+A shim must NOT:
+
+- Silently change behavior to "make it fit" AVM.
+- Replace unknown operations with placeholders.
+- Substitute heuristic approximations without explicit residual/receipt fields.
+
+If a construct cannot be represented, the correct action is **reject**, not "strip silently".
+
+### 3.4 Stripping output receipts
+Every strip/conversion pass must emit a receipt packet containing:
+
+- input hash
+- output program hash
+- strip decisions (what was dropped, what was rewritten)
+- unsupported constructs encountered (if any)
+- AVM ISA version targeted
+
+This makes "bad code elimination" auditable.
+
+---
+
+## 4. Serialization boundary (shim responsibility)
+
+Adapters may represent AVM programs and values in JSON or binary form.
+
+Rules:
+- Serialization formats must be versioned.
+- No semantic meaning may depend on string parsing.
+- Decoders must reject unknown opcodes/types.
+
+---
+
+## 5. Receipt / provenance policy
+
+Every adapter execution must be able to emit a receipt packet containing:
+
+- AVM ISA version
+- adapter version
+- input program hash
+- output state hash
+- (optional) projection hash
+
+This makes drift observable and auditable.
+
+---
+
+## 6. Relationship to prior "universal adapter" language
+
+Earlier drafts described AVM as a universal adapter from many math languages.
+
+**This spec supersedes that framing.** The correct architecture is:
+
+- **Lean -> AVM ISA (Lean-defined) -> adapter shims/backends**
+
+If other languages are supported as inputs, they must be compiled into AVM by a
+shim that produces AVM programs; but the AVM ISA itself remains Lean-only.
+
+---
+
+## 7. Claim boundary
+
+This document defines AVM as a Lean-only ISA and a backend adapter ecosystem.
+
+It does not claim:
+- that every backend already exists
+- that all proofs are complete
+- that the ISA opcodes are final
+
+It does claim:
+- strict typing + closed-world opcodes is mandatory
+- all semantics live in Lean
+- all non-Lean code is an adapter shim, not a semantic authority
+- stripping must be explicit (reject or receipt), never silent behavior change
+- float is forbidden by default; boundary-only conversion requires justification

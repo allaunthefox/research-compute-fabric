@@ -668,9 +668,10 @@ theorem abs_mul_le (a b : Q16_16) (ha : a.toInt ≥ 0) :
 
 /-- Triangle inequality for Q16_16: |a*b| ≤ |a| * |b|.
     Threads arithmetic bounds through checker gates. -/
--- TODO(lean-port): blocked; q16Clamp applies Int.abs internally so sign analysis
--- after division is non-trivial. Requires case split on sign of (a.toInt * b.toInt)
--- and careful handling of the clamping boundaries.
+-- TODO(lean-port): blocked; q16Clamp applies Int.abs internally making sign analysis
+-- non-trivial after division. The key insight: q16Clamp(x) ≤ q16Clamp(-x) always holds
+-- (when x<0, LHS is negative and RHS is positive). Needs case split on sign of
+-- (a.toInt * b.toInt) / q16Scale and careful handling of the clamping boundaries.
 theorem abs_triangle (a b : Q16_16) :
     (abs (mul a b)).toInt ≤ (mul (abs a) (abs b)).toInt := by
   admit

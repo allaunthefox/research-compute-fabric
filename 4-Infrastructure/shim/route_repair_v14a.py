@@ -4,7 +4,11 @@
 Projects theorem structure onto a 16D modifier, chooses a local proof chart (4D),
 and generates 3D-ranked patch candidates. Focused on zero-bucket repair.
 """
-# PARTIAL BOUNDARY: contains domain logic; not a provable surface. Port to Lean/RRC before treating as authoritative.
+# PARTIAL BOUNDARY: contains domain logic; not a provable surface.
+# rank_patches scoring functional (ALPHA/BETA/GAMMA/DELTA, score formula, sort order)
+# is ported to Semantics.PIST.Repair — treat that module as authoritative for
+# scoring decisions. Remaining Python logic (16D modifier, 4D projection,
+# chart-driven patch generators, proof-server I/O) is not yet ported.
 
 import json, os, re, sys
 from collections import Counter, defaultdict

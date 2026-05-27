@@ -149,6 +149,7 @@ import Semantics.LawfulLoss
 import Semantics.Core.MassNumber
 import Semantics.RRCLogogramProjection
 import Semantics.PIST.Spectral
+import Semantics.PIST.Repair
 import Semantics.ThresholdVector
 import Semantics.LogogramRotationLoop
 import Semantics.CompressionYield

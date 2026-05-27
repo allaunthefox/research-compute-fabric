@@ -2,6 +2,8 @@
 
 let
   mailDomain = domain;
+  # Internal router target (k3s-server / nixos-laptop over Tailscale)
+  internalRouter = "100.102.173.61:80";
   sendAlert = pkgs.writeShellScriptBin "send-alert" ''
     set -euo pipefail
     subject="''${1:-Alert}"
@@ -35,7 +37,7 @@ in
   networking.hostName = lib.mkDefault hostName;
   networking.domain = lib.mkDefault mailDomain;
 
-  # ── Postfix ───────────────────────────────────────────────────────────────
+  # ── Postfix (mail stays on edge — non-HTTP protocol) ─────────────────────
   services.postfix = {
     enable = true;
     hostname = "mail.${mailDomain}";
@@ -62,7 +64,6 @@ in
       ssl_min_protocol = TLSv1.2
       mail_location = maildir:/var/mail/%n
       auth_mechanisms = plain login
-      ssl = yes
       passdb {
         driver = passwd-file
         args = /etc/dovecot/users
@@ -74,7 +75,6 @@ in
     '';
   };
 
-  # Create mailbox user and directory
   users.users.postmaster = {
     isSystemUser = true;
     uid = 5000;
@@ -87,37 +87,7 @@ in
     members = [ "postmaster" ];
   };
 
-  # ── ProtonMail Bridge ─────────────────────────────────────────────────────
-  systemd.services.protonmail-bridge = lib.mkIf (pkgs ? protonmail-bridge) {
-    description = "ProtonMail Bridge SMTP relay";
-    after = [ "network.target" ];
-    wants = [ "network.target" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "simple";
-      User = "protonmail-bridge";
-      StateDirectory = "protonmail/bridge";
-      ExecStart = "${pkgs.writeShellScript "bridge-run" ''
-        ${pkgs.socat}/bin/socat TCP-LISTEN:1025,fork TCP:127.0.0.1:1025 &
-        ${pkgs.socat}/bin/socat TCP-LISTEN:1143,fork TCP:127.0.0.1:1143 &
-        rm -f /tmp/bridge-faketty
-        mkfifo /tmp/bridge-faketty
-        cat /tmp/bridge-faketty | ${pkgs.protonmail-bridge}/bin/protonmail-bridge --cli
-      ''}";
-      Restart = "on-failure";
-      RestartSec = 10;
-    };
-  };
-
-  users.users.protonmail-bridge = lib.mkIf (pkgs ? protonmail-bridge) {
-    isSystemUser = true;
-    group = "protonmail-bridge";
-    home = "/var/lib/protonmail";
-    createHome = true;
-  };
-  users.groups.protonmail-bridge = lib.mkIf (pkgs ? protonmail-bridge) {};
-
-  # ── ProtonMail alert relay ────────────────────────────────────────────────
+  # ── msmtp alert relay ────────────────────────────────────────────────────
   environment.etc."msmtprc".text = ''
     defaults
     auth           login
@@ -149,45 +119,129 @@ in
     msmtp
     sendAlert
     socat
-  ] ++ lib.optional (pkgs ? protonmail-bridge) pkgs.protonmail-bridge;
+  ];
 
-  # ── rs-surface ────────────────────────────────────────────────────────────
-  systemd.services.rs-surface = {
-    description = "Research Stack Surface Daemon";
-    after = [ "network.target" "tailscaled.service" ];
-    wants = [ "network.target" "tailscaled.service" ];
-    wantedBy = [ "multi-user.target" ];
-    environment = {
-      RS_CREDENTIAL_CONFIG = "/etc/rs-surface/credentials.json";
-      RS_SURFACE_PORT = "8444";
-      RS_SURFACE_HOST = "0.0.0.0";
-      RUST_LOG = "info";
-    };
-    serviceConfig = {
-      Type = "simple";
-      WorkingDirectory = "/opt/rs-surface";
-      ExecStart = "${pkgs.bash}/bin/bash /opt/rs-surface/run.sh";
-      Restart = "always";
-      RestartSec = 5;
-    };
+  # ── Caddy — Public TLS edge ──────────────────────────────────────────────
+  # This is a "dumb TLS edge": terminates TLS for researchstack.info +
+  # *.researchstack.info via Porkbun DNS-01 challenge, then forwards ALL
+  # HTTP traffic to the internal Caddy router over Tailscale.
+  #
+  # Exceptions:
+  #   - auth.researchstack.info → forwarded with Host preserved (OIDC issuer)
+  #   - mail/webmail subdomains → forwarded to internal router
+  #
+  # No path routing logic lives here. Traefik (k3s built-in) handles all
+  # path-based routing inside the cluster via Ingress resources.
+  systemd.services.caddy.serviceConfig.EnvironmentFile = [ "/etc/caddy/porkbun.env" ];
+
+  sops.secrets.porkbun-env = {
+    sopsFile = ./secrets/porkbun-env.age;
+    format = "yaml";
+    path = "/etc/caddy/porkbun.env";
   };
 
-  # ── Caddy ─────────────────────────────────────────────────────────────────
   services.caddy = {
     enable = true;
+    package = pkgs.caddy;
     extraConfig = ''
-      mail.${domain} { reverse_proxy 127.0.0.1:30808 }
-      webmail.${domain} { reverse_proxy 127.0.0.1:30808 }
-      cred.${domain} { reverse_proxy 127.0.0.1:8444 }
+      (porkbun_tls) {
+        tls {
+          dns porkbun {
+            api_key {$PORKBUN_API_KEY}
+            api_secret_key {$PORKBUN_SECRET_KEY}
+          }
+        }
+      }
+
+      # Primary domain — forward everything to Traefik on k3s-server
+      researchstack.info {
+        import porkbun_tls
+        reverse_proxy ${internalRouter} {
+          header_up Host {host}
+          header_up X-Real-IP {remote}
+          header_up X-Forwarded-For {remote}
+          header_up X-Forwarded-Proto {scheme}
+          header_up X-Forwarded-Host {host}
+        }
+      }
+
+      # Auth subdomain — stable OIDC issuer (preserved, not redirected)
+      auth.${domain} {
+        import porkbun_tls
+        reverse_proxy ${internalRouter} {
+          header_up Host auth.${domain}
+          header_up X-Real-IP {remote}
+          header_up X-Forwarded-For {remote}
+          header_up X-Forwarded-Proto {scheme}
+          header_up X-Forwarded-Host auth.${domain}
+        }
+      }
+
+      # Mail subdomains — forward to Traefik (mail Ingress pending)
+      mail.${domain}, webmail.${domain} {
+        import porkbun_tls
+        reverse_proxy ${internalRouter} {
+          header_up Host {host}
+          header_up X-Real-IP {remote}
+          header_up X-Forwarded-For {remote}
+          header_up X-Forwarded-Proto {scheme}
+          header_up X-Forwarded-Host {host}
+        }
+      }
+
+      # Legacy subdomain catch-all — 301 to canonical paths
+      # These exist for bookmark/client compat during migration.
+      status.${domain} {
+        import porkbun_tls
+        redir https://${domain}/server/status/{uri} 301
+      }
+
+      dash.${domain}, home.${domain} {
+        import porkbun_tls
+        redir https://${domain}/ 301
+      }
+
+      media.${domain} {
+        import porkbun_tls
+        redir https://${domain}/apps/jellyfin/{uri} 301
+      }
+
+      books.${domain} {
+        import porkbun_tls
+        redir https://${domain}/apps/books/{uri} 301
+      }
+
+      music.${domain} {
+        import porkbun_tls
+        redir https://${domain}/apps/music/{uri} 301
+      }
+
+      vault.${domain} {
+        import porkbun_tls
+        redir https://${domain}/server/vault/{uri} 301
+      }
+
+      pulse.${domain} {
+        import porkbun_tls
+        redir https://${domain}/api/registry/{uri} 301
+      }
+
+      apps.${domain} {
+        import porkbun_tls
+        redir https://${domain}/apps/{uri} 301
+      }
+
+      # Wildcard fallback — anything else gets a redirect to root
+      *.${domain} {
+        import porkbun_tls
+        redir https://${domain}{uri} 301
+      }
     '';
   };
 
   # ── Firewall ──────────────────────────────────────────────────────────────
   networking.firewall.allowedTCPPorts = [
-    25 143 465 587 993
-    1025 1143
-    8444
-    30808
+    25 143 465 587 993   # Mail protocols (Postfix + Dovecot)
   ];
 
 }

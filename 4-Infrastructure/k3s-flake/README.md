@@ -8,10 +8,68 @@ no external dependencies embedded in the flake.
 
 > A node goes online → it joins → it goes offline → the cluster adjusts.
 
-The flake spans the full topology spectrum:
-- **Server-class x86** (core, judge, mirror, foxtop) — full k8s workloads
-- **Thin client / Pi** (edge) — lightweight k3s agent, pulse heartbeat only
-- **microvm-nerdrack** — zero work, just pulse. Tainted `pulse-only:NoSchedule`.
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  Internet                                                           │
+│    ▼                                                                │
+│  ┌─────────────────────────────────────────────────────────────┐    │
+│  │  Public Edge (microvm-racknerd)                             │    │
+│  │  Caddy: TLS termination only (Porkbun DNS-01)              │    │
+│  │  Ports 80/443 → forwards ALL traffic over Tailscale        │    │
+│  └───────────────────────────┬─────────────────────────────────┘    │
+│                              │ Tailscale mesh                       │
+│  ┌───────────────────────────▼─────────────────────────────────┐    │
+│  │  Traefik Ingress (nixos-laptop / k3s-server :80)            │    │
+│  │  Path routing + forward_auth middleware (Authentik)          │    │
+│  │  Defined in manifests/ingress/ (Ingress + Middleware CRDs)  │    │
+│  └───────────────────────────┬─────────────────────────────────┘    │
+│                              │                                      │
+│  ┌───────────────────────────▼─────────────────────────────────┐    │
+│  │  k3s Service Layer (ClusterIP)                              │    │
+│  │  Hermes, Authentik, Uptime Kuma, Homarr, control-plane APIs │    │
+│  └─────────────────────────────────────────────────────────────┘    │
+│                                                                     │
+│  ┌─────────────────────────────────────────────────────────────┐    │
+│  │  Worker Pool (qfox-1, steamdeck, 361395-1, ...)             │    │
+│  │  GPU compute, storage, downloaders, codecs                  │    │
+│  └─────────────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+## URL Contract (canonical paths on `https://researchstack.info`)
+
+| Path | Service | Type |
+|------|---------|------|
+| `/` | Homer directory | Dashboard |
+| `/gettingstarted` | Static page | Info |
+| `/apps/chat/*` | Hermes (chat/orchestrator) | App |
+| `/apps/jellyfin/*` | Jellyfin | App |
+| `/apps/books/*` | Audiobookshelf | App |
+| `/apps/music/*` | Navidrome | App |
+| `/apps/budget/*` | Actual Budget | App |
+| `/server/status/*` | Uptime Kuma | Ops UI |
+| `/server/dash/*` | Homarr | Ops UI |
+| `/server/vault/*` | Vaultwarden | Ops UI |
+| `/api/cred/*` | Credential Server | Control-plane |
+| `/api/registry/*` | Registry API (join/heartbeat) | Control-plane |
+| `/api/jobs/*` | Job Router | Control-plane |
+| `/api/blobs/*` | Blob Plane | Control-plane |
+
+**Stable subdomains** (not path-routed):
+- `auth.researchstack.info` → Authentik (OIDC issuer — must not change)
+- `mail.researchstack.info` / `webmail.researchstack.info` → Mail services
+
+**Legacy subdomain redirects** (301 → canonical path):
+- `status.*` → `/server/status/`
+- `dash.*` / `home.*` → `/`
+- `media.*` → `/apps/jellyfin/`
+- `books.*` → `/apps/books/`
+- `music.*` → `/apps/music/`
+- `vault.*` → `/server/vault/`
+- `apps.*` → `/apps/`
+- `pulse.*` → `/api/registry/`
 
 ## File Layout
 
@@ -19,7 +77,8 @@ The flake spans the full topology spectrum:
 4-Infrastructure/k3s-flake/
 ├── flake.nix                    — 6 topology configurations
 ├── k3s-configuration.nix       — base module (Tailscale, SSH, Nix, firewall, sops)
-├── k3s-server.nix              — control plane + Caddy/Porkbun + deploy oneshot
+├── k3s-server.nix              — control plane + Traefik Ingress + deploy oneshot
+├── k3s-edge.nix                — public TLS edge (Caddy) + mail services
 ├── .sops.yaml                  — age key rules
 ├── secrets/                    — encrypted at rest, decrypted at activation
 │   ├── k3s-token.age           — K3S_TOKEN=<value>
@@ -32,13 +91,21 @@ The flake spans the full topology spectrum:
 │   ├── edge.nix                — label: role=edge, taint: pulse-only:NoSchedule
 │   └── foxtop.nix              — label: role=foxtop
 ├── manifests/                  — Kubernetes resources, auto-deployed by systemd
-│   ├── kustomization.yaml
+│   ├── kustomization.yaml      — master resource list
 │   ├── namespace.yaml          — namespace: services
-│   ├── authentik/              — HelmChart CRD (official chart + in-cluster PG/Redis)
-│   ├── uptime-kuma/            — Deployment + NodePort 30801 + PVC
-│   ├── heimdall/               — Deployment + NodePort 30802 + PVC
-│   ├── homer/                  — Deployment + NodePort 30803 + ConfigMap
-│   └── pulse-receiver/         — Deployment + NodePort 30804 (inline Python receiver)
+│   ├── ingress/                — Traefik Ingress + Middleware CRDs (path routing)
+│   ├── authentik/              — HelmChart CRD (OIDC @ auth.researchstack.info)
+│   ├── hermes/                 — Deployment + ClusterIP (placeholder → /apps/chat/)
+│   ├── credential-server/      — Deployment + ClusterIP (/api/cred/*)
+│   ├── control-plane/          — Registry, Jobs, Blobs APIs (/api/*)
+│   ├── uptime-kuma/            — Deployment + Service (/server/status/)
+│   ├── homer/                  — Deployment + Service (/)
+│   ├── homarr/                 — Deployment + Service (/server/dash/)
+│   ├── actual-budget/          — Deployment + Service (/apps/budget/)
+│   ├── vaultwarden/            — Deployment + Service (/server/vault/)
+│   ├── media/                  — Jellyfin, Navidrome, Audiobookshelf, *arr stack
+│   ├── heimdall/               — [LEGACY] being replaced by path routing
+│   └── pulse-receiver/         — [LEGACY] being replaced by /api/registry/
 └── scripts/
     └── deploy-services.sh      — idempotent kubectl apply, called by systemd oneshot
 ```
@@ -49,35 +116,51 @@ The flake spans the full topology spectrum:
 
 | Role    | k3s Label                                       | Taints                    | Workload |
 |---------|-------------------------------------------------|---------------------------|----------|
-| server  | — (control plane)                               | —                         | Caddy ingress + deploy-manifests |
-| core    | `topology.researchstack.io/role=core`           | —                         | General compute (PG, Redis, etc.) |
+| server  | — (control plane)                               | —                         | Internal Caddy router + deploy-manifests |
+| core    | `topology.researchstack.io/role=core`           | —                         | General compute (PG, Redis, Authentik) |
 | judge   | `topology.researchstack.io/role=judge`          | —                         | Validation / audit |
 | mirror  | `topology.researchstack.io/role=mirror`         | —                         | Storage / replication |
-| edge    | `topology.researchstack.io/role=edge`           | `pulse-only:NoSchedule`   | Pulse heartbeat only |
-| foxtop  | `topology.researchstack.io/role=foxtop`         | —                         | Top-level orchestrator |
+| edge    | `topology.researchstack.io/role=edge`           | `pulse-only:NoSchedule`   | Public TLS edge + mail |
+| foxtop  | `topology.researchstack.io/role=foxtop`         | —                         | Primary compute / orchestrator |
 
 ### Service Placement
 
-| Service            | NodePort | Prefers Role | Stateful? |
-|--------------------|----------|--------------|-----------|
-| Authentik          | 30800    | core, server | Yes (PG + Redis PVCs) |
-| Uptime Kuma        | 30801    | any          | PVC (1Gi) — node-bound |
-| Heimdall           | 30802    | any          | PVC (1Gi) — node-bound |
-| Homer              | 30803    | any          | No (ConfigMap) |
-| Pulse Receiver     | 30804    | any          | No (stateless) |
+| Service            | Port  | Path              | Prefers Role | Stateful? |
+|--------------------|-------|-------------------|--------------|-----------|
+| Authentik          | 80    | auth.* subdomain  | core         | Yes (PG + Redis PVCs) |
+| Hermes             | 80    | /apps/chat/       | any          | No (placeholder) |
+| Uptime Kuma        | 3001  | /server/status/   | any          | PVC (1Gi) |
+| Homer              | 8080  | /                 | any          | No (ConfigMap) |
+| Homarr             | 7575  | /server/dash/     | any          | PVC |
+| Actual Budget      | 5006  | /apps/budget/     | any          | PVC |
+| Vaultwarden        | 80    | /server/vault/    | any          | PVC |
+| Credential Server  | 8444  | /api/cred/        | any          | Secret vol |
+| Registry API       | 8080  | /api/registry/    | any          | No (stub) |
+| Jobs API           | 8080  | /api/jobs/        | any          | No (stub) |
+| Blobs API          | 8080  | /api/blobs/       | any          | No (stub) |
 
-### Domain Mapping (Caddy)
+All services use ClusterIP and are routed via Traefik Ingress. Legacy
+NodePort assignments are preserved for backward compat but are not the
+primary routing path.
 
-All services are served under `*.YOUR_DOMAIN` (e.g. `researchstack.info`):
+### Routing Model (Caddy edge + Traefik Ingress)
 
-- `auth.YOUR_DOMAIN` → NodePort 30800 → Authentik
-- `status.YOUR_DOMAIN` → NodePort 30801 → Uptime Kuma
-- `apps.YOUR_DOMAIN` → NodePort 30802 → Heimdall
-- `home.YOUR_DOMAIN` → NodePort 30803 → Homer
-- `pulse.YOUR_DOMAIN` → NodePort 30804 → Pulse Receiver
-- `YOUR_DOMAIN` → static response "k3s unified topology — Research Stack"
+**Public edge** (`k3s-edge.nix` / microvm-racknerd):
+- Caddy terminates TLS via Porkbun DNS-01 wildcard
+- Forwards all traffic to Traefik (`100.102.173.61:80`) over Tailscale
+- Handles legacy subdomain 301 redirects at the edge
+- `auth.*` and `mail.*`/`webmail.*` forwarded with Host header preserved
 
-TLS via Porkbun DNS challenge (caddy-dns/porkbun plugin).
+**Traefik Ingress** (k3s built-in, nixos-laptop):
+- Listens on `:80` (node port, HTTP — TLS handled by edge)
+- Path-based routing defined in `manifests/ingress/ingress.yaml`
+- Traefik Middleware CRDs for:
+  - `authentik-forward-auth` — SSO gate for `/apps/*`, `/server/*`, `/`
+  - `strip-*` — prefix stripping per route
+- `/api/*` routes skip `forward_auth` (token-authenticated)
+- `auth.researchstack.info` matched by separate Ingress (no middleware)
+
+TLS via Porkbun DNS challenge (caddy-dns/porkbun plugin) at the edge.
 
 ## Node Lifecycle
 

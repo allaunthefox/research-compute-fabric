@@ -79,12 +79,11 @@
               default: true
             exposedPort: 30080
             protocol: TCP
+          # websecure NodePort not exposed — TLS terminates at the edge Caddy,
+          # never reaches Traefik. Disabling reduces surface area.
           websecure:
-            port: 8443
-            nodePort: 30443
             expose:
               default: false
-            protocol: TCP
         service:
           type: NodePort
         ingressRoute:
@@ -101,11 +100,13 @@
     package = pkgs.caddy;
     extraConfig = ''
       :80 {
-        reverse_proxy 127.0.0.1:30080 {
+        reverse_proxy 100.102.173.61:30080 {
           header_up Host {host}
           header_up X-Real-IP {remote}
           header_up X-Forwarded-For {remote}
-          header_up X-Forwarded-Proto https
+          # Preserve the proto set by the edge Caddy (https) rather than
+          # overwriting it. The edge is authoritative; we just pass it through.
+          header_up X-Forwarded-Proto {http.request.header.X-Forwarded-Proto}
           header_up X-Forwarded-Host {host}
         }
       }

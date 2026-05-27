@@ -1,9 +1,9 @@
 import Semantics.Basic
 import Semantics.FixedPoint
 
-open Semantics.Q16_16
-
 namespace Semantics.Swarm
+
+open Semantics.Q16_16
 
 structure Genome where
   muBin    : UInt8

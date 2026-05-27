@@ -2,10 +2,10 @@ import Semantics.FAMM
 import Semantics.HCMMR.Core
 import Semantics.FixedPoint
 
+namespace Semantics.MMRFAMMUnification
+
 open Semantics
 open Semantics.FixedPoint (Q16_16)
-
-namespace Semantics.MMRFAMMUnification
 
 /-! # MMR-FAMM Unification
 

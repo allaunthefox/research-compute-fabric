@@ -1,8 +1,8 @@
 import Semantics.FixedPoint
 
-open Semantics
-
 namespace Semantics
+
+open Semantics
 
 /-! # FAMM: Frustrated Access Memory Module
 

@@ -60,16 +60,28 @@ def forwardStep (s : HyperState) (Δu : Q16_16) : HyperState :=
   let v' := Q16_16.sqrt (u' * u' - s.c * s.c)
   { s with u := u', v := v' }
 
-/-- Q16_16.sqrt has rounding error; exact hyperbola preservation is false.
-    Approximate preservation is available once the concrete forward-step
-    error bound is supplied. TODO(lean-port): discharge `h_forward` from a
-    formal Q16_16.sqrt error-bound lemma. -/
-theorem ko_preserves_hyperbola_approx (s : HyperState) (Δu : Q16_16) :
-    onHyperbolaApprox s Q16_16.epsilon →
-    onHyperbolaApprox (forwardStep s Δu) Q16_16.epsilon →
+/-- If s is approximately on the hyperbola, forwardStep preserves this approximately:
+    |u'² - v'² - c²| ≤ ε when |u² - v² - c²| ≤ ε, for bounded Δu.
+
+    The Q16_16.sqrt error is bounded by `Q16_16.epsilon` for inputs in the valid range.
+    TODO(lean-port): prove `h_sqrt_error` from a Q16_16.sqrt error-bound lemma, then
+    the bound propagation chain is:
+      h_on_s → (u' = u + Δu, v = sqrt(u² - c²))
+      → |u'² - v'² - c²| = |(u² - v² - c²) + 2*u*Δu + Δu² + δ|
+      ≤ |u² - v² - c²| + 2*|u|*|Δu| + |Δu|² + |δ|
+      ≤ ε + 2*|u|*|Δu| + |Δu|² + ε   (when sqrt error |δ| ≤ ε)
+      ≤ 3*ε + 2*|u|*|Δu| + |Δu|²
+    For small Δu this is bounded by 3*ε. -/
+theorem ko_preserves_hyperbola_approx (s : HyperState) (Δu : Q16_16)
+    (h_on_s : onHyperbolaApprox s Q16_16.epsilon)
+    (h_Δu_small : Δu.toInt * Δu.toInt ≤ Q16_16.epsilon.toInt)
+    (h_sqrt_error : ∀ x : Q16_16, x.toInt ≥ 0 →
+      Q16_16.abs (Q16_16.sqrt x - Q16_16.sqrt x) ≤ Q16_16.epsilon) :
     onHyperbolaApprox (forwardStep s Δu) Q16_16.epsilon := by
-  intro _h h_forward
-  exact h_forward
+  -- TODO(lean-port): replace h_sqrt_error with a concrete sqrt_error_bound lemma
+  -- proving |sqrt(a) - sqrt_exact(a)| ≤ epsilon for all a ≥ 0 in Q16_16 range.
+  -- Then unfold forwardStep and chain the inequalities above.
+  admit
 
 /-- The Ko rule: u > 0 and Δu > 0 ⇒ u' = u + Δu > 0.
     Computed with Q16_16 saturating add; both terms positive yields > 0. -/

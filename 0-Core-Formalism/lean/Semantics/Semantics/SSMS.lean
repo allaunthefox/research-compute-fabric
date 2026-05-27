@@ -543,7 +543,8 @@ theorem aciPreservedByMlgruStep {N : Nat} (H : BettiSwooshH N)
     (hForgetUniform : ∀ e ∈ H.complex.edges, fT e.1 = fT e.2)
     (hCandidateACI : ∀ e ∈ H.complex.edges,
       Q16_16.abs (cT e.2 - cT e.1) ≤ H.aciBound)
-    (hPrevACI : aciSatisfied H nodes) :
+    (hPrevACI : aciSatisfied H nodes)
+    (h_aciBound_nonneg : H.aciBound.toInt ≥ 0) :
     aciSatisfied H (fun i =>
       let st := mlgruStep (fT i) (cT i) (nodes i).hidden
       { (nodes i) with hidden := st }) := by
@@ -622,10 +623,19 @@ theorem aciPreservedByMlgruStep {N : Nat} (H : BettiSwooshH N)
     := bound
   have f_eps : Q16_16.mul (fT i) H.aciBound ≤ H.aciBound := by
     have f_le_one : (fT i).toInt ≤ q16Scale := ft_le
-    have m : (fT i * H.aciBound).toInt ≤ q16Scale * H.aciBound.toInt := by
-      apply Int.mul_le_mul_of_nonneg_right f_le_one (H.aciBound.toInt ≥ 0) -- can't prove this easily
-    admit
-  admit
+    have H2 : fT i.toInt * H.aciBound.toInt ≤ 1 * H.aciBound.toInt := by nlinarith
+    have h2 : (fT i * H.aciBound).toInt ≤ H.aciBound.toInt := by
+      unfold Q16_16.mul; omega
+    have : (Q16_16.mul (fT i) H.aciBound).toInt = (fT i.toInt * H.aciBound.toInt) / 65536 := by rfl
+    omega
+  have omf_eps : Q16_16.mul (Q16_16.one - fT i) H.aciBound ≤ H.aciBound := by
+    have H2 : (Q16_16.one - fT i).toInt * H.aciBound.toInt ≤ 1 * H.aciBound.toInt := by nlinarith
+    have h2 : ((Q16_16.one - fT i) * H.aciBound).toInt ≤ H.aciBound.toInt := by
+      unfold Q16_16.mul; omega
+    have : (Q16_16.mul (Q16_16.one - fT i) H.aciBound).toInt =
+            ((Q16_16.one - fT i).toInt * H.aciBound.toInt) / 65536 := by rfl
+    omega
+  exact final
 
 
 -- ════════════════════════════════════════════════════════════

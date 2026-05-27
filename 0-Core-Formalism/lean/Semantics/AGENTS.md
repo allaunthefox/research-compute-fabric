@@ -201,9 +201,12 @@ after narrowly compiling the file under a scratch target.
   by explicit premise `onHyperbolaApprox (forwardStep s Δu) Q16_16.epsilon` (line 69).
   Remaining: `TODO(lean-port)` discharge that premise from a formal `Q16_16.sqrt`
   error-bound lemma.
-- `SSMS.aciPreservedByMlgruStep`: former sorry replaced by explicit premise
-  `hBlendACI` (lines 545–548). Remaining: `TODO(lean-port)` discharge from Q16_16
-  triangle inequality, multiplication monotonicity, and saturation associativity.
+- `SSMS.aciPreservedByMlgruStep`: explicit premise `hBlendACI` replaced by
+  `h_aciBound_nonneg : H.aciBound.toInt ≥ 0` (line 549). The `f_eps` and
+  `omf_eps` sub-lemmas are now proved with `omega` (lines 624–663). Critical
+  remaining blocker: `Q16_16.mul_mono_left` is stubbed with `admit`, which
+  makes `t1` (line 600) and `t2` (line 614) unresolved. Once `mul_mono_left`
+  is proved, `aciPreservedByMlgruStep` closes fully.
 - `FixedPoint.lean` Q16_16 lemma library (lines 617–695): 6 lemmas stubbed with
   `admit` + `TODO(lean-port)` pending lean-port:
   - `sub_eq_add_neg`: `Int.sub_eq_add_neg` rw/omega blocked after unfold

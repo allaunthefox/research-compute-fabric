@@ -18,6 +18,7 @@ spec:
       containers:
         - name: credential-server
           image: registry.researchstack.info/infra/credential-server:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8444
               name: http

@@ -9,7 +9,7 @@
 # debian:bookworm-slim for glibc compatibility with the standard Rust toolchain.
 #
 # ── Stage 1: build the Rust surface binary ─────────────────────────────────
-FROM rust:1.82-bookworm AS builder
+FROM rust:bookworm AS builder
 
 RUN apt-get update -qq && apt-get install -y --no-install-recommends \
     pkg-config libssl-dev && rm -rf /var/lib/apt/lists/*
@@ -33,7 +33,7 @@ ENV RS_SURFACE_PORT=8080
 
 RUN apt-get update -qq && apt-get install -y --no-install-recommends \
     ca-certificates wget && rm -rf /var/lib/apt/lists/* \
-    && adduser --system --no-create-home --uid 988 surface \
+    && addgroup --system --gid 988 surface && adduser --system --no-create-home --uid 988 --ingroup surface surface \
     && mkdir -p /opt/rs-surface /etc/rs-surface /var/lib/rs-surface \
                 /var/log/rs-surface /run/rs-surface /mnt/topological-storage \
     && chown -R surface:surface /var/lib/rs-surface /var/log/rs-surface \
@@ -42,8 +42,7 @@ RUN apt-get update -qq && apt-get install -y --no-install-recommends \
 COPY --from=builder /build/target/release/rs-surface /opt/rs-surface/rs-surface
 COPY profiles/racknerd-surface.json /etc/rs-surface/node.json
 
-# Python server kept alongside as a debugging/fallback reference
-COPY server.py /opt/rs-surface/server.py
+# Python server kept alongside as a debugging/fallback reference (omitted)
 
 USER surface
 EXPOSE 8080

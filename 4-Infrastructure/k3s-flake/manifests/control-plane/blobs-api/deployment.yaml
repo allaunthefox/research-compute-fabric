@@ -18,6 +18,7 @@ spec:
       containers:
         - name: blobs-api
           image: registry.researchstack.info/control-plane/blobs-api:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           resources:

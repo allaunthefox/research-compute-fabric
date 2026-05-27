@@ -18,7 +18,7 @@ metadata:
   namespace: services
 spec:
   forwardAuth:
-    address: http://authentik.services.svc.cluster.local/outpost.goauthentik.io/auth/caddy
+    address: http://authentik-server.services.svc.cluster.local/outpost.goauthentik.io/auth/caddy
     authResponseHeaders:
       - X-Authentik-Username
       - X-Authentik-Email

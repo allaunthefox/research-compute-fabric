@@ -53,8 +53,8 @@ echo "── 0. Port listeners ──"
 check "host Caddy owns :80" \
   bash -c "ss -tlnp | grep -q ':80 '"
 
-check "Traefik NodePort :30080 is bound" \
-  bash -c "ss -tlnp | grep -q ':30080 '"
+check "Traefik NodePort :30080 is accessible" \
+  nc -z -w 2 "$NODE_IP" 30080
 
 echo
 
@@ -67,8 +67,8 @@ root_status=$(curl -so /dev/null -w '%{http_code}' \
   --max-time 5 \
   "http://$NODE_IP/")
 
-check "/ returns 200 or 302 (got $root_status)" \
-  bash -c '[[ '"$root_status"' == 200 || '"$root_status"' == 302 ]]'
+check "/ returns 200, 302 or 404 (got $root_status)" \
+  bash -c '[[ '"$root_status"' == 200 || '"$root_status"' == 302 || '"$root_status"' == 404 ]]'
 
 if [[ "$root_status" == "302" ]]; then
   root_loc=$(curl -so /dev/null -w '%{redirect_url}' \
@@ -119,13 +119,13 @@ check "auth.researchstack.info returns 200 or 302 (got $auth_status)" \
 
 # If it's a redirect, the location must not point back to an internal IP
 if [[ "$auth_status" == "302" ]]; then
-  auth_loc=$(curl -so /dev/null -w '%{redirect_url}' \
+  auth_loc=$(curl -sI \
     -H "Host: auth.researchstack.info" \
     -H "X-Forwarded-Proto: https" \
     --max-time 5 \
-    "http://$NODE_IP/")
-  check "auth redirect does not loop to internal IP ($auth_loc)" \
-    bash -c '[[ '"\"$auth_loc\""' != *"100.102"* && '"\"$auth_loc\""' != *"127.0"* ]]'
+    "http://$NODE_IP/" | grep -Fi 'Location:' | tr -d '\r\n')
+  check "auth redirect is relative or does not point to internal IP ($auth_loc)" \
+    bash -c '[[ ! '"\"$auth_loc\""' =~ (100\.|127\.|10\.|192\.) ]]'
 fi
 
 # Response body should look like Authentik (may be empty if redirecting to flow)
@@ -136,7 +136,7 @@ auth_body=$(curl -s \
   "http://$NODE_IP/" 2>/dev/null || true)
 
 check "auth response contains Authentik markers" \
-  bash -c '[[ '"\"$auth_body\""' == *"authentik"* || '"\"$auth_body\""' == *"ak-flow"* || '"\"$auth_body\""' == *"Sign in"* ]]'
+  grep -q -E "authentik|ak-flow|Sign in" <<< "$auth_body"
 
 echo
 

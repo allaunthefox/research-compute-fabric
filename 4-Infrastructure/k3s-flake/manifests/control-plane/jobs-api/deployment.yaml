@@ -18,6 +18,7 @@ spec:
       containers:
         - name: jobs-api
           image: registry.researchstack.info/control-plane/jobs-api:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           resources:

@@ -59,7 +59,7 @@ structure CellPatch where
 
 /-- Admissibility check for a patch on a cell. -/
 def cellPatchAdmissible (_cell : Cell) (_patch : CellPatch) : Bool :=
-  true  -- TODO(lean-port): Define actual admissibility predicate
+  true  -- TODO(lean-port): Define actual admissibility predicate - check deltaH/deltaS bounds and cell state constraints
 
 /-- Payload carrying both a gossip packet and a patch. -/
 structure KernelPayload where

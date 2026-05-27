@@ -329,7 +329,7 @@ def testEntity2 : MathEntity :=
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-- Theorem: Subject cost is symmetric for adjacent indices -/
--- TODO(lean-port): Fix omega proof
+-- TODO(lean-port): Fix omega proof - need to prove symmetry of adjacent-subject cost calculation
 -- theorem subjectCostSymmetric (s1 s2 : MathSubject)
 --     (hAdj : s1.toIdx.val + 1 = s2.toIdx.val) :
 --     subjectCost s1 s2 = subjectCost s2 s1 := by
@@ -343,7 +343,7 @@ theorem exactSubjectZeroCost (s : MathSubject) :
   simp [subjectCost]
 
 /-- Theorem: Query cost is monotonic in complexity ceiling violation -/
--- TODO(lean-port): Fix proof - need to show (entity - c1) / entity > (entity - c2) / entity given c1 < c2
+-- TODO(lean-port): Fix proof - need to show monotonicity of complexity penalty when c1 < c2 < entity
 -- theorem complexityCostMonotonic (c1 c2 entity : Q16_16)
 --     (h1 : c1 < c2) (h2 : entity > c2) :
 --     complexityCost (some c1) entity > complexityCost (some c2) entity := by
@@ -355,7 +355,6 @@ theorem exactSubjectZeroCost (s : MathSubject) :
 --   have h_c1_lt_entity : c1 < entity := by trans h1 h2
 --   have h_c2_lt_entity : c2 < entity := by exact h2
 
--- TODO(lean-port): Theorem: Empty query matches all entities (zero or minimal cost)
--- Fix implicit argument synthesis issue in theorem signature
+-- TODO(lean-port): Theorem: Empty query (defaultQueryParams with all filters empty) yields zero cost for all entities
 
 end Semantics.MathQuery

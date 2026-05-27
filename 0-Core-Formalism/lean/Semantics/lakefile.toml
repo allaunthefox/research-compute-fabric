@@ -21,16 +21,18 @@ name = "Semantics"
 # ── Compiler: blessed RRC compiler surface ────────────────────────────────────
 # Fast CI target. Only these modules form the "functional Rainbow Raccoon
 # Compiler" proof-of-life:
-#   Semantics.RRC.Emit      — fixture corpus → alignment gate → JSON  (Goal A+)
-#   Semantics.AVMIsa.Emit   — AVM canaries → receipt → RRC projection → JSON (Goal A)
+#   Semantics.RRC.Emit        — fixture corpus → alignment gate → JSON  (Goal A+)
+#   Semantics.AVMIsa.Emit     — AVM canaries → RRC → JSON (Goal A); sole output boundary
+#                               also stamps Semantics.RRC.Corpus278 (278-equation corpus)
+#   Semantics.RRC.Corpus278   — raw 278-equation features (Python-supplied, Lean-gated)
 # Libraries (imported by roots, not roots themselves):
-#   Semantics.AVMIsa.*      — ISA, types, step, run
-#   Semantics.ReceiptCore   — receipt ledger, promotion gates
+#   Semantics.AVMIsa.*        — ISA, types, step, run
+#   Semantics.ReceiptCore     — receipt ledger, promotion gates
 #   Semantics.RRCLogogramProjection — projection/merge/lane theorems
-#   Semantics.FixedPoint    — Q16_16, Q0_16 (no Float in compute paths)
+#   Semantics.FixedPoint      — Q16_16, Q0_16 (no Float in compute paths)
 [[lean_lib]]
 name = "Compiler"
-roots = ["Semantics.RRC.Emit", "Semantics.AVMIsa.Emit"]
+roots = ["Semantics.RRC.Emit", "Semantics.AVMIsa.Emit", "Semantics.RRC.Corpus278"]
 
 [[lean_lib]]
 name = "PIST"

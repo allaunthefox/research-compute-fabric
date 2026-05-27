@@ -64,24 +64,42 @@ inductive Promotion where
 
   Fields match the invariant_receipt + equation_record structure from
   rrc_equation_classifier_receipt.json:
-  - equationId:  "rrc_eq_<hex>" stable object identifier
-  - name:        human-readable equation name
-  - shape:       RRC routing shape (from RRCLogogramProjection.RRCShape)
-  - status:      witness status (candidate or hold)
-  - rrcKind:     classifier receipt kind tag
-  - weakAxesCnt: count of weak (missing) projection axes — proxy for receipt_density gap
-  - pistProxyLabel:  PIST proxy classifier output (if any)
-  - pistExactLabel:  PIST exact classifier output (if any)
+  - equationId:       "rrc_eq_<hex>" stable object identifier
+  - name:             human-readable equation name
+  - shape:            RRC routing shape (from RRCLogogramProjection.RRCShape)
+  - status:           witness status (candidate or hold)
+  - rrcKind:          classifier receipt kind tag
+  - weakAxesCnt:      count of weak (missing) projection axes — proxy for receipt_density gap
+  - pistProxyLabel:   PIST proxy classifier output (if any)
+  - pistExactLabel:   PIST exact classifier output (if any)
+
+  Generator fields (for EN9wiki page generation):
+  - operatorTokens:   operator/domain tokens derived from route_hint and rrc_kind
+                      e.g. ["cognitive_load", "exponential_decay"]
+  - invariantsDeclared: declared invariant family from domain_type
+                      e.g. "LAYER_G_ENERGY" or "unknown"
+  - boundaryConds:    binding class / boundary condition family
+                      e.g. "thermodynamic_bind" or "unknown"
+  - templateKey:      which page-generator template applies
+                      e.g. "definition", "master_equation", "gate", "receipt", "hold"
+  - templateParams:   compact parameter string for deterministic rendering
+                      e.g. "route=cognitive_load;shape=CognitiveLoadField"
 -/
 structure FixtureRow where
-  equationId     : String
-  name           : String
-  shape          : RRCShape
-  status         : WitnessStatus
-  rrcKind        : String
-  weakAxesCnt    : Nat
-  pistProxyLabel : Option String   -- None when PIST has no prediction
-  pistExactLabel : Option String
+  equationId        : String
+  name              : String
+  shape             : RRCShape
+  status            : WitnessStatus
+  rrcKind           : String
+  weakAxesCnt       : Nat
+  pistProxyLabel    : Option String   -- None when PIST has no prediction
+  pistExactLabel    : Option String
+  -- Generator fields
+  operatorTokens    : List String     -- domain/operator token list
+  invariantsDeclared : String         -- declared invariant family or "unknown"
+  boundaryConds     : String          -- binding class or "unknown"
+  templateKey       : String          -- page-generator template key
+  templateParams    : String          -- compact rendering parameter string
   deriving Repr
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -146,15 +164,21 @@ def alignmentWarnings (status : AlignmentStatus) : List String :=
 -- ─────────────────────────────────────────────────────────────────────────────
 
 structure RrcRow where
-  equationId       : String
-  name             : String
-  shape            : RRCShape
-  status           : WitnessStatus
-  alignmentStatus  : AlignmentStatus
-  alignmentScore   : Nat           -- integer, denominator 100
-  promotion        : Promotion
-  warnings         : List String
-  receipt          : Receipt
+  equationId          : String
+  name                : String
+  shape               : RRCShape
+  status              : WitnessStatus
+  alignmentStatus     : AlignmentStatus
+  alignmentScore      : Nat           -- integer, denominator 100
+  promotion           : Promotion
+  warnings            : List String
+  receipt             : Receipt
+  -- Generator fields (passed through from FixtureRow)
+  operatorTokens      : List String
+  invariantsDeclared  : String
+  boundaryConds       : String
+  templateKey         : String
+  templateParams      : String
   deriving Repr
 
 def compileRow (row : FixtureRow) : RrcRow :=
@@ -163,15 +187,20 @@ def compileRow (row : FixtureRow) : RrcRow :=
   let warnings := alignmentWarnings aStatus
   let passed   := aStatus != .missingPrediction && aStatus != .alignmentWarning
   let receipt  := leanBuildReceipt row.equationId passed
-  { equationId      := row.equationId
-    name            := row.name
-    shape           := row.shape
-    status          := row.status
-    alignmentStatus := aStatus
-    alignmentScore  := aScore
-    promotion       := .notPromoted
-    warnings        := warnings
-    receipt         := receipt }
+  { equationId         := row.equationId
+    name               := row.name
+    shape              := row.shape
+    status             := row.status
+    alignmentStatus    := aStatus
+    alignmentScore     := aScore
+    promotion          := .notPromoted
+    warnings           := warnings
+    receipt            := receipt
+    operatorTokens     := row.operatorTokens
+    invariantsDeclared := row.invariantsDeclared
+    boundaryConds      := row.boundaryConds
+    templateKey        := row.templateKey
+    templateParams     := row.templateParams }
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- §6  Fixture corpus — 6 canonical rows, one per RRCShape
@@ -187,69 +216,99 @@ def compileRow (row : FixtureRow) : RrcRow :=
 
 /-- CognitiveLoadField — CANDIDATE, proxy=LogogramProjection (PIST mismatch) -/
 def fixtureClf : FixtureRow :=
-  { equationId     := "rrc_eq_86ccde7bfd669b77"
-    name           := "bandwidth_adjusted_threshold"
-    shape          := .cognitiveLoadField
-    status         := .candidate
-    rrcKind        := "cognitive_field_receipt"
-    weakAxesCnt    := 7
-    pistProxyLabel := some "LogogramProjection"
-    pistExactLabel := some "LogogramProjection" }
+  { equationId          := "rrc_eq_86ccde7bfd669b77"
+    name                := "bandwidth_adjusted_threshold"
+    shape               := .cognitiveLoadField
+    status              := .candidate
+    rrcKind             := "cognitive_field_receipt"
+    weakAxesCnt         := 7
+    pistProxyLabel      := some "LogogramProjection"
+    pistExactLabel      := some "LogogramProjection"
+    operatorTokens      := ["cognitive_load", "exponential_decay", "threshold_reweighting"]
+    invariantsDeclared  := "unknown"
+    boundaryConds       := "unknown"
+    templateKey         := "definition"
+    templateParams      := "route=cognitive_load;shape=CognitiveLoadField" }
 
 /-- SignalShapedRouteCompiler — CANDIDATE, proxy=LogogramProjection (PIST mismatch) -/
 def fixtureSsrc : FixtureRow :=
-  { equationId     := "rrc_eq_ac1a7a22801b7d77"
-    name           := "core_equations"
-    shape          := .signalShapedRouteCompiler
-    status         := .candidate
-    rrcKind        := "compression_route_prior"
-    weakAxesCnt    := 6
-    pistProxyLabel := some "LogogramProjection"
-    pistExactLabel := some "LogogramProjection" }
+  { equationId          := "rrc_eq_ac1a7a22801b7d77"
+    name                := "core_equations"
+    shape               := .signalShapedRouteCompiler
+    status              := .candidate
+    rrcKind             := "compression_route_prior"
+    weakAxesCnt         := 6
+    pistProxyLabel      := some "LogogramProjection"
+    pistExactLabel      := some "LogogramProjection"
+    operatorTokens      := ["compression_route", "signal_shaped"]
+    invariantsDeclared  := "LAYER_A_COMPRESSION"
+    boundaryConds       := "geometric_bind"
+    templateKey         := "master_equation"
+    templateParams      := "route=compression_route;shape=SignalShapedRouteCompiler" }
 
 /-- LogogramProjection — HOLD, proxy=LogogramProjection (exact alignment) -/
 def fixtureLp : FixtureRow :=
-  { equationId     := "rrc_eq_4c87c96f612f6100"
-    name           := "Stamp_Code"
-    shape          := .logogramProjection
-    status         := .hold
-    rrcKind        := "logogram_projection"
-    weakAxesCnt    := 9
-    pistProxyLabel := some "LogogramProjection"
-    pistExactLabel := some "LogogramProjection" }
+  { equationId          := "rrc_eq_4c87c96f612f6100"
+    name                := "Stamp_Code"
+    shape               := .logogramProjection
+    status              := .hold
+    rrcKind             := "logogram_projection"
+    weakAxesCnt         := 9
+    pistProxyLabel      := some "LogogramProjection"
+    pistExactLabel      := some "LogogramProjection"
+    operatorTokens      := ["logogram_projection"]
+    invariantsDeclared  := "unknown"
+    boundaryConds       := "unknown"
+    templateKey         := "receipt"
+    templateParams      := "route=logogram_projection;shape=LogogramProjection" }
 
 /-- ProjectableGeometryTopology — HOLD, no PIST prediction (missing) -/
 def fixturePgt : FixtureRow :=
-  { equationId     := "rrc_eq_5193efd26258bc51"
-    name           := "UQGET_Hubble_Tension"
-    shape          := .projectableGeometryTopology
-    status         := .hold
-    rrcKind        := "geometry_topology_receipt"
-    weakAxesCnt    := 8
-    pistProxyLabel := none
-    pistExactLabel := none }
+  { equationId          := "rrc_eq_5193efd26258bc51"
+    name                := "UQGET_Hubble_Tension"
+    shape               := .projectableGeometryTopology
+    status              := .hold
+    rrcKind             := "geometry_topology_receipt"
+    weakAxesCnt         := 8
+    pistProxyLabel      := none
+    pistExactLabel      := none
+    operatorTokens      := ["geometry_topology", "hubble_tension"]
+    invariantsDeclared  := "LAYER_C_TOPOLOGY"
+    boundaryConds       := "unknown"
+    templateKey         := "hold"
+    templateParams      := "route=geometry_topology;shape=ProjectableGeometryTopology" }
 
 /-- CadForceProbeReceipt — HOLD, no PIST prediction (missing) -/
 def fixtureCad : FixtureRow :=
-  { equationId     := "rrc_eq_7076f5bdea119531"
-    name           := "DAG_Force_Equilibrium"
-    shape          := .cadForceProbeReceipt
-    status         := .hold
-    rrcKind        := "cad_force_receipt"
-    weakAxesCnt    := 8
-    pistProxyLabel := none
-    pistExactLabel := none }
+  { equationId          := "rrc_eq_7076f5bdea119531"
+    name                := "DAG_Force_Equilibrium"
+    shape               := .cadForceProbeReceipt
+    status              := .hold
+    rrcKind             := "cad_force_receipt"
+    weakAxesCnt         := 8
+    pistProxyLabel      := none
+    pistExactLabel      := none
+    operatorTokens      := ["cad_force", "dag_equilibrium"]
+    invariantsDeclared  := "unknown"
+    boundaryConds       := "physical_bind"
+    templateKey         := "gate"
+    templateParams      := "route=cad_force;shape=CadForceProbeReceipt" }
 
 /-- HoldForUnlawfulOrUnderspecifiedShape — HOLD, no PIST prediction (missing) -/
 def fixtureHold : FixtureRow :=
-  { equationId     := "rrc_eq_6d33c14a88eb0a12"
-    name           := "LASSO_MOGAT_GAT_Propagation"
-    shape          := .holdForUnlawfulOrUnderspecifiedShape
-    status         := .hold
-    rrcKind        := "negative_control"
-    weakAxesCnt    := 9
-    pistProxyLabel := none
-    pistExactLabel := none }
+  { equationId          := "rrc_eq_6d33c14a88eb0a12"
+    name                := "LASSO_MOGAT_GAT_Propagation"
+    shape               := .holdForUnlawfulOrUnderspecifiedShape
+    status              := .hold
+    rrcKind             := "negative_control"
+    weakAxesCnt         := 9
+    pistProxyLabel      := none
+    pistExactLabel      := none
+    operatorTokens      := ["unclassified_equation"]
+    invariantsDeclared  := "unknown"
+    boundaryConds       := "unknown"
+    templateKey         := "hold"
+    templateParams      := "route=unclassified_equation;shape=HoldForUnlawfulOrUnderspecifiedShape" }
 
 def fixtureCorpus : List FixtureRow :=
   [fixtureClf, fixtureSsrc, fixtureLp, fixturePgt, fixtureCad, fixtureHold]
@@ -298,7 +357,12 @@ private def jRrcRow (r : RrcRow) : String :=
   s!"\"alignment_score\":{r.alignmentScore}," ++
   s!"\"promotion\":{jPromotion r.promotion}," ++
   s!"\"warnings\":{jStrList r.warnings}," ++
-  s!"\"receipt_valid\":{jBool r.receipt.valid}}"
+  s!"\"receipt_valid\":{jBool r.receipt.valid}," ++
+  s!"\"operator_tokens\":{jStrList r.operatorTokens}," ++
+  s!"\"invariants_declared\":{jStr r.invariantsDeclared}," ++
+  s!"\"boundary_conds\":{jStr r.boundaryConds}," ++
+  s!"\"template_key\":{jStr r.templateKey}," ++
+  s!"\"template_params\":{jStr r.templateParams}}"
 
 private def jRowList (rs : List RrcRow) : String :=
   "[" ++ String.intercalate "," (rs.map jRrcRow) ++ "]"
@@ -314,17 +378,20 @@ structure EmitResult where
   json          : String
   deriving Repr
 
-def emitFixture : EmitResult :=
-  let rows       := fixtureCorpus.map compileRow
+/-- Generic corpus emitter: compile any list of FixtureRows and emit a
+    labelled JSON receipt.  Used by both `emitFixture` (6 canonical rows)
+    and `emitCorpus278` (full 278-equation corpus in Semantics.RRC.Corpus278). -/
+def emitCorpus (schema : String) (corpus : List FixtureRow) : EmitResult :=
+  let rows       := corpus.map compileRow
   let candidates := rows.filter (·.receipt.valid)
   let summary    :=
     s!"\{\"total\":{rows.length}," ++
     s!"\"passed_alignment\":{candidates.length}," ++
     s!"\"not_promoted\":{rows.length}," ++
-    s!"\"schema\":\"rrc_emit_fixture_v1\"," ++
+    s!"\"schema\":{jStr schema}," ++
     s!"\"claim_boundary\":\"admissibility-and-routing-pass-only\"}"
   let json :=
-    s!"\{\"schema\":\"rrc_emit_fixture_v1\"," ++
+    s!"\{\"schema\":{jStr schema}," ++
     s!"\"claim_boundary\":\"admissibility-and-routing-pass-only\"," ++
     s!"\"summary\":{summary}," ++
     s!"\"rows\":{jRowList rows}}"
@@ -332,6 +399,9 @@ def emitFixture : EmitResult :=
     totalRows     := rows.length
     candidateRows := candidates.length
     json          := json }
+
+def emitFixture : EmitResult :=
+  emitCorpus "rrc_emit_fixture_v1" fixtureCorpus
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- §9  Eval witnesses

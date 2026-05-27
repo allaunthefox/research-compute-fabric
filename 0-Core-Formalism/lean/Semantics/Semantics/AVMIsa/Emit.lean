@@ -13,6 +13,7 @@
 import Semantics.AVMIsa.Run
 import Semantics.ReceiptCore
 import Semantics.RRCLogogramProjection
+import Semantics.RRC.Corpus278
 
 namespace Semantics.AVMIsa.Emit
 
@@ -186,7 +187,46 @@ def emit : EmitResult :=
     json            := jsonBody }
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- §7  Proof-of-life eval witnesses
+-- §7  RRC corpus stamping (278-equation corpus → AVM-stamped receipt bundle)
+--
+--     Architecture:
+--       Semantics.RRC.Corpus278  — raw features (Python-supplied, no decisions)
+--       Semantics.RRC.Emit       — alignment gate (Lean classifies)
+--       Semantics.AVMIsa.Emit    — AVM stamps final receipt + emits JSON (here)
+--
+--     The AVM is the sole output boundary.  RRC.Emit feeds it; AVMIsa.Emit
+--     stamps it.  Promotion remains not_promoted at this stage.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+open Semantics.RRC.Emit in
+open Semantics.RRC.Corpus278 in
+/-- Stamp the 278-equation corpus: run the alignment gate (RRC.Emit), then
+    mint an AVM-authority receipt for the whole bundle, and emit JSON.
+
+    The AVM canary suite must pass for the bundle receipt to be valid.
+    Individual row receipts reflect alignment-gate pass/fail independently. -/
+def emitRrcCorpus278 : String :=
+  -- 1. Classify all 278 rows through the alignment gate
+  let classified := emitCorpus "rrc_corpus278_v1" corpus278
+  -- 2. Run AVM canaries — AVM must be live for the bundle to be valid
+  let avmOk      := canaryReceipts.all (·.valid)
+  -- 3. Mint AVM-authority bundle receipt
+  let bundleReceipt := leanBuildReceipt "avm.rrc_corpus278.bundle" avmOk
+  -- 4. Compute summary statistics
+  let total      := classified.totalRows
+  let passed     := classified.candidateRows
+  let held       := total - passed
+  -- 5. Emit JSON — AVM is the output boundary
+  s!"\{\"schema\":\"avm_rrc_corpus278_v1\"," ++
+  s!"\"claim_boundary\":\"admissibility-and-routing-pass-only;not-promoted\"," ++
+  s!"\"avm_canaries_passed\":{jsonBool avmOk}," ++
+  s!"\"bundle_receipt_valid\":{jsonBool bundleReceipt.valid}," ++
+  s!"\"summary\":\{\"total\":{total},\"passed_alignment\":{passed},\"held\":{held}," ++
+  s!"\"not_promoted\":{total}}}," ++
+  s!"\"rows\":{classified.json}}"
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- §8  Proof-of-life eval witnesses
 -- ─────────────────────────────────────────────────────────────────────────────
 
 -- Individual canary checks
@@ -197,7 +237,16 @@ def emit : EmitResult :=
 -- Receipt validity
 #eval canaryReceipts.map (fun r => (r.targetId, r.valid))
 
--- Full JSON bundle (the "rainbow raccoon compiler" output)
+-- Full canary JSON bundle (the "rainbow raccoon compiler" output)
 #eval emit.json
+
+-- 278-equation corpus: AVM stamps the bundle, RRC.Emit classifies rows
+-- (summary only — full JSON is ~200KB)
+open Semantics.RRC.Emit in
+open Semantics.RRC.Corpus278 in
+#eval
+  let r := emitCorpus "rrc_corpus278_v1" corpus278
+  (r.totalRows, r.candidateRows, r.totalRows - r.candidateRows)
+  -- expect: (278, <passed_alignment>, <held>)
 
 end Semantics.AVMIsa.Emit

@@ -1,0 +1,19 @@
+{
+  // Project config for Research Stack.
+  // Hooks fire on every user message to remind the agent of the programming
+  // choice flow and post-interaction workflow defined in AGENTS.md.
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat '/home/allaun/Research Stack/.devin/hooks/programming-choice-reminder.sh' | bash",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

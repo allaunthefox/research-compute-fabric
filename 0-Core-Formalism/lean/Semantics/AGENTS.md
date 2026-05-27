@@ -82,3 +82,75 @@ lake build
   making them compile under a narrow target.
 - Generated `*_tb.v` and `*_test_vectors.json` files are build artifacts unless
   a task explicitly promotes one as a hardware receipt.
+
+## Blessed Compiler Surface (as of 2026-05-26)
+
+The `Compiler` lean_lib in `lakefile.toml` gates the promoted API surface.
+Only the following roots are blessed for downstream import and receipt emission:
+
+| Root | Purpose |
+|------|---------|
+| `Semantics.RRC.Emit` | RRC record construction and JSON emission |
+| `Semantics.AVMIsa.Emit` | AVM ISA canary runner + receipt emitter (Goal A) |
+| `Semantics.AVMIsa.Run` | AVM ISA interpreter (used by Emit) |
+| `Semantics.ReceiptCore` | Shared receipt schema types |
+| `Semantics.RRCLogogramProjection` | Logogram projection predicate |
+
+Build the narrow surface with:
+
+```bash
+lake build Compiler
+```
+
+Build the full workspace with:
+
+```bash
+lake build
+```
+
+Full workspace build baseline: **3566 jobs, 0 errors** (commit `c20aa4be` + consolidation).
+
+### Goal A canary receipt (AVMIsa.Emit)
+
+`Semantics/AVMIsa/Emit.lean` runs three AVM ISA canaries and emits a JSON
+receipt on every `#eval`. Expected output shape:
+
+```json
+{
+  "schema": "avm_canary_emit_v1",
+  "all_canaries_passed": true,
+  "receipts": [...],
+  "rrc_logogram": { "shape": "logogramProjection", ... },
+  "projection_passed": true
+}
+```
+
+Three passing canaries: `avm.canary.not`, `avm.canary.and`, `avm.canary.or`.
+
+## Quarantined Modules (not in build surface)
+
+| Module | File | Reason |
+|--------|------|--------|
+| `PIST.HybridTSMPISTTorus` | `2-Search-Space/PIST/HybridTSMPISTTorus.lean` | 2 sorry-related errors; no importers |
+
+Quarantined files are excluded from `lakefile.toml` PIST roots. Revive only
+after narrowly compiling the file under a scratch target.
+
+## Pending Proof Work
+
+- `goldenContractionEnergyDecrease` in `Semantics/PistSimulation.lean`:
+  theorem body present with `sorry`; marked `TODO(lean-port)`. Proof requires
+  Jensen's inequality for discrete convex combinations on Q16_16. The theorem
+  is positioned after `burgersPhiEnergyStep` (its dependencies are now in
+  scope). Do not move or re-comment this theorem; fix the proof instead.
+
+## Key API Notes (Lean 4.30 / this workspace)
+
+- `Q16_16` is a Subtype `{ x : Int // q16MinRaw ≤ x ∧ x ≤ q16MaxRaw }`.
+  Safe constructors: `Q16_16.ofRawInt (n : Int)`, `Q16_16.ofBits (u : UInt32)`,
+  `Q16_16.ofNat`, `Q16_16.ofRatio`. No struct literals `{ val := N }`.
+- `Q0_16` has `add`/`sub` (no `addSat`/`subSat`).
+- `List.get?` does not exist — use `list[i]?` subscript syntax.
+- `liftMetaM` is the correct combinator for `MetaM → TacticM` in `mapM`.
+- `MVarId.toNat` does not exist — use `g.name.toString`.
+- `List.size` → `.length`; `Json.num Nat` → `Json.num { mantissa := (n : Int), exponent := 0 }`.

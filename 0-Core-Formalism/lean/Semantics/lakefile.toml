@@ -1,7 +1,9 @@
 name = "Semantics"
 version = "0.1.0"
 srcDir = "."
-defaultTargets = ["Semantics"]
+# Compiler is the narrow fast-verification target for CI: only the blessed
+# RRC + AVMIsa + ReceiptCore surface.  Semantics is the full workspace build.
+defaultTargets = ["Compiler", "Semantics"]
 
 [[require]]
 name = "sparkle"
@@ -15,6 +17,20 @@ rev = "v4.30.0-rc2"
 
 [[lean_lib]]
 name = "Semantics"
+
+# ── Compiler: blessed RRC compiler surface ────────────────────────────────────
+# Fast CI target. Only these modules form the "functional Rainbow Raccoon
+# Compiler" proof-of-life:
+#   Semantics.RRC.Emit      — fixture corpus → alignment gate → JSON  (Goal A+)
+#   Semantics.AVMIsa.Emit   — AVM canaries → receipt → RRC projection → JSON (Goal A)
+# Libraries (imported by roots, not roots themselves):
+#   Semantics.AVMIsa.*      — ISA, types, step, run
+#   Semantics.ReceiptCore   — receipt ledger, promotion gates
+#   Semantics.RRCLogogramProjection — projection/merge/lane theorems
+#   Semantics.FixedPoint    — Q16_16, Q0_16 (no Float in compute paths)
+[[lean_lib]]
+name = "Compiler"
+roots = ["Semantics.RRC.Emit", "Semantics.AVMIsa.Emit"]
 
 [[lean_lib]]
 name = "PIST"

@@ -1266,17 +1266,7 @@ def burgersPhiDissipationStep (N : Nat) (u : Array Q16_16) (_ν _dx _dt : Q16_16
     theorem for the viscous Burgers equation.
     TODO(lean-port): complete the proof; currently verified by
     computational witness on all test fixtures. -/
--- TODO(lean-port): goldenContractionEnergyDecrease forward-references
--- arrayKineticEnergy (defined below at §9f). Move this theorem after
--- arrayKineticEnergy's definition or introduce a mutual block.
--- theorem goldenContractionEnergyDecrease {N : Nat} (u : Array Q16_16)
---     (hN : N ≥ 3)
---     (h_size : u.size = N)
---     (ν dx dt : Q16_16) :
---     Q16_16.le
---       (arrayKineticEnergy (burgersPhiDissipationStep N u ν dx dt))
---       (arrayKineticEnergy u) := by
---   sorry
+-- goldenContractionEnergyDecrease: moved below arrayKineticEnergy (§9f).
 
 -- ── 9e. Verification witnesses ───────────────────────────
 
@@ -1524,6 +1514,35 @@ def burgersPhiEnergyStep (N : Nat) (u : Array Q16_16) (ν dx dt : Q16_16)
   let e1 := arrayKineticEnergy u1
   let delta := Q16_16.sub e1 e0
   (e0, e1, delta)
+
+/-- For a convex field (each interior point ≥ its 3-point moving average),
+    the golden contraction step reduces kinetic energy.
+
+    Proof sketch:
+      1. Let c_i = (u_{i-1} + u_i + u_{i+1})/3 be the moving average.
+      2. The contraction is u'_i = c_i + φ⁻¹·(u_i − c_i).
+      3. Rewrite: u'_i = (1−φ⁻¹)·c_i + φ⁻¹·u_i, a convex combination.
+      4. Since φ⁻¹ ∈ (0,1), u'_i lies between c_i and u_i.
+      5. For convex fields (u_i ≥ c_i), we have c_i ≤ u'_i ≤ u_i.
+      6. If any u_i > c_i, then u'_i < u_i for that point.
+      7. The squared energy Σ(u'_i)² < Σ(u_i)² by Jensen's inequality
+         applied to the strictly convex function x ↦ x².
+
+    This is a discrete analogue of the continuous energy dissipation
+    theorem for the viscous Burgers equation.
+    TODO(lean-port): complete the proof; currently verified by
+    computational witness on all test fixtures.
+    (Formerly §9d; moved here so arrayKineticEnergy is in scope.) -/
+theorem goldenContractionEnergyDecrease {N : Nat} (u : Array Q16_16)
+    (hN : N ≥ 3)
+    (h_size : u.size = N)
+    (ν dx dt : Q16_16) :
+    Q16_16.le
+      (arrayKineticEnergy (burgersPhiDissipationStep N u ν dx dt))
+      (arrayKineticEnergy u) := by
+  -- TODO(lean-port): General proof requires Jensen's inequality for discrete
+  -- convex combinations and a monotonicity argument on the squared sum.
+  sorry
 
 /- --- CONVEX FIELD (all diffs ≥ 0): smooth parabola ---
    u = [0,3,4,3,0]; c = [0,2.33,3.33,2.33,0]; all diffs = +0.67.

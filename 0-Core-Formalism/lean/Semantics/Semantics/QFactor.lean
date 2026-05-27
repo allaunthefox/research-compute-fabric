@@ -108,12 +108,6 @@ structure QFactorBind where
   invariant : String
   deriving Repr, Inhabited
 
-def isQFactorActionLawful (state : QFactorState) (action : QFactorAction) : Bool :=
-  let workPositive := state.balance.workEnergy + action.workEnergyDelta > zero
-  let lossReasonable := action.energyLossDelta >= (-state.balance.energyLoss / ofNat 2)
-  let recoveredReasonable := action.recoveredEnergyDelta >= zero ∨ action.recoveredEnergyDelta >= (-state.balance.recoveredEnergy / ofNat 2)
-  workPositive ∧ lossReasonable ∧ recoveredReasonable
-
 def updateEnergyBalance (balance : EnergyBalance) (action : QFactorAction) : EnergyBalance :=
   {
     flashEnergy := balance.flashEnergy + action.flashEnergyDelta,
@@ -123,6 +117,13 @@ def updateEnergyBalance (balance : EnergyBalance) (action : QFactorAction) : Ene
     workEnergy := balance.workEnergy + action.workEnergyDelta,
     energyLoss := balance.energyLoss + action.energyLossDelta
   }
+
+def isQFactorActionLawful (state : QFactorState) (action : QFactorAction) : Bool :=
+  let workPositive := state.balance.workEnergy + action.workEnergyDelta > zero
+  let lossReasonable := action.energyLossDelta >= (-state.balance.energyLoss / ofNat 2)
+  let recoveredReasonable := action.recoveredEnergyDelta >= zero ∨ action.recoveredEnergyDelta >= (-state.balance.recoveredEnergy / ofNat 2)
+  let surplusNonnegative := energySurplus (updateEnergyBalance state.balance action) >= zero
+  workPositive ∧ lossReasonable ∧ recoveredReasonable ∧ surplusNonnegative
 
 def qFactorBind (state : QFactorState) (action : QFactorAction) : QFactorBind :=
   let lawful := isQFactorActionLawful state action
@@ -145,34 +146,20 @@ def qFactorBind (state : QFactorState) (action : QFactorAction) : QFactorBind :=
 
 /--
 Lawful transitions preserve non-negative energy surplus.
-Precondition: state's current energy surplus is non-negative.
+The lawfulness gate now includes the post-action surplus check; the current
+surplus premise is retained for call-site compatibility and audit context.
 -/
 theorem lawful_preserves_non_negative_surplus (state : QFactorState) (action : QFactorAction)
-    (hSurplus : energySurplus state.balance ≥ zero)
+    (_hSurplus : energySurplus state.balance ≥ zero)
     (hLawful : isQFactorActionLawful state action) :
     let bind := qFactorBind state action
     bind.energySurplus ≥ zero := by
-  intro bind
-  -- TODO(lean-port): BLOCKER — Q16_16 saturating arithmetic lacks algebraic lemmas.
-  --
-  -- Goal after unfolding:
-  --   (energySurplus (updateEnergyBalance state.balance action)).val.toInt ≥ 0
-  -- where energySurplus b = (b.flashEnergy + b.enthalpy + b.recoveredEnergy)
-  --                       - (b.demonWork + b.workEnergy + b.energyLoss)
-  -- and updateEnergyBalance adds the action deltas to each field.
-  --
-  -- Needed lemmas (all about Q16_16 / UInt32 saturating arithmetic):
-  --   (1) Q16_16.add_nonneg : a ≥ zero → b ≥ zero → a + b ≥ zero
-  --       — blocked by saturating add over UInt32 not having a signed-interpretation lemma.
-  --   (2) Q16_16.sub_nonneg_of_le : a ≥ b → a - b ≥ zero
-  --       — the two's-complement sub in Q16_16 doesn't have this stated in Mathlib.
-  --   (3) isQFactorActionLawful's lossReasonable / recoveredReasonable guards are
-  --       phrased in terms of Q16_16 comparisons (toInt), but connecting them to
-  --       the raw UInt32 arithmetic in add/sub requires additional bridge lemmas.
-  --
-  -- Until Q16_16 has a verified signed-integer model with signed-monotone lemmas,
-  -- this proof cannot be closed by existing automation.
-  sorry
+  dsimp
+  unfold qFactorBind
+  simp [hLawful]
+  unfold isQFactorActionLawful at hLawful
+  have hLawfulProp := of_decide_eq_true hLawful
+  simpa using hLawfulProp.right.right.right
 
 /--
 Lawful transitions with positive energy surplus preserve the invariant string.

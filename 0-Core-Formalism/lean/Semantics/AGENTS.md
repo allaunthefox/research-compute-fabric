@@ -106,8 +106,8 @@ Build the full workspace with:
 lake build
 ```
 
-Compiler surface baseline: **3313 jobs, 0 errors** (`lake build Compiler`, commit `778b78d3`, reverified 2026-05-27).
-Full workspace: **3571 jobs, 0 errors** (`lake build`, commit `778b78d3`, reverified 2026-05-27).
+Compiler surface baseline: **3313 jobs, 0 errors** (`lake build Compiler`, commit `1931cb30`, reverified 2026-05-27).
+Full workspace: **3571 jobs, 0 errors** (`lake build`, commit `1931cb30`, reverified 2026-05-27).
 PistSimulation: **3309 jobs, 0 errors** (`lake build Semantics.PistSimulation`, commit `778b78d3`, reverified 2026-05-27).
 
 ### goldenContractionEnergyDecrease — proof status
@@ -197,6 +197,13 @@ after narrowly compiling the file under a scratch target.
 - `goldenContractionEnergyDecrease` is discharged. Remaining follow-up is a
   separate premise-discharge lemma showing when the Burgers golden-contraction
   step satisfies `h_pt` and `h_u'_nonneg`.
+- `HyperbolicStateSurface.ko_preserves_hyperbola_approx` now makes the
+  forward-step approximation bound explicit. Remaining follow-up:
+  `TODO(lean-port)` discharge that premise from a formal `Q16_16.sqrt` error
+  bound.
+- `SSMS.aciPreservedByMlgruStep` now makes the blended hidden-state ACI bound
+  explicit. Remaining follow-up: discharge that premise from Q16_16 triangle,
+  multiplication monotonicity, and saturation associativity lemmas.
 
 ## Key API Notes (Lean 4.30 / this workspace)
 

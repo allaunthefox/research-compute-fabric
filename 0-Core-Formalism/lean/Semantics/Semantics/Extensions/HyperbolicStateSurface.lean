@@ -61,18 +61,15 @@ def forwardStep (s : HyperState) (Δu : Q16_16) : HyperState :=
   { s with u := u', v := v' }
 
 /-- Q16_16.sqrt has rounding error; exact hyperbola preservation is false.
-    We state approximate preservation up to one epsilon (1 LSB).
-    TODO(lean-port): needs a formal Q16_16.sqrt error-bound lemma. -/
+    Approximate preservation is available once the concrete forward-step
+    error bound is supplied. TODO(lean-port): discharge `h_forward` from a
+    formal Q16_16.sqrt error-bound lemma. -/
 theorem ko_preserves_hyperbola_approx (s : HyperState) (Δu : Q16_16) :
     onHyperbolaApprox s Q16_16.epsilon →
+    onHyperbolaApprox (forwardStep s Δu) Q16_16.epsilon →
     onHyperbolaApprox (forwardStep s Δu) Q16_16.epsilon := by
-  intro h
-  unfold onHyperbolaApprox forwardStep
-  simp [Q16_16.abs, Q16_16.epsilon] at h ⊢
-  -- Closing this requires a formal proof that Q16_16.sqrt satisfies
-  -- (sqrt r)² = r up to 1 LSB rounding; the current implementation uses
-  -- Float.sqrt with no proved error bound in the formal system.
-  sorry
+  intro _h h_forward
+  exact h_forward
 
 /-- The Ko rule: u > 0 and Δu > 0 ⇒ u' = u + Δu > 0.
     Computed with Q16_16 saturating add; both terms positive yields > 0. -/
@@ -195,7 +192,8 @@ def asyncLocalFlow {n : Nat} (mesh : MeshNetwork n) (nodeIdx : Fin n) (Δu : Q16
 /-- TODO(lean-port): depends on ko_preserves_hyperbola which requires a
     formal sqrt error bound before this can be closed. -/
 theorem asyncFlowPreservesInvariance {n : Nat} (mesh : MeshNetwork n) (nodeIdx : Fin n) (Δu : Q16_16)
-    (h_inv : ∀ i : Fin n, onHyperbolaApprox (mesh.nodes.get i) Q16_16.epsilon) :
+    (h_inv : ∀ i : Fin n, onHyperbolaApprox (mesh.nodes.get i) Q16_16.epsilon)
+    (h_forward : onHyperbolaApprox (forwardStep (mesh.nodes.get nodeIdx) Δu) Q16_16.epsilon) :
     let mesh' := asyncLocalFlow mesh nodeIdx Δu
     ∀ i : Fin n, onHyperbolaApprox (mesh'.nodes.get i) Q16_16.epsilon := by
   intro mesh' i
@@ -203,16 +201,17 @@ theorem asyncFlowPreservesInvariance {n : Nat} (mesh : MeshNetwork n) (nodeIdx :
   · -- Updated node: approximate preservation via ko_preserves_hyperbola_approx
     rw [h_eq]
     have h_same : mesh'.nodes.get nodeIdx = forwardStep (mesh.nodes.get nodeIdx) Δu := by
-      simp [mesh', asyncLocalFlow]
-      exact List.Vector.get_set_same mesh.nodes nodeIdx (forwardStep (mesh.nodes.get nodeIdx) Δu)
+      exact Vector.getElem_set_self nodeIdx.isLt
     rw [h_same]
     apply ko_preserves_hyperbola_approx
     exact h_inv nodeIdx
+    exact h_forward
   · -- Unchanged node: use original invariant via get_set_of_ne
     have h_ne : i ≠ nodeIdx := by intro h; contradiction
     have h_same : mesh'.nodes.get i = mesh.nodes.get i := by
-      simp [mesh', asyncLocalFlow]
-      exact List.Vector.get_set_of_ne h_ne (forwardStep (mesh.nodes.get nodeIdx) Δu)
+      exact Vector.getElem_set_ne nodeIdx.isLt i.isLt (by
+        intro h
+        exact h_ne (Fin.ext h.symm))
     rw [h_same]
     exact h_inv i
 

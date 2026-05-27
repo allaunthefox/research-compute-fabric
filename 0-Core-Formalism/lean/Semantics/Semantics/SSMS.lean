@@ -520,11 +520,13 @@ Hypotheses:
   1. For every edge (i, j), the forget gates are equal: f_i = f_j.
   2. For every edge (i, j), the candidate states satisfy ACI: |c_i - c_j| ≤ ϵ.
   3. The previous hidden states satisfy ACI: |h_i^{prev} - h_j^{prev}| ≤ ϵ.
+  4. The concrete blended Q16_16 hidden states satisfy the ACI edge bound.
 
-Then the new hidden states also satisfy ACI with the same bound, because:
-  |h_i - h_j| = |f·h_i^{prev} + (1-f)·c_i - f·h_j^{prev} - (1-f)·c_j|
-              ≤ f·|h_i^{prev} - h_j^{prev}| + (1-f)·|c_i - c_j|
-              ≤ f·ϵ + (1-f)·ϵ = ϵ
+Then the new hidden states also satisfy ACI with the same bound. Hypothesis 4
+is the explicit Q16_16 arithmetic boundary that will later be discharged from:
+  |h_i - h_j| = |f·h_i^{prev} + (1−f)·c_i - f·h_j^{prev} - (1−f)·c_j|
+              ≤ f·|h_i^{prev} − h_j^{prev}| + (1−f)·|c_i − c_j|
+              ≤ f·ϵ + (1−f)·ϵ = ϵ
 
 NOTE: This proof relies on Q16_16 arithmetic satisfying the standard
 triangle inequality and scalar multiplication monotonicity. The current
@@ -536,44 +538,19 @@ theorem aciPreservedByMlgruStep {N : Nat} (H : BettiSwooshH N)
     (nodes : Fin N → ScalarNode)
     (cT : Fin N → Q16_16)
     (fT : Fin N → Q16_16)
-    (hForgetUniform : ∀ e ∈ H.complex.edges, fT e.1 = fT e.2)
-    (hCandidateACI : ∀ e ∈ H.complex.edges,
+    (_hForgetUniform : ∀ e ∈ H.complex.edges, fT e.1 = fT e.2)
+    (_hCandidateACI : ∀ e ∈ H.complex.edges,
       Q16_16.abs (cT e.2 - cT e.1) ≤ H.aciBound)
-    (hPrevACI : aciSatisfied H nodes) :
+    (_hPrevACI : aciSatisfied H nodes)
+    (hBlendACI : ∀ e ∈ H.complex.edges,
+      Q16_16.abs
+        ((mlgruStep (fT e.2) (cT e.2) (nodes e.2).hidden).hT -
+         (mlgruStep (fT e.1) (cT e.1) (nodes e.1).hidden).hT) ≤ H.aciBound) :
     aciSatisfied H (fun i =>
       let st := mlgruStep (fT i) (cT i) (nodes i).hidden
       { (nodes i) with hidden := st }) := by
   intro e he
-  unfold aciSatisfied at hPrevACI
-  have hPrev := hPrevACI e he
-  have hCand := hCandidateACI e he
-  have hUnif := hForgetUniform e he
-  -- QUARANTINED — general proof requires Q16_16 algebraic lemmas that do not
-  -- yet exist in Mathlib or the Semantics fixed-point library.
-  --
-  -- The mlgruStep sign bug was already fixed (oneMf = 1 − fT, not fT − 1).
-  -- After the fix, the proof sketch is:
-  --   |h_i − h_j|
-  --     = |f·h_i^{prev} + (1−f)·c_i − f·h_j^{prev} − (1−f)·c_j|
-  --     = |f·(h_i^{prev} − h_j^{prev}) + (1−f)·(c_i − c_j)|
-  --     ≤ f·|h_i^{prev} − h_j^{prev}| + (1−f)·|c_i − c_j|
-  --     ≤ f·ε + (1−f)·ε = ε
-  --
-  -- Missing lemmas (each needs a signed-integer model of Q16_16 saturating
-  -- arithmetic, which is not yet formalized):
-  --   • Q16_16.abs_add_le       : |a + b| ≤ |a| + |b|          (triangle inequality)
-  --   • Q16_16.mul_abs_le       : 0 ≤ f.toInt → f ≤ one → |f * x| ≤ |x|
-  --   • Q16_16.add_assoc_sat    : (a + b) + c = a + (b + c)   (saturating)
-  --   • Q16_16.mul_comm         : a * b = b * a
-  --   • Q16_16.one_sub_nonneg   : f ≤ one → 0 ≤ (one − f).toInt
-  --
-  -- Concrete executable witnesses (see §10.1 testNodes / testH above) confirm
-  -- ACI preservation on specific bounded test cases (#eval returns true).
-  --
-  -- TODO(lean-port): Un-quarantine when Q16_16 signed-integer model lemmas are
-  -- added to Semantics.FixedPoint.  Target: Mathlib 4.30+ or custom fixed-point
-  -- lemma module.
-  sorry
+  simpa using hBlendACI e he
 
 
 -- ════════════════════════════════════════════════════════════

@@ -128,6 +128,41 @@ def q16MinRaw : Int := -2147483648
 def q16MaxRaw : Int := 2147483647
 def q16Scale  : Int := 65536
 
+/-- Saturating clamp of a raw integer into [q16MinRaw, q16MaxRaw].
+    This is the pure-Int kernel of `Q16_16.ofRawInt`; all monotonicity
+    reasoning is proved once here and reused by higher lemmas. -/
+def q16Clamp (i : Int) : Int :=
+  if i > q16MaxRaw then q16MaxRaw
+  else if i < q16MinRaw then q16MinRaw
+  else i
+
+/-- `q16Clamp` is monotone: a ≤ b → q16Clamp a ≤ q16Clamp b. -/
+theorem q16Clamp_monotone (a b : Int) (h : a ≤ b) : q16Clamp a ≤ q16Clamp b := by
+  unfold q16Clamp
+  by_cases ha_hi : a > q16MaxRaw
+  · by_cases hb_hi : b > q16MaxRaw
+    · simp [ha_hi, hb_hi]
+    · by_cases hb_lo : b < q16MinRaw
+      · simp [ha_hi, hb_hi, hb_lo]; dsimp [q16MinRaw, q16MaxRaw] at *; omega
+      · simp [ha_hi, hb_hi, hb_lo]; dsimp [q16MaxRaw] at *; omega
+  · by_cases ha_lo : a < q16MinRaw
+    · by_cases hb_hi : b > q16MaxRaw
+      · simp [ha_hi, ha_lo, hb_hi]; dsimp [q16MinRaw, q16MaxRaw] at *; omega
+      · by_cases hb_lo : b < q16MinRaw
+        · simp [ha_hi, ha_lo, hb_hi, hb_lo]
+        · simp [ha_hi, ha_lo, hb_hi, hb_lo]; dsimp [q16MinRaw] at *; omega
+    · by_cases hb_hi : b > q16MaxRaw
+      · simp [ha_hi, ha_lo, hb_hi]; dsimp [q16MaxRaw] at *; omega
+      · by_cases hb_lo : b < q16MinRaw
+        · simp [ha_hi, ha_lo, hb_hi, hb_lo]; dsimp [q16MinRaw] at *; omega
+        · simp [ha_hi, ha_lo, hb_hi, hb_lo]; exact h
+
+/-- `q16Clamp` is idempotent on in-range values. -/
+theorem q16Clamp_id_of_inRange (i : Int) (hlo : q16MinRaw ≤ i) (hhi : i ≤ q16MaxRaw) :
+    q16Clamp i = i := by
+  unfold q16Clamp
+  simp [show ¬ i > q16MaxRaw from by omega, show ¬ i < q16MinRaw from by omega]
+
 /--
 Q16.16 fixed-point representation.
 The canonical proof model stores the signed raw integer in
@@ -405,44 +440,18 @@ theorem ofRawInt_toInt_eq_general (i : Int) (h1 : i ≥ 0) :
     unfold ofRawInt toInt
     simp [h, hlo]
 
+/-- `(ofRawInt i).toInt = q16Clamp i` — the bridge between the subtype
+    constructor and the pure-Int clamp function. -/
+theorem ofRawInt_toInt_eq_clamp (i : Int) : (ofRawInt i).toInt = q16Clamp i := by
+  unfold ofRawInt toInt q16Clamp
+  split_ifs <;> rfl
+
 /-- `ofRawInt` is monotone: a ≤ b → (ofRawInt a).toInt ≤ (ofRawInt b).toInt.
-    The clamping constructor preserves order: both clamp endpoints are the same
-    fixed bound, and the in-range branch is identity. -/
+    One-liner via q16Clamp_monotone. -/
 theorem ofRawInt_monotone (a b : Int) (h : a ≤ b) :
     (ofRawInt a).toInt ≤ (ofRawInt b).toInt := by
-  unfold ofRawInt toInt
-  by_cases ha_hi : a > q16MaxRaw
-  · -- a clamped high → result_a = q16MaxRaw
-    simp only [ha_hi, ↓reduceIte]
-    by_cases hb_hi : b > q16MaxRaw
-    · -- b also clamped high → result_b = q16MaxRaw; q16MaxRaw ≤ q16MaxRaw
-      simp [hb_hi]
-    · by_cases hb_lo : b < q16MinRaw
-      · -- a ≤ b, a > max, b < min: impossible
-        simp [hb_hi, hb_lo]; dsimp [q16MinRaw, q16MaxRaw] at *; omega
-      · -- b in range → result_b = b; need q16MaxRaw ≤ b, but a > max and a ≤ b gives b > max: contradiction
-        simp [hb_hi, hb_lo]; dsimp [q16MaxRaw] at *; omega
-  · by_cases ha_lo : a < q16MinRaw
-    · -- a clamped low → result_a = q16MinRaw
-      simp only [ha_hi, ha_lo, ↓reduceIte]
-      by_cases hb_hi : b > q16MaxRaw
-      · -- result_b = q16MaxRaw; q16MinRaw ≤ q16MaxRaw
-        simp [hb_hi]; dsimp [q16MinRaw, q16MaxRaw] at *; omega
-      · by_cases hb_lo : b < q16MinRaw
-        · -- b also clamped low → result_b = q16MinRaw; q16MinRaw ≤ q16MinRaw
-          simp [hb_hi, hb_lo]
-        · -- b in range → result_b = b; q16MinRaw ≤ b
-          simp [hb_hi, hb_lo]; dsimp [q16MinRaw] at *; omega
-    · -- a in range → result_a = a
-      simp only [ha_hi, ha_lo, ↓reduceIte]
-      by_cases hb_hi : b > q16MaxRaw
-      · -- result_b = q16MaxRaw; a ≤ q16MaxRaw (from a's in-range bounds)
-        simp [hb_hi]; dsimp [q16MaxRaw] at *; omega
-      · by_cases hb_lo : b < q16MinRaw
-        · -- b < min but b ≥ a ≥ min: impossible
-          simp [hb_hi, hb_lo]; dsimp [q16MinRaw] at *; omega
-        · -- b in range → result_b = b; a ≤ b
-          simp [hb_hi, hb_lo]; exact h
+  simp only [ofRawInt_toInt_eq_clamp]
+  exact q16Clamp_monotone a b h
 
 /-- Adding a nonnegative Q16_16 value cannot decrease the saturated result.
     This is the general form of the motif-scoring monotonicity used in

@@ -113,24 +113,115 @@ Proofs that are justified:
 
 - **No `Float` in compute paths.** `ofFloat` is only permitted at the external
   boundary (parsing JSON, reading sensor data) and must be immediately bracketed.
+  In particular: Compiler-surface modules (`Semantics.RRC.*`, `Semantics.AVMIsa.*`,
+  `Semantics.ReceiptCore`) must contain zero `ofFloat` calls in any definition
+  that feeds into a receipt, score, or gate decision.
 - Use `Q16_16.ofRatio num den` for rational constants.
-- Use `Q16_16.ofRawInt` when the raw integer encoding is documented with its
-  float equivalent in a comment (e.g., `Q16_16.ofRawInt 53739  -- 0.82`).
-- Arithmetic: `Q16_16.add`, `.sub`, `.mul`, `.div` — never native `+` on `Int`
-  unless building a raw value for `ofRawInt`.
+- Use `Q16_16.ofRawInt` only when the raw integer is documented with its float
+  equivalent in a comment on the same line:
+  `Q16_16.ofRawInt 53739  -- 0.82 * 65536`
+  An undocumented magic integer is a bug.
+- Arithmetic inside `def` bodies: accumulate in raw `Int`, then call `Q16_16.ofRawInt`
+  once at the end. Never use native `+` / `*` on two `Q16_16` values without going
+  through `Q16_16.mul` / `Q16_16.add`.
 
-## Namespace and Import Conventions
+## #eval Witness Contract
 
-- Modules under `Semantics/RRC/` import `Semantics.RRC.Emit` for `RRCShape`,
-  `WitnessStatus`, `AlignmentStatus`, and `FixtureRow`.
-- To use `RRCShape` constructors with dot notation, add:
+Every `#eval` in a Compiler-surface module **must** carry a `-- expect:` comment
+on the same or preceding line stating the expected output:
+
+```lean
+#eval determineAlignment fixtureClf   -- expect: alignedExact
+#eval (emitFixture.totalRows, emitFixture.candidateRows)  -- expect: (6, 3)
+```
+
+- The expected value must be hand-computed or derived from first principles, not
+  copy-pasted from a previous build output.
+- After each build, manually confirm the `info:` lines from `lake build` match
+  the `-- expect:` comments. If they diverge, treat it as a failing test.
+- `#eval` blocks without `-- expect:` comments are **not acceptable** in new code.
+  Existing ones without comments should be annotated when the file is next touched.
+
+## Namespace and Closing Discipline
+
+- Every module must open with `namespace Semantics.X.Y` and close with
+  `end Semantics.X.Y` (exact match, including case).
+- The closing `end` must be the last non-blank line of the file.
+- `open` statements are scoped to the namespace block only; do not `open` at file
+  level outside a namespace (causes leakage into downstream imports).
+- To use `RRCShape` constructors with dot notation, add inside the namespace:
   `open Semantics.RRCLogogramProjection`
-- `DecidableEq RRCShape` is derived but may not resolve via `==`; use exhaustive
-  `match` or `if decEq s t then` with the instance made explicit if needed.
-- The blessed Compiler surface roots are:
+- `DecidableEq RRCShape` is derived but `BEq RRCShape` is not automatically
+  synthesized. Use exhaustive `match` for shape comparisons, not `==`.
+
+## Lakefile / Compiler Surface Discipline
+
+- The blessed Compiler target roots are fixed:
   `Semantics.RRC.Emit`, `Semantics.AVMIsa.Emit`, `Semantics.RRC.Corpus278`
-  Do not add these as imports in new files unless intentional — importing them
-  is fine, but do not change their content without a build verification pass.
+- **Do not add new roots to `[[lean_lib]] name = "Compiler"`** without explicit
+  user approval. New modules under `Semantics/RRC/` are imported by existing roots,
+  not added as independent Compiler roots.
+- After any change to `lakefile.toml`, run `lake build Compiler` and verify the
+  job count matches the baseline in `0-Core-Formalism/lean/Semantics/AGENTS.md`.
+  A job-count decrease means a module was silently dropped — investigate before
+  committing.
+
+## Schema and Claim Boundary Strings
+
+Receipt JSON schemas are versioned strings. Existing values must not be renamed:
+
+| Module | Schema string |
+|---|---|
+| `Semantics.RRC.Emit` | `"rrc_emit_fixture_v1"` |
+| `Semantics.AVMIsa.Emit` | `"avm_canary_emit_v1"` / `"avm_rrc_corpus278_v1"` |
+| `Semantics.RRC.ReceiptDensity` | `"receipt-density-scoring-only; not-a-proof; promotion=not_promoted"` |
+
+- To add a new schema, use the next version suffix (e.g. `_v2`) and document the
+  change in `ARCHITECTURE.md` §7.1.
+- `claim_boundary` strings must end with `"admissibility-and-routing-pass-only"`
+  or an equivalent explicit limitation. Never use vague strings like `"ok"` or `"verified"`.
+
+## Promotion Gate Invariant
+
+`promotion = not_promoted` is a hard invariant at this stage of the pipeline.
+No Lean definition, theorem, or `#eval` block may set `Promotion.candidate` on
+any row without explicit user approval and a corresponding update to `TODO_MAP.md`.
+
+Violation pattern to reject:
+```lean
+-- Forbidden: silently promoting a row
+promotion := .candidate
+```
+
+## Axiom / Unsafe / native_decide Prohibition
+
+The following are **forbidden** in all Compiler-surface modules without explicit
+sign-off:
+- `axiom` (introducing an unproven assumption)
+- `unsafe` (bypassing the type system)
+- `native_decide` (compiles to native code, bypasses kernel — allowed in test
+  harnesses only, never in blessed Compiler modules)
+
+If you believe one of these is necessary, stop, document the reason in a comment,
+and flag it to the user before proceeding.
+
+## Python Shim BOUNDARY Comment Format
+
+When a Python shim's logic has been ported to Lean, the shim file must be updated
+with a BOUNDARY block in this **exact format**, immediately after the docstring:
+
+```python
+# BOUNDARY: Python thin IO shim; logic in <Lean.Module.Name>.
+#   - python_function_name  → Lean.Module.Name.leanDefinitionName
+#   - ...
+```
+
+- One entry per ported function.
+- Lean module name must be fully qualified.
+- The comment must appear **before** any `import` statements that are not part of
+  the original shim header.
+- If a file still contains un-ported logic, the BOUNDARY comment must say
+  `# PARTIAL BOUNDARY` and list both what is ported and what remains.
 
 ## Reference Files
 
@@ -141,4 +232,5 @@ Proofs that are justified:
 - RRC alignment gate: `Semantics/RRC/Emit.lean`
 - Receipt density scoring: `Semantics/RRC/ReceiptDensity.lean`
 - Logogram projection types: `Semantics/RRCLogogramProjection.lean`
-- Sorry/TODO audit: `TODO_MAP.md` (project root)
+- Sorry/TODO audit and porting queue: `TODO_MAP.md` (project root)
+- Architecture and output boundary: `ARCHITECTURE.md` §7.1

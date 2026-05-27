@@ -12,7 +12,10 @@ With options:
   insert: bool (default false) — store result in ene.artifacts
   top_k: int (default 5) — number of nearest motifs to return
 """
-# PARTIAL BOUNDARY: contains domain logic; not a provable surface. Port to Lean/RRC before treating as authoritative.
+# PARTIAL BOUNDARY: spectral feature extraction and tactic inference ported to Semantics.PIST.Spectral.
+#   classify_tactic_from_name → Semantics.PIST.Spectral.classifyTacticFromName
+#   compute_spectral          → Semantics.PIST.Spectral.computeSpectral
+#   RDS I/O, MCP protocol, and motif scoring remain in Python.
 
 import json
 import math

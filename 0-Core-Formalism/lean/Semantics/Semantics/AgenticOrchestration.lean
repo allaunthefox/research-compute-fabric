@@ -160,7 +160,7 @@ steps
 4. **Human-in-the-loop**: When should human review be required?
 -/ 
 
--- TODO(lean-port):
+-- TODO(lean-port): complete proof placeholders and connect to SubagentOrchestrator domain definitions.
 -- 1. Complete all proof placeholders in theorems
 -- 2. Connect to SubagentOrchestrator domain definitions
 -- 3. Define agent communication protocol (async message passing)

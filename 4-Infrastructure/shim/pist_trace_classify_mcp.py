@@ -12,10 +12,12 @@ With options:
   insert: bool (default false) — store result in ene.artifacts
   top_k: int (default 5) — number of nearest motifs to return
 """
-# PARTIAL BOUNDARY: spectral feature extraction and tactic inference ported to Semantics.PIST.Spectral.
-#   classify_tactic_from_name → Semantics.PIST.Spectral.classifyTacticFromName
-#   compute_spectral          → Semantics.PIST.Spectral.computeSpectral
-#   RDS I/O, MCP protocol, and motif scoring remain in Python.
+# PARTIAL BOUNDARY: decision-critical logic ported to Lean; Python retains I/O only.
+#   classify_tactic_from_name  → Semantics.PIST.Spectral.classifyTacticFromName
+#   compute_spectral           → Semantics.PIST.Spectral.computeSpectral
+#   motif score + rank order   → Semantics.PIST.Motif (motifScore, rankMotifs)
+#   RDS queries, MCP protocol, artifact insertion, classify_trace orchestration
+#   remain in Python.
 
 import json
 import math

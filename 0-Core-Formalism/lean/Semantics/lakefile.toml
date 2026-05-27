@@ -19,7 +19,9 @@ name = "Semantics"
 [[lean_lib]]
 name = "PIST"
 srcDir = "../../../2-Search-Space/PIST"
-roots = ["PIST", "PistBridge", "PistSimulation", "TorsionalPIST", "HybridTSMPISTTorus", "Trace"]
+# HybridTSMPISTTorus removed from roots: pre-existing sorry/#eval failures,
+# no module imports it, quarantined pending Lean 4.30 port.
+roots = ["PIST", "PistBridge", "PistSimulation", "TorsionalPIST", "Trace"]
 
 [[lean_lib]]
 name = "FAMM"

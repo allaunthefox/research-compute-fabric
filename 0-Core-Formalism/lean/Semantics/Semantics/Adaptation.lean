@@ -14,34 +14,34 @@ structure Genome where
   sigBin   : UInt8
   deriving Repr, BEq, DecidableEq
 
-def Genome.muQ    (g : Genome) : Q16_16 := ⟨(0x41 * (g.muBin.toNat + 1)).toUInt32⟩
-def Genome.rhoQ   (g : Genome) : Q16_16 := ⟨(0x2000 * (g.rhoBin.toNat + 1)).toUInt32⟩
-def Genome.cFac   (g : Genome) : Q16_16 := ⟨(0x2000 * (g.cBin.toNat + 1)).toUInt32⟩
-def Genome.mFac   (g : Genome) : Q16_16 := ⟨(0x2000 * (g.mBin.toNat + 1)).toUInt32⟩
-def Genome.neRaw  (g : Genome) : Q16_16 := ⟨(0x4000 * (g.neBin.toNat + 1)).toUInt32⟩
-def Genome.sigQ   (g : Genome) : Q16_16 := ⟨(65536 + 0x4000 * (g.sigBin.toNat + 1)).toUInt32⟩
+def Genome.muQ    (g : Genome) : Q16_16 := ofRawInt (0x41 * (g.muBin.toNat + 1))
+def Genome.rhoQ   (g : Genome) : Q16_16 := ofRawInt (0x2000 * (g.rhoBin.toNat + 1))
+def Genome.cFac   (g : Genome) : Q16_16 := ofRawInt (0x2000 * (g.cBin.toNat + 1))
+def Genome.mFac   (g : Genome) : Q16_16 := ofRawInt (0x2000 * (g.mBin.toNat + 1))
+def Genome.neRaw  (g : Genome) : Q16_16 := ofRawInt (0x4000 * (g.neBin.toNat + 1))
+def Genome.sigQ   (g : Genome) : Q16_16 := ofRawInt (65536 + 0x4000 * (g.sigBin.toNat + 1))
 
 def Genome.neEff (g : Genome) : Q16_16 :=
   let n := g.neBin.toNat + 1
   match n with
-  | 1 => ⟨0⟩
-  | 2 => ⟨65536⟩
-  | 3 => ⟨103893⟩
-  | 4 => ⟨131072⟩
-  | 5 => ⟨152192⟩
-  | 6 => ⟨169472⟩
-  | 7 => ⟨184000⟩
-  | _ => ⟨196608⟩
+  | 1 => ofRawInt 0
+  | 2 => ofRawInt 65536
+  | 3 => ofRawInt 103893
+  | 4 => ofRawInt 131072
+  | 5 => ofRawInt 152192
+  | 6 => ofRawInt 169472
+  | 7 => ofRawInt 184000
+  | _ => ofRawInt 196608
 
 def isLawful (g : Genome) : Bool :=
-  let D : Q16_16 := ⟨196⟩
-  let B : Q16_16 := ⟨65⟩
-  let lambdaConstant : Q16_16 := ⟨65536⟩
-  let mStar : Q16_16 := ⟨32768⟩
+  let D : Q16_16 := ofRawInt 196
+  let B : Q16_16 := ofRawInt 65
+  let lambdaConstant : Q16_16 := ofRawInt 65536
+  let mStar : Q16_16 := ofRawInt 32768
   let l1 := decide (g.muQ <= D / g.cFac)
-  let phi := Q16_16.mk 65536 - (g.mFac - mStar).abs
+  let phi := ofRawInt 65536 - (g.mFac - mStar).abs
   let l2 := decide (g.rhoQ * g.neEff * phi >= B)
-  let l3 := decide (g.sigQ > Q16_16.mk 65536 + lambdaConstant * g.muQ)
+  let l3 := decide (g.sigQ > ofRawInt 65536 + lambdaConstant * g.muQ)
   l1 && l2 && l3
 
 def betaStep (g : Genome) : Genome :=

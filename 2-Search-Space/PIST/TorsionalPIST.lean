@@ -21,11 +21,11 @@ def TorsionalState_initial : TorsionalState :=
   { q1 := Semantics.Quaternion.Quaternion.one
   , q2 := Semantics.Quaternion.Quaternion.one
   , q3 := Semantics.Quaternion.Quaternion.one
-  , eta := { val := 0x00010000 }
-  , energy := { val := 0 } }
+  , eta := Semantics.Q16_16.ofRawInt 0x00010000
+  , energy := Semantics.Q16_16.ofRawInt 0 }
 
 def TorsionalState_torsionalBetaStep (s : TorsionalState) (dt : DynamicCanal.Fix16) : TorsionalState :=
-  let target := Semantics.Quaternion.Quaternion.smul { val := 0x00008000 } (Semantics.Quaternion.Quaternion.add (TorsionalState.q1 s) (TorsionalState.q2 s))
+  let target := Semantics.Quaternion.Quaternion.smul (Semantics.Q16_16.ofRawInt 0x00008000) (Semantics.Quaternion.Quaternion.add (TorsionalState.q1 s) (TorsionalState.q2 s))
   let error := Semantics.Quaternion.Quaternion.sub target (TorsionalState.q3 s)
   let deltaQ3 := Semantics.Quaternion.Quaternion.smul (TorsionalState.eta s) error
   let nextQ3 := Semantics.Quaternion.Quaternion.add (TorsionalState.q3 s) (Semantics.Quaternion.Quaternion.smul dt deltaQ3)
@@ -45,8 +45,8 @@ def TorsionalState_torsionalBetaStep (s : TorsionalState) (dt : DynamicCanal.Fix
 def TorsionalState_recoveryViaTurbulence (s : TorsionalState) (isStuck : Bool) : TorsionalState :=
   if !isStuck then s
   else
-    let nextEta := DynamicCanal.Fix16.add (TorsionalState.eta s) { val := 0x00008000 }
-    let turb := Semantics.Quaternion.Quaternion.smul { val := 0x00002000 } Semantics.Quaternion.Quaternion.k
+    let nextEta := DynamicCanal.Fix16.add (TorsionalState.eta s) (Semantics.Q16_16.ofRawInt 0x00008000)
+    let turb := Semantics.Quaternion.Quaternion.smul (Semantics.Q16_16.ofRawInt 0x00002000) Semantics.Quaternion.Quaternion.k
     { s with eta := nextEta, q3 := Semantics.Quaternion.Quaternion.add (TorsionalState.q3 s) turb }
 
 def TorsionalState_rgFlow (s : TorsionalState) (dt : DynamicCanal.Fix16) (depth : Nat) : TorsionalState :=
@@ -83,7 +83,7 @@ private axiom Fix16_mul_zero (s : Fix16) : Fix16.mul s Fix16.zero = Fix16.zero
 private axiom Fix16_add_zero (a : Fix16) : Fix16.add a Fix16.zero = a
 
 theorem TorsionalState_classical_limit_is_monotone (s : TorsionalState) (h : TorsionalState_isClassicalPure s) :
-  TorsionalState.q1 (TorsionalState_torsionalBetaStep s { val := 0x00010000 }) = TorsionalState.q1 s := by
+  TorsionalState.q1 (TorsionalState_torsionalBetaStep s (Semantics.Q16_16.ofRawInt 0x00010000)) = TorsionalState.q1 s := by
   simp [TorsionalState_torsionalBetaStep, TorsionalState_isClassicalPure] at h ⊢
   rw [h]
   apply Semantics.Quaternion.Quaternion.ext

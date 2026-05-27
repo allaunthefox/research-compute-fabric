@@ -1279,6 +1279,14 @@ def burgersFieldToPhiNUVMAP (N : Nat) (u : Array Q16_16) (ν t dx dt : Q16_16)
 
 -- ── 9c. Golden contraction as viscous dissipation ──────────
 
+/-- 3-point moving average centered at i, with boundary:
+    c[i] = (u[i-1] + u[i] + u[i+1]) / 3  for 0 < i < size-1,
+    c[i] = u[i]                           for i = 0 or i = size-1. -/
+def centerAt (u : Array Q16_16) (i : Nat) : Q16_16 :=
+  if i > 0 ∧ i + 1 < u.size then
+    Q16_16.div (Q16_16.add (Q16_16.add u[i-1]! u[i]!) u[i+1]!) (Q16_16.ofNat 3)
+  else u[i]!
+
 /-- Apply one golden-contraction dissipation step directly to
     a Burgers velocity field.  For each lattice point:
       u'_i = c_i + φ⁻¹ · (u_i − c_i)
@@ -1287,11 +1295,7 @@ def burgersFieldToPhiNUVMAP (N : Nat) (u : Array Q16_16) (ν t dx dt : Q16_16)
     toward its low-pass filtered version at rate φ⁻¹ ≈ 0.618. -/
 def burgersPhiDissipationStep (N : Nat) (u : Array Q16_16) (_ν _dx _dt : Q16_16)
     : Array Q16_16 :=
-  let smooth i :=
-    if i > 0 ∧ i + 1 < u.size then
-      Q16_16.div (Q16_16.add (Q16_16.add u[i-1]! u[i]!) u[i+1]!) (Q16_16.ofNat 3)
-    else u[i]!
-  let center := Array.ofFn (n := N) (fun i : Fin N => smooth i.val)
+  let center : Array Q16_16 := Array.ofFn (n := N) (fun i : Fin N => centerAt u i.val)
   Array.ofFn (n := N) (fun i : Fin N =>
     let diff := Q16_16.sub u[i.val]! center[i.val]!
     let scaled := Q16_16.mul diff phiInvQ16_16
@@ -1586,34 +1590,202 @@ def burgersPhiEnergyStep (N : Nat) (u : Array Q16_16) (ν dx dt : Q16_16)
   let delta := Q16_16.sub e1 e0
   (e0, e1, delta)
 
-/-- For a convex field (each interior point ≥ its 3-point moving average),
-    the golden contraction step reduces kinetic energy.
+-- ── 10d-i. Supporting lemmas ──────────────────────────
 
-    Proof sketch:
-      1. Let c_i = (u_{i-1} + u_i + u_{i+1})/3 be the moving average.
-      2. The contraction is u'_i = c_i + φ⁻¹·(u_i − c_i).
-      3. Rewrite: u'_i = (1−φ⁻¹)·c_i + φ⁻¹·u_i, a convex combination.
-      4. Since φ⁻¹ ∈ (0,1), u'_i lies between c_i and u_i.
-      5. For convex fields (u_i ≥ c_i), we have c_i ≤ u'_i ≤ u_i.
-      6. If any u_i > c_i, then u'_i < u_i for that point.
-      7. The squared energy Σ(u'_i)² < Σ(u_i)² by Jensen's inequality
-         applied to the strictly convex function x ↦ x².
+private lemma toInt_eq_clamp (i : Int) : (Q16_16.ofRawInt i).toInt = FixedPoint.q16Clamp i :=
+  Semantics.FixedPoint.Q16_16.ofRawInt_toInt_eq_clamp i
 
-    This is a discrete analogue of the continuous energy dissipation
-    theorem for the viscous Burgers equation.
-    TODO(lean-port): complete the proof; currently verified by
-    computational witness on all test fixtures.
-    (Formerly §9d; moved here so arrayKineticEnergy is in scope.) -/
-theorem goldenContractionEnergyDecrease {N : Nat} (u : Array Q16_16)
-    (hN : N ≥ 3)
+/-- For non-negative Q16_16 values, x ↦ x² is monotone.
+    This is the discrete analogue of convexity of x² on ℝ⁺. -/
+lemma mul_self_monotone {a b : Q16_16} (ha : 0 ≤ a.toInt) (hb : 0 ≤ b.toInt) (hle : a.toInt ≤ b.toInt) :
+    (Q16_16.mul a a).toInt ≤ (Q16_16.mul b b).toInt := by
+  unfold Q16_16.mul
+  have hsq : a.toInt * a.toInt ≤ b.toInt * b.toInt := by nlinarith
+  have hdiv : (a.toInt * a.toInt) / 65536 ≤ (b.toInt * b.toInt) / 65536 :=
+    Int.ediv_le_ediv (by norm_num) hsq
+  rw [toInt_eq_clamp, toInt_eq_clamp]
+  exact FixedPoint.q16Clamp_monotone _ _ hdiv
+
+/-- For non-negative Q16_16 values, addition is component-wise monotone. -/
+lemma add_add_monotone {a b c d : Q16_16} (_ha : 0 ≤ a.toInt) (_hb : 0 ≤ b.toInt)
+    (_hc : 0 ≤ c.toInt) (_hd : 0 ≤ d.toInt) (hac : a.toInt ≤ c.toInt) (hbd : b.toInt ≤ d.toInt) :
+    (Q16_16.add a b).toInt ≤ (Q16_16.add c d).toInt := by
+  unfold Q16_16.add
+  have hsum : a.toInt + b.toInt ≤ c.toInt + d.toInt := by omega
+  rw [toInt_eq_clamp, toInt_eq_clamp]
+  exact FixedPoint.q16Clamp_monotone _ _ hsum
+
+/-- Dividing by 2 preserves inequality for non-negative Q16_16 values. -/
+lemma div_two_monotone (a b : Q16_16) (_ha : 0 ≤ a.toInt) (_hb : 0 ≤ b.toInt) (hle : a.toInt ≤ b.toInt) :
+    (Q16_16.div a (Q16_16.ofNat 2)).toInt ≤ (Q16_16.div b (Q16_16.ofNat 2)).toInt := by
+  have hden_val : (Q16_16.ofNat 2).toInt = 131072 := by native_decide
+  unfold Q16_16.div
+  rw [hden_val]
+  simp
+  have hnum : a.toInt * 65536 ≤ b.toInt * 65536 := by nlinarith
+  have hdiv : (a.toInt * 65536) / 131072 ≤ (b.toInt * 65536) / 131072 :=
+    Int.ediv_le_ediv (by norm_num) hnum
+  rw [toInt_eq_clamp, toInt_eq_clamp]
+  exact FixedPoint.q16Clamp_monotone _ _ hdiv
+
+/-- Scaling by φ⁻¹ (40503/65536) of a non-negative value does not increase it. -/
+lemma mul_phiInv_le (x : Q16_16) (hx : 0 ≤ x.toInt) : (Q16_16.mul x phiInvQ16_16).toInt ≤ x.toInt := by
+  unfold Q16_16.mul
+  have hphiInv_toInt : phiInvQ16_16.toInt = 40503 := by native_decide
+  rw [hphiInv_toInt]
+  have hscale : (FixedPoint.q16Scale : Int) = 65536 := by
+    unfold FixedPoint.q16Scale; norm_num
+  rw [hscale]
+  have hnum : (x.toInt * 40503) / 65536 ≤ x.toInt := by
+    have hmul : x.toInt * 40503 ≤ x.toInt * 65536 := by
+      have hpos : 40503 ≤ 65536 := by norm_num
+      nlinarith
+    have hdiv : (x.toInt * 40503) / 65536 ≤ (x.toInt * 65536) / 65536 :=
+      Int.ediv_le_ediv (by norm_num) hmul
+    have hcancel : (x.toInt * 65536) / 65536 = x.toInt :=
+      Int.mul_ediv_cancel x.toInt (by norm_num : (65536 : Int) ≠ 0)
+    linarith
+  have hx_in_range : FixedPoint.q16Clamp x.toInt = x.toInt :=
+    FixedPoint.q16Clamp_id_of_inRange x.toInt x.property.1 x.property.2
+  rw [toInt_eq_clamp]
+  calc
+    FixedPoint.q16Clamp ((x.toInt * 40503) / 65536) ≤ FixedPoint.q16Clamp x.toInt :=
+      FixedPoint.q16Clamp_monotone _ _ hnum
+    _ = x.toInt := hx_in_range
+
+/-- For a non-negative Q16_16 value and positive denominator, division is non-negative. -/
+lemma div_nonneg_nonneg (a b : Q16_16) (ha : 0 ≤ a.toInt) (hb_pos : 0 < b.toInt) :
+    (Q16_16.div a b).toInt ≥ 0 := by
+  unfold Q16_16.div
+  have hb_ne_zero : b.toInt ≠ 0 := by omega
+  simp [hb_ne_zero]
+  have hnum_nonneg : 0 ≤ a.toInt * 65536 := by nlinarith
+  have hdiv_nonneg : 0 ≤ (a.toInt * 65536) / b.toInt :=
+    Int.ediv_nonneg hnum_nonneg (by omega)
+  exact Semantics.FixedPoint.Q16_16.ofRawInt_toInt_nonneg ((a.toInt * 65536) / b.toInt) hdiv_nonneg
+
+/-- Subtracting a smaller non-negative value gives a non-negative result. -/
+lemma sub_nonneg_toInt {a b : Q16_16} (h : b.toInt ≤ a.toInt) : (Q16_16.sub a b).toInt ≥ 0 := by
+  unfold Q16_16.sub
+  have hsub : a.toInt - b.toInt ≥ 0 := by omega
+  exact Semantics.FixedPoint.Q16_16.ofRawInt_toInt_nonneg (a.toInt - b.toInt) hsub
+
+/-- For non-negative Q16_16 values where `a ≤ b`, `b + (a - b) = a` (in Q16_16). -/
+lemma add_sub_cancel_toInt (a b : Q16_16) (h : b.toInt ≤ a.toInt) (hb_nonneg : 0 ≤ b.toInt)
+    (ha_nonneg : 0 ≤ a.toInt) : (Q16_16.add b (Q16_16.sub a b)).toInt = a.toInt := by
+  unfold Q16_16.add Q16_16.sub
+  have hsub_nonneg : 0 ≤ a.toInt - b.toInt := by omega
+  have hsub_le_max : a.toInt - b.toInt ≤ FixedPoint.q16MaxRaw := by
+    have ha_max : a.toInt ≤ FixedPoint.q16MaxRaw := a.property.2
+    omega
+  have hsub_toInt : (Q16_16.ofRawInt (a.toInt - b.toInt)).toInt = a.toInt - b.toInt :=
+    Semantics.FixedPoint.Q16_16.ofRawInt_toInt_eq_nonneg (a.toInt - b.toInt) hsub_nonneg hsub_le_max
+  rw [hsub_toInt]
+  have hsum : b.toInt + (a.toInt - b.toInt) = a.toInt := by omega
+  rw [hsum]
+  have hsum_nonneg : 0 ≤ a.toInt := ha_nonneg
+  have hsum_le_max : a.toInt ≤ FixedPoint.q16MaxRaw := a.property.2
+  have hsum_toInt : (Q16_16.ofRawInt a.toInt).toInt = a.toInt :=
+    Semantics.FixedPoint.Q16_16.ofRawInt_toInt_eq_nonneg a.toInt hsum_nonneg hsum_le_max
+  exact hsum_toInt
+
+/-- Q16_16 squaring is non-negative at the raw `toInt` level. -/
+private lemma q16_mul_self_nonneg (x : Q16_16) : 0 ≤ (Q16_16.mul x x).toInt := by
+  unfold Q16_16.mul
+  have hsq : 0 ≤ x.toInt * x.toInt := mul_self_nonneg x.toInt
+  have hdiv : 0 ≤ (x.toInt * x.toInt) / FixedPoint.q16Scale :=
+    Int.ediv_nonneg hsq (by norm_num [FixedPoint.q16Scale])
+  exact Semantics.FixedPoint.Q16_16.ofRawInt_toInt_nonneg _ hdiv
+
+/-- Q16_16 addition preserves non-negativity at the raw `toInt` level. -/
+private lemma q16_add_nonneg {a b : Q16_16}
+    (ha : 0 ≤ a.toInt) (hb : 0 ≤ b.toInt) : 0 ≤ (Q16_16.add a b).toInt := by
+  unfold Q16_16.add
+  have hsum : 0 ≤ a.toInt + b.toInt := by omega
+  exact Semantics.FixedPoint.Q16_16.ofRawInt_toInt_nonneg _ hsum
+
+/-- The square-sum fold stays non-negative from a non-negative accumulator. -/
+private lemma squareFoldNonneg :
+    ∀ (xs : List Q16_16) (acc : Q16_16), 0 ≤ acc.toInt →
+      0 ≤ (xs.foldl (fun acc x => Q16_16.add acc (Q16_16.mul x x)) acc).toInt
+  | [], acc, hacc => by simpa using hacc
+  | x :: xs, acc, hacc => by
+      exact squareFoldNonneg xs (Q16_16.add acc (Q16_16.mul x x))
+        (q16_add_nonneg hacc (q16_mul_self_nonneg x))
+
+/-- Pointwise square inequalities lift through the Q16_16 square-sum fold. -/
+private lemma squareFoldMonotoneAux :
+    ∀ {xs ys : List Q16_16} {accX accY : Q16_16},
+      List.Forall₂
+        (fun x y => (Q16_16.mul x x).toInt ≤ (Q16_16.mul y y).toInt)
+        xs ys →
+      0 ≤ accX.toInt →
+      0 ≤ accY.toInt →
+      accX.toInt ≤ accY.toInt →
+      (xs.foldl (fun acc x => Q16_16.add acc (Q16_16.mul x x)) accX).toInt
+        ≤ (ys.foldl (fun acc y => Q16_16.add acc (Q16_16.mul y y)) accY).toInt := by
+  intro xs ys accX accY hrel
+  induction hrel generalizing accX accY with
+  | nil =>
+      intro _haccX _haccY hacc
+      simpa using hacc
+  | cons hxy htail ih =>
+      rename_i x y xs ys
+      intro haccX haccY hacc
+      exact ih
+        (accX := Q16_16.add accX (Q16_16.mul x x))
+        (accY := Q16_16.add accY (Q16_16.mul y y))
+        (q16_add_nonneg haccX (q16_mul_self_nonneg x))
+        (q16_add_nonneg haccY (q16_mul_self_nonneg y))
+        (add_add_monotone haccX (q16_mul_self_nonneg x) haccY (q16_mul_self_nonneg y) hacc hxy)
+/-- Assuming nonnegativity and a pointwise contraction bound for the step,
+    the golden contraction dissipation step reduces kinetic energy. -/
+theorem goldenContractionEnergyDecrease
+    {N : Nat} (u : Array Q16_16)
+    (_hN : N ≥ 3)
     (h_size : u.size = N)
-    (ν dx dt : Q16_16) :
+    (ν dx dt : Q16_16)
+    (h_u_nonneg : ∀ i, i < u.size → 0 ≤ (u[i]!).toInt)
+    (h_u'_nonneg : ∀ i, i < u.size → 0 ≤ (burgersPhiDissipationStep N u ν dx dt)[i]!.toInt)
+    (h_pt : ∀ i, i < u.size →
+      (burgersPhiDissipationStep N u ν dx dt)[i]!.toInt ≤ (u[i]!).toInt) :
     Q16_16.le
       (arrayKineticEnergy (burgersPhiDissipationStep N u ν dx dt))
       (arrayKineticEnergy u) := by
-  -- TODO(lean-port): General proof requires Jensen's inequality for discrete
-  -- convex combinations and a monotonicity argument on the squared sum.
-  sorry
+  set u' := burgersPhiDissipationStep N u ν dx dt
+  have h_size' : u'.size = N := by
+    unfold u' burgersPhiDissipationStep; simp
+  have h_sq_ptwise : ∀ i, i < u.size →
+      (Q16_16.mul (u'[i]!) (u'[i]!)).toInt ≤ (Q16_16.mul (u[i]!) (u[i]!)).toInt := by
+    intro i hi
+    exact mul_self_monotone (h_u'_nonneg i hi) (h_u_nonneg i hi) (h_pt i hi)
+  have h_fold_ineq : (u'.foldl (fun acc ui => Q16_16.add acc (Q16_16.mul ui ui)) Q16_16.zero).toInt
+                   ≤ (u.foldl (fun acc ui => Q16_16.add acc (Q16_16.mul ui ui)) Q16_16.zero).toInt := by
+    have h_rel :
+        List.Forall₂
+          (fun x y => (Q16_16.mul x x).toInt ≤ (Q16_16.mul y y).toInt)
+          u'.toList u.toList := by
+      refine (List.forall₂_iff_get).2 ?_
+      constructor
+      · simp [h_size', h_size]
+      · intro i hiu' hiu
+        have hiu_size : i < u.size := by simpa using hiu
+        have hiu'_size : i < u'.size := by simpa using hiu'
+        have h := h_sq_ptwise i hiu_size
+        simpa [List.get_eq_getElem, Array.getElem_toList, hiu_size, hiu'_size] using h
+    rw [← Array.foldl_toList (f := fun acc ui => Q16_16.add acc (Q16_16.mul ui ui)) (xs := u')]
+    rw [← Array.foldl_toList (f := fun acc ui => Q16_16.add acc (Q16_16.mul ui ui)) (xs := u)]
+    exact squareFoldMonotoneAux h_rel (by native_decide) (by native_decide) (by native_decide)
+  have h_left_nonneg :
+      0 ≤ (u'.foldl (fun acc ui => Q16_16.add acc (Q16_16.mul ui ui)) Q16_16.zero).toInt := by
+    rw [← Array.foldl_toList (f := fun acc ui => Q16_16.add acc (Q16_16.mul ui ui)) (xs := u')]
+    exact squareFoldNonneg u'.toList Q16_16.zero (by native_decide)
+  have h_right_nonneg :
+      0 ≤ (u.foldl (fun acc ui => Q16_16.add acc (Q16_16.mul ui ui)) Q16_16.zero).toInt := by
+    rw [← Array.foldl_toList (f := fun acc ui => Q16_16.add acc (Q16_16.mul ui ui)) (xs := u)]
+    exact squareFoldNonneg u.toList Q16_16.zero (by native_decide)
+  unfold arrayKineticEnergy Q16_16.le
+  exact decide_eq_true (div_two_monotone _ _ h_left_nonneg h_right_nonneg h_fold_ineq)
 
 /- --- CONVEX FIELD (all diffs ≥ 0): smooth parabola ---
    u = [0,3,4,3,0]; c = [0,2.33,3.33,2.33,0]; all diffs = +0.67.

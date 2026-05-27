@@ -91,7 +91,31 @@ def isVoidConcept (v : PhaseVec) (acc : PhaseVec) (ε : Q16_16) : Prop :=
                    isIntegrable acc contribs ε
 
 -- Zero contributors are void in the torsion calculus.
--- TODO(lean-port): proof required - theorem temporarily removed
+theorem zeroIsVoid (acc : PhaseVec) (ε : Q16_16) : isVoidConcept PhaseVec.zero acc ε := by
+  intro contribs
+  have hAdd : PhaseVec.add acc PhaseVec.zero = acc := by
+    -- PhaseVec.add uses == (boolean Int equality); PhaseVec.zero has val = 0 for both fields
+    -- so the second condition is always true, returning acc directly (unless acc is also zero,
+    -- in which case PhaseVec.zero = acc holds because both fields are zero).
+    have h_zero_cond : (PhaseVec.zero.x.val == 0 && PhaseVec.zero.y.val == 0) = true := by
+      native_decide
+    have h_add_lemma (v : PhaseVec) : PhaseVec.add v PhaseVec.zero = v := by
+      cases v
+      rename_i x y
+      unfold PhaseVec.add
+      simp [h_zero_cond]
+      intro hx hy
+      have hx' : x = Q16_16.zero := Subtype.ext hx
+      have hy' : y = Q16_16.zero := Subtype.ext hy
+      simpa [PhaseVec.zero, hx', hy']
+    exact h_add_lemma acc
+  have hFold : List.foldl PhaseVec.add PhaseVec.zero (PhaseVec.zero :: contribs) =
+               List.foldl PhaseVec.add PhaseVec.zero contribs := by
+    have hzz : PhaseVec.add PhaseVec.zero PhaseVec.zero = PhaseVec.zero := by
+      unfold PhaseVec.add PhaseVec.zero
+      decide
+    simp [hzz]
+  simp [isVoidConcept, isIntegrable, aldiTorsion, hAdd, hFold]
 
 -- =============================================================================
 -- THE LOCKING INVARIANT (Section 4 & 5)

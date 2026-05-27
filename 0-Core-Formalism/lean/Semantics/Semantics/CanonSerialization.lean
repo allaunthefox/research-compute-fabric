@@ -259,23 +259,9 @@ def SameIdentity (a b : CanonicalBinaryForm) : Prop :=
 def IsCanonical (cbf : CanonicalBinaryForm) : Prop :=
   ∀ h1 h2, serializeCanonicalBinaryForm cbf = .ok h1 → serializeCanonicalBinaryForm cbf = .ok h2 → h1 = h2
 
--- Serialization of a given schema and source is deterministic:
--- the same input always produces the same canonical bytes.
--- COMMENTED OUT: References undefined canonicalize function.
--- TODO(lean-port): Implement canonicalize function or remove this theorem.
--- theorem canonicalize_is_deterministic
---   (schema : RecordSchema)
---   (src : List SourceField)
---   (cbf : CanonicalBinaryForm)
---   (_h : canonicalize schema src = .ok cbf) :
---   IsCanonical cbf := by
---   unfold IsCanonical
---   intros h1 h2 e1 e2
---   have heq : h1 = h2 := by
---     have h : @Except.ok NormalizeError ByteArray h1 = @Except.ok NormalizeError ByteArray h2 := by
---       rw [← e1, ← e2]
---     injection h
---   exact heq
+-- Serialization determinism was removed along with the `canonicalize` function
+-- that never existed in the ported surface. The `IsCanonical` definition remains
+-- active and is used by Prohibited.lean (NotAllowed_NondeterministicCanonicalForm).
 
 -- Filtering for adversarial / irrelevant structure
 
@@ -324,7 +310,12 @@ def applyFilters (rules : List FilterRule) (src : List SourceField) : FilterResu
 
 -- If filtering marks everything safe, then no kept field is adversarial.
 -- COMMENTED OUT: Contains proof placeholder - requires proof.
--- TODO(lean-port): Re-enable when proof is completed.
+-- TODO(lean-port): Re-enable when proof is completed. The missing proof steps are:
+--   (1) From `_h : safe = true`, we have `¬(results.any (λ r ⇒ r.relevance == Relevance.adversarial))`
+--       where `results = src.map (λ f ⇒ …)`.
+--   (2) `.kept` is `results.filter (λ r ⇒ r.relevance ≠ noise ∧ r.relevance ≠ adversarial)`.
+--   (3) For any `r ∈ kept`, we know `r ∈ results` and `r.relevance ≠ adversarial`.
+--   The proof is a straightforward boolean/case analysis on the `any`/`filter`/`all` chain.
 -- theorem filter_safe_no_adversarial_kept
 --   (rules : List FilterRule)
 --   (src : List SourceField)

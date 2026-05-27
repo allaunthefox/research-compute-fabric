@@ -315,6 +315,76 @@ backup/distilled-with-vcd-history-2026-05-11
 - QC flagger contract: `scripts/qc-flag/AGENTS.md`
 - Lean expert agent contract: `shared-data/artifacts/lean_expert_agent/AGENTS.md`
 
+## Clean PIST predictions pipeline (no Rust authority)
+
+### Canonical IDs + dedup
+
+Join key is invariant ID: `equation_id := invariant_receipt.object_id` (format `rrc_eq_<hex>`).
+The 278 source file contains duplicate object_id groups; predictions artifacts must be
+deduped by `equation_id`.
+
+Preserve auditability by attaching provenance:
+- `summary.total_source_records = 278`
+- `summary.unique_equation_ids = 250`
+- each prediction row includes `source_records : Array {equation_record_id, name}` for
+  all source rows sharing that invariant.
+
+### Deterministic representative selection
+
+When multiple compiled records share the same `equation_id`, select a representative
+deterministically:
+
+```
+representative := min(records, key = equation_record.equation_id)  (lexicographic)
+```
+
+Never "last wins".
+
+### Prediction artifact (v1, matrix-only)
+
+Generate: `shared-data/rrc_pist_predictions_278_v1.json`
+
+Constraints:
+- `schema: "rrc_pist_predictions_278_v1"`
+- `claim_boundary: "matrix-only;no-classifier;no-lean-spectral"`
+- `proxy_pred: null`, `exact_pred: null` (until a classifier surface is defined)
+- include:
+  - `global_vocab_hash`
+  - `matrix_schema: "token_strand_adjacency_8x8_v1"`
+  - `matrix_hash` (sha256 of canonical row-major JSON, no whitespace)
+  - `matrix_8x8` (Int counts)
+
+### Generation rules (matrix_schema v1)
+
+1. global vocab = all unique tokens across corpus, sorted
+2. `strand(token) = vocab_index % 8`
+3. matrix is 8×8 adjacency of token bigrams in original order, projected to strands:
+   `M[strand(t_i)][strand(t_{i+1})] += 1`
+
+### Merge path into Lean corpus
+
+```
+pist_matrix_builder.py
+  → writes rrc_pist_predictions_278_v1.json (dedup by invariant id)
+  → build_corpus278.py reads it and merges by equation_id = rrc_eq_<hex>
+  → regenerates Semantics/RRC/Corpus278.lean with pistProxyLabel/pistExactLabel
+    populated when present
+  → emit278.json alignment gate becomes non-missing_prediction only when labels exist.
+```
+
+### Required validations (every change)
+
+- `python3 -m py_compile` on touched shim scripts
+- `python3 -m json.tool` on generated JSON
+- reproducibility check: two consecutive runs must produce identical file SHA256
+- `lake build` (full workspace) must stay green
+
+### NOTE on counts
+
+Prediction artifact row count may be 250 while source record count is 278. This is
+correct: one prediction per invariant equation id, with provenance for all source
+records.
+
 <!-- BEGIN ContextStream -->
 ## 🚨 CRITICAL RULE #1 - ENE CONTEXT FIRST 🚨
 

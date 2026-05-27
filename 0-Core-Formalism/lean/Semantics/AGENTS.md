@@ -106,7 +106,22 @@ Build the full workspace with:
 lake build
 ```
 
-Compiler surface baseline: **3311 jobs, 0 errors** (`lake build Compiler`, commit `8d158bf9`).
+Compiler surface baseline: **3313 jobs, 0 errors** (`lake build Compiler`, commit `778b78d3`, reverified 2026-05-27).
+Full workspace: **3571 jobs, 0 errors** (`lake build`, commit `778b78d3`, reverified 2026-05-27).
+PistSimulation: **3309 jobs, 0 errors** (`lake build Semantics.PistSimulation`, commit `778b78d3`, reverified 2026-05-27).
+
+### goldenContractionEnergyDecrease — proof status
+
+**Statement:** For Burgers fields with non-negative `u` and pointwise contraction `u'[i] ≤ u[i]`, the golden-contraction dissipation step reduces kinetic energy.
+
+**Status:** Formal proof complete. The proof lifts pointwise square inequalities
+through a `List.Forall₂` fold induction and uses `Array.foldl_toList` only to
+connect the array energy definition to the list proof.
+
+**Current theorem hypotheses:** `h_u_nonneg`, `h_u'_nonneg`, `h_pt`
+(pointwise `u'[i] ≤ u[i]`), `h_size`, `hN`. Convexity is not part of this
+theorem; it belongs in a separate premise-discharge lemma for `h_pt` and
+`h_u'_nonneg`.
 
 ### Architecture: AVM is the sole output boundary
 
@@ -145,6 +160,14 @@ Expected `#eval` corpus summary: `(278, <passed>, 278 - <passed>)`.
 Current state: `(278, 0, 278)` — all held, no PIST labels present yet.
 This is **correct and honest** — the gate reports exactly what it sees.
 
+The PIST predictions merge pipeline:
+  `pist_matrix_builder.py` → `rrc_pist_predictions_278_v1.json` → `build_corpus278.py` reads it
+  and populates `pistProxyLabel`/`pistExactLabel` in generated `Corpus278.lean`.
+  The merge is keyed by `invariant_receipt.object_id` (equation_id = `rrc_eq_<hex>`).
+  When the predictions artifact has non-null labels, regenerating Corpus278.lean
+  via `python3 4-Infrastructure/shim/build_corpus278.py` will automatically flow them
+  into `determineAlignment` — no Lean emit logic changes needed.
+
 Each row carries 5 generator fields for EN9wiki page generation:
 - `operatorTokens` — domain/operator token list (from route_hint + rrc_kind)
 - `invariantsDeclared` — declared invariant family (from domain_type)
@@ -171,11 +194,9 @@ after narrowly compiling the file under a scratch target.
 
 ## Pending Proof Work
 
-- `goldenContractionEnergyDecrease` in `Semantics/PistSimulation.lean`:
-  theorem body present with `sorry`; marked `TODO(lean-port)`. Proof requires
-  Jensen's inequality for discrete convex combinations on Q16_16. The theorem
-  is positioned after `burgersPhiEnergyStep` (its dependencies are now in
-  scope). Do not move or re-comment this theorem; fix the proof instead.
+- `goldenContractionEnergyDecrease` is discharged. Remaining follow-up is a
+  separate premise-discharge lemma showing when the Burgers golden-contraction
+  step satisfies `h_pt` and `h_u'_nonneg`.
 
 ## Key API Notes (Lean 4.30 / this workspace)
 

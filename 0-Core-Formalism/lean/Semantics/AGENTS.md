@@ -83,7 +83,7 @@ lake build
 - Generated `*_tb.v` and `*_test_vectors.json` files are build artifacts unless
   a task explicitly promotes one as a hardware receipt.
 
-## Blessed Compiler Surface (as of 2026-05-26, commit `9928dd74`)
+## Blessed Compiler Surface (as of 2026-05-26, commit `8d158bf9`)
 
 The `Compiler` lean_lib in `lakefile.toml` gates the promoted API surface.
 Only the following roots are blessed for downstream import and receipt emission:
@@ -106,7 +106,7 @@ Build the full workspace with:
 lake build
 ```
 
-Full workspace build baseline: **3567 jobs, 0 errors** (commit `9928dd74`).
+Compiler surface baseline: **3311 jobs, 0 errors** (`lake build Compiler`, commit `8d158bf9`).
 
 ### Architecture: AVM is the sole output boundary
 
@@ -187,3 +187,11 @@ after narrowly compiling the file under a scratch target.
 - `liftMetaM` is the correct combinator for `MetaM → TacticM` in `mapM`.
 - `MVarId.toNat` does not exist — use `g.name.toString`.
 - `List.size` → `.length`; `Json.num Nat` → `Json.num { mantissa := (n : Int), exponent := 0 }`.
+
+## Cross-References
+
+See root `AGENTS.md` for:
+- **Post-Interaction Workflow** (mandatory 5-step session-end procedure)
+- **Programming Choice Flow** (Lean owns decisions; Python owns I/O)
+- **Do Not Sweep** rules (no broad `git add .`)
+- **Git Remote Hygiene**

@@ -99,6 +99,7 @@ Raw Data
 └────────┬─────────┘
          ▼
    Compressed Output + Receipt
+     (all receipt JSON stamped exclusively by AVMIsa.Emit)
 ```
 
 ---
@@ -138,7 +139,7 @@ GCCL = Law Stack (what must be preserved)
 
 | Path | Purpose |
 |------|---------|
-| `0-Core-Formalism/lean/Semantics/` | Lean 4 source (truth), FixedPoint, PIST, GWL, AVMR, FAMM, etc. |
+| `0-Core-Formalism/lean/Semantics/` | Lean 4 source (truth), FixedPoint, PIST, GWL, AVMR, FAMM, RRC.Emit, AVMIsa.Emit, RRC.Corpus278 |
 | `0-Core-Formalism/otom/` | One-Truth-Only-Model consolidated spec |
 | `0-Core-Formalism/core/` | Rust/Python extraction targets |
 | `1-Distributed-Systems/` | ENE mesh nodes, gossip, waveprobe |
@@ -154,6 +155,26 @@ GCCL = Law Stack (what must be preserved)
 | `shared-data/` | Databases, golden traces, artifacts |
 | `workspace-config/` | IDE and environment settings |
 | `scratch/` | Experimental code |
+
+### 7.1 Compiler Surface (Blessed Output Boundary)
+
+The `Compiler` lean_lib (`lakefile.toml`) is the sole gate for downstream
+import and receipt emission. Only three roots are blessed:
+
+| Root | Role |
+|------|------|
+| `Semantics.RRC.Corpus278` | 278 raw FixtureRows — Python-supplied, Lean-gated; no decisions |
+| `Semantics.RRC.Emit` | Alignment classifier (`missingPrediction` / `alignedExact` / etc.) |
+| `Semantics.AVMIsa.Emit` | **Sole output boundary** — AVM canaries must pass; stamps and emits all receipt JSON |
+
+**Invariant:** nothing outside `AVMIsa.Emit` may emit a top-level receipt JSON.
+The pipeline is:
+
+```
+RRC.Corpus278  →(emitCorpus)→  RRC.Emit  →(emitRrcCorpus278)→  AVMIsa.Emit  →  JSON receipt
+```
+
+Build the narrow surface: `lake build Compiler` (3311 jobs, 0 errors, commit `8d158bf9`).
 
 ---
 

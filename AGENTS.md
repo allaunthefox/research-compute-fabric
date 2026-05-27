@@ -312,6 +312,8 @@ backup/distilled-with-vcd-history-2026-05-11
 - Lean module-local contract: `0-Core-Formalism/lean/Semantics/AGENTS.md`
 - Infrastructure contract: `4-Infrastructure/AGENTS.md`
 - CAD harness contract: `5-Applications/text-to-cad/AGENTS.md`
+- QC flagger contract: `scripts/qc-flag/AGENTS.md`
+- Lean expert agent contract: `shared-data/artifacts/lean_expert_agent/AGENTS.md`
 
 <!-- BEGIN ContextStream -->
 ## 🚨 CRITICAL RULE #1 - ENE CONTEXT FIRST 🚨

@@ -66,3 +66,11 @@ Each issue MUST include `file:line` reference, severity (⚠️ ERROR, 🔶 WARN
 - `6-Documentation/docs/AGENTS.md` for strict operating rules
 - `0-Core-Formalism/lean/Semantics/Semantics/Physics/` for target inspection
 - `lake build` at `0-Core-Formalism/lean/Semantics/` for compilation verification
+
+## Cross-References
+
+See root `AGENTS.md` for:
+- **Post-Interaction Workflow** (mandatory 5-step session-end procedure)
+- **Programming Choice Flow** (Lean owns decisions; Python owns I/O)
+- **Do Not Sweep** rules (no broad `git add .`)
+- **Git Remote Hygiene**

@@ -37,3 +37,11 @@ bash scripts/qc-flag/run_qc_flag.sh path/to/dir/ --verbose
 - **JSON**: structured per-file results with issue details
 - **Markdown**: human-readable report with summary table and issue tables
 - **Exit code**: 0 if all files pass, 1 if any file has ERROR-severity issues
+
+## Cross-References
+
+See root `AGENTS.md` for:
+- **Post-Interaction Workflow** (mandatory 5-step session-end procedure)
+- **Programming Choice Flow** (Lean owns decisions; Python owns I/O)
+- **Do Not Sweep** rules (no broad `git add .`)
+- **Git Remote Hygiene**

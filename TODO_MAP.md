@@ -131,10 +131,16 @@ PCIe FPGA           = future math-hell router (VU9P-class)
   - `4-Infrastructure/shim/rrc_equation_classifier_curriculum.jsonl`
   - `4-Infrastructure/shim/rrc_equation_classifier_table.csv`
   - `docs/rrc_equation_classification.md`
+  - `Semantics/RRC/Corpus278.lean` — 278 FixtureRows, Python-supplied, Lean-gated ✅
+  - `Semantics/RRC/Emit.lean` — alignment classifier (missingPrediction / alignedExact / etc.) ✅
+  - `Semantics/AVMIsa/Emit.lean` — sole output boundary; stamps avm.rrc_corpus278.bundle ✅
 - **Owner:** Python shim / Lean bridge
 - **Status:** 🔄 IN_PROGRESS
 - **Result:** 278 equation surfaces projected; 29 CANDIDATE, 249 HOLD. Labels demoted to non-authoritative route hints.
-- **Next action:** Add `scale_band_declared` witnesses and negative-control strength fields, then rerun the receipt and measure HOLD deltas.
+  Lean Compiler surface (RRC.Corpus278 → RRC.Emit → AVMIsa.Emit) implemented and building:
+  `lake build Compiler` → 3311 jobs, 0 errors (commit `8d158bf9`).
+- **Next action:** Add `scale_band_declared` witnesses and negative-control strength fields,
+  then rerun the receipt and measure HOLD deltas.
 
 ---
 

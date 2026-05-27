@@ -345,3 +345,11 @@ These tables extend `ene_substrate_schema.sql` (not yet created):
   phase_hash, residual_total, is_stable
 - `ene.receipts ADD theorem_id` — FK to prover_state
 - `ene.receipts ADD dispatch_path` — CHECK(vulkan_gpu, cpu_blitter)
+
+## Cross-References
+
+See root `AGENTS.md` for:
+- **Post-Interaction Workflow** (mandatory 5-step session-end procedure)
+- **Programming Choice Flow** (Lean owns decisions; Python owns I/O — shims must not contain decision/gating/scoring logic)
+- **Do Not Sweep** rules (no broad `git add .`)
+- **Git Remote Hygiene**

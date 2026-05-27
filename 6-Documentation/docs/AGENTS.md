@@ -1024,3 +1024,14 @@ must hold byte-for-byte.
 **Document ID:** AGENTS_LEAN_PORT_STRICT
 **Version:** 2.2
 **Date:** 2026-05-19
+
+## Cross-References
+
+See root `AGENTS.md` for:
+- **Post-Interaction Workflow** (mandatory 5-step session-end procedure)
+- **Programming Choice Flow** (Lean owns decisions; Python owns I/O)
+- **Compiler Surface Blessing** (RRC.Emit, AVMIsa.Emit, RRC.Corpus278 are the 3 blessed roots)
+- **AVMIsa.Emit sole output boundary** — nothing outside AVMIsa.Emit may emit a top-level receipt JSON
+- **Do Not Sweep** rules (no broad `git add .`)
+- **Git Remote Hygiene**
+- **Nested Contracts** listing all subtree AGENTS.md files

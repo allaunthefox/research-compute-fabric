@@ -147,3 +147,11 @@ Run from the repository root unless you intentionally want paths to resolve from
 - If the first pass makes scope clear, edit the source first and validate after.
 - Do not run generation tools, `cadref`, and `snapshot` in parallel against geometry that is still changing in the same edit loop. Rebuild first, then inspect, then render.
 - In cloud or constrained environments, avoid full-repo hydration when affected entries are known. Fetch only the needed inputs, generated outputs, and LFS objects for the entries being edited and explicitly regenerated.
+
+## Cross-References
+
+See root `AGENTS.md` for:
+- **Post-Interaction Workflow** (mandatory 5-step session-end procedure)
+- **Programming Choice Flow** (Lean owns decisions; Python owns I/O)
+- **Do Not Sweep** rules (no broad `git add .`)
+- **Git Remote Hygiene**

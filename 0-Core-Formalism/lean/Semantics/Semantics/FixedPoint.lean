@@ -614,6 +614,53 @@ theorem epsilon_add_pos {r : Q16_16} (hr : r.toInt ≥ 0) :
       (by norm_num [q16MinRaw]) (by norm_num [q16MaxRaw])
   omega
 
+/-- Subtraction is addition of the negation: a - b = a + (-b). -/
+-- TODO(lean-port): prove using Int.sub_eq_add_neg; tactic chain blocked by
+--   rw/omega failures on Int arithmetic equality after unfold.
+theorem sub_eq_add_neg (a b : Q16_16) : sub a b = add a (neg b) := by
+  admit
+
+/-- Multiplication by a non-negative scalar is monotone:
+    if a ≤ b and c ≥ 0, then a*c ≤ b*c.
+    Used in SSMS.aciPreservedByMlgruStep for bound propagation. -/
+-- TODO(lean-port): blocked by Int.ediv_le_ediv synthesis failure after unfold.
+theorem mul_mono_left (a b c : Q16_16) (h : a.toInt ≤ b.toInt) (hc : c.toInt ≥ 0) :
+    (mul a c).toInt ≤ (mul b c).toInt := by
+  admit
+
+/-- Multiplication by a non-negative scalar is monotone on the right. -/
+-- TODO(lean-port): blocked by same Int.ediv_le_ediv synthesis failure.
+theorem mul_mono_right (a b c : Q16_16) (h : a.toInt ≤ b.toInt) (hc : c.toInt ≥ 0) :
+    (mul c a).toInt ≤ (mul c b).toInt := by
+  admit
+
+/-- Addition is monotone in the left argument:
+    if a ≤ b then a+c ≤ b+c. -/
+-- TODO(lean-port): blocked by q16Clamp_monotone call after ofRawInt_toInt_eq_clamp.
+theorem add_le_add (a b c : Q16_16) (h : a.toInt ≤ b.toInt) :
+    (add a c).toInt ≤ (add b c).toInt := by
+  admit
+
+/-- Absolute value of any Q16_16 value is non-negative. -/
+-- TODO(lean-port): blocked by Int.sub_eq_add_neg rw failure; type mismatch in
+--   ofRawInt_toInt_nonneg call in by_cases then-branch.
+theorem abs_nonneg (a : Q16_16) : (abs a).toInt ≥ 0 := by
+  admit
+
+/-- For non-negative a, |a*b| ≤ a*|b|.
+    Key lemma for bound propagation in SSMS.aciPreservedByMlgruStep. -/
+-- TODO(lean-port): blocked by Int.ediv_le_ediv synthesis and rw failures.
+theorem abs_mul_le (a b : Q16_16) (ha : a.toInt ≥ 0) :
+    (abs (mul a b)).toInt ≤ (mul a (abs b)).toInt := by
+  admit
+
+/-- Triangle inequality for Q16_16: |a*b| ≤ |a| * |b|.
+    Threads arithmetic bounds through checker gates. -/
+-- TODO(lean-port): blocked by Int.abs |x*y| ≤ |x|*|y| calc block failures.
+theorem abs_triangle (a b : Q16_16) :
+    (abs (mul a b)).toInt ≤ (mul (abs a) (abs b)).toInt := by
+  admit
+
 end Q16_16
 
 -- ═══════════════════════════════════════════════════════════════════════════

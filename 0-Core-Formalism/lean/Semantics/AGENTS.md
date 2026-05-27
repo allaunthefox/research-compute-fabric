@@ -204,6 +204,18 @@ after narrowly compiling the file under a scratch target.
 - `SSMS.aciPreservedByMlgruStep`: former sorry replaced by explicit premise
   `hBlendACI` (lines 545–548). Remaining: `TODO(lean-port)` discharge from Q16_16
   triangle inequality, multiplication monotonicity, and saturation associativity.
+- `FixedPoint.lean` Q16_16 lemma library (lines 617–695): 6 lemmas stubbed with
+  `admit` + `TODO(lean-port)` pending lean-port:
+  - `sub_eq_add_neg`: `Int.sub_eq_add_neg` rw/omega blocked after unfold
+  - `mul_mono_left/right`: `Int.ediv_le_ediv` synthesis blocked after unfold
+  - `add_le_add`: `ofRawInt_toInt_eq_clamp` + `q16Clamp_monotone` blocked after unfold
+  - `abs_nonneg`: `by_cases` then/else branch `ofRawInt_toInt_nonneg` type mismatch
+  - `abs_mul_le`: `Int.ediv_le_ediv` + `rw [ofRawInt_toInt_eq_clamp]` blocked
+  - `abs_triangle`: `Int.abs |x*y| ≤ |x|*|y|` calc block + `Int.ediv_le_ediv` blocked
+  All blocked by the same core issue: calc/rw/omega fail on `ofRawInt`-projected
+  Int arithmetic after `unfold mul/add/abs/neg`. Fix: use `calc [ofRawInt_toInt_eq_clamp]`
+  with explicit `have hdiv := Int.ediv_le_ediv ...` chaining and `q16Clamp_id_of_inRange`
+  for the `abs` cases.
 
 ## Key API Notes (Lean 4.30 / this workspace)
 

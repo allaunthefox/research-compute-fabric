@@ -623,16 +623,28 @@ theorem sub_eq_add_neg (a b : Q16_16) : sub a b = add a (neg b) := by
 /-- Multiplication by a non-negative scalar is monotone:
     if a ≤ b and c ≥ 0, then a*c ≤ b*c.
     Used in SSMS.aciPreservedByMlgruStep for bound propagation. -/
--- TODO(lean-port): blocked by Int.ediv_le_ediv synthesis failure after unfold.
 theorem mul_mono_left (a b c : Q16_16) (h : a.toInt ≤ b.toInt) (hc : c.toInt ≥ 0) :
     (mul a c).toInt ≤ (mul b c).toInt := by
-  admit
+  unfold mul
+  have hmul : a.toInt * c.toInt ≤ b.toInt * c.toInt := by
+    apply Int.mul_le_mul_of_nonneg_right h hc
+  have hpos : 0 < q16Scale := by unfold q16Scale; norm_num
+  have hdiv : (a.toInt * c.toInt) / q16Scale ≤ (b.toInt * c.toInt) / q16Scale := by
+    apply Int.ediv_le_ediv hpos hmul
+  rw [ofRawInt_toInt_eq_clamp, ofRawInt_toInt_eq_clamp]
+  exact q16Clamp_monotone _ _ hdiv
 
 /-- Multiplication by a non-negative scalar is monotone on the right. -/
--- TODO(lean-port): blocked by same Int.ediv_le_ediv synthesis failure.
 theorem mul_mono_right (a b c : Q16_16) (h : a.toInt ≤ b.toInt) (hc : c.toInt ≥ 0) :
     (mul c a).toInt ≤ (mul c b).toInt := by
-  admit
+  unfold mul
+  have hmul : c.toInt * a.toInt ≤ c.toInt * b.toInt := by
+    apply Int.mul_le_mul_of_nonneg_left h hc
+  have hpos : 0 < q16Scale := by unfold q16Scale; norm_num
+  have hdiv : (c.toInt * a.toInt) / q16Scale ≤ (c.toInt * b.toInt) / q16Scale := by
+    apply Int.ediv_le_ediv hpos hmul
+  rw [ofRawInt_toInt_eq_clamp, ofRawInt_toInt_eq_clamp]
+  exact q16Clamp_monotone _ _ hdiv
 
 /-- Addition is monotone in the left argument:
     if a ≤ b then a+c ≤ b+c. -/
@@ -656,7 +668,9 @@ theorem abs_mul_le (a b : Q16_16) (ha : a.toInt ≥ 0) :
 
 /-- Triangle inequality for Q16_16: |a*b| ≤ |a| * |b|.
     Threads arithmetic bounds through checker gates. -/
--- TODO(lean-port): blocked by Int.abs |x*y| ≤ |x|*|y| calc block failures.
+-- TODO(lean-port): blocked; q16Clamp applies Int.abs internally so sign analysis
+-- after division is non-trivial. Requires case split on sign of (a.toInt * b.toInt)
+-- and careful handling of the clamping boundaries.
 theorem abs_triangle (a b : Q16_16) :
     (abs (mul a b)).toInt ≤ (mul (abs a) (abs b)).toInt := by
   admit

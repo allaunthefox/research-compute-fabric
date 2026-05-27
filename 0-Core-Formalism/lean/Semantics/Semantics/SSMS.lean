@@ -608,12 +608,15 @@ theorem aciPreservedByMlgruStep {N : Nat} (H : BettiSwooshH N)
         show (Q16_16.sub (nodes i).hidden.hT (nodes j).hidden.hT).toInt ≤ H.aciBound.toInt
         have a := Q16_16.abs (Q16_16.sub (nodes i).hidden.hT (nodes j).hidden.hT)
         have b := Q16_16.abs (Q16_16.sub (nodes i).hidden.hT (nodes j).hidden.hT)
-        exact le_trans (le_of_eq (abs_toInt_eq_self (Q16_16.sub (nodes i).hidden.hT (nodes j).hidden.hT) (by omega))) (le_of_lt (lt_of_le_of_lt h_le (by admit)))
+        have h_diff_nonneg : ((nodes i).hidden.hT - (nodes j).hidden.hT).toInt ≥ 0 := by omega
+        exact le_trans
+          (le_of_eq (abs_toInt_eq_self (Q16_16.sub (nodes i).hidden.hT (nodes j).hidden.hT) h_diff_nonneg))
+          (le_of_lt (lt_of_le_of_lt h_le (lt_of_ge_of_le h_aciBound_nonneg (by omega))))
       ) ft_nonneg
     exact m1
   have t2 : Q16_16.abs (Q16_16.mul (Q16_16.one - fT i) (cT i - cT j)) ≤
             Q16_16.mul (Q16_16.one - fT i) (Q16_16.abs (cT i - cT j)) := by
-    have m2 := Q16_16.mul_mono_left (cT i - cT j) H.aciBound (Q16_16.one - fT i) _ omf_nonneg
+    have m2 := Q16_16.mul_mono_left (Q16_16.abs (cT i - cT j)) H.aciBound (Q16_16.one - fT i) hcand omf_nonneg
     exact m2
   have final := calc
     Q16_16.abs ((mlgruStep (fT i) (cT i) (nodes i).hidden).hT -

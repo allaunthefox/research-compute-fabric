@@ -203,22 +203,22 @@ after narrowly compiling the file under a scratch target.
   error-bound lemma.
 - `SSMS.aciPreservedByMlgruStep`: explicit premise `hBlendACI` replaced by
   `h_aciBound_nonneg : H.aciBound.toInt ≥ 0` (line 549). The `f_eps` and
-  `omf_eps` sub-lemmas are now proved with `omega` (lines 624–663). Critical
-  remaining blocker: `Q16_16.mul_mono_left` is stubbed with `admit`, which
-  makes `t1` (line 600) and `t2` (line 614) unresolved. Once `mul_mono_left`
-  is proved, `aciPreservedByMlgruStep` closes fully.
-- `FixedPoint.lean` Q16_16 lemma library (lines 617–695): 6 lemmas stubbed with
-  `admit` + `TODO(lean-port)` pending lean-port:
-  - `sub_eq_add_neg`: `Int.sub_eq_add_neg` rw/omega blocked after unfold
-  - `mul_mono_left/right`: `Int.ediv_le_ediv` synthesis blocked after unfold
-  - `add_le_add`: `ofRawInt_toInt_eq_clamp` + `q16Clamp_monotone` blocked after unfold
-  - `abs_nonneg`: `by_cases` then/else branch `ofRawInt_toInt_nonneg` type mismatch
-  - `abs_mul_le`: `Int.ediv_le_ediv` + `rw [ofRawInt_toInt_eq_clamp]` blocked
-  - `abs_triangle`: `Int.abs |x*y| ≤ |x|*|y|` calc block + `Int.ediv_le_ediv` blocked
-  All blocked by the same core issue: calc/rw/omega fail on `ofRawInt`-projected
-  Int arithmetic after `unfold mul/add/abs/neg`. Fix: use `calc [ofRawInt_toInt_eq_clamp]`
-  with explicit `have hdiv := Int.ediv_le_ediv ...` chaining and `q16Clamp_id_of_inRange`
-  for the `abs` cases.
+  `omf_eps` sub-lemmas are proved with `omega` (lines 627–641). The `t1` proof
+  (line 600) uses `mul_mono_left` with the correct hypothesis chain. The `t2`
+  proof (line 617) corrected to pass `Q16_16.abs (cT i - cT j)` as the first
+  arg to `mul_mono_left`. Critical remaining blocker: `Q16_16.abs_triangle` is
+  admitted (FixedPoint.lean:674); the `bound` calc uses it and is effectively
+  admitted. Once `abs_triangle` is proved, `aciPreservedByMlgruStep` closes.
+- `FixedPoint.lean` Q16_16 lemma library (lines 617–695):
+  - `mul_mono_left/right` ✅ PROVED — `Int.ediv_le_ediv hpos hmul` pattern works
+    with explicit `hpos : 0 < q16Scale` proof
+  - `sub_eq_add_neg` (line 620): admit, unused
+  - `add_le_add` (line 652): admit, unused
+  - `abs_nonneg` (line 659): admit, unused
+  - `abs_mul_le` (line 665): admit, unused
+  - `abs_triangle` (line 674): admit, used in SSMS `bound` — the `q16Clamp`
+    internal `Int.abs` makes sign analysis non-trivial; needs case split on sign
+    of `(a.toInt * b.toInt) / q16Scale`
 
 ## Key API Notes (Lean 4.30 / this workspace)
 

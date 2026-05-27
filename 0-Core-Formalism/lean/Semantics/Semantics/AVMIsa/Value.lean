@@ -11,6 +11,7 @@ inductive AvmVal : AvmTy → Type where
   | q0 : Semantics.Q0_16 → AvmVal AvmTy.q0_16
   | q16 : Semantics.Q16_16 → AvmVal AvmTy.q16_16
   | b : Bool → AvmVal AvmTy.bool
+  deriving Repr
 
 /-- Existential wrapper for storing values in an untyped container.
 
@@ -24,6 +25,10 @@ structure AnyVal where
   ty : AvmTy
   val : AvmVal ty
 
-deriving Inhabited
+instance : Inhabited AnyVal where
+  default := { ty := AvmTy.bool, val := AvmVal.b false }
+
+instance : Repr AnyVal where
+  reprPrec v _ := repr v.val
 
 end Semantics.AVMIsa

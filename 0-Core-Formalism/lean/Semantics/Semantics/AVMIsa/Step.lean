@@ -10,7 +10,7 @@ inductive StepError : Type where
   | typeMismatch
   | invalidJump
   | missingLocal
-  deriving Inhabited, DecidableEq, BEq
+  deriving Inhabited, DecidableEq, BEq, Repr
 
 /-- Outcome type for AVM execution.
 
@@ -19,7 +19,7 @@ We avoid Float and avoid exceptions. Backends should mirror this boundary.
 inductive Outcome (α : Type) : Type where
   | ok : α → Outcome α
   | err : StepError → Outcome α
-  deriving Inhabited
+  deriving Inhabited, Repr
 
 /-- Pop one element from stack. -/
 def pop1 (s : State) : Outcome (AnyVal × State) :=
@@ -42,10 +42,9 @@ def evalPrim (p : Prim) (s : State) : Outcome State :=
       match pop1 s with
       | Outcome.err e => Outcome.err e
       | Outcome.ok (v, s1) =>
-          match v.ty with
-          | AvmTy.bool =>
-              let b := match v.val with | AvmVal.b x => x
-              Outcome.ok (push1 s1 ⟨AvmTy.bool, AvmVal.b (!b)⟩)
+          match v with
+          | ⟨AvmTy.bool, AvmVal.b x⟩ =>
+              Outcome.ok (push1 s1 ⟨AvmTy.bool, AvmVal.b (!x)⟩)
           | _ => Outcome.err StepError.typeMismatch
   | Prim.and =>
       match pop1 s with
@@ -54,12 +53,10 @@ def evalPrim (p : Prim) (s : State) : Outcome State :=
           match pop1 s1 with
           | Outcome.err e => Outcome.err e
           | Outcome.ok (v2, s2) =>
-              if v1.ty = AvmTy.bool ∧ v2.ty = AvmTy.bool then
-                let b1 := match v1.val with | AvmVal.b x => x
-                let b2 := match v2.val with | AvmVal.b x => x
-                Outcome.ok (push1 s2 ⟨AvmTy.bool, AvmVal.b (b2 && b1)⟩)
-              else
-                Outcome.err StepError.typeMismatch
+              match v1, v2 with
+              | ⟨AvmTy.bool, AvmVal.b b1⟩, ⟨AvmTy.bool, AvmVal.b b2⟩ =>
+                  Outcome.ok (push1 s2 ⟨AvmTy.bool, AvmVal.b (b2 && b1)⟩)
+              | _, _ => Outcome.err StepError.typeMismatch
   | Prim.or =>
       match pop1 s with
       | Outcome.err e => Outcome.err e
@@ -67,12 +64,10 @@ def evalPrim (p : Prim) (s : State) : Outcome State :=
           match pop1 s1 with
           | Outcome.err e => Outcome.err e
           | Outcome.ok (v2, s2) =>
-              if v1.ty = AvmTy.bool ∧ v2.ty = AvmTy.bool then
-                let b1 := match v1.val with | AvmVal.b x => x
-                let b2 := match v2.val with | AvmVal.b x => x
-                Outcome.ok (push1 s2 ⟨AvmTy.bool, AvmVal.b (b2 || b1)⟩)
-              else
-                Outcome.err StepError.typeMismatch
+              match v1, v2 with
+              | ⟨AvmTy.bool, AvmVal.b b1⟩, ⟨AvmTy.bool, AvmVal.b b2⟩ =>
+                  Outcome.ok (push1 s2 ⟨AvmTy.bool, AvmVal.b (b2 || b1)⟩)
+              | _, _ => Outcome.err StepError.typeMismatch
   | Prim.addSatQ0 =>
       match pop1 s with
       | Outcome.err e => Outcome.err e
@@ -80,12 +75,10 @@ def evalPrim (p : Prim) (s : State) : Outcome State :=
           match pop1 s1 with
           | Outcome.err e => Outcome.err e
           | Outcome.ok (v2, s2) =>
-              if v1.ty = AvmTy.q0_16 ∧ v2.ty = AvmTy.q0_16 then
-                let x := match v1.val with | AvmVal.q0 q => q
-                let y := match v2.val with | AvmVal.q0 q => q
-                Outcome.ok (push1 s2 ⟨AvmTy.q0_16, AvmVal.q0 (Semantics.Q0_16.addSat y x)⟩)
-              else
-                Outcome.err StepError.typeMismatch
+              match v1, v2 with
+              | ⟨AvmTy.q0_16, AvmVal.q0 x⟩, ⟨AvmTy.q0_16, AvmVal.q0 y⟩ =>
+                  Outcome.ok (push1 s2 ⟨AvmTy.q0_16, AvmVal.q0 (Semantics.Q0_16.add y x)⟩)
+              | _, _ => Outcome.err StepError.typeMismatch
   | Prim.subSatQ0 =>
       match pop1 s with
       | Outcome.err e => Outcome.err e
@@ -93,12 +86,10 @@ def evalPrim (p : Prim) (s : State) : Outcome State :=
           match pop1 s1 with
           | Outcome.err e => Outcome.err e
           | Outcome.ok (v2, s2) =>
-              if v1.ty = AvmTy.q0_16 ∧ v2.ty = AvmTy.q0_16 then
-                let x := match v1.val with | AvmVal.q0 q => q
-                let y := match v2.val with | AvmVal.q0 q => q
-                Outcome.ok (push1 s2 ⟨AvmTy.q0_16, AvmVal.q0 (Semantics.Q0_16.subSat y x)⟩)
-              else
-                Outcome.err StepError.typeMismatch
+              match v1, v2 with
+              | ⟨AvmTy.q0_16, AvmVal.q0 x⟩, ⟨AvmTy.q0_16, AvmVal.q0 y⟩ =>
+                  Outcome.ok (push1 s2 ⟨AvmTy.q0_16, AvmVal.q0 (Semantics.Q0_16.sub y x)⟩)
+              | _, _ => Outcome.err StepError.typeMismatch
   | _ =>
       -- Remaining primitives are not yet implemented in v1.
       Outcome.err StepError.typeMismatch
@@ -111,7 +102,7 @@ def step (program : List Instr) (s : State) : Outcome State :=
   if s.halted then
     Outcome.ok s
   else
-    match program.get? s.pc with
+    match program[s.pc]? with
     | none => Outcome.err StepError.invalidJump
     | some instr =>
         match instr with
@@ -146,14 +137,16 @@ def step (program : List Instr) (s : State) : Outcome State :=
             match pop1 s with
             | Outcome.err e => Outcome.err e
             | Outcome.ok (v, s1) =>
-                if v.ty = AvmTy.bool then
-                  let b := match v.val with | AvmVal.b x => x
-                  if b then
-                    if target < program.length then Outcome.ok { s1 with pc := target } else Outcome.err StepError.invalidJump
-                  else
-                    Outcome.ok { s1 with pc := s.pc + 1 }
-                else
-                  Outcome.err StepError.typeMismatch
+                match v with
+                | ⟨AvmTy.bool, AvmVal.b b⟩ =>
+                    if b then
+                      if target < program.length then
+                        Outcome.ok { s1 with pc := target }
+                      else
+                        Outcome.err StepError.invalidJump
+                    else
+                      Outcome.ok { s1 with pc := s.pc + 1 }
+                | _ => Outcome.err StepError.typeMismatch
         | Instr.prim p =>
             match evalPrim p s with
             | Outcome.err e => Outcome.err e

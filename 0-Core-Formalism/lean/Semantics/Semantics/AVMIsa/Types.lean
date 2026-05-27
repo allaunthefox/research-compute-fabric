@@ -10,6 +10,6 @@ inductive AvmTy : Type where
   | q0_16 : AvmTy
   | q16_16 : AvmTy
   | bool : AvmTy
-  deriving DecidableEq, BEq, Inhabited
+  deriving DecidableEq, BEq, Inhabited, Repr
 
 end Semantics.AVMIsa

@@ -18,7 +18,7 @@ inductive Prim : Type where
   | and
   | or
   | not
-  deriving DecidableEq, BEq, Inhabited
+  deriving DecidableEq, BEq, Inhabited, Repr
 
 /-- Core instruction set.
 
@@ -37,6 +37,6 @@ inductive Instr : Type where
   | jumpIf : Nat → Instr
   | prim : Prim → Instr
   | halt : Instr
-  deriving Inhabited
+  deriving Inhabited, Repr
 
 end Semantics.AVMIsa

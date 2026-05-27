@@ -15,7 +15,7 @@ structure State where
   locals : List (Option AnyVal)
   halted : Bool
 
-deriving Inhabited
+deriving Inhabited, Repr
 
 /-- Safe locals lookup (returns `none` when out of bounds). -/
 def getLocal? (s : State) (i : Nat) : Option AnyVal :=
@@ -23,8 +23,8 @@ def getLocal? (s : State) (i : Nat) : Option AnyVal :=
 
 /-- Safe locals set (no-op when out of bounds). -/
 def setLocal (s : State) (i : Nat) (v : AnyVal) : State :=
-  if h : i < s.locals.length then
-    { s with locals := s.locals.set ⟨i, h⟩ (some v) }
+  if i < s.locals.length then
+    { s with locals := s.locals.set i (some v) }
   else
     s
 

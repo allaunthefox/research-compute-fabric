@@ -36,6 +36,26 @@ except ImportError:
 # Q16_16 constants
 Q16_ONE = 0x00010000
 Q16_MASK = 0xFFFFFFFF
+Q16_SCALE = 65536  # alias for readability
+
+
+def _q16(f: float) -> int:
+    """Convert float to Q16_16 integer."""
+    return max(-2147483648, min(2147483647, int(round(f * Q16_SCALE))))
+
+
+def _q16_to_float(q: int) -> float:
+    """Convert Q16_16 integer to float (for display/comparison only)."""
+    if q >= 0x80000000:
+        return (q - 0x100000000) / Q16_SCALE
+    return q / Q16_SCALE
+
+
+def _q16_signed(v: int) -> int:
+    """Convert unsigned Q16_16 to signed Python int (still in Q16_16 units)."""
+    if v >= 0x80000000:
+        return v - 0x100000000
+    return v
 
 
 # ── Sidon Set Slot Assignment ────────────────────────────────────────────────
@@ -177,40 +197,39 @@ def verify_sidon(slots: List[int]) -> bool:
 
 # ── Soliton-Inspired Search ─────────────────────────────────────────────────
 
-def _discrete_soliton(k: int, n: int) -> float:
+def _discrete_soliton(k: int, n: int) -> int:
     """Evaluate the (discrete) ideal soliton distribution at index *k* for size *n*.
 
     μ(1) = 1/n,  μ(k) = 1/(k*(k-1))  for k = 2..n
-    Normalised so the values can serve as sampling weights.
+    Returns Q16_16 integer weight.
     """
     if k == 1:
-        return 1.0 / n
+        return Q16_ONE // n
     elif 2 <= k <= n:
-        return 1.0 / (k * (k - 1))
-    return 0.0
+        return Q16_ONE // (k * (k - 1))
+    return 0
 
 
-def _candidate_energy(crossing: dict) -> float:
-    """Compute an 'energy' score for a crossing configuration.
+def _candidate_energy(crossing: dict) -> int:
+    """Compute an 'energy' score for a crossing configuration (Q16_16 int).
 
     Higher energy ↔ more promising configuration.
     Uses bracket admissibility, gap size, and parity diversity.
     """
-    energy = 0.0
+    energy = 0
     brackets = crossing.get("brackets", [])
     for b in brackets:
         if b.get("admissible", False):
-            energy += 2.0
-        gap = b.get("gap", 0)
+            energy += 2 * Q16_ONE
+        gap = _q16_signed(b.get("gap", 0))
         # Larger gaps are generally better (more room for braiding)
-        # Convert Q16_16 gap to float for scoring
-        gap_f = gap / Q16_ONE if gap < 0x80000000 else (gap - 0x100000000) / Q16_ONE
-        energy += abs(gap_f) * 0.5
+        # abs(gap) * 0.5 in Q16_16 = abs(gap) // 2
+        energy += abs(gap) // 2
 
     # Parity diversity bonus
     parities = {b.get("admissible", False) for b in brackets}
     if len(parities) > 1:
-        energy += 1.0
+        energy += Q16_ONE
 
     return energy
 
@@ -222,6 +241,9 @@ def soliton_search(target_energy: float, candidates: List[dict],
     The search distributes exploration effort according to a discrete soliton
     pulse: heavy sampling of promising candidates (high energy), lighter
     sampling of others, with stochastic jumps to avoid local optima.
+
+    All internal computation uses Q16_16 integers.  Energy values in the
+    returned dict are converted to float at the API boundary.
 
     Args:
         target_energy: desired energy threshold for a satisfactory solution.
@@ -244,20 +266,30 @@ def soliton_search(target_energy: float, candidates: List[dict],
         return {"best": {}, "best_energy": 0.0, "iterations": 0,
                 "converged": False, "history": []}
 
-    # Pre-compute energies
+    # Convert target to Q16_16 for internal comparison
+    if target_energy == float("inf"):
+        target_q16 = 2 ** 62  # effectively infinite
+    else:
+        target_q16 = _q16(target_energy)
+
+    # Pre-compute energies (Q16_16 ints)
     energies = [_candidate_energy(c) for c in candidates]
 
-    # Build soliton weights
+    # Build soliton weights (Q16_16 ints)
     weights = [_discrete_soliton(i + 1, n) for i in range(n)]
     total_w = sum(weights)
-    probs = [w / total_w for w in weights]
+    # Convert to Q16_16 probabilities (sum ≈ Q16_SCALE)
+    if total_w > 0:
+        probs_q16 = [w * Q16_SCALE // total_w for w in weights]
+    else:
+        probs_q16 = [Q16_SCALE // n] * n
 
     # Sort candidates by energy descending; remap probs accordingly
     ranked = sorted(range(n), key=lambda i: energies[i], reverse=True)
     # Assign higher soliton weight to higher-energy candidates
-    weighted_probs = [0.0] * n
+    weighted_probs_q16 = [0] * n
     for rank_idx, orig_idx in enumerate(ranked):
-        weighted_probs[orig_idx] = probs[rank_idx]
+        weighted_probs_q16[orig_idx] = probs_q16[rank_idx]
 
     best_idx = max(range(n), key=lambda i: energies[i])
     best_energy = energies[best_idx]
@@ -266,12 +298,12 @@ def soliton_search(target_energy: float, candidates: List[dict],
 
     for iteration in range(1, max_iterations + 1):
         # Sample a candidate index from the soliton-weighted distribution
-        r = rng.random()
-        cumulative = 0.0
+        r_q16 = int(rng.random() * Q16_SCALE)
+        cumulative = 0
         chosen = rng.randint(0, n - 1)
         for idx in range(n):
-            cumulative += weighted_probs[idx]
-            if cumulative >= r:
+            cumulative += weighted_probs_q16[idx]
+            if cumulative >= r_q16:
                 chosen = idx
                 break
 
@@ -281,13 +313,13 @@ def soliton_search(target_energy: float, candidates: List[dict],
             best_energy = e
             best = candidates[chosen]
             best_idx = chosen
-            history.append((iteration, best_energy))
+            history.append((iteration, _q16_to_float(best_energy)))
 
         # Check convergence
-        if best_energy >= target_energy:
+        if best_energy >= target_q16:
             return {
                 "best": best,
-                "best_energy": best_energy,
+                "best_energy": _q16_to_float(best_energy),
                 "iterations": iteration,
                 "converged": True,
                 "history": history,
@@ -300,11 +332,11 @@ def soliton_search(target_energy: float, candidates: List[dict],
                 best_energy = energies[jump_idx]
                 best = candidates[jump_idx]
                 best_idx = jump_idx
-                history.append((iteration, best_energy))
+                history.append((iteration, _q16_to_float(best_energy)))
 
     return {
         "best": best,
-        "best_energy": best_energy,
+        "best_energy": _q16_to_float(best_energy),
         "iterations": max_iterations,
         "converged": False,
         "history": history,
@@ -313,49 +345,50 @@ def soliton_search(target_energy: float, candidates: List[dict],
 
 # ── QUBO Matrix (dict format for HiGHS) ─────────────────────────────────────
 
-def bracket_cost(bracket: dict) -> float:
-    """Compute the individual (diagonal) cost for a single bracket.
+def bracket_cost(bracket: dict) -> int:
+    """Compute the individual (diagonal) cost for a single bracket (Q16_16 int).
 
     Negative cost → prefer selecting this bracket (admissible is good).
     """
-    base = 1.0 if bracket.get("admissible", False) else 2.0
+    base = Q16_ONE if bracket.get("admissible", False) else 2 * Q16_ONE
     # Gap magnitude bonus: larger gaps reduce cost
-    gap = bracket.get("gap", 0)
-    gap_f = gap / Q16_ONE if gap < 0x80000000 else (gap - 0x100000000) / Q16_ONE
-    return -base + abs(gap_f) * 0.1
+    # abs(gap) * 0.1 in Q16_16 = abs(gap) * _q16(0.1) // Q16_SCALE
+    gap = _q16_signed(bracket.get("gap", 0))
+    return -base + abs(gap) * _q16(0.1) // Q16_SCALE
 
 
-def crossing_penalty(b1: dict, b2: dict) -> float:
-    """Compute the off-diagonal interaction cost between two brackets.
+def crossing_penalty(b1: dict, b2: dict) -> int:
+    """Compute the off-diagonal interaction cost between two brackets (Q16_16 int).
 
     Positive penalty → discourage selecting both when they conflict.
     """
-    penalty = 0.0
+    penalty = 0
     if _brackets_overlap(b1, b2):
-        penalty += 2.0
+        penalty += 2 * Q16_ONE
     # Gap similarity: reward diversity
-    g1 = _q16_to_float(b1.get("gap", 0))
-    g2 = _q16_to_float(b2.get("gap", 0))
-    penalty -= 0.1 * abs(g1 - g2)
+    g1 = _q16_signed(b1.get("gap", 0))
+    g2 = _q16_signed(b2.get("gap", 0))
+    penalty -= abs(g1 - g2) * _q16(0.1) // Q16_SCALE
     return penalty
 
 
-def build_qubo_matrix(brackets: List[dict]) -> Dict[Tuple[int, int], float]:
-    """Convert brackets to a dict-format QUBO matrix Q[i,j].
+def build_qubo_matrix(brackets: List[dict]) -> Dict[Tuple[int, int], int]:
+    """Convert brackets to a dict-format QUBO matrix Q[i,j] (Q16_16 values).
 
     Q[i,i] = bracket_cost(bracket)  — diagonal (linear bias).
     Q[i,j] = crossing_penalty(b_i, b_j) — off-diagonal (interaction).
 
-    This format is directly consumable by ``solve_qubo_highs``.
+    This format is directly consumable by ``solve_qubo_highs`` (after
+    converting Q16_16 values to float at the API boundary).
 
     Args:
         brackets: list of BraidBracket dicts.
 
     Returns:
-        Dict mapping (i, j) → cost coefficient.
+        Dict mapping (i, j) → Q16_16 cost coefficient.
     """
     n = len(brackets)
-    Q: Dict[Tuple[int, int], float] = {}
+    Q: Dict[Tuple[int, int], int] = {}
     for i in range(n):
         Q[(i, i)] = bracket_cost(brackets[i])
         for j in range(i + 1, n):
@@ -366,8 +399,8 @@ def build_qubo_matrix(brackets: List[dict]) -> Dict[Tuple[int, int], float]:
 
 # ── QUBO Optimization (list-format, SA) ────────────────────────────────────
 
-def _build_qubo_matrix(bracket_pairs: List[Tuple[dict, dict]]) -> List[List[float]]:
-    """Build a QUBO matrix from bracket pair costs.
+def _build_qubo_matrix(bracket_pairs: List[Tuple[dict, dict]]) -> List[List[int]]:
+    """Build a QUBO matrix from bracket pair costs (Q16_16 values).
 
     Each bracket pair (A, B) has a crossing cost derived from gap difference,
     admissibility conflict, and parity mismatch.
@@ -379,29 +412,29 @@ def _build_qubo_matrix(bracket_pairs: List[Tuple[dict, dict]]) -> List[List[floa
     Goal: minimise x^T Q x  over binary x ∈ {0,1}^n.
     """
     n = len(bracket_pairs)
-    Q = [[0.0] * n for _ in range(n)]
+    Q = [[0] * n for _ in range(n)]
 
     for i in range(n):
         a_i, b_i = bracket_pairs[i]
         # Linear bias: admissible pairs get negative cost (prefer them)
         if a_i.get("admissible", False) and b_i.get("admissible", False):
-            Q[i][i] = -1.0
+            Q[i][i] = -Q16_ONE
         else:
-            Q[i][i] = 1.0
+            Q[i][i] = Q16_ONE
 
         # Quadratic interaction
         for j in range(i + 1, n):
             a_j, b_j = bracket_pairs[j]
-            cost = 0.0
+            cost = 0
 
             # Overlap penalty: if pairs share a bracket, penalise
             if _brackets_overlap(a_i, a_j) or _brackets_overlap(b_i, b_j):
-                cost += 2.0
+                cost += 2 * Q16_ONE
 
             # Gap similarity reward: diverse gaps are better
-            gap_i = _q16_to_float(a_i.get("gap", 0))
-            gap_j = _q16_to_float(a_j.get("gap", 0))
-            cost -= 0.1 * abs(gap_i - gap_j)
+            gap_i = _q16_signed(a_i.get("gap", 0))
+            gap_j = _q16_signed(a_j.get("gap", 0))
+            cost -= abs(gap_i - gap_j) * _q16(0.1) // Q16_SCALE
 
             Q[i][j] = cost
             Q[j][i] = cost
@@ -411,24 +444,17 @@ def _build_qubo_matrix(bracket_pairs: List[Tuple[dict, dict]]) -> List[List[floa
 
 def _brackets_overlap(b1: dict, b2: dict) -> bool:
     """Check if two brackets overlap in their [lower, upper] ranges."""
-    l1 = _q16_to_float(b1.get("lower", 0))
-    u1 = _q16_to_float(b1.get("upper", 0))
-    l2 = _q16_to_float(b2.get("lower", 0))
-    u2 = _q16_to_float(b2.get("upper", 0))
+    l1 = _q16_signed(b1.get("lower", 0))
+    u1 = _q16_signed(b1.get("upper", 0))
+    l2 = _q16_signed(b2.get("lower", 0))
+    u2 = _q16_signed(b2.get("upper", 0))
     return l1 < u2 and l2 < u1
 
 
-def _q16_to_float(v: int) -> float:
-    """Convert unsigned Q16_16 to float (boundary use only)."""
-    if v >= 0x80000000:
-        return (v - 0x100000000) / Q16_ONE
-    return v / Q16_ONE
-
-
-def _qubo_energy(Q: List[List[float]], x: List[int]) -> float:
-    """Compute x^T Q x."""
+def _qubo_energy(Q: List[List[int]], x: List[int]) -> int:
+    """Compute x^T Q x (Q16_16 result)."""
     n = len(x)
-    energy = 0.0
+    energy = 0
     for i in range(n):
         for j in range(n):
             energy += Q[i][j] * x[i] * x[j]
@@ -441,6 +467,10 @@ def qubo_optimize(bracket_pairs: List[Tuple[dict, dict]],
                   initial_temp: float = 10.0,
                   cooling_rate: float = 0.9995) -> dict:
     """Solve the QUBO via simulated annealing.
+
+    All QUBO matrix values and energy computations use Q16_16 integers.
+    Temperature and acceptance use Q16_16 internally; the returned energy
+    is converted to float at the API boundary.
 
     Args:
         bracket_pairs: list of (bracket_a, bracket_b) tuples.
@@ -470,7 +500,10 @@ def qubo_optimize(bracket_pairs: List[Tuple[dict, dict]],
     best_x = list(x)
     best_energy = current_energy
 
-    temp = initial_temp
+    # Temperature in Q16_16
+    temp_q16 = _q16(initial_temp)
+    cooling_q16 = _q16(cooling_rate)
+
     for iteration in range(1, max_iterations + 1):
         # Flip a random bit
         idx = rng.randint(0, n - 1)
@@ -479,7 +512,8 @@ def qubo_optimize(bracket_pairs: List[Tuple[dict, dict]],
         delta = new_energy - current_energy
 
         # Accept or reject
-        if delta < 0 or rng.random() < math.exp(-delta / max(temp, 1e-12)):
+        # delta/temp_q16 gives dimensionless ratio via Python float division
+        if delta < 0 or rng.random() < math.exp(-delta / max(temp_q16, 1)):
             current_energy = new_energy
             if current_energy < best_energy:
                 best_energy = current_energy
@@ -487,13 +521,13 @@ def qubo_optimize(bracket_pairs: List[Tuple[dict, dict]],
         else:
             x[idx] = 1 - x[idx]  # revert
 
-        temp *= cooling_rate
+        temp_q16 = temp_q16 * cooling_q16 // Q16_SCALE
 
     selected = [bracket_pairs[i] for i in range(n) if best_x[i]]
     return {
         "selection": best_x,
         "selected_pairs": selected,
-        "energy": best_energy,
+        "energy": _q16_to_float(best_energy),  # convert at API boundary
         "iterations": max_iterations,
     }
 
@@ -504,8 +538,9 @@ def find_optimal_crossing(brackets: List[dict],
                           max_iterations: int = 1000) -> dict:
     """Find the optimal crossing configuration from a set of brackets.
 
-    1. Build QUBO matrix from brackets (dict format).
+    1. Build QUBO matrix from brackets (dict format, Q16_16 values).
     2. Try HiGHS MIP solver first (exact, fast for small instances).
+       Q16_16 values are converted to float at the HiGHS API boundary.
     3. Fall back to simulated annealing if HiGHS unavailable or fails.
     4. Run soliton search on the candidates.
 
@@ -521,7 +556,7 @@ def find_optimal_crossing(brackets: List[dict],
             "method": str,            # 'highs_mip' or 'simulated_annealing'
         }
     """
-    # Build dict-format QUBO matrix from raw brackets
+    # Build dict-format QUBO matrix from raw brackets (Q16_16 values)
     Q = build_qubo_matrix(brackets)
 
     qubo_result = None
@@ -530,7 +565,9 @@ def find_optimal_crossing(brackets: List[dict],
     # ── Try HiGHS first ────────────────────────────────────────────────
     if _HIGHS_AVAILABLE:
         try:
-            result = solve_qubo_highs(Q, time_limit=30.0)
+            # Convert Q16_16 ints to float at the HiGHS API boundary
+            Q_float = {(i, j): v / Q16_SCALE for (i, j), v in Q.items()}
+            result = solve_qubo_highs(Q_float, time_limit=30.0)
             selection = result.get("solution", [])
             # Convert selection vector to bracket pairs
             selected_brackets = [brackets[i] for i in range(len(selection))
@@ -615,7 +652,7 @@ def main():
     print("  assign_sidon_slots(num_slots)           -> List[int]")
     print("  soliton_search(target, candidates)       -> dict")
     print("  qubo_optimize(bracket_pairs)             -> dict")
-    print("  build_qubo_matrix(brackets)              -> Dict[(i,j), float]")
+    print("  build_qubo_matrix(brackets)              -> Dict[(i,j), int]")
     print("  find_optimal_crossing(brackets)          -> dict")
     print()
     print(f"  HiGHS available: {_HIGHS_AVAILABLE}")

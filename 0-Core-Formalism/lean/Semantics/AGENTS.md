@@ -109,6 +109,7 @@ lake build
 Compiler surface baseline: **3313 jobs, 0 errors** (`lake build Compiler`, commit `1931cb30`, reverified 2026-05-27).
 Full workspace: **3571 jobs, 0 errors** (`lake build`, commit `1931cb30`, reverified 2026-05-27).
 PistSimulation: **3309 jobs, 0 errors** (`lake build Semantics.PistSimulation`, commit `778b78d3`, reverified 2026-05-27).
+EmergencyBoot: **3302 jobs, 0 errors** (`lake build Semantics.Hardware.EmergencyBootTypes Semantics.Hardware.EmergencyBootState Semantics.Hardware.EmergencyBootShell`, reverified 2026-05-27).
 
 ### goldenContractionEnergyDecrease — proof status
 
@@ -201,24 +202,35 @@ after narrowly compiling the file under a scratch target.
   by explicit premise `onHyperbolaApprox (forwardStep s Δu) Q16_16.epsilon` (line 69).
   Remaining: `TODO(lean-port)` discharge that premise from a formal `Q16_16.sqrt`
   error-bound lemma.
-- `SSMS.aciPreservedByMlgruStep`: explicit premise `hBlendACI` replaced by
-  `h_aciBound_nonneg : H.aciBound.toInt ≥ 0` (line 549). The `f_eps` and
-  `omf_eps` sub-lemmas are proved with `omega` (lines 627–641). The `t1` proof
-  (line 600) uses `mul_mono_left` with the correct hypothesis chain. The `t2`
-  proof (line 617) corrected to pass `Q16_16.abs (cT i - cT j)` as the first
-  arg to `mul_mono_left`. Critical remaining blocker: `Q16_16.abs_triangle` is
-  admitted (FixedPoint.lean:674); the `bound` calc uses it and is effectively
-  admitted. Once `abs_triangle` is proved, `aciPreservedByMlgruStep` closes.
+- `SSMS.aciPreservedByMlgruStep`: theorem signature updated with
+  `h_ft_range : ∀ i, (fT i).toInt ≥ 0 ∧ (fT i).toInt ≤ FixedPoint.q16Scale`
+  (line 546). The `hprev` and `hcand` sub-proofs use `abs_sub_comm` with correct
+  argument ordering (lines 559–571). The `f_eps` and `omf_eps` sub-lemmas are
+  proved via `mul_mono_left` + `one_mul` (PROVED, lines 605–607, 611–614).
+  The `omf_toInt` equality is proved via `q16Clamp_id_of_inRange` (lines 575–599).
+  The remaining `admit` (line 619) is the full mlgruStep preservation chain:
+  triangle inequality + mul bounds → H.aciBound. Requires `abs_triangle` and
+  `abs_mul_le` to be proved in FixedPoint.lean.
 - `FixedPoint.lean` Q16_16 lemma library (lines 617–695):
   - `mul_mono_left/right` ✅ PROVED — `Int.ediv_le_ediv hpos hmul` pattern works
     with explicit `hpos : 0 < q16Scale` proof
+  - `abs_sub_comm` ✅ PROVED — three-case split on `d := a.val - b.val` relative to
+    `q16MinRaw`/`q16MaxRaw` bounds
   - `sub_eq_add_neg` (line 620): admit, unused
   - `add_le_add` (line 652): admit, unused
   - `abs_nonneg` (line 659): admit, unused
   - `abs_mul_le` (line 665): admit, unused
-  - `abs_triangle` (line 674): admit, used in SSMS `bound` — the `q16Clamp`
-    internal `Int.abs` makes sign analysis non-trivial; needs case split on sign
-    of `(a.toInt * b.toInt) / q16Scale`
+  - `abs_triangle` (line 674): admit, needed for SSMS preservation chain
+- `EmergencyBootTypes.lean` — 6502 design philosophy hardware types (graphene memristor,
+  optical fiber hot/cold paths, voltage differential computation). All structures compile;
+  remaining formal work: `eigensolid_convergence` for optical delay-line memory,
+  `receipt_invertible` for geometric seed extraction.
+- `EmergencyBootState.lean` — power failure detection, seed assembly, self-sufficiency
+  checks. Verified: `utilizationWithinBounds` (FPGA resource limits), `powerFailureMonotonic`
+  (bridge isolation implies no false detection).
+- `EmergencyBootShell.lean` — Tiny IP command interface (BOOT, SCAN, STATUS, EXIT, etc.).
+  Verified: `commandOpcode_roundTrip` (opcode parsing correctness).
+  TODO(lean-port): status byte round-trip theorem, phase-disjointness for command gating.
 
 ## Key API Notes (Lean 4.30 / this workspace)
 

@@ -301,6 +301,9 @@ python3 4-Infrastructure/storage/storage_agent.py --loop --interval 900
 - `4-Infrastructure/shim/tang9k_uart_beacon_probe.py`
 - `4-Infrastructure/shim/hutter_jxl_starfield_eigenprobe.py`
 - `4-Infrastructure/shim/hutter_jxl_starfield_replay_verify.py`
+- `4-Infrastructure/hardware/emergency_boot/emergency_boot_shim.py` — Python I/O shim
+  for Geometry Emergency Boot Witness (6502 calculator-efficiency FPGA controller)
+  Specification: `6-Documentation/docs/specs/GEOMETRY_EMERGENCY_BOOT_WITNESS_2026-04-08.md`
 
 ## Compute Dispatch (WGSL → any substrate)
 

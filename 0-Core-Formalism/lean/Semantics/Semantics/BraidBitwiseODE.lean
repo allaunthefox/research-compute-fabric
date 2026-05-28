@@ -140,9 +140,12 @@ theorem cross_step_preserves_slot (a b : BraidStrand) :
     32 steps (the bit width of Q16.16). -/
 theorem bitwise_ode_correct (state : Q16_16) (h : state.toInt = 0) :
     bitwiseODEIntegrate state state = state := by
-  unfold bitwiseODEIntegrate
-  simp [h, Q16_16.ofBits, Q16_16.toBits, Q16_16.ofNat]
-  sorry  -- TODO(lean-port): requires Q16.16 bit-level identity proof
+  -- state.toInt = 0 means state is the zero Q16.16 value
+  rw [Q16_16.toInt_eq_zero_iff] at h
+  subst h
+  -- Goal: bitwiseODEIntegrate zero zero = zero
+  -- All intermediate values (toBits 0, ofNat 0, ofBits 0, XOR 0 0) reduce to zero
+  native_decide
 
 
 -- ════════════════════════════════════════════════════════════

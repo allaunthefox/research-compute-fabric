@@ -331,23 +331,22 @@ def projectGoxelFieldToFrame (field : GoxelFieldFrame) (spec : VCNFrameSpec) : A
 
 /-- 16D field energy conservation theorem during VCN transform.
     The hardware transform should preserve high-dimensional field energy.
-    TODO(lean-port): This theorem requires additional hypotheses to be provable.
-    Needed premises:
-    - `fieldEnergyBound : field.fieldEnergy ≤ encoded.compressionRatio + ⟨32768, ...⟩`
-      (or equivalently, the Q16_16 energy difference is bounded by 0.5 in fixed-point)
-    - Or: `field.fieldEnergy ≤ ⟨32768, ...⟩` and `encoded.compressionRatio ≥ 0`
-    Without these, the subtraction `fieldEnergy - compressionRatio` can saturate
-    to q16MaxRaw, violating the bound. -/
+    When field energy exceeds compression ratio (so subtraction doesn't
+    underflow) and the difference is bounded by 0x8000 (0.5 in Q16_16),
+    the saturated subtraction result stays within the bound. -/
 theorem goxelFieldEnergyConservation (field : GoxelFieldFrame) (encoded : VCNComputationReceipt) :
     field.fieldEnergy.val ≥ encoded.compressionRatio.val →
+    field.fieldEnergy.val ≤ encoded.compressionRatio.val + 32768 →
     (field.fieldEnergy - encoded.compressionRatio).val ≤ 32768 := by
-  -- TODO(lean-port): Requires Q16_16.sub_val_of_ge lemma (subtraction preserves
-  -- non-negative values without saturation). The bound 32768 = 0x8000 is half the
-  -- Q16_16 scale, representing 0.5 in fixed-point. Proof sketch:
-  -- 1. Show (a - b).val = a.val - b.val when a.val ≥ b.val (no saturation)
-  -- 2. Show result ≤ 32768 from field energy constraints
-  intro _h
-  sorry
+  intro h_ge h_le
+  -- Unfold subtraction to ofRawInt and then to q16Clamp
+  change (Q16_16.ofRawInt (field.fieldEnergy.val - encoded.compressionRatio.val)).val ≤ 32768
+  rw [FixedPoint.Q16_16.ofRawInt_val_eq_q16Clamp]
+  -- The raw difference is in-range, so q16Clamp is the identity
+  rw [FixedPoint.q16Clamp_id_of_inRange]
+  · omega
+  · dsimp [FixedPoint.q16MinRaw]; omega
+  · dsimp [FixedPoint.q16MaxRaw]; omega
 
 /-- 16D topology preservation theorem.
     The compression hierarchy should preserve topological relationships in 16D space.

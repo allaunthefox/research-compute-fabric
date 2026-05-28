@@ -115,7 +115,8 @@ def decode_rs(encoded_data: bytes, nsym: int = 32) -> Tuple[bytes, int]:
     """
     codec = reedsolo.RSCodec(nsym)
     decoded, _, errata_pos = codec.decode(encoded_data)
-    return bytes(decoded), len(errata_pos) if errata_pos else 0
+    corrections = len(errata_pos) if errata_pos else 0
+    return bytes(decoded), corrections
 
 
 def protect_frame(frame_bytes: bytes, redundancy_factor: int = 2) -> bytes:

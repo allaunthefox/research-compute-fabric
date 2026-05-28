@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: edge
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: caddy-data-v2
+  namespace: edge
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: caddy-edge
+  namespace: edge
+  labels:
+    app: caddy-edge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: caddy-edge
+  template:
+    metadata:
+      labels:
+        app: caddy-edge
+    spec:
+      hostNetwork: true
+      dnsPolicy: Default
+      nodeSelector:
+        kubernetes.io/hostname: 361395-1
+      containers:
+        - name: caddy
+          image: localhost/caddy-edge:latest
+          imagePullPolicy: Never
+          command: ["caddy"]
+          args: ["run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+          ports:
+            - containerPort: 80
+              name: http
+            - containerPort: 443
+              name: https
+          env:
+            - name: PORKBUN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: porkbun-credentials
+                  key: api-key
+            - name: PORKBUN_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: porkbun-credentials
+                  key: api-secret-key
+          volumeMounts:
+            - name: caddy-config
+              mountPath: /etc/caddy
+              readOnly: true
+            - name: caddy-data
+              mountPath: /data
+            - name: caddy-config-storage
+              mountPath: /config
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
+          readinessProbe:
+            tcpSocket:
+              port: 443
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 443
+            initialDelaySeconds: 20
+            periodSeconds: 30
+      volumes:
+        - name: caddy-config
+          configMap:
+            name: caddy-caddyfile
+        - name: caddy-data
+          persistentVolumeClaim:
+            claimName: caddy-data-v2
+        - name: caddy-config-storage
+          emptyDir: {}

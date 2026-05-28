@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: edge
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webrtc-bridge
+  namespace: edge
+  labels:
+    app: webrtc-bridge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webrtc-bridge
+  template:
+    metadata:
+      labels:
+        app: webrtc-bridge
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      nodeSelector:
+        kubernetes.io/hostname: 361395-1
+      containers:
+        - name: webrtc-bridge
+          image: localhost/webrtc-bridge:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: PORT
+              value: "8080"
+            - name: PROXY_TARGET
+              value: "http://100.102.173.61:30080"
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webrtc-bridge
+  namespace: edge
+spec:
+  selector:
+    app: webrtc-bridge
+  ports:
+    - port: 80
+      targetPort: 8080
+      name: http
+  type: ClusterIP
+---
+# Traefik IngressRoute to expose under /webrtc path on the Funnel hostname.
+# Traefik is already configured for 361395-1.tail4e7094.ts.net via Tailscale Funnel.
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: webrtc-bridge
+  namespace: edge
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`361395-1.tail4e7094.ts.net`) && PathPrefix(`/webrtc`)
+      kind: Rule
+      services:
+        - name: webrtc-bridge
+          port: 80
+      middlewares:
+        - name: webrtc-strip-prefix
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: webrtc-strip-prefix
+  namespace: edge
+spec:
+  stripPrefix:
+    prefixes:
+      - /webrtc

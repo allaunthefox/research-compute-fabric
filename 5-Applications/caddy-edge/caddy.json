@@ -1,0 +1,87 @@
+{
+  "apps": {
+    "http": {
+      "servers": {
+        "srv0": {
+          "listen": [":443"],
+          "routes": [
+            {
+              "match": [{"host": ["researchstack.info"]}],
+              "handle": [
+                {
+                  "handler": "reverse_proxy",
+                  "upstreams": [{"dial": "100.102.173.61:30080"}]
+                }
+              ],
+              "terminal": true
+            },
+            {
+              "match": [{"host": ["auth.researchstack.info"]}],
+              "handle": [
+                {
+                  "handler": "reverse_proxy",
+                  "upstreams": [{"dial": "100.102.173.61:30080"}]
+                }
+              ],
+              "terminal": true
+            },
+            {
+              "match": [{"host": ["*.researchstack.info"]}],
+              "handle": [
+                {
+                  "handler": "static_response",
+                  "status_code": 301,
+                  "headers": {
+                    "Location": ["https://researchstack.info{http.request.uri}"]
+                  }
+                }
+              ],
+              "terminal": true
+            }
+          ]
+        },
+        "srv_redirect": {
+          "listen": [":80"],
+          "routes": [
+            {
+              "handle": [
+                {
+                  "handler": "static_response",
+                  "status_code": 301,
+                  "headers": {
+                    "Location": ["https://{http.request.host}{http.request.uri}"]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "tls": {
+      "automation": {
+        "policies": [
+          {
+            "subjects": ["researchstack.info", "*.researchstack.info"],
+            "issuers": [
+              {
+                "module": "acme",
+                "ca": "https://acme-v02.api.letsencrypt.org/directory",
+                "email": "allaun@researchstack.info",
+                "challenges": {
+                  "dns": {
+                    "provider": {
+                      "name": "porkbun",
+                      "api_key": "{env.PORKBUN_API_KEY}",
+                      "api_secret_key": "{env.PORKBUN_SECRET_KEY}"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

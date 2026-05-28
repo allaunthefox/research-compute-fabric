@@ -1,0 +1,29 @@
+{
+    email allaun@researchstack.info
+    default_sni researchstack.info
+    acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+(porkbun_tls) {
+    tls {
+        dns porkbun {
+            api_key {$PORKBUN_API_KEY}
+            api_secret_key {$PORKBUN_SECRET_KEY}
+        }
+    }
+}
+
+researchstack.info {
+    import porkbun_tls
+    reverse_proxy 100.102.173.61:30080
+}
+
+auth.researchstack.info {
+    import porkbun_tls
+    reverse_proxy 100.102.173.61:30080
+}
+
+*.researchstack.info {
+    import porkbun_tls
+    redir https://researchstack.info{uri} 301
+}

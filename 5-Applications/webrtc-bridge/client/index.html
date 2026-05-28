@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebRTC Bridge — Research Stack</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --green: #3fb950;
+      --red: #f85149;
+      --blue: #58a6ff;
+      --yellow: #d29922;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      background: var(--bg);
+      color: var(--text);
+      padding: 2rem;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 2rem; }
+    .status-bar {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      padding: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+    .status-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--red);
+      flex-shrink: 0;
+    }
+    .status-dot.connected { background: var(--green); }
+    .status-dot.connecting { background: var(--yellow); animation: pulse 1s infinite; }
+    @keyframes pulse { 50% { opacity: 0.4; } }
+    .status-label { font-weight: 600; }
+    .status-detail { color: var(--muted); font-size: 0.8rem; }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .metric {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem;
+      text-align: center;
+    }
+    .metric-value { font-size: 1.5rem; font-weight: 700; color: var(--blue); }
+    .metric-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .request-form {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .form-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+    select, input, button {
+      font-family: inherit;
+      font-size: 0.85rem;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+    }
+    select { width: 100px; }
+    input { flex: 1; }
+    button {
+      background: var(--blue);
+      color: var(--bg);
+      border-color: var(--blue);
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .log {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      max-height: 400px;
+      overflow-y: auto;
+      font-size: 0.8rem;
+      line-height: 1.6;
+    }
+    .log-entry { border-bottom: 1px solid var(--border); padding: 0.25rem 0; }
+    .log-entry:last-child { border-bottom: none; }
+    .log-time { color: var(--muted); }
+    .log-ok { color: var(--green); }
+    .log-err { color: var(--red); }
+    .log-info { color: var(--blue); }
+  </style>
+</head>
+<body>
+  <h1>⚡ WebRTC Bridge</h1>
+  <p class="subtitle">Direct P2P to Research Stack — bypasses DERP relay</p>
+
+  <div class="status-bar">
+    <div class="status-dot" id="statusDot"></div>
+    <div>
+      <div class="status-label" id="statusLabel">Disconnected</div>
+      <div class="status-detail" id="statusDetail">Not connected to signaling server</div>
+    </div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-value" id="metricRTT">—</div>
+      <div class="metric-label">RTT (ms)</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value" id="metricRequests">0</div>
+      <div class="metric-label">Requests</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value" id="metricBytes">0</div>
+      <div class="metric-label">Bytes</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value" id="metricICE">—</div>
+      <div class="metric-label">ICE Type</div>
+    </div>
+  </div>
+
+  <div class="request-form">
+    <div class="form-row">
+      <select id="reqMethod">
+        <option>GET</option>
+        <option>POST</option>
+        <option>PUT</option>
+        <option>DELETE</option>
+        <option>PATCH</option>
+      </select>
+      <input id="reqPath" placeholder="/api/v1/..." value="/dashboard/">
+      <button id="sendBtn" disabled>Send</button>
+    </div>
+  </div>
+
+  <div class="log" id="log"></div>
+
+  <script>
+    const state = {
+      ws: null,
+      pc: null,
+      dc: null,        // The single data channel (client-created)
+      connected: false,
+      requests: 0,
+      bytes: 0,
+      pendingRequests: new Map(),
+    };
+
+    const els = {
+      statusDot: document.getElementById('statusDot'),
+      statusLabel: document.getElementById('statusLabel'),
+      statusDetail: document.getElementById('statusDetail'),
+      metricRTT: document.getElementById('metricRTT'),
+      metricRequests: document.getElementById('metricRequests'),
+      metricBytes: document.getElementById('metricBytes'),
+      metricICE: document.getElementById('metricICE'),
+      reqMethod: document.getElementById('reqMethod'),
+      reqPath: document.getElementById('reqPath'),
+      sendBtn: document.getElementById('sendBtn'),
+      log: document.getElementById('log'),
+    };
+
+    function log(msg, cls = '') {
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      const time = new Date().toISOString().slice(11, 23);
+      entry.innerHTML = `<span class="log-time">${time}</span> <span class="${cls}">${msg}</span>`;
+      els.log.prepend(entry);
+      while (els.log.children.length > 200) {
+        els.log.removeChild(els.log.lastChild);
+      }
+    }
+
+    function setStatus(st, label, detail) {
+      els.statusDot.className = 'status-dot ' + st;
+      els.statusLabel.textContent = label;
+      els.statusDetail.textContent = detail;
+    }
+
+    function updateMetrics() {
+      els.metricRequests.textContent = state.requests;
+      els.metricBytes.textContent = formatBytes(state.bytes);
+    }
+
+    function formatBytes(b) {
+      if (b < 1024) return b + ' B';
+      if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+      return (b / 1048576).toFixed(1) + ' MB';
+    }
+
+    function generateId() {
+      return 'req-' + Math.random().toString(36).slice(2, 10);
+    }
+
+    // --- WebSocket Signaling ---
+
+    function connectSignaling() {
+      const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = proto + '//' + location.host + '/ws';
+      log('Connecting to signaling server: ' + wsUrl, 'log-info');
+      setStatus('connecting', 'Connecting', 'Establishing WebSocket...');
+
+      const ws = new WebSocket(wsUrl);
+      state.ws = ws;
+
+      ws.onopen = () => {
+        log('WebSocket connected', 'log-info');
+        createPeerConnection();
+        sendOffer();
+      };
+
+      ws.onmessage = (evt) => {
+        const msg = JSON.parse(evt.data);
+        handleSignalingMessage(msg);
+      };
+
+      ws.onerror = () => {
+        log('WebSocket error', 'log-err');
+      };
+
+      ws.onclose = () => {
+        log('WebSocket closed', 'log-err');
+        if (!state.connected) {
+          setStatus('', 'Disconnected', 'Signaling server closed — retrying in 3s');
+          setTimeout(connectSignaling, 3000);
+        }
+      };
+    }
+
+    function handleSignalingMessage(msg) {
+      switch (msg.type) {
+        case 'answer':
+          log('Received SDP answer', 'log-info');
+          state.pc.setRemoteDescription(new RTCSessionDescription(msg.sdp));
+          break;
+        case 'candidate':
+          if (msg.candidate) {
+            state.pc.addIceCandidate(new RTCIceCandidate(msg.candidate));
+          }
+          break;
+      }
+    }
+
+    // --- WebRTC PeerConnection ---
+
+    function createPeerConnection() {
+      const config = {
+        iceServers: [
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:stun1.l.google.com:19302' },
+          { urls: 'stun:stun2.l.google.com:19302' },
+        ],
+      };
+
+      const pc = new RTCPeerConnection(config);
+      state.pc = pc;
+
+      pc.onicecandidate = (evt) => {
+        if (evt.candidate && state.ws && state.ws.readyState === WebSocket.OPEN) {
+          state.ws.send(JSON.stringify({
+            type: 'candidate',
+            candidate: evt.candidate.toJSON(),
+          }));
+        }
+      };
+
+      pc.oniceconnectionstatechange = () => {
+        const iceState = pc.iceConnectionState;
+        log('ICE state: ' + iceState, 'log-info');
+
+        if (iceState === 'connected' || iceState === 'completed') {
+          // Try to detect the candidate pair type
+          try {
+            const stats = pc.getStats();
+            stats.then(s => {
+              s.forEach(report => {
+                if (report.type === 'candidate-pair' && report.selected) {
+                  const local = s.get(report.localCandidateId);
+                  if (local) {
+                    els.metricICE.textContent = local.candidateType || 'unknown';
+                  }
+                }
+              });
+            });
+          } catch (_) {}
+          measureRTT();
+        }
+
+        if (iceState === 'failed' || iceState === 'disconnected') {
+          state.connected = false;
+          setStatus('', 'Disconnected', 'ICE connection lost');
+          els.sendBtn.disabled = true;
+        }
+      };
+
+      // Client creates the data channel — server receives it via OnDataChannel.
+      const dc = pc.createDataChannel('http-proxy', { ordered: true });
+      state.dc = dc;
+
+      dc.onopen = () => {
+        log('Data channel opened', 'log-info');
+        state.connected = true;
+        setStatus('connected', 'Connected', 'WebRTC data channel active — P2P');
+        els.sendBtn.disabled = false;
+        // Close the signaling WebSocket; we no longer need it.
+        if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+          state.ws.close();
+        }
+      };
+
+      dc.onclose = () => {
+        log('Data channel closed', 'log-err');
+        state.connected = false;
+        setStatus('', 'Disconnected', 'Data channel closed');
+        els.sendBtn.disabled = true;
+      };
+
+      dc.onmessage = (evt) => {
+        handleDataChannelMessage(evt.data);
+      };
+    }
+
+    async function sendOffer() {
+      const offer = await state.pc.createOffer();
+      await state.pc.setLocalDescription(offer);
+      state.ws.send(JSON.stringify({
+        type: 'offer',
+        sdp: offer,
+      }));
+      log('Sent SDP offer', 'log-info');
+    }
+
+    // --- Data Channel Protocol ---
+
+    function handleDataChannelMessage(data) {
+      const resp = JSON.parse(data);
+      const pending = state.pendingRequests.get(resp.id);
+      if (pending) {
+        state.pendingRequests.delete(resp.id);
+        const elapsed = performance.now() - pending.startTime;
+        state.bytes += (data.length + pending.bodySize);
+        updateMetrics();
+
+        const cls = resp.status < 400 ? 'log-ok' : 'log-err';
+        log(`${pending.method} ${pending.path} → ${resp.status} (${elapsed.toFixed(0)}ms)`, cls);
+
+        if (pending.onResponse) {
+          pending.onResponse(resp, elapsed);
+        }
+      }
+    }
+
+    function sendRequest(method, path) {
+      if (!state.connected || !state.dc) {
+        log('Not connected', 'log-err');
+        return;
+      }
+
+      const id = generateId();
+      const req = { id, method, path, headers: {}, body: '' };
+      const data = JSON.stringify(req);
+
+      state.pendingRequests.set(id, {
+        method,
+        path,
+        startTime: performance.now(),
+        bodySize: data.length,
+      });
+      state.dc.send(data);
+      state.requests++;
+      updateMetrics();
+      log(`→ ${method} ${path}`, 'log-info');
+    }
+
+    // --- RTT Measurement ---
+
+    function measureRTT() {
+      if (!state.dc || state.dc.readyState !== 'open') return;
+      const id = 'rtt-' + Date.now();
+      state.pendingRequests.set(id, {
+        method: 'RTT',
+        path: '/health',
+        startTime: performance.now(),
+        bodySize: 0,
+        onResponse: (_resp, elapsed) => {
+          els.metricRTT.textContent = elapsed.toFixed(0);
+        },
+      });
+      const req = { id, method: 'GET', path: '/health', headers: {}, body: '' };
+      state.dc.send(JSON.stringify(req));
+    }
+
+    setInterval(() => {
+      if (state.connected) measureRTT();
+    }, 10000);
+
+    // --- UI Events ---
+
+    els.sendBtn.addEventListener('click', () => {
+      sendRequest(els.reqMethod.value, els.reqPath.value);
+    });
+
+    els.reqPath.addEventListener('keydown', (evt) => {
+      if (evt.key === 'Enter') {
+        sendRequest(els.reqMethod.value, els.reqPath.value);
+      }
+    });
+
+    // --- Start ---
+    connectSignaling();
+  </script>
+</body>
+</html>

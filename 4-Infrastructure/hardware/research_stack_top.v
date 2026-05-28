@@ -49,7 +49,7 @@ module research_stack_top (
     wire [5:0]  cpu_led;
     wire        cpu_uart_tx;
     wire [7:0]  cpu_rdata;
-    wire [15:0] cpu_mem_addr;
+    wire [11:0] cpu_mem_addr;
     wire [7:0]  cpu_mem_wdata;
     wire        cpu_mem_we;
 
@@ -135,7 +135,7 @@ module research_stack_top (
     blitter_memory_map mem_map (
         .clk(clk),
         .rst_n(rst_n),
-        .addr(cpu_mem_addr),
+        .addr({4'b0, cpu_mem_addr}),  // pad 12-bit to 16-bit
         .wdata(cpu_mem_wdata),
         .we(cpu_mem_we),
         .rdata(map_rdata),

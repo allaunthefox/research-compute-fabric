@@ -26,6 +26,13 @@ import random
 import hashlib
 from typing import Dict, List, Optional, Tuple
 
+# HiGHS QUBO solver — lazy import with fallback
+try:
+    from qubo_highs import solve_qubo_highs
+    _HIGHS_AVAILABLE = True
+except ImportError:
+    _HIGHS_AVAILABLE = False
+
 # Q16_16 constants
 Q16_ONE = 0x00010000
 Q16_MASK = 0xFFFFFFFF
@@ -224,7 +231,60 @@ def soliton_search(target_energy: float, candidates: List[dict],
     }
 
 
-# ── QUBO Optimization ───────────────────────────────────────────────────────
+# ── QUBO Matrix (dict format for HiGHS) ─────────────────────────────────────
+
+def bracket_cost(bracket: dict) -> float:
+    """Compute the individual (diagonal) cost for a single bracket.
+
+    Negative cost → prefer selecting this bracket (admissible is good).
+    """
+    base = 1.0 if bracket.get("admissible", False) else 2.0
+    # Gap magnitude bonus: larger gaps reduce cost
+    gap = bracket.get("gap", 0)
+    gap_f = gap / Q16_ONE if gap < 0x80000000 else (gap - 0x100000000) / Q16_ONE
+    return -base + abs(gap_f) * 0.1
+
+
+def crossing_penalty(b1: dict, b2: dict) -> float:
+    """Compute the off-diagonal interaction cost between two brackets.
+
+    Positive penalty → discourage selecting both when they conflict.
+    """
+    penalty = 0.0
+    if _brackets_overlap(b1, b2):
+        penalty += 2.0
+    # Gap similarity: reward diversity
+    g1 = _q16_to_float(b1.get("gap", 0))
+    g2 = _q16_to_float(b2.get("gap", 0))
+    penalty -= 0.1 * abs(g1 - g2)
+    return penalty
+
+
+def build_qubo_matrix(brackets: List[dict]) -> Dict[Tuple[int, int], float]:
+    """Convert brackets to a dict-format QUBO matrix Q[i,j].
+
+    Q[i,i] = bracket_cost(bracket)  — diagonal (linear bias).
+    Q[i,j] = crossing_penalty(b_i, b_j) — off-diagonal (interaction).
+
+    This format is directly consumable by ``solve_qubo_highs``.
+
+    Args:
+        brackets: list of BraidBracket dicts.
+
+    Returns:
+        Dict mapping (i, j) → cost coefficient.
+    """
+    n = len(brackets)
+    Q: Dict[Tuple[int, int], float] = {}
+    for i in range(n):
+        Q[(i, i)] = bracket_cost(brackets[i])
+        for j in range(i + 1, n):
+            Q[(i, j)] = crossing_penalty(brackets[i], brackets[j])
+            Q[(j, i)] = Q[(i, j)]
+    return Q
+
+
+# ── QUBO Optimization (list-format, SA) ────────────────────────────────────
 
 def _build_qubo_matrix(bracket_pairs: List[Tuple[dict, dict]]) -> List[List[float]]:
     """Build a QUBO matrix from bracket pair costs.
@@ -364,44 +424,92 @@ def find_optimal_crossing(brackets: List[dict],
                           max_iterations: int = 1000) -> dict:
     """Find the optimal crossing configuration from a set of brackets.
 
-    1. Generate all valid bracket pairs.
-    2. Run QUBO optimization to select the best subset.
-    3. Run soliton search on the candidates.
+    1. Build QUBO matrix from brackets (dict format).
+    2. Try HiGHS MIP solver first (exact, fast for small instances).
+    3. Fall back to simulated annealing if HiGHS unavailable or fails.
+    4. Run soliton search on the candidates.
 
     Args:
         brackets: list of BraidBracket dicts.
-        max_iterations: iteration budget for both soliton and QUBO.
+        max_iterations: iteration budget for soliton search and SA fallback.
 
     Returns:
         {
             "qubo_result": dict,
             "soliton_result": dict,
             "optimal_pairs": List[Tuple[dict, dict]],
+            "method": str,            # 'highs_mip' or 'simulated_annealing'
         }
     """
-    # Generate bracket pairs (only admissible pairs are candidates)
-    pairs = []
-    for i in range(len(brackets)):
-        for j in range(i + 1, len(brackets)):
-            if brackets[i].get("admissible", False) and brackets[j].get("admissible", False):
-                pairs.append((brackets[i], brackets[j]))
+    # Build dict-format QUBO matrix from raw brackets
+    Q = build_qubo_matrix(brackets)
 
-    if not pairs:
-        # Fall back to all pairs even if not admissible
+    qubo_result = None
+    method = "simulated_annealing"
+
+    # ── Try HiGHS first ────────────────────────────────────────────────
+    if _HIGHS_AVAILABLE:
+        try:
+            result = solve_qubo_highs(Q, time_limit=30.0)
+            selection = result.get("solution", [])
+            # Convert selection vector to bracket pairs
+            selected_brackets = [brackets[i] for i in range(len(selection))
+                                 if i < len(brackets) and selection[i]]
+            # Reconstruct pairs from selected brackets
+            selected_pairs = []
+            for i in range(len(selected_brackets)):
+                for j in range(i + 1, len(selected_brackets)):
+                    selected_pairs.append((selected_brackets[i],
+                                           selected_brackets[j]))
+            qubo_result = {
+                "selection": selection,
+                "selected_pairs": selected_pairs,
+                "energy": result.get("objective", 0.0),
+                "iterations": 1,
+                "highs_status": result.get("status", "unknown"),
+            }
+            method = "highs_mip"
+        except Exception as exc:
+            # Log and fall through to SA
+            print(f"[braid_search] HiGHS failed ({exc}), falling back to SA")
+
+    # ── Simulated annealing fallback ───────────────────────────────────
+    if qubo_result is None:
+        # Generate bracket pairs (only admissible pairs are candidates)
+        pairs = []
         for i in range(len(brackets)):
             for j in range(i + 1, len(brackets)):
-                pairs.append((brackets[i], brackets[j]))
+                if (brackets[i].get("admissible", False)
+                        and brackets[j].get("admissible", False)):
+                    pairs.append((brackets[i], brackets[j]))
 
-    # QUBO optimization
-    qubo_result = qubo_optimize(pairs, max_iterations=max_iterations)
+        if not pairs:
+            # Fall back to all pairs even if not admissible
+            for i in range(len(brackets)):
+                for j in range(i + 1, len(brackets)):
+                    pairs.append((brackets[i], brackets[j]))
+
+        qubo_result = qubo_optimize(pairs, max_iterations=max_iterations)
+        method = "simulated_annealing"
 
     # Build crossing candidates from QUBO-selected pairs
+    selected_pairs = qubo_result.get("selected_pairs", [])
     crossing_candidates = []
-    for a, b in pairs:
+    for a, b in selected_pairs:
         crossing_candidates.append({
             "brackets": [a, b],
             "admissible": a.get("admissible", False) and b.get("admissible", False),
         })
+
+    # Fallback: if HiGHS selected nothing, build from all pairs
+    if not crossing_candidates:
+        for i in range(len(brackets)):
+            for j in range(i + 1, len(brackets)):
+                crossing_candidates.append({
+                    "brackets": [brackets[i], brackets[j]],
+                    "admissible": (brackets[i].get("admissible", False)
+                                   and brackets[j].get("admissible", False)),
+                })
 
     soliton_result = soliton_search(
         target_energy=float("inf"),
@@ -412,7 +520,8 @@ def find_optimal_crossing(brackets: List[dict],
     return {
         "qubo_result": qubo_result,
         "soliton_result": soliton_result,
-        "optimal_pairs": qubo_result.get("selected_pairs", []),
+        "optimal_pairs": selected_pairs if selected_pairs else qubo_result.get("selected_pairs", []),
+        "method": method,
     }
 
 
@@ -426,7 +535,10 @@ def main():
     print("  assign_sidon_slots(num_slots)           -> List[int]")
     print("  soliton_search(target, candidates)       -> dict")
     print("  qubo_optimize(bracket_pairs)             -> dict")
+    print("  build_qubo_matrix(brackets)              -> Dict[(i,j), float]")
     print("  find_optimal_crossing(brackets)          -> dict")
+    print()
+    print(f"  HiGHS available: {_HIGHS_AVAILABLE}")
     print()
 
     # Demo: Sidon set
@@ -438,4 +550,37 @@ def main():
 
 
 if __name__ == "__main__":
+    import time
+
+    # Generate test brackets with varying properties
+    test_brackets = [
+        {"admissible": True, "gap": 0x00020000, "lower": 0x00000000, "upper": 0x00030000},
+        {"admissible": True, "gap": 0x00040000, "lower": 0x00010000, "upper": 0x00050000},
+        {"admissible": False, "gap": 0x00010000, "lower": 0x00020000, "upper": 0x00030000},
+        {"admissible": True, "gap": 0x00030000, "lower": 0x00000000, "upper": 0x00030000},
+        {"admissible": True, "gap": 0x00050000, "lower": 0x00040000, "upper": 0x00090000},
+        {"admissible": False, "gap": 0x00028000, "lower": 0x00010000, "upper": 0x00038000},
+    ]
+
     main()
+    print()
+
+    # ── Timing: HiGHS vs SA ────────────────────────────────────────────
+    # Time HiGHS (or full pipeline with HiGHS)
+    t0 = time.time()
+    r1 = find_optimal_crossing(test_brackets)
+    t_highs = time.time() - t0
+
+    # Time SA fallback directly
+    pairs = []
+    for i in range(len(test_brackets)):
+        for j in range(i + 1, len(test_brackets)):
+            pairs.append((test_brackets[i], test_brackets[j]))
+
+    t0 = time.time()
+    r2 = qubo_optimize(pairs)
+    t_sa = time.time() - t0
+
+    print(f"  find_optimal_crossing method: {r1.get('method', 'unknown')}")
+    print(f"  find_optimal_crossing: {t_highs*1000:.1f}ms  |  SA direct: {t_sa*1000:.1f}ms")
+    print(f"  HiGHS available: {_HIGHS_AVAILABLE}")

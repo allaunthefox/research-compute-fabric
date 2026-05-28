@@ -17,6 +17,8 @@ if [[ -n "${SPARKLE_NEXTPNR:-}" ]]; then
   NEXTPNR="${SPARKLE_NEXTPNR}"
 elif [[ -x "${LOCAL_NEXTPNR}" ]]; then
   NEXTPNR="${LOCAL_NEXTPNR}"
+elif command -v nextpnr-himbaechel &>/dev/null; then
+  NEXTPNR=$(command -v nextpnr-himbaechel)
 else
   NEXTPNR="${ROOT}/tools/bin/nextpnr-himbaechel"
 fi

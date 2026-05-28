@@ -63,25 +63,26 @@ def forwardStep (s : HyperState) (Δu : Q16_16) : HyperState :=
 /-- If s is approximately on the hyperbola, forwardStep preserves this approximately:
     |u'² - v'² - c²| ≤ ε when |u² - v² - c²| ≤ ε, for bounded Δu.
 
-    The Q16_16.sqrt error is bounded by `Q16_16.epsilon` for inputs in the valid range.
-    TODO(lean-port): prove `h_sqrt_error` from a Q16_16.sqrt error-bound lemma, then
-    the bound propagation chain is:
-      h_on_s → (u' = u + Δu, v = sqrt(u² - c²))
-      → |u'² - v'² - c²| = |(u² - v² - c²) + 2*u*Δu + Δu² + δ|
-      ≤ |u² - v² - c²| + 2*|u|*|Δu| + |Δu|² + |δ|
-      ≤ ε + 2*|u|*|Δu| + |Δu|² + ε   (when sqrt error |δ| ≤ ε)
-      ≤ 3*ε + 2*|u|*|Δu| + |Δu|²
-    For small Δu this is bounded by 3*ε. -/
+    The key identity is: u'² - v'² - c² = (u'² - c²) - (sqrt(u'² - c²))²,
+    so the error is exactly the sqrt squaring rounding error.
+
+    TODO(lean-port): prove this from a Q16_16.sqrt squaring error-bound lemma
+    |sqrt(a)² - a| ≤ ε for a ≥ 0. The proof then unfolds forwardStep and applies
+    the bound directly. The Q16_16 clamping in `sub` and `mul` prevents a simple
+    algebraic chain; the proof must reason at the `toInt` level. -/
 theorem ko_preserves_hyperbola_approx (s : HyperState) (Δu : Q16_16)
     (h_on_s : onHyperbolaApprox s Q16_16.epsilon)
     (h_Δu_small : Δu.toInt * Δu.toInt ≤ Q16_16.epsilon.toInt)
-    (h_sqrt_error : ∀ x : Q16_16, x.toInt ≥ 0 →
-      Q16_16.abs (Q16_16.sqrt x - Q16_16.sqrt x) ≤ Q16_16.epsilon) :
+    (h_sqrt_sq_error : ∀ x : Q16_16, x.toInt ≥ 0 →
+      Q16_16.abs (Q16_16.sqrt x * Q16_16.sqrt x - x) ≤ Q16_16.epsilon) :
     onHyperbolaApprox (forwardStep s Δu) Q16_16.epsilon := by
-  -- TODO(lean-port): replace h_sqrt_error with a concrete sqrt_error_bound lemma
-  -- proving |sqrt(a) - sqrt_exact(a)| ≤ epsilon for all a ≥ 0 in Q16_16 range.
-  -- Then unfold forwardStep and chain the inequalities above.
-  admit
+  -- Proof: forwardStep computes v' = sqrt(u'² - c²).
+  -- Then u'² - v'² - c² = (u'² - c²) - sqrt(u'²-c²)².
+  -- By h_sqrt_sq_error with x = u'² - c² (assuming ≥ 0), |...| ≤ ε.
+  unfold onHyperbolaApprox forwardStep at *
+  have h_sq := h_sqrt_sq_error
+  -- The key step: apply the sqrt squaring bound
+  sorry  -- TODO(lean-port): requires dedicated sqrt squaring bound lemma for Q16_16
 
 /-- The Ko rule: u > 0 and Δu > 0 ⇒ u' = u + Δu > 0.
     Computed with Q16_16 saturating add; both terms positive yields > 0. -/
@@ -201,8 +202,10 @@ def asyncLocalFlow {n : Nat} (mesh : MeshNetwork n) (nodeIdx : Fin n) (Δu : Q16
   let s' := forwardStep s Δu
   { nodes := mesh.nodes.set nodeIdx s' }
 
-/-- TODO(lean-port): depends on ko_preserves_hyperbola which requires a
-    formal sqrt error bound before this can be closed. -/
+/-- Async flow preserves the hyperbola invariant at all nodes.
+    For the updated node, we use the `h_forward` hypothesis directly
+    (no dependency on ko_preserves_hyperbola_approx).
+    For unchanged nodes, the original invariant persists via get_set_of_ne. -/
 theorem asyncFlowPreservesInvariance {n : Nat} (mesh : MeshNetwork n) (nodeIdx : Fin n) (Δu : Q16_16)
     (h_inv : ∀ i : Fin n, onHyperbolaApprox (mesh.nodes.get i) Q16_16.epsilon)
     (h_forward : onHyperbolaApprox (forwardStep (mesh.nodes.get nodeIdx) Δu) Q16_16.epsilon) :
@@ -210,13 +213,11 @@ theorem asyncFlowPreservesInvariance {n : Nat} (mesh : MeshNetwork n) (nodeIdx :
     ∀ i : Fin n, onHyperbolaApprox (mesh'.nodes.get i) Q16_16.epsilon := by
   intro mesh' i
   by_cases h_eq : i = nodeIdx
-  · -- Updated node: approximate preservation via ko_preserves_hyperbola_approx
+  · -- Updated node: the hypothesis h_forward gives exactly what we need
     rw [h_eq]
     have h_same : mesh'.nodes.get nodeIdx = forwardStep (mesh.nodes.get nodeIdx) Δu := by
       exact Vector.getElem_set_self nodeIdx.isLt
     rw [h_same]
-    apply ko_preserves_hyperbola_approx
-    exact h_inv nodeIdx
     exact h_forward
   · -- Unchanged node: use original invariant via get_set_of_ne
     have h_ne : i ≠ nodeIdx := by intro h; contradiction

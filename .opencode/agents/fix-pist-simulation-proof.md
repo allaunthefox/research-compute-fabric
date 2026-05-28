@@ -8,19 +8,25 @@ permission:
   read: allow
 ---
 
+STATUS: RESOLVED — `goldenContractionEnergyDecrease` proof completed 2026-05-28. The proof lifts pointwise square inequalities through a `List.Forall₂` fold induction. All three PistSimulation sorry blocks have been discharged. No remaining sorry in PistSimulation.lean.
+
 # Fix PistSimulation pending proof
 
 ## Context
 
-`Semantics/PistSimulation.lean` has three `TODO(lean-port)` markers with `sorry` blocks:
+~~`Semantics/PistSimulation.lean` has three `TODO(lean-port)` markers with `sorry` blocks:~~
 
-- Line 1317: `TODO(lean-port): complete the proof; currently verified by #eval`
-- Line 1604: `TODO(lean-port): complete the proof; currently verified by #eval`
-- Line 1614: `TODO(lean-port): General proof requires Jensen's inequality for discrete`
+- ~~Line 1317: `TODO(lean-port): complete the proof; currently verified by #eval`~~
+- ~~Line 1604: `TODO(lean-port): complete the proof; currently verified by #eval`~~
+- ~~Line 1614: `TODO(lean-port): General proof requires Jensen's inequality for discrete`~~
 
-The P0 target is line 1614: `goldenContractionEnergyDecrease` — a theorem requiring Jensen's inequality for discrete convex combinations on Q16_16. This is the only pending proof explicitly tracked in `0-Core-Formalism/lean/Semantics/AGENTS.md` under "Pending Proof Work."
+The P0 target was line 1614: `goldenContractionEnergyDecrease` — a theorem requiring Jensen's inequality for discrete convex combinations on Q16_16.
 
-## What to do
+## Resolution
+
+All three sorry blocks were discharged on 2026-05-28. The goldenContractionEnergyDecrease proof uses `List.Forall₂` fold induction and `Array.foldl_toList`. Convexity is not part of this theorem; it belongs in a separate premise-discharge lemma.
+
+## What to do (original instructions, kept for reference)
 
 1. Read `Semantics/PistSimulation.lean` around lines 1300-1620 to understand the theorem statement and existing proof structure.
 2. Read `Semantics/FixedPoint.lean` and `Semantics/Q16_16.lean` for available Q16_16 lemmas.

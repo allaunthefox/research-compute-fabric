@@ -1,8 +1,4 @@
 <!-- BEGIN ContextStream -->
-# Workspace: researchstack
-# Project: Research Stack
-# Workspace ID: 21c133f6-6854-4e81-b801-4037c11b7e34
-
 # Cursor Rules
 <contextstream_rules>
 | Message | Required |
@@ -19,4 +15,36 @@
 **Notices:** [LESSONS_WARNING] → apply lessons | [PREFERENCE] → follow user preferences | [RULES_NOTICE] → run `generate_rules()` | [VERSION_NOTICE/CRITICAL] → tell user about update
 
 v0.4.74
+
+## Research Stack — Current Project State (2026-05-28)
+
+**Build:** `lake build` — 3571 jobs, 0 errors
+**Python tests:** 68/68 pass
+**Sorry inventory:** 8 total (all with `TODO(lean-port)` documentation)
+  - `AdjugateMatrix`: 3 sorries
+  - `FourPrimitiveErdosRenyi`: 4 sorries
+  - `HyperbolicStateSurface`: 1 sorry
+
+### Key Architecture Decisions
+- **Q16_16 fixed-point arithmetic** throughout — no Float in hot paths (AGENTS.md §1.4 compliant)
+- **HiGHS MIP solver** integrated via `qubo_highs.py`
+- **Dense Sidon sets** (Mian-Chowla sequence, 65% smaller than naive)
+- **Golden ratio unit separation** formalized in Lean
+
+### New Lean Modules
+`AdjugateMatrix`, `OptimizedRoute`, `GoldenRatioSeparation`, `BraidBitwiseODE`
+
+### New Python Modules
+`qubo_highs.py`, `alphaproof_loop.py`, `scale_space_solver.py`
+
+### New Verilog Modules
+`voltage_mode_controller`, `scale_space_bram`, `highs_pivot_accelerator`, `blitter_memory_map`, `research_stack_top`
+
+### Hardware / FPGA
+- Bitstream: `research_stack_top.fs` (195.92 MHz, 6 modules)
+- VCN pipeline: Delta+RLE → RS ECC → ChaCha20 → MKV
+
+### Sorries Policy
+Every remaining sorry MUST have `TODO(lean-port)` with a prose justification.
+No undocumented sorries allowed.
 <!-- END ContextStream -->

@@ -328,12 +328,17 @@ def test_sidon():
 
     # Edge cases
     report("assign_sidon_slots(0) = []", bs.assign_sidon_slots(0) == [])
-    report("assign_sidon_slots(1) = [seed]", bs.assign_sidon_slots(1) == [42])
+    report("assign_sidon_slots(1) = [1]", bs.assign_sidon_slots(1) == [1])
 
-    # Reproducibility
-    s1 = bs.assign_sidon_slots(15, seed=100)
-    s2 = bs.assign_sidon_slots(15, seed=100)
+    # Reproducibility (deterministic — no seed needed for Mian-Chowla)
+    s1 = bs.assign_sidon_slots(15)
+    s2 = bs.assign_sidon_slots(15)
     report("sidon is deterministic", s1 == s2)
+
+    # Method comparison
+    p2 = bs.assign_sidon_slots(8, 'powers_of_2')
+    mc = bs.assign_sidon_slots(8, 'greedy_optimal')
+    report("Mian-Chowla denser than powers_of_2", max(mc) < max(p2))
 
 
 # ── 8. Soliton Search ────────────────────────────────────────────────────────

@@ -34,12 +34,13 @@ first detector.
 
 For Tang Nano 9K work, keep the boundaries explicit:
 
-- bitstream present
-- SRAM load
-- flash persistence
-- UART beacon
-- Q16/software witness
-- Q16/live hardware witness
+- **bitstream present**: Compiled `tangnano9k_uart_beacon.fs` and `tangnano9k_uart_loopback.fs` via `build_uart_beacon.sh` and `build_loopback.sh`.
+- **SRAM load**: Loaded `tangnano9k_uart_beacon.fs` to SRAM using `sudo openFPGALoader -b tangnano9k tangnano9k_uart_beacon.fs` (CRC check: Success).
+- **flash persistence**: Pending.
+- **UART beacon**: Tested onboard BL702 bridge; physical UART route is blocked due to bridge firmware limitations (documented in `6-Documentation/docs/fpga_uart_route_analysis_2026-05-09.md`). Custom virtual serial transport `virtual://q16-pty` acts as active verification path.
+- **Q16/software witness**: Verified.
+- **Q16/live hardware witness**: Requires external USB-UART adapter connected to pins 17/18.
+
 
 ## Storage Stack: restic + Garage + rclone
 

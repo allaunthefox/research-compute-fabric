@@ -106,7 +106,7 @@ Build the full workspace with:
 lake build
 ```
 
-Compiler surface baseline: **3313 jobs, 0 errors** (`lake build Compiler`, commit `1931cb30`, reverified 2026-05-27).
+Compiler surface baseline: **3313 jobs, 0 errors** (`lake build Compiler`, commit `46237867`, reverified 2026-05-28).
 Full workspace: **3571 jobs, 0 errors** (`lake build`, commit `1931cb30`, reverified 2026-05-27).
 PistSimulation: **3309 jobs, 0 errors** (`lake build Semantics.PistSimulation`, commit `778b78d3`, reverified 2026-05-27).
 EmergencyBoot: **3302 jobs, 0 errors** (`lake build Semantics.Hardware.EmergencyBootTypes Semantics.Hardware.EmergencyBootState Semantics.Hardware.EmergencyBootShell`, reverified 2026-05-27).

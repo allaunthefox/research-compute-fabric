@@ -22,10 +22,12 @@ module tangnano9k_uart_loopback (
     // Record of last received byte for LED display
     reg [7:0]  last_rx;
     
+    wire rst_n_internal = 1'b1;
+
     // UART Receiver Instance
     uart_rx rx_inst (
         .clk(clk),
-        .rst_n(rst_n),
+        .rst_n(rst_n_internal),
         .rx_pin(uart_rx_pin),
         .rx_data(rx_data),
         .rx_done(rx_done)
@@ -34,7 +36,7 @@ module tangnano9k_uart_loopback (
     // UART Transmitter Instance
     uart_tx tx_inst (
         .clk(clk),
-        .rst_n(rst_n),
+        .rst_n(rst_n_internal),
         .tx_start(tx_start),
         .tx_data(tx_data),
         .uart_tx(uart_tx_pin),
@@ -42,8 +44,8 @@ module tangnano9k_uart_loopback (
     );
     
     // Control Logic: Echo RX+1 to TX
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
+    always @(posedge clk or negedge rst_n_internal) begin
+        if (!rst_n_internal) begin
             tx_start <= 1'b0;
             tx_data  <= 8'h00;
             last_rx  <= 8'h00;

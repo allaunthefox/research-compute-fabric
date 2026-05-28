@@ -22,13 +22,12 @@ module tangnano9k_uart_beacon (
     reg [23:0] gap_counter;
     reg [2:0] byte_index;
     reg [5:0] sent_count;
-    reg [7:0] reset_counter = 8'd0;
 
-    wire internal_rst_n = &reset_counter;
+    wire rst_n_internal = 1'b1; // Bypass physical reset button
 
     uart_tx tx_inst (
         .clk(clk),
-        .rst_n(internal_rst_n),
+        .rst_n(rst_n_internal),
         .tx_start(tx_start),
         .tx_data(tx_data),
         .uart_tx(uart_tx_pin),
@@ -49,9 +48,8 @@ module tangnano9k_uart_beacon (
         end
     endfunction
 
-    always @(posedge clk) begin
-        if (!internal_rst_n) begin
-            reset_counter <= reset_counter + 8'd1;
+    always @(posedge clk or negedge rst_n_internal) begin
+        if (!rst_n_internal) begin
             tx_start <= 1'b0;
             tx_data <= 8'h00;
             gap_counter <= 24'd0;
@@ -77,7 +75,6 @@ module tangnano9k_uart_beacon (
 
     assign led = ~sent_count;
 
-    // Keep RX referenced so the shared UART CST can be reused unchanged.
     wire unused_rx = uart_rx_pin;
     wire unused_rst = rst_n;
 

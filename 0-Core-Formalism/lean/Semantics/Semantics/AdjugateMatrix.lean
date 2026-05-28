@@ -284,8 +284,23 @@ def cayleyTransform (skew : Matrix8) : Option Matrix8 :=
         all entries are small enough to avoid truncation).
     (c) A version over ℚ using Mathlib's matrix library, where the
         Laplace cofactor identity has a clean proof. -/
-theorem det_self_inverse {m : Matrix8} {inv : Matrix8}
+/-- Entry-wise approximate equality of two 8×8 matrices within a given tolerance. -/
+def matrixApproxEq (a b : Matrix8) (tolerance : Q16_16) : Prop :=
+  ∀ i j : Fin 8, (abs (sub (getEntry a i.val j.val) (getEntry b i.val j.val))).toInt ≤ tolerance.toInt
+
+/-- If matrixInverse returns `some inv`, then `m × inv` is approximately `I`
+    within a bounded truncation error `ε`. -/
+theorem det_self_inverse_approx {m : Matrix8} {inv : Matrix8} (ε : Q16_16)
     (h : matrixInverse m = some inv) :
+    matrixApproxEq (matrixMultiply m inv) identity8 ε := by
+  sorry
+
+/-- If all division and multiplication operations are exact (no truncation),
+    then `m × inv = I` holds exactly. -/
+theorem det_self_inverse_exact {m : Matrix8} {inv : Matrix8}
+    (h : matrixInverse m = some inv)
+    (h_div_exact : ∀ i j : Fin 8, ((getEntry (adjugate m) j.val i.val).toInt * 65536) % (det8 m).toInt = 0)
+    (h_mul_exact : ∀ i j k : Fin 8, ((getEntry m i.val k.val).toInt * (getEntry inv k.val j.val).toInt) % 65536 = 0) :
     matrixMultiply m inv = identity8 := by
   sorry
 

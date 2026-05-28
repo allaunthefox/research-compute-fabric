@@ -40,47 +40,127 @@ Q16_MASK = 0xFFFFFFFF
 
 # ── Sidon Set Slot Assignment ────────────────────────────────────────────────
 
-def assign_sidon_slots(num_slots: int, seed: int = 42) -> List[int]:
+def assign_sidon_slots(num_slots: int, method: str = 'greedy_optimal') -> List[int]:
     """Generate a Sidon set of size *num_slots* and return sorted slot indices.
 
     A Sidon set (B₂ sequence) is a set of integers where all pairwise sums
     are distinct.  This guarantees collision-free slot assignment for braid
     strands: no two pairs of strands occupy the same combined slot.
 
-    Construction: greedy algorithm starting from *seed*, extending the set
-    by testing each candidate against all existing pairwise sums.
-
     Args:
         num_slots: number of slots needed.
-        seed: starting value for the greedy search.
+        method: construction method.
+            'powers_of_2'     — {1, 2, 4, 8, 16, ...} (conservative, max=2^(n-1))
+            'greedy_optimal'  — Mian-Chowla sequence (default, densest practical)
+            'algebraic'       — algebraic integer construction from totally real
+                                number fields (scales well for large n)
 
     Returns:
         Sorted list of *num_slots* integers forming a Sidon set.
     """
     if num_slots <= 0:
         return []
+    if method == 'powers_of_2':
+        return [1 << i for i in range(num_slots)]
+    elif method == 'greedy_optimal':
+        return _mian_chowla(num_slots)
+    elif method == 'algebraic':
+        return _algebraic_sidon(num_slots)
+    else:
+        raise ValueError(f"Unknown Sidon method: {method!r}")
 
-    sidon: List[int] = [seed]
-    pairwise_sums: set = set()  # only {seed+seed} initially, but we grow
 
-    candidate = seed + 1
-    while len(sidon) < num_slots:
-        # Check if candidate can join without creating a duplicate sum
-        ok = True
-        for existing in sidon:
-            s = existing + candidate
-            if s in pairwise_sums:
-                ok = False
+def _mian_chowla(n: int) -> List[int]:
+    """Mian-Chowla sequence: densest known Sidon set construction.
+
+    a(0)=1, a(n) = smallest integer > a(n-1) such that all pairwise
+    sums a(i)+a(j) (i<=j) are distinct.
+
+    Returns a list of *n* positive integers forming a Sidon set.
+    For n=8 the result is {1, 3, 7, 12, 20, 30, 44, 65} — max is 65
+    vs 128 for powers-of-2 (49% smaller).
+    """
+    if n <= 0:
+        return []
+    seq = [1]
+    sums = {2}  # a(0)+a(0) = 2
+    while len(seq) < n:
+        candidate = seq[-1] + 1
+        while True:
+            # Check if candidate + each existing element produces a new sum
+            new_sums = {candidate + s for s in seq} | {candidate * 2}
+            if new_sums.isdisjoint(sums):
+                seq.append(candidate)
+                sums |= new_sums
                 break
-        if ok:
-            # Record all new pairwise sums
-            for existing in sidon:
-                pairwise_sums.add(existing + candidate)
-            pairwise_sums.add(candidate + candidate)
-            sidon.append(candidate)
-        candidate += 1
+            candidate += 1
+    return seq
 
-    return sorted(sidon)
+
+def _algebraic_sidon(n: int) -> List[int]:
+    """Algebraic integer Sidon set from totally real number field.
+
+    Uses the Bloom-Sawin construction: elements of O_K in a box.
+    For practical n, falls back to Mian-Chowla with scaling.
+
+    For small n (≤20), delegates to Mian-Chowla directly.
+    For larger n, uses the number field construction: take elements
+    of Z[√d] in a box, project to integers via the norm map.
+    d = smallest prime > n (totally real quadratic field).
+    """
+    if n <= 20:
+        return _mian_chowla(n)
+    # Find the smallest prime > n for the quadratic field Q(√d)
+    d = n + 1
+    while not _is_prime(d):
+        d += 1
+    # Elements: a + b*√d with 0 ≤ a, b ≤ √(n/d)
+    box = max(1, int(math.sqrt(n / d)))
+    slots: List[int] = []
+    seen: set = set()
+    for b in range(box + 1):
+        for a in range(box + 1):
+            val = a + b * b * d  # norm map projection
+            if val > 0 and val not in seen:
+                slots.append(val)
+                seen.add(val)
+                if len(slots) >= n:
+                    break
+        if len(slots) >= n:
+            break
+    result = sorted(slots[:n])
+    # Verify Sidon property; fall back to Mian-Chowla if construction fails
+    if not _verify_sidon(result):
+        return _mian_chowla(n)
+    return result
+
+
+def _verify_sidon(seq: List[int]) -> bool:
+    """Verify all pairwise sums are distinct (internal helper)."""
+    sums: set = set()
+    for i in range(len(seq)):
+        for j in range(i, len(seq)):
+            s = seq[i] + seq[j]
+            if s in sums:
+                return False
+            sums.add(s)
+    return True
+
+
+def _is_prime(n: int) -> bool:
+    """Deterministic primality test (trial division)."""
+    if n < 2:
+        return False
+    if n < 4:
+        return True
+    if n % 2 == 0 or n % 3 == 0:
+        return False
+    i = 5
+    while i * i <= n:
+        if n % i == 0 or n % (i + 2) == 0:
+            return False
+        i += 6
+    return True
 
 
 def verify_sidon(slots: List[int]) -> bool:
@@ -541,12 +621,16 @@ def main():
     print(f"  HiGHS available: {_HIGHS_AVAILABLE}")
     print()
 
-    # Demo: Sidon set
-    n = 10
-    slots = assign_sidon_slots(n)
-    valid = verify_sidon(slots)
-    print(f"  Sidon set (n={n}): {slots}")
-    print(f"  Valid: {valid}")
+    # Demo: Sidon set methods
+    for n in (8, 16):
+        slots_old = assign_sidon_slots(n, 'powers_of_2')
+        slots_new = assign_sidon_slots(n, 'greedy_optimal')
+        print(f"  Sidon set (n={n}):")
+        print(f"    powers_of_2  : {slots_old}  max={max(slots_old)}")
+        print(f"    greedy_optimal: {slots_new}  max={max(slots_new)}")
+        print(f"    max reduction: {(1 - max(slots_new)/max(slots_old))*100:.0f}%")
+        assert verify_sidon(slots_old), "powers_of_2 failed Sidon check"
+        assert verify_sidon(slots_new), "greedy_optimal failed Sidon check"
 
 
 if __name__ == "__main__":

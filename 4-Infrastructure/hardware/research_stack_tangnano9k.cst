@@ -1,0 +1,14 @@
+# Research Stack Tang Nano 9K Constraint File
+# Target: GW1NR-LV9QN88PC6/I5
+
+IO_PORT "clk"           LOC=52  | IOSTANDARD=LVCMOS33;
+IO_PORT "rst_n"         LOC=3   | IOSTANDARD=LVCMOS33;
+IO_PORT "user_btn"      LOC=4   | IOSTANDARD=LVCMOS33;
+IO_PORT "led[0]"        LOC=10  | IOSTANDARD=LVCMOS18;
+IO_PORT "led[1]"        LOC=11  | IOSTANDARD=LVCMOS18;
+IO_PORT "led[2]"        LOC=13  | IOSTANDARD=LVCMOS18;
+IO_PORT "led[3]"        LOC=14  | IOSTANDARD=LVCMOS18;
+IO_PORT "led[4]"        LOC=15  | IOSTANDARD=LVCMOS18;
+IO_PORT "led[5]"        LOC=16  | IOSTANDARD=LVCMOS18;
+IO_PORT "uart_tx"       LOC=17  | IOSTANDARD=LVCMOS33;
+IO_PORT "uart_rx"       LOC=18  | IOSTANDARD=LVCMOS33;

@@ -1,14 +1,18 @@
 """
 Multi-scale optimization using scale space theory.
 
-Implements coarse-to-fine optimization via Gaussian smoothing at multiple
-scales, with Q16.16 fixed-point arithmetic for FPGA compatibility.
+Implements coarse-to-fine optimization via cluster-based route optimization
+at multiple scales, with Q16.16 fixed-point arithmetic for FPGA compatibility.
 
 Scale mapping:
-    σ₃ (1.0):  coarse LP relaxation → approximate solution
-    σ₂ (0.75): tighter LP → better solution
-    σ₁ (0.5):  exact MIP → optimal solution
-    σ₀ (0.25): formal verification target
+    σ₃ (1.0):  coarse — merge nearby nodes, solve small problem
+    σ₂ (0.75): medium — tighter clustering
+    σ₁ (0.5):  fine — minimal clustering, warm-started
+    σ₀ (0.25): formal verification target — full problem, 2-opt polish
+
+The Gaussian kernel is used for route-space smoothing, NOT cost matrix
+smoothing. At each scale σ, nodes whose pairwise cost is below σ·max_cost
+are clustered together. The reduced problem is solved, then expanded back.
 """
 
 import math
@@ -140,17 +144,19 @@ def gaussian_kernel_2d_q16(sigma: float, size: int = 16) -> list[list[int]]:
 # Voltage ↔ scale mapping
 # ---------------------------------------------------------------------------
 
-# Voltage range: 0.6V → σ=1.0 (coarse), 1.2V → σ=0.0 (fine/identity)
+# Voltage range: 0.6V → σ=1.0 (coarse), 1.2V → σ=0.25 (fine)
 _VOLTAGE_MIN = 0.6
 _VOLTAGE_MAX = 1.2
 _SIGMA_AT_VMIN = 1.0
-_SIGMA_AT_VMAX = 0.01  # Not exactly 0 to avoid degenerate kernel
+_SIGMA_AT_VMAX = 0.25  # Matches finest scale in default sigmas
 
 
 def voltage_to_scale(voltage_mv: float) -> float:
     """Map millivolt voltage to scale parameter σ.
 
-    Range: 0.6V (600mV, σ=1.0) to 1.2V (1200mV, σ≈0.01).
+    Range: 0.6V (600mV, σ=1.0) to 1.2V (1200mV, σ=0.25).
+
+    Linear mapping: σ = 1.0 - (V - 0.6) / 0.6 * 0.75
 
     Args:
         voltage_mv: Voltage in millivolts.
@@ -161,7 +167,7 @@ def voltage_to_scale(voltage_mv: float) -> float:
     voltage_v = voltage_mv / 1000.0
     # Clamp to range
     voltage_v = max(_VOLTAGE_MIN, min(_VOLTAGE_MAX, voltage_v))
-    # Linear interpolation: σ = 1.0 - (V - 0.6) / 0.6 * 0.99
+    # Linear interpolation: σ = 1.0 - (V - 0.6) / 0.6 * 0.75
     t = (voltage_v - _VOLTAGE_MIN) / (_VOLTAGE_MAX - _VOLTAGE_MIN)
     sigma = _SIGMA_AT_VMIN + t * (_SIGMA_AT_VMAX - _SIGMA_AT_VMIN)
     return max(0.01, sigma)
@@ -184,58 +190,221 @@ def scale_to_voltage(sigma: float) -> float:
 
 
 # ---------------------------------------------------------------------------
-# Multi-scale solver
+# Cluster-based multi-scale solver
 # ---------------------------------------------------------------------------
 
-def _apply_smoothing_q16(matrix: list[list[float]],
-                         sigma: float) -> list[list[float]]:
-    """Apply Gaussian smoothing to a cost matrix using Q16.16 arithmetic.
+def _single_linkage_clusters(cost_matrix: list[list[float]],
+                             threshold: float) -> list[list[int]]:
+    """Cluster nodes using single-linkage clustering.
 
-    Convolves each row and column with the Gaussian kernel.
+    Merge nodes whose minimum pairwise cost is below the threshold.
+
+    Args:
+        cost_matrix: n×n cost matrix.
+        threshold: Cost threshold for merging.
+
+    Returns:
+        List of clusters, where each cluster is a list of node indices.
     """
-    n = len(matrix)
+    n = len(cost_matrix)
     if n == 0:
-        return matrix
+        return []
 
-    kernel = gaussian_kernel_q16(sigma, size=min(n, 33))
-    k_half = len(kernel) // 2
+    # Union-find for single-linkage
+    parent = list(range(n))
 
-    # Convert matrix to Q16.16
-    q16_matrix = [[q16_from_float(matrix[i][j]) for j in range(n)]
-                  for i in range(n)]
+    def find(x: int) -> int:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
 
-    # Smooth rows
-    smoothed = [[0] * n for _ in range(n)]
+    def union(x: int, y: int) -> None:
+        rx, ry = find(x), find(y)
+        if rx != ry:
+            parent[rx] = ry
+
+    # Merge pairs whose cost is below threshold
     for i in range(n):
-        for j in range(n):
-            total = 0
-            for ki in range(len(kernel)):
-                jj = j + ki - k_half
-                if 0 <= jj < n:
-                    total += q16_multiply(q16_matrix[i][jj], kernel[ki])
-                else:
-                    # Mirror boundary
-                    jj = max(0, min(n - 1, jj))
-                    total += q16_multiply(q16_matrix[i][jj], kernel[ki])
-            smoothed[i][j] = q16_clamp(total)
+        for j in range(i + 1, n):
+            if cost_matrix[i][j] < threshold:
+                union(i, j)
 
-    # Smooth columns
-    result = [[0] * n for _ in range(n)]
+    # Group nodes by cluster root
+    clusters: dict[int, list[int]] = {}
     for i in range(n):
-        for j in range(n):
-            total = 0
-            for ki in range(len(kernel)):
-                ii = i + ki - k_half
-                if 0 <= ii < n:
-                    total += q16_multiply(smoothed[ii][j], kernel[ki])
-                else:
-                    ii = max(0, min(n - 1, ii))
-                    total += q16_multiply(smoothed[ii][j], kernel[ki])
-            result[i][j] = q16_clamp(total)
+        root = find(i)
+        if root not in clusters:
+            clusters[root] = []
+        clusters[root].append(i)
 
-    # Convert back to float
-    return [[q16_to_float(result[i][j]) for j in range(n)]
-            for i in range(n)]
+    return list(clusters.values())
+
+
+def _build_reduced_cost_matrix(cost_matrix: list[list[float]],
+                               clusters: list[list[int]]) -> list[list[float]]:
+    """Build a reduced cost matrix for cluster representatives.
+
+    The cost between two clusters is the minimum cost between any pair of
+    nodes across the two clusters.
+
+    Args:
+        cost_matrix: Original n×n cost matrix.
+        clusters: List of clusters (each a list of node indices).
+
+    Returns:
+        Reduced k×k cost matrix where k = number of clusters.
+    """
+    k = len(clusters)
+    reduced = [[0.0] * k for _ in range(k)]
+
+    for ci in range(k):
+        for cj in range(ci + 1, k):
+            # Minimum cost across cluster boundaries
+            min_cost = float('inf')
+            for ni in clusters[ci]:
+                for nj in clusters[cj]:
+                    if cost_matrix[ni][nj] < min_cost:
+                        min_cost = cost_matrix[ni][nj]
+            reduced[ci][cj] = min_cost
+            reduced[cj][ci] = min_cost
+
+    return reduced
+
+
+def _expand_tour(cluster_tour: list[int],
+                 clusters: list[list[int]],
+                 cost_matrix: list[list[float]]) -> list[int]:
+    """Expand a cluster-level tour back to individual nodes.
+
+    For each cluster in the tour, we need to enter and exit through specific
+    nodes. We pick the entry/exit nodes that minimize the inter-cluster edges.
+
+    Args:
+        cluster_tour: Tour over cluster indices.
+        clusters: List of clusters (each a list of node indices).
+        cost_matrix: Original cost matrix.
+
+    Returns:
+        Tour over original node indices.
+    """
+    if len(cluster_tour) <= 1:
+        # Single cluster — order nodes greedily within cluster
+        nodes = clusters[cluster_tour[0]]
+        if len(nodes) <= 1:
+            return nodes
+        return _greedy_tour_subgraph(nodes, cost_matrix)[0]
+
+    # For each consecutive pair of clusters, find the best entry/exit nodes
+    k = len(cluster_tour)
+    entry_node = [0] * k  # Which node in cluster i we enter through
+    exit_node = [0] * k   # Which node in cluster i we exit through
+
+    for i in range(k):
+        ci = cluster_tour[i]
+        cj = cluster_tour[(i + 1) % k]
+
+        # Find the pair of nodes (one in ci, one in cj) with minimum cost
+        best_cost = float('inf')
+        best_exit = clusters[ci][0]
+        best_entry = clusters[cj][0]
+
+        for ni in clusters[ci]:
+            for nj in clusters[cj]:
+                c = cost_matrix[ni][nj]
+                if c < best_cost:
+                    best_cost = c
+                    best_exit = ni
+                    best_entry = nj
+
+        exit_node[i] = best_exit
+        entry_node[(i + 1) % k] = best_entry
+
+    # Build the full tour by visiting each cluster's nodes between entry/exit
+    full_tour = []
+    for i in range(k):
+        ci = cluster_tour[i]
+        cluster_nodes = clusters[ci]
+        entry = entry_node[i]
+        exit_nd = exit_node[i]
+
+        if len(cluster_nodes) == 1:
+            full_tour.append(cluster_nodes[0])
+        else:
+            # Build a path through the cluster from entry to exit
+            # Use greedy nearest-neighbor within the cluster, starting at entry
+            path = _build_cluster_path(cluster_nodes, entry, exit_nd, cost_matrix)
+            full_tour.extend(path)
+
+    return full_tour
+
+
+def _build_cluster_path(nodes: list[int], start: int, end: int,
+                        cost_matrix: list[list[float]]) -> list[int]:
+    """Build a path through cluster nodes from start to end.
+
+    Uses nearest-neighbor heuristic constrained to the cluster.
+    """
+    if len(nodes) <= 2:
+        # Just return all nodes, start first
+        result = [start]
+        for n in nodes:
+            if n != start:
+                result.append(n)
+        return result
+
+    visited = {start}
+    path = [start]
+    current = start
+
+    # Visit all nodes except the end node
+    remaining = set(nodes) - {start, end}
+
+    while remaining:
+        best_next: int = nodes[0]  # will be overwritten
+        best_cost = float('inf')
+        for n in remaining:
+            c = cost_matrix[current][n]
+            if c < best_cost:
+                best_cost = c
+                best_next = n
+        path.append(best_next)
+        visited.add(best_next)
+        remaining.remove(best_next)
+        current = best_next
+
+    # End at the exit node
+    if end != start:
+        path.append(end)
+
+    return path
+
+
+def _greedy_tour_subgraph(nodes: list[int],
+                          cost_matrix: list[list[float]]) -> tuple[list[int], float]:
+    """Greedy nearest-neighbor tour on a subset of nodes."""
+    if len(nodes) <= 1:
+        return nodes, 0.0
+
+    visited = {nodes[0]}
+    tour = [nodes[0]]
+    current = nodes[0]
+    total_cost = 0.0
+
+    for _ in range(len(nodes) - 1):
+        best_j = -1
+        best_c = float('inf')
+        for j in nodes:
+            if j not in visited and cost_matrix[current][j] < best_c:
+                best_c = cost_matrix[current][j]
+                best_j = j
+        tour.append(best_j)
+        visited.add(best_j)
+        total_cost += best_c
+        current = best_j
+
+    total_cost += cost_matrix[current][tour[0]]
+    return tour, total_cost
 
 
 def _greedy_tour(cost_matrix: list[list[float]]) -> tuple[list[int], float]:
@@ -295,17 +464,18 @@ def _2opt_improve(tour: list[int],
 
 def solve_multiscale(cost_matrix: list[list[float]],
                      sigmas: Optional[list[float]] = None) -> dict:
-    """Solve routing problem at multiple scales.
+    """Solve routing problem at multiple scales using cluster-based optimization.
 
-    Coarse-to-fine strategy:
-        σ₃ (1.0):  coarse LP relaxation → approximate solution
-        σ₂ (0.75): tighter LP → better solution
-        σ₁ (0.5):  exact MIP → optimal solution
-        σ₀ (0.25): formal verification target
+    Coarse-to-fine strategy with clustering:
+        σ=1.0:  coarse — merge nearby nodes, solve small problem
+        σ=0.75: medium — tighter clustering
+        σ=0.5:  fine — minimal clustering, warm-started
+        σ=0.25: formal verification target — full problem, 2-opt polish
 
-    At each scale, the cost matrix is Gaussian-smoothed, then solved
-    with progressively tighter methods. Solutions from coarser scales
-    seed finer scales.
+    At each scale σ, nodes whose pairwise cost is below σ·max_cost are
+    clustered together. The reduced problem is solved on cluster representatives,
+    then expanded back to individual nodes. Solutions from coarser scales
+    warm-start finer scales.
 
     Args:
         cost_matrix: n×n cost matrix.
@@ -322,41 +492,81 @@ def solve_multiscale(cost_matrix: list[list[float]],
     if n == 0:
         return {'solutions': {}, 'converged': True, 'best_sigma': 0.0}
 
+    # Find the maximum cost for threshold computation
+    max_cost = 0.0
+    for i in range(n):
+        for j in range(n):
+            if cost_matrix[i][j] > max_cost:
+                max_cost = cost_matrix[i][j]
+
+    if max_cost == 0.0:
+        # All costs are zero — any tour is optimal
+        tour = list(range(n))
+        return {
+            'solutions': {sigmas[0]: {'tour': tour, 'cost': 0.0,
+                                       'n_clusters': 1, 'sigma': sigmas[0]}},
+            'converged': True,
+            'best_sigma': sigmas[0],
+            'best_cost': 0.0,
+        }
+
     solutions = {}
     best_cost = float('inf')
     best_sigma = sigmas[0]
     prev_tour = None
 
     for sigma in sigmas:
-        # Smooth the cost matrix at this scale
-        smoothed = _apply_smoothing_q16(cost_matrix, sigma)
+        # Compute clustering threshold: merge nodes with cost < sigma * max_cost
+        threshold = sigma * max_cost
 
-        # Solve on smoothed costs
-        if prev_tour is not None:
-            # Warm-start: use previous solution as seed
-            # Compute cost on smoothed matrix
-            seed_cost = sum(smoothed[prev_tour[i]][prev_tour[(i + 1) % n]]
-                            for i in range(n))
-            # Run 2-opt on smoothed matrix starting from previous tour
-            tour, smoothed_cost = _2opt_improve(prev_tour[:], smoothed)
+        # Cluster nodes using single-linkage
+        clusters = _single_linkage_clusters(cost_matrix, threshold)
+        n_clusters = len(clusters)
+
+        if n_clusters == 1:
+            # All nodes in one cluster — solve the full problem
+            if prev_tour is not None:
+                tour, cost = _2opt_improve(prev_tour[:], cost_matrix)
+            else:
+                tour, cost = _greedy_tour(cost_matrix)
+                tour, cost = _2opt_improve(tour, cost_matrix)
         else:
-            # Cold start: greedy + 2-opt
-            tour, smoothed_cost = _greedy_tour(smoothed)
-            tour, smoothed_cost = _2opt_improve(tour, smoothed)
+            # Build reduced cost matrix for cluster representatives
+            reduced_matrix = _build_reduced_cost_matrix(cost_matrix, clusters)
 
-        # Evaluate on original cost matrix
-        real_cost = sum(cost_matrix[tour[i]][tour[(i + 1) % n]]
-                        for i in range(n))
+            # Solve the reduced problem
+            if n_clusters <= 2:
+                # Trivial: just order the clusters
+                cluster_tour = list(range(n_clusters))
+            else:
+                cluster_tour, _ = _greedy_tour(reduced_matrix)
+                if n_clusters >= 4:
+                    cluster_tour, _ = _2opt_improve(cluster_tour, reduced_matrix)
+
+            # Expand cluster tour back to individual nodes
+            tour = _expand_tour(cluster_tour, clusters, cost_matrix)
+
+            # Polish with 2-opt on the full problem
+            if prev_tour is not None:
+                # Warm-start: try both the expanded tour and the previous tour
+                tour_a, cost_a = _2opt_improve(tour, cost_matrix)
+                tour_b, cost_b = _2opt_improve(prev_tour[:], cost_matrix)
+                if cost_a <= cost_b:
+                    tour, cost = tour_a, cost_a
+                else:
+                    tour, cost = tour_b, cost_b
+            else:
+                tour, cost = _2opt_improve(tour, cost_matrix)
 
         solutions[sigma] = {
             'tour': tour,
-            'cost': real_cost,
-            'smoothed_cost': smoothed_cost,
+            'cost': cost,
+            'n_clusters': n_clusters,
             'sigma': sigma,
         }
 
-        if real_cost < best_cost:
-            best_cost = real_cost
+        if cost < best_cost:
+            best_cost = cost
             best_sigma = sigma
 
         prev_tour = tour
@@ -415,7 +625,7 @@ if __name__ == '__main__':
 
     for sigma, data in sorted(result['solutions'].items(), reverse=True):
         print(f"  σ={sigma:.2f}: tour cost={data['cost']:.2f}, "
-              f"smoothed={data['smoothed_cost']:.2f}")
+              f"clusters={data['n_clusters']}")
 
     # Demo voltage mapping
     print("\nVoltage ↔ Scale mapping:")

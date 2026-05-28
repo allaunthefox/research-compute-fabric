@@ -233,7 +233,7 @@ module Blitter6502OISC (
     reg [9:0] uart_shift;
     reg uart_active;
 
-    localparam UART_DIV = 16'd234;  // ~115200 baud at 27MHz
+    localparam UART_DIV = 16'd233;  // 115384 baud at 27MHz (matches Lean uartBaudDivisor)
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin

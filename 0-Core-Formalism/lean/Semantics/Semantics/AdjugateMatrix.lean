@@ -232,18 +232,89 @@ def cayleyTransform (skew : Matrix8) : Option Matrix8 :=
   | some inv => some (matrixMultiply iMinusA inv)
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- §9  Theorems (stubs — proofs deferred to TODO(lean-port))
+-- §9  Theorems
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-- If matrixInverse returns `some inv`, then `m × inv = I`.
-    TODO(lean-port): Prove from the algebraic identity A·adj(A) = det(A)·I
-    and the cancellation det(A) ≠ 0 → A·(adj(A)/det(A)) = I.
-    The fixed-point saturation complicates the proof; a bounded-error
-    version may be more tractable. -/
+
+    MATHEMATICAL PROOF SKETCH (exact arithmetic over a field F):
+
+    1. From `h`, extract `d := det8 m ≠ 0`.
+    2. By definition of `matrixInverse` and `adjugate`,
+       `inv[i][j] = cofactor8 m j i / d`  (note the transpose: adj = cof^T).
+    3. The Laplace cofactor identity gives:
+         Σ_k m[i][k] · cofactor8 m j k = det8 m · δ(i,j)
+       This holds because:
+       - When i = j, the left side is exactly the cofactor expansion of
+         det8 m along row i.
+       - When i ≠ j, the left side is the determinant of a matrix with
+         two identical rows (row i replaced by row j), hence 0.
+    4. Dividing by d:  Σ_k m[i][k] · (cofactor8 m j k / d) = δ(i,j).
+    5. Therefore (m × inv)[i][j] = δ(i,j), i.e., m × inv = I.
+
+    Q16_16 OBSTRUCTION:
+
+    This theorem is **not exactly true** over saturating Q16_16 fixed-point
+    arithmetic.  The source of error is integer truncation in `div` and `mul`:
+
+    - `div a b` = ofRawInt ((a * 65536) / b)    — truncates toward zero
+    - `mul a b` = ofRawInt ((a * b) / 65536)     — truncates toward zero
+
+    When `det8 m` does not divide the adjugate entries exactly, `div`
+    introduces a truncation error of up to 1 LSB per entry.  This error
+    propagates through `mul` and `add` in the matrix multiply.
+
+    Concrete counterexample: m = diag(3, 1, 1, 1, 1, 1, 1, 1).
+      det(m) = 3, inv[0][0] = div(65536, 196608) = ofRawInt(21845)
+      (exact 1/3 would be 21845.333…; truncation gives 21845).
+      (m × inv)[0][0] = mul(196608, 21845) = ofRawInt(65535) ≠ 65536 = one.
+      Error: 1 LSB.
+
+    For matrices where `det8 m` divides all adjugate entries exactly
+    (e.g., permutation matrices, power-of-2 diagonal matrices), the
+    identity holds.  `native_decide` confirms it for the identity matrix
+    (see `identity8_self_inverse` and `det_self_inverse_identity` below).
+
+    TODO(lean-port): Prove one of:
+    (a) A bounded-error variant: each entry of `m × inv` is within 1 LSB
+        of `identity8`.  This requires bounding the accumulated truncation
+        error through 8 multiply-accumulate steps.
+    (b) An exact version with a precondition that det8 m divides all
+        cofactor products exactly (e.g., det8 m is a power of 2, or
+        all entries are small enough to avoid truncation).
+    (c) A version over ℚ using Mathlib's matrix library, where the
+        Laplace cofactor identity has a clean proof. -/
 theorem det_self_inverse {m : Matrix8} {inv : Matrix8}
     (h : matrixInverse m = some inv) :
     matrixMultiply m inv = identity8 := by
   sorry
+
+/-- The 8×8 identity matrix is its own inverse.  Proved by computation. -/
+theorem identity8_self_inverse :
+    matrixInverse identity8 = some identity8 := by
+  native_decide
+
+/-- Multiplying the 8×8 identity by itself yields the identity. -/
+theorem identity8_mul_self :
+    matrixMultiply identity8 identity8 = identity8 := by
+  native_decide
+
+/-- det(identity8) = 1 in Q16_16. -/
+theorem det8_identity :
+    det8 identity8 = one := by
+  native_decide
+
+/-- `det_self_inverse` holds for the identity matrix: if
+    `matrixInverse identity8 = some inv`, then `identity8 × inv = identity8`.
+    Follows from `identity8_self_inverse` and `identity8_mul_self`. -/
+theorem det_self_inverse_identity {inv : Matrix8}
+    (h : matrixInverse identity8 = some inv) :
+    matrixMultiply identity8 inv = identity8 := by
+  have hinv : inv = identity8 := by
+    rw [identity8_self_inverse] at h
+    exact (Option.some_injective _ h).symm
+  subst hinv
+  exact identity8_mul_self
 
 /-- Cayley-transformed skew-symmetric matrix is orthogonal:
     Q^T Q = I.  Follows from the algebraic identity
@@ -287,5 +358,15 @@ theorem cayley_is_orthogonal {skew : Matrix8} {q : Matrix8}
 #eval! match cayleyTransform (Array.replicate 8 (Array.replicate 8 zero)) with
        | some q => (getEntry q 0 0).toInt
        | none   => (-1 : Int)
+
+-- det_self_inverse counterexample: diag(3,1,...,1) has 1-LSB error.
+-- det(m) = 3 (Q16_16: 196608); entry (0,0) of m × m⁻¹ = 65535 ≠ 65536.
+-- This demonstrates that det_self_inverse is not exactly true in Q16_16.
+-- expect: 65535 (one LSB below identity)
+#eval! let m := Array.ofFn (n := 8) fun (i : Fin 8) =>
+          Array.ofFn (n := 8) fun (j : Fin 8) =>
+            if i.val = j.val then (if i.val = 0 then ofInt 3 else one) else zero
+       let inv := (matrixInverse m).getD identity8
+       (getEntry (matrixMultiply m inv) 0 0).toInt
 
 end Semantics.AdjugateMatrix

@@ -150,6 +150,11 @@
         portaudio             # Cross-platform audio I/O
         libsndfile            # Audio file I/O
         alsa-lib             # ALSA audio library
+
+        # ── Jellyfin media server ─────────────────────────────────────────
+        jellyfin              # Media server
+        jellyfin-ffmpeg      # Jellyfin's patched FFmpeg (VA-API, QSV, OCL support)
+        jellyfin-web         # Web UI
       ];
 
       # ── Python packages (full science stack) ──────────────────────────────

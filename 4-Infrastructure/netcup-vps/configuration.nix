@@ -351,6 +351,7 @@
       #     reverse_proxy /lean* localhost:8765
       #     reverse_proxy /python* localhost:8767
       #     reverse_proxy /ollama* localhost:11434
+      #     reverse_proxy localhost:8096
       #   '';
       # };
     };
@@ -358,6 +359,44 @@
       admin off
       auto_https off
     '';
+  };
+
+  # ── Jellyfin media server (port 8096) ────────────────────────────────────
+  # Stream video, audio, and images to any device.
+  # Transcoding via jellyfin-ffmpeg (VA-API/QSV/OCL on x86, software on ARM64).
+  systemd.services.jellyfin = {
+    description = "Jellyfin media server";
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
+
+    script = ''
+      #!${pkgs.bash}/bin/bash
+      set -euo pipefail
+      export JELLYFIN_DATA_DIR=/home/researcher/.local/share/jellyfin
+      export JELLYFIN_CONFIG_DIR=/home/researcher/.config/jellyfin
+      export JELLYFIN_LOG_DIR=/home/researcher/.local/log/jellyfin
+      export JELLYFIN_CACHE_DIR=/home/researcher/.cache/jellyfin
+      mkdir -p $JELLYFIN_DATA_DIR $JELLYFIN_CONFIG_DIR $JELLYFIN_LOG_DIR $JELLYFIN_CACHE_DIR
+      exec ${pkgs.jellyfin}/bin/jellyfin \
+        --datadir "$JELLYFIN_DATA_DIR" \
+        --configdir "$JELLYFIN_CONFIG_DIR" \
+        --logdir "$JELLYFIN_LOG_DIR" \
+        --cachedir "$JELLYFIN_CACHE_DIR" \
+        --ffmpeg ${pkgs.jellyfin-ffmpeg}/bin/ffmpeg \
+        --webdir ${pkgs.jellyfin-web}/share/jellyfin-web
+    '';
+
+    serviceConfig = {
+      Type = "simple";
+      Restart = "always";
+      RestartSec = "10s";
+      User = "researcher";
+      Group = "researcher";
+      Environment = [
+        "HOME=/home/researcher"
+        "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+      ];
+    };
   };
 
   # ── Prometheus node exporter (port 9100) ──────────────────────────────────
@@ -480,13 +519,17 @@
       6443  # k3s Kubernetes API
       2379  # etcd client
       2380  # etcd peer
+      8096  # Jellyfin media server
       8765  # Lean LSP (v4.19.0)
       8766  # Lean LSP (v4.30.0-rc2)
       8767  # Python LSP
+      8920  # Jellyfin-alt HTTP
       9100  # Prometheus node exporter
       11434 # Ollama
     ];
-    allowedUDPPorts = [ ];
+    allowedUDPPorts = [
+      1900  # Jellyfin discovery (SSDP)
+    ];
   };
 
   # ── Packages ────────────────────────────────────────────────────────────────
@@ -542,6 +585,13 @@
     portaudio             # Cross-platform audio I/O
     libsndfile            # Audio file I/O
     alsa-lib             # ALSA audio library
+
+    # ── Jellyfin media server ───────────────────────────────────────────────
+    jellyfin              # Media server (TV, movies, music)
+    jellyfin-ffmpeg       # Jellyfin's patched FFmpeg with hardware encoding
+    jellyfin-web          # Web UI
+    # Hardware acceleration (common for ARM64 media)
+    openssl              # Already present; TLS for jellyfin
   ];
 
   # ── Performance tuning for 64GB RAM / 18 cores ────────────────────────────

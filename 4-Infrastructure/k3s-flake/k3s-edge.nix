@@ -1,4 +1,4 @@
-{ config, pkgs, lib, hostName, serverAddr, domain ? "researchstack.info", ... }:
+{ config, pkgs, lib, hostName, serverAddr, domain ? "researchstack.info", caddyPorkbun ? pkgs.caddy, ... }:
 
 let
   mailDomain = domain;
@@ -142,10 +142,11 @@ in
 
   services.caddy = {
     enable = true;
-    package = pkgs.caddy;
+    package = caddyPorkbun;
     extraConfig = ''
       (porkbun_tls) {
         tls {
+          ca https://acme-v02.api.letsencrypt.org/directory
           dns porkbun {
             api_key {$PORKBUN_API_KEY}
             api_secret_key {$PORKBUN_SECRET_KEY}
@@ -193,7 +194,7 @@ in
       # These exist for bookmark/client compat during migration.
       status.${domain} {
         import porkbun_tls
-        redir https://${domain}/server/status/{uri} 301
+        redir https://${domain}/server/status{uri} 301
       }
 
       dash.${domain}, home.${domain} {
@@ -203,32 +204,47 @@ in
 
       media.${domain} {
         import porkbun_tls
-        redir https://${domain}/apps/jellyfin/{uri} 301
+        redir https://${domain}/apps/jellyfin{uri} 301
       }
 
       books.${domain} {
         import porkbun_tls
-        redir https://${domain}/apps/books/{uri} 301
+        redir https://${domain}/apps/books{uri} 301
       }
 
       music.${domain} {
         import porkbun_tls
-        redir https://${domain}/apps/music/{uri} 301
+        redir https://${domain}/apps/music{uri} 301
       }
 
       vault.${domain} {
         import porkbun_tls
-        redir https://${domain}/server/vault/{uri} 301
+        redir https://${domain}/server/vault{uri} 301
       }
 
       pulse.${domain} {
         import porkbun_tls
-        redir https://${domain}/api/registry/{uri} 301
+        redir https://${domain}/api/registry{uri} 301
       }
 
       apps.${domain} {
         import porkbun_tls
-        redir https://${domain}/apps/{uri} 301
+        redir https://${domain}/apps{uri} 301
+      }
+
+      chat.${domain} {
+        import porkbun_tls
+        redir https://${domain}/apps/chat{uri} 301
+      }
+
+      budget.${domain} {
+        import porkbun_tls
+        redir https://${domain}/apps/budget{uri} 301
+      }
+
+      www.${domain} {
+        import porkbun_tls
+        redir https://${domain}{uri} 301
       }
 
       # Wildcard fallback — anything else gets a redirect to root

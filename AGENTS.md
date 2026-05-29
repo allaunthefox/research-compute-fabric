@@ -20,6 +20,15 @@ This file is the first stop for coding agents working in this repository.
 - Preserve user work. The working tree is often intentionally dirty; do not revert, delete, or stage unrelated files.
 - Prefer repo-native tools and receipt generators over ad hoc summaries.
 - Treat Lean as the source of truth for formal or hardware-adjacent claims.
+- **Load the `lean-proof` skill before any Lean work.** It enforces the proof
+  quality contract: no bare sorries, no tautologies, Q16_16 compliance, and
+  `#eval` witness requirements. Trigger patterns auto-load it on `.lean`,
+  `lake build`, `sorry`, `Q16_16`, `theorem`, `lemma`, etc.
+- **No `Float` in compute paths.** `ofFloat` is only permitted at the external
+  boundary (JSON parsing, sensor data). All core/main computation uses
+  `Q16_16.ofNat`, `Q16_16.ofRatio`, or `Q16_16.ofRawInt`. This applies to
+  Lean, Python, and Verilog. The HiGHS boundary is the only exception (it
+  requires float inputs, but the result is immediately converted to Q16_16).
 - Keep claims bounded: a receipt proves only the gate it actually checks.
 - Secrets are runtime-only. Use environment variables such as `OLLAMA_API_KEY`
   or `DEEPSEEK_API_KEY`; never paste, print, or commit literal provider keys.
@@ -389,92 +398,10 @@ correct: one prediction per invariant equation id, with provenance for all sourc
 records.
 
 <!-- BEGIN ContextStream -->
-## 🚨 CRITICAL RULE #1 - ENE CONTEXT FIRST 🚨
-
-**ENE is the local memory/context source of truth. BEFORE using ContextStream,
-Glob, Grep, Search, Read (for discovery), Explore, Task(Explore),
-EnterPlanMode, or ANY local file scanning:**
-
-```
-STOP → Call ene-contextstream first:
-  1. ene_context(user_message="...", save_exchange=true) on session/message start
-  2. ene_status if only health is needed
-  3. ene_search(query="...", sources=["ene_api", "local_memory"])
-  4. ene_recall(query="...") when looking for prior decisions/preferences
-```
-
-**MCP tool names by client usually look like:**
-
-- `mcp__ene-contextstream__ene_status`
-- `mcp__ene-contextstream__ene_context`
-- `mcp__ene-contextstream__ene_search`
-- `mcp__ene-contextstream__ene_recall`
-- `mcp__ene-contextstream__ene_remember`
-
-If the client cannot call the ENE MCP server, use the local fallback:
-
-```bash
-python3 4-Infrastructure/infra/ene_contextstream_mcp.py --status
-```
-
-## Remote Proof Agent
-
-Hermes, OpenCode, Codex, Cursor, Roo, and VS Code should use the
-`remote-lean-proof` MCP server for AWS-backed Lean checks when local Lean is
-slow or unavailable. The MCP server fronts the dedicated proof service at
-`http://54.236.176.28:8787`, requires the runtime token stored outside Git at
-`~/.config/ene/language-proof-server.token`, and returns receipt-bearing
-responses.
-
-Active proof-worker pool:
-
-```text
-http://54.236.176.28:8787     AWS EC2 dedicated proof server
-http://100.110.163.82:8787    361395-1 Netcup proof worker
-http://100.102.173.61:8787    nixos-laptop proof worker
-http://100.85.244.73:8787     nixos-steamdeck-1 proof worker
-```
-
-Primary tools:
-
-- `proof_status` for health and token wiring.
-- `lean_check` for inline Lean snippets.
-- `lake_build` for allowlisted repo targets.
-
-Do not call the raw HTTP proof endpoint directly from agents. Route through the
-MCP shim so auth, receipts, and ENE memory can be centralized.
-
-ContextStream remains a fallback only:
-
-1. Try ENE first.
-2. Use ContextStream second if ENE returns no useful result, `ene-api` is down,
-   or the task specifically needs ContextStream-hosted transcript history.
-3. Use local tools only after ENE and ContextStream fail or after they return
-   exact file paths that need direct editing.
-
-## ContextStream Fallback Search
-
-**BEFORE using Glob, Grep, Search, Read (for discovery), Explore, Task(Explore), EnterPlanMode, or ANY local file scanning:**
-```
-STOP → Call search(mode="auto", query="...") FIRST
-```
-
-**Note:** PreToolUse hooks block these tools when ContextStream is available.
-**Claude Code users:** Your tool names are `mcp__contextstream__search`, `mcp__contextstream__init`, etc.
-
-❌ **NEVER DO THIS:**
-- `Glob("**/*.ts")` → Use `search(mode="pattern", query="*.ts")` instead
-- `Grep("functionName")` → Use `search(mode="keyword", query="functionName")` instead
-- `Read(file)` for discovery → Use `search(mode="auto", query="...")` instead
-- `Explore` or `Task(subagent_type="Explore")` → Use `search(mode="auto")` instead
-- `EnterPlanMode` for discovery → Use `search(mode="auto", output_format="paths")` instead
-
-✅ **ALWAYS DO THIS:**
-1. `search(mode="auto", query="what you're looking for")`
-2. Only use local tools (Glob/Grep/Read) after stale/not-indexed refresh grace window elapses (~20s) or ContextStream still returns **0 results** after retry
-3. Use Read ONLY for exact file edits after you know the file path
-
-This applies to **EVERY search** throughout the **ENTIRE conversation**, not just the first message.
+### When to Use ContextStream Search:
+✅ Project is indexed and fresh
+✅ Looking for code by meaning/concept
+✅ Need semantic understanding
 
 ---
 <!-- END ContextStream -->

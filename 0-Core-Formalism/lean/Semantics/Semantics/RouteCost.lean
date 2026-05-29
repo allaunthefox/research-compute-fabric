@@ -79,6 +79,7 @@ structure RouteNode where
   risk : FailureRisk
   throat : Bool
   fammMemory : Bool
+  latencyClass : Nat := 0  -- 0=local (<1ms), 1=near (1-10ms), 2=far (10-100ms), 3=derp (>100ms)
   deriving Repr
 
 def FoundationKernel.index : FoundationKernel → Nat
@@ -200,18 +201,47 @@ def fammMemoryBonus (a b : RouteNode) : Nat :=
   else if a.fammMemory || b.fammMemory then qQuarter
   else qZero
 
+/-- Network latency cost as a coursing agent.
+
+    Consistent latency is computable — not noise, but a fixed phase offset.
+    DERP relay adds ~129ms per hop. This maps to the cost function:
+
+    - local (0): same node, <1ms → zero cost
+    - near (1): same cluster, 1-10ms → qEighth
+    - far (2): cross-network, 10-100ms → qQuarter
+    - derp (3): DERP relay, >100ms → qHalf
+
+    The latency class determines the FPGA voltage mode:
+    - local → σ₀ (1.2V, exact)
+    - near → σ₁ (1.0V, normal)
+    - far → σ₂ (0.8V, approximate)
+    - derp → σ₃ (0.6V, coarse)
+
+    This is the "coursing agent" — latency shapes the computation. -/
+def networkLatencyCost (a b : RouteNode) : Nat :=
+  if a.id == b.id then qZero
+  else
+    let maxClass := Nat.max a.latencyClass b.latencyClass
+    match maxClass with
+    | 0 => qZero      -- local: no latency cost
+    | 1 => qEighth    -- near: 1-10ms
+    | 2 => qQuarter   -- far: 10-100ms
+    | 3 => qHalf      -- derp: >100ms (DERP relay)
+    | _ => qOne       -- unknown: maximum cost
+
 def weighted (weight component : Nat) : Nat :=
   (weight * component) / 100
 
 def routeCostNat (a b : RouteNode) : Nat :=
   if a.id == b.id then qZero else
     let positive :=
-      weighted 20 (kernelDistance a b) +
-      weighted 14 (streetTransitionCost a b) +
-      weighted 16 (gwlTopologyDistance a b) +
-      weighted 12 (substrateExecutionCost a b) +
-      weighted 14 (proofObligationCost a b) +
-      weighted 14 (failureRisk a b)
+      weighted 18 (kernelDistance a b) +
+      weighted 12 (streetTransitionCost a b) +
+      weighted 14 (gwlTopologyDistance a b) +
+      weighted 10 (substrateExecutionCost a b) +
+      weighted 12 (proofObligationCost a b) +
+      weighted 12 (failureRisk a b) +
+      weighted 12 (networkLatencyCost a b)
     let bonus :=
       weighted 5 (throatBonus a b) +
       weighted 5 (fammMemoryBonus a b)

@@ -210,12 +210,18 @@ def fammMemoryBonus (a b : RouteNode) : Nat :=
     - near (1): same cluster, 1-10ms → qEighth
     - far (2): cross-network, 10-100ms → qQuarter
     - derp (3): DERP relay, >100ms → qHalf
+    - offline (4): Tailscale down/unreachable → qOne (maximum cost)
+
+    When Tailscale doesn't exist or is down, the chain must not fail.
+    Offline nodes get latencyClass=4, which routes computation to local-only.
+    The cost is still computable — offline is just another latency class.
 
     The latency class determines the FPGA voltage mode:
     - local → σ₀ (1.2V, exact)
     - near → σ₁ (1.0V, normal)
     - far → σ₂ (0.8V, approximate)
     - derp → σ₃ (0.6V, coarse)
+    - offline → σ₃ (0.6V, coarse, local-only fallback)
 
     This is the "coursing agent" — latency shapes the computation. -/
 def networkLatencyCost (a b : RouteNode) : Nat :=
@@ -227,6 +233,7 @@ def networkLatencyCost (a b : RouteNode) : Nat :=
     | 1 => qEighth    -- near: 1-10ms
     | 2 => qQuarter   -- far: 10-100ms
     | 3 => qHalf      -- derp: >100ms (DERP relay)
+    | 4 => qOne       -- offline: Tailscale down, maximum cost
     | _ => qOne       -- unknown: maximum cost
 
 def weighted (weight component : Nat) : Nat :=

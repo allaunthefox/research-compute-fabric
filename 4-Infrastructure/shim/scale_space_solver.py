@@ -15,8 +15,104 @@ smoothing. At each scale σ, nodes whose pairwise cost is below σ·max_cost
 are clustered together. The reduced problem is solved, then expanded back.
 """
 
+import json
 import math
+import subprocess
 from typing import Optional
+
+# ── Tailscale Detection (graceful degradation) ──────────────────────────
+
+_LATENCY_CLASSES = {
+    0: {'name': 'local',   'ms_max': 1,    'voltage': 1200, 'sigma': 0.0},
+    1: {'name': 'near',    'ms_max': 10,   'voltage': 1000, 'sigma': 0.25},
+    2: {'name': 'far',     'ms_max': 100,  'voltage': 800,  'sigma': 0.50},
+    3: {'name': 'derp',    'ms_max': 1000, 'voltage': 600,  'sigma': 1.0},
+    4: {'name': 'offline', 'ms_max': None, 'voltage': 600,  'sigma': 1.0},
+}
+
+
+def detect_tailscale() -> dict:
+    """Detect Tailscale status. Returns dict with 'available', 'peers', 'latency_map'.
+
+    If Tailscale is not installed or not running, returns available=False
+    with empty peers and latency_map. The chain never fails.
+    """
+    result = {
+        'available': False,
+        'peers': {},
+        'latency_map': {},
+        'derp_region': None,
+    }
+
+    # Check if tailscale binary exists
+    try:
+        proc = subprocess.run(
+            ['tailscale', 'status', '--json'],
+            capture_output=True, text=True, timeout=5
+        )
+        if proc.returncode != 0:
+            return result  # tailscale not running
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return result  # tailscale not installed
+
+    try:
+        status = json.loads(proc.stdout)
+        result['available'] = True
+        result['derp_region'] = status.get('CurrentTailnet', {}).get('Name')
+
+        for peer_id, peer in status.get('Peer', {}).items():
+            hostname = peer.get('HostName', peer_id)
+            tailscale_ip = peer.get('TailscaleIPs', [None])[0]
+            relay = peer.get('Relay', '')
+            latency = peer.get('CurAddr', '')
+
+            # Classify latency
+            if not peer.get('Online', False):
+                latency_class = 4  # offline
+            elif relay:  # DERP relay
+                latency_class = 3  # derp
+            elif tailscale_ip:
+                latency_class = 1  # near (same tailnet)
+            else:
+                latency_class = 2  # far
+
+            result['peers'][hostname] = {
+                'ip': tailscale_ip,
+                'latency_class': latency_class,
+                'relay': relay,
+                'online': peer.get('Online', False),
+            }
+            if tailscale_ip:
+                result['latency_map'][tailscale_ip] = latency_class
+
+    except (json.JSONDecodeError, KeyError, TypeError):
+        pass  # malformed status, return what we have
+
+    return result
+
+
+def get_latency_class(node_ip: str, ts_status: Optional[dict] = None) -> int:
+    """Get latency class for a node. Returns 4 (offline) if Tailscale unavailable.
+
+    The chain never fails — offline is just another latency class.
+    """
+    if ts_status is None:
+        ts_status = detect_tailscale()
+
+    if not ts_status['available']:
+        return 4  # offline — Tailscale not running
+
+    return ts_status['latency_map'].get(node_ip, 4)  # default to offline
+
+
+def latency_to_voltage(latency_class: int) -> int:
+    """Map latency class to FPGA voltage in millivolts."""
+    return _LATENCY_CLASSES.get(latency_class, _LATENCY_CLASSES[4])['voltage']
+
+
+def latency_to_sigma(latency_class: int) -> float:
+    """Map latency class to scale space sigma."""
+    return _LATENCY_CLASSES.get(latency_class, _LATENCY_CLASSES[4])['sigma']
 
 try:
     import numpy as np

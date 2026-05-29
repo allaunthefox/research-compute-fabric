@@ -14,6 +14,13 @@
   boot.loader.grub.device = "/dev/vda";
   boot.loader.grub.efiSupport = true;
   boot.loader.grub.efiInstallAsRemovable = true;
+  boot.loader.grub.fsTracker = true;  # Track BTRFS subvolumes
+
+  # ── BTRFS support ───────────────────────────────────────────────────────────
+  # Enable btrfs kernel module and quota support
+  boot.supportedFilesystems = lib.mkAfter [ "btrfs" ];
+  boot.kernelModules = [ "btrfs" ];
+  boot.extraModulePackages = with pkgs; [ btrfs-progs ];
 
   # ── Filesystems ────────────────────────────────────────────────────────────
   # NOTE: Fill in actual partition layout from CCP before deploying.
@@ -592,6 +599,11 @@
     jellyfin-web          # Web UI
     # Hardware acceleration (common for ARM64 media)
     openssl              # Already present; TLS for jellyfin
+
+    # ── BTRFS tools ────────────────────────────────────────────────────────
+    btrfs-progs          # btrfs filesystem utilities (mkfs, subvolume, send/receive)
+    btrfs-heatmap        # Visualize BTRFS space usage
+    btrfs-static         # Static btrfs binaries for rescue
   ];
 
   # ── Performance tuning for 64GB RAM / 18 cores ────────────────────────────

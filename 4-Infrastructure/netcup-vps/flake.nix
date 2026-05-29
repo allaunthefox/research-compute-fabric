@@ -155,6 +155,11 @@
         jellyfin              # Media server
         jellyfin-ffmpeg      # Jellyfin's patched FFmpeg (VA-API, QSV, OCL support)
         jellyfin-web         # Web UI
+
+        # ── BTRFS filesystem tools ───────────────────────────────────────
+        btrfs-progs          # mkfs, subvolume, send/receive, scrub, balance
+        btrfs-heatmap        # Visualize BTRFS space usage
+        btrfs-static         # Static binaries for rescue
       ];
 
       # ── Python packages (full science stack) ──────────────────────────────

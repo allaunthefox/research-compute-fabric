@@ -44,6 +44,22 @@ module research_stack_top (
     end
     assign btn_rise = btn_stable & ~btn_stable_prev;
 
+    // Auto-start: trigger CPU 100ms after reset (no button needed)
+    reg [31:0] auto_start_cnt;
+    reg auto_start;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            auto_start_cnt <= 0;
+            auto_start <= 0;
+        end else if (!auto_start) begin
+            if (auto_start_cnt >= 2700000) begin  // 100ms at 27MHz
+                auto_start <= 1;
+            end else begin
+                auto_start_cnt <= auto_start_cnt + 1;
+            end
+        end
+    end
+
     // ── Blitter CPU Signals ────────────────────────────────────────
     wire        cpu_busy;
     wire [5:0]  cpu_led;
@@ -121,7 +137,7 @@ module research_stack_top (
     Blitter6502OISC cpu (
         .clk(clk),
         .rst_n(rst_n),
-        .start(btn_rise),
+        .start(auto_start),
         .busy(cpu_busy),
         .led(cpu_led),
         .uart_tx(cpu_uart_tx),
@@ -202,11 +218,16 @@ module research_stack_top (
     );
 
     // ── LED Output ─────────────────────────────────────────────────
-    // led[5] = CPU busy
-    // led[4] = Q16 done
-    // led[3:2] = voltage mode
-    // led[1:0] = scale select
-    assign led = {cpu_busy, q16_done_reg, map_voltage_mode, map_scale_select};
+    // When CPU is busy: show running pattern (blinking)
+    // When CPU is halted: show cpu_led (register values from Blitter)
+    // Otherwise: show status
+    reg [24:0] heartbeat;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) heartbeat <= 0;
+        else heartbeat <= heartbeat + 1;
+    end
+    assign led = cpu_busy ? {1'b1, heartbeat[23], 1'b0, heartbeat[21], 1'b0, heartbeat[19]}
+                 : cpu_led;  // Blitter's register output after halt
 
     // ── UART ───────────────────────────────────────────────────────
     assign uart_tx = cpu_uart_tx;

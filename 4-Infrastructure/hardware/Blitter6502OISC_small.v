@@ -227,11 +227,12 @@ module Blitter6502OISC (
         end
     end
 
-    // UART telemetry: when halted, send a_reg as status byte
+    // UART telemetry: when halted, send a_reg as status byte (once only)
     reg [3:0] uart_bit_cnt;
     reg [15:0] uart_div;
     reg [9:0] uart_shift;
     reg uart_active;
+    reg uart_sent;  // prevents retransmission
 
     localparam UART_DIV = 16'd233;  // 115384 baud at 27MHz (matches Lean uartBaudDivisor)
 
@@ -242,13 +243,15 @@ module Blitter6502OISC (
             uart_div <= 16'd0;
             uart_shift <= 10'b0;
             uart_active <= 1'b0;
+            uart_sent <= 1'b0;
         end else begin
-            if (halted && !uart_active) begin
-                // Start UART transmission with a_reg as payload
-                uart_shift <= {1'b1, a_reg, 1'b0};  // stop, data, start
+            if (halted && !uart_active && !uart_sent) begin
+                // Send recognizable pattern: 0xAA + a_reg
+                uart_shift <= {1'b1, 8'hAA, 1'b0};  // stop, 0xAA, start
                 uart_active <= 1'b1;
                 uart_bit_cnt <= 4'd0;
                 uart_div <= 16'd0;
+                uart_sent <= 1'b1;
             end
 
             if (uart_active) begin
@@ -305,11 +308,27 @@ module Blitter6502OISCTop (
         end
     end
 
+    // Auto-start: trigger CPU 100ms after reset
+    reg [31:0] auto_start_cnt;
+    reg auto_start;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            auto_start_cnt <= 0;
+            auto_start <= 0;
+        end else if (!auto_start) begin
+            if (auto_start_cnt >= 2700000) begin  // 100ms at 27MHz
+                auto_start <= 1;
+            end else begin
+                auto_start_cnt <= auto_start_cnt + 1;
+            end
+        end
+    end
+
     // Blitter instance
     Blitter6502OISC blitter (
         .clk(clk),
         .rst_n(rst_n),
-        .start(btn_rise),
+        .start(auto_start),
         .busy(),
         .led(led),
         .uart_tx(uart_tx),

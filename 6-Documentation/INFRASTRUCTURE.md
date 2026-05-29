@@ -3,6 +3,7 @@
 **Last updated:** 2026-05-29
 **Domain:** researchstack.info
 **Repo:** ~/Research Stack (git main)
+**Hosting:** Self-hosted bare metal — no cloud instances. All compute runs on physical nodes connected via Tailscale mesh. AWS instances were shut down and migrated to this setup.
 
 ---
 
@@ -213,7 +214,7 @@ fpga, systemverilog, verilog-design, math-help, physics-intuition, hardware-coun
 | lean | verify_lean_theorem | uvx lean-mcp |
 | sympy | 100+ symbolic math tools | uvx mcp-sympy |
 | contextstream | memory, search, session management | MCP server |
-| aws | AWS CLI tools | uvx awslabs.aws-api-mcp-server |
+| aws | AWS CLI tools (legacy — AWS instances shut down) | uvx awslabs.aws-api-mcp-server |
 
 ## Key Constants
 

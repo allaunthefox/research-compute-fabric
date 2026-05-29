@@ -528,6 +528,20 @@
     suitesparse           # CHOLMOD, UMFPACK, SPQR
     z3                    # SMT solver
     julia_11              # Julia 1.11 (good ARM64 SIMD)
+
+    # ── Audio / video processing (DSP volunteer computing) ─────────────────
+    ffmpeg                # Core: transcoding, streaming, filtering
+    ffmpeg-full          # Full build with all filters/codecs
+    flac                  # Free Lossless Audio Codec
+    opus                  # Opus audio codec
+    libvpx               # VP8/VP9 video codec
+    libaom               # AV1 codec
+    dav1d                 # AV1 decoder (fast, ASM-optimized)
+    mediainfo             # Inspect audio/video metadata
+    sox                   # Sound exchange — audio processing CLI
+    portaudio             # Cross-platform audio I/O
+    libsndfile            # Audio file I/O
+    alsa-lib             # ALSA audio library
   ];
 
   # ── Performance tuning for 64GB RAM / 18 cores ────────────────────────────

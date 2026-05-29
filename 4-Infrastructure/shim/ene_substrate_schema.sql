@@ -220,7 +220,24 @@ CREATE TABLE IF NOT EXISTS ene.gossip_surface_edges (
 );
 CREATE INDEX IF NOT EXISTS ene_gse_source_idx ON ene.gossip_surface_edges (source_node_id);
 
--- 11. legacy compatibility tables
+-- 11. dsp_nodes — PipeWire/FLAC DSP compute node capabilities
+CREATE TABLE IF NOT EXISTS ene.dsp_nodes (
+    node_id          TEXT PRIMARY KEY,
+    dsp_available    BOOLEAN NOT NULL DEFAULT true,
+    pipewire_available BOOLEAN NOT NULL DEFAULT false,
+    virtual_soundcard_supported BOOLEAN NOT NULL DEFAULT false,
+    physical_soundcard BOOLEAN NOT NULL DEFAULT false,
+    max_sample_rate  INTEGER DEFAULT 48000,
+    spectral_bands   INTEGER DEFAULT 1024,
+    latency_target_us INTEGER DEFAULT 5120,
+    fft_size         INTEGER DEFAULT 2048,
+    overlap_factor   REAL DEFAULT 0.5,
+    last_seen_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+    receipt_hash     TEXT
+);
+CREATE INDEX IF NOT EXISTS ene_dsp_available_idx ON ene.dsp_nodes (dsp_available) WHERE dsp_available = true;
+
+-- 12. legacy compatibility tables
 CREATE TABLE IF NOT EXISTS ene.wiki_pages (
     slug TEXT PRIMARY KEY,
     title TEXT,

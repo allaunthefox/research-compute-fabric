@@ -333,6 +333,20 @@ Known dispatch entry points:
 For the braid eigensolid compressor, the dispatch is planned at:
 `4-Infrastructure/shim/braid_blitter/` (Rust, following `parquet_compressor/src/gpu.rs`)
 
+### ENE schema additions for DSP volunteer computing (PipeWire/FLAC)
+
+Any Linux node with PipeWire can act as a DSP compute worker regardless of physical audio hardware.
+A virtual sound card is created via PipeWire, exposing FLAC audio chunks as compute workloads.
+
+- `ene.dsp_nodes` — PipeWire/FLAC DSP node capabilities: node_id, dsp_available,
+  pipewire_available, virtual_soundcard_supported, physical_soundcard, max_sample_rate,
+  spectral_bands, latency_target_us, fft_size, overlap_factor, last_seen_at, receipt_hash
+- Dispatch: FLAC chunks in MKV audio track → routed to DSP-capable nodes → results
+  returned via separate reply channel
+- Shim: `4-Infrastructure/shim/flac_dsp_node.py` — node registration, PipeWire probe,
+  FLAC chunk spectral analysis (FFT peaks, spectral centroid, RMS level)
+- Receipt: every DSP operation writes to `~/.cache/flac_dsp_receipts.jsonl`
+
 ### ENE schema additions for braid eigensolid compressor (planned)
 
 These tables extend `ene_substrate_schema.sql` (not yet created):

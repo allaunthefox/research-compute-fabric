@@ -88,7 +88,8 @@
     description = "Research Stack developer";
     extraGroups = [
       "wheel"
-      "docker"
+      "docker"      # podman docker compat socket
+      "k3s"        # k3s API access
       "keys"
       "tailscale"
     ];
@@ -277,6 +278,27 @@
     };
   };
 
+  # ── PostgreSQL (ENE database) ───────────────────────────────────────────────
+  services.postgresql = {
+    enable = true;
+    package = pkgs.postgresql_16;
+    # Enable JIT for analytical queries on ENE data
+    settings.jit = "on";
+    # Memory tuning for 64GB RAM
+    settings.shared_buffers = "16GB";
+    settings.effective_cache_size = "48GB";
+    settings.work_mem = "256MB";
+    settings.maintenance_work_mem = "2GB";
+    settings.effective_io_concurrency = 200;
+    settings.max_worker_processes = "16";
+    # Enable parallel query execution
+    settings.max_parallel_workers_per_gather = "8";
+    settings.max_parallel_workers = "16";
+    # Logging
+    settings.log_destination = "stderr";
+    settings.log_line_prefix = "ene %p %u@%d ";
+  };
+
   # ── ENE database restoration (oneshot) ───────────────────────────────────
   # Copies backed-up ENE data from external disk to the VPS
   # Run manually after mounting the backup drive:
@@ -295,15 +317,16 @@
       export PGUSER=postgres
       export SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
 
-      echo "Restoring ENE schema..."
+      echo "Creating ENE database..."
       sudo -u postgres psql -c "CREATE DATABASE ene;" 2>/dev/null || true
-      sudo -u postgres pg_restore -C -d postgres "${backupDir}/rds_dump/ene_schema.sql" 2>/dev/null || true
+
+      echo "Restoring ENE schema..."
+      sudo -u postgres psql -d ene -f "${backupDir}/rds_dump/ene_schema.sql" 2>/dev/null || true
 
       echo "Restoring ENE data..."
-      sudo -u postgres pg_restore -C -d ene "${backupDir}/rds_dump/ene_full.dump" 2>/dev/null || true
+      sudo -u postgres pg_restore -d ene "${backupDir}/rds_dump/ene_full.dump" 2>/dev/null || true
 
       echo "Importing CSV tables..."
-      # Import CSVs (list tables that need CSV import)
       for tbl in $(ls "${backupDir}/rds_tables/"*.csv 2>/dev/null | xargs -I{} basename {} .csv); do
         echo "  Importing $tbl..."
         sudo -u postgres psql -d ene -c "\\COPY $tbl FROM '${backupDir}/rds_tables/$tbl.csv' WITH (FORMAT csv, HEADER true)" 2>/dev/null || true
@@ -317,11 +340,134 @@
     };
   };
 
-  # ── Docker (for x86_64 images via nix-ld) ────────────────────────────────
-  virtualisation.docker = {
+  # ── Caddy reverse proxy (HTTPS for LSP endpoints) ──────────────────────────
+  # Certificates via Let's Encrypt / Caddy DNS challenge (configure domain first)
+  services.caddy = {
     enable = true;
-    autoPrune.enable = true;
-    enableOnBoot = true;
+    virtualHosts = {
+      # TLS will work once a domain points to this VPS
+      # "rs-vps.example.com" = {
+      #   extraConfig = ''
+      #     reverse_proxy /lean* localhost:8765
+      #     reverse_proxy /python* localhost:8767
+      #     reverse_proxy /ollama* localhost:11434
+      #   '';
+      # };
+    };
+    globalConfig = ''
+      admin off
+      auto_https off
+    '';
+  };
+
+  # ── Prometheus node exporter (port 9100) ──────────────────────────────────
+  # Exposes hardware/OS metrics for monitoring (Uptime Kuma, etc.)
+  services.prometheus.exporters = {
+    node = {
+      enable = true;
+      port = 9100;
+      enabledCollectors = [ "systemd" "logind" ];
+      # Don't firewall this — only expose on internal interfaces
+      openFirewall = false;
+    };
+  };
+
+  # ── Automatic NixOS upgrades (weekly) ───────────────────────────────────
+  systemd.timers.nix-upgrade = {
+    wantedBy = [ "timers.target" ];
+    timerConfig.OnCalendar = "weekly";
+    persistent = true;
+  };
+  systemd.services.nix-upgrade = {
+    description = "NixOS channel upgrade";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.nix}/bin/nix-channel --update nixos";
+      User = "root";
+    };
+  };
+
+  # ── Health check watchdog ────────────────────────────────────────────────
+  # Restarts LSP/Ollama if they become unresponsive
+  systemd.services.health-check = {
+    description = "LSP and Ollama health watchdog";
+    after = [
+      "lean-lsp-mcp.service"
+      "lean-lsp-mathlib.service"
+      "pylsp.service"
+      "ollama.service"
+    ];
+    wantedBy = [ "multi-user.target" ];
+    script = ''
+      #!${pkgs.bash}/bin/bash
+      set -euo pipefail
+
+      check_service() {
+        local name="$1"; shift
+        local url="$1"; shift
+        if ! curl -sf --max-time 5 "$url" > /dev/null 2>&1; then
+          echo "[health] $name unhealthy at $url — restarting..."
+          systemctl restart "$name"
+        fi
+      }
+
+      # Lean LSP (streamable-http health check via --timeout flag)
+      # check_service lean-lsp-mcp http://localhost:8765/health 2>/dev/null || true
+      # Python LSP has no built-in health endpoint — check port
+      if ! nc -z localhost 8767 2>/dev/null; then
+        echo "[health] pylsp port 8767 not listening — restarting..."
+        systemctl restart pylsp
+      fi
+      # Ollama API
+      if ! curl -sf --max-time 5 http://localhost:11434/api/tags > /dev/null 2>&1; then
+        echo "[health] ollama unhealthy — restarting..."
+        systemctl restart ollama
+      fi
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+      # Run every 5 minutes
+    };
+  };
+  systemd.timers.health-check = {
+    wantedBy = [ "timers.target" ];
+    timerConfig.OnCalendar = "*-*-* *:0/5:00";
+    persistent = true;
+    randomizedDelaySec = 30;
+  };
+
+  # ── Podman (container runtime) ───────────────────────────────────────────────
+  # Replaces Docker; manages containers without a daemon
+  virtualisation.podman = {
+    enable = true;
+    # Docker-compatible socket for tools that expect Docker
+    dockerCompat = true;
+    defaultLocks = "/var/lib/containers.lock";
+    storage.settings = {
+      # Use the 2TB disk for container storage
+      storage.rootlessStoragePath = "/var/lib/containers";
+    };
+  };
+
+  # ── k3s (lightweight Kubernetes) ─────────────────────────────────────────
+  # Single-node k3s for orchestrating long-running compute workloads
+  services.k3s = {
+    enable = true;
+    # Token and certs for node authentication
+    # token = "changeme";  # Set a secure token
+    # Master role only (no agents)
+    role = "server";
+    # Disable traefik (we have Caddy for ingress)
+    disableAgent = true;
+    # Extra args for the server
+    extraFlags = [
+      "--disable traefik"
+      "--disable servicelb"
+      "--disable metrics-server"
+      "--write-kubeconfig-mode 0644"
+    ];
+    # Port config
+    port = 6443;
   };
 
   # ── Networking ─────────────────────────────────────────────────────────────
@@ -329,11 +475,15 @@
     enable = true;
     allowedTCPPorts = [
       22    # SSH
-      80    # HTTP
-      443   # HTTPS
+      80    # HTTP (Caddy)
+      443   # HTTPS (Caddy)
+      6443  # k3s Kubernetes API
+      2379  # etcd client
+      2380  # etcd peer
       8765  # Lean LSP (v4.19.0)
       8766  # Lean LSP (v4.30.0-rc2)
       8767  # Python LSP
+      9100  # Prometheus node exporter
       11434 # Ollama
     ];
     allowedUDPPorts = [ ];
@@ -359,8 +509,25 @@
     openssl pkg-config
     graphviz
     postgresql_16
-    docker containerd
+    podman
     tailscale  # mesh networking
+    netcat-openbsd  # for health check port probing
+
+    # ── ARM64-optimized HPC / math packages ───────────────────────────
+    openblas              # Multi-threaded BLAS, ARM64 Neoverse-optimized
+    blis                  # Fast BLIS on ARM64
+    lapack
+    petsc                 # Scientific computing (sparse/direct solvers)
+    slepc                 # Eigenvalue solver (PETSc-based)
+    flintqs               # Fast FLINT (factorization, primality)
+    pari                   # PARI/GP (number theory)
+    gap                    # Groups, Algorithms, Programming
+    singular              # Polynomial algebra, Gröbner bases
+    symengine             # Fast C++ symbolic (SymPy backend)
+    fftw                  # FFT (single/double precision)
+    suitesparse           # CHOLMOD, UMFPACK, SPQR
+    z3                    # SMT solver
+    julia_11              # Julia 1.11 (good ARM64 SIMD)
   ];
 
   # ── Performance tuning for 64GB RAM / 18 cores ────────────────────────────

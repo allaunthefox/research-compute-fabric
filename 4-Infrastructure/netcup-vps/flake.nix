@@ -86,8 +86,6 @@
         texliveFull
         # Math CLI tools
         gnuplot maxima wxmaxima octave
-        # CAS
-        # sage  # too heavy for server; use lean + sympy
         # Typesetting
         typst
         # Network / TLS
@@ -102,16 +100,62 @@
         graphviz
         # PostgreSQL client
         postgresql_16
-        # Docker (for running pre-built x86_64 images via nix-ld)
-        docker
-        # Containerd for docker
-        containerd
+        # Podman container runtime (Docker-compatible)
+        podman
         # nix-ld for running x86_64 binaries on ARM64
-        # (built from nixpkgs-stable to ensure binary cache availability)
         (import nixpkgs-stable {
           system = "x86_64-linux";
           config.allowUnfree = false;
         }).nix-ld
+      ];
+
+      # ── ARM64-optimized HPC / math packages ────────────────────────────────
+      # Key insight: ARM64 Neoverse N1 (Ampere Altra) has excellent SIMD
+      # (ARMv8.2-A SVE/SVE2), strong memory bandwidth, and cache hierarchy
+      # similar to AMD Zen. These packages are built with ARM64 in mind.
+      mathPackages = with pkgs; [
+        # ── Linear algebra (BLAS/LAPACK ecosystem) ───────────────────────
+        openblas              # Multi-threaded, ARM64 Neoverse-optimized BLAS
+        blis                  # BLIS — fast on ARM64, cleaner than OpenBLAS
+        lapack                # Reference LAPACK (used via OpenBLAS/BLIS backends)
+        python311Packages.scipy  # Uses OpenBLAS by default
+
+        # ── Sparse / iterative solvers ────────────────────────────────────
+        petsc                 # Portable, extensible Toolkit for Scientific Computing
+        slepc                 # Eigenvalue solver (builds on PETSc)
+
+        # ── Number theory / algebra ───────────────────────────────────────
+        flintqs               # Fast multi-method FLINT for factoring, primality
+        pari                  # PARI/GP — number theory, algebraic number theory
+        gap                   # Groups, Algorithms, Programming — computational algebra
+        singular              # Polynomial computation, Gröbner bases
+
+        # ── Fast symbolic engine (C++ backend for SymPy) ──────────────────
+        symengine             # Fast C++ symbolic library; sympy can use it as backend
+
+        # ── FFT / signal processing ─────────────────────────────────────
+        fftw                  # Fast Fourier Transform (single precision)
+        fftwDouble            # Double precision FFTW (separate package)
+
+        # ── Sparse matrix suites ───────────────────────────────────────────
+        suitesparse            # CHOLMOD, UMFPACK, SPQR, etc. — sparse direct solvers
+
+        # ── Computer Algebra System ──────────────────────────────────────
+        # sage is too large for a server build (~15GB); use symengine + sympy + pari
+        # maxima is already in corePackages
+
+        # ── Polynomial systems / SMT ──────────────────────────────────────
+        z3                    # Microsoft Z3 (SMT solver, C++ backend)
+        python311Packages.z3   # Python bindings for Z3
+
+        # ── Julia (excellent ARM64 support, fast JIT) ───────────────────
+        julia_11              # Julia 1.11 — good ARM64 SIMD vectorization
+
+        # ── R with optimized BLAS ─────────────────────────────────────────
+        rPackages.override { packages = with pkgs.rPackages; [
+          RcppArmadillo   # Armadillo via Rcpp (uses OpenBLAS)
+          RcppEigen       # Eigen via Rcpp
+        ]; }
       ];
 
       # ── Python packages (full science stack) ──────────────────────────────
@@ -161,7 +205,7 @@
 
     in rec {
       packages.${system} = {
-        inherit corePackages pythonPackages;
+        inherit corePackages pythonPackages mathPackages;
 
         # ── Lean LSP service (port 8765) ──────────────────────────────────
         lean-lsp-mcp = elan-lsp { toolchain = "4.19.0"; port = 8765; };
@@ -187,9 +231,9 @@
       # Convenience: nix build .#packages.aarch64-linux.lean-lsp-mcp
       defaultPackage.${system} = packages.${system}.lean-lsp-mcp;
 
-      # ── Dev shell ────────────────────────────────────────────────────────
+      # ── Dev shell ───────────────────────────────────────────────────────
       devShells.${system}.default = pkgs.mkShell {
-        packages = corePackages ++ pythonPackages;
+        packages = corePackages ++ pythonPackages ++ mathPackages;
         shellHook = ''
           echo "Research Stack — netcup VPS dev shell (ARM64, NixOS 25.11)"
           export PS1='\[\033[1;34m\][rs-vps]\[\033[0m\] \w \$ '

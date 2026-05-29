@@ -604,14 +604,89 @@
     btrfs-progs          # btrfs filesystem utilities (mkfs, subvolume, send/receive)
     btrfs-heatmap        # Visualize BTRFS space usage
     btrfs-static         # Static btrfs binaries for rescue
+
+    # ── NUMA / ARM64 performance ───────────────────────────────────────────
+    numactl              # NUMA policy control for BLAS/PETSc/Julia threading
   ];
 
-  # ── Performance tuning for 64GB RAM / 18 cores ────────────────────────────
+  # ── Performance tuning for ARM64 (Ampere/Altra Neoverse) ─────────────────────
+  # 64GB RAM, 18 cores, NUMA-aware (if Ampere Altra)
+
+  # ── CPU governor: performance mode ────────────────────────────────────────
+  # Prefer consistent clocks over power saving for compute workloads
+  powerManagement.cpuFreqPolicy = "performance";
+
   boot.kernel.sysctl = {
-    # Transparent hugepage support for memory-intensive workloads
-    "vm.nr_hugepages" = 1024;
-    # Swappiness: prefer RAM over swap for build workloads
+    # ── General memory ─────────────────────────────────────────────────
+    # Swappiness: aggressive RAM use, minimal swap (we have 64GB)
     "vm.swappiness" = 10;
+    # Dirty page cache: prefer page cache over swapping
+    "vm.dirty_ratio" = 60;
+    "vm.dirty_background_ratio" = 15;
+    "vm.dirty_expire_centisecs" = 6000;
+
+    # ── Transparent hugepages ───────────────────────────────────────────
+    "vm.nr_hugepages" = 1024;
+    # Always use hugepages (not "madvise") for predictable allocation
+    "vm.nr_overcommit_hugepages" = 1024;
+
+    # ── ARM64-specific memory / cache tuning ────────────────────────────
+    # VM max for ARM64 (default is only 16TB; bump for large workloads)
+    "vm.max_map_count" = 1048576;
+    # Shared memory: raise to 32GB for Julia, PETSc, BLAS
+    "kernel.shmmax" = 34359738368;  # 32GB
+    "kernel.shmall" = 8388608;       # 32GB worth of pages
+    "kernel.shmmin" = 4096;
+    "kernel.shmni" = 8192;
+
+    # ── ARM64 cache / TLB tuning ───────────────────────────────────────
+    # Enable the ARM64 hardware DBM (Dirty Bit Map) feature for faster
+    # page dirtying tracking — benefits in-memory workloads
+    "vm.zone_reclaim_mode" = 0;  # Disable zone reclaim on NUMA (let remote access)
+
+    # ── File descriptor limits ──────────────────────────────────────────
+    "fs.file-max" = 524288;
+    "fs.nr_open" = 524288;
+    "fs.inotify.max_user_watches" = 524288;
+
+    # ── Network buffers (LSP/TCP services) ────────────────────────────
+    "net.core.rmem_max" = 16777216;
+    "net.core.wmem_max" = 16777216;
+    "net.core.rmem_default" = 16777216;
+    "net.core.wmem_default" = 16777216;
+    "net.core.netdev_max_backlog" = 5000;
+    "net.ipv4.tcp_rmem" = "4096 87380 16777216";
+    "net.ipv4.tcp_wmem" = "4096 65536 16777216";
+    "net.ipv4.tcp_fastopen" = 3;  # Fast Open for LSP connections
+
+    # ── POSIX message queues ───────────────────────────────────────────
+    "kernel.msgmax" = 65536;
+    "kernel.msgmni" = 4096;
+  };
+
+  # ── Raise default file descriptor limit for all users ──────────────────
+  security.pam.loginLimits = [
+    { domain = "*"; type = "nofile"; item = "soft"; value = "524288"; }
+    { domain = "*"; type = "nofile"; item = "hard"; value = "524288"; }
+    { domain = "*"; type = "memlock"; item = "soft"; value = "unlimited"; }
+    { domain = "*"; type = "memlock"; item = "hard"; value = "unlimited"; }
+  ];
+
+  # ── ARM64 Numactl for Julia / PETSc / OpenBLAS threading ──────────────
+  # Pin BLAS/PETSc threads to specific NUMA nodes on Ampere Altra
+  environment.variables = {
+    # OpenBLAS: use all 18 cores, prefer threads over OpenMP
+    OPENBLAS_NUM_THREADS = "16";
+    OPENBLAS_VERBOSE = "0";
+    OPENBLAS_AFFINITY = "1";  # Compact affinity (cores 0-15 on node 0)
+    # PETSc: thread pinning
+    PETSC_OPTIONS = "-matpthread";  # Use pthread threading, not OpenMP
+    # Julia: use all cores for BLAS/LAPACK
+    JULIA_NUM_THREADS = "16";
+    # FFTW: plan with wisdom for reuse
+    OMP_NUM_THREADS = "16";
+    # tmpfs for /tmp means scratch goes to RAM, no disk I/O bottleneck
+    XDG_CACHE_HOME = "/home/researcher/.cache";
   };
 
   # ── Security ────────────────────────────────────────────────────────────────

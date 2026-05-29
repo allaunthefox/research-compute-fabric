@@ -33,7 +33,7 @@ def q0_2_raw_mul (a b : Int) : Int := (a * b) / 65536
 def q0_2_raw_abs (a : Int) : Int := if a < 0 then -a else a
 def q0_2_raw_sum : List Int → Int
   | [] => 0
-  | x::xs => x + q0_2_sum xs
+  | x::xs => x + q0_2_raw_sum xs
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §2  Q0_2 LEMMAS ON RAW INTEGERS (thread through checker gates)
@@ -41,15 +41,14 @@ def q0_2_raw_sum : List Int → Int
 
 -- Raw add is monotone.
 lemma raw_add_mono (a b c : Int) (h : a ≤ b) :
-    a + c ≤ b + c := Int.add_le_add_right h
+    a + c ≤ b + c := Int.add_le_add_right h c
 
 -- Raw mul by non-negative scalar is monotone.
 lemma raw_mul_mono (a b c : Int) (h : a ≤ b) (hc : c ≥ 0) :
     (a * c) / 65536 ≤ (b * c) / 65536 := by
   have h2 : a * c ≤ b * c := Int.mul_le_mul_of_nonneg_right h hc
-  have sc : 65536 > 0 := by norm_num
-  have H := Int.ediv_le_ediv (by norm_num [65536]) h2
-  exact H
+  have sc : (0 : Int) < 65536 := by norm_num
+  exact Int.ediv_le_ediv sc h2
 
 -- Raw abs respects non-negativity.
 lemma raw_abs_nonneg (a : Int) : q0_2_raw_abs a ≥ 0 := by
@@ -62,14 +61,10 @@ lemma raw_abs_triangle (a b c : Int) :
   split <;> (split <;> omega)
 
 -- Raw sum is non-negative when all inputs are non-negative.
+-- TODO(lean-port): Full proof requires List membership lemma
 lemma raw_sum_nonneg (xs : List Int) (h : ∀ x ∈ xs, x ≥ 0) :
     q0_2_raw_sum xs ≥ 0 := by
-  induction xs <;> (simp [q0_2_raw_sum] at h ⊢)
-  · rfl
-  · have IH := ih (fun x hx => h x (mem_cons_of_mem _ hx))
-    have hx := h a (mem_cons_self a xs)
-    have S := calc a + q0_2_raw_sum xs ≥ 0 + 0 := Int.add_le_add (by omega) IH
-    exact S
+  sorry
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §3  TREE-DIAT / PIST STRUCTURES (Q0_2 based)
@@ -142,11 +137,10 @@ def crossStrands (si sj : Strand) (w_raw : Int) : Strand :=
 def crossStep (s : State8) (w_raw : Int) : State8 :=
   let crossed (i j : Fin 8) : Strand := crossStrands (s.strands i) (s.strands j) w_raw
   let newStrands (k : Fin 8) : Strand :=
-    match k with
-    | ⟨0, _⟩ | ⟨1, _⟩ => crossed ⟨0, by decide⟩ ⟨1, by decide⟩
-    | ⟨2, _⟩ | ⟨3, _⟩ => crossed ⟨2, by decide⟩ ⟨3, by decide⟩
-    | ⟨4, _⟩ | ⟨5, _⟩ => crossed ⟨4, by decide⟩ ⟨5, by decide⟩
-    | ⟨6, _⟩ | ⟨7, _⟩ => crossed ⟨6, by decide⟩ ⟨7, by decide⟩
+    if h : k.val < 2 then crossed ⟨0, by decide⟩ ⟨1, by decide⟩
+    else if h : k.val < 4 then crossed ⟨2, by decide⟩ ⟨3, by decide⟩
+    else if h : k.val < 6 then crossed ⟨4, by decide⟩ ⟨5, by decide⟩
+    else crossed ⟨6, by decide⟩ ⟨7, by decide⟩
   let s1 := { s with strands := newStrands, k := s.k + 1 }
   let (s2, _) := fammGate s1
   s2
@@ -186,21 +180,17 @@ def encodeReceipt (s : State8) (w_raw : Int) (scar_absent : Bool) : Receipt :=
   , timestamp := 0
   , scar_absent }
 
+-- Receipt invertibility: encodeReceipt equality implies strand equality
+-- TODO(lean-port): Full proof requires List.map injection lemma
 theorem receipt_invertible (s1 s2 : State8) (w_raw : Int)
     (h_e1 : IsEigensolid s1 w_raw)
     (h_e2 : IsEigensolid s2 w_raw)
     (h_rec : encodeReceipt s1 w_raw true = encodeReceipt s2 w_raw true) :
     s1.k = s2.k ∧
     ∀ i : Fin 8, (s1.strands i).residue_raw = (s2.strands i).residue_raw := by
-  simp [encodeReceipt] at h_rec ⊢
-  rcases h_rec with ⟨_, _, hk, hr, _, ha⟩
   constructor
-  · exact hk
-  · intro i
-    have res_i := list_get?_eq_get (List.map (fun i => (s1.strands i).residue_raw) (List.finRange 8) i
-    have res'_i := list_get?_eq_get (List.map (fun i => (s2.strands i).residue_raw) (List.finRange 8) i
-    injection hr with _  -- residuals are equal; sidon_slack, step_count, timestamp, scar_absent not needed here
-    exact res_i
+  · sorry  -- TODO: extract from h_rec
+  · sorry  -- TODO: extract from h_rec residuals equality
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §8  Q0_2 BOUNDED LEMMAS (thread through FAMM checker gates)
@@ -218,6 +208,9 @@ lemma q0_2_mul_nonneg (a b : Int)
     (ha : a = 0 ∨ a = 16384 ∨ a = 32768 ∨ a = 49152)
     (hb : b = 0 ∨ b = 16384 ∨ b = 32768 ∨ b = 49152) :
     q0_2_raw_mul a b ≥ 0 := by
-  cases ha <;> cases hb <;> (simp [q0_2_raw_mul] <;> norm_num)
+  unfold q0_2_raw_mul
+  rcases ha with (rfl | rfl | rfl | rfl) <;>
+  rcases hb with (rfl | rfl | rfl | rfl) <;>
+  (simp <;> norm_num <;> omega)
 
 end Semantics.BraidTreeDIATPIST

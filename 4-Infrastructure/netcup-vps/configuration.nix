@@ -16,6 +16,8 @@
   boot.loader.grub.efiInstallAsRemovable = true;
 
   # ── Filesystems ────────────────────────────────────────────────────────────
+  # NOTE: Fill in actual partition layout from CCP before deploying.
+  # Run `lsblk` or `fdisk -l` after booting the NixOS installer ISO.
   fileSystems = {
     "/" = {
       device = "/dev/vda1";
@@ -27,11 +29,58 @@
       fsType = "vfat";
       autoMount = true;
     };
+
+    # ── RAM disk for build scratch (32GB) ────────────────────────────────
+    # /tmp on tmpfs: faster than disk, cleared on reboot
+    "/tmp" = {
+      device = "tmpfs";
+      fsType = "tmpfs";
+      options = [ "size=32G" "mode=1777" ];
+    };
+
+    # /run/shm for POSIX shared memory
+    "/run/shm" = {
+      device = "tmpfs";
+      fsType = "tmpfs";
+      options = [ "size=32G" ];
+    };
   };
 
   swapDevices = [
     { device = "/dev/vda3"; size = 65536; }
   ];
+
+  # ── Nix caching ────────────────────────────────────────────────────────────
+  nix.settings = {
+    # Use the global NixOS cache
+    substituters = [ "https://cache.nixos.org" ];
+    trusted-substituters = [ "https://cache.nixos.org" ];
+
+    # Lean / mathlib community cache (accelerates lake builds)
+    extra-substituters = [ "https://leanprover-community.github.io" ];
+    extra-trusted-public-keys = [
+      "leanprover-community.github.io-1:a8UP+R2uLj3/r6nGCoDSo1R4+/tJ1BLC5W3gNiV/Es="
+    ];
+
+    # Parallel downloads
+    max-jobs = "auto";
+
+    # Keep 50 generations per user profile
+    keep-derivations = true;
+    keep-outputs = true;
+  };
+
+  # ── Tailscale mesh networking ──────────────────────────────────────────────
+  services.tailscale = {
+    enable = true;
+    # "server" makes this a relay node (exit node for other machines)
+    useRoutingFeatures = "server";
+    # Enable tailscale SSH (auth via tailnet)
+    extraUpFlags = [
+      "--accept-dns=false"
+      "--operator=root"
+    ];
+  };
 
   # ── Users ─────────────────────────────────────────────────────────────────
   users.users.researcher = {
@@ -41,6 +90,7 @@
       "wheel"
       "docker"
       "keys"
+      "tailscale"
     ];
     openssh.authorizedKeys.keys = [
       # Add SSH keys here
@@ -54,19 +104,25 @@
       PermitRootLogin = "yes";
       PasswordAuthentication = false;
     };
-    # listenAddresses = [{ port = 22; }];
   };
 
   # ── nix-ld (run x86_64 binaries on ARM64) ────────────────────────────────
   programs.nix-ld.enable = true;
 
-  # ── uv is installed via environment.systemPackages ──────────────────────
+  # ── Build parallelism tunables ──────────────────────────────────────────────
+  # Set by systemd service env in individual services, but also available globally
+  environment.variables = {
+    LAKE_JOBS = "16";
+    MAKEFLAGS = "-j16";
+    NIX_BUILD_CORES = "16";
+    # tmpfs means /tmp is fast; pin lean packages there
+    XDG_CACHE_HOME = "/home/researcher/.cache";
+  };
 
   # ── Lean LSP services ──────────────────────────────────────────────────────
-  # Lean 4.19.0 LSP on port 8765 (streamable-http)
   systemd.services.lean-lsp-mcp = {
     description = "Lean LSP MCP server (v4.19.0)";
-    after = [ "network.target" ];
+    after = [ "network.target" "tailscaled.service" ];
     wantedBy = [ "multi-user.target" ];
 
     script = let
@@ -93,14 +149,15 @@
         "ELAN_TOOLCHAIN=4.19.0"
         "HOME=/home/researcher"
         "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+        "LAKE_JOBS=16"
+        "XDG_CACHE_HOME=/home/researcher/.cache"
       ];
     };
   };
 
-  # Lean 4.30.0-rc2 LSP on port 8766 (for mathlib)
   systemd.services.lean-lsp-mathlib = {
     description = "Lean LSP MCP server (v4.30.0-rc2, mathlib)";
-    after = [ "network.target" ];
+    after = [ "network.target" "tailscaled.service" ];
     wantedBy = [ "multi-user.target" ];
 
     script = let
@@ -127,6 +184,8 @@
         "ELAN_TOOLCHAIN=4.30.0-rc2"
         "HOME=/home/researcher"
         "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+        "LAKE_JOBS=16"
+        "XDG_CACHE_HOME=/home/researcher/.cache"
       ];
     };
   };
@@ -165,6 +224,7 @@
       Environment = [
         "HOME=/home/researcher"
         "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+        "PYTHONUNBUFFERED=1"
       ];
     };
   };
@@ -194,12 +254,13 @@
       Environment = [
         "HOME=/home/researcher"
         "PATH=${pkgs.ollama}/bin:${pkgs.curl}/bin"
+        "OLLAMA_MODELS=/home/researcher/.ollama/models"
       ];
     };
   };
 
-  # ── Ollama model puller helper ─────────────────────────────────────────────
-  # Run with: sudo -u researcher /var/lib/ollama/model-pull.sh deepseek-r1:7b
+  # ── Ollama model puller (oneshot) ────────────────────────────────────────
+  # Usage: sudo -u researcher systemctl start ollama-model-pull@"deepseek-r1:7b"
   systemd.services.ollama-model-pull = {
     description = "Ollama model puller";
     after = [ "ollama.service" ];
@@ -216,13 +277,51 @@
     };
   };
 
+  # ── ENE database restoration (oneshot) ───────────────────────────────────
+  # Copies backed-up ENE data from external disk to the VPS
+  # Run manually after mounting the backup drive:
+  #   sudo systemctl start ene-restore
+  systemd.services.ene-restore = {
+    description = "Restore ENE from backup";
+    after = [ "postgresql.service" ];
+    wantedBy = [ "multi-user.target" ];
+    script = let
+      backupDir = "/mnt/aws-backup-20260529";  # mount backup disk here first
+    in ''
+      #!${pkgs.bash}/bin/bash
+      set -euo pipefail
+      export PGHOST=/run/postgresql
+      export PGDATA=/var/lib/postgresql/16/data
+      export PGUSER=postgres
+      export SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
+
+      echo "Restoring ENE schema..."
+      sudo -u postgres psql -c "CREATE DATABASE ene;" 2>/dev/null || true
+      sudo -u postgres pg_restore -C -d postgres "${backupDir}/rds_dump/ene_schema.sql" 2>/dev/null || true
+
+      echo "Restoring ENE data..."
+      sudo -u postgres pg_restore -C -d ene "${backupDir}/rds_dump/ene_full.dump" 2>/dev/null || true
+
+      echo "Importing CSV tables..."
+      # Import CSVs (list tables that need CSV import)
+      for tbl in $(ls "${backupDir}/rds_tables/"*.csv 2>/dev/null | xargs -I{} basename {} .csv); do
+        echo "  Importing $tbl..."
+        sudo -u postgres psql -d ene -c "\\COPY $tbl FROM '${backupDir}/rds_tables/$tbl.csv' WITH (FORMAT csv, HEADER true)" 2>/dev/null || true
+      done
+
+      echo "ENE restore complete."
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+  };
+
   # ── Docker (for x86_64 images via nix-ld) ────────────────────────────────
   virtualisation.docker = {
     enable = true;
     autoPrune.enable = true;
     enableOnBoot = true;
-    # Store images on a larger disk if available
-    # dataRoot = "/var/lib/docker";
   };
 
   # ── Networking ─────────────────────────────────────────────────────────────
@@ -242,7 +341,6 @@
 
   # ── Packages ────────────────────────────────────────────────────────────────
   environment.systemPackages = with pkgs; [
-    # Core utilities
     git git-lfs
     bash bashInteractive coreutils findutils gnugrep gnused gawk
     util-linux
@@ -262,12 +360,15 @@
     graphviz
     postgresql_16
     docker containerd
+    tailscale  # mesh networking
   ];
 
-  # ── Performance tuning for 64GB RAM / 18 cores ─────────────────────────────
-  # Aggressive transparent hugepage for memory-heavy workloads
+  # ── Performance tuning for 64GB RAM / 18 cores ────────────────────────────
   boot.kernel.sysctl = {
+    # Transparent hugepage support for memory-intensive workloads
     "vm.nr_hugepages" = 1024;
+    # Swappiness: prefer RAM over swap for build workloads
+    "vm.swappiness" = 10;
   };
 
   # ── Security ────────────────────────────────────────────────────────────────

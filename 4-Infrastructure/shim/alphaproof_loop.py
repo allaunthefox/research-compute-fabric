@@ -16,13 +16,20 @@ import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List, Dict
 
 try:
     import requests
     HAS_REQUESTS = True
 except ImportError:
     HAS_REQUESTS = False
+
+# Import pre-filter for copy-if pattern
+try:
+    from lean_proof_prefilter import analyze_file, classify_theorem, extract_theorems
+    HAS_PREFILTER = True
+except ImportError:
+    HAS_PREFILTER = False
 
 
 # ---------------------------------------------------------------------------
@@ -260,6 +267,138 @@ def fpga_accelerate(candidates: list[dict]) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
+# Proof prioritization (copy-if pre-filter)
+# ---------------------------------------------------------------------------
+
+
+def prioritize_problems(lean_dir: str, max_problems: int = 20) -> List[Dict]:
+    """Pre-filter and prioritize proof problems using the copy-if pattern.
+
+    Scans the Lean codebase, classifies theorems as trivial/non-trivial,
+    and returns the highest-priority non-trivial problems for the LLM.
+
+    This is the Lean equivalent of the vectorized copy_if:
+    - Trivial theorems (zero deltas) = skip
+    - Non-trivial theorems (non-zero deltas) = feed to solver
+
+    Args:
+        lean_dir: Path to Lean source directory.
+        max_problems: Maximum number of problems to return.
+
+    Returns:
+        List of prioritized problem dicts with file, theorem, and priority.
+    """
+    if not HAS_PREFILTER:
+        print("[alphaproof] pre-filter not available, using default order")
+        return []
+
+    problems = []
+    lean_path = Path(lean_dir)
+
+    for lean_file in sorted(lean_path.rglob('*.lean')):
+        if '.lake' in str(lean_file):
+            continue
+        try:
+            analysis = analyze_file(str(lean_file))
+            for thm in analysis['theorems']:
+                if thm['classification'] == 'non_trivial':
+                    # Priority: more tactics = harder = higher priority
+                    tactic_count = len(thm.get('category', '').split(','))
+                    has_sorry = 'sorry' in thm.get('category', '')
+                    priority = tactic_count + (10 if has_sorry else 0)
+
+                    problems.append({
+                        'file': str(lean_file),
+                        'theorem': thm['name'],
+                        'kind': thm['kind'],
+                        'line': thm['line'],
+                        'category': thm['category'],
+                        'priority': priority,
+                        'block': thm['block'],
+                    })
+        except Exception:
+            continue
+
+    # Sort by priority (highest first = hardest problems first)
+    problems.sort(key=lambda p: p['priority'], reverse=True)
+
+    # Deduplicate by theorem name
+    seen = set()
+    unique = []
+    for p in problems:
+        if p['theorem'] not in seen:
+            seen.add(p['theorem'])
+            unique.append(p)
+
+    return unique[:max_problems]
+
+
+def batch_proof_search(lean_dir: str, max_iterations: int = 10,
+                       model: str = DEFAULT_MODEL,
+                       lake_project: Optional[str] = None) -> Dict:
+    """Run AlphaProof on prioritized non-trivial theorems.
+
+    Uses the copy-if pre-filter to skip trivial theorems and focus
+    the LLM solver on the hardest problems first.
+    """
+    problems = prioritize_problems(lean_dir)
+
+    if not problems:
+        print("[alphaproof] no non-trivial problems found")
+        return {'problems': [], 'results': []}
+
+    print(f"[alphaproof] found {len(problems)} non-trivial problems")
+    print(f"[alphaproof] top 5: {[p['theorem'] for p in problems[:5]]}")
+
+    results = []
+    for i, problem in enumerate(problems):
+        print(f"\n[alphaproof] [{i+1}/{len(problems)}] {problem['theorem']}"
+              f" (priority={problem['priority']}, category={problem['category']})")
+
+        # Build prompt from the theorem block
+        prompt = (
+            f"Prove this Lean 4 theorem. The file is {problem['file']}, "
+            f"line {problem['line']}.\n\n"
+            f"```lean\n{problem['block']}\n```\n\n"
+            f"Replace the sorry with a complete proof. "
+            f"Use omega, simp, decide, norm_num, ring, or linarith as appropriate."
+        )
+
+        result = search_loop(
+            problem=prompt,
+            max_iterations=max_iterations,
+            model=model,
+            lake_project=lake_project,
+        )
+
+        results.append({
+            'theorem': problem['theorem'],
+            'file': problem['file'],
+            'priority': problem['priority'],
+            'success': result['success'],
+            'iterations': result['iterations'],
+            'solution': result.get('solution', ''),
+        })
+
+        if result['success']:
+            print(f"[alphaproof] SOLVED {problem['theorem']} "
+                  f"in {result['iterations']} iterations")
+        else:
+            print(f"[alphaproof] FAILED {problem['theorem']} "
+                  f"after {result['iterations']} iterations")
+
+    # Summary
+    solved = sum(1 for r in results if r['success'])
+    print(f"\n[alphaproof] summary: {solved}/{len(results)} solved")
+
+    return {
+        'problems': problems,
+        'results': results,
+        'solved': solved,
+        'total': len(results),
+    }
+
+
 # Main search loop
 # ---------------------------------------------------------------------------
 
@@ -372,9 +511,33 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print("Usage: python alphaproof_loop.py <problem_file_or_text> "
               "[--max-iter N] [--model MODEL]")
+        print("       python alphaproof_loop.py --batch <lean_dir> "
+              "[--max-iter N] [--model MODEL]")
         sys.exit(1)
 
     problem_arg = sys.argv[1]
+
+    # Batch mode: run pre-filter on Lean codebase
+    if problem_arg == '--batch':
+        lean_dir = sys.argv[2] if len(sys.argv) > 2 else '.'
+        max_iter = 10
+        model_name = DEFAULT_MODEL
+
+        for i, arg in enumerate(sys.argv[3:], 3):
+            if arg == '--max-iter' and i + 1 < len(sys.argv):
+                max_iter = int(sys.argv[i + 1])
+            elif arg == '--model' and i + 1 < len(sys.argv):
+                model_name = sys.argv[i + 1]
+
+        result = batch_proof_search(lean_dir, max_iterations=max_iter,
+                                    model=model_name)
+
+        print(f"\n{'='*60}")
+        print(f"Solved: {result['solved']}/{result['total']}")
+        print(f"{'='*60}")
+        sys.exit(0 if result['solved'] > 0 else 1)
+
+    # Single problem mode
     if os.path.isfile(problem_arg):
         problem_text = Path(problem_arg).read_text()
     else:

@@ -17,44 +17,107 @@
   boot.loader.grub.fsTracker = true;  # Track BTRFS subvolumes
 
   # ── BTRFS support ───────────────────────────────────────────────────────────
-  # Enable btrfs kernel module and quota support
   boot.supportedFilesystems = lib.mkAfter [ "btrfs" ];
-  boot.kernelModules = [ "btrfs" ];
   boot.extraModulePackages = with pkgs; [ btrfs-progs ];
 
+  # ── QEMU/KVM guest agent (for netcup SCP control panel) ──────────────────
+  # Required by the netcup Server Control Panel for:
+  #   - Graceful shutdown / reboot commands from SCP
+  #   - Console access (VNC/SPICE)
+  #   - Status reporting (IP, hostname, etc.)
+  #   - File transfer (SCP)
+  programs.qemuGuestAgent.enable = true;
+
+  # ── SPICE agent (for improved console quality) ────────────────────────────
+  programs.spiceVdAgent.enable = true;
+  programs.spiceDesktopPlus.enable = true;
+
+  # ── Kernel modules (mirrors Debian lsmod) ───────────────────────────────────
+  # VirtIO (KVM guest) — must be loaded early
+  boot.kernelModules = [
+    # Storage
+    "virtio_blk"
+    "virtio_scsi"
+    # Network
+    "virtio_net"
+    # Memory ballooning (SCP control panel needs this)
+    "virtio_balloon"
+    # Serial console (SCP VNC/console access)
+    "virtio_serial"
+    # GPU (SPICE display)
+    "virtio_gpu"
+    "virtio_dma_buf"
+    # DMA buffer sharing between VirtIO devices
+    "drm"
+    "drm_kms_helper"
+    "drm_shmem_helper"
+    # USB (keyboard/mouse in SPICE console)
+    "xhci_pci"
+    "usbcore"
+    "usb_common"
+    "usbhid"
+    # SCSI / CDROM
+    "scsi_mod"
+    "scsi_common"
+    "sr_mod"
+    "cdrom"
+    # Filesystem
+    "ext4"
+    "mbcache"
+    "jbd2"
+    "crc16"
+    "crc32c_generic"
+    # EFI
+    "efi_pstore"
+    "efivarfs"
+    # QEMU firmware config (SCP reads guest info via this)
+    "qemu_fw_cfg"
+    # IPTables (if firewall is active)
+    "ip_tables"
+    "x_tables"
+    # cgroups v2 (systemd)
+    # binfmt_misc (runs foreign binaries)
+    # hugetlbfs (large pages)
+    # pstore (crash kernel logs)
+  ];
+
+  boot.extraModulePackages = with pkgs; [ btrfs-progs ];
+
+  # ── Kernel command line ───────────────────────────────────────────────────────
+  # net.ifnames=0 = eth0 naming (matches Debian convention)
+  boot.kernelParams = [
+    "net.ifnames=0"
+    "console=tty0"
+    "quiet"
+  ];
+
   # ── Filesystems ────────────────────────────────────────────────────────────
-  # NOTE: Fill in actual partition layout from CCP before deploying.
-  # Run `lsblk` or `fdisk -l` after booting the NixOS installer ISO.
+  # Real partition layout from netcup CCP:
+  #   vda1: EFI System Partition (vfat, /boot/efi)
+  #   vda2: /boot (ext4, 977MB) — keep as-is, no reformat
+  #   vda3: / (2TB, converting ext4 → btrfs)
+  # Swap: file on btrfs (no separate partition needed)
   fileSystems = {
-    "/" = {
-      device = "/dev/vda1";
-      fsType = "ext4";
-      autoMount = true;
-    };
     "/boot/efi" = {
-      device = "/dev/vda2";
+      device = "/dev/vda1";
       fsType = "vfat";
-      autoMount = true;
+      options = [ "umask=0077" ];
     };
 
-    # ── RAM disk for build scratch (32GB) ────────────────────────────────
-    # /tmp on tmpfs: faster than disk, cleared on reboot
-    "/tmp" = {
-      device = "tmpfs";
-      fsType = "tmpfs";
-      options = [ "size=32G" "mode=1777" ];
+    "/boot" = {
+      device = "/dev/vda2";
+      fsType = "ext4";
     };
 
-    # /run/shm for POSIX shared memory
-    "/run/shm" = {
-      device = "tmpfs";
-      fsType = "tmpfs";
-      options = [ "size=32G" ];
+    "/" = {
+      device = "/dev/disk/by-uuid/d8f20598-5e7e-46d6-8a29-f66d9b1efc4d";
+      fsType = "btrfs";
+      options = [ "compress=zstd" "ssd" "noatime" ];
     };
   };
 
   swapDevices = [
-    { device = "/dev/vda3"; size = 65536; }
+    { device = "/swapfile"; size = 65536; }
   ];
 
   # ── Nix caching ────────────────────────────────────────────────────────────

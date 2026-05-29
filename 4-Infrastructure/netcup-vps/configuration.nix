@@ -44,13 +44,14 @@
     "virtio_balloon"
     # Serial console (SCP VNC/console access)
     "virtio_serial"
-    # GPU (SPICE display)
+    # GPU (SPICE display + 3D acceleration via virglrenderer)
     "virtio_gpu"
     "virtio_dma_buf"
-    # DMA buffer sharing between VirtIO devices
+    "virtio-gpu"        # virtio-gpu 3D with virglrenderer
     "drm"
     "drm_kms_helper"
     "drm_shmem_helper"
+    "ttm"                # GPU memory manager (needed by DRM)
     # USB (keyboard/mouse in SPICE console)
     "xhci_pci"
     "usbcore"
@@ -75,13 +76,28 @@
     # IPTables (if firewall is active)
     "ip_tables"
     "x_tables"
-    # cgroups v2 (systemd)
-    # binfmt_misc (runs foreign binaries)
-    # hugetlbfs (large pages)
-    # pstore (crash kernel logs)
   ];
 
   boot.extraModulePackages = with pkgs; [ btrfs-progs ];
+
+  # ── VirtIO GPU 3D acceleration (virglrenderer) ─────────────────────────────
+  # Enables hardware-accelerated 3D in SPICE via VirtIO-gpu
+  hardware.virtio = {
+    enable = true;
+    guestAgent.enable = true;
+  };
+
+  # ── X11 / SPICE configuration ───────────────────────────────────────────────
+  services.xserver = {
+    enable = true;
+    videoDrivers = [ "virtiogpu" "fbdev" "vmware" ];
+  };
+
+  # ── SPICE (remote display) ───────────────────────────────────────────────
+  services.spice = {
+    enable = true;
+    vdagent.enable = true;
+  };
 
   # ── Kernel command line ───────────────────────────────────────────────────────
   # net.ifnames=0 = eth0 naming (matches Debian convention)
@@ -660,16 +676,30 @@
     jellyfin              # Media server (TV, movies, music)
     jellyfin-ffmpeg       # Jellyfin's patched FFmpeg with hardware encoding
     jellyfin-web          # Web UI
-    # Hardware acceleration (common for ARM64 media)
-    openssl              # Already present; TLS for jellyfin
 
     # ── BTRFS tools ────────────────────────────────────────────────────────
-    btrfs-progs          # btrfs filesystem utilities (mkfs, subvolume, send/receive)
+    btrfs-progs          # mkfs, subvolume, send/receive, scrub, balance
     btrfs-heatmap        # Visualize BTRFS space usage
-    btrfs-static         # Static btrfs binaries for rescue
+    btrfs-static         # Static binaries for rescue
 
     # ── NUMA / ARM64 performance ───────────────────────────────────────────
     numactl              # NUMA policy control for BLAS/PETSc/Julia threading
+
+    # ── Framebuffer / DRM / GPU acceleration ─────────────────────────────────
+    mesa                    # OpenGL, VA-API, video acceleration
+    libGL                   # OpenGL runtime
+    libGLU                  # GLU (OpenGL utility library)
+    virglrenderer           # VirtIO-gpu 3D acceleration (VRAM share with host)
+    swiftshader            # Software Vulkan (for containers without GPU)
+    libva                   # VA-API (video acceleration)
+    # ── SPICE remote display ───────────────────────────────────────────────
+    spice                   # SPICE protocol
+    spice-gtk              # SPICE GTK client (for remote viewer)
+    xorg.libX11            # X11 display server library
+    xorg.libXext            # X11 extensions
+    xorg.libXrender         # X Render extension
+    xf86-video-vmware      # VMware X11 driver
+    xf86-video-fbdev       # Linux framebuffer X11 driver
   ];
 
   # ── Performance tuning for ARM64 (Ampere/Altra Neoverse) ─────────────────────

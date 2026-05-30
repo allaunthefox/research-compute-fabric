@@ -90,10 +90,9 @@ def dotProduct (a b : List Int) : Int :=
   (List.zip a b).foldl (fun acc (x, y) => acc + x * y) 0
 
 def is_epsilon_orthogonal (qi qj : List Int) (epsilon : Int) : Prop :=
-  let d := dotProduct qi qj
-  -epsilon < d ∧ d < epsilon
+  (-epsilon < dotProduct qi qj) ∧ (dotProduct qi qj < epsilon)
 
-/-- #eval witness: orthogonal vectors have zero dot product -/
+/- Witness: orthogonal vectors have zero dot product -/
 #eval let v1 : List Int := [1, 2, 3]
       let v2 : List Int := [1, -2, 1]
       dotProduct v1 v2
@@ -129,14 +128,56 @@ def admit (g : GoxelAdmission) (epsilon_g epsilon_pi budget : Nat) : Prop :=
   g.kot_cost ≤ budget ∧
   g.audit_bundle == "valid"
 
-/-- O-AMMR Node Validity Predicate (Goxel-Aware). -/
+/-- QR Factorization Witness: carries pre-computed QR validation data.
+    All values are Q16_16 fixed-point; no Float in compute paths.
+    The witness is produced by the QR factorization runtime and
+    consumed by the formal validation predicate. -/
+structure QRResidualWitness where
+  residual_norm       : Semantics.FixedPoint.Q16_16  -- pre-computed ||A - QR|| (Frobenius or max-norm)
+  epsilon_residual    : Semantics.FixedPoint.Q16_16  -- tolerance for residual bound
+  basis_size          : Nat     -- number of QR columns
+  max_basis           : Nat     -- rank control: basis_size ≤ max_basis
+  ortho_violation     : Semantics.FixedPoint.Q16_16  -- max |q_i · q_j| over i ≠ j (off-diagonal)
+  epsilon_ortho       : Semantics.FixedPoint.Q16_16  -- tolerance for orthogonality
+  deriving Repr
+
+/-- Residual bound check: ||A - QR|| < ε in Q16_16 fixed-point.
+    This is a Prop-level predicate formalizing that the QR factorization
+    residual is within the accepted tolerance. -/
+def residual_bound_ok (w : QRResidualWitness) : Prop :=
+  (Semantics.FixedPoint.Q16_16.abs w.residual_norm).toInt < w.epsilon_residual.toInt
+
+/-- Basis size check: basis_size ≤ max_basis (rank control). -/
+def basis_size_ok (w : QRResidualWitness) : Prop :=
+  w.basis_size ≤ w.max_basis
+
+/-- Orthogonality check: Q^T Q ≈ I within Q16_16 tolerance.
+    The maximum off-diagonal dot product must be below ε. -/
+def orthogonality_ok (w : QRResidualWitness) : Prop :=
+  (Semantics.FixedPoint.Q16_16.abs w.ortho_violation).toInt < w.epsilon_ortho.toInt
+
+/-- O-AMMR Node Validity Predicate (QR-Hardened).
+    Validates both the admission gate and the QR factorization witness.
+    Three independent checks must all pass:
+    1. Residual bound: ||A - QR|| < ε_residual
+    2. Basis size: basis_size ≤ max_basis
+    3. Orthogonality: max off-diagonal |q_i · q_j| < ε_ortho -/
 structure O_AMMR_Node where
   hash_committed           : String
   admission                : GoxelAdmission
+  qr_witness               : QRResidualWitness
   deriving Repr
 
+/-- The strengthened O_AMMR_valid predicate. Requires:
+    (a) admission gate: ρ_G ≤ ε_G ∧ ρ_Π ≤ ε_Π ∧ KOT ≤ budget ∧ audit = valid
+    (b) QR residual bound: ||A - QR|| < ε_residual
+    (c) basis size: basis_size ≤ max_basis
+    (d) orthogonality: max off-diagonal |q_i · q_j| < ε_ortho -/
 def O_AMMR_valid (node : O_AMMR_Node) (eg epi b : Nat) : Prop :=
-  admit node.admission eg epi b
+  admit node.admission eg epi b ∧
+  residual_bound_ok node.qr_witness ∧
+  basis_size_ok node.qr_witness ∧
+  orthogonality_ok node.qr_witness
 
 /-- Projection function: interprets a GCCL-Rep event for a specific mountain. -/
 def project (_rep : GCCLByteRepresentative) (m : Mountain) : Prop :=

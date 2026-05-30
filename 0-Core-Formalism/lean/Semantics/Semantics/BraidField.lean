@@ -171,19 +171,19 @@ def latestPeak : MMR → Option IntNode
      - Equal heights   → merge and recurse (integrate out UV dof)
      - Distinct heights → insert at front   (stable at this scale)
 
-   Termination: each recursive call passes `rest`, whose size is
-   strictly less than `(cons top rest).size`. -/
+   Recursive call passes `rest`, whose size is strictly less than
+   `(cons top rest).size`. -/
 def append (mmr : MMR) (m : Mountain) : MMR :=
-  match mmr with
-  | empty => cons m empty
-  | cons top rest =>
-    if top.height == m.height then
-      -- Trigger: equal heights → merge and propagate the combined peak
-      rest.append (Mountain.merge top m)
-    else
-      -- Stable: distinct heights → new mountain sits at front
-      cons m (cons top rest)
-termination_by mmr.size
+  let rec go (mmr : MMR) (m : Mountain) : MMR :=
+    match mmr with
+    | empty => cons m empty
+    | cons top rest =>
+      if top.height == m.height then
+        go rest (Mountain.merge top m)
+      else
+        cons m (cons top rest)
+  go mmr m
+termination_by mmr
 
 /-- Stability predicate: all mountains have distinct heights.
    True iff no merge is pending — the RG fixed point condition. -/
@@ -214,11 +214,20 @@ structure PISTField where
   geometry    : Q16_16  -- G: bind(curvature, ideal_curvature, KL)
   adaptation  : Q16_16  -- A: bind(current_rate, optimal_rate, ratio)
   protection  : Q16_16  -- P: bind(safety_margin, critical_threshold, KL)
-deriving Repr, BEq
+ deriving Repr, BEq
+
+instance : Inhabited PISTField := ⟨{
+  burden     := Q16_16.zero,
+  geometry   := Q16_16.zero,
+  adaptation := Q16_16.zero,
+  protection := Q16_16.zero
+}⟩
 
 /-- Burden cost function: informational cost of MMR load and merge debt. -/
 def burdenCost (load : ℕ) (target : ℕ) (_metric : Metric) : Q16_16 :=
-  Q16_16.ofNat ((load - target).abs * 65536)
+  let diff : Int := Int.ofNat load - Int.ofNat target
+  let diffNat := if diff < 0 then (-diff).toNat else diff.toNat
+  Q16_16.ofNat (diffNat * 65536)
 
 /-- Geometry cost function: geometric cost of peak variance. -/
 def geometryCost (curvature : ℕ) (_ideal : ℕ) (_metric : Metric) : Q16_16 :=
@@ -289,7 +298,14 @@ structure SpherionState where
   mmr   : MMR
   voids : BettiCycleSet
   pist  : PISTField
-deriving Repr
+
+instance : Inhabited SpherionState := ⟨{
+  scale := 0,
+  mmr   := MMR.empty,
+  voids := BettiCycleSet.empty,
+  pist  := { burden := Q16_16.zero, geometry := Q16_16.zero,
+              adaptation := Q16_16.zero, protection := Q16_16.zero }
+}⟩
 
 /-- Construct the initial UV state. -/
 def SpherionState.init (uvScale : ℕ) : SpherionState :=

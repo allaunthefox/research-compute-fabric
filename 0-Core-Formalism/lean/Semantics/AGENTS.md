@@ -83,7 +83,7 @@ lake build
 - Generated `*_tb.v` and `*_test_vectors.json` files are build artifacts unless
   a task explicitly promotes one as a hardware receipt.
 
-## Blessed Compiler Surface (as of 2026-05-26, commit `8d158bf9`)
+## Blessed Compiler Surface (as of 2026-05-30, commit `b7f3d1a9`)
 
 The `Compiler` lean_lib in `lakefile.toml` gates the promoted API surface.
 Only the following roots are blessed for downstream import and receipt emission:
@@ -107,9 +107,20 @@ lake build
 ```
 
 Compiler surface baseline: **3313 jobs, 0 errors** (`lake build Compiler`, commit `859d8726`, reverified 2026-05-28).
-Full workspace: **3571 jobs, 0 errors** (`lake build`, commit `859d8726`, reverified 2026-05-28).
+Full workspace: **3560 jobs, 0 errors** (`lake build`, reverified 2026-05-30).
 PistSimulation: **3309 jobs, 0 errors** (`lake build Semantics.PistSimulation`, commit `778b78d3`, reverified 2026-05-27).
 EmergencyBoot: **3302 jobs, 0 errors** (`lake build Semantics.Hardware.EmergencyBootTypes Semantics.Hardware.EmergencyBootState Semantics.Hardware.EmergencyBootShell`, reverified 2026-05-27).
+
+### BraidDiatCodec — chirality/MMR/braid residual codec
+
+New codec module (`Semantics.BraidDiatCodec`) layers the mountains-on-mountain stack into a compact binary format:
+
+- **Layer 1** — `ChiralityDIAT`: 2-bit chirality + 62-bit DIAT slot address. Encode: `(Chirality × UInt32) → ChiralityDIAT`. Decode roundtrip proven (`encode_decode_roundtrip`).
+- **Layer 2** — `MountainPacked`: height(8) + apex(48) + base_count(8) + base coords. Lossless `fromMountain` / `toMountain` with inner MMR preserved recursively.
+- **Layer 3** — `BraidResidualPacked`: 5 Q0_2 fields × 2 bits = 10 bits per crossing residual. Q0_2 roundtrip proven (`bracket_roundtrip`).
+- **Layer 4** — `BraidDiatFrame`: 256-bit fixed header + variable mountain list. Full `encode` / `decode` between `SpherionState × BraidReceipt` and frame.
+
+Key invariants: DIAT mass (`a + b = 2k + 1`), MMR strictly decreasing heights, Q0_2 4-state packing.
 
 ### goldenContractionEnergyDecrease — proof status
 

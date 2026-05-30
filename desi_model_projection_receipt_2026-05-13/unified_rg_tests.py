@@ -477,8 +477,8 @@ def test_braid_spherion_bridge():
     # The formal proof
     print(f"\n  Formal proof status:")
     print(f"    lake build: 3560 jobs, 0 errors")
-    print(f"    All admits discharged")
-    print(f"    No sorry, no axiom, no tautology")
+    print(f"    14 proofs: sorry + TODO(lean-port) (dependency drift)")
+    print(f"    lake build: 3309 jobs, 0 errors (sorry warnings)")
 
     # Connection to test suite
     print(f"\n  What this adds to the test suite:")

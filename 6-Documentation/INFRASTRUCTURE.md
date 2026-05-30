@@ -250,3 +250,36 @@ openFPGALoader -b tangnano9k research_stack_top.fs
 export KUBECONFIG=/tmp/researchstack-kubeconfig.yaml
 kubectl get pods -A
 ```
+
+## k3s Cluster Setup
+
+Detailed cluster setup documentation: `4-Infrastructure/docs/k3s-cluster-setup.md`
+
+### Topology (cupfox control plane)
+
+| Node | Tailscale IP | Role | Arch |
+|------|-------------|------|------|
+| cupfox | 100.110.163.82 | control-plane | amd64 |
+| neon-64gb | 100.64.19.78 | worker (heavy) | arm64 |
+| steamdeck | 100.85.244.73 | worker (gpu) | amd64 |
+| racknerd | 100.80.39.40 | worker (edge) | amd64 |
+
+### Ollama Inference Serving
+
+- Host-level deployment on Neon-64GB (bypasses KServe RAM limits)
+- Caddy reverse proxy on racknerd (:8443 → 100.64.19.78:11434)
+- Troubleshooting: autosave.json stale config, passt port interception
+
+### netcup-vps (ARM64 EPYC)
+
+NixOS configuration: `4-Infrastructure/netcup-vps/configuration.nix`
+
+ARM64-optimized packages:
+- openblas, blis, lapack — multi-threaded linear algebra
+- petsc, slepc — sparse/eigenvalue solvers
+- flintqs, pari, gap, singular — number theory / algebra
+- symengine — fast C++ symbolic (SymPy backend)
+- fftw, suitesparse — FFT and sparse direct solvers
+- z3, julia_11 — SMT and JIT numerics
+
+k3s ports: 6443, 2379, 2380 (firewall updated)

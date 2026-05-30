@@ -51,7 +51,7 @@ Single control plane on **cupfox**, workers on Neon-64GB, steamdeck, and rackner
 |------|-----|-----|------|-------|
 | cupfox | 2 vCPU EPYC | 3.8 GB | 125 GB (86% used) | EPYC means 2 cores is capable for control plane |
 | Neon-64GB | 18 vCPU ARM64 EPYC | 64 GB | 2 TB | Heavy workloads target |
-| steamdeck | — | — | — | RDNA 2 GPU |
+| steamdeck | 8 vCPU AMD | 14.5 GB | — | RDNA 2 GPU (no NVIDIA driver) |
 | racknerd | 1 vCPU Xeon | 715 MB | 9 GB | Edge only |
 
 ---

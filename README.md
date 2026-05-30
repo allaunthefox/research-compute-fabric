@@ -14,7 +14,7 @@ Because we only use addition, subtraction, multiplication, and modulo, this syst
 ## 🛠️ How we know it works (Zero Guesswork)
 We do not guess that our integer math works. We prove it.
 The core of this project is written in **Lean 4**, a strict mathematical theorem prover. 
-If our logic has a flaw, *the code physically will not compile.* We currently have **746 verified Lean modules** across a **3,529-job deterministic build** (0 errors) securing this engine.
+If our logic has a flaw, *the code physically will not compile.* We currently have **746 verified Lean modules** across a **3,313-job deterministic build** (0 errors) securing this engine.
 
 Python, Rust, and Verilog only exist in this repository to act as "dumb pipes" to feed data into our proven mathematical core.
 

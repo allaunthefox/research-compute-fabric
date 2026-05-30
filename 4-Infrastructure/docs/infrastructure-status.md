@@ -1,216 +1,169 @@
 # Infrastructure Status — Research Stack
 
-> **Last verified:** 2026-05-23
+> **Last verified:** 2026-05-30
 > **Scope:** All live nodes, services, and storage in the Tailscale mesh.
 
 ---
 
-## Tailscale Mesh
+## Cluster Overview
 
-All nodes route through Tailscale. No public ports are open on any node except `microvm-racknerd` (ports 80/443 for Caddy).
+All nodes run k3s v1.35.5+k3s1 (except steamdeck: v1.34.5+k3s1) joined into a single cluster,
+networked over Tailscale. cupfox is the control-plane; all other nodes are workers.
 
-| Node | Tailscale IP | Hostname | Role | OS | SSH |
-|------|-------------|----------|------|-----|-----|
-| **qfox-1** | 100.88.57.96 | QFox | Garage primary, S3 endpoint, GPU compute, build host | Arch Linux 7.0.9-cachyos | local |
-| **nixos-laptop** | 100.102.173.61 | nixos | Authentik SSO, k3s control plane, storage node | NixOS 26.05 (Yarara) | key OK |
-| **361395-1** | 100.110.163.82 | 361395 | Netcup VPS, Garage storage node | Debian 13 | key OK |
-| **microvm-racknerd** | 100.101.247.127 | MicroVM-Racknerd | Caddy reverse proxy, public edge | Debian (microVM) | root password OK |
-| **nixos-steamdeck-1** | 100.85.244.73 | steamdeck | GPU compute, planned edge LLM (3B-7B) | NixOS | just onboarded |
-| **dracocomp** | 100.100.140.27 | — | offline / unreachable | — | unreachable 3+ days |
+**kubeconfig:** retrieve from cupfox at `/etc/rancher/k3s/k3s.yaml` (replace `0.0.0.0` → `100.110.163.82` for Tailscale access).
 
----
+```bash
+# Access cluster from anywhere via Tailscale
+ssh root@100.110.163.82 'cat /etc/rancher/k3s/k3s.yaml' | sed 's|0.0.0.0|100.110.163.82|g' > ~/.kube/config
+kubectl get nodes
+```
 
-## Public Edge: Caddy on microvm-racknerd
+| Node | k3s Role | CPU | RAM | Arch | Public IP | Tailscale | Notes |
+|------|----------|-----|-----|------|-----------|-----------|-------|
+| cupfox | control-plane | 2 | 3.8 GiB | amd64 | 46.232.249.226 | 100.110.163.82 | k3s + KubeRay operator |
+| neon-64gb | worker | 18 | 62.7 GiB | **arm64** | 152.53.81.164 | 100.100.75.113 | Heavy stateful + inference |
+| racknerd | worker | 1 | 715 MiB | amd64 | 172.245.19.182 | 100.80.39.40 | TLS via Caddy, too small for Ray |
+| steamdeck | worker | 8 | 14.5 GiB | amd64 | — | 100.85.244.73 | NixOS 25.11, Ray head + worker running |
 
-Caddy v2.11.3 with Porkbun DNS plugin handles all public HTTPS traffic.
-
-### Wildcard TLS
-
-- **Certificate:** `*.researchstack.info` + `researchstack.info`
-- **Issuer:** Let's Encrypt E7
-- **Challenge:** DNS-01 via Porkbun API
-- **Valid:** 2026-05-21 → 2026-08-19
-- **Renewal:** automatic
-
-### Domains & Routing
-
-| Domain | Caddy Action | Upstream (Tailscale) | Notes |
-|--------|-------------|----------------------|-------|
-| `researchstack.info` | `forward_auth` + `reverse_proxy` | `100.102.173.61:30803` | Homer dashboard (landing page) |
-| `chat.researchstack.info` | `forward_auth` + `file_server` | `100.102.173.61:9000` (auth only) | Placeholder HTML |
-| `dash.researchstack.info` | `forward_auth` + `reverse_proxy` | `100.102.173.61:30802` | Heimdall (k3s NodePort) |
-| `status.researchstack.info` | `forward_auth` + `reverse_proxy` | `100.102.173.61:30801` | Uptime Kuma (k3s NodePort) |
-| `auth.researchstack.info` | `reverse_proxy` (direct) | `100.102.173.61:9000` | Authentik SSO (no forward_auth loop) |
-
-### Caddy Service
-
-- **Config:** `/etc/caddy/Caddyfile`
-- **Service:** `caddy.service` (systemd)
-- **Status:** active
-- **Env:** Porkbun credentials via systemd drop-in (`/etc/systemd/system/caddy.service.d/override.conf`)
-- **Disk:** 9.1G total, 6.4G free
+> **Note:** neon-64gb is ARM64 — `rayproject/ray` images are amd64 only. Build or pull multi-arch
+> images to use its 18 cores. Racknerd has only 715 MiB RAM and cannot run Ray pods.
 
 ---
 
-## Identity: Authentik on nixos-laptop
+## k3s Cluster — cupfox
 
-Authentik runs as standalone Podman containers (not k3s). The k3s Helm migration is pending.
+k3s v1.35.5+k3s1 runs as control-plane on cupfox. Flannel.1 (mtu 1280) handles pod networking.
 
-### Containers
+### System pods
 
-| Container | Image | Port | Status |
-|-----------|-------|------|--------|
-| `authentik_postgresql_1` | `postgres:16-alpine` | 5432/tcp | Up, healthy |
-| `authentik_valkey_1` | `valkey/valkey:8-alpine` | 6379/tcp | Up, healthy |
-| `authentik_server_1` | `ghcr.io/goauthentik/server:2026.2.3` | 0.0.0.0:9000→9000, 0.0.0.0:9443→9443 | Up |
-| `authentik_worker_1` | `ghcr.io/goauthentik/server:2026.2.3` | — | Up |
+| Pod | Ready | Node | Status |
+|-----|-------|------|--------|
+| coredns-6b6544b569-n86sp | 1/1 | steamdeck | Running |
+| local-path-provisioner-5d9d9885bc-5hbt2 | 1/1 | cupfox | Running |
+| metrics-server-56dd944747-g59vn | 1/1 | steamdeck | Running |
 
-### Compose
+### Ray on k3s — KubeRay Operator
 
-- **Path:** `/home/allaun/authentik/docker-compose.yml`
-- **Network:** `authentik_authentik` (bridge)
-- **Volumes:** `database`, `redis`, `media`, `custom-templates`, `certs`
+| Component | Version | Namespace | Status |
+|-----------|---------|-----------|--------|
+| kuberay-operator | 1.6.1 | ray-system | Running |
+| raycluster (head) | 2.40.0 | ray-system | Running on steamdeck |
+| raycluster (worker) | 2.40.0 | ray-system | Running on steamdeck |
 
-### Valkey Migration
+```bash
+# Check Ray status
+kubectl exec -it raycluster-head-xxx -n ray-system -- ray status
 
-Redis was replaced with Valkey 8 (Alpine) on 2026-05-22. The `redis` volume was wiped during migration because Valkey does not read Redis RDB format version 13. Authentik cache/session data was lost but rebuilds automatically on first use.
+# Ray Python test
+kubectl exec -it raycluster-head-xxx -n ray-system -- python -c "import ray; ray.init(); print(ray.cluster_resources())"
+```
 
----
-
-## k3s on nixos-laptop
-
-k3s v1.35.4+k3s1 runs as a single-node control plane. Authentik was **not** successfully migrated to k3s.
-
-### Running Services (services namespace)
-
-| Pod | Service | NodePort | Status |
-|-----|---------|----------|--------|
-| `uptime-kuma` | `uptime-kuma` | 30801 | Running |
-| `heimdall` | `heimdall` | 30802 | Running |
-| `homer` | `homer` | 30803 | Running |
-| `pulse-receiver` | `pulse-receiver` | 30804 | Running |
-
-### Blocked / Broken
-
-| Pod | Status | Blocker |
-|-----|--------|---------|
-| `authentik-postgresql-0` | CrashLoopBackOff | Bitnami PostgreSQL subchart: read-only filesystem on `/var/run/postgresql` |
-| `authentik-redis-master-0` | ImagePullBackOff | Bitnami Redis image tags no longer exist |
-| `authentik-server-*` | Running (0/1) | Waiting for PostgreSQL |
-| `authentik-worker-*` | CrashLoopBackOff | Waiting for PostgreSQL |
-| `helm-install-authentik-*` | Error | Helm revision failures cascade |
-
-**Decision:** Keep Authentik on standalone Podman. Decommission or fix the k3s Authentik HelmChart when time permits.
+**RayCluster manifest:** `4-Infrastructure/kube/raycluster.yaml`
 
 ---
 
 ## Storage: Garage S3
 
-Garage v2.3.0 provides a self-hosted, replicated S3-compatible object store.
+Garage v2.3.0 — self-hosted S3-compatible object store, Tailscale-only access.
 
 ### Cluster Topology
 
-| Node ID | Hostname | Address | Zone | Capacity | Usable | DataAvail |
-|---------|----------|---------|------|----------|--------|-----------|
-| `3e08a71b73fa2b10` | QFox | 100.88.57.96:3901 | local | 780.4 GiB | 68.9 GiB | 1.5 TiB (83.5%) |
-| `75fac43bc53eb201` | 361395 | 100.110.163.82:3901 | fra | 68.9 GiB | 68.9 GiB | 65.2 GiB (52.3%) |
-| `a7e6c283056a4d77` | nixos | 100.102.173.61:3901 | ord | 346.5 GiB | 68.9 GiB | 393.5 GiB (85.8%) |
+| Node | Tailscale IP | Address | Capacity | DataAvail |
+|------|-------------|---------|----------|-----------|
+| cupfox | 100.110.163.82 | — | 68.9 GiB | 65.2 GiB (52.3%) |
+| qfox-1 (local) | 100.88.57.96 | — | 780.4 GiB | 1.5 TiB (83.5%) |
+| nixos-laptop | 100.102.173.61 | — | 346.5 GiB | 393.5 GiB (85.8%) |
 
 - **Replication factor:** 3
-- **Zone redundancy:** maximum
-- **Effective capacity:** 68.9 GiB (bottlenecked by 361395-1)
 - **Layout version:** 1
 
 ### Ports
 
 | Port | Purpose | Binding |
 |------|---------|---------|
-| 3900 | S3 API | qfox-1 only (localhost + Tailscale) |
-| 3901 | RPC (inter-node) | all nodes, Tailscale |
+| 3900 | S3 API | qfox-1 localhost + Tailscale |
+| 3901 | RPC | all nodes, Tailscale-only |
 | 3903 | Admin API | loopback only |
 
 ### Buckets
 
-| Alias | Purpose |
-|-------|---------|
+| Bucket | Purpose |
+|--------|---------|
 | `research-stack` | Primary project objects |
-| `db-scratch` | Active SQLite scratch databases |
+| `db-scratch` | Active SQLite scratch DBs |
 | `rds-overflow` | pg_dump / COPY TO exports |
 | `snap-zone` | ZFS send/receive snapshots |
 | `gdrive-mirror` | Mirror of gdrive:research-stack |
 
-### Nodes
-
-**qfox-1**
-- Garage runs as systemd service (`garage.service`) under dedicated `garage` user
-- S3 API bound to localhost:3900 (forwarded via SSH tunnel for remote access)
-- NixOS-style persistence not needed (native Arch)
-
-**361395-1**
-- Garage runs as systemd service
-- zram enabled: 2G zstd swap
-- Disk: 125G total, 66G free
-
-**nixos-laptop**
-- Garage runs as systemd service via NixOS module
-- zram enabled in `/etc/nixos/configuration.nix`
-- Disk: 459G NVMe, 394G free
-- Binary path: not in default `$PATH`; managed by NixOS
-
----
-
-## Backups: restic + rclone
-
-### Primary restic repo
-
-- **Backend:** `s3:http://localhost:3900/research-stack` (Garage)
-- **Password file:** `/etc/garage/restic-password`
-
 ### Scripts
-
-All scripts live in `4-Infrastructure/storage/restic/`:
 
 | Script | Purpose |
 |--------|---------|
 | `backup.sh snap [tag]` | Snapshot repo tree → Garage |
 | `backup.sh snap-db [dir]` | Snapshot SQLite scratch DBs |
-| `backup.sh snap-rds <table>` | Stream pg_dump \| zstd → restic stdin |
 | `backup.sh cold-copy` | rclone copy Garage → gdrive:restic-mirror |
-| `backup.sh sync-gdrive` | rclone sync gdrive:research-stack → Garage:gdrive-mirror |
 | `backup.sh forget` | Retention prune (7d/4w/6m) |
 | `backup.sh verify` | restic check --read-data-subset=5% |
 | `backup.sh full` | snap + cold-copy + sync-gdrive + forget |
 
-### Schedule
-
-- **Daily timer:** `restic-backup.timer` fires at 03:00 ±30 min
-- **Post-commit hook:** `.git/hooks/post-commit` runs `db-consolidate.sh offload` + `consolidate` in background
+Daily timer fires at 03:00 ±30 min. Post-commit hook runs `db-consolidate.sh offload + consolidate` async.
 
 ---
 
-## Secrets
+## Public Edge: Caddy on racknerd
 
-SOPS/age is used for all secrets.
+Caddy handles TLS termination for `*.researchstack.info` domains.
 
-- **Age key:** `~/.config/sops/age/keys.txt`
-- **Public key:** `age1tp4vr565zkmvnyulatpyaj6z8zrz7q9mpaypz85yz8rty99crdasualxyr`
-- **Config:** `.sops.yaml` (repo root) + `4-Infrastructure/k3s-flake/.sops.yaml`
+### Domains & Routing
 
-### Encrypted files (selection)
+| Domain | Upstream | Notes |
+|--------|----------|-------|
+| `researchstack.info` | 100.102.173.61:30803 | Homer dashboard |
+| `dash.researchstack.info` | 100.102.173.61:30802 | Heimdall |
+| `status.researchstack.info` | 100.102.173.61:30801 | Uptime Kuma |
+| `auth.researchstack.info` | 100.102.173.61:9000 | Authentik SSO (direct) |
 
-| File | Contents |
-|------|----------|
-| `4-Infrastructure/infra/secrets/credentials.json` | Provider API keys |
-| `4-Infrastructure/infra/secrets/appflowy.env` | AppFlowy secrets |
-| `4-Infrastructure/deploy/cupfox/pre-infect-backup/porkbun.env` | Porkbun API key + secret |
-| `4-Infrastructure/storage/restic/restic.env` | Restic + Garage credentials |
-| `API KEYS/racknerd_510bd9c_root.txt` | Racknerd credentials |
+### TLS
 
-### Porkbun DNS
+- **Certificate:** `*.researchstack.info` + `researchstack.info`
+- **Issuer:** Let's Encrypt
+- **Challenge:** DNS-01 via Porkbun API
+- **Valid:** 2026-05-21 → 2026-08-19
 
-- API key + secret stored in SOPS-encrypted `porkbun.env`
-- Used by Caddy for DNS-01 wildcard certificate challenges
-- Verified working: `/ping` and `/dns/retrieve/researchstack.info`
+---
+
+## Services by Node
+
+### cupfox (100.110.163.82)
+- k3s control-plane
+- KubeRay operator (ray-system namespace)
+- Garage storage node (fra zone)
+
+### neon-64gb (100.100.75.113)
+- k3s worker (ARM64, 18 cores)
+- Docker: ollama, cert-manager, knative (no Ray images available for ARM64)
+- **Note:** Ray images must be built/pulled for linux/arm64 to use GPU workers here
+
+### racknerd (100.80.39.40)
+- k3s worker (715 MiB RAM — too small for Ray)
+- Docker: docker-mailserver
+- Caddy TLS termination
+
+### steamdeck (100.85.244.73)
+- k3s worker (NixOS 25.11, 8 cores, 14 GiB RAM)
+- Docker: nginx, postgres, ollama, authentik, homarr, audiobookshelf, roundcube
+- Ray head + worker running on this node
+
+### nixos-laptop (100.102.173.61)
+- Authentik SSO (standalone Podman, port 9000)
+- Uptime Kuma, Heimdall, Homer (k3s NodePorts)
+- Garage storage node (ord zone)
+- SSH access via Tailscale key
+
+### qfox-1 (this machine, 100.88.57.96)
+- Primary Garage S3 endpoint
+- Build host (CUDA 13.2, RTX, 30 GiB RAM)
+- Local Nix environment
 
 ---
 
@@ -219,120 +172,44 @@ SOPS/age is used for all secrets.
 | Layer | Status |
 |-------|--------|
 | **Tailscale** | X25519Kyber768 hybrid key exchange active (v1.98+) |
-| **SSH (all nodes)** | `mlkem768x25519-sha256` preferred in `sshd_config` and `ssh_config` |
-| **Garage RPC** | Tailscale transport only (no direct PQ on RPC layer) |
-
----
-
-## Node Details
-
-### qfox-1
-
-| Spec | Value |
-|------|-------|
-| OS | Arch Linux, kernel 7.0.9-1-cachyos |
-| CPU | AMD Ryzen (GPU compute available) |
-| Disk | 1.8 TB NVMe |
-| Memory | — |
-| Tailscale | 100.88.57.96 |
-| Garage | primary node, S3 endpoint |
-| SSH config | `~/.ssh/config` entry `qfox-1` (local) |
-
-### nixos-laptop
-
-| Spec | Value |
-|------|-------|
-| OS | NixOS 26.05.20260521.f83fc3c (Yarara) |
-| Disk | 459G NVMe, 394G free |
-| Memory | 14 GiB total |
-| Tailscale | 100.102.173.61 |
-| k3s | v1.35.4+k3s1, single-node control plane |
-| Authentik | Podman, port 9000 |
-| Garage | storage node (ord zone) |
-| zram | enabled in NixOS config |
-
-### 361395-1 (Netcup VPS)
-
-| Spec | Value |
-|------|-------|
-| OS | Debian 13 (OpenSSH_10.0p2) |
-| Public IP | 46.232.249.226 |
-| Disk | 125G, 66G free |
-| Memory | — |
-| Tailscale | 100.110.163.82 |
-| Garage | storage node (fra zone) |
-| zram | 2G zstd (manual `zramctl`) |
-| APT issues | `enterprise.proxmox.com` returns 401; `pve-no-subscription` repo duplicated |
-
-### microvm-racknerd
-
-| Spec | Value |
-|------|-------|
-| OS | Debian (microVM) |
-| Public IP | 172.245.19.182 |
-| Disk | 9.1G, 6.4G free |
-| Tailscale | 100.101.247.127 |
-| Role | Caddy reverse proxy, public edge |
-| Ports | 80, 443 open to internet |
-
-### nixos-steamdeck-1
-
-| Spec | Value |
-|------|-------|
-| OS | NixOS |
-| Tailscale | 100.85.244.73 |
-| Hostname | steamdeck |
-| Role | GPU compute, planned edge LLM (3B-7B) |
-| GPU | RDNA 2 |
-| Status | just onboarded |
-
----
-
-## Open Issues
-
-| # | Issue | Node | Priority | Notes |
-|---|-------|------|----------|-------|
-| 1 | k3s Authentik PostgreSQL read-only filesystem | nixos-laptop | Low | Using standalone Podman instead |
-| 2 | k3s Authentik Redis image pull failure | nixos-laptop | Low | Bitnami tags removed; Valkey already in use |
-| 3 | 361395-1 APT 401 + duplicate repos | 361395-1 | Low | Cleanup `sources.list` when convenient |
-| 4 | dracocomp offline | — | Low | Unreachable 3+ days |
-| 5 | Garage S3 API only on qfox-1 localhost | qfox-1 | Low | Remote access via SSH tunnel or Tailscale funnel |
-| 6 | Caddy admin API returns null certs JSON | racknerd | Info | Cert is functional; API introspection mismatch |
+| **SSH (all nodes)** | `mlkem768x25519-sha256` preferred |
+| **Garage RPC** | Tailscale transport only |
 
 ---
 
 ## Access Cheat Sheet
 
 ```bash
+# Cluster admin (via Tailscale)
+ssh root@100.110.163.82 'cat /etc/rancher/k3s/k3s.yaml' | sed 's|0.0.0.0|100.110.163.82|g' > /tmp/kubeconfig
+KUBECONFIG=/tmp/kubeconfig kubectl get pods -n ray-system
+
+# Ray status
+KUBECONFIG=/tmp/kubeconfig kubectl exec -it raycluster-head-xxx -n ray-system -- ray status
+
 # SSH shortcuts (from ~/.ssh/config)
-ssh nixos-laptop
-ssh racknerd          # alias for microvm-racknerd
-ssh 361395-1
-ssh steamdeck          # nixos-steamdeck-1 (100.85.244.73)
+ssh root@100.110.163.82   # cupfox
+ssh root@152.53.81.164    # neon-64gb
+ssh root@172.245.19.182   # racknerd
+ssh root@100.85.244.73    # steamdeck
 
-# Tailscale direct
-ssh -o StrictHostKeyChecking=accept-new root@100.110.163.82
-
-# Authentik (local on nixos-laptop)
-curl http://127.0.0.1:9000
-
-# Caddy reload (on racknerd)
-systemctl reload caddy
-
-# Garage status
-sudo /usr/local/bin/garage -c /etc/garage/garage.toml status
+# Garage status (local)
+garage status
 
 # Decrypt secrets
-cd "/home/allaun/Research Stack"
 sops --decrypt 4-Infrastructure/infra/secrets/credentials.json
-
-# k3s on nixos-laptop
-kubectl get pods -n services
-kubectl get svc -n services
-
-# restic backup (from qfox-1)
-bash 4-Infrastructure/storage/restic/backup.sh full
 ```
+
+---
+
+## Open Issues
+
+| # | Issue | Node | Priority |
+|---|-------|------|----------|
+| 1 | neon-64gb ARM64 — no Ray images available | neon-64gb | High |
+| 2 | Dependabot alert #75 (`@ai-sdk/provider-utils`, transitive) | — | Low |
+| 3 | racknerd RAM too small for Ray (715 MiB) | racknerd | Won't fix |
+| 4 | CUDA driver mismatch (610.x vs 13.2 toolkit) — needs reboot | qfox-1 | Medium |
 
 ---
 
@@ -340,75 +217,7 @@ bash 4-Infrastructure/storage/restic/backup.sh full
 
 | Date | Change |
 |------|--------|
-| 2026-05-22 | Redis replaced with Valkey in Authentik compose |
-| 2026-05-22 | Caddy upstreams switched from k3s NodePort 30800 to standalone Podman 9000 |
-| 2026-05-23 | **infra-controller** deployed on 361395-1 (Netcup); systemd timer every 5 min |
-| 2026-05-23 | nixos-steamdeck-1 onboarded (100.85.244.73, NixOS, RDNA 2 GPU) |
-| 2026-05-22 | nixos-laptop Tailscale IP changed 100.119.165.120 → 100.102.173.61 |
-
----
-
-## Automation: infra-controller on 361395-1
-
-The **infra-controller** is the central health orchestration daemon running on the Netcup VPS (361395-1). It probes all nodes every 5 minutes via SSH over the Tailscale mesh.
-
-### Architecture
-
-```
-361395-1 (Netcup) — CONTROL PLANE
-├── infra-controller.timer (systemd, every 5 min)
-├── infra-controller.service (oneshot)
-├── Receipts: ~/.cache/infra-controller.jsonl (hash-chained)
-└── Alerting: local postfix → admin@researchstack.info
-
-Probes (SSH → each node):
-  qfox-1              → system, restic, garage, garage_buckets, gdrive_offload
-  nixos-laptop        → system, k3s
-  microvm-racknerd    → system, caddy
-  nixos-steamdeck-1   → system
-  361395-1 (local)    → system, garage, garage_buckets
-
-Roles (affects alert severity):
-  CRITICAL: microvm-racknerd, nixos-laptop  → alert on down
-  OPTIONAL: qfox-1, nixos-steamdeck-1        → log only
-```
-
-### Receipts
-
-- **Schema:** `infra_controller_receipt_v1`
-- **Format:** JSONL hash-chain, one entry per cycle
-- **Local:** `~/.cache/infra-controller.jsonl` (always available)
-- **S3 backup:** planned (s3://research-stack/agent-receipts/)
-
-### Commands
-
-```bash
-# Manual run
-ssh 361395-1 "cd '/home/allaun/Research Stack' && python3 4-Infrastructure/auto/infra_controller.py --probe-only"
-
-# View latest receipt
-ssh 361395-1 "tail -1 ~/.cache/infra-controller.jsonl | python3 -m json.tool"
-
-# Watch journal
-ssh 361395-1 "journalctl -u infra-controller.service -f"
-
-# Timer status
-ssh 361395-1 "systemctl status infra-controller.timer"
-```
-
-### Code location
-
-- `4-Infrastructure/auto/infra_controller.py` — main daemon
-- `4-Infrastructure/auto/lib/probe.py` — SSH probe runner
-- `4-Infrastructure/auto/lib/receipt.py` — receipt schema + hash-chain
-- `4-Infrastructure/auto/lib/alerting.py` — email/webhook/dashboard dispatch
-- `4-Infrastructure/auto/lib/config.py` — YAML config loader
-- `4-Infrastructure/auto/config/nodes.yaml` — node inventory + thresholds
-- `4-Infrastructure/auto/nodes/*.sh` — per-probe collector scripts (bash)
-
-| 2026-05-21 | Wildcard TLS `*.researchstack.info` deployed via Porkbun DNS-01 |
-| 2026-05-21 | Porkbun API keys regenerated and re-encrypted |
-| 2026-05-20 | Garage cluster bumped to `replication_factor=3` across all nodes |
-| 2026-05-20 | zram enabled cluster-wide |
-| 2026-05-19 | NixOS flake conversion + k3s bootstrap on nixos-laptop |
-| 2026-05-18 | Garage buckets created: research-stack, db-scratch, rds-overflow, snap-zone, gdrive-mirror |
+| 2026-05-30 | k3s cluster migrated to cupfox (was nixos-laptop); kubeconfig accessible via Tailscale |
+| 2026-05-30 | KubeRay operator 1.6.1 deployed in ray-system namespace |
+| 2026-05-30 | RayCluster deployed: head + worker on steamdeck (2 CPUs total) |
+| 2026-05-30 | Node naming standardized: cupfox / neon-64gb / racknerd / steamdeck |

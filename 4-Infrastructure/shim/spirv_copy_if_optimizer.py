@@ -140,6 +140,7 @@ class CopyIfPattern:
     true_value_id: str  # Value from true branch
     false_value_id: str  # Value from false branch (identity/zero)
     result_id: str  # OpPhi result
+    type_id: str  # OpPhi type operand
 
 
 def detect_copy_if(func: SpirvFunc) -> List[CopyIfPattern]:
@@ -213,6 +214,7 @@ def detect_copy_if(func: SpirvFunc) -> List[CopyIfPattern]:
                     true_value_id=true_value_id,
                     false_value_id=false_value_id,
                     result_id=phi_instr.result_id or '',
+                    type_id=phi_instr.args[0].lstrip('%'),
                 ))
 
     return patterns
@@ -287,10 +289,10 @@ def transform_copy_if(text: str) -> Tuple[str, int]:
                     ))
                     # Add OpSelect
                     new_instructions.append(SpirvInstr(
-                        raw=f"  %{pattern.result_id} = OpSelect %{compute_instr.result_id} %{pattern.cond_id} %{compute_instr.result_id} %{pattern.false_value_id}",
+                        raw=f"  %{pattern.result_id} = OpSelect %{pattern.type_id} %{pattern.cond_id} %{compute_instr.result_id} %{pattern.false_value_id}",
                         result_id=pattern.result_id,
                         opcode='OpSelect',
-                        args=[f'%{compute_instr.result_id}', f'%{pattern.cond_id}', f'%{compute_instr.result_id}', f'%{pattern.false_value_id}'],
+                        args=[f'%{pattern.type_id}', f'%{pattern.cond_id}', f'%{compute_instr.result_id}', f'%{pattern.false_value_id}'],
                     ))
                     # Add branch to merge
                     new_instructions.append(SpirvInstr(

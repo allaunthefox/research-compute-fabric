@@ -1,0 +1,11 @@
+{
+  "arxiv_id": "2604.16876",
+  "title": "Conjugacy Classes of Positive 3-Braids",
+  "authors": [
+    "Kui-Yo Chen",
+    "Yat-Hin Suen"
+  ],
+  "abstract": "Abstract:The conjugacy problem in braid groups has been extensively studied, particularly from an algorithmic perspective. Established methods based on Garside structures, such as initial summit sets and super summit sets, provide effective procedures for determining whether two braids are conjugate. In contrast, explicit structural descriptions of conjugacy classes are less frequently addressed. Although cyclic sliding offers a powerful mechanism for navigating distinguished subsets within a conjugacy class, it is well known that conjugate braids cannot, in general, be obtained from one another solely through iterated cyclic sliding. In this paper, we provide a direct and explicit characterization of the conjugacy classes of positive $3$-braids. Specifically, for any given positive $3$-braid, we determine all of its conjugates in a concrete and closed form.",
+  "url": "https://arxiv.org/abs/2604.16876",
+  "pdf_path": "/home/allaun/Research Stack/shared-data/papers/2026-05/2604.16876.pdf"
+}

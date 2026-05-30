@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2511.21459",
+  "title": "Hash-based GPU 3D Reconstruction",
+  "authors": [
+    "Lorenzo De Rebotti",
+    "Emanuele Giacomini",
+    "Giorgio Grisetti",
+    "Luca Di Giammarino"
+  ],
+  "abstract": "Abstract:Efficient and scalable 3D surface reconstruction from range data remains a core challenge in computer graphics and vision, particularly in real-time and resource-constrained scenarios. Traditional volumetric methods based on fixed-resolution voxel grids or hierarchical structures like octrees often suffer from memory inefficiency, computational overhead, and a lack of GPU support. We propose a novel variance-adaptive, multi-resolution voxel grid that dynamically adjusts voxel size based on the local variance of signed distance field (SDF) observations. Unlike prior multi-resolution approaches that rely on recursive octree structures, our method leverages a flat spatial hash table to store all voxel blocks, supporting constant-time access and full GPU parallelism. This design enables high memory efficiency and real-time scalability. We further demonstrate how our representation supports GPU-accelerated rendering through a parallel quad-tree structure for Gaussian Splatting, enabling effective control over splat density. Our open-source CUDA/C++ implementation achieves up to 13x speedup and 4x lower memory usage compared to fixed-resolution baselines, while maintaining on par results in terms of reconstruction accuracy, offering a practical and extensible solution for high-performance 3D reconstruction.",
+  "url": "https://arxiv.org/abs/2511.21459",
+  "pdf_path": "/home/allaun/Research Stack/shared-data/papers/2026-05/2511.21459.pdf"
+}

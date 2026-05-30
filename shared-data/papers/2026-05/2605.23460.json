@@ -1,0 +1,12 @@
+{
+  "arxiv_id": "2605.23460",
+  "title": "Self-Orthogonal Reed-Solomon \u2192 Quantum ECC",
+  "authors": [
+    "Yanxin Chen",
+    "Yanli Wang",
+    "Tongjiang Yan"
+  ],
+  "abstract": "Abstract:In this paper, two classes of twisted generalized Reed-Solomon (TGRS) codes with multi-twists are studied. Firstly, some sufficient and necessary conditions for these codes to be self-orthogonal and self-dual are established. Then several explicit constructions of self-orthogonal and self-dual codes are presented, from which quantum stabilizer codes are further derived. Finally, some corresponding examples are given, especially that some of these codes are MDS, AMDS or NMDS and that some of the resulting quantum stabilizer codes are optimal, achieving the quantum Singleton bound.",
+  "url": "https://arxiv.org/abs/2605.23460",
+  "pdf_path": "/home/allaun/Research Stack/shared-data/papers/2026-05/2605.23460.pdf"
+}

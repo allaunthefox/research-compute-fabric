@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2605.29955",
+  "title": "Formalizing Mathematics at Scale",
+  "authors": ["Rammal, Ahmad", "Patel, Niket", "Gloeckle, Fabian", "Hayat, Amaury", "Kempe, Julia", "Munos, Remi", "Arnal, Charles", "Cabannes, Vivien"],
+  "abstract": "We present AutoformBot, a multi-agent system for building an Autoformalized Textbook Library At Scale (Atlas) in Lean 4. AutoformBot orchestrates thousands of LLM agents, equipped with formal verification tools, dependency-aware task scheduling, and collaborative version control, to translate informal textbook prose into machine-checked definitions and proofs. We apply our methods to a corpus of 26 open-access textbooks spanning analysis, algebra, topology, combinatorics, and probability, producing Atlas: a verified library of over 45,000 Lean 4 declarations and 500 thousand lines of code. We release two artifacts: (i) AutoformBot, the open-source multi-agent framework; and (ii) Atlas, the resulting formal library. Our results suggest that autoformalizing the core content of graduate-level mathematics at scale is now economically and technically feasible.",
+  "url": "https://arxiv.org/abs/2605.29955",
+  "pdf_url": "https://arxiv.org/pdf/2605.29955",
+  "pdf_file": "2605.29955.pdf",
+  "pdf_size": "1.1M",
+  "date": "2026-05-30",
+  "topics": ["Lean 4", "autoformalization", "multi-agent", "LLM", "Atlas", "formal verification"],
+  "fetched_at": "2026-05-30"
+}

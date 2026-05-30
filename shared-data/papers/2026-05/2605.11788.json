@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2605.11788",
+  "title": "The unified transform for Burgers' equation: Application to unsaturated flow in finite interval",
+  "authors": ["Kalimeris, Konstantinos", "Mindrinos, Leonidas", "Paraskevopoulos, Athanasios"],
+  "abstract": "In this paper, we focus on one-dimensional vertical infiltration, assuming constant diffusivity and a quadratic relationship between hydraulic conductivity and water content. Under these assumptions, Richards' equation reduces to Burgers' equation, which we then linearize via the Hopf-Cole transformation. This turns the initial boundary value problem into a diffusion equation on a finite interval with mixed boundary conditions. To solve it, we use the Unified Transform Method (also known as the Fokas method). This approach gives an explicit integral representation of the solution, and when evaluated numerically, the results match classical Fourier series solutions exactly, but with better convergence and stability. Two examples from hydrological applications are examined.",
+  "url": "https://arxiv.org/abs/2605.11788",
+  "pdf_url": "https://arxiv.org/pdf/2605.11788",
+  "pdf_file": "2605.11788.pdf",
+  "pdf_size": "1.4M",
+  "date": "2026-05-16",
+  "topics": ["Burgers equation", "Hopf-Cole transformation", "unified transform method", "Fokas method", "hydrology", "Richards equation"],
+  "fetched_at": "2026-05-30"
+}

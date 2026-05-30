@@ -1,0 +1,12 @@
+{
+  "arxiv_id": "2605.29934",
+  "title": "Navier-Stokes Non-Uniqueness",
+  "authors": [
+    "Zipeng Chen",
+    "Song Liu",
+    "Zhaoyang Yin"
+  ],
+  "abstract": "Abstract:In this paper, we consider the generalized Navier-Stokes equations with fritional dissipation $(-\\Delta)^{\\beta}$ with $\\beta&gt;\\frac{1}{2}$. When $\\beta\\in(1,2)$, We prove that smooth solutions of the generalized Navier-Stokes equations are non-unique with arbitrarily small initial data in $\\dot{B}^{-\\beta-\\alpha}_{\\infty,1}(\\mathbb{T}^d)$ for any $\\alpha&gt;0$. It is worth pointing out that the space $\\dot{B}^{-\\beta-\\alpha}_{\\infty,1}(\\mathbb{T}^d)$ is subcritical for $0&lt;\\alpha&lt;\\beta-1$. To the best of our knowledge, this is the first non-uniqueness result of Navier-Stokes equations with initial data at the critical regularity. To show the sharpness of the above results, for $\\beta&gt;\\frac{1}{2}$, we establish the local well-poseness of the generalized Navier-Stokes equations with small initial data in $\\dot{B}^{-\\beta-\\alpha}_{\\infty,\\infty}(\\mathbb{T}^d)$ with $\\alpha&lt;0$ and $\\alpha\\leq\\beta-1$.",
+  "url": "https://arxiv.org/abs/2605.29934",
+  "pdf_path": "/home/allaun/Research Stack/shared-data/papers/2026-05/2605.29934.pdf"
+}

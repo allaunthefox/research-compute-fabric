@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2605.09974",
+  "title": "Localization phase diagram of the Hexagonal Lattice with irrational magnetic flux",
+  "authors": ["Gao, Qi", "Zhang, Shuo", "Chen, Wei"],
+  "abstract": "We study the Hofstadter model on a hexagonal lattice with irrational magnetic flux in this work. The Hofstadter model of the square lattice with irrational flux has been solved mathematically by Avila in his Fields medal work. However, this theory is usually not applicable to lattices with internal degrees of freedom, such as spin or sub-lattices. In this work, we show that for the hexagonal lattice with only nearest neighbor hopping, the system can still be characterized by a 2x2 transfer matrix and solved exactly by Avila's global theory although this lattice has two sub-lattices. We obtained the exact localization phase diagram of the hexagonal lattice with irrational flux by this theory, which reveals three pure phases, that is, the extended, localized and critical states but no mobility edge due to the chiral symmetry. We used the renormalization group (RG) theory to verify these results, which can determine part of the phase diagram. We then computed the fractal dimension of the remaining part numerically. The results from both the RG theory and numerical analysis confirmed the phase diagram we get from Avila's global theory.",
+  "url": "https://arxiv.org/abs/2605.09974",
+  "pdf_url": "https://arxiv.org/pdf/2605.09974",
+  "pdf_file": "2605.09974.pdf",
+  "pdf_size": "1.3M",
+  "date": "2026-05-14",
+  "topics": ["Hofstadter model", "hexagonal lattice", "irrational magnetic flux", "localization", "renormalization group", "fractal dimension"],
+  "fetched_at": "2026-05-30"
+}

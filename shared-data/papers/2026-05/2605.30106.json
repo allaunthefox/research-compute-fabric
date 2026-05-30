@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2605.30106",
+  "title": "A Rust-to-Lean Verification Pipeline with AI Provers: An Experience Report",
+  "authors": ["Klaus, Natalia", "Tolmach, Palina", "Conejero, Juan"],
+  "abstract": "We describe a verification pipeline that takes production Rust cryptographic code and produces machine-checked correctness proofs in Lean 4. The pipeline combines three components: symbolic extraction tools (Charon and Aeneas, or Hax) that lift Rust into Lean 4; formal cryptographic specification libraries (ArkLib and CompPoly, from the Verified zkEVM project) that provide the mathematical targets; and AI provers (Aristotle from Harmonic AI and Aleph from Logical Intelligence) that close the resulting proof obligations. Every proof is checked by the Lean kernel, so AI output cannot compromise soundness. Within the scope of the Ethereum Foundation's zkEVM Verification Project, we applied the pipeline to cryptographic primitives in Plonky3 (FRI folding, Mersenne31 and KoalaBear field arithmetic, Horner polynomial evaluation) and RISC Zero (Merkle inclusion verification). In addition, Aleph authored proofs of two bounds-style theorems in Plonky3's compute_log_arity_for_round that previously stood as sorry.",
+  "url": "https://arxiv.org/abs/2605.30106",
+  "pdf_url": "https://arxiv.org/pdf/2605.30106",
+  "pdf_file": "2605.30106.pdf",
+  "pdf_size": "661K",
+  "date": "2026-05-30",
+  "topics": ["Rust", "Lean 4", "formal verification", "AI provers", "zkEVM", "cryptographic verification"],
+  "fetched_at": "2026-05-30"
+}

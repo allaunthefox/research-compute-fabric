@@ -1,0 +1,7 @@
+{
+  "naive_s": 0.062,
+  "spatial_s": 0.028,
+  "speedup": 2.18,
+  "n": 50,
+  "updates": 500
+}

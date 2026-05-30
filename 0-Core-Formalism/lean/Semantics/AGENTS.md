@@ -122,6 +122,18 @@ New codec module (`Semantics.BraidDiatCodec`) layers the mountains-on-mountain s
 
 Key invariants: DIAT mass (`a + b = 2k + 1`), MMR strictly decreasing heights, Q0_2 4-state packing.
 
+### BraidSpherionBridge — SpherionState ↔ BraidState equivalence
+
+New bridge module (`Semantics.BraidSpherionBridge`) wires the mountains-on-mountain formalism to the braid strand formalism:
+
+- **`SpherionSpike`** — `spike(m : Mountain, crossPair : Fin 4)` ties a Mountain to which braid pair fires
+- **`spikeToStrandUpdate`** — applies a spike's crossing to a `BraidState` via `braidCross`
+- **`strandFlow`** — iterates `spikeToStrandUpdate` over a spike train
+- **`braidCross_merge_correspondence`** — (admit) braidCross on (i,j) ↔ Mountain.merge for corresponding pair
+- **`receipt_correspondence`** — (admit) BraidReceipt = SpherionState receipt dimensions
+
+Key remaining admits: `IntNodeToPhaseVec` linearity (`IntNode.add ↔ PhaseVec.add`), step count accumulation, full receipt dimension mapping.
+
 ### goldenContractionEnergyDecrease — proof status
 
 **Statement:** For Burgers fields with non-negative `u` and pointwise contraction `u'[i] ≤ u[i]`, the golden-contraction dissipation step reduces kinetic energy.

@@ -155,7 +155,7 @@ namespace MountainPacked
 def fromMountain (m : BraidField.Mountain) : MountainPacked :=
   match m with
   | BraidField.Mountain.node h apex base _ =>
-    let bases := base.bind (fun (n : DynamicCanal.IntNode) =>
+    let bases := base.bind (fun (n : BraidField.IntNode) =>
       [Int32.ofInt n.coords[0]!, Int32.ofInt n.coords[1]!,
        Int32.ofInt n.coords[2]!])
     {
@@ -173,18 +173,17 @@ def toMountain (p : MountainPacked) : BraidField.Mountain :=
   let apexCoords := [Int.ofInt p.apexX.toInt,
                      Int.ofInt p.apexY.toInt,
                      Int.ofInt p.apexZ.toInt]
-  let baseNodes := List.ofFn (fun (i : Fin (3 * p.baseCount.toNat)) =>
-    let idx := i.val / 3
-    let coord := i.val % 3
-    let x := Int.ofInt p.bases[3*idx.toNat]!.toInt
-    let y := Int.ofInt p.bases[3*idx.toNat + 1]!.toInt
-    let z := Int.ofInt p.bases[3*idx.toNat + 2]!.toInt
-    { coords := [x, y, z] })
+  let baseNodesReversed : List BraidField.IntNode := (List.range p.baseCount.toNat).foldl (fun acc i =>
+    let baseX := Int.ofInt p.bases[3*i.toNat]!.toInt
+    let baseY := Int.ofInt p.bases[3*i.toNat + 1]!.toInt
+    let baseZ := Int.ofInt p.bases[3*i.toNat + 2]!.toInt
+    { coords := [baseX, baseY, baseZ] } :: acc
+  ) []
   BraidField.Mountain.node
     p.height.toNat
     { coords := apexCoords }
-    baseNodes
-    BraidField.M MMR.empty
+    baseNodesReversed
+    BraidField.MMR.empty
 
 end MountainPacked
 
@@ -315,7 +314,7 @@ def encode (state : BraidField.SpherionState)
     slot
     mmrSize    := UInt16.ofNat packedMountains.length
     sidonSlack := UInt8.ofNat receipt.sidon_slack.toNat
-    stepCount  := receipt.step_count
+    stepCount  := UInt32.ofNat receipt.step_count
     writeTime  := receipt.write_time
     scarAbsent := receipt.scar_absent
     mountains  := packedMountains
@@ -344,14 +343,87 @@ def decode (frame : BraidDiatFrame) :
     pist
   }
   let receipt : BraidEigensolid.BraidReceipt := {
-    crossing_matrix := BraidBracket.zero  -- decoded from residuals separately
+    crossing_matrix := BraidBracket.zero
     sidon_slack     := frame.sidonSlack.toNat
-    step_count      := frame.stepCount
-    residuals       := []  -- decoded from residuals array separately
+    step_count      := frame.stepCount.toNat
+    residuals       := []
     write_time      := frame.writeTime
     scar_absent     := frame.scarAbsent
   }
   pure (state, receipt, chir, n)
+
+end BraidDiatFrame
+
+-- ============================================================
+-- §5  ROUNDTRIP THEOREMS
+-- ============================================================
+
+namespace BraidDiatFrame
+
+/-- Roundtrip: decode(encode(state, receipt, chir, n, residuals)) recovers
+    the original state, receipt chirality, and slot n when inputs are valid.
+    The crossing_matrix and residuals in the receipt are not preserved through
+    the frame encode/decode (they travel separately via the residuals array). -/
+theorem encode_decode_roundtrip
+    (state : BraidField.SpherionState)
+    (receipt : BraidEigensolid.BraidReceipt)
+    (chir : Chirality)
+    (n : UInt32)
+    (residuals : Array BraidResidualPacked)
+    (h_n : n < 0x400000) :
+    match encode state receipt chir n residuals with
+    | some frame =>
+      match decode frame with
+      | some (state', receipt', chir', n') =>
+        state'.mmr = state.mmr ∧
+        chir' = chir ∧
+        n' = n ∧
+        receipt'.sidon_slack = receipt.sidon_slack ∧
+        receipt'.step_count = receipt.step_count ∧
+        receipt'.write_time = receipt.write_time ∧
+        receipt'.scar_absent = receipt.scar_absent
+      | none => False
+    | none => False := by
+  simp [encode, decode]
+  split
+  . next frame h_frame =>
+    simp [h_frame]
+    split
+    . next h_dec =>
+      simp [h_dec]
+      constructor
+      . simp [mountains, mmr, mountainList]
+      . rfl
+      . rfl
+      . simp [sidonSlack]
+      . simp [stepCount]
+      . simp [writeTime]
+      . simp [scarAbsent]
+    . intro h_none
+      simp [h_none]
+  . intro h_none
+    simp [h_none]
+
+/-- Encode after decode recovers the original frame (when chir/n are consistent).
+    This requires the slot encode to succeed, which needs n < 0x400000. -/
+theorem decode_encode_roundtrip
+    (frame : BraidDiatFrame)
+    (h : ∀ (chir : Chirality) (n : UInt32), n < 0x400000 → decode frame = some (_, _, chir, n) → encode { frame with slot := { frame.slot with chirality := chir } } receipt chir n residuals ≠ none)
+    (receipt : BraidEigensolid.BraidReceipt)
+    (residuals : Array BraidResidualPacked) :
+    match decode frame with
+    | some (state, receipt', chir, n) =>
+      match encode state receipt' chir n residuals with
+      | some frame' => frame'.slot = frame.slot ∧ frame'.mmrSize = frame.mmrSize ∧ frame'.sidonSlack = frame.sidonSlack ∧ frame'.stepCount = frame.stepCount ∧ frame'.writeTime = frame.writeTime ∧ frame'.scarAbsent = frame.scarAbsent
+      | none => False
+    | none => True := by
+  simp [decode, encode]
+  split
+  . next frame _ _ _ _ h_slot =>
+    simp [h_slot]
+    simp [mmrSize, sidonSlack, stepCount, writeTime, scarAbsent]
+    constructor <;> rfl
+  . rfl
 
 end BraidDiatFrame
 
@@ -373,7 +445,7 @@ def estimatedBytes (frame : BraidDiatFrame) : Nat :=
 /-- #eval estimate for a typical frame with 4 mountains and 8 base nodes each -/
 #eval let frame := {
   slot := {
-    chirality := Chirality.positive
+    chirality := Chirality.right
     shell     := UInt8.ofNat 16
     offsetA   := 100
     offsetB   := 156

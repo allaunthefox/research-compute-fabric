@@ -165,6 +165,13 @@ def latestPeak : MMR → Option IntNode
   | empty    => none
   | cons m _ => some m.apex
 
+/-- Convert an MMR to a list of Mountains in decreasing-height order
+    (i.e., unwrap the cons structure). This is the canonical order used
+    for encoding — mountains are listed strictly decreasing by height. -/
+def mountainList : MMR → List Mountain
+  | empty    => []
+  | cons m r => m :: r.mountainList
+
 /-- Append a new leaf Mountain to the MMR, merging equal heights.
 
    This IS the discrete beta function:

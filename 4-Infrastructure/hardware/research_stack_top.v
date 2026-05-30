@@ -2,6 +2,7 @@
 // Unified FPGA design for Tang Nano 9K (GW1NR-9C)
 // Combines: Blitter6502OISC + Q16 LUT + Memory Map + Voltage Controller
 //           + Scale Space BRAM + HiGHS Pivot Accelerator
+//           + Fractal Box Counter + FD Selector
 
 `timescale 1ns / 1ps
 
@@ -100,6 +101,12 @@ module research_stack_top (
     wire        highs_write_en;
     wire [5:0]  highs_write_idx;
     wire [31:0] highs_write_data;
+
+    // ── Fractal Box Counter Signals ────────────────────────────────
+    wire [31:0] frac_fd_q16;
+    wire        frac_fd_valid;
+    wire [1:0]  frac_voltage_mode;
+    wire        frac_mode_valid;
 
     // ── Q16 LUT: use lower 16 bits of operands ────────────────────
     wire [15:0] q16_a_16 = map_q16_a[15:0];
@@ -215,6 +222,33 @@ module research_stack_top (
         .write_en(highs_write_en),
         .write_idx(highs_write_idx),
         .write_data(highs_write_data)
+    );
+
+    // Fractal Box Counter (DBC algorithm, 8-bit input, Q16_16 FD output)
+    fractal_box_counter #(
+        .MAX_SCALE(8),
+        .DATA_WIDTH(8)
+    ) frac_bc (
+        .clk(clk),
+        .rst_n(rst_n),
+        .data_in(map_q16_a[7:0]),       // 8-bit data from memory map
+        .data_valid(map_highs_trigger),  // reuse highs_trigger as data strobe
+        .data_count(map_q16_b[15:0]),    // element count from memory map
+        .fd_q16(frac_fd_q16),
+        .fd_valid(frac_fd_valid)
+    );
+
+    // Fractal FD → Voltage Mode Selector
+    // Maps fractal dimension to voltage mode:
+    //   FD < 2.3 → STORE (0), FD < 2.6 → COMPUTE (1),
+    //   FD < 2.9 → APPROX (2), FD >= 2.9 → MORPHIC (3)
+    fractal_fd_selector frac_sel (
+        .clk(clk),
+        .rst_n(rst_n),
+        .fd_q16(frac_fd_q16),
+        .fd_valid(frac_fd_valid),
+        .voltage_mode(frac_voltage_mode),
+        .mode_valid(frac_mode_valid)
     );
 
     // ── LED Output ─────────────────────────────────────────────────

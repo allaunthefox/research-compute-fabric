@@ -21,6 +21,8 @@ yosys -p "
     voltage_mode_controller.v \
     scale_space_bram.v \
     highs_pivot_accelerator.v \
+    fractal_box_counter.v \
+    fractal_fd_selector.v \
     Blitter6502OISC_small.v \
     research_stack_top.v;
   synth_gowin -top ${TOP} -json ${JSON};

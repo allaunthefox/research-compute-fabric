@@ -39,3 +39,27 @@ preferred-citation:
   url: "https://github.com/allaunthefox/Research-Stack"
   date-released: 2026-05-08
   license: Apache-2.0
+
+references:
+  - type: thesis
+    title: "Pascal's Triangle, Pascal's Pyramid, and the Trinomial Triangle"
+    authors:
+      - family-names: "Saucedo"
+        given-names: "Antonio Jr."
+    date-published: 2019-06
+    institution:
+      name: "California State University, San Bernardino"
+    collection-title: "Electronic Theses, Projects, and Dissertations"
+    url: "https://scholarworks.lib.csusb.edu/etd/855"
+    notes: "Combinatorics reference for Pascal triangle extensions, Fermat-number patterns, and hockey-stick identities; useful as a domain source, not as a Lean proof authority."
+  - type: thesis
+    title: "Addressing Rural Mental Health Crises: An Alternative to Police"
+    authors:
+      - family-names: "Weatheral-block"
+        given-names: "Faith Ann"
+    date-published: 2024-05
+    institution:
+      name: "California State University, San Bernardino"
+    collection-title: "Electronic Theses, Projects, and Dissertations"
+    url: "https://scholarworks.lib.csusb.edu/etd/1957"
+    notes: "Exploratory qualitative social-work project for rural crisis-response domain fixtures and route-token provenance; not evidence for quantitative safety or formal claims."

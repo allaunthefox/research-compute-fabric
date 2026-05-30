@@ -163,6 +163,22 @@ theorem q16Clamp_id_of_inRange (i : Int) (hlo : q16MinRaw ≤ i) (hhi : i ≤ q1
   unfold q16Clamp
   simp [show ¬ i > q16MaxRaw from by omega, show ¬ i < q16MinRaw from by omega]
 
+lemma q16Clamp_lower (x : Int) : q16MinRaw ≤ q16Clamp x := by
+  unfold q16Clamp q16MinRaw q16MaxRaw; split_ifs <;> omega
+
+lemma q16Clamp_upper (x : Int) : q16Clamp x ≤ q16MaxRaw := by
+  unfold q16Clamp q16MinRaw q16MaxRaw; split_ifs <;> omega
+
+lemma q16Clamp_nonneg_of_nonneg {x : Int} (hx : 0 ≤ x) : 0 ≤ q16Clamp x := by
+  unfold q16Clamp q16MinRaw q16MaxRaw
+  split_ifs <;> omega
+
+lemma q16Clamp_idem (x : Int) : q16Clamp (q16Clamp x) = q16Clamp x := by
+  have h_upper := q16Clamp_upper x
+  have h_lower := q16Clamp_lower x
+  unfold q16Clamp q16MinRaw q16MaxRaw
+  split_ifs <;> omega
+
 /--
 Q16.16 fixed-point representation.
 The canonical proof model stores the signed raw integer in
@@ -446,6 +462,11 @@ theorem ofRawInt_toInt_eq_clamp (i : Int) : (ofRawInt i).toInt = q16Clamp i := b
   unfold ofRawInt toInt q16Clamp
   split_ifs <;> rfl
 
+/-- `@[simp]` version rewriting `.val` directly (avoids `toInt` unfolding
+    ordering issues in `simp` calls). -/
+@[simp] theorem ofRawInt_val_eq_q16Clamp (i : Int) : (ofRawInt i).val = q16Clamp i :=
+  ofRawInt_toInt_eq_clamp i
+
 /-- `ofRawInt` is monotone: a ≤ b → (ofRawInt a).toInt ≤ (ofRawInt b).toInt.
     One-liner via q16Clamp_monotone. -/
 theorem ofRawInt_monotone (a b : Int) (h : a ≤ b) :
@@ -614,10 +635,93 @@ theorem epsilon_add_pos {r : Q16_16} (hr : r.toInt ≥ 0) :
       (by norm_num [q16MinRaw]) (by norm_num [q16MaxRaw])
   omega
 
-/-- Subtraction is addition of the negation: a - b = a + (-b). -/
--- TODO(lean-port): prove using Int.sub_eq_add_neg; tactic chain blocked by
---   rw/omega failures on Int arithmetic equality after unfold.
+/-- `abs (sub a b) = abs (sub b a)` — absolute value of a difference
+    is symmetric. Holds for all Q16_16 values (proved by case analysis
+    on `a.val - b.val` at the Int clamping boundary). -/
+private lemma q16Clamp_eq_q16MaxRaw_of_ge {x : Int} (h : x ≥ q16MaxRaw) : q16Clamp x = q16MaxRaw := by
+  dsimp [q16Clamp]
+  by_cases hx : x > q16MaxRaw
+  · simp [hx]
+  · have hx_eq : x = q16MaxRaw := le_antisymm (le_of_not_gt hx) h
+    subst hx_eq; simp [q16Clamp, q16MaxRaw, q16MinRaw]
+
+private lemma q16Clamp_eq_q16MinRaw_of_le {x : Int} (h : x ≤ q16MinRaw) : q16Clamp x = q16MinRaw := by
+  dsimp [q16Clamp]
+  by_cases hx_hi : x > q16MaxRaw
+  · unfold q16MinRaw q16MaxRaw at *; omega
+  · by_cases hx_lo : x < q16MinRaw
+    · simp [hx_hi, hx_lo]
+    · have hx_eq : x = q16MinRaw := le_antisymm h (by
+        by_contra hlt
+        apply hx_lo
+        exact lt_of_not_ge hlt)
+      subst hx_eq; simp [q16Clamp, q16MaxRaw, q16MinRaw]
+
+private lemma not_q16MaxRaw_lt_0 : ¬ q16MaxRaw < 0 := by unfold q16MaxRaw; omega
+
+private lemma q16Clamp_2147483648_eq_q16MaxRaw : q16Clamp (2147483648 : Int) = q16MaxRaw := by
+  unfold q16Clamp q16MaxRaw q16MinRaw; omega
+
+private lemma val_if (c : Prop) [Decidable c] (x y : Q16_16) : (if c then x else y).val = (if c then x.val else y.val) := by
+  split <;> rfl
+
+theorem abs_sub_comm (a b : Q16_16) : abs (sub a b) = abs (sub b a) := by
+  apply Q16_16.ext
+  simp [abs, sub, neg, toInt, val_if, ofRawInt_val_eq_q16Clamp]
+  have hswap : q16Clamp (b.val - a.val) = q16Clamp (-(a.val - b.val)) := by
+    have : b.val - a.val = -(a.val - b.val) := by omega
+    rw [this]
+  rw [hswap]
+  set d := a.val - b.val
+  have hswap' : q16Clamp (-(a.val - b.val)) = q16Clamp (-d) := by rfl
+  rw [hswap']
+  by_cases hd_above : d > q16MaxRaw
+  · have h_cd : q16Clamp d = q16MaxRaw := q16Clamp_eq_q16MaxRaw_of_ge (le_of_lt hd_above)
+    have h_nd_low : -d ≤ q16MinRaw := by unfold q16MaxRaw q16MinRaw at *; omega
+    have h_cnd : q16Clamp (-d) = q16MinRaw := q16Clamp_eq_q16MinRaw_of_le h_nd_low
+    rw [h_cd, h_cnd]
+    unfold q16Clamp q16MaxRaw q16MinRaw; norm_num
+  · by_cases hd_below : d < q16MinRaw
+    · have h_cd : q16Clamp d = q16MinRaw := q16Clamp_eq_q16MinRaw_of_le (by omega)
+      have h_nd_high : -d ≥ q16MaxRaw := by unfold q16MaxRaw q16MinRaw at *; omega
+      have h_cnd : q16Clamp (-d) = q16MaxRaw := q16Clamp_eq_q16MaxRaw_of_ge h_nd_high
+      rw [h_cd, h_cnd]
+      unfold q16Clamp q16MaxRaw q16MinRaw; norm_num
+    · have h_lo : q16MinRaw ≤ d := by unfold q16MinRaw q16MaxRaw at *; omega
+      have h_hi : d ≤ q16MaxRaw := by unfold q16MinRaw q16MaxRaw at *; omega
+      have h_cd : q16Clamp d = d := q16Clamp_id_of_inRange d h_lo h_hi
+      rw [h_cd]
+      by_cases h_nd_above : -d > q16MaxRaw
+      · have h_d_min : d = q16MinRaw := by unfold q16MinRaw q16MaxRaw at *; omega
+        rw [h_d_min]
+        unfold q16Clamp q16MaxRaw q16MinRaw; norm_num
+      · by_cases h_nd_below : -d < q16MinRaw
+        · have h_d_max : d = q16MaxRaw := by unfold q16MinRaw q16MaxRaw at *; omega
+          rw [h_d_max]
+          unfold q16Clamp q16MaxRaw q16MinRaw; norm_num
+        · have h_nd_lo' : q16MinRaw ≤ -d := by omega
+          have h_nd_hi' : -d ≤ q16MaxRaw := by omega
+          have h_cnd : q16Clamp (-d) = -d := q16Clamp_id_of_inRange (-d) h_nd_lo' h_nd_hi'
+          rw [h_cnd, show (-(-d : Int) = d) by omega]
+          by_cases hd_neg : d < 0
+          · omega
+          · by_cases hd_zero : d = 0
+            · rw [hd_zero]
+              unfold q16Clamp q16MinRaw q16MaxRaw; norm_num
+            · have hd_pos : 0 < d := by omega
+              rw [h_cd]
+              split_ifs <;> omega
+
+/-- Subtraction is addition of the negation: a - b = a + (-b).
+
+    NOTE: This theorem is NOT universally true for Q16_16. Counterexample:
+    `a = b = q16MinRaw` gives LHS = 0, RHS = -1. The difference arises because
+    `neg q16MinRaw` overflows to `q16MaxRaw`, altering the clamping path.
+    SSMS does not use this theorem — the `bound` proof has been restructured
+    to avoid it. -/
 theorem sub_eq_add_neg (a b : Q16_16) : sub a b = add a (neg b) := by
+  -- TODO(lean-port): this is false at q16MinRaw. Either add precondition
+  -- `hb : b.toInt > q16MinRaw` or prove the specific form needed by SSMS.
   admit
 
 /-- Multiplication by a non-negative scalar is monotone:
@@ -648,30 +752,39 @@ theorem mul_mono_right (a b c : Q16_16) (h : a.toInt ≤ b.toInt) (hc : c.toInt 
 
 /-- Addition is monotone in the left argument:
     if a ≤ b then a+c ≤ b+c. -/
--- TODO(lean-port): blocked by q16Clamp_monotone call after ofRawInt_toInt_eq_clamp.
 theorem add_le_add (a b c : Q16_16) (h : a.toInt ≤ b.toInt) :
     (add a c).toInt ≤ (add b c).toInt := by
-  admit
+  unfold add
+  simp [ofRawInt_toInt_eq_clamp]
+  apply q16Clamp_monotone
+  omega
 
 /-- Absolute value of any Q16_16 value is non-negative. -/
--- TODO(lean-port): blocked by Int.sub_eq_add_neg rw failure; type mismatch in
---   ofRawInt_toInt_nonneg call in by_cases then-branch.
 theorem abs_nonneg (a : Q16_16) : (abs a).toInt ≥ 0 := by
-  admit
+  unfold abs neg
+  have h := a.property.1
+  split_ifs with hlt
+  · rw [ofRawInt_toInt_eq_clamp]
+    have h_nonneg : 0 ≤ -a.toInt := by omega
+    exact q16Clamp_nonneg_of_nonneg h_nonneg
+  · omega
 
 /-- For non-negative a, |a*b| ≤ a*|b|.
-    Key lemma for bound propagation in SSMS.aciPreservedByMlgruStep. -/
--- TODO(lean-port): blocked by Int.ediv_le_ediv synthesis and rw failures.
+    WARNING: This lemma is UNCONDITIONALLY FALSE (counterexample: a=3, b=-1
+    gives LHS=1, RHS=0). The error comes from floor division: a*b may round
+    to -1 but a*|b| rounds to 0. Use abs_mul_bound or a direct convexity
+    argument instead.
+    TODO(lean-port): do not use this lemma — restructure SSMS to avoid it. -/
 theorem abs_mul_le (a b : Q16_16) (ha : a.toInt ≥ 0) :
     (abs (mul a b)).toInt ≤ (mul a (abs b)).toInt := by
   admit
 
 /-- Triangle inequality for Q16_16: |a*b| ≤ |a| * |b|.
-    Threads arithmetic bounds through checker gates. -/
--- TODO(lean-port): blocked; q16Clamp applies Int.abs internally making sign analysis
--- non-trivial after division. The key insight: q16Clamp(x) ≤ q16Clamp(-x) always holds
--- (when x<0, LHS is negative and RHS is positive). Needs case split on sign of
--- (a.toInt * b.toInt) / q16Scale and careful handling of the clamping boundaries.
+    WARNING: This lemma is FALSE in general (counterexample: a=3, b=-3 gives
+    LHS=1, RHS=0). The floor division causes |a*b|/65536 to round up while
+    |a|*|b|/65536 rounds to 0 for small values.
+    TODO(lean-port): do not use this lemma — restructure SSMS to use
+    abs_triangle_add (|x+y| ≤ |x|+|y|) instead. -/
 theorem abs_triangle (a b : Q16_16) :
     (abs (mul a b)).toInt ≤ (mul (abs a) (abs b)).toInt := by
   admit

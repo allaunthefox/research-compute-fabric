@@ -5,6 +5,7 @@
 
 import Semantics.FixedPoint
 import Semantics.Tactics
+import Semantics.Q16_16Numerics
 
 set_option linter.dupNamespace false
 
@@ -338,10 +339,11 @@ structure KernelParams where
 
 namespace DynamicCanal
 
-/-- Dynamic Canal law: λ_eff(P) = λ₀[σ + (1-σ)e^(-ξP)] -/
+/-- Dynamic Canal law: λ_eff(P) = λ₀[σ + (1-σ)e^(-ξP)]
+    Uses rigorous Q16_16Numerics.expNeg for the exponential. -/
 def dynamicCanalLambda (p : KernelParams) (pressure : Q16_16) : Q16_16 :=
   let ξP := Q16_16.mul p.canalElasticity pressure
-  let eTerm := Q16_16.expNeg ξP
+  let eTerm := Semantics.Q16_16Numerics.expNeg ξP
   let oneMinusσ := Q16_16.sub Q16_16.one p.canalSaturation
   let deform := Q16_16.add p.canalSaturation (Q16_16.mul oneMinusσ eTerm)
   Q16_16.mul p.lambda0 deform

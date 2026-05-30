@@ -821,10 +821,10 @@ structure AgentComputeDispatch where
 Convert a work unit to a GPU compute dispatch for the compile bridge.
 -/
 def workUnitToDispatch (unit : WorkUnit) (gpuId : Nat) : AgentComputeDispatch :=
-  { agentId := unit.agentId
-    workUnitId := unit.unitId
-    substrate := s!"gpu:{gpuId}"
-    shaderName := some "compile_bridge.wgsl"
+  { agentId := unit.agentId,
+    workUnitId := unit.unitId,
+    substrate := "gpu:" ++ toString gpuId,
+    shaderName := some "compile_bridge.wgsl",
     theoremBatchSize := 65536 }
 
 -- ═══════════════════════════════════════════════════════════════════════════

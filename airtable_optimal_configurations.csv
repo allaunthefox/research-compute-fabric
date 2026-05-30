@@ -1,0 +1,5 @@
+Configuration,Cost,Components,Operations/sec,Ops/$,Power (W),Use Case,Notes
+$10 Optimal,$10,Raspberry Pi 2W + USB-C to SFP + PCIe Idle + HDMI TMDS + 1km Fiber Spool + $5 Display,36000000,3600000,12,Low-cost morphic field computing,3.6M ops/$ with infinite spatiotemporal memory via fiber
+$100 Balanced,$100,Raspberry Pi 2W + USB-C to SFP + PCIe Idle + HDMI TMDS + 1km Fiber Spool + DisplayPort Texel + $5 Display,3236000000,32360000,212,General-purpose compute,Adds DisplayPort texel acceleration for 90x performance boost
+$1K High-Performance,$1000,EPYC SP5 Fabric + PCIe Idle + HDMI TMDS + DisplayPort Texel + FPGA Probing,5801000000,5801000,215,Research cluster,Treat EPYC as unified fabric with TDMS acceleration
+$10K Enterprise,$10000,EPYC SP5 Fabric + PCIe Idle + HDMI TMDS + DisplayPort Texel + FPGA Probing + NetworkRAM,5802000000,580200,220,Enterprise compute,Adds NetworkRAM for torsional state computation

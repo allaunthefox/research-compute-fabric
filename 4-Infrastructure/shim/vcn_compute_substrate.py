@@ -16,6 +16,7 @@ Usage:
     python3 vcn_compute_substrate.py extract_receipt <input.mkv> <receipt.json>
 """
 
+import re
 import struct
 import subprocess
 import json
@@ -46,6 +47,9 @@ YUV420_FRAME_SIZE = 3_110_400  # 1920*1080 + 960*540 + 960*540
 SIGNATURE_HEADER = b"RDMAVCN\0"
 SIGNATURE_SIZE = 24
 
+# SEI receipt UUID — identifies VCN integrity NAL unit in H.264/HEVC bitstream
+SEI_UUID = "086f3693-b7b3-4f2c-9653-21492feee5b8"
+
 # Encoder settings for computation mode (software encoding for initial testing)
 ENCODER_PROFILE = "main"
 ENCODER_LEVEL = "4"
@@ -53,8 +57,65 @@ QP_MIN = 2  # Minimal quantization for precise computation
 QP_MAX = 4
 TRANSFORM_SKIP = True
 DEBLOCKING = False
-SAO = False
+SEI = False
 # ── Resolution / Frame Rate Catalog ──────────────────────────────────────────
+
+def sei_receipt_from_mkv(mkv_path: Path, uuid_hex: str = SEI_UUID) -> List[dict]:
+    """Extract VCN SEI receipts from an MKV file.
+
+    Parses the MKV binary directly to find SEI NAL units with the VCN integrity
+    UUID. Returns one receipt dict per frame:
+        {"seq": int, "crc32_hex": str, "timestamp_us": int}
+
+    Args:
+        mkv_path: Input MKV file path.
+        uuid_hex: UUID string to match in SEI user_data (default: SEI_UUID).
+
+    Returns:
+        List of receipt dicts in encode order, empty if none found.
+    """
+    uuid_raw = uuid_hex.replace("-", "").lower()
+    uuid_bytes = bytes.fromhex(uuid_raw)
+    receipts: List[dict] = []
+
+    try:
+        data = mkv_path.read_bytes()
+    except (OSError, IOError):
+        return []
+
+    pos = 0
+    while True:
+        idx = data.find(uuid_bytes, pos)
+        if idx < 0:
+            break
+        # SEI payload immediately follows the 16-byte UUID
+        payload_hex = ""
+        j = idx + 16
+        while j < min(idx + 16 + 200, len(data)):
+            c = chr(data[j])
+            if c in "0123456789abcdefABCDEF":
+                payload_hex += c
+                j += 1
+            elif payload_hex and len(payload_hex) >= 8:
+                break
+            else:
+                j += 1
+                payload_hex = ""
+        if len(payload_hex) >= 8:
+            try:
+                json_bytes = bytes.fromhex(payload_hex)
+                payload_str = json_bytes.decode("utf-8", errors="replace")
+                payload = json.loads(payload_str)
+                receipts.append({
+                    "seq": int(payload["s"]),
+                    "crc32_hex": str(payload["c"]),
+                    "timestamp_us": int(payload["t"])
+                })
+            except (ValueError, json.JSONDecodeError, KeyError):
+                pass
+        pos = idx + 1
+
+    return receipts
 
 VCN_RESOLUTIONS = {
   "240p":  (320, 240),
@@ -253,35 +314,128 @@ def create_frame_dynamic(data: bytes, seq: int, spec: VCNComputeFrameSpec) -> by
 def encode_frames_hardware(
     input_frames: List[bytes],
     output_path: Path,
-    spec: VCNComputeFrameSpec
+    spec: VCNComputeFrameSpec,
+    sei_receipts: Optional[List[dict]] = None
 ) -> subprocess.CompletedProcess:
-    """Encode frames using detected hardware encoder with software fallback."""
-    raw_path = output_path.with_suffix(".raw")
-    with open(raw_path, "wb") as f:
-        for frame in input_frames:
-            f.write(frame)
+    """Encode frames using detected hardware encoder with software fallback.
+
+    Args:
+        input_frames: Raw YUV420 frame bytes.
+        output_path: Output MKV path.
+        spec: VCN frame specification.
+        sei_receipts: Optional list of SEI receipt dicts, one per frame.
+            Each dict must have: seq (int), crc32_hex (str), timestamp_us (int).
+            When provided, SEI NAL unit is injected per-frame via h264_metadata BSF.
+            The receipt format is: {"s": seq, "c": crc32_hex, "t": timestamp_us}
+    """
+    if sei_receipts is not None and len(sei_receipts) != len(input_frames):
+        raise ValueError(f"sei_receipts count ({len(sei_receipts)}) != frames count ({len(input_frames)})")
+
     encoder = spec.encoder
-    cmd = ["ffmpeg", "-y", "-f", "rawvideo", "-pix_fmt", spec.format,
-           "-s", f"{spec.width}x{spec.height}", "-r", str(spec.frame_rate),
-           "-i", str(raw_path), "-c:v", encoder, "-qp", str(QP_MIN),
-           "-f", "matroska", str(output_path)]
+
+    if sei_receipts is None:
+        raw_path = output_path.with_suffix(".raw")
+        with open(raw_path, "wb") as f:
+            for frame in input_frames:
+                f.write(frame)
+        cmd = _build_ffmpeg_cmd(
+            input_path=raw_path, output_path=output_path,
+            spec=spec, encoder=encoder, sei_payload=None
+        )
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        if result.returncode != 0 and encoder != "libx264":
+            cmd[cmd.index("-c:v") + 1] = "libx264"
+            result = subprocess.run(cmd, capture_output=True, text=True)
+        raw_path.unlink(missing_ok=True)
+        return result
+
+    tmp_mkvs: List[Path] = []
+    for idx, (frame, receipt) in enumerate(zip(input_frames, sei_receipts)):
+        frame_raw = output_path.with_suffix(f".frame_{idx}.raw")
+        with open(frame_raw, "wb") as f:
+            f.write(frame)
+        sei_payload_hex = json.dumps({
+            "s": receipt["seq"],
+            "c": receipt["crc32_hex"],
+            "t": receipt["timestamp_us"]
+        }, separators=(",", ":")).encode().hex()
+        tmp_out = output_path.with_suffix(f".sei_{idx}.mkv")
+        cmd = _build_ffmpeg_cmd(
+            input_path=frame_raw, output_path=tmp_out,
+            spec=spec, encoder=encoder, sei_payload=sei_payload_hex
+        )
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        if result.returncode != 0 and encoder != "libx264":
+            cmd[cmd.index("-c:v") + 1] = "libx264"
+            result = subprocess.run(cmd, capture_output=True, text=True)
+        frame_raw.unlink(missing_ok=True)
+        if result.returncode != 0:
+            for p in tmp_mkvs:
+                p.unlink(missing_ok=True)
+            return result
+        tmp_mkvs.append(tmp_out)
+
+    if len(tmp_mkvs) == 1:
+        tmp_mkvs[0].replace(output_path)
+        tmp_mkvs[0].unlink(missing_ok=True)
+        return subprocess.CompletedProcess(args=["encode_frames_hardware"], returncode=0, stdout="", stderr="")
+
+    combined_path = output_path.with_suffix(".combined.tmp")
+    _merge_mkvs(tmp_mkvs, combined_path)
+    combined_path.replace(output_path)
+    for p in tmp_mkvs:
+        p.unlink(missing_ok=True)
+    return subprocess.CompletedProcess(args=["encode_frames_hardware"], returncode=0, stdout="", stderr="")
+
+
+def _merge_mkvs(inputs: List[Path], output: Path) -> None:
+    """Concatenate multiple MKV files into one using ffmpeg concat demuxer."""
+    concat_list = output.with_suffix(".concat.txt")
+    try:
+        with open(concat_list, "w") as f:
+            for p in inputs:
+                f.write(f"file '{p}'\n")
+        cmd = [
+            "ffmpeg", "-y", "-f", "concat", "-safe", "0",
+            "-i", str(concat_list), "-c", "copy",
+            "-f", "matroska", str(output)
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        if result.returncode != 0:
+            raise RuntimeError(f"MKV concat failed: {result.stderr}")
+    finally:
+        concat_list.unlink(missing_ok=True)
+
+
+def _build_ffmpeg_cmd(
+    input_path: Path,
+    output_path: Path,
+    spec: VCNComputeFrameSpec,
+    encoder: str,
+    sei_payload: Optional[str] = None
+) -> List[str]:
+    cmd = ["ffmpeg", "-y",
+            "-f", "rawvideo", "-pix_fmt", spec.format,
+            "-s", f"{spec.width}x{spec.height}", "-r", str(spec.frame_rate),
+            "-i", str(input_path)]
+    if sei_payload is not None:
+        bsf = f"h264_metadata=sei_user_data={SEI_UUID}+{sei_payload}"
+        cmd.extend(["-c:v", encoder, "-qp", str(QP_MIN), "-bsf:v", bsf])
+    else:
+        cmd.extend(["-c:v", encoder, "-qp", str(QP_MIN)])
     if "vaapi" in encoder:
         cmd.insert(1, "-vaapi_device")
         cmd.insert(2, "/dev/dri/renderD128")
         cmd.insert(3, "-vf")
         cmd.insert(4, "format=nv12,hwupload")
     elif "nvenc" in encoder:
-        cmd.extend(["-preset", "p1", "-tune", "ull"])
+        cmd.extend(["-preset", "p1", "-tune", "zerolatency"])
     elif "amf" in encoder:
         cmd.extend(["-usage", "ultralowlatency"])
     elif encoder == "libx264":
         cmd.extend(["-profile:v", ENCODER_PROFILE, "-preset", "ultrafast", "-tune", "zerolatency"])
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    if result.returncode != 0 and encoder != "libx264":
-        cmd[cmd.index("-c:v") + 1] = "libx264"
-        result = subprocess.run(cmd, capture_output=True, text=True)
-    raw_path.unlink(missing_ok=True)
-    return result
+    cmd.extend(["-f", "matroska", str(output_path)])
+    return cmd
 
 
 def pack_q16_16_to_yuv(value: int) -> Tuple[int, int, int]:
@@ -589,6 +743,7 @@ CHACHA_NONCE_SIZE = 16      # 128-bit nonce (cryptography ChaCha20 requires 16)
 TAG_STRAND   = 0x01
 TAG_CROSSING = 0x02
 TAG_PIST     = 0x03
+TAG_LUPINE   = 0x04  # LUPINE CUDA operation (JSON-braid wrapper)
 
 
 def _q16_to_bytes(value: int) -> bytes:
@@ -1022,7 +1177,76 @@ def encode_mountain_merge(mountain_a: dict, mountain_b: dict,
     return create_frame_dynamic(payload, seq=0, spec=spec)
 
 
-def main():
+# ── Public deserialize wrappers (used by vcn_lupine_bridge) ─────────────────
+
+def deserialize_braid_strand(raw: bytes) -> dict:
+    return _deserialize_strand(raw)
+
+
+def deserialize_braid_bracket(raw: bytes) -> dict:
+    return _deserialize_bracket(raw)
+
+
+def deserialize_braid_strand_with_payload(raw: bytes) -> dict:
+    return {
+        "strand": _deserialize_strand(raw),
+        "payload_bytes": len(raw),
+    }
+
+
+# ── Braid compute stubs (GPU node side — TODO: lean-port) ──────────────────
+
+def compute_strand_phase(strand: dict) -> dict:
+    phase_x = strand.get("phaseAcc", {}).get("x", 0)
+    phase_y = strand.get("phaseAcc", {}).get("y", 0)
+    slot = strand.get("slot", 0)
+    return {
+        "phase_x": phase_x,
+        "phase_y": phase_y,
+        "slot": slot,
+        "norm": (phase_x * phase_x + phase_y * phase_y) >> 16,
+    }
+
+
+def serialize_crossing_result(result: dict) -> bytes:
+    residual = result.get("residual", 0)
+    status = result.get("status", "ok")
+    return struct.pack("<I", residual) + status.encode("utf-8")[:8].ljust(8, b"\x00")
+
+
+def compute_crossing_residual(bracket_a: dict, bracket_b: dict) -> dict:
+    a_sum = (bracket_a["lower"] + bracket_a["upper"]) & 0xFFFFFFFF
+    b_sum = (bracket_b["lower"] + bracket_b["upper"]) & 0xFFFFFFFF
+    cross = (bracket_a["lower"] * bracket_b["upper"]) & 0xFFFFFFFF
+    residual = (cross - a_sum - b_sum) & 0xFFFFFFFF
+    return {"residual": residual, "status": "ok"}
+
+
+def deserialize_pist_data(raw: bytes) -> dict:
+    if len(raw) < 4:
+        return {"coeffs": [], "count": 0}
+    count = struct.unpack("<I", raw[:4])[0]
+    coeffs = list(struct.unpack(f"<{count}I", raw[4:4 + count * 4])) if count > 0 else []
+    return {"coeffs": coeffs, "count": count}
+
+
+def serialize_pist_result(result: dict) -> bytes:
+    coeffs = result.get("coeffs", [])
+    count = len(coeffs)
+    return struct.pack("<I", count) + struct.pack(f"<{count}I", *coeffs) if count > 0 else struct.pack("<I", 0)
+
+
+def compute_pist_spectral(data: dict) -> dict:
+    coeffs = data.get("coeffs", [])
+    if not coeffs:
+        return {"spectral_centroid": 0, "spectral_flux": 0, "count": 0}
+    total = sum(coeffs)
+    centroid = (total // max(len(coeffs), 1)) & 0xFFFFFFFF
+    flux = sum(abs(coeffs[i] - coeffs[i - 1]) for i in range(1, len(coeffs))) & 0xFFFFFFFF
+    return {"spectral_centroid": centroid, "spectral_flux": flux, "count": len(coeffs)}
+
+
+# ── main ────────────────────────────────────────────────────────────────────
     import sys
     
     if len(sys.argv) < 2:

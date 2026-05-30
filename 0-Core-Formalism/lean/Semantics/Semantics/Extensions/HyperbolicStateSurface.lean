@@ -1,6 +1,7 @@
 import Std
 import Mathlib.Data.Vector.Basic
 import Semantics.FixedPoint
+import Semantics.Q16_16Numerics
 
 /-! # HyperbolicStateSurface.lean — The DAG as Hyperbolic Geometry
 
@@ -49,7 +50,7 @@ def onHyperbola (s : HyperState) : Prop :=
   s.u * s.u - s.v * s.v = s.c * s.c
 
 /-- Approximate hyperbola membership: |u² - v² - c²| ≤ ε.
-    Needed because Q16_16.sqrt is a Newton approximation with rounding error. -/
+    Needed because Semantics.Q16_16Numerics.sqrt is a Newton approximation with rounding error. -/
 def onHyperbolaApprox (s : HyperState) (ε : Q16_16) : Prop :=
   Q16_16.abs (s.u * s.u - s.v * s.v - s.c * s.c) ≤ ε
 
@@ -57,7 +58,7 @@ def onHyperbolaApprox (s : HyperState) (ε : Q16_16) : Prop :=
     Δu > 0.  v adjusts via fixed-point sqrt to keep u² - v² = c². -/
 def forwardStep (s : HyperState) (Δu : Q16_16) : HyperState :=
   let u' := s.u + Δu
-  let v' := Q16_16.sqrt (u' * u' - s.c * s.c)
+  let v' := Semantics.Q16_16Numerics.sqrt (u' * u' - s.c * s.c)
   { s with u := u', v := v' }
 
 /-- If s is approximately on the hyperbola, forwardStep preserves this approximately:
@@ -66,7 +67,7 @@ def forwardStep (s : HyperState) (Δu : Q16_16) : HyperState :=
     The key identity is: u'² - v'² - c² = (u'² - c²) - (sqrt(u'² - c²))²,
     so the error is exactly the sqrt squaring rounding error.
 
-    TODO(lean-port): prove this from a Q16_16.sqrt squaring error-bound lemma
+    TODO(lean-port): prove this from a Semantics.Q16_16Numerics.sqrt squaring error-bound lemma
     |sqrt(a)² - a| ≤ ε for a ≥ 0. The proof then unfolds forwardStep and applies
     the bound directly. The Q16_16 clamping in `sub` and `mul` prevents a simple
     algebraic chain; the proof must reason at the `toInt` level. -/
@@ -74,15 +75,28 @@ theorem ko_preserves_hyperbola_approx (s : HyperState) (Δu : Q16_16)
     (h_on_s : onHyperbolaApprox s Q16_16.epsilon)
     (h_Δu_small : Δu.toInt * Δu.toInt ≤ Q16_16.epsilon.toInt)
     (h_sqrt_sq_error : ∀ x : Q16_16, x.toInt ≥ 0 →
-      Q16_16.abs (Q16_16.sqrt x * Q16_16.sqrt x - x) ≤ Q16_16.epsilon) :
+      Q16_16.abs (Semantics.Q16_16Numerics.sqrt x * Semantics.Q16_16Numerics.sqrt x - x) ≤ Q16_16.epsilon) :
     onHyperbolaApprox (forwardStep s Δu) Q16_16.epsilon := by
-  -- Proof: forwardStep computes v' = sqrt(u'² - c²).
-  -- Then u'² - v'² - c² = (u'² - c²) - sqrt(u'²-c²)².
-  -- By h_sqrt_sq_error with x = u'² - c² (assuming ≥ 0), |...| ≤ ε.
-  unfold onHyperbolaApprox forwardStep at *
-  have h_sq := h_sqrt_sq_error
-  -- The key step: apply the sqrt squaring bound
-  sorry  -- TODO(lean-port): requires dedicated sqrt squaring bound lemma for Q16_16
+  unfold onHyperbolaApprox forwardStep
+  -- Proof strategy:
+  -- 1. After unfolding, the goal is:
+  --    Q16_16.abs ((s.u + Δu)² - sqrt((s.u + Δu)² - s.c²)² - s.c²) ≤ ε
+  -- 2. Let a = (s.u + Δu)² - s.c². Then goal becomes Q16_16.abs (a - sqrt(a)²) ≤ ε.
+  -- 3. By h_sqrt_sq_error (with x = a, assuming a.toInt ≥ 0):
+  --    Q16_16.abs (sqrt(a)² - a) ≤ ε
+  -- 4. By abs_sub_comm: Q16_16.abs (a - sqrt(a)²) = Q16_16.abs (sqrt(a)² - a) ≤ ε.
+  --
+  -- OBSTACLE: The proof requires showing a.toInt ≥ 0 (i.e., (s.u+Δu)² - s.c² ≥ 0).
+  -- This follows from h_on_s (|u² - v² - c²| ≤ ε) and h_Δu_small (Δu² ≤ ε),
+  -- but bridging this gap requires reasoning at the Q16_16 toInt level because
+  -- Q16_16 sub/mul use saturating clamping (q16Clamp), not raw Int arithmetic.
+  -- Specifically:
+  --   (a - b).toInt = q16Clamp(a.toInt - b.toInt), not a.toInt - b.toInt
+  --   (a * b).toInt = q16Clamp(a.toInt * b.toInt / q16Scale), not a.toInt * b.toInt
+  -- The proof must unfold toInt, sub, mul to their definitions and use
+  -- q16Clamp_id_of_inRange to show clamping is identity for in-range values.
+  -- BLOCKED on: formal Q16_16 range analysis showing (s.u+Δu)² - s.c² stays in range.
+  sorry
 
 /-- The Ko rule: u > 0 and Δu > 0 ⇒ u' = u + Δu > 0.
     Computed with Q16_16 saturating add; both terms positive yields > 0. -/
@@ -159,7 +173,7 @@ def computeFlowLine (initial : HyperState) (_rule : Cell → List Cell → Cell)
     Distance to the u = v asymptote measures irreversibility.
     d → 0: nearly reversible.  d → ∞: highly irreversible. -/
 def distanceToReversibility (s : HyperState) : Q16_16 :=
-  let sqrt2 := Q16_16.sqrt (Q16_16.ofNat 2)
+  let sqrt2 := Semantics.Q16_16Numerics.sqrt (Q16_16.ofNat 2)
   Q16_16.div (s.u - s.v) sqrt2
 
 /-- Landauer-limit approximation: E_opp ∝ 1/d as we approach the asymptote. -/

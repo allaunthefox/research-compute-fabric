@@ -14,11 +14,15 @@
       lib = nixpkgs.lib;
       system = "x86_64-linux";
 
+      caddyPorkbun = import ./pkgs/caddy-porkbun.nix {
+        pkgs = nixpkgs.legacyPackages.${system};
+      };
+
       mkNode = { hostName, extraModules ? [ ], serverAddr ? null, domain ? null }:
         assert hostName != "";
         nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = { inherit hostName serverAddr domain; };
+          specialArgs = { inherit hostName serverAddr domain caddyPorkbun; };
           modules = [
             sops-nix.nixosModules.sops
             ./k3s-configuration.nix
@@ -66,6 +70,7 @@
 
       packages.${system} = {
         nixos-anywhere = nixpkgs.legacyPackages.${system}.nixos-anywhere;
+        caddy-porkbun = caddyPorkbun;
       };
 
       apps.${system}.install-edge = {

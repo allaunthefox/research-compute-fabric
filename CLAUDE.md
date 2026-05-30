@@ -1,8 +1,4 @@
 <!-- BEGIN ContextStream -->
-# Workspace: researchstack
-# Project: Research Stack
-# Workspace ID: 21c133f6-6854-4e81-b801-4037c11b7e34
-
 # Claude Code Instructions
 <contextstream_rules>
 | Message | Required |

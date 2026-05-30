@@ -388,6 +388,10 @@ theorem picard_lindelof {n : ℕ} (f : (Fin n → ℝ) → (Fin n → ℝ)) (x�
   -- by gluing (the linear growth bound ‖f(x)‖ ≤ ‖f(x₀)‖+K‖x−x₀‖ prevents blowup).
   -- A full Lean proof requires formalizing C([−T,T]) as a complete metric space,
   -- the weighted-norm contraction estimate, and the local-to-global extension.
+  -- TODO(lean-port): Prove existence via Banach fixed-point theorem on Picard operator.
+  -- Requires: complete metric space C([-T,T]), weighted sup-norm ‖γ‖_w = sup e^{-2K|t|}‖γ(t)‖,
+  -- contraction constant 1/2 via ‖P(γ₁)-P(γ₂)‖_w ≤ ‖γ₁-γ₂‖_w / 2,
+  -- and local-to-global extension via linear growth bound ‖f(x)‖ ≤ ‖f(x₀)‖+K‖x-x₀‖.
   have hex : ∃ γ, IsSolutionND f x₀ γ := sorry
   have hunique : ∀ γ₁ γ₂, IsSolutionND f x₀ γ₁ → IsSolutionND f x₀ γ₂ → γ₁ = γ₂ := by
     intro γ₁ γ₂ h₁ h₂

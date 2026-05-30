@@ -263,16 +263,25 @@ def avmrStructureFunction (coboundaryNorm : Q16_16) (level : Q16_16) : Q16_16 :=
   Q16_16.neg (Q16_16.mul (Q16_16.mul kolmogorovFourFifths coboundaryNorm) level)
 
 /-- The 4/5 law is exact: S_3(r) / r = -(4/5) ε for all r.
-    This is the discrete analog of the Kolmogorov exact result. -/
+    This is the discrete analog of the Kolmogorov exact result.
+
+    Note: Q16_16 division is integer division with truncation, so
+    (a * b) / b = a holds exactly when b divides a * b without remainder.
+    For the Q16_16 fixed-point representation, this holds when the multiplication
+    does not overflow and the division is exact. -/
 theorem kolmogorov_exact (coboundaryNorm level : Q16_16) :
-    -- S_3(level) / level = -(4/5) · coboundaryNorm
-    -- This holds when level ≠ 0
     level.toInt ≠ 0 →
     Q16_16.div (avmrStructureFunction coboundaryNorm level) level =
     Q16_16.neg (Q16_16.mul kolmogorovFourFifths coboundaryNorm) := by
   intro h
   unfold avmrStructureFunction
-  sorry  -- TODO(lean-port): Q16_16 division cancellation
+  -- S_3(level) = -(4/5) * coboundaryNorm * level
+  -- S_3(level) / level = -(4/5) * coboundaryNorm  (when level divides exactly)
+  -- For Q16_16: div is integer division, so (a * b) / b = a when b | a*b
+  -- This holds for the canonical Q16_16 representation where mul and div are exact
+  -- for the range of values used in the Kolmogorov 4/5 law.
+  -- TODO(lean-port): prove Q16_16.div_mul_cancel or equivalent for fixed-point arithmetic
+  sorry
 
 /-! ## Unified Gate Decision
 

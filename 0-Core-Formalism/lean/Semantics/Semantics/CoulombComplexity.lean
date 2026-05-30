@@ -37,6 +37,7 @@ import Semantics.SigmaGate
 import Semantics.FixedPoint
 import Semantics.Bind
 import Mathlib.Data.Real.Basic
+import Semantics.Q16_16Numerics
 
 namespace Semantics.CoulombComplexity
 
@@ -187,7 +188,7 @@ def t5Distance (coords_i coords_j : Array Q16_16) : Q16_16 :=
       let diff := Q16_16.sub coords_i[idx]! coords_j[idx]!
       Q16_16.mul diff diff)
     let sumSq := squaredDiffs.foldl (fun acc d => Q16_16.add acc d) Q16_16.zero
-    Q16_16.sqrt sumSq
+    Semantics.Q16_16Numerics.sqrt sumSq
 
 -- Test: Like charges repel (positive force)
 #eval! coulombForce (Q16_16.ofInt 1) (Q16_16.ofInt 10) (Q16_16.ofInt 10) (Q16_16.ofInt 5) (Q16_16.ofInt 1)

@@ -13,6 +13,7 @@ provide 90% reduction in memory vs STL mesh approach.
 
 import Semantics.FixedPoint
 import Semantics.NUVMATH  -- For UV coordinate projection
+import Semantics.Q16_16Numerics
 
 namespace Semantics.Geometry
 
@@ -61,30 +62,30 @@ partial def evalTPMS (kind : TPMSKind) (x y z : Q16_16) : Q16_16 :=
   | .gyroid =>
     -- f(x,y,z) = sin(x)cos(y) + sin(y)cos(z) + sin(z)cos(x)
     -- cos(θ) approximated as sin(θ + π/2)
-    let sin_x := Q16_16.sin x
-    let cos_x := Q16_16.sin (Q16_16.add x (Q16_16.ofFloat 1.570796327))
-    let sin_y := Q16_16.sin y
-    let cos_y := Q16_16.sin (Q16_16.add y (Q16_16.ofFloat 1.570796327))
-    let sin_z := Q16_16.sin z
-    let cos_z := Q16_16.sin (Q16_16.add z (Q16_16.ofFloat 1.570796327))
+    let sin_x := Semantics.Q16_16Numerics.sin x
+    let cos_x := Semantics.Q16_16Numerics.sin (Q16_16.add x (Q16_16.ofFloat 1.570796327))
+    let sin_y := Semantics.Q16_16Numerics.sin y
+    let cos_y := Semantics.Q16_16Numerics.sin (Q16_16.add y (Q16_16.ofFloat 1.570796327))
+    let sin_z := Semantics.Q16_16Numerics.sin z
+    let cos_z := Semantics.Q16_16Numerics.sin (Q16_16.add z (Q16_16.ofFloat 1.570796327))
     let term1 := Q16_16.mul sin_x cos_y
     let term2 := Q16_16.mul sin_y cos_z
     let term3 := Q16_16.mul sin_z cos_x
     Q16_16.add (Q16_16.add term1 term2) term3
   | .schwarzP =>
     -- f(x,y,z) = sin(x+π/2) + sin(y+π/2) + sin(z+π/2) = cos(x) + cos(y) + cos(z)
-    let c_x := Q16_16.sin (Q16_16.add x (Q16_16.ofFloat 1.570796327))
-    let c_y := Q16_16.sin (Q16_16.add y (Q16_16.ofFloat 1.570796327))
-    let c_z := Q16_16.sin (Q16_16.add z (Q16_16.ofFloat 1.570796327))
+    let c_x := Semantics.Q16_16Numerics.sin (Q16_16.add x (Q16_16.ofFloat 1.570796327))
+    let c_y := Semantics.Q16_16Numerics.sin (Q16_16.add y (Q16_16.ofFloat 1.570796327))
+    let c_z := Semantics.Q16_16Numerics.sin (Q16_16.add z (Q16_16.ofFloat 1.570796327))
     Q16_16.add (Q16_16.add c_x c_y) c_z
   | .schwarzD =>
     -- Schwarz D: more complex, simplified to gyroid-like for now
     evalTPMS .gyroid x y z
   | .neovius =>
     -- Neovius: 3(cos(x) + cos(y) + cos(z)) + 4cos(x)cos(y)cos(z)
-    let c_x := Q16_16.sin (Q16_16.add x (Q16_16.ofFloat 1.570796327))
-    let c_y := Q16_16.sin (Q16_16.add y (Q16_16.ofFloat 1.570796327))
-    let c_z := Q16_16.sin (Q16_16.add z (Q16_16.ofFloat 1.570796327))
+    let c_x := Semantics.Q16_16Numerics.sin (Q16_16.add x (Q16_16.ofFloat 1.570796327))
+    let c_y := Semantics.Q16_16Numerics.sin (Q16_16.add y (Q16_16.ofFloat 1.570796327))
+    let c_z := Semantics.Q16_16Numerics.sin (Q16_16.add z (Q16_16.ofFloat 1.570796327))
     let sum := Q16_16.add (Q16_16.add c_x c_y) c_z
     let threeSum := Q16_16.mul (Q16_16.ofFloat 3.0) sum
     let prod := Q16_16.mul (Q16_16.mul c_x c_y) c_z
@@ -186,8 +187,8 @@ def toShellCell (kind : TPMSKind) (p : LatticeParams) (x y z : Q16_16)
   let inMaterial := Q16_16.abs dist <= Q16_16.div p.thickness (Q16_16.ofFloat 2.0)
   
   -- Quantize for FPGA (8-bit)
-  let f_quant := (Q16_16.mul (Q16_16.ofFloat 127.5) 
-    (Q16_16.add (Q16_16.ofFloat 1.0) (Q16_16.sin x))).val.toUInt8
+  let f_quant := UInt8.ofNat ((Q16_16.mul (Q16_16.ofFloat 127.5) 
+    (Q16_16.add (Q16_16.ofFloat 1.0) (Semantics.Q16_16Numerics.sin x))).val.natAbs % 256)
   
   { fValue := f_quant
     isMaterial := inMaterial

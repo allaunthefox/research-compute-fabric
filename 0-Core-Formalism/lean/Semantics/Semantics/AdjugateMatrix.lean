@@ -284,10 +284,14 @@ def cayleyTransform (skew : Matrix8) : Option Matrix8 :=
         all entries are small enough to avoid truncation).
     (c) A version over ℚ using Mathlib's matrix library, where the
         Laplace cofactor identity has a clean proof. -/
+-- NOTE: det_self_inverse is NOT exactly true over Q16_16 due to truncation errors.
+-- See the comment above for details. This is a placeholder for future work on
+-- bounded-error or exact-arithmetic variants.
+-- TODO(lean-port): Prove bounded-error variant or exact version
 theorem det_self_inverse {m : Matrix8} {inv : Matrix8}
     (h : matrixInverse m = some inv) :
     matrixMultiply m inv = identity8 := by
-  sorry
+  sorry  -- Requires bounded-error or exact-arithmetic proof
 
 /-- Entry-wise approximate equality of two 8×8 matrices within a given tolerance. -/
 def matrixApproxEq (a b : Matrix8) (tolerance : Q16_16) : Prop :=
@@ -298,6 +302,23 @@ def matrixApproxEq (a b : Matrix8) (tolerance : Q16_16) : Prop :=
 theorem det_self_inverse_approx {m : Matrix8} {inv : Matrix8} (ε : Q16_16)
     (h : matrixInverse m = some inv) :
     matrixApproxEq (matrixMultiply m inv) identity8 ε := by
+  -- OBSTACLE: This theorem statement is too strong as written.
+  -- It claims matrixApproxEq holds for ANY ε, including ε = 0.
+  -- But Q16_16 truncation error means (m × inv)[i][j] ≠ identity8[i][j] in general
+  -- (see the concrete counterexample in the det_self_inverse comment: m = diag(3,1,...,1)
+  -- gives 1 LSB error at entry [0][0]).
+  --
+  -- To make this provable, the theorem needs an additional hypothesis:
+  --   (h_bound : ε.toInt ≥ <truncation error bound>)
+  -- where the truncation error bound depends on:
+  --   (a) the number of multiply-accumulate steps (8 for 8×8 matrices)
+  --   (b) the magnitude of the cofactor entries relative to det8 m
+  --   (c) whether det8 m divides the cofactor products exactly
+  --
+  -- The bounded-error variant from the det_self_inverse TODO (option a) would be:
+  --   ∀ i j, abs(m×inv[i][j] - I[i][j]) ≤ ofRawInt (8 * 32)  -- 8 MAC steps × 1 LSB each
+  -- PROPOSED FIX: Add a precondition (h_bound : ε.toInt ≥ 256) or derive the
+  -- bound from matrix properties. Without this, the theorem is false.
   sorry
 
 /-- If all division and multiplication operations are exact (no truncation),
@@ -458,11 +479,16 @@ private def eqrows : Matrix8 :=
 #eval det8 eqrows  -- expect 0
 
 /-- The cofactor identity for the identity matrix: I × adj(I) = det(I) × I.
-    Proved by native_decide on concrete Q16_16 values. -/
+    Proved by native_decide on concrete Q16_16 values.
+    NOTE: native_decide times out on the universal quantifier ∀ i : Fin 8.
+    Verified by #eval for all 8 cases. -/
 theorem cofactor_identity_identity_diag (i : Fin 8) :
     cofactorProductEntry identity8 i.val i.val = det8 identity8 := by
   sorry  -- TODO(lean-port): native_decide too slow for 8x8, verified by #eval above
 
+/-- Off-diagonal cofactor identity for the identity matrix.
+    NOTE: native_decide times out on the universal quantifier ∀ i j : Fin 8.
+    Verified by #eval for all off-diagonal pairs. -/
 theorem cofactor_identity_identity_offdiag (i j : Fin 8) (h : i ≠ j) :
     cofactorProductEntry identity8 i.val j.val = zero := by
   sorry  -- TODO(lean-port): native_decide too slow for 8x8, verified by #eval above

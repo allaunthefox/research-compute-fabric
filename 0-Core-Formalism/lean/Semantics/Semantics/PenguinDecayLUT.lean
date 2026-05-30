@@ -38,6 +38,7 @@ import Semantics.SemanticRGFlow
 import Semantics.LadderBraidAlgebra
 import Semantics.LadderLUT
 import Semantics.PIST.Spectral
+import Semantics.Q16_16Numerics
 
 namespace Semantics.PenguinDecayLUT
 
@@ -234,7 +235,7 @@ def extractBSMScale (anomaly : PenguinAnomaly) : BSMScale :=
   -- Λ_NP ≈ 1/(√(|δC_9|)) in TeV units (simplified)
   let absDC9 := Q16_16.abs anomaly.delta_c9
   -- Λ_NP ~ 35 TeV / √(|δC_9|/1.1)  (scaling from central value)
-  let scaleFactor := Q16_16.div (Q16_16.ofRawInt 2293760) (Q16_16.sqrt absDC9)  -- 35 TeV * 65536
+  let scaleFactor := Q16_16.div (Q16_16.ofRawInt 2293760) (Semantics.Q16_16Numerics.sqrt absDC9)  -- 35 TeV * 65536
   -- Leptoquark mass: M_LQ ~ Λ_NP / 3 (for O(1) couplings)
   let mlq := Q16_16.div scaleFactor (Q16_16.ofRawInt 196608)  -- / 3
   { lambda_np := scaleFactor

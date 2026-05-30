@@ -24,11 +24,11 @@ Level 0 — Primordial             PIST/DIAT Shells │ Q16.16 Arithmetic │ Br
 
 | Level | Domain | Key Substrates | Invariant |
 |-------|--------|----------------|-----------|
-| 0 (Primordial) | Pure math | PIST/DIAT shells, Q16.16, BraidField, BracketedCalculus, EigensolidConvergence | mass = t·(2k+1-t), arithmetic totality; 746 modules, 3529 jobs, 0 errors |
+| 0 (Primordial) | Pure math | PIST/DIAT shells, Q16.16, BraidField, BracketedCalculus, EigensolidConvergence, Geometry Emergency Boot Witness | mass = t·(2k+1-t), arithmetic totality; 746 modules, 3529 jobs, 0 errors |
 | 1 (Geometric) | Shape-aware | GWL rotational coupling, toroidal shells, torsion quaternions, GWL throat | dE/dt ≤ 0, no zero-mass singularities |
 | 2 (Biological) | Life-aware | 64 codon tables, Izhikevich spiking neurons, STDP plasticity | codon validity, spike threshold v < 30mV |
 | 3 (Thermodynamic) | Energy-aware | Trixal state (thermal/work/irreversibility), homeostatic governor, HyperFlow NS-on-shells | irreversibility < threshold, |γ+s'(p*)| < 1 |
-| 4 (Security) | Attack-aware | AngrySphinx exponential gate, FAMM frustration tensor, ASIC admissible operations | E_solve ≥ 2^n, F > 0, operation admissibility |
+| 4 (Security) | Attack-aware | AngrySphinx exponential gate, FAMM frustration tensor, ASIC admissible operations, Emergency Boot Power Monitor | E_solve ≥ 2^n, F > 0, operation admissibility, power failure detection |
 | 5 (Semantic) | Meaning-aware | CrossDimensionalFilter (12 primes), manifold networking, compression control | shared primes non-empty, flat→ordinary kernel |
 | 6 (Meta) | Self-aware | Cognitive load router, auto-adaptive metatyping (7 invariants), adaptation, SSMS_nD | efficiency ≥ 0, mass conservation across tiers |
 
@@ -100,6 +100,36 @@ Raw Data
          ▼
    Compressed Output + Receipt
      (all receipt JSON stamped exclusively by AVMIsa.Emit)
+
+---
+
+Emergency Boot Flow (power failure path):
+
+Power Failure Detected
+  │
+  ▼
+┌──────────────────┐    AEM20940 + TSM Safety Interlock + Galvanic Bridge
+│ Power Monitor    │    60mV threshold, 1ns watchdog, 350V isolation
+└────────┬─────────┘
+         ▼
+┌──────────────────┐    Geometric Scan: FPGA reads capacitor array
+│ Geometry Scan    │    Extract spatial, capacitance, topology, dimensions
+└────────┬─────────┘
+         ▼
+┌──────────────────┐    Seed Assembly: multi-dimensional collapse
+│ Seed Assembly    │    128-bit seed from 4 geometric dimensions
+└────────┬─────────┘
+         ▼
+┌──────────────────┐    TSM Reconstruction: opcode expansion
+│ TSM Reconstruct  │    Seed → TSM-VDP ISA word → memory layout
+└────────┬─────────┘
+         ▼
+┌──────────────────┐    ZK-STARK Validation: proof verification
+│ STARK Validate   │    Validate recovered state integrity
+└────────┬─────────┘
+         ▼
+   Emergency Boot Interface
+     (Tiny IP shell for recovery operations)
 ```
 
 ---
@@ -145,7 +175,7 @@ GCCL = Law Stack (what must be preserved)
 | `1-Distributed-Systems/` | ENE mesh nodes, gossip, waveprobe |
 | `2-Search-Space/manifold/` | Manifold compression algos (pist_gcl_compression.py, shifters/) |
 | `3-Mathematical-Models/` | Equation registry, math databases, model maps |
-| `4-Infrastructure/` | Shims, GPU, FPGA Verilog, drivers |
+| `4-Infrastructure/` | Shims, GPU, FPGA Verilog, drivers, emergency boot system |
 | `5-Applications/` | Scripts, tests, Hutter prize work, audit tools |
 | `6-Documentation/docs/` | Main documentation tree |
 | `docs/` | Research papers, specs, roadmaps (aliased into 6-Documentation) |

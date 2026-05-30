@@ -27,6 +27,7 @@ use tracing::{debug, info, warn};
 /// first for fast linear scans.
 const PROVIDER_ENV_MAP: &[(&str, &str)] = &[
     ("deepseek", "DEEPSEEK_API_KEY"),
+    ("mimo", "MIMO_API_KEY"),
     ("quandela", "QUANDELA_API_KEY"),
     ("wolfram_alpha", "WOLFRAM_ALPHA_APPID"),
     ("notion", "NOTION_API_KEY"),

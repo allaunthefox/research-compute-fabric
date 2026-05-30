@@ -1,0 +1,7 @@
+Pattern Name,Primary Substrate,Secondary Substrates,Total Cost,Total Performance,Value Ratio,Use Case,Complexity,Scalability,Status,Notes
+$10 Morphic Field Computer,MCU (SidonAVM),USB-C to SFP + 1km Fiber + PCIe Idle + HDMI TMDS + $5 Display,10,36M ops/sec + 6GB/s + 5M spatiotemporal slots,3.6M ops/$,Embedded,Medium,Linear,Specified,Optimal balance of cost and performance with spatiotemporal RAM
+$30 Pi Cluster,MCU (SidonAVM),USB-C to SFP + PCIe Idle + HDMI TMDS + $5 Display (x10),30,360M ops/sec + 60GB/s + 50M spatiotemporal slots,12M ops/$,Embedded,Medium,Linear,Theoretical,Linear scaling of optimal configuration
+$100 Pi Cluster,MCU (SidonAVM),USB-C to SFP + PCIe Idle + HDMI TMDS + $5 Display (x100),100,3.6B ops/sec + 600GB/s + 500M spatiotemporal slots,36M ops/$,Embedded,Medium,Linear,Theoretical,Linear scaling for research workloads
+PCIe Harvest Only,PCIe Idle,None,0,10M ops/sec + 100MB/s,Infinite,Desktop,Simple,Linear,Specified,Minimal configuration using only harvested cycles
+Display Transport Only,HDMI TMDS,None,0,600M ops/sec + 6GB/s,Infinite,Desktop,Complex,Linear,Specified,Display interface as compute substrate
+EPYC Fabric Only,EPYC SP5,None,10000,5.8B ops/sec + 500GB/s,580K,Data Center,Very Complex,Super-linear,Theoretical,High-end configuration for complex workloads

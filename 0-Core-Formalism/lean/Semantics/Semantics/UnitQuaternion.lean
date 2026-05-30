@@ -2,32 +2,33 @@ import Semantics.FixedPoint
 import Semantics.SLUG3
 import Mathlib.Data.Fin.Basic
 import Mathlib.Algebra.Quaternion
+import Semantics.Q16_16Numerics
 
 namespace Semantics
 
 open Q16_16
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- §0  Fixed-Point Trigonometry Approximations (for Q16_16)
+-- §0  Fixed-Point Trigonometry (using rigorous Q16_16Numerics)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- Cosine approximation for Q16_16.
+/-- Cosine using rigorous Q16_16Numerics.
     Input: angle in radians, scaled to Q16_16.
-    Output: approximate cos(angle) in Q16_16. -/
+    Output: cos(angle) in Q16_16 with error < 2⁻¹⁶. -/
 def cos (x : Q16_16) : Q16_16 :=
-  one - (x * x) / ofNat 2  -- Taylor: 1 - x²/2
+  Semantics.Q16_16Numerics.cos x
 
-/-- Sine approximation for Q16_16.
+/-- Sine using rigorous Q16_16Numerics.
     Input: angle in radians, scaled to Q16_16.
-    Output: approximate sin(angle) in Q16_16. -/
+    Output: sin(angle) in Q16_16 with error < 2⁻¹⁶. -/
 def sin (x : Q16_16) : Q16_16 :=
-  x - (x * x * x) / ofNat 6  -- Taylor: x - x³/6
+  Semantics.Q16_16Numerics.sin x
 
-/-- Arccosine approximation for Q16_16.
+/-- Arccosine using rigorous Q16_16Numerics.
     Input: value in [-1.0, 1.0], scaled to Q16_16.
-    Output: approximate arccos(value) in radians. -/
+    Output: arccos(value) in radians with error < 2⁻¹⁶. -/
 def acos (x : Q16_16) : Q16_16 :=
-  one - x  -- Approximation: arccos(x) ≈ 1 - x for small angles
+  Semantics.Q16_16Numerics.acos x
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §1  Unit Quaternion Receipt Type (S³ Embedding)
@@ -82,15 +83,16 @@ def dot (a b : UnitQuaternion) : Q16_16 :=
   a.w * b.w + a.x * b.x + a.y * b.y + a.z * b.z
 
 /-- Great circle distance on S³: approximate arccos(a · b).
-    For compression: distance maps to dissimilarity metric. -/
+    For compression: distance maps to dissimilarity metric.
+    Uses rigorous Q16_16Numerics.acos for proper precision. -/
 def distance (a b : UnitQuaternion) : Q16_16 :=
   let d := dot a b
   if d.val ≥ 0x00010000 then  -- d ≥ 1.0
     zero  -- distance = 0 (identical)
   else if d.val ≤ 0xFFFF0000 then  -- d ≤ -1.0
-    ⟨0x0003243F⟩  -- π ≈ 3.14159 in Q16_16
+    Semantics.Q16_16Numerics.pi  -- π ≈ 3.14159
   else
-    one - d  -- Approximation: arccos(d) ≈ 1 - d for small angles
+    Semantics.Q16_16Numerics.acos d  -- rigorous arccos
 
 /-- Quaternion conjugate: q* = [w, -x, -y, -z].
     The unit receipt is preserved. -/
@@ -118,7 +120,7 @@ def fromAxisAngle (axis : Q16_16 × Q16_16 × Q16_16) (angle : Q16_16) : UnitQua
   let (ux, uy, uz) := axis
   let cosHalf := cos (angle / ofInt 2)
   let sinHalf := sin (angle / ofInt 2)
-  let norm := Q16_16.sqrt (ux * ux + uy * uy + uz * uz)
+  let norm := Semantics.Q16_16Numerics.sqrt (ux * ux + uy * uy + uz * uz)
   let cosTheta := cosHalf
   let sinTheta := sinHalf * norm
   { w := cosTheta, x := sinTheta * ux, y := sinTheta * uy, z := sinTheta * uz,

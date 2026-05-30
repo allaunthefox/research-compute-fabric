@@ -27,6 +27,7 @@ import Semantics.ResonanceGradient
 import Semantics.UnitQuaternion
 import Mathlib.Data.Fin.Basic
 import Mathlib.Algebra.Quaternion
+import Semantics.Q16_16Numerics
 
 namespace Semantics.QuaternionGenomic
 
@@ -154,7 +155,7 @@ def primeIndexedQuaternion (primeIdx : Nat) (_hPrime : Nat.Prime primeIdx) : Uni
   let axisX := ofNat (primeIdx + 2)
   let axisY := ofNat (primeIdx + 4)
   let axisZ := ofNat (primeIdx + 6)
-  let n := Q16_16.sqrt (axisX * axisX + axisY * axisY + axisZ * axisZ)
+  let n := Semantics.Q16_16Numerics.sqrt (axisX * axisX + axisY * axisY + axisZ * axisZ)
   { w := cos angle,
     x := sin angle * axisX / n,
     y := sin angle * axisY / n,

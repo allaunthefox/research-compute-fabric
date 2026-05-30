@@ -1,0 +1,8 @@
+Workload Name,Category,Best Substrate,Math Operations,Data Structure,Complexity Class,Parallelizability,Physical Grounding,Display Requirement,Lean Formalization,Status
+Menger Sponge QR,Fractal Geometry,MCU + USB-C SFP,XOR, bit shifts, addition,Menger lattice (N=64),O(n),Embarrassingly Parallel,Required,Optional,MengerSpongeFractalAddressing.lean,Specified
+GO Tile Flip,Game Theory,MCU + HDMI TMDS,Liberty check, capture detection, ko rule,Go board (19×19),O(n²),Highly Parallel,Optional,Required,TileStateMachine.lean,Specified
+Game of Life,Cellular Automata,MCU + DisplayPort,Birth/survival/death rules,2D grid (240×320),O(n),Embarrassingly Parallel,Optional,Required,GameOfLife_InformationTheory.md,Specified
+Soliton Fields,Soliton Fields,HDMI + DisplayPort,φ-phase, amplitude coefficients, velocity tensor,N-dimensional parameter matrix,O(n log n),Highly Parallel,Required,Required,VideoPhysics.lean,Specified
+Sidon Sets,Topology,MCU (SidonAVM),Greedy Erdős–Turán construction,Sidon set (max 8 elements),O(n²),Moderately Parallel,Not Applicable,Not Applicable,SidonAVM.lean,Deployed
+NetworkRAM Topology,Topology,PCIe Idle + Fiber,DriftTensor addressing, DelayLine slots,O(n),Highly Parallel,Required,Not Applicable,NetworkRAM.lean,Specified
+VCN 16D Field,Fractal Geometry,EPYC + VCN,16D coordinate projection,16D goxel field,O(n),Embarrassingly Parallel,Required,Optional,MeshRouting.lean,Specified

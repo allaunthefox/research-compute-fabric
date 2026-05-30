@@ -1,10 +1,10 @@
 # Geometry Emergency Boot Witness
 
-**Version:** 1.0  
-**Status:** Specification  
-**Date:** 2026-04-08  
-**Scope:** Graphene supercapacitor geometric encoding for emergency recovery boot system  
-**Extends:** `TINY_IP_CONTIKI_SURFACE_SPEC.md`  
+**Version:** 1.0
+**Status:** Specification
+**Date:** 2026-04-08
+**Scope:** Graphene supercapacitor geometric encoding for emergency recovery boot system
+**Extends:** `TINY_IP_CONTIKI_SURFACE_SPEC.md`
 **Reference implementation:** Planned for `4-Infrastructure/hardware/emergency_boot/`
 
 ---
@@ -707,9 +707,9 @@ def assembleSeed (g : GeometrySeed) : Nat :=
 def seedTo128Bits (seed : Nat) : Array Bool :=
   -- Convert to 128-bit boolean array for TSM-VDP processing (truncate from 152-bit)
   let bits := Array.mkArray 128 false
-  Array.foldl (λ arr i => 
-    if Bitwise.testBit seed i then 
-      Array.set! arr i true 
+  Array.foldl (λ arr i =>
+    if Bitwise.testBit seed i then
+      Array.set! arr i true
     else arr) bits (List.range 128)
 
 def extractOpticalPathSignature (seed : Nat) : OpticalPath :=

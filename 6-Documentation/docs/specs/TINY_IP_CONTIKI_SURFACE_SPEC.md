@@ -174,3 +174,33 @@ A tiny IP surface is healthy if:
 4. Lost pulses are retransmitted by timer.
 5. Oversized payloads are refused before expansion.
 6. Quorum can be reached under lossy links.
+
+---
+
+## Extensions
+
+### Geometry Emergency Boot Witness
+
+The Tiny IP surface is extended by the Geometry Emergency Boot Witness specification for hardware-rooted emergency recovery.
+
+**Extension document:** `GEOMETRY_EMERGENCY_BOOT_WITNESS_2026-04-08.md`
+
+**Key extensions:**
+
+| Extension | Domain | Scalar | Purpose |
+|-----------|--------|--------|---------|
+| Emergency boot commands | `0x0D` | `0x01-0x05, 0xFF` | Geometric seed-based recovery |
+| `geometry_scan` process | - | - | Physical capacitor geometry extraction |
+| `seed_assembly` process | - | - | Multi-dimensional geometry → seed collapse |
+| `tsm_reconstruct` process | - | - | TSM-VDP state reconstruction from seed |
+| `emergency_shell` process | - | - | Emergency command interface |
+| `power_monitor` process | - | - | AEM20940-based power failure detection |
+
+The emergency boot system provides a minimal GEM/Contiki-like interface for device recovery when power failure occurs, using graphene supercapacitor geometric arrangement as the root of trust.
+
+See `GEOMETRY_EMERGENCY_BOOT_WITNESS_2026-04-08.md` for complete specification of:
+- Multi-dimensional geometric encoding (spatial, capacitance, topology, dimensions)
+- Power failure detection (AEM20940 + TSM Safety Interlock + Galvanic Bridge)
+- Seed extraction and TSM-VDP recovery algorithm
+- Emergency boot command interface
+- Hardware integration (Lattice iCE40UP5K-SG48, Rogers 4350B substrate)

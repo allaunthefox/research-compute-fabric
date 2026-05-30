@@ -1,0 +1,192 @@
+{
+  "providers": [
+    {
+      "name": "CERN Open Data",
+      "url": "https://opendata.cern.ch",
+      "api_endpoint": "https://opendata.cern.org/api/records",
+      "data_format": "CSV, JSON, ROOT",
+      "description": "Public dataset from CERN experiments (LHC and others)",
+      "coverage": [
+        "LHCb",
+        "ALICE",
+        "ATLAS",
+        "CMS",
+        "ALICE"
+      ],
+      "status": "offline",
+      "last_check": 1780025535.80305,
+      "record_count": null
+    },
+    {
+      "name": "INSPIRE HEP",
+      "url": "https://inspirehep.net",
+      "api_endpoint": "https://inspirehep.net/api/literature",
+      "data_format": "JSON, BibTeX",
+      "description": "Literature database for HEP (papers, data, software)",
+      "coverage": [
+        "All HEP literature",
+        "Citations",
+        "Data citations"
+      ],
+      "status": "verified",
+      "last_check": 1780025536.697958,
+      "record_count": null
+    },
+    {
+      "name": "HepData",
+      "url": "https://www.hepdata.net",
+      "api_endpoint": "https://www.hepdata.net/record/100337",
+      "data_format": "CSV, YAML",
+      "description": "Table data from HEP publications (we have this)",
+      "coverage": [
+        "LHCb",
+        "ATLAS",
+        "CMS",
+        "Tevatron",
+        "BELLE",
+        "BABAR"
+      ],
+      "status": "verified",
+      "last_check": 1780025536.6979694,
+      "record_count": 103961
+    },
+    {
+      "name": "Fermilab",
+      "url": "https:// Fermilab.gov",
+      "api_endpoint": "https:// fermilab.gov/api/",
+      "data_format": "ROOT, FITS",
+      "description": "Fermilab data including Tevatron and NuMI",
+      "coverage": [
+        "CDF",
+        "D0",
+        "MiniBooNE",
+        "NOvA",
+        "Lariat"
+      ],
+      "status": "unverified",
+      "last_check": 1780025536.6979725,
+      "record_count": null
+    },
+    {
+      "name": "SLAC SPIRES",
+      "url": "https://slac.stanford.edu",
+      "api_endpoint": "https://slacls.stanford.edu/export",
+      "data_format": "XML, CSV",
+      "description": "HEP literature database (now part of INSPIRE)",
+      "coverage": [
+        "SLAC",
+        "PEP",
+        "PEP-II"
+      ],
+      "status": "unverified",
+      "last_check": 1780025536.6979744,
+      "record_count": null
+    },
+    {
+      "name": "DESY Zeuthen",
+      "url": "https://www.desy.de",
+      "api_endpoint": "https://www.desy.de/phys_subg/data_archives",
+      "data_format": "ROOT",
+      "description": "DESY particle physics data",
+      "coverage": [
+        "HERA",
+        "ZEUS",
+        "H1"
+      ],
+      "status": "unverified",
+      "last_check": 1780025536.6979754,
+      "record_count": null
+    },
+    {
+      "name": "J-PARC",
+      "url": "https://j-parc.jp",
+      "api_endpoint": "https://j-parc.jp/en/research",
+      "data_format": "ROOT",
+      "description": "Japanese proton accelerator research",
+      "coverage": [
+        "KOTO",
+        "COMET",
+        "T2K"
+      ],
+      "status": "unverified",
+      "last_check": 1780025536.697976,
+      "record_count": null
+    },
+    {
+      "name": "BNL RHIC",
+      "url": "https://www.bnl.gov",
+      "api_endpoint": "https://www.bnl.gov/rhic",
+      "data_format": "ROOT",
+      "description": "Brookhaven nuclear physics",
+      "coverage": [
+        "STAR",
+        "PHENIX",
+        "PHENIX",
+        "RHIC"
+      ],
+      "status": "unverified",
+      "last_check": 1780025536.6979766,
+      "record_count": null
+    },
+    {
+      "name": "KEK",
+      "url": "https://www.kek.jp",
+      "api_endpoint": "https://www.kek.jp/en/research",
+      "data_format": "ROOT",
+      "description": "Japanese HEP data",
+      "coverage": [
+        "Belle II",
+        "KLOE",
+        "VG06"
+      ],
+      "status": "unverified",
+      "last_check": 1780025536.6979768,
+      "record_count": null
+    },
+    {
+      "name": "NIKHEF",
+      "url": "https://www.nikhef.nl",
+      "api_endpoint": "https://www.nikhef.nl/data",
+      "data_format": "ROOT",
+      "description": "Dutch HEP data",
+      "coverage": [
+        "ANTARES",
+        "KM3NeT"
+      ],
+      "status": "unverified",
+      "last_check": 1780025536.6979773,
+      "record_count": null
+    },
+    {
+      "name": "IHEP Data",
+      "url": "https://www.ihep.ac.cn",
+      "api_endpoint": "https://www.ihep.ac.cn/data",
+      "data_format": "ROOT",
+      "description": "Chinese HEP data",
+      "coverage": [
+        "BESIII",
+        "Daya Bay",
+        "LHAASO"
+      ],
+      "status": "unverified",
+      "last_check": 1780025536.6979775,
+      "record_count": null
+    },
+    {
+      "name": "IFIC Valencia",
+      "url": "https://ific.uv.es",
+      "api_endpoint": "https://ific.uv.es/data",
+      "data_format": "ROOT",
+      "description": "Spanish HEP data",
+      "coverage": [
+        "ANTARES",
+        "KM3NeT"
+      ],
+      "status": "unverified",
+      "last_check": 1780025536.697978,
+      "record_count": null
+    }
+  ],
+  "total_providers": 12,
+  "verified_count": 2
+}

@@ -1,0 +1,109 @@
+{
+  "schema_name": "Compute Substrate Research Database",
+  "description": "Comprehensive database of morphic field compute substrates, math workloads, and scaling analysis from $10 embedded to EPYC fabric",
+  "tables": [
+    {
+      "table_name": "Hardware Substrates",
+      "description": "All compute substrate options with cost, bandwidth, and complexity metrics",
+      "fields": [
+        {"name": "Substrate Name", "type": "singleLineText", "description": "Name of the compute substrate"},
+        {"name": "Category", "type": "singleSelect", "options": ["Physical Entropy", "Harvested Cycles", "Display Interface", "Empirical Discovery", "Coordination", "Overkill"]},
+        {"name": "Cost ($)", "type": "number", "description": "Cost in USD"},
+        {"name": "Bandwidth", "type": "singleLineText", "description": "Bandwidth capacity (e.g., ~100MB/s)"},
+        {"name": "Math Complexity", "type": "singleSelect", "options": ["Simple (XOR/shifts)", "Medium (Q0.16 scalar)", "Complex (Soliton fields)", "Adaptive (Empirical)", "Very Complex (GPU fabric)"]},
+        {"name": "Ops/$", "type": "singleLineText", "description": "Operations per dollar ratio"},
+        {"name": "Hardware Requirements", "type": "multilineText", "description": "Required hardware components"},
+        {"name": "Status", "type": "singleSelect", "options": ["Deployed", "Specified", "Experimental", "Theoretical"]},
+        {"name": "Key Insight", "type": "multilineText", "description": "Core innovation or advantage"},
+        {"name": "Lean Formalization", "type": "singleLineText", "description": "Lean module reference if exists"},
+        {"name": "Python Implementation", "type": "singleLineText", "description": "Python shim reference if exists"}
+      ]
+    },
+    {
+      "table_name": "Math Workloads",
+      "description": "Mathematical workloads suited for different substrates",
+      "fields": [
+        {"name": "Workload Name", "type": "singleLineText", "description": "Name of the mathematical workload"},
+        {"name": "Category", "type": "singleSelect", "options": ["Fractal Geometry", "Cellular Automata", "Game Theory", "Soliton Fields", "Sidon Sets", "Topology"]},
+        {"name": "Best Substrate", "type": "singleLineText", "description": "Optimal hardware substrate for this workload"},
+        {"name": "Math Operations", "type": "multilineText", "description": "Key mathematical operations (XOR, shifts, etc.)"},
+        {"name": "Data Structure", "type": "singleLineText", "description": "Primary data structure (e.g., Menger lattice, Go board)"},
+        {"name": "Complexity Class", "type": "singleSelect", "options": ["O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n²)", "Exponential"]},
+        {"name": "Parallelizability", "type": "singleSelect", "options": ["Embarrassingly Parallel", "Highly Parallel", "Moderately Parallel", "Sequential"]},
+        {"name": "Physical Grounding", "type": "singleSelect", "options": ["Required", "Optional", "Not Applicable"]},
+        {"name": "Display Requirement", "type": "singleSelect", "options": ["Required", "Optional", "Not Applicable"]},
+        {"name": "Lean Formalization", "type": "singleLineText", "description": "Lean module reference"},
+        {"name": "Status", "type": "singleSelect", "options": ["Implemented", "Specified", "Theoretical"]}
+      ]
+    },
+    {
+      "table_name": "Performance Metrics",
+      "description": "Detailed performance characteristics for each substrate-workload combination",
+      "fields": [
+        {"name": "Substrate", "type": "singleLineText", "description": "Hardware substrate"},
+        {"name": "Workload", "type": "singleLineText", "description": "Mathematical workload"},
+        {"name": "Operations/sec", "type": "number", "description": "Operations per second"},
+        {"name": "Bytes/sec", "type": "number", "description": "Data throughput in bytes per second"},
+        {"name": "Ops/$", "type": "number", "description": "Operations per dollar ratio"},
+        {"name": "Power (W)", "type": "number", "description": "Power consumption in watts"},
+        {"name": "Latency (ms)", "type": "number", "description": "Operation latency in milliseconds"},
+        {"name": "Scalability", "type": "singleSelect", "options": ["Linear", "Sub-linear", "Super-linear", "Constant"]},
+        {"name": "Efficiency Rating", "type": "singleSelect", "options": ["Excellent", "Good", "Fair", "Poor"]},
+        {"name": "Notes", "type": "multilineText", "description": "Additional performance notes"}
+      ]
+    },
+    {
+      "table_name": "Scaling Analysis",
+      "description": "Cost-performance scaling from 6502 to EPYC class hardware",
+      "fields": [
+        {"name": "Hardware Class", "type": "singleLineText", "description": "Hardware class (e.g., 6502, ARM1, Pi 2W, EPYC)"},
+        {"name": "Year", "type": "number", "description": "Approximate year of introduction"},
+        {"name": "Cores", "type": "number", "description": "Number of CPU cores"},
+        {"name": "Clock (MHz)", "type": "number", "description": "Clock speed in MHz"},
+        {"name": "Cost ($)", "type": "number", "description": "Cost in USD"},
+        {"name": "Menger Ops/sec", "type": "number", "description": "Menger sponge operations per second"},
+        {"name": "Ops/$", "type": "number", "description": "Operations per dollar ratio"},
+        {"name": "Cost Increase", "type": "number", "description": "Cost multiplier vs baseline"},
+        {"name": "Performance Increase", "type": "number", "description": "Performance multiplier vs baseline"},
+        {"name": "Value Ratio", "type": "number", "description": "Performance gain per cost increase"},
+        {"name": "Sweet Spot", "type": "checkbox", "description": "Whether this is in the optimal cost-performance range"},
+        {"name": "Notes", "type": "multilineText", "description": "Additional scaling notes"}
+      ]
+    },
+    {
+      "table_name": "Integration Patterns",
+      "description": "How to combine multiple substrates for optimal morphic field computation",
+      "fields": [
+        {"name": "Pattern Name", "type": "singleLineText", "description": "Name of the integration pattern"},
+        {"name": "Primary Substrate", "type": "singleLineText", "description": "Main compute substrate"},
+        {"name": "Secondary Substrates", "type": "multilineText", "description": "Supporting substrates"},
+        {"name": "Total Cost", "type": "number", "description": "Total cost of the integration"},
+        {"name": "Total Performance", "type": "singleLineText", "description": "Combined performance metrics"},
+        {"name": "Value Ratio", "type": "singleLineText", "description": "Overall ops/$ ratio"},
+        {"name": "Use Case", "type": "singleSelect", "options": ["Embedded", "Desktop", "Server", "Data Center", "Research"]},
+        {"name": "Complexity", "type": "singleSelect", "options": ["Simple", "Medium", "Complex", "Very Complex"]},
+        {"name": "Scalability", "type": "singleSelect", "options": ["Limited", "Linear", "Exponential", "Infinite"]},
+        {"name": "Status", "type": "singleSelect", "options": ["Implemented", "Specified", "Theoretical"]},
+        {"name": "Notes", "type": "multilineText", "description": "Integration notes and considerations"}
+      ]
+    },
+    {
+      "table_name": "Optimal Configurations",
+      "description": "Recommended hardware configurations for different use cases and budgets",
+      "fields": [
+        {"name": "Configuration Name", "type": "singleLineText", "description": "Name of the configuration"},
+        {"name": "Total Cost", "type": "number", "description": "Total cost in USD"},
+        {"name": "Target Use Case", "type": "singleSelect", "options": ["Ultra-Low-Cost", "Research", "Production", "High-Performance"]},
+        {"name": "Primary Hardware", "type": "singleLineText", "description": "Main compute hardware"},
+        {"name": "Entropy Source", "type": "singleLineText", "description": "Physical entropy source"},
+        {"name": "Harvested Substrates", "type": "multilineText", "description": "Harvested compute substrates"},
+        {"name": "Display Interface", "type": "singleLineText", "description": "Display/transport interface"},
+        {"name": "Expected Performance", "type": "singleLineText", "description": "Expected computational performance"},
+        {"name": "Value Ratio", "type": "singleLineText", "description": "Ops/$ ratio"},
+        {"name": "Scalability", "type": "singleSelect", "options": ["Single Node", "Linear Scale", "Exponential Scale"]},
+        {"name": "Status", "type": "singleSelect", "options": ["Implemented", "Specified", "Theoretical"]},
+        {"name": "Notes", "type": "multilineText", "description": "Configuration notes and trade-offs"}
+      ]
+    }
+  ]
+}

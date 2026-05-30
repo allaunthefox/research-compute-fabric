@@ -1,0 +1,9 @@
+Substrate Name,Category,Cost ($),Bandwidth,Math Complexity,Ops/$,Hardware Requirements,Status,Key Insight,Lean Formalization,Python Implementation
+TOSLINK Entropy,Physical Entropy,0,Physical noise,Simple (XOR/shifts),∞,TOSLINK transceiver + optical cable,Specified,Optical imperfections as deterministic stochastic channel,MechRouting.lean,vcn_compute_substrate.py
+USB-C to SFP + 1km Fiber,Physical Entropy,0,Physical noise,Simple (XOR/shifts),∞,USB-C to SFP adapter + 1km fiber spool,Specified,Hot-swappable SFP modules + fiber imperfections = modern optical entropy,MechRouting.lean,vcn_compute_substrate.py
+PCIe Idle Cycles,Harvested Cycles,0,~100MB/s DMA,Medium (Q0.16 scalar),∞,PCIe device with management controller,Specified,Link state machine idle cycles = free compute substrate,MeshRouting.lean,vcn_compute_substrate.py
+HDMI TMDS Abuse,Display Interface,0,~6GB/s (1080p@60),Complex (Soliton fields),∞,HDMI interface + TMDS access,Specified,Display cable as N-dimensional soliton field transport,MeshRouting.lean,hdmi_computational_shell.py
+DisplayPort Texel Stream,Display Interface,0,~32GB/s (8K@60),Complex (Soliton fields),∞,DisplayPort 1.4a + NVENC GPU,Specified,8K60 texel transport with NVENC acceleration,DP_TEXEL_8K_ENCODING_SPEC.md,dp_texel_encoder.py
+MCU (SidonAVM),Coordination,10,None,Medium (Q0.16 scalar),~100K,Raspberry Pi 2W or similar MCU,Deployed,AVM abstraction for Sidon set generation,SidonAVM.lean,sidon_avm.py
+FPGA Probing,Empirical Discovery,500,~1GB/s,Adaptive (Empirical),~1M,Tang Nano 9K + Xilinx FPGA,Specified,Empirical discovery of hardware capabilities via systematic probing,PROBING_NANOKERNEL_FPGA_ACCELERATOR.md,fpga_probing.py
+EPYC SP5 Fabric,Overkill,10000,~500GB/s,Very Complex (GPU fabric),580K,AMD EPYC SP5 + 96 cores,Theoretical,Treat silicon as unified compute fabric,NetworkedSelfSolvingSpace.lean,epyc_fabric.py

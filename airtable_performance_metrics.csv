@@ -1,0 +1,9 @@
+Substrate,Workload,Operations/sec,Bytes/sec,Ops/$,Power (W),Latency (ms),Scalability,Efficiency Rating,Notes
+TOSLINK Entropy,Menger Sponge QR,1000000,1000000,Infinite,1,1,Constant,Excellent,Optical imperfections provide deterministic stochastic channel
+USB-C to SFP,Menger Sponge QR,1000000,1000000,Infinite,2,5,Constant,Excellent,Hot-swappable SFP modules plus fiber imperfections
+PCIe Idle Cycles,Menger Sponge QR,10000000,100000000,Infinite,5,1,Linear,Excellent,Link state machine idle cycles equal free compute
+HDMI TMDS Abuse,Soliton Fields,600000000,6000000000,Infinite,10,2,Linear,Excellent,Display cable as N-dimensional soliton field transport
+DisplayPort Texel,Menger Sponge QR,3200000000,32000000000,Infinite,200,5,Linear,Excellent,8K60 texel transport with NVENC acceleration
+MCU (SidonAVM),Sidon Sets,20000000,0,2000000,5,1,Linear,Good,AVM abstraction for Sidon set generation
+FPGA Probing,Empirical Discovery,1000000,1000000000,2000,10,10,Sub-linear,Good,Systematic hardware capability discovery
+EPYC SP5 Fabric,Menger Sponge QR,5800000000,500000000000,580000,200,1,Super-linear,Fair,Treat silicon as unified compute fabric

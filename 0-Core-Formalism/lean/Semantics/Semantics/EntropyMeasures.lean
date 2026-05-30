@@ -22,6 +22,7 @@ import Mathlib.Data.Nat.Basic
 import Semantics.OrthogonalAmmr
 import Semantics.FixedPoint
 import Semantics.Tactics
+import Semantics.Q16_16Numerics
 
 namespace Semantics.EntropyMeasures
 
@@ -5659,10 +5660,10 @@ def adaptiveLUT (histogram : Array Nat) (total : Nat) (variance : Q16_16)
     m̂_info = mul(H_adapt, THERMO_CONST) -/
 def thermoConstant : Q16_16 := { val := 272 }  -- Scaled appropriately for Q16.16
 
-/-- Placeholder for exponential LUT (to be implemented with NR table). -/
+/-- Exponential function using rigorous Q16_16Numerics.
+    Replaces old 4-entry lookup table with IEEE 754 Float bridge. -/
 def Q16_16.expLUT (x : Q16_16) : Q16_16 :=
-  -- Use float version as accurate baseline for research model
-  ofFloat (Float.exp (toFloat x))
+  Semantics.Q16_16Numerics.exp x
 
 /-- Information mass: converts adaptive entropy to thermodynamic mass. -/
 def informationMass {B : Nat} (p : ProbDist B) (t : VarianceThresholds) : Q16_16 :=

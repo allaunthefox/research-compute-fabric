@@ -544,7 +544,8 @@ theorem aciPreservedByMlgruStep {N : Nat} (H : BettiSwooshH N)
     (hCandidateACI : ∀ e ∈ H.complex.edges,
       Q16_16.abs (cT e.2 - cT e.1) ≤ H.aciBound)
     (hPrevACI : aciSatisfied H nodes)
-    (h_aciBound_nonneg : H.aciBound.toInt ≥ 0) :
+    (h_aciBound_nonneg : H.aciBound.toInt ≥ 0)
+    (h_ft_range : ∀ i, (fT i).toInt ≥ 0 ∧ (fT i).toInt ≤ FixedPoint.q16Scale) :
     aciSatisfied H (fun i =>
       let st := mlgruStep (fT i) (cT i) (nodes i).hidden
       { (nodes i) with hidden := st }) := by
@@ -552,93 +553,83 @@ theorem aciPreservedByMlgruStep {N : Nat} (H : BettiSwooshH N)
   let i := e.1
   let j := e.2
   have hij : fT i = fT j := hForgetUniform e he
-  have hprev : Q16_16.abs (nodes i).hidden.hT - (nodes j).hidden.hT ≤ H.aciBound := hPrevACI e he
-  have hcand : Q16_16.abs (cT i - cT j) ≤ H.aciBound := hCandidateACI e he
-  have f_nonneg : (fT i).toInt ≥ 0 := by
-    have h := (fT i).property.2
-    omega
+  have hprev : Q16_16.abs ((nodes i).hidden.hT - (nodes j).hidden.hT) ≤ H.aciBound := by
+    have h' : Q16_16.abs ((nodes i).hidden.hT - (nodes j).hidden.hT) = Q16_16.abs ((nodes j).hidden.hT - (nodes i).hidden.hT) := by
+      calc
+        Q16_16.abs ((nodes i).hidden.hT - (nodes j).hidden.hT)
+            = Q16_16.abs (Q16_16.sub ((nodes i).hidden.hT) ((nodes j).hidden.hT)) := rfl
+        _ = Q16_16.abs (Q16_16.sub ((nodes j).hidden.hT) ((nodes i).hidden.hT)) := by
+          rw [Semantics.FixedPoint.Q16_16.abs_sub_comm]
+        _ = Q16_16.abs ((nodes j).hidden.hT - (nodes i).hidden.hT) := rfl
+    rw [h']
+    exact hPrevACI e he
+  have hcand : Q16_16.abs (cT i - cT j) ≤ H.aciBound := by
+    calc
+      Q16_16.abs (cT i - cT j) = Q16_16.abs (Q16_16.sub (cT i) (cT j)) := rfl
+      _ = Q16_16.abs (Q16_16.sub (cT j) (cT i)) := by rw [Semantics.FixedPoint.Q16_16.abs_sub_comm]
+      _ = Q16_16.abs (cT j - cT i) := rfl
+      _ ≤ H.aciBound := hCandidateACI e he
+  have hft_range := h_ft_range i
+  have f_nonneg : (fT i).toInt ≥ 0 := hft_range.1
+  have ft_le : (fT i).toInt ≤ FixedPoint.q16Scale := hft_range.2
+  have omf_toInt : (Q16_16.one - fT i).toInt = FixedPoint.q16Scale - (fT i).toInt := by
+    calc
+      (Q16_16.one - fT i).toInt = (Q16_16.sub Q16_16.one (fT i)).toInt := rfl
+      _ = (Q16_16.ofRawInt (Q16_16.one.toInt - (fT i).toInt)).toInt := rfl
+      _ = FixedPoint.q16Scale - (fT i).toInt := by
+        calc
+          (Q16_16.ofRawInt (Q16_16.one.toInt - (fT i).toInt)).toInt
+              = FixedPoint.q16Clamp (Q16_16.one.toInt - (fT i).toInt) := by
+                dsimp [Q16_16.toInt]; rw [Semantics.FixedPoint.Q16_16.ofRawInt_val_eq_q16Clamp]
+          _ = FixedPoint.q16Clamp (FixedPoint.q16Scale - (fT i).toInt) := by
+            dsimp [Q16_16.one, Q16_16.toInt, FixedPoint.q16Scale]
+          _ = FixedPoint.q16Scale - (fT i).toInt := by
+            have h_range : FixedPoint.q16MinRaw ≤ (FixedPoint.q16Scale - (fT i).toInt) ∧
+                          (FixedPoint.q16Scale - (fT i).toInt) ≤ FixedPoint.q16MaxRaw := by
+              constructor
+              · -- q16MinRaw ≤ q16Scale - (fT i).toInt
+                have : FixedPoint.q16Scale - (fT i).toInt ≥ 0 := by
+                  nlinarith [ft_le]
+                calc
+                  FixedPoint.q16MinRaw = -2147483648 := rfl
+                  _ ≤ 0 := by norm_num
+                  _ ≤ FixedPoint.q16Scale - (fT i).toInt := this
+              · -- q16Scale - (fT i).toInt ≤ q16MaxRaw
+                have : FixedPoint.q16Scale - (fT i).toInt ≤ FixedPoint.q16Scale := by omega
+                calc
+                  FixedPoint.q16Scale - (fT i).toInt ≤ FixedPoint.q16Scale := this
+                  _ = 65536 := rfl
+                  _ ≤ 2147483647 := by norm_num
+                  _ = FixedPoint.q16MaxRaw := rfl
+            exact FixedPoint.q16Clamp_id_of_inRange (FixedPoint.q16Scale - (fT i).toInt) h_range.1 h_range.2
   have omfnn : (Q16_16.one - fT i).toInt ≥ 0 := by
-    have h := (fT i).property.2
-    omega
-  have ft_le : (fT i).toInt ≤ q16Scale := (fT i).property.2
-  have omf_le : (Q16_16.one - fT i).toInt ≤ q16Scale := by
-    have h := (fT i).property.1
-    omega
-  -- rewrite difference using sub_eq_add_neg and unfold mlgruStep
-  have diff_ij : (mlgruStep (fT i) (cT i) (nodes i).hidden).hT -
-                 (mlgruStep (fT j) (cT j) (nodes j).hidden).hT =
-      Q16_16.add
-        (Q16_16.mul (fT i) ((nodes i).hidden.hT - (nodes j).hidden.hT))
-        (Q16_16.mul (Q16_16.one - fT i) (cT i - cT j)) := by
-    unfold mlgruStep
-    rw [hij]
-    have t1 : Q16_16.mul (fT i) (nodes i).hidden.hT + Q16_16.mul (Q16_16.one - fT i) (cT i) -
-              (Q16_16.mul (fT i) (nodes j).hidden.hT + Q16_16.mul (Q16_16.one - fT i) (cT j)) =
-            Q16_16.mul (fT i) (nodes i).hidden.hT - Q16_16.mul (fT i) (nodes j).hidden.hT +
-            Q16_16.mul (Q16_16.one - fT i) (cT i) - Q16_16.mul (Q16_16.one - fT i) (cT j) := by
-      omega
-    rw [t1]
-    have t2 := congr_arg (fun x => Q16_16.mul (fT i) x) (Q16_16.sub_eq_add_neg (nodes i).hidden.hT (nodes j).hidden.hT)
-    have t3 := congr_arg (fun x => Q16_16.mul (Q16_16.one - fT i) x) (Q16_16.sub_eq_add_neg (cT i) (cT j))
-    rw [t2, t3]
-    exact rfl
-  have bound := calc
-    Q16_16.abs ((mlgruStep (fT i) (cT i) (nodes i).hidden).hT -
-                 (mlgruStep (fT j) (cT j) (nodes j).hidden).hT)
-    ≤ Q16_16.abs (Q16_16.mul (fT i) ((nodes i).hidden.hT - (nodes j).hidden.hT)) +
-      Q16_16.abs (Q16_16.mul (Q16_16.one - fT i) (cT i - cT j)) := by
-    have t := diff_ij
-    have tri := Q16_16.abs_triangle
-      ((mlgruStep (fT i) (cT i) (nodes i).hidden).hT)
-      ((mlgruStep (fT j) (cT j) (nodes j).hidden).hT)
-      Q16_16.zero
-    rw [Q16_16.sub_eq_add_neg] at tri
-    rw [t] at tri
-    exact tri
-  have ft_nonneg : (fT i).toInt ≥ 0 := f_nonneg
-  have omf_nonneg : (Q16_16.one - fT i).toInt ≥ 0 := omfnn
-  have t1 : Q16_16.abs (Q16_16.mul (fT i) ((nodes i).hidden.hT - (nodes j).hidden.hT)) ≤
-            Q16_16.mul (fT i) (Q16_16.abs ((nodes i).hidden.hT - (nodes j).hidden.hT)) := by
-    have h_val := Q16_16.abs ((nodes i).hidden.hT - (nodes j).hidden.hT)
-    have h_le : h_val ≤ H.aciBound := hprev
-    have m1 := Q16_16.mul_mono_left
-      ((nodes i).hidden.hT - (nodes j).hidden.hT) H.aciBound (fT i)
-      (by
-        have t := Q16_16.abs ((nodes i).hidden.hT - (nodes j).hidden.hT)
-        show (Q16_16.sub (nodes i).hidden.hT (nodes j).hidden.hT).toInt ≤ H.aciBound.toInt
-        have a := Q16_16.abs (Q16_16.sub (nodes i).hidden.hT (nodes j).hidden.hT)
-        have b := Q16_16.abs (Q16_16.sub (nodes i).hidden.hT (nodes j).hidden.hT)
-        have h_diff_nonneg : ((nodes i).hidden.hT - (nodes j).hidden.hT).toInt ≥ 0 := by omega
-        exact le_trans
-          (le_of_eq (abs_toInt_eq_self (Q16_16.sub (nodes i).hidden.hT (nodes j).hidden.hT) h_diff_nonneg))
-          (le_of_lt (lt_of_le_of_lt h_le (lt_of_ge_of_le h_aciBound_nonneg (by omega))))
-      ) ft_nonneg
-    exact m1
-  have t2 : Q16_16.abs (Q16_16.mul (Q16_16.one - fT i) (cT i - cT j)) ≤
-            Q16_16.mul (Q16_16.one - fT i) (Q16_16.abs (cT i - cT j)) := by
-    have m2 := Q16_16.mul_mono_left (Q16_16.abs (cT i - cT j)) H.aciBound (Q16_16.one - fT i) hcand omf_nonneg
-    exact m2
-  have final := calc
-    Q16_16.abs ((mlgruStep (fT i) (cT i) (nodes i).hidden).hT -
-                (mlgruStep (fT j) (cT j) (nodes j).hidden).hT)
-    ≤ Q16_16.mul (fT i) (Q16_16.abs ((nodes i).hidden.hT - (nodes j).hidden.hT)) +
-      Q16_16.mul (Q16_16.one - fT i) (Q16_16.abs (cT i - cT j))
-    := bound
+    rw [omf_toInt]; omega
+  have omf_le : (Q16_16.one - fT i).toInt ≤ FixedPoint.q16Scale := by
+    rw [omf_toInt]; omega
   have f_eps : Q16_16.mul (fT i) H.aciBound ≤ H.aciBound := by
-    have f_le_one : (fT i).toInt ≤ q16Scale := ft_le
-    have H2 : fT i.toInt * H.aciBound.toInt ≤ 1 * H.aciBound.toInt := by nlinarith
-    have h2 : (fT i * H.aciBound).toInt ≤ H.aciBound.toInt := by
-      unfold Q16_16.mul; omega
-    have : (Q16_16.mul (fT i) H.aciBound).toInt = (fT i.toInt * H.aciBound.toInt) / 65536 := by rfl
-    omega
+    have h2 : (Q16_16.mul (fT i) H.aciBound).toInt ≤ H.aciBound.toInt := by
+      have := Semantics.FixedPoint.Q16_16.mul_mono_left (fT i) Q16_16.one H.aciBound ft_le h_aciBound_nonneg
+      simpa [Q16_16.one_mul] using this
+    exact h2
   have omf_eps : Q16_16.mul (Q16_16.one - fT i) H.aciBound ≤ H.aciBound := by
-    have H2 : (Q16_16.one - fT i).toInt * H.aciBound.toInt ≤ 1 * H.aciBound.toInt := by nlinarith
-    have h2 : ((Q16_16.one - fT i) * H.aciBound).toInt ≤ H.aciBound.toInt := by
-      unfold Q16_16.mul; omega
-    have : (Q16_16.mul (Q16_16.one - fT i) H.aciBound).toInt =
-            ((Q16_16.one - fT i).toInt * H.aciBound.toInt) / 65536 := by rfl
-    omega
-  exact final
+    have h2 : (Q16_16.mul (Q16_16.one - fT i) H.aciBound).toInt ≤ H.aciBound.toInt := by
+      have := Semantics.FixedPoint.Q16_16.mul_mono_left (Q16_16.one - fT i) Q16_16.one H.aciBound omf_le h_aciBound_nonneg
+      simpa [Q16_16.one_mul] using this
+    exact h2
+  dsimp
+  have h_swap : ((mlgruStep (fT e.2) (cT e.2) (nodes e.2).hidden).hT -
+                  (mlgruStep (fT e.1) (cT e.1) (nodes e.1).hidden).hT).abs =
+                ((mlgruStep (fT e.1) (cT e.1) (nodes e.1).hidden).hT -
+                  (mlgruStep (fT e.2) (cT e.2) (nodes e.2).hidden).hT).abs :=
+    Semantics.FixedPoint.Q16_16.abs_sub_comm _ _
+  rw [h_swap]
+  -- TODO(lean-port): complete the mlgruStep ACI preservation chain
+  -- |h'_i - h'_j| = |fT*(h_i-h_j) + (1-fT)*(c_i-c_j)|
+  --   ≤ |fT*(h_i-h_j)| + |(1-fT)*(c_i-c_j)|
+  --   ≤ fT*|h_i-h_j| + (1-fT)*|c_i-c_j|
+  --   ≤ fT*H.aciBound + (1-fT)*H.aciBound
+  --   = H.aciBound
+  admit
 
 
 -- ════════════════════════════════════════════════════════════

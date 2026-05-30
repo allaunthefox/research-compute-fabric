@@ -23,6 +23,7 @@ import Mathlib.Data.Fin.Basic
 import Semantics.FixedPoint
 import Semantics.MorphicScalar
 import Semantics.OEPI
+import Semantics.Q16_16Numerics
 
 namespace Semantics.MorphicDSP
 
@@ -448,7 +449,7 @@ def computeGradient (field : AcousticGradientField) (idx : Nat) : Array Q16_16 :
 /-- Acoustic impedance as gradient magnitude |∇f|. -/
 def acousticImpedance (grad : Array Q16_16) : Q16_16 :=
   grad.foldl (fun acc g => acc + (g * g)) Q16_16.zero
-  |> Q16_16.sqrt
+  |> Semantics.Q16_16Numerics.sqrt
 
 /-- Geodesic flow following gradient descent on acoustic manifold. -/
 def acousticGeodesic (field : AcousticGradientField) (startIdx : Nat) (steps : Nat) : Array Nat :=

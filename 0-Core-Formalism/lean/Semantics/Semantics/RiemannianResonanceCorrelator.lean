@@ -31,6 +31,7 @@ Part of the OTOM TreeDIAT/PIST family.
 import Semantics.PIST.Spectral
 import Semantics.SemanticRGFlow
 import Semantics.LadderBraidAlgebra
+import Semantics.Q16_16Numerics
 
 namespace Semantics.RiemannianResonanceCorrelator
 
@@ -91,7 +92,7 @@ def flat : EventManifold :=
 def computeVolume (m : EventManifold) : Q16_16 :=
   let g := m.metric
   let det := Q16_16.mul (Q16_16.mul g.g11 g.g22) (Q16_16.mul g.g33 g.g44)
-  Q16_16.sqrt (Q16_16.abs det)
+  Semantics.Q16_16Numerics.sqrt (Q16_16.abs det)
 
 end EventManifold
 
@@ -191,7 +192,7 @@ def extractResonances (data : Array EventPoint) (n_modes : Nat) : Array Resonanc
     Array.range n_modes |>.map fun k =>
       { index := k
       , eigenval := ev
-      , energy := Q16_16.sqrt (Q16_16.abs ev) }
+      , energy := Semantics.Q16_16Numerics.sqrt (Q16_16.abs ev) }
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §4  KERNEL LEARNING (finding the PDE)

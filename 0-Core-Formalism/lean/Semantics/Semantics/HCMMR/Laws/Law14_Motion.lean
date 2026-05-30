@@ -8,6 +8,7 @@ Newtonian/Lagrangian mechanics.
 
 import Semantics.HCMMR.Core
 import Semantics.FixedPoint
+import Semantics.Q16_16Numerics
 
 namespace Semantics.HCMMR.Law14
 
@@ -182,7 +183,7 @@ def gearReduceResidual (r16to8 r8to4 r4to3 r3ToTrajectory : Q16_16) : Q16_16 :=
   let r2 := Q16_16.mul r8to4 r8to4
   let r3 := Q16_16.mul r4to3 r4to3
   let r4 := Q16_16.mul r3ToTrajectory r3ToTrajectory
-  Q16_16.sqrt (Q16_16.add (Q16_16.add (Q16_16.add r1 r2) r3) r4)
+  Semantics.Q16_16Numerics.sqrt (Q16_16.add (Q16_16.add (Q16_16.add r1 r2) r3) r4)
 
 -- ═══════════════════════════════════════════════════════════════════
 -- §6  Fixtures

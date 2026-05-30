@@ -182,6 +182,8 @@
         scikit-learn
         notion-client
         pytest
+        reedsolo
+        cryptography
       ];
 
       # ── Custom etc for researcher user ───────────────────────────────────

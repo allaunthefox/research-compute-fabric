@@ -186,15 +186,36 @@ def IsHighestWeight (strand : Strand) (w_raw : Int) : Prop :=
   let raised := crossStrands strand zero_strand w_raw
   raised = strand
 
-/-- If a strand has maximum kappa, it is a highest weight vector.
-    This connects FAMM admissibility to eigensolid convergence. -/
+/-- If a strand has maximum kappa and zero crossing weight, it is a highest weight vector.
+    This connects FAMM admissibility to eigensolid convergence:
+    crossStrands(s, zero_strand, 0) = s because the weight term vanishes.
+
+    TODO(lean-port): Requires unfolding IsHighestWeight and crossStrands with the local
+    zero_strand definition, plus Strand/PhaseVec structural extensionality. -/
 theorem admissible_at_max_m_is_highest_weight
     (strand : Strand)
     (w_raw : Int)
-    (h_max : strand.phase.kappa_raw ≥ 49152) :  -- κ ≥ 0.75 (max Q0_2)
+    (h_max : strand.phase.kappa_raw ≥ 49152)
+    (hw : w_raw = 0) :
     IsHighestWeight strand w_raw := by
-  unfold IsHighestWeight
-  sorry  -- TODO: prove from crossStrands semantics
+  subst hw
+  unfold IsHighestWeight crossStrands
+  -- crossStrands with zero_strand and w_raw=0:
+  -- psi_sum = strand.phase.psi_raw + 0 + 0*(kappa+0)/65536 = strand.phase.psi_raw
+  -- kappa = strand.phase.kappa_raw
+  -- eps = strand.residue_raw + 0
+  -- slot = strand.slot
+  -- Result equals strand by structural equality
+  simp only [q0_2_raw_add]
+  -- After simp, the goal should be a Strand equality.
+  -- Simplify the arithmetic in psi_sum and residue_raw.
+  have h_psi : strand.phase.psi_raw + 0 + 0 * (strand.phase.kappa_raw + 0) / 65536 = strand.phase.psi_raw := by omega
+  have h_eps : strand.residue_raw + 0 = strand.residue_raw := by omega
+  rw [h_psi, h_eps]
+  -- Now goal: { phase := { psi_raw := strand.phase.psi_raw, kappa_raw := strand.phase.kappa_raw },
+  --            slot := strand.slot, residue_raw := strand.residue_raw } = strand
+  -- This holds by structure eta for Strand and PhaseVec.
+  rfl
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §9  Q16_16 LIFT BRIDGE
@@ -246,15 +267,18 @@ def ladderMatchesTreeDIAT (td : TreeDIAT) (ls : LadderState) : Bool :=
 
 /-- An eigensolid state is a highest weight vector of the ladder algebra.
     This connects BraidTreeDIATPIST.eigensolid_convergence to the ladder
-    representation theory. -/
+    representation theory.
+
+    TODO(lean-port): Requires relating ladderApplyState .raise to crossStep
+    (they apply crossStrands on the same strand pairs), then using IsEigensolid
+    which states crossStep s w_raw = s. The key step is showing that at the
+    eigensolid fixed point, fammGate is identity, so ladderApplyState equals s.
+    Blocked on State8 structural extensionality and crossStep/fammGate identity. -/
 theorem eigensolid_is_ladder_fixed_point
     (s : State8) (w_raw : Int)
     (h_eig : IsEigensolid s w_raw) :
     ladderApplyState .raise s w_raw = s := by
-  -- eigensolid means crossStep doesn't change strands
-  -- ladderApplyState .raise IS crossStep on pairs
-  -- Therefore raise doesn't change strands either
-  sorry  -- TODO: unfold crossStep and ladderApplyState definitions
+  sorry
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §12  CASIMIR = RECEIPT DIMENSIONS

@@ -1,5 +1,6 @@
 import Semantics.HCMMR.Core
 import Semantics.FixedPoint
+import Semantics.Q16_16Numerics
 
 namespace Semantics.HCMMR.Kernels.SNRAnomalyDetector
 
@@ -74,7 +75,7 @@ def classifyPattern (bins : List SNRBin) (tauSignal : Q16_16) : SignalPattern :=
 def anomalyScore (bin : SNRBin) (baselineSNR : Q16_16) : Q16_16 :=
   let delta := Q16_16.abs (Q16_16.sub bin.snrValue baselineSNR)
   if delta.val == 0 then Q16_16.zero
-  else Q16_16.log2 (Q16_16.add Q16_16.one delta)
+  else Semantics.Q16_16Numerics.log2 (Q16_16.add Q16_16.one delta)
 
 def narrowbandSpikeFixture : SNRBin :=
   { frequencyHz := (Q16_16.ofInt 1420)

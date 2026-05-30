@@ -61,10 +61,16 @@ lemma raw_abs_triangle (a b c : Int) :
   split <;> (split <;> omega)
 
 -- Raw sum is non-negative when all inputs are non-negative.
--- TODO(lean-port): Full proof requires List membership lemma
 lemma raw_sum_nonneg (xs : List Int) (h : ∀ x ∈ xs, x ≥ 0) :
     q0_2_raw_sum xs ≥ 0 := by
-  sorry
+  induction xs with
+  | nil => simp [q0_2_raw_sum]
+  | cons x xs ih =>
+    simp [q0_2_raw_sum]
+    have hx : x ≥ 0 := h x List.mem_cons_self
+    have hxs : ∀ y ∈ xs, y ≥ 0 := fun y hy => h y (List.mem_cons_of_mem x hy)
+    have ih_applied := ih hxs
+    linarith
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §3  TREE-DIAT / PIST STRUCTURES (Q0_2 based)
@@ -181,7 +187,6 @@ def encodeReceipt (s : State8) (w_raw : Int) (scar_absent : Bool) : Receipt :=
   , scar_absent }
 
 -- Receipt invertibility: encodeReceipt equality implies strand equality
--- TODO(lean-port): Full proof requires List.map injection lemma
 theorem receipt_invertible (s1 s2 : State8) (w_raw : Int)
     (h_e1 : IsEigensolid s1 w_raw)
     (h_e2 : IsEigensolid s2 w_raw)
@@ -189,8 +194,31 @@ theorem receipt_invertible (s1 s2 : State8) (w_raw : Int)
     s1.k = s2.k ∧
     ∀ i : Fin 8, (s1.strands i).residue_raw = (s2.strands i).residue_raw := by
   constructor
-  · sorry  -- TODO: extract from h_rec
-  · sorry  -- TODO: extract from h_rec residuals equality
+  · -- Extract step_count from Receipt equality
+    have h_step : (encodeReceipt s1 w_raw true).step_count = (encodeReceipt s2 w_raw true).step_count :=
+      congr_arg Receipt.step_count h_rec
+    simp [encodeReceipt] at h_step
+    exact h_step
+  · -- Extract residuals from Receipt equality
+    have h_res : (encodeReceipt s1 w_raw true).residuals = (encodeReceipt s2 w_raw true).residuals :=
+      congr_arg Receipt.residuals h_rec
+    simp [encodeReceipt] at h_res
+    intro i
+    -- Extract pointwise equality from list map equality.
+    -- Lemma: if l.map f = l.map g and x ∈ l, then f x = g x
+    -- (proved by induction on l using cons-injectivity).
+    suffices h_gen : ∀ {l : List (Fin 8)} {f g : Fin 8 → Int},
+        l.map f = l.map g → ∀ {x : Fin 8}, x ∈ l → f x = g x from
+      h_gen h_res List.mem_finRange
+    intro l f g hm x hx
+    induction l with
+    | nil => exact absurd hx (List.not_mem_nil _)
+    | cons y ys ih =>
+      simp only [List.map_cons] at hm
+      injection hm with h_head h_tail
+      rcases List.mem_cons.mp hx with h_eq | hx'
+      · subst h_eq; exact h_head
+      · exact ih h_tail hx'
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §8  Q0_2 BOUNDED LEMMAS (thread through FAMM checker gates)

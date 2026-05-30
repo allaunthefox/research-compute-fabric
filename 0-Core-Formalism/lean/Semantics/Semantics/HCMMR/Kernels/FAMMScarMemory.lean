@@ -8,6 +8,7 @@ step magnitude; low frustration permits aggressive exploration.
 
 import Semantics.HCMMR.Core
 import Semantics.FixedPoint
+import Semantics.Q16_16Numerics
 
 namespace Semantics.HCMMR.Kernels.FAMMScarMemory
 
@@ -22,12 +23,14 @@ structure FAMMScar where
   scarHistory        : List String
   deriving Repr, BEq, DecidableEq, Inhabited
 
+/-- FAMM bias using rigorous exponential.
+    Uses Q16_16Numerics.expNeg for proper precision. -/
 def fammBias (scar : FAMMScar) : Q16_16 :=
   let sigma2 := scar.frustrationEnergy
   let iLock := scar.interferenceLock
   let dPhi := scar.phaseMismatch
   let arg := scar.dampingCoefficient * (sigma2 + iLock + dPhi)
-  Q16_16.expNeg arg
+  Semantics.Q16_16Numerics.expNeg arg
 
 def applyFAMMBias (delta : Q16_16) (scar : FAMMScar) : Q16_16 :=
   let bias := fammBias scar

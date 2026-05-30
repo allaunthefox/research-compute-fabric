@@ -14,23 +14,9 @@
   boot.loader.grub.device = "/dev/vda";
   boot.loader.grub.efiSupport = true;
   boot.loader.grub.efiInstallAsRemovable = true;
-  boot.loader.grub.fsTracker = true;  # Track BTRFS subvolumes
 
   # ── BTRFS support ───────────────────────────────────────────────────────────
   boot.supportedFilesystems = lib.mkAfter [ "btrfs" ];
-  boot.extraModulePackages = with pkgs; [ btrfs-progs ];
-
-  # ── QEMU/KVM guest agent (for netcup SCP control panel) ──────────────────
-  # Required by the netcup Server Control Panel for:
-  #   - Graceful shutdown / reboot commands from SCP
-  #   - Console access (VNC/SPICE)
-  #   - Status reporting (IP, hostname, etc.)
-  #   - File transfer (SCP)
-  programs.qemuGuestAgent.enable = true;
-
-  # ── SPICE agent (for improved console quality) ────────────────────────────
-  programs.spiceVdAgent.enable = true;
-  programs.spiceDesktopPlus.enable = true;
 
   # ── Kernel modules (mirrors Debian lsmod) ───────────────────────────────────
   # VirtIO (KVM guest) — must be loaded early
@@ -77,26 +63,12 @@
     "ip_tables"
     "x_tables"
   ];
-
   boot.extraModulePackages = with pkgs; [ btrfs-progs ];
-
-  # ── VirtIO GPU 3D acceleration (virglrenderer) ─────────────────────────────
-  # Enables hardware-accelerated 3D in SPICE via VirtIO-gpu
-  hardware.virtio = {
-    enable = true;
-    guestAgent.enable = true;
-  };
 
   # ── X11 / SPICE configuration ───────────────────────────────────────────────
   services.xserver = {
     enable = true;
-    videoDrivers = [ "virtiogpu" "fbdev" "vmware" ];
-  };
-
-  # ── SPICE (remote display) ───────────────────────────────────────────────
-  services.spice = {
-    enable = true;
-    vdagent.enable = true;
+    videoDrivers = [ "virtiogpu" "fbdev" ];
   };
 
   # ── Kernel command line ───────────────────────────────────────────────────────
@@ -110,25 +82,45 @@
   # ── Filesystems ────────────────────────────────────────────────────────────
   # Real partition layout from netcup CCP:
   #   vda1: EFI System Partition (vfat, /boot/efi)
-  #   vda2: /boot (ext4, 977MB) — keep as-is, no reformat
-  #   vda3: / (2TB, converting ext4 → btrfs)
+  # Partition layout (GPT):
+  #   vda1: /boot (ext4, 1GB)
+  #   vda2: /nix (btrfs @ subvol, 64GB)
+  #   vda3: / (btrfs @ subvol) + /home (@home) + /var (@var) + /var/log (@log)
   # Swap: file on btrfs (no separate partition needed)
   fileSystems = {
-    "/boot/efi" = {
-      device = "/dev/vda1";
-      fsType = "vfat";
-      options = [ "umask=0077" ];
-    };
-
     "/boot" = {
-      device = "/dev/vda2";
+      device = "/dev/disk/by-uuid/62bea288-8fcf-45c3-aeec-d7b4cc8aa681";
       fsType = "ext4";
     };
 
-    "/" = {
-      device = "/dev/disk/by-uuid/d8f20598-5e7e-46d6-8a29-f66d9b1efc4d";
+    "/nix" = {
+      device = "/dev/disk/by-uuid/f9741995-1a17-4ac3-ac03-478c76e41998";
       fsType = "btrfs";
-      options = [ "compress=zstd" "ssd" "noatime" ];
+      options = [ "compress=zstd:3" "ssd" "noatime" "subvol=@" ];
+    };
+
+    "/" = {
+      device = "/dev/disk/by-uuid/c505c4a6-9133-4d10-a461-f050721d4fb2";
+      fsType = "btrfs";
+      options = [ "compress=zstd:3" "ssd" "noatime" "subvol=@" ];
+    };
+
+    "/home" = {
+      device = "/dev/disk/by-uuid/c505c4a6-9133-4d10-a461-f050721d4fb2";
+      fsType = "btrfs";
+      options = [ "compress=zstd:3" "ssd" "noatime" "subvol=@home" ];
+    };
+
+    "/var" = {
+      device = "/dev/disk/by-uuid/c505c4a6-9133-4d10-a461-f050721d4fb2";
+      fsType = "btrfs";
+      options = [ "compress=zstd:3" "ssd" "noatime" "subvol=@var" ];
+    };
+
+    "/var/log" = {
+      device = "/dev/disk/by-uuid/c505c4a6-9133-4d10-a461-f050721d4fb2";
+      fsType = "btrfs";
+      options = [ "compress=zstd:3" "ssd" "noatime" "subvol=@log" ];
     };
   };
 
@@ -148,8 +140,9 @@
       "leanprover-community.github.io-1:a8UP+R2uLj3/r6nGCoDSo1R4+/tJ1BLC5W3gNiV/Es="
     ];
 
-    # Parallel downloads
-    max-jobs = "auto";
+    # Use 4 cores to avoid crashing the VPS
+    max-jobs = 4;
+    cores = 4;
 
     # Keep 50 generations per user profile
     keep-derivations = true;
@@ -198,14 +191,6 @@
 
   # ── Build parallelism tunables ──────────────────────────────────────────────
   # Set by systemd service env in individual services, but also available globally
-  environment.variables = {
-    LAKE_JOBS = "16";
-    MAKEFLAGS = "-j16";
-    NIX_BUILD_CORES = "16";
-    # tmpfs means /tmp is fast; pin lean packages there
-    XDG_CACHE_HOME = "/home/researcher/.cache";
-  };
-
   # ── Lean LSP services ──────────────────────────────────────────────────────
   systemd.services.lean-lsp-mcp = {
     description = "Lean LSP MCP server (v4.19.0)";
@@ -449,7 +434,7 @@
 
   # ── Jellyfin media server (port 8096) ────────────────────────────────────
   # Stream video, audio, and images to any device.
-  # Transcoding via jellyfin-ffmpeg (VA-API/QSV/OCL on x86, software on ARM64).
+  # Uses system ffmpeg (software encode on ARM64).
   systemd.services.jellyfin = {
     description = "Jellyfin media server";
     after = [ "network.target" ];
@@ -468,7 +453,7 @@
         --configdir "$JELLYFIN_CONFIG_DIR" \
         --logdir "$JELLYFIN_LOG_DIR" \
         --cachedir "$JELLYFIN_CACHE_DIR" \
-        --ffmpeg ${pkgs.jellyfin-ffmpeg}/bin/ffmpeg \
+        --ffmpeg ${pkgs.ffmpeg}/bin/ffmpeg \
         --webdir ${pkgs.jellyfin-web}/share/jellyfin-web
     '';
 
@@ -501,7 +486,6 @@
   systemd.timers.nix-upgrade = {
     wantedBy = [ "timers.target" ];
     timerConfig.OnCalendar = "weekly";
-    persistent = true;
   };
   systemd.services.nix-upgrade = {
     description = "NixOS channel upgrade";
@@ -521,6 +505,7 @@
       "lean-lsp-mathlib.service"
       "pylsp.service"
       "ollama.service"
+      "vcn-lupine-daemon.service"
     ];
     wantedBy = [ "multi-user.target" ];
     script = ''
@@ -557,21 +542,50 @@
   systemd.timers.health-check = {
     wantedBy = [ "timers.target" ];
     timerConfig.OnCalendar = "*-*-* *:0/5:00";
-    persistent = true;
-    randomizedDelaySec = 30;
   };
 
-  # ── Podman (container runtime) ───────────────────────────────────────────────
+  # ── VCN-LUPINE unified compute bridge daemon ─────────────────────────────────
+  # Bridges IPC (libcuda preload + braid encoders) to GPU node (qfox-1) over MKV.
+  systemd.services.vcn-lupine-daemon = {
+    description = "VCN-LUPINE unified compute transport daemon";
+    after = [ "network.target" "tailscaled.service" ];
+    wantedBy = [ "multi-user.target" ];
+
+    script = ''
+      mkdir -p /run/vcn-lupine
+      export LUPINE_GPU_NODE="100.88.57.96"
+      export LUPINE_GPU_PORT="14834"
+      export PYTHONPATH="/home/researcher/repo/4-Infrastructure/shim:$PYTHONPATH"
+      exec ${pkgs.python3}/bin/python3 \
+        /home/researcher/repo/4-Infrastructure/shim/vcn_lupine_daemon.py \
+        --gpu-node "$LUPINE_GPU_NODE" \
+        --gpu-port "$LUPINE_GPU_PORT" \
+        >> /var/log/vcn-lupine-daemon.log 2>&1
+    '';
+
+    serviceConfig = {
+      Type = "simple";
+      Restart = "on-failure";
+      RestartSec = "10s";
+      RuntimeDirectory = "vcn-lupine";
+      RuntimeDirectoryMode = "0755";
+      LogsDirectory = "vcn-lupine";
+      ProtectSystem = "strict";
+      ProtectHome = true;
+      ReadOnlyPaths = [ "/" ];
+      ReadWritePaths = [ "/run/vcn-lupine" "/var/log" ];
+      PrivateTmp = true;
+      NoNewPrivileges = true;
+      CapabilityBoundingSet = [ "" ];
+      DeviceAllow = [ "/dev/null" "r" ];
+    };
+  };
+
   # Replaces Docker; manages containers without a daemon
   virtualisation.podman = {
     enable = true;
     # Docker-compatible socket for tools that expect Docker
     dockerCompat = true;
-    defaultLocks = "/var/lib/containers.lock";
-    storage.settings = {
-      # Use the 2TB disk for container storage
-      storage.rootlessStoragePath = "/var/lib/containers";
-    };
   };
 
   # ── k3s (lightweight Kubernetes) ─────────────────────────────────────────
@@ -591,8 +605,6 @@
       "--disable metrics-server"
       "--write-kubeconfig-mode 0644"
     ];
-    # Port config
-    port = 6443;
   };
 
   # ── Networking ─────────────────────────────────────────────────────────────
@@ -644,11 +656,9 @@
 
     # ── ARM64-optimized HPC / math packages ───────────────────────────
     openblas              # Multi-threaded BLAS, ARM64 Neoverse-optimized
-    blis                  # Fast BLIS on ARM64
     lapack
     petsc                 # Scientific computing (sparse/direct solvers)
     slepc                 # Eigenvalue solver (PETSc-based)
-    flintqs               # Fast FLINT (factorization, primality)
     pari                   # PARI/GP (number theory)
     gap                    # Groups, Algorithms, Programming
     singular              # Polynomial algebra, Gröbner bases
@@ -656,13 +666,11 @@
     fftw                  # FFT (single/double precision)
     suitesparse           # CHOLMOD, UMFPACK, SPQR
     z3                    # SMT solver
-    julia_11              # Julia 1.11 (good ARM64 SIMD)
+    julia               # Julia (latest, ARM64 native)
 
     # ── Audio / video processing (DSP volunteer computing) ─────────────────
     ffmpeg                # Core: transcoding, streaming, filtering
-    ffmpeg-full          # Full build with all filters/codecs
     flac                  # Free Lossless Audio Codec
-    opus                  # Opus audio codec
     libvpx               # VP8/VP9 video codec
     libaom               # AV1 codec
     dav1d                 # AV1 decoder (fast, ASM-optimized)
@@ -674,13 +682,11 @@
 
     # ── Jellyfin media server ───────────────────────────────────────────────
     jellyfin              # Media server (TV, movies, music)
-    jellyfin-ffmpeg       # Jellyfin's patched FFmpeg with hardware encoding
     jellyfin-web          # Web UI
 
     # ── BTRFS tools ────────────────────────────────────────────────────────
     btrfs-progs          # mkfs, subvolume, send/receive, scrub, balance
     btrfs-heatmap        # Visualize BTRFS space usage
-    btrfs-static         # Static binaries for rescue
 
     # ── NUMA / ARM64 performance ───────────────────────────────────────────
     numactl              # NUMA policy control for BLAS/PETSc/Julia threading
@@ -693,12 +699,9 @@
     swiftshader            # Software Vulkan (for containers without GPU)
     libva                   # VA-API (video acceleration)
     # ── SPICE remote display ───────────────────────────────────────────────
-    spice                   # SPICE protocol
-    spice-gtk              # SPICE GTK client (for remote viewer)
     xorg.libX11            # X11 display server library
     xorg.libXext            # X11 extensions
     xorg.libXrender         # X Render extension
-    xf86-video-vmware      # VMware X11 driver
     xf86-video-fbdev       # Linux framebuffer X11 driver
   ];
 
@@ -707,7 +710,7 @@
 
   # ── CPU governor: performance mode ────────────────────────────────────────
   # Prefer consistent clocks over power saving for compute workloads
-  powerManagement.cpuFreqPolicy = "performance";
+
 
   boot.kernel.sysctl = {
     # ── General memory ─────────────────────────────────────────────────
@@ -759,15 +762,19 @@
 
   # ── Raise default file descriptor limit for all users ──────────────────
   security.pam.loginLimits = [
-    { domain = "*"; type = "nofile"; item = "soft"; value = "524288"; }
-    { domain = "*"; type = "nofile"; item = "hard"; value = "524288"; }
-    { domain = "*"; type = "memlock"; item = "soft"; value = "unlimited"; }
-    { domain = "*"; type = "memlock"; item = "hard"; value = "unlimited"; }
+    { domain = "*"; type = "soft"; item = "nofile"; value = "524288"; }
+    { domain = "*"; type = "hard"; item = "nofile"; value = "524288"; }
+    { domain = "*"; type = "soft"; item = "memlock"; value = "unlimited"; }
+    { domain = "*"; type = "hard"; item = "memlock"; value = "unlimited"; }
   ];
 
   # ── ARM64 Numactl for Julia / PETSc / OpenBLAS threading ──────────────
   # Pin BLAS/PETSc threads to specific NUMA nodes on Ampere Altra
   environment.variables = {
+    # Build parallelism
+    LAKE_JOBS = "16";
+    MAKEFLAGS = "-j16";
+    NIX_BUILD_CORES = "16";
     # OpenBLAS: use all 18 cores, prefer threads over OpenMP
     OPENBLAS_NUM_THREADS = "16";
     OPENBLAS_VERBOSE = "0";

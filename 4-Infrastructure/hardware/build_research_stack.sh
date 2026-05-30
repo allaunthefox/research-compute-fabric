@@ -23,6 +23,8 @@ yosys -p "
     highs_pivot_accelerator.v \
     fractal_box_counter.v \
     fractal_fd_selector.v \
+    spatial_hash_bram.v \
+    spatial_hash_selector.v \
     Blitter6502OISC_small.v \
     research_stack_top.v;
   synth_gowin -top ${TOP} -json ${JSON};

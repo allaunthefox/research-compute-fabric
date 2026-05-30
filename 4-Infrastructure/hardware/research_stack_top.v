@@ -3,6 +3,7 @@
 // Combines: Blitter6502OISC + Q16 LUT + Memory Map + Voltage Controller
 //           + Scale Space BRAM + HiGHS Pivot Accelerator
 //           + Fractal Box Counter + FD Selector
+//           + Spatial Hash BRAM + Density Selector
 
 `timescale 1ns / 1ps
 
@@ -107,6 +108,15 @@ module research_stack_top (
     wire        frac_fd_valid;
     wire [1:0]  frac_voltage_mode;
     wire        frac_mode_valid;
+
+    // ── Spatial Hash BRAM Signals ─────────────────────────────────
+    wire [15:0] sh_cell_density;
+    wire [15:0] sh_neighbor_density;
+    wire        sh_query_done;
+
+    // ── Spatial Hash Selector Signals ─────────────────────────────
+    wire [1:0]  sh_voltage_mode;
+    wire        sh_mode_valid;
 
     // ── Q16 LUT: use lower 16 bits of operands ────────────────────
     wire [15:0] q16_a_16 = map_q16_a[15:0];
@@ -249,6 +259,37 @@ module research_stack_top (
         .fd_valid(frac_fd_valid),
         .voltage_mode(frac_voltage_mode),
         .mode_valid(frac_mode_valid)
+    );
+
+    // Spatial Hash BRAM (16×16×16 grid, 8 particles/cell, dual-port)
+    // Insert: particle position from map_q16_a[3:0], trigger from map_highs_trigger
+    // Query:  query position from map_q16_b[3:0], trigger from map_q16_trigger
+    spatial_hash_bram spatial_hash (
+        .clk(clk),
+        .rst_n(rst_n),
+        .particle_x(map_q16_a[3:0]),
+        .particle_y(map_q16_a[7:4]),
+        .particle_z(map_q16_a[11:8]),
+        .particle_valid(map_highs_trigger),
+        .query_x(map_q16_b[3:0]),
+        .query_y(map_q16_b[7:4]),
+        .query_z(map_q16_b[11:8]),
+        .query_valid(map_q16_trigger),
+        .cell_density(sh_cell_density),
+        .neighbor_density(sh_neighbor_density),
+        .query_done(sh_query_done)
+    );
+
+    // Spatial Hash Density → Voltage Mode Selector
+    // Maps particle density to voltage mode:
+    //   density < 10 → STORE, < 50 → COMPUTE, < 200 → APPROX, >= 200 → MORPHIC
+    spatial_hash_selector sh_sel (
+        .clk(clk),
+        .rst_n(rst_n),
+        .density_in(sh_cell_density),
+        .density_valid(sh_query_done),
+        .voltage_mode(sh_voltage_mode),
+        .mode_valid(sh_mode_valid)
     );
 
     // ── LED Output ─────────────────────────────────────────────────

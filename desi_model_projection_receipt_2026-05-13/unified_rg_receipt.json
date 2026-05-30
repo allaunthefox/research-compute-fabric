@@ -1,0 +1,112 @@
+{
+  "schema": "unified_rg_test_suite_v2",
+  "generated_at": "2026-05-30T13:57:02Z",
+  "rg_fixed_point": 1.2618595071429148,
+  "tests": [
+    {
+      "name": "Erdos unit distance",
+      "result": {
+        "lower_bound": 1.014,
+        "rg_bound": 1.2618595071429148,
+        "std_bound": 1.3333333333333333,
+        "gap_lower_to_rg": 0.24785950714291483,
+        "recurrence_coefficient": 0.14285714285714285,
+        "nine_pow_alpha": 15.999999999999998,
+        "note": "Algebraic identity 9^alpha=16 verified (tautology, not empirical)"
+      }
+    },
+    {
+      "name": "Burgers shock front",
+      "result": {
+        "D_measured": 1.203,
+        "D_std": 1.0,
+        "D_rg": 1.2618595071429148,
+        "D_infinite": 1.1965000000000001,
+        "D_inf_CI": [
+          1.1484298439127854,
+          1.2448633199949115
+        ],
+        "spectral_measured": 1.9,
+        "note": "Non-monotonic data; spectral exponent favors standard"
+      }
+    },
+    {
+      "name": "Sine-Gordon beta^2",
+      "result": {
+        "beta2_std": 1.3333333333333333,
+        "beta2_rg": 1.2618595071429148,
+        "M_ratio": 0.8590033676455671,
+        "g_shift": 0.026294385530916814,
+        "note": "Prediction only. Falsification criteria specified."
+      }
+    },
+    {
+      "name": "Bitcoin blockchain",
+      "result": {
+        "D_block_interval": 1.155,
+        "D_rg": 1.2618595071429148,
+        "D_poisson": 1.5,
+        "classification": "engineered",
+        "note": "RG does not apply to engineered systems. No verdict recorded."
+      }
+    },
+    {
+      "name": "Boundary universality",
+      "result": {
+        "mean": 1.2574444444444444,
+        "std": 0.011392004993756715,
+        "n": 9,
+        "t_vs_alpha": 1.1626740071366124,
+        "p_vs_alpha": 0.2784688857773163,
+        "full_range": [
+          1.1,
+          1.45
+        ],
+        "note": "Curated data; selection bias possible; full range wider"
+      }
+    }
+  ],
+  "metrics": {
+    "Shock front D": {
+      "standard": 1.0,
+      "rg": 1.2618595071429148,
+      "measured": 1.203,
+      "rel_err_std": 0.20300000000000007,
+      "rel_err_rg": 0.046645055816224475,
+      "verdict": "RG"
+    },
+    "Spectral exponent": {
+      "standard": 2.0,
+      "rg": 1.2618595071429148,
+      "measured": 1.9,
+      "rel_err_std": 0.050000000000000044,
+      "rel_err_rg": 0.5057143756850984,
+      "verdict": "STANDARD"
+    },
+    "Boundary D (aggregate)": {
+      "standard": 1.275,
+      "rg": 1.2618595071429148,
+      "measured": 1.2574444444444444,
+      "rel_err_std": 0.01376906318082788,
+      "rel_err_rg": 0.003498854407704229,
+      "verdict": "RG",
+      "error": 0.011392004993756715
+    }
+  },
+  "scorecard": {
+    "rg_favor": 2,
+    "std_favor": 1,
+    "inconclusive": 0,
+    "tautologies_excluded": 1,
+    "significance_threshold": 0.1
+  },
+  "honesty_notes": [
+    "9^alpha=16 is algebraic identity (tautology), excluded from score",
+    "PIST test removed as duplicate of Erdos identity check",
+    "Bitcoin test has no verdict (engineered system, RG does not apply)",
+    "Sine-Gordon is prediction only with falsification criteria",
+    "Boundary data is curated from 50 refs, selection bias possible",
+    "Burgers data is non-monotonic, extrapolation unreliable",
+    "Spectral exponent favors standard (1.9 closer to 2.0 than 1.262)"
+  ]
+}

@@ -30,6 +30,13 @@ from typing import Dict, List, Optional, Tuple
 import sys as _sys
 _sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+# BraidDiatCodec: compact braid encoding (714 bytes avg)
+try:
+    from braid_diat_codec import BraidDiatFrame, BraidDiatCodec
+    _HAS_BRAID_DIAT = True
+except ImportError:
+    _HAS_BRAID_DIAT = False
+
 from braid_vcn_encoder import (
     delta_rle_encode_vectorized,
     rs_encode,

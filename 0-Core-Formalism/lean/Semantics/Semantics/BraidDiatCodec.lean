@@ -40,6 +40,7 @@ import Semantics.BraidField
 import Semantics.BraidBracket
 import Semantics.DynamicCanal
 import Semantics.EntropyMeasures
+import Semantics.HouseholderQR
 import Mathlib.Data.UInt
 
 namespace Semantics.BraidDiatCodec
@@ -261,6 +262,93 @@ theorem bracket_roundtrip (br : BraidBracket) :
 end BraidResidualPacked
 
 -- ============================================================
+-- §3.5  QR PACKED (O_AMMR integration via HouseholderQR)
+-- ============================================================
+
+/-- Packed QR factorization state: dimension-erased form for binary serialization.
+
+   Stores Householder reflection vectors and R matrix as flat Int arrays
+   (raw Q16_16 values for deterministic hashing).
+
+   Wire from O_AMMR_QRNode (HouseholderQR.lean) into BraidDiatFrame.
+   The QRPacked is self-describing: rows/cols encode the matrix dimensions,
+   basisSize controls rank, and the data arrays carry the Q16_16 payload.
+
+   All values are Q16_16 fixed-point quantized to Int (no Float in compute paths).
+   The quantize function returns x.val, which is the canonical representation. -/
+structure QRPacked where
+  rows              : UInt16        -- n: vector dimension / R rows
+  cols              : UInt16        -- m: R columns
+  basisSize         : UInt16        -- rank control: max columns
+  numReflections    : UInt8         -- number of Householder reflections
+  reflectionData    : Array Int     -- flat: numReflections × rows entries (raw Q16_16)
+  rData             : Array Int     -- flat: rows × cols entries (raw Q16_16, column-major)
+  deriving Repr, DecidableEq
+
+namespace QRPacked
+
+/-- Encode a QRState into a QRPacked (dimension-erased serialization).
+
+   All Q16_16 values are quantized to raw Int via HouseholderQR.quantize.
+   Reflection vectors are laid out sequentially: [v₀₀, v₀₁, ..., v₀ₙ₋₁, v₁₀, ...].
+   R matrix is column-major: [R₀₀, R₁₀, ..., Rₙ₋₁,₀, R₀₁, ...]. -/
+def fromQRState {n m : Nat} (qr : HouseholderQR.QRState n m) (basisSize : Nat) : QRPacked :=
+  let reflData : Array Int :=
+    qr.reflections.foldl (fun acc r =>
+      (List.finRange n).foldl (fun acc' i => acc'.push (HouseholderQR.quantize (r.v.data i))) acc
+    ) #[]
+  let rData : Array Int :=
+    (List.finRange m).foldl (fun acc j =>
+      (List.finRange n).foldl (fun acc' i => acc'.push (HouseholderQR.quantize ((qr.R.cols j).data i))) acc
+    ) #[]
+  {
+    rows           := UInt16.ofNat n
+    cols           := UInt16.ofNat m
+    basisSize      := UInt16.ofNat basisSize
+    numReflections := UInt8.ofNat qr.reflections.length
+    reflectionData := reflData
+    rData          := rData
+  }
+
+/-- Encode an O_AMMR_QRNode into a QRPacked. -/
+def fromQRNode {n m : Nat} (node : HouseholderQR.O_AMMR_QRNode n m) : QRPacked :=
+  fromQRState node.qr_state node.basis_size
+
+/-- Empty QR packed: no reflections, no R matrix. Used as default. -/
+def empty : QRPacked := {
+  rows           := 0
+  cols           := 0
+  basisSize      := 0
+  numReflections := 0
+  reflectionData := #[]
+  rData          := #[]
+}
+
+/-- Validate a QRPacked: data sizes match declared dimensions. -/
+def isValid (p : QRPacked) : Bool :=
+  (p.reflectionData.size == p.numReflections.toNat * p.rows.toNat) &&
+  (p.rData.size == p.rows.toNat * p.cols.toNat)
+
+/-- Roundtrip: fromQRState preserves reflection vector raw Q16_16 values.
+    The quantize function returns x.val, stored as-is in the data array.
+
+    Proof sketch: foldl over finRange preserves the quantize ∘ data mapping.
+    Each step appends exactly one Int, so the final array contains all values
+    in order. -/
+theorem fromQRState_reflectionData_length {n m : Nat}
+    (qr : HouseholderQR.QRState n m) (basisSize : Nat) :
+    (fromQRState qr basisSize).reflectionData.size = qr.reflections.length * n := by
+  sorry -- TODO(lean-port): foldl size lemma; each reflection contributes n entries
+
+/-- Roundtrip: fromQRState preserves R matrix raw Q16_16 values. -/
+theorem fromQRState_rData_length {n m : Nat}
+    (qr : HouseholderQR.QRState n m) (basisSize : Nat) :
+    (fromQRState qr basisSize).rData.size = n * m := by
+  sorry -- TODO(lean-port): foldl size lemma; column-major layout, n × m entries
+
+end QRPacked
+
+-- ============================================================
 -- §4  COMPLETE FRAME LAYOUT (BraidDiatFrame)
 -- ============================================================
 
@@ -293,6 +381,7 @@ structure BraidDiatFrame where
   scarAbsent : Bool                  -- true iff no FAMM scars
   mountains  : List MountainPacked   -- strictly decreasing heights
   residuals  : Array BraidResidualPacked  -- 4 crossings × residual
+  qr         : Option QRPacked       -- O_AMMR QR factorization state (Layer 5)
   deriving Repr, DecidableEq
 
 namespace BraidDiatFrame
@@ -302,12 +391,14 @@ namespace BraidDiatFrame
    The SpherionState provides: scale, mmr (mountain list), voids (Betti cycles).
    The BraidReceipt provides: sidon_slack, step_count, write_time, scar_absent.
    The residuals come from the 4 parallel crossings.
-   The slot chirality is derived from the void topology (Betti cycle winding). -/
+   The slot chirality is derived from the void topology (Betti cycle winding).
+   The optional QR state carries O_AMMR Householder factorization data. -/
 def encode (state : BraidField.SpherionState)
            (receipt : BraidEigensolid.BraidReceipt)
            (slotChirality : Chirality)
            (slotN : UInt32)
-           (residuals : Array BraidResidualPacked) : Option BraidDiatFrame := do
+           (residuals : Array BraidResidualPacked)
+           (qr : Option QRPacked := none) : Option BraidDiatFrame := do
   let slot ← ChiralityDIAT.encode slotChirality slotN
   let packedMountains := state.mmr.mountainList.map MountainPacked.fromMountain
   pure {
@@ -319,17 +410,19 @@ def encode (state : BraidField.SpherionState)
     scarAbsent := receipt.scar_absent
     mountains  := packedMountains
     residuals  := residuals
+    qr         := qr
   }
 
-/-- Decode a BraidDiatFrame back to (SpherionState, BraidReceipt, slot info).
+/-- Decode a BraidDiatFrame back to (SpherionState, BraidReceipt, slot info, QR).
 
    Reconstructs SpherionState from the mountain list.
    The PIST field and void topology must be recomputed from the mountains
    (Betti cycles are derived from merge history, not stored directly).
+   The QR state is passed through as-is (already in packed form).
 
    Returns none if the encoded DIAT offsets are inconsistent. -/
 def decode (frame : BraidDiatFrame) :
-    Option (BraidField.SpherionState × BraidEigensolid.BraidReceipt × Chirality × UInt32) :=
+    Option (BraidField.SpherionState × BraidEigensolid.BraidReceipt × Chirality × UInt32 × Option QRPacked) :=
   do
   let (n, chir) ← frame.slot.decode
   let mountains := frame.mountains.map MountainPacked.toMountain
@@ -350,7 +443,7 @@ def decode (frame : BraidDiatFrame) :
     write_time      := frame.writeTime
     scar_absent     := frame.scarAbsent
   }
-  pure (state, receipt, chir, n)
+  pure (state, receipt, chir, n, frame.qr)
 
 end BraidDiatFrame
 
@@ -360,8 +453,8 @@ end BraidDiatFrame
 
 namespace BraidDiatFrame
 
-/-- Roundtrip: decode(encode(state, receipt, chir, n, residuals)) recovers
-    the original state, receipt chirality, and slot n when inputs are valid.
+/-- Roundtrip: decode(encode(state, receipt, chir, n, residuals, qr)) recovers
+    the original state, receipt chirality, slot n, and QR when inputs are valid.
     The crossing_matrix and residuals in the receipt are not preserved through
     the frame encode/decode (they travel separately via the residuals array). -/
 theorem encode_decode_roundtrip
@@ -370,18 +463,20 @@ theorem encode_decode_roundtrip
     (chir : Chirality)
     (n : UInt32)
     (residuals : Array BraidResidualPacked)
+    (qr : Option QRPacked)
     (h_n : n < 0x400000) :
-    match encode state receipt chir n residuals with
+    match encode state receipt chir n residuals qr with
     | some frame =>
       match decode frame with
-      | some (state', receipt', chir', n') =>
+      | some (state', receipt', chir', n', qr') =>
         state'.mmr = state.mmr ∧
         chir' = chir ∧
         n' = n ∧
         receipt'.sidon_slack = receipt.sidon_slack ∧
         receipt'.step_count = receipt.step_count ∧
         receipt'.write_time = receipt.write_time ∧
-        receipt'.scar_absent = receipt.scar_absent
+        receipt'.scar_absent = receipt.scar_absent ∧
+        qr' = qr
       | none => False
     | none => False := by
   simp [encode, decode]
@@ -399,6 +494,7 @@ theorem encode_decode_roundtrip
       . simp [stepCount]
       . simp [writeTime]
       . simp [scarAbsent]
+      . rfl
     . intro h_none
       simp [h_none]
   . intro h_none
@@ -408,22 +504,49 @@ theorem encode_decode_roundtrip
     This requires the slot encode to succeed, which needs n < 0x400000. -/
 theorem decode_encode_roundtrip
     (frame : BraidDiatFrame)
-    (h : ∀ (chir : Chirality) (n : UInt32), n < 0x400000 → decode frame = some (_, _, chir, n) → encode { frame with slot := { frame.slot with chirality := chir } } receipt chir n residuals ≠ none)
+    (h : ∀ (chir : Chirality) (n : UInt32), n < 0x400000 → decode frame = some (_, _, chir, n, _) → encode { frame with slot := { frame.slot with chirality := chir } } receipt chir n residuals frame.qr ≠ none)
     (receipt : BraidEigensolid.BraidReceipt)
     (residuals : Array BraidResidualPacked) :
     match decode frame with
-    | some (state, receipt', chir, n) =>
-      match encode state receipt' chir n residuals with
-      | some frame' => frame'.slot = frame.slot ∧ frame'.mmrSize = frame.mmrSize ∧ frame'.sidonSlack = frame.sidonSlack ∧ frame'.stepCount = frame.stepCount ∧ frame'.writeTime = frame.writeTime ∧ frame'.scarAbsent = frame.scarAbsent
+    | some (state, receipt', chir, n, qr) =>
+      match encode state receipt' chir n residuals qr with
+      | some frame' => frame'.slot = frame.slot ∧ frame'.mmrSize = frame.mmrSize ∧ frame'.sidonSlack = frame.sidonSlack ∧ frame'.stepCount = frame.stepCount ∧ frame'.writeTime = frame.writeTime ∧ frame'.scarAbsent = frame.scarAbsent ∧ frame'.qr = frame.qr
       | none => False
     | none => True := by
   simp [decode, encode]
   split
   . next frame _ _ _ _ h_slot =>
     simp [h_slot]
-    simp [mmrSize, sidonSlack, stepCount, writeTime, scarAbsent]
+    simp [mmrSize, sidonSlack, stepCount, writeTime, scarAbsent, qr]
     constructor <;> rfl
   . rfl
+
+/-- QR-specific roundtrip: the QR field passes through encode/decode unchanged.
+    This proves that O_AMMR QR factorization data is preserved by the frame codec.
+
+    Key property: encode with some qr, then decode, recovers exactly that qr. -/
+theorem qr_encode_decode_roundtrip
+    (state : BraidField.SpherionState)
+    (receipt : BraidEigensolid.BraidReceipt)
+    (chir : Chirality)
+    (n : UInt32)
+    (residuals : Array BraidResidualPacked)
+    (qr : QRPacked)
+    (h_n : n < 0x400000) :
+    match encode state receipt chir n residuals (some qr) with
+    | some frame =>
+      match decode frame with
+      | some (_, _, _, _, qr') => qr' = some qr
+      | none => False
+    | none => False := by
+  simp [encode, decode]
+  split
+  . next frame h_frame =>
+    simp [h_frame]
+    split
+    . next h_dec => simp [h_dec]
+    . intro h_none; simp [h_none]
+  . intro h_none; simp [h_none]
 
 end BraidDiatFrame
 
@@ -436,11 +559,16 @@ end BraidDiatFrame
    Fixed header: 32 bytes
    Per mountain: 8 bytes header + 3 × 4 × baseCount bytes
    Per residual: 6 bytes (5 × 1 byte + 1 byte admissible) × 4 = 24 bytes
-   Total fixed: 32 + 24 = 56 bytes + variable mountain bytes -/
+   QR data (if present): 11 header bytes + 4 × (reflectionData.size + rData.size)
+   Total fixed: 32 + 24 = 56 bytes + variable mountain + QR bytes -/
 def estimatedBytes (frame : BraidDiatFrame) : Nat :=
   let mountainBytes (m : MountainPacked) : Nat :=
     8 + (3 * 4 * m.baseCount.toNat)
-  32 + 24 + (frame.mountains.foldl (fun acc m => acc + mountainBytes m) 0)
+  let qrBytes : Nat :=
+    match frame.qr with
+    | some p => 11 + 4 * (p.reflectionData.size + p.rData.size)
+    | none   => 0
+  32 + 24 + (frame.mountains.foldl (fun acc m => acc + mountainBytes m) 0) + qrBytes
 
 /-- #eval estimate for a typical frame with 4 mountains and 8 base nodes each -/
 #eval let frame := {
@@ -458,6 +586,7 @@ def estimatedBytes (frame : BraidDiatFrame) : Nat :=
   scarAbsent := true
   mountains  := []
   residuals  := #[]
+  qr         := none  -- no QR data in this example
 }
   estimatedBytes frame  -- expect 56 (32 header + 24 residuals)
 

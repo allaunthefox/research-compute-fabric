@@ -371,6 +371,137 @@ class BraidResidualPacked:
 
 # ── Layer 4: BraidDiatFrame ─────────────────────────────────────────────────
 
+class QRPacked:
+    """
+    Packed QR factorization state: dimension-erased form for binary serialization.
+
+    Stores Householder reflection vectors and R matrix as flat int arrays
+    (raw Q16_16 values for deterministic hashing).
+
+    Wire from O_AMMR_QRNode (HouseholderQR.lean) into BraidDiatFrame.
+
+    Layout (11-byte header + variable data):
+      rows:              UInt16  (2 bytes)
+      cols:              UInt16  (2 bytes)
+      basis_size:        UInt16  (2 bytes)
+      num_reflections:   UInt8   (1 byte)
+      refl_data_len:     UInt32  (4 bytes) — number of Int entries
+      reflection_data:   refl_data_len × 4 bytes (signed Int32 each)
+      r_data_len:        UInt32  (4 bytes)
+      r_data:            r_data_len × 4 bytes (signed Int32 each)
+
+    All values are Q16_16 fixed-point (no Float in compute paths).
+    """
+
+    HEADER_STRUCT = struct.Struct(">HHHBI")  # rows(2)+cols(2)+basis(2)+numRefl(1)+reflLen(4) = 11
+
+    __slots__ = (
+        "rows", "cols", "basis_size", "num_reflections",
+        "reflection_data", "r_data",
+    )
+
+    def __init__(
+        self,
+        rows: int,
+        cols: int,
+        basis_size: int,
+        num_reflections: int,
+        reflection_data: Optional[List[int]] = None,
+        r_data: Optional[List[int]] = None,
+    ) -> None:
+        self.rows: int = rows
+        self.cols: int = cols
+        self.basis_size: int = basis_size
+        self.num_reflections: int = num_reflections
+        self.reflection_data: List[int] = reflection_data if reflection_data is not None else []
+        self.r_data: List[int] = r_data if r_data is not None else []
+
+    def to_bytes(self) -> bytes:
+        """Serialize to bytes."""
+        def _clamp_i32(v: int) -> int:
+            return max(-2**31, min(2**31 - 1, v))
+
+        header = struct.pack(
+            ">HHHBI",
+            self.rows & 0xFFFF,
+            self.cols & 0xFFFF,
+            self.basis_size & 0xFFFF,
+            self.num_reflections & 0xFF,
+            len(self.reflection_data),
+        )
+        ref_bytes = b"".join(
+            struct.pack(">i", _clamp_i32(v)) for v in self.reflection_data
+        )
+        r_len_bytes = struct.pack(">I", len(self.r_data))
+        r_bytes = b"".join(
+            struct.pack(">i", _clamp_i32(v)) for v in self.r_data
+        )
+        return header + ref_bytes + r_len_bytes + r_bytes
+
+    @classmethod
+    def from_bytes(cls, raw: bytes) -> QRPacked:
+        """Deserialize from bytes."""
+        rows, cols, basis_size, num_reflections, refl_data_len = (
+            cls.HEADER_STRUCT.unpack(raw[:11])
+        )
+        offset = 11
+        reflection_data: List[int] = []
+        for _ in range(refl_data_len):
+            v = struct.unpack(">i", raw[offset:offset + 4])[0]
+            reflection_data.append(v)
+            offset += 4
+
+        r_data_len = struct.unpack(">I", raw[offset:offset + 4])[0]
+        offset += 4
+        r_data: List[int] = []
+        for _ in range(r_data_len):
+            v = struct.unpack(">i", raw[offset:offset + 4])[0]
+            r_data.append(v)
+            offset += 4
+
+        return cls(rows, cols, basis_size, num_reflections, reflection_data, r_data)
+
+    @classmethod
+    def from_qr_state(
+        cls,
+        reflections: List[List[int]],
+        r_matrix: List[List[int]],
+        basis_size: int,
+    ) -> QRPacked:
+        """
+        Encode QR state (reflection vectors + R matrix) into QRPacked.
+
+        Args:
+            reflections: list of reflection vectors (each is a list of raw Q16_16 ints)
+            r_matrix: R matrix as list of columns (each column is a list of raw Q16_16 ints)
+            basis_size: rank control (max columns)
+        """
+        num_reflections = len(reflections)
+        rows = len(reflections[0]) if reflections else (len(r_matrix[0]) if r_matrix else 0)
+        cols = len(r_matrix)
+
+        refl_data: List[int] = []
+        for v in reflections:
+            refl_data.extend(v)
+
+        r_data: List[int] = []
+        for col in r_matrix:
+            r_data.extend(col)
+
+        return cls(rows, cols, basis_size, num_reflections, refl_data, r_data)
+
+    def is_valid(self) -> bool:
+        """Validate that data sizes match declared dimensions."""
+        return (
+            len(self.reflection_data) == self.num_reflections * self.rows
+            and len(self.r_data) == self.rows * self.cols
+        )
+
+    def estimated_bytes(self) -> int:
+        """Estimate serialized byte size."""
+        return 11 + 4 * len(self.reflection_data) + 4 + 4 * len(self.r_data)
+
+
 class BraidDiatFrame:
     """
     Complete BraidDiatFrame: fixed header + variable mountain list.
@@ -398,6 +529,7 @@ class BraidDiatFrame:
         "scar_absent",
         "mountains",
         "residuals",
+        "qr",
     )
 
     def __init__(
@@ -410,6 +542,7 @@ class BraidDiatFrame:
         scar_absent: bool,
         mountains: Optional[List[MountainPacked]] = None,
         residuals: Optional[List[BraidResidualPacked]] = None,
+        qr: Optional[QRPacked] = None,
     ) -> None:
         self.slot: ChiralityDIAT = slot
         self.mmr_size: int = mmr_size
@@ -419,6 +552,7 @@ class BraidDiatFrame:
         self.scar_absent: bool = scar_absent
         self.mountains: List[MountainPacked] = mountains if mountains else []
         self.residuals: List[BraidResidualPacked] = residuals if residuals else []
+        self.qr: Optional[QRPacked] = qr
 
     def to_bytes(self) -> bytes:
         """Serialize to bytes (lossless)."""
@@ -450,8 +584,9 @@ class BraidDiatFrame:
 
         mountain_bytes = b"".join(m.to_bytes() for m in self.mountains)
         residual_bytes = b"".join(r.to_bytes() for r in self.residuals)
+        qr_bytes = self.qr.to_bytes() if self.qr else b""
 
-        return header + mountain_bytes + residual_bytes
+        return header + mountain_bytes + residual_bytes + qr_bytes
 
     @classmethod
     def from_bytes(cls, raw: bytes) -> BraidDiatFrame:
@@ -496,9 +631,17 @@ class BraidDiatFrame:
             residuals.append(BraidResidualPacked.from_bytes(raw[offset : offset + 8]))
             offset += 8
 
+        # QR data (if present, appended after residuals)
+        qr: Optional[QRPacked] = None
+        if offset < len(raw):
+            try:
+                qr = QRPacked.from_bytes(raw[offset:])
+            except Exception:
+                qr = None
+
         return cls(
             slot, mmr_size, sidon_slack, step_count,
-            write_time, scar_absent, mountains, residuals,
+            write_time, scar_absent, mountains, residuals, qr,
         )
 
     @classmethod
@@ -509,6 +652,7 @@ class BraidDiatFrame:
         slot_chirality: Chirality,
         slot_n: int,
         residuals: Optional[List[BraidResidualPacked]] = None,
+        qr: Optional[QRPacked] = None,
     ) -> Optional[BraidDiatFrame]:
         """
         Encode SpherionState + BraidReceipt into a BraidDiatFrame.
@@ -517,6 +661,7 @@ class BraidDiatFrame:
           {"scale": int, "mmr": {"mountainList": [Mountain, ...]}, ...}
         BraidReceipt dict shape:
           {"sidon_slack": int, "step_count": int, "write_time": int, "scar_absent": bool}
+        qr: optional QRPacked for O_AMMR QR factorization data (Layer 5)
         """
         slot = ChiralityDIAT.decode(slot_chirality, slot_n)
         if slot is None:
@@ -537,13 +682,14 @@ class BraidDiatFrame:
             receipt["scar_absent"],
             packed_mountains,
             residuals,
+            qr,
         )
 
-    def decode(self) -> Tuple[dict, dict, Chirality, int]:
+    def decode(self) -> Tuple[dict, dict, Chirality, int, Optional[QRPacked]]:
         """
-        Decode BraidDiatFrame back to (SpherionState, BraidReceipt, slot chirality, n).
+        Decode BraidDiatFrame back to (SpherionState, BraidReceipt, slot chirality, n, qr).
 
-        Returns (state, receipt, chirality, n).
+        Returns (state, receipt, chirality, n, qr).
         """
         n = self.slot.to_n()
         chir = self.slot.chirality
@@ -566,7 +712,7 @@ class BraidDiatFrame:
             "crossing_matrix": self.residuals[0].to_bracket() if self.residuals else {},
             "residuals": [r.to_bracket() for r in self.residuals],
         }
-        return state, receipt, chir, n
+        return state, receipt, chir, n, self.qr
 
 
 # ── Integer square root (matches Lean DynamicCanal.DIAT.isqrt) ─────────────────
@@ -638,7 +784,18 @@ def make_random_bracket(rng: random.Random) -> dict:
     }
 
 
-def make_random_frame(rng: random.Random) -> Tuple[BraidDiatFrame, dict]:
+def make_random_qr(rng: random.Random, max_dim: int = 8) -> QRPacked:
+    """Generate a random QRPacked for testing."""
+    rows = rng.randint(1, max_dim)
+    cols = rng.randint(1, max_dim)
+    num_reflections = rng.randint(0, min(rows, 4))
+    basis_size = rng.randint(0, cols)
+    reflection_data = [rng.randint(-2**31, 2**31 - 1) for _ in range(num_reflections * rows)]
+    r_data = [rng.randint(-2**31, 2**31 - 1) for _ in range(rows * cols)]
+    return QRPacked(rows, cols, basis_size, num_reflections, reflection_data, r_data)
+
+
+def make_random_frame(rng: random.Random, include_qr: bool = False) -> Tuple[BraidDiatFrame, dict]:
     """Generate a random BraidDiatFrame and its canonical dict form."""
     num_mountains = rng.randint(1, 20)
     state = make_random_state(rng, num_mountains)
@@ -646,8 +803,9 @@ def make_random_frame(rng: random.Random) -> Tuple[BraidDiatFrame, dict]:
     slot_chirality = Chirality(rng.randint(0, 3))
     slot_n = rng.randint(0, 100000)
     residuals = [BraidResidualPacked.from_bracket(make_random_bracket(rng)) for _ in range(4)]
-    frame = BraidDiatFrame.encode(state, receipt, slot_chirality, slot_n, residuals)
-    return frame, {"state": state, "receipt": receipt}
+    qr = make_random_qr(rng) if include_qr else None
+    frame = BraidDiatFrame.encode(state, receipt, slot_chirality, slot_n, residuals, qr)
+    return frame, {"state": state, "receipt": receipt, "qr": qr}
 
 
 # ── MessagePack shim (pure Python, no C extension needed) ───────────────────

@@ -308,6 +308,7 @@ python3 4-Infrastructure/storage/storage_agent.py --loop --interval 900
 - `4-Infrastructure/shim/spirv_packet_generator.py` — OpPhi-driven packet descriptor generator: SPIR-V asm → copy-if optimizer → JSON packet descriptors (5 OpPhi fields: type_id, cond_id, true_val_id, false_val_id, result_id)
 - `4-Infrastructure/shim/virtio_net_transform.py` — Virtio-net ring as computation pipeline: three Class-1 primitives (HASH_REPORT RSS Toeplitz, TSO gso_size split, MRG_RXBUF merge) via virtio_net_hdr_v1_hash; zero backend changes needed
 - `4-Infrastructure/shim/vcn_compute_substrate.py` — AMD VCN / NVIDIA NVENC H.264/H.265 hardware video encoder as compute device via MKV trick; dynamically detects GPU vendor (NVIDIA/AMD/Intel) to load math-optimized lossless parameters (YUV444p10le, full-range PC spacing, CABAC offload, VAAPI/NVENC/AMF wrappers); carries BraidStrand/BraidBracket payloads; vectorized packing
+- `4-Infrastructure/shim/qemu_framebuffer_packer.py` — QEMU graphics framebuffer packer mapping Q16_16 scalars to ARGB8888/RGB24 pixels for mmap-based zero-copy display DMA loopback
 - `4-Infrastructure/shim/rrc_ray_tagger.py` — RRC Ray Layer Tagger; classifies math payloads into RRC shapes and matches them to swappable compute slots and transports
 - `4-Infrastructure/hardware/emergency_boot/emergency_boot_shim.py` — Python I/O shim
   for Geometry Emergency Boot Witness (6502 calculator-efficiency FPGA controller)

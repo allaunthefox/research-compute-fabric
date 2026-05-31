@@ -98,6 +98,9 @@ VENDOR_MAP = {
     "0x10de": "nvidia",
     "0x1002": "amd",
     "0x8086": "intel",
+    "0x1013": "cirrus",
+    "0x1106": "via",
+    "0x1af4": "virtio",
 }
 
 # Discrete GPU device ID ranges (approximate)
@@ -125,8 +128,10 @@ def _detect_gpus() -> List[GPUDevice]:
 
     for card_dir in sorted(drm_dir.glob("card*")):
         card_name = card_dir.name  # e.g. "card0", "card1"
+        # Handle names like "card0", "card0-VGA-1"
+        base = card_name.split("-")[0]
         try:
-            card_id = int(card_name.replace("card", ""))
+            card_id = int(base.replace("card", ""))
         except ValueError:
             continue
 
@@ -213,6 +218,10 @@ def _is_discrete_gpu(vendor: str, name: str, device_id: str) -> bool:
     if vendor == "intel":
         # Intel is almost always integrated (except Arc)
         return "arc" in name_lower
+
+    # Virtual GPUs (Cirrus, virtio) are never discrete
+    if vendor in ("cirrus", "virtio", "via"):
+        return False
 
     return False
 
@@ -368,7 +377,7 @@ def _assign_tier(caps: DeviceCapabilities):
 
     # Check for AMD/Intel discrete with VA-API
     for gpu in caps.gpus:
-        if gpu.is_discrete and gpu.vaapi_profiles:
+        if gpu.is_discrete and gpu.vaapi_profiles and gpu.vendor_name not in ("cirrus", "virtio"):
             return (
                 ComputeTier.GPU_VAAPI,
                 {"GPU": 1},

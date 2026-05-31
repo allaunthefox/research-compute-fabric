@@ -1,0 +1,78 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+body {
+  background-color: #f0f2f5;
+  color: #2d3436;
+}
+
+.main-content {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 2em 3em;
+}
+
+.main-content h1,
+.main-content h2,
+.main-content h3 {
+  color: #2d3436;
+  border-bottom-color: #dfe6e9;
+}
+
+.main-content code {
+  background-color: #f8f9fa;
+  color: #e17055;
+}
+
+.main-content pre {
+  background-color: #2d3436;
+  color: #dfe6e9;
+  border-radius: 6px;
+}
+
+.main-content table th {
+  background-color: #dfe6e9;
+  color: #2d3436;
+}
+
+.main-content table td {
+  border-color: #e8ecef;
+}
+
+.main-content a {
+  color: #0984e3;
+}
+
+.main-content a:hover {
+  color: #74b9ff;
+}
+
+.main-content blockquote {
+  border-left-color: #74b9ff;
+  background-color: #f0f4f8;
+}
+
+.header {
+  background: linear-gradient(120deg, #2d3436, #636e72);
+  color: #dfe6e9;
+}
+
+.project-name {
+  color: #ffffff;
+}
+
+.project-tagline {
+  color: #b2bec3;
+}
+
+.btn {
+  background-color: #0984e3;
+  color: #ffffff;
+}
+
+.btn:hover {
+  background-color: #74b9ff;
+}

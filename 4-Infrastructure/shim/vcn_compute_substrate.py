@@ -272,16 +272,30 @@ def load_math_optimizations(vendor: str, gpu_name: str) -> MathOptimizationLoad:
 
     # 2. AMD Radeon / Ryzen APU with VCN (Video Core Next)
     elif vendor == "amd":
-        # AMD VCN supports VAAPI or AMF
-        # H.265 lossless constant QP
-        opt.pixel_format = "yuv444p"
-        opt.bit_depth = 8
-        opt.packing_density = "yuv444_3x"
-        opt.color_range = "pc"
-        opt.encoder_opts = [
-            "-qp", "0",                   # VAAPI / AMF Lossless QP
-            "-color_range", "pc"
-        ]
+        # Check if it is an integrated GPU / APU (shared system memory)
+        is_igpu = "graphics" in gpu_name or "integrated" in gpu_name or "apu" in gpu_name or "drm" in gpu_name
+
+        if is_igpu:
+            # iGPU/APU: Optimize for memory bandwidth limits of unified system RAM
+            opt.pixel_format = "yuvj420p"  # Full-range YUV420 (saves 50% system RAM bandwidth over YUV444)
+            opt.bit_depth = 8
+            opt.packing_density = "independent_y_6x" # Independent Y-plane utilization
+            opt.color_range = "pc"         # PC range (0-255) to prevent clamping loss
+            opt.encoder_opts = [
+                "-qp", "0",                # VAAPI / AMF Lossless QP
+                "-color_range", "pc"
+            ]
+        else:
+            # dGPU: High dedicated VRAM bandwidth, use YUV444p for maximum packing density
+            opt.pixel_format = "yuv444p"
+            opt.bit_depth = 8
+            opt.packing_density = "yuv444_3x"
+            opt.color_range = "pc"
+            opt.encoder_opts = [
+                "-qp", "0",                   # VAAPI / AMF Lossless QP
+                "-color_range", "pc"
+            ]
+
 
     # 3. Intel Graphics
     elif vendor == "intel":

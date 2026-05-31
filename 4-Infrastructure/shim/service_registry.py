@@ -34,11 +34,11 @@ from typing import Optional, Dict, List, Any
 
 # ── Connection config (from env or defaults) ─────────────────────────────────
 
-DB_HOST = os.environ.get("REGISTRY_HOST", "sql103.infinityfree.com")
-DB_PORT = int(os.environ.get("REGISTRY_PORT", "3306"))
-DB_USER = os.environ.get("REGISTRY_USER", "if0_42058601")
+DB_HOST = os.environ.get("REGISTRY_HOST", "mysql-2b650837-bigdataiscoming-88eb.l.aivencloud.com")
+DB_PORT = int(os.environ.get("REGISTRY_PORT", "14829"))
+DB_USER = os.environ.get("REGISTRY_USER", "avnadmin")
 DB_PASS = os.environ.get("REGISTRY_PASS", "")
-DB_NAME = os.environ.get("REGISTRY_DB", "if0_42058601_registry")
+DB_NAME = os.environ.get("REGISTRY_DB", "defaultdb")
 
 ENCRYPTION_KEY = os.environ.get("REGISTRY_ENCRYPT_KEY", "")
 
@@ -87,6 +87,7 @@ def _get_connection():
             host=DB_HOST, port=DB_PORT, user=DB_USER,
             password=DB_PASS, database=DB_NAME,
             connect_timeout=10, autocommit=True,
+            ssl_mode='REQUIRED',
         )
     except ImportError:
         pass
@@ -97,9 +98,19 @@ def _get_connection():
             host=DB_HOST, port=DB_PORT, user=DB_USER,
             password=DB_PASS, database=DB_NAME,
             connect_timeout=10, autocommit=True,
+            ssl={'ssl': True},
         )
     except ImportError:
         raise ImportError("Install mysql-connector-python or pymysql: pip install mysql-connector-python")
+
+
+def _get_dict_cursor(conn):
+    """Get a dictionary cursor compatible with both mysql-connector and pymysql."""
+    if type(conn).__module__.startswith("pymysql"):
+        import pymysql.cursors
+        return conn.cursor(pymysql.cursors.DictCursor)
+    else:
+        return conn.cursor(dictionary=True)
 
 
 def init_schema():
@@ -161,7 +172,7 @@ def discover_nodes(tier: Optional[str] = None,
     Only returns nodes seen within max_age_seconds.
     """
     conn = _get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = _get_dict_cursor(conn)
     cutoff = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
     if tier:
@@ -256,7 +267,7 @@ def store_credential(name: str, value: str, ttl_seconds: int = 3600) -> str:
 def get_credential(name: str) -> Optional[str]:
     """Retrieve and decrypt a credential by name. Returns None if expired."""
     conn = _get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = _get_dict_cursor(conn)
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
     cursor.execute("""
         SELECT encrypted_blob FROM credentials
@@ -304,7 +315,7 @@ def set_config(key: str, value: Any) -> None:
 def get_config(key: str, default: Any = None) -> Any:
     """Get a configuration value."""
     conn = _get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = _get_dict_cursor(conn)
     cursor.execute("SELECT config_value FROM config WHERE config_key = %s", (key,))
     row = cursor.fetchone()
     cursor.close()

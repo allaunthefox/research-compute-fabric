@@ -3,88 +3,112 @@
 
 @import "{{ site.theme }}";
 
+/* === Full soft color override === */
+
+/* Body: soft warm gray */
 body {
-  background-color: #f0f2f5;
-  color: #2d3436;
+  background-color: #f5f0eb !important;
+  color: #3d3d3d !important;
 }
 
-.main-content {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  padding: 2em 3em;
-}
-
-.main-content h1,
-.main-content h2,
-.main-content h3 {
-  color: #2d3436;
-  border-bottom-color: #dfe6e9;
-}
-
-.main-content code {
-  background-color: #f8f9fa;
-  color: #e17055;
-}
-
-.main-content pre {
-  background-color: #2d3436;
-  color: #dfe6e9;
-  border-radius: 6px;
-}
-
-.main-content table th {
-  background-color: #dfe6e9;
-  color: #2d3436;
-}
-
-.main-content table td {
-  border-color: #e8ecef;
-}
-
-.main-content a {
-  color: #0984e3;
-}
-
-.main-content a:hover {
-  color: #74b9ff;
-}
-
-.main-content blockquote {
-  border-left-color: #74b9ff;
-  background-color: #f0f4f8;
-}
-
+/* Header: soft dark, not green */
 .page-header {
-  background-color: #2d3436;
-  background-image: linear-gradient(120deg, #2d3436, #636e72);
-  color: #dfe6e9;
+  background-color: #3d3d3d !important;
+  background-image: none !important;
+  color: #e0ddd8 !important;
 }
 
-.page-header .project-name {
-  color: #ffffff;
+.page-header .project-name,
+.page-header h1 {
+  color: #f5f0eb !important;
 }
 
 .page-header .project-tagline {
-  color: #b2bec3;
+  color: #b5b0a8 !important;
 }
 
 .page-header .btn {
-  background-color: #0984e3;
-  color: #ffffff;
-  border-color: rgba(255,255,255,0.2);
+  background-color: #6b6560 !important;
+  color: #f5f0eb !important;
+  border-color: #8a8580 !important;
 }
 
 .page-header .btn:hover {
-  background-color: #74b9ff;
-  border-color: rgba(255,255,255,0.3);
+  background-color: #8a8580 !important;
 }
 
-.main-content h1,
-.main-content h2,
-.main-content h3,
-.main-content h4,
-.main-content h5,
-.main-content h6 {
-  color: #2d3436;
+/* Main content: same soft tone */
+.main-content,
+main {
+  background-color: #f5f0eb !important;
+  color: #3d3d3d !important;
+}
+
+/* Headings: muted, not green */
+.main-content h1, .main-content h2, .main-content h3,
+.main-content h4, .main-content h5, .main-content h6,
+main h1, main h2, main h3, main h4, main h5, main h6 {
+  color: #4a4540 !important;
+  border-bottom-color: #d8d3cd !important;
+}
+
+/* Code: soft */
+.main-content code, main code {
+  background-color: #ebe6e0 !important;
+  color: #6b4c3b !important;
+}
+
+.main-content pre, main pre {
+  background-color: #3d3d3d !important;
+  color: #d8d3cd !important;
+  border: 1px solid #5a5550 !important;
+}
+
+.main-content pre code, main pre code {
+  background-color: transparent !important;
+  color: #d8d3cd !important;
+}
+
+/* Tables: soft headers */
+.main-content table th, main table th {
+  background-color: #e5e0da !important;
+  color: #4a4540 !important;
+  border-color: #d8d3cd !important;
+}
+
+.main-content table td, main table td {
+  border-color: #d8d3cd !important;
+  color: #3d3d3d !important;
+}
+
+/* Links: muted blue */
+.main-content a, main a {
+  color: #5a7a8a !important;
+}
+
+.main-content a:hover, main a:hover {
+  color: #7a9aaa !important;
+}
+
+/* Blockquotes */
+.main-content blockquote, main blockquote {
+  border-left-color: #b5b0a8 !important;
+  background-color: #ebe6e0 !important;
+  color: #5a5550 !important;
+}
+
+/* Horizontal rules */
+.main-content hr, main hr {
+  background-color: #d8d3cd !important;
+}
+
+/* Footer */
+.site-footer {
+  border-top-color: #d8d3cd !important;
+  color: #8a8580 !important;
+}
+
+/* Strong/emphasis */
+.main-content strong, main strong {
+  color: #3d3d3d !important;
 }

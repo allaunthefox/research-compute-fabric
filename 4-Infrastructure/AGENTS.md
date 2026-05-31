@@ -310,6 +310,7 @@ python3 4-Infrastructure/storage/storage_agent.py --loop --interval 900
 - `4-Infrastructure/shim/vcn_compute_substrate.py` — AMD VCN / NVIDIA NVENC H.264/H.265 hardware video encoder as compute device via MKV trick; dynamically detects GPU vendor (NVIDIA/AMD/Intel) to load math-optimized lossless parameters (YUV444p10le, full-range PC spacing, CABAC offload, VAAPI/NVENC/AMF wrappers); carries BraidStrand/BraidBracket payloads; vectorized packing
 - `4-Infrastructure/shim/qemu_framebuffer_packer.py` — QEMU graphics framebuffer packer mapping Q16_16 scalars to ARGB8888/RGB24 pixels for mmap-based zero-copy display DMA loopback
 - `4-Infrastructure/shim/rrc_ray_tagger.py` — RRC Ray Layer Tagger; classifies math payloads into RRC shapes and matches them to swappable compute slots and transports
+- `4-Infrastructure/cloudflare/src/lib.rs` — Cloudflare Workers edge WASM trinary VM core implementing the Q0_16 scalar compute floor
 - `4-Infrastructure/hardware/emergency_boot/emergency_boot_shim.py` — Python I/O shim
   for Geometry Emergency Boot Witness (6502 calculator-efficiency FPGA controller)
   Specification: `6-Documentation/docs/specs/GEOMETRY_EMERGENCY_BOOT_WITNESS_2026-04-08.md`

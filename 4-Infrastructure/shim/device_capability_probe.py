@@ -37,15 +37,17 @@ from typing import List, Optional, Tuple
 
 class ComputeTier(IntEnum):
     """Compute capability tiers, ordered by decreasing capability."""
-    GPU_CUDA = 7       # NVIDIA discrete + CUDA (Ray GPU worker, NVENC)
-    GPU_VAAPI = 6      # AMD/Intel discrete + VA-API (Ray worker, hardware encode)
-    GPU_APU = 5        # AMD integrated, shared memory, bandwidth-optimized
-    CPU_FFMPEG = 4     # Software encode only (libx264/libx265)
-    ETHERNET = 3       # virtio-net PistPacket DMA (TX/RX rings, host transforms)
-    FRAMEBUFFER = 2    # /dev/fb0 DMA backplane only
-    ESP32 = 1          # MCU, Q0_16 scalar in idle hook
-    RELAY = 0          # Network only, no compute
-    OFFLINE = -1       # Unreachable
+    GPU_CUDA = 10      # NVIDIA discrete + CUDA (Ray GPU worker, NVENC)
+    GPU_VAAPI = 9      # AMD/Intel discrete + VA-API (Ray worker, hardware encode)
+    GPU_APU = 8        # AMD integrated, shared memory, bandwidth-optimized
+    CPU_FFMPEG = 7     # Software encode only (libx264/libx265)
+    BATCH = 6          # Batch container/runner compute (e.g. GitHub Actions)
+    ETHERNET = 5       # virtio-net PistPacket DMA (TX/RX rings, host transforms)
+    FRAMEBUFFER = 4    # /dev/fb0 DMA backplane only
+    WASM = 3           # Edge compute WASM (Cloudflare Workers, Deno, Vercel)
+    ESP32 = 2          # MCU, Q0_16 scalar in idle hook
+    RELAY = 1          # Network only, no compute
+    OFFLINE = 0        # Unreachable
 
 
 @dataclass
@@ -87,6 +89,7 @@ class DeviceCapabilities:
     ray_resources: dict = field(default_factory=dict)
     os_arch: str = "x86_64"
     total_memory_mb: int = 0
+    has_virtio_net: bool = False
     # VCN alignment
     packing_density: str = "macroblock_1x"
     color_range: str = "tv"
@@ -354,7 +357,7 @@ def probe_device(hostname: str = "") -> DeviceCapabilities:
     """Probe the local device and return complete capability profile.
 
     Assigns the highest compute tier the device can handle:
-      GPU_CUDA > GPU_VAAPI > GPU_APU > CPU_FFMPEG > FRAMEBUFFER > ESP32 > RELAY
+      GPU_CUDA > GPU_VAAPI > GPU_APU > CPU_FFMPEG > BATCH > ETHERNET > FRAMEBUFFER > WASM > ESP32 > RELAY
     """
     if not hostname:
         import socket
@@ -370,7 +373,7 @@ def probe_device(hostname: str = "") -> DeviceCapabilities:
 
     # 3. Detect framebuffer and Ethernet
     caps.framebuffer = _detect_framebuffer()
-    has_virtio_net = _detect_virtio_net()
+    caps.has_virtio_net = _detect_virtio_net()
 
     # 4. Get system memory
     try:
@@ -435,8 +438,17 @@ def _assign_tier(caps: DeviceCapabilities):
             "macroblock_1x",
         )
 
+    # Check for GITHUB_ACTIONS (Batch container tier)
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        return (
+            ComputeTier.BATCH,
+            {"batch": 1},
+            "yuv420p",
+            "macroblock_1x",
+        )
+
     # virtio-net Ethernet computation (PistPacket DMA via TX/RX rings)
-    if has_virtio_net:
+    if caps.has_virtio_net:
         return (
             ComputeTier.ETHERNET,
             {"ethernet": 1},
@@ -451,6 +463,15 @@ def _assign_tier(caps: DeviceCapabilities):
             {"framebuffer": 1},
             "argb8888",  # Direct pixel mapping
             "framebuffer_raw",
+        )
+
+    # Check for WASM edge computation config
+    if "WASM_COMPUTE_URL" in os.environ or "CLOUDFLARE_WORKER_URL" in os.environ:
+        return (
+            ComputeTier.WASM,
+            {"wasm": 1},
+            "yuv420p",
+            "macroblock_1x",
         )
 
     # Default: relay (network only)
@@ -516,8 +537,12 @@ def get_ray_placement_strategy(caps: DeviceCapabilities) -> dict:
         return {"num_gpus": 1, "resources": {"APU": 1}}
     if caps.tier == ComputeTier.CPU_FFMPEG:
         return {"num_cpus": 1}
+    if caps.tier == ComputeTier.BATCH:
+        return {"resources": {"batch": 1}}
     if caps.tier == ComputeTier.FRAMEBUFFER:
         return {"resources": {"framebuffer": 1}}
+    if caps.tier == ComputeTier.WASM:
+        return {"resources": {"wasm": 1}}
     return {}
 
 

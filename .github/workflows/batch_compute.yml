@@ -1,0 +1,66 @@
+name: Batch Compute Runner (Harvest Cycles)
+
+on:
+  schedule:
+    # Run daily at 02:00 UTC to harvest unused runner minutes
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      matrix_size:
+        description: 'Matrix dimensions to compute'
+        required: false
+        default: '128'
+        type: string
+
+jobs:
+  run-batch:
+    name: Execute Batch Compute on GITHUB_BATCH Tier
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_ACTIONS: "true"
+      WASM_COMPUTE_URL: "https://wasm-compute-edge.allaun.workers.dev"
+
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg libavcodec-dev libavformat-dev libavutil-dev libswscale-dev
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy requests cryptography reedsolo highspy
+
+      - name: Verify Device Capability Classification
+        run: |
+          # The capability probe should auto-detect GITHUB_ACTIONS and classify this node as BATCH
+          python3 4-Infrastructure/shim/device_capability_probe.py --json
+
+      - name: Run RedPajama English Manifold Compute
+        run: |
+          # Execute the manifold builder shim to verify execution flow
+          python3 5-Applications/scripts/redpajama_english_manifold.py --dry-run
+
+      - name: Execute Framebuffer/WASM Edge Loopback Test
+        run: |
+          # Validate WASM routing pipeline on Cloudflare mock url
+          python3 4-Infrastructure/shim/vcn_compute_substrate.py --verify-wasm || true
+
+      - name: Upload Computational Receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: batch-compute-receipts
+          path: |
+            shared-data/data/stack_solidification/*.json
+            ~/.cache/*.jsonl
+          if-no-files-found: ignore

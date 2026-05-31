@@ -307,7 +307,7 @@ python3 4-Infrastructure/storage/storage_agent.py --loop --interval 900
 - `4-Infrastructure/shim/spirv_copy_if_optimizer.py` — SPIR-V OpPhi→OpSelect transform (OpBranchConditional+OpPhi → OpSelect); eliminates branch over head; emits `CopyIfPattern` with type_id fix
 - `4-Infrastructure/shim/spirv_packet_generator.py` — OpPhi-driven packet descriptor generator: SPIR-V asm → copy-if optimizer → JSON packet descriptors (5 OpPhi fields: type_id, cond_id, true_val_id, false_val_id, result_id)
 - `4-Infrastructure/shim/virtio_net_transform.py` — Virtio-net ring as computation pipeline: three Class-1 primitives (HASH_REPORT RSS Toeplitz, TSO gso_size split, MRG_RXBUF merge) via virtio_net_hdr_v1_hash; zero backend changes needed
-- `4-Infrastructure/shim/vcn_compute_substrate.py` — AMD VCN H.264 encoder as compute device via MKV trick; SEI receipt schema; carries BraidStrand/BraidBracket payloads
+- `4-Infrastructure/shim/vcn_compute_substrate.py` — AMD VCN H.264 encoder as compute device via MKV trick; SEI receipt schema; carries BraidStrand/BraidBracket payloads; vectorized YUV420 packing using numpy
 - `4-Infrastructure/shim/rrc_ray_tagger.py` — RRC Ray Layer Tagger; classifies math payloads into RRC shapes and matches them to swappable compute slots and transports
 - `4-Infrastructure/hardware/emergency_boot/emergency_boot_shim.py` — Python I/O shim
   for Geometry Emergency Boot Witness (6502 calculator-efficiency FPGA controller)

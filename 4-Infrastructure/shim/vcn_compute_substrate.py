@@ -40,6 +40,13 @@ try:
 except ImportError:
     _CHA20_AVAILABLE = False
 
+try:
+    import numpy as np
+    _HAS_NUMPY = True
+except ImportError:
+    np = None
+    _HAS_NUMPY = False
+
 # Frame constants from UNIFIED_TRANSPORT_ENCODING_SPEC.md
 FRAME_WIDTH = 1920
 FRAME_HEIGHT = 1080
@@ -496,57 +503,88 @@ def create_yuv420_frame(data: bytes, seq: int) -> bytes:
     """
     if len(data) > YUV420_FRAME_SIZE - SIGNATURE_SIZE:
         raise ValueError(f"Data too large: {len(data)} > {YUV420_FRAME_SIZE - SIGNATURE_SIZE}")
-    
-    # Create frame buffer
-    frame = bytearray(YUV420_FRAME_SIZE)
-    
+
+    if _HAS_NUMPY:
+        # Create empty planes filled with neutral gray (128)
+        y_plane = np.full(FRAME_WIDTH * FRAME_HEIGHT, 128, dtype=np.uint8)
+        u_plane = np.full((FRAME_WIDTH // 2) * (FRAME_HEIGHT // 2), 128, dtype=np.uint8)
+        v_plane = np.full((FRAME_WIDTH // 2) * (FRAME_HEIGHT // 2), 128, dtype=np.uint8)
+
+        # Parse data as uint32 values (little-endian)
+        # Pad data to multiple of 4 bytes if necessary
+        pad_len = (4 - (len(data) % 4)) % 4
+        if pad_len > 0:
+            padded_data = data + b"\x00" * pad_len
+        else:
+            padded_data = data
+
+        values = np.frombuffer(padded_data, dtype=np.uint32)
+
+        # Vectorized pack_q16_16_to_yuv
+        y_vals = np.clip((values >> 16) & 0xFF, 16, 235).astype(np.uint8)
+        u_vals = np.clip((values >> 8) & 0xFF, 16, 240).astype(np.uint8)
+        v_vals = np.clip(values & 0xFF, 16, 240).astype(np.uint8)
+
+        # Y plane: repeat each element 4 times
+        y_plane_data = np.repeat(y_vals, 4)
+
+        # Copy to planes
+        n_y = min(len(y_plane_data), len(y_plane))
+        n_uv = min(len(values), len(u_plane))
+
+        y_plane[:n_y] = y_plane_data[:n_y]
+        u_plane[:n_uv] = u_vals[:n_uv]
+        v_plane[:n_uv] = v_vals[:n_uv]
+
+        # Concatenate planes
+        frame = bytearray(y_plane.tobytes() + u_plane.tobytes() + v_plane.tobytes())
+    else:
+        # Create frame buffer
+        frame = bytearray(YUV420_FRAME_SIZE)
+
+        # Pack data into YUV420 format
+        # Y plane: 1920×1080 bytes
+        # U plane: 960×540 bytes (subsampled 2x)
+        # V plane: 960×540 bytes (subsampled 2x)
+
+        y_plane_view = memoryview(frame)[0:FRAME_WIDTH * FRAME_HEIGHT]
+        u_plane_view = memoryview(frame)[FRAME_WIDTH * FRAME_HEIGHT:FRAME_WIDTH * FRAME_HEIGHT + (FRAME_WIDTH // 2) * (FRAME_HEIGHT // 2)]
+        v_plane_view = memoryview(frame)[FRAME_WIDTH * FRAME_HEIGHT + (FRAME_WIDTH // 2) * (FRAME_HEIGHT // 2):]
+
+        # Pre-fill with neutral gray
+        y_plane_view[:] = b"\x80" * len(y_plane_view)
+        u_plane_view[:] = b"\x80" * len(u_plane_view)
+        v_plane_view[:] = b"\x80" * len(v_plane_view)
+
+        # Pack data as Q16_16 scalars into macroblocks (6 bytes = 4Y + 1U + 1V)
+        data_idx = 0
+        macroblock_idx = 0
+
+        while data_idx + 4 <= len(data):
+            # Read 4 bytes as Q16_16 scalar
+            q16_value = struct.unpack("<I", data[data_idx:data_idx + 4])[0]
+            y, u, v = pack_q16_16_to_yuv(q16_value)
+
+            # Place in macroblock (4 Y pixels, 1 U, 1 V)
+            mb_y_start = macroblock_idx * 4
+            mb_u_start = macroblock_idx
+            mb_v_start = macroblock_idx
+
+            if mb_y_start + 4 <= len(y_plane_view):
+                y_plane_view[mb_y_start:mb_y_start + 4] = bytes([y, y, y, y])
+            if mb_u_start + 1 <= len(u_plane_view):
+                u_plane_view[mb_u_start] = u
+            if mb_v_start + 1 <= len(v_plane_view):
+                v_plane_view[mb_v_start] = v
+
+            data_idx += 4
+            macroblock_idx += 1
+
     # Write signature header (exactly 24 bytes)
     version = 1
     length = len(data)
-    header = SIGNATURE_HEADER + struct.pack("<IIII", version, seq, length, 0)  # 8 + 4 + 4 + 4 + 4 = 24 bytes
+    header = SIGNATURE_HEADER + struct.pack("<IIII", version, seq, length, 0)
     frame[:SIGNATURE_SIZE] = header
-    
-    # Ensure frame is exactly the right size
-    if len(frame) != YUV420_FRAME_SIZE:
-        raise ValueError(f"Frame size mismatch: {len(frame)} != {YUV420_FRAME_SIZE}")
-    
-    # Pack data into YUV420 format
-    # Y plane: 1920×1080 bytes
-    # U plane: 960×540 bytes (subsampled 2x)
-    # V plane: 960×540 bytes (subsampled 2x)
-    
-    y_plane = frame[0:FRAME_WIDTH * FRAME_HEIGHT]
-    u_plane = frame[FRAME_WIDTH * FRAME_HEIGHT:FRAME_WIDTH * FRAME_HEIGHT + (FRAME_WIDTH // 2) * (FRAME_HEIGHT // 2)]
-    v_plane = frame[FRAME_WIDTH * FRAME_HEIGHT + (FRAME_WIDTH // 2) * (FRAME_HEIGHT // 2):]
-    
-    # Pack data as Q16_16 scalars into macroblocks (6 bytes = 4Y + 1U + 1V)
-    data_idx = 0
-    macroblock_idx = 0
-    
-    while data_idx + 4 <= len(data):
-        # Read 4 bytes as Q16_16 scalar
-        q16_value = struct.unpack("<I", data[data_idx:data_idx + 4])[0]
-        y, u, v = pack_q16_16_to_yuv(q16_value)
-        
-        # Place in macroblock (4 Y pixels, 1 U, 1 V)
-        mb_y_start = macroblock_idx * 4
-        mb_u_start = macroblock_idx * 1
-        mb_v_start = macroblock_idx * 1
-        
-        if mb_y_start + 4 <= len(y_plane):
-            y_plane[mb_y_start:mb_y_start + 4] = bytes([y, y, y, y])
-        if mb_u_start + 1 <= len(u_plane):
-            u_plane[mb_u_start] = u
-        if mb_v_start + 1 <= len(v_plane):
-            v_plane[mb_v_start] = v
-        
-        data_idx += 4
-        macroblock_idx += 1
-    
-    # Pad remaining space with neutral gray (Y=128, U=128, V=128)
-    y_plane[macroblock_idx * 4:] = bytes([128] * (len(y_plane) - macroblock_idx * 4))
-    u_plane[macroblock_idx:] = bytes([128] * (len(u_plane) - macroblock_idx))
-    v_plane[macroblock_idx:] = bytes([128] * (len(v_plane) - macroblock_idx))
     
     return bytes(frame)
 

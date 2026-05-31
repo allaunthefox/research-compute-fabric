@@ -37,10 +37,11 @@ from typing import List, Optional, Tuple
 
 class ComputeTier(IntEnum):
     """Compute capability tiers, ordered by decreasing capability."""
-    GPU_CUDA = 6       # NVIDIA discrete + CUDA (NVENC, NVDEC)
-    GPU_VAAPI = 5      # AMD/Intel discrete + VA-API hardware encode
-    GPU_APU = 4        # AMD integrated, shared memory, bandwidth-optimized
-    CPU_FFMPEG = 3     # Software encode only (libx264/libx265)
+    GPU_CUDA = 7       # NVIDIA discrete + CUDA (Ray GPU worker, NVENC)
+    GPU_VAAPI = 6      # AMD/Intel discrete + VA-API (Ray worker, hardware encode)
+    GPU_APU = 5        # AMD integrated, shared memory, bandwidth-optimized
+    CPU_FFMPEG = 4     # Software encode only (libx264/libx265)
+    ETHERNET = 3       # virtio-net PistPacket DMA (TX/RX rings, host transforms)
     FRAMEBUFFER = 2    # /dev/fb0 DMA backplane only
     ESP32 = 1          # MCU, Q0_16 scalar in idle hook
     RELAY = 0          # Network only, no compute
@@ -259,6 +260,35 @@ def _probe_vaapi_profiles(render_node: str) -> List[str]:
     return profiles
 
 
+def _detect_virtio_net() -> bool:
+    """Detect virtio-net network device (Ethernet computation surface)."""
+    net_dir = Path("/sys/class/net")
+    if not net_dir.exists():
+        return False
+    for iface in net_dir.iterdir():
+        if not iface.is_dir():
+            continue
+        # Check for virtio-net driver
+        driver_link = iface / "device" / "driver"
+        if driver_link.exists():
+            try:
+                driver = driver_link.resolve().name
+                if "virtio" in driver:
+                    return True
+            except (OSError, ValueError):
+                pass
+        # Check device vendor for virtio
+        vendor_path = iface / "device" / "vendor"
+        if vendor_path.exists():
+            try:
+                vid = vendor_path.read_text().strip()
+                if vid == "0x1af4":  # Red Hat / VirtIO
+                    return True
+            except (OSError, ValueError):
+                pass
+    return False
+
+
 def _detect_framebuffer() -> Optional[FramebufferDevice]:
     """Detect framebuffer device and its capabilities."""
     fb_path = Path("/dev/fb0")
@@ -338,8 +368,9 @@ def probe_device(hostname: str = "") -> DeviceCapabilities:
     # 2. Detect FFmpeg
     caps.has_ffmpeg, caps.ffmpeg_encoders, caps.preferred_encoder = _detect_ffmpeg()
 
-    # 3. Detect framebuffer
+    # 3. Detect framebuffer and Ethernet
     caps.framebuffer = _detect_framebuffer()
+    has_virtio_net = _detect_virtio_net()
 
     # 4. Get system memory
     try:
@@ -402,6 +433,15 @@ def _assign_tier(caps: DeviceCapabilities):
             {"CPU": 1},
             "yuv420p",
             "macroblock_1x",
+        )
+
+    # virtio-net Ethernet computation (PistPacket DMA via TX/RX rings)
+    if has_virtio_net:
+        return (
+            ComputeTier.ETHERNET,
+            {"ethernet": 1},
+            "pist_packet",
+            "virtio_ring",
         )
 
     # Framebuffer only

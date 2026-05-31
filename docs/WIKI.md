@@ -2,7 +2,7 @@
 
 > Comprehensive architecture reference — May 30, 2026
 
-The Research Stack is a capability-adaptive compute fabric that turns every device in a Tailscale mesh — from NVIDIA GPUs to ESP32 microcontrollers — into a unified distributed compute cluster. Formal proofs live in Lean 4; Python shims handle I/O at the boundary; Ray schedules work across the mesh; and a custom VCN compression pipeline achieves **50× bandwidth reduction** for cross-node data transfers.
+The Research Stack is a capability-adaptive compute fabric that turns every device in a Tailscale mesh — from NVIDIA GPUs to ESP32 microcontrollers — into a unified distributed compute cluster. Formal proofs live in Lean 4; Python shims handle I/O at the boundary; Ray schedules work across the mesh; and a custom VCN compression pipeline achieves [**50× bandwidth reduction**](#4-vcn-pipeline) for cross-node data transfers.
 
 ---
 

@@ -922,6 +922,8 @@ TAG_STRAND   = 0x01
 TAG_CROSSING = 0x02
 TAG_PIST     = 0x03
 TAG_LUPINE   = 0x04  # LUPINE CUDA operation (JSON-braid wrapper)
+TAG_VAAPI    = 0x05  # AMD/Intel VA-API hardware encode/decode
+TAG_FLAC     = 0x06  # PipeWire/FLAC audio DSP computation
 
 
 def _q16_to_bytes(value: int) -> bytes:

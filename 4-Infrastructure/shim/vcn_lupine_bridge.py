@@ -23,7 +23,7 @@ from typing import Any, Optional, Tuple
 sys.path.insert(0, str(Path(__file__).parent))
 
 from vcn_compute_substrate import (
-    TAG_STRAND, TAG_CROSSING, TAG_PIST, TAG_LUPINE,
+    TAG_STRAND, TAG_CROSSING, TAG_PIST, TAG_LUPINE, TAG_VAAPI, TAG_FLAC,
     BRAID_STRAND_BYTES, BRAID_BRACKET_BYTES,
 )
 from vcn_lupine_opcodes import (
@@ -38,7 +38,7 @@ MAX_PAYLOAD = 4 * 1024 * 1024  # 4 MB per frame
 
 
 def tag_name(tag: int) -> str:
-    names = {TAG_STRAND: "STRAND", TAG_CROSSING: "CROSSING", TAG_PIST: "PIST", TAG_LUPINE: "LUPINE"}
+    {TAG_STRAND: "STRAND", TAG_CROSSING: "CROSSING", TAG_PIST: "PIST", TAG_LUPINE: "LUPINE", TAG_VAAPI: "VAAPI", TAG_FLAC: "FLAC"}
     flag, base = tag & FLAG_REPLY, tag & 0x7F
     prefix = "REPLY_" if flag else ""
     return prefix + names.get(base, f"UNKNOWN({base})")
@@ -136,12 +136,14 @@ def lupine_opcode_name(opcode: int) -> str:
 
 class FrameDispatcher:
     """Routes TAG_LUPINE frames to CUDA backend, braid frames to VCN compute."""
-
     def __init__(self, cuda_backend: Optional["CUDABackend"] = None,
-                 braid_backend: Optional["BraidBackend"] = None):
+                 braid_backend: Optional["BraidBackend"] = None,
+                 vaapi_backend: Optional["VAAPIBackend"] = None,
+                 flac_backend: Optional["FLACBackend"] = None):
         self.cuda = cuda_backend
         self.braid = braid_backend
-
+        self.vaapi = vaapi_backend
+        self.flac = flac_backend
     def dispatch(self, tag: int, flags: int, seq: int,
                  payload: bytes) -> Optional[bytes]:
         """Dispatch a received frame to the appropriate backend.
@@ -197,6 +199,19 @@ class FrameDispatcher:
 
     def _lupine_error(self, seq: int, status: int, msg: str) -> bytes:
         return pack_reply(TAG_LUPINE, seq, encode_lupine_reply(0, status, msg))
+
+    def _dispatch_vaapi_request(self, seq: int, payload: bytes) -> bytes:
+        if self.vaapi is None:
+            raise ValueError("VA-API backend not available")
+        op = payload[0] if payload else 0
+        if op == 0:
+            result = self.vaapi.encode(payload[1:])
+        else:
+            result = self.vaapi.decode(payload[1:])
+        return pack_reply(TAG_VAAPI, seq, result)
+
+    def _dispatch_vaapi_reply(self, seq: int, payload: bytes) -> bytes:
+        return pack_frame(TAG_VAAPI | FLAG_REPLY, seq, payload)
 
 
 # ── CUDABackend interface ──────────────────────────────────────────────────────
@@ -259,6 +274,60 @@ print(result.stdout)
             return json.loads(result.stdout.strip())
         except json.JSONDecodeError:
             return result.stdout.strip()
+
+
+# ── FLACBackend interface ──────────────────────────────────────────────────────
+
+class FLACBackend:
+    """Interface for PipeWire/FLAC audio DSP backends."""
+
+    def process_chunk(self, chunk_data: bytes, sample_rate: int = 48000) -> dict:
+        raise NotImplementedError
+
+
+class LocalFLACBackend(FLACBackend):
+    """Local FLAC DSP backend using numpy FFT."""
+
+    def process_chunk(self, chunk_data: bytes, sample_rate: int = 48000) -> dict:
+        import struct
+        import json
+
+        try:
+            import numpy as np
+            # chunk_data is raw PCM samples (float32 LE)
+            n = len(chunk_data) // 4
+            data = np.frombuffer(chunk_data[:n*4], dtype=np.float32)
+
+            if data.ndim > 1:
+                data = data.mean(axis=1)
+
+            n_fft = min(4096, len(data))
+            window = np.hanning(n_fft)
+            frame = data[:n_fft] * window
+            spectrum = np.abs(np.fft.rfft(frame))
+            freqs = np.fft.rfftfreq(n_fft, 1.0 / sample_rate)
+
+            peak_indices = np.argsort(spectrum)[-8:]
+            peaks = [{"freq_hz": float(freqs[i]), "magnitude": float(spectrum[i])}
+                     for i in sorted(peak_indices)]
+
+            spectral_sum = np.sum(spectrum)
+            centroid = float(np.sum(freqs * spectrum) / spectral_sum) if spectral_sum > 0 else 0.0
+            rms = float(np.sqrt(np.mean(data ** 2)))
+            rms_db = float(20 * np.log10(rms + 1e-12))
+
+            return {
+                "status": "ok",
+                "fft_peaks": peaks,
+                "spectral_centroid_hz": centroid,
+                "rms_level_db": rms_db,
+                "sample_rate": sample_rate,
+                "samples": len(data),
+            }
+        except ImportError:
+            return {"status": "missing_libs", "error": "numpy not available"}
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
 
 
 # ── BraidBackend interface ─────────────────────────────────────────────────────

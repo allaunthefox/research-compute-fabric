@@ -42,12 +42,13 @@ class ComputeTier(IntEnum):
     GPU_APU = 8        # AMD integrated, shared memory, bandwidth-optimized
     CPU_FFMPEG = 7     # Software encode only (libx264/libx265)
     BATCH = 6          # Batch container/runner compute (e.g. GitHub Actions)
-    ETHERNET = 5       # virtio-net PistPacket DMA (TX/RX rings, host transforms)
-    FRAMEBUFFER = 4    # /dev/fb0 DMA backplane only
+    ETHERNET = 3       # virtio-net PistPacket DMA (TX/RX rings, host transforms)
+    FRAMEBUFFER = 2    # /dev/fb0 DMA backplane only
+    DSP = 1            # PipeWire/FLAC audio DSP (spectral analysis, FFT)
     WASM = 3           # Edge compute WASM (Cloudflare Workers, Deno, Vercel)
-    ESP32 = 2          # MCU, Q0_16 scalar in idle hook
-    RELAY = 1          # Network only, no compute
-    OFFLINE = 0        # Unreachable
+    ESP32 = 0          # MCU, Q0_16 scalar in idle hook
+    RELAY = -1         # Network only, no compute
+    OFFLINE = -2       # Unreachable
 
 
 @dataclass

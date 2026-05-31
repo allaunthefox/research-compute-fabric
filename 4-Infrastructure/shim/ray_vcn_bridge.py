@@ -39,12 +39,36 @@ import ray
 # VCN bridge imports (unchanged — these are the abstraction layer)
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from vcn_lupine_bridge import (
-    TAG_STRAND, TAG_CROSSING, TAG_PIST, TAG_LUPINE,
+    TAG_STRAND, TAG_CROSSING, TAG_PIST, TAG_LUPINE, TAG_VAAPI,
     FLAG_REPLY, FRAME_HDR_SIZE,
     pack_frame, unpack_frame, pack_reply, unpack_reply,
     tag_name, bridge_receipt,
-    FrameDispatcher, CUDABackend, BraidBackend,
+    FrameDispatcher, CUDABackend, BraidBackend, VAAPIBackend,
 )
+
+
+@ray.remote(runtime_env={"pip": ["reedsolo", "cryptography"]})
+class RayVAAPIBackend(VAAPIBackend):
+    """VA-API compute backend running as a Ray actor.
+
+    Uses AMD/Intel VAAPI for hardware H.264 encode/decode.
+    Scheduled on nodes with AMD iGPU or Intel GPU.
+    """
+
+    def __init__(self, device: str = "/dev/dri/renderD128", encoder: str = "h264_vaapi"):
+        self.device = device
+        self.encoder = encoder
+
+    def encode(self, payload: bytes, resolution: str = "1080p") -> bytes:
+        from braid_vcn_encoder import encode_braid_strand
+        import json
+        strand = json.loads(payload.decode()) if payload else {}
+        return encode_braid_strand(strand, resolution)
+
+    def decode(self, mkv_data: bytes) -> bytes:
+        from braid_vcn_encoder import decode_braid_mkv
+        result = decode_braid_mkv(mkv_data)
+        return json.dumps(result, default=str).encode()
 
 
 # ── Sync wrappers for Ray actors (FrameDispatcher expects sync interface) ──
@@ -63,6 +87,16 @@ class SyncCUDAWrapper(CUDABackend):
         self._actor = actor
     def call(self, opcode: int, args: dict):
         return ray.get(self._actor.call.remote(opcode, args))
+
+
+class SyncVAAPIWrapper(VAAPIBackend):
+    """Wraps a Ray VAAPIBackend actor to satisfy FrameDispatcher's sync interface."""
+    def __init__(self, actor):
+        self._actor = actor
+    def encode(self, payload: bytes, resolution: str = "1080p") -> bytes:
+        return ray.get(self._actor.encode.remote(payload, resolution))
+    def decode(self, mkv_data: bytes) -> bytes:
+        return ray.get(self._actor.decode.remote(mkv_data))
 
 
 # ── Ray-backed BraidBackend ─────────────────────────────────────────────────

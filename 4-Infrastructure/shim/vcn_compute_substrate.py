@@ -143,6 +143,16 @@ RESOLUTION_ORDER = list(VCN_RESOLUTIONS.keys())
 
 
 @dataclass
+class MathOptimizationLoad:
+    """Mathematical and packing optimizations mapped to detected GPU architecture."""
+    pixel_format: str = "yuv420p"
+    color_range: str = "tv"
+    encoder_opts: List[str] = field(default_factory=list)
+    packing_density: str = "macroblock_1x"
+    bit_depth: int = 8
+
+
+@dataclass
 class VCNHardwareCapabilities:
   """Detected hardware encoder/decoder capabilities."""
   supported_resolutions: List[Tuple[int, int]] = field(default_factory=lambda: [(1920, 1080)])
@@ -152,6 +162,7 @@ class VCNHardwareCapabilities:
   max_bandwidth_mbps: int = 100
   gpu_vendor: str = "unknown"
   gpu_name: str = "unknown"
+  optimization: Optional[MathOptimizationLoad] = None
 
 
 @dataclass
@@ -163,6 +174,7 @@ class VCNComputeFrameSpec:
   bytes_per_frame: int = 3_110_400
   frame_rate: int = 60
   encoder: str = "libx264"
+
 
 
 def probe_vcn_capabilities() -> VCNHardwareCapabilities:
@@ -234,7 +246,68 @@ def probe_vcn_capabilities() -> VCNHardwareCapabilities:
    max_w, max_h = caps.supported_resolutions[-1] if caps.supported_resolutions else (1920, 1080)
    max_pixels = max_w * max_h
    caps.max_bandwidth_mbps = (max_pixels * 3 // 2 * 60) // (1024 * 1024)
+   caps.optimization = load_math_optimizations(caps.gpu_vendor, caps.gpu_name)
    return caps
+
+
+def load_math_optimizations(vendor: str, gpu_name: str) -> MathOptimizationLoad:
+    """Determine optimal mathematical packing and compression parameters based on GPU capabilities."""
+    opt = MathOptimizationLoad()
+    vendor = vendor.lower()
+    gpu_name = gpu_name.lower()
+
+    # 1. NVIDIA Ada Lovelace / Ampere / Turing
+    if vendor == "nvidia":
+        # Target H.265 (HEVC) lossless mode via NVENC
+        opt.pixel_format = "yuv444p10le"  # 10-bit YUV444p (no subsampling, high precision)
+        opt.bit_depth = 10
+        opt.packing_density = "yuv444_3x"
+        opt.color_range = "pc"            # PC range (0-255) to avoid clamping loss
+        opt.encoder_opts = [
+            "-preset", "lossless",        # Hardware lossless HEVC
+            "-tune", "zerolatency",       # Zero pipeline buffering
+            "-color_range", "pc",         # Prevent clamping loss
+            "-colorspace", "bt709"
+        ]
+
+    # 2. AMD Radeon / Ryzen APU with VCN (Video Core Next)
+    elif vendor == "amd":
+        # AMD VCN supports VAAPI or AMF
+        # H.265 lossless constant QP
+        opt.pixel_format = "yuv444p"
+        opt.bit_depth = 8
+        opt.packing_density = "yuv444_3x"
+        opt.color_range = "pc"
+        opt.encoder_opts = [
+            "-qp", "0",                   # VAAPI / AMF Lossless QP
+            "-color_range", "pc"
+        ]
+
+    # 3. Intel Graphics
+    elif vendor == "intel":
+        opt.pixel_format = "yuv422p"
+        opt.bit_depth = 8
+        opt.packing_density = "macroblock_1x"
+        opt.color_range = "pc"
+        opt.encoder_opts = [
+            "-global_quality", "0",       # QSV lossless
+            "-color_range", "pc"
+        ]
+
+    # 4. Fallback / Generic (CPU x265)
+    else:
+        opt.pixel_format = "yuv444p"
+        opt.bit_depth = 8
+        opt.packing_density = "yuv444_3x"
+        opt.color_range = "pc"
+        opt.encoder_opts = [
+            "-x265-params", "lossless=1", # CPU x265 lossless
+            "-preset", "ultrafast",
+            "-tune", "zerolatency",
+            "-color_range", "pc"
+        ]
+
+    return opt
 
 
 def _select_preferred_encoder(encoders: List[str], vendor: str) -> str:
@@ -270,11 +343,17 @@ def _test_resolution(width: int, height: int, encoder: str) -> bool:
 
 def compute_frame_size(width: int, height: int, fmt: str = "yuv420p") -> int:
     """Compute frame size in bytes for given resolution and format."""
-    if fmt == "yuv420p":
+    fmt = fmt.lower()
+    if fmt in ["yuv420p", "yuvj420p"]:
         return width * height * 3 // 2
-    elif fmt == "rgb24":
+    elif fmt in ["yuv420p10le", "yuv420p10"]:
         return width * height * 3
+    elif fmt in ["yuv444p", "yuvj444p", "rgb24"]:
+        return width * height * 3
+    elif fmt in ["yuv444p10le", "yuv444p10"]:
+        return width * height * 6
     raise ValueError(f"Unsupported format: {fmt}")
+
 
 
 def select_optimal_resolution(
@@ -283,9 +362,10 @@ def select_optimal_resolution(
     preferred_format: str = "yuv420p"
 ) -> VCNComputeFrameSpec:
     """Select the smallest resolution that can hold target_data_size."""
+    fmt = caps.optimization.pixel_format if (caps.optimization and caps.optimization.pixel_format) else preferred_format
     required_size = target_data_size + SIGNATURE_SIZE
     for w, h in caps.supported_resolutions:
-        frame_bytes = compute_frame_size(w, h, preferred_format)
+        frame_bytes = compute_frame_size(w, h, fmt)
         if frame_bytes >= required_size:
             max_fps = 60
             for fps in reversed(caps.supported_frame_rates):
@@ -294,12 +374,13 @@ def select_optimal_resolution(
                     max_fps = fps
                     break
             encoder = caps.available_encoders[0] if caps.available_encoders else "libx264"
-            return VCNComputeFrameSpec(width=w, height=h, format=preferred_format,
+            return VCNComputeFrameSpec(width=w, height=h, format=fmt,
                 bytes_per_frame=frame_bytes, frame_rate=max_fps, encoder=encoder)
     w, h = caps.supported_resolutions[-1] if caps.supported_resolutions else (1920, 1080)
     encoder = caps.available_encoders[0] if caps.available_encoders else "libx264"
-    return VCNComputeFrameSpec(width=w, height=h, format=preferred_format,
-        bytes_per_frame=compute_frame_size(w, h, preferred_format), frame_rate=60, encoder=encoder)
+    return VCNComputeFrameSpec(width=w, height=h, format=fmt,
+        bytes_per_frame=compute_frame_size(w, h, fmt), frame_rate=60, encoder=encoder)
+
 
 
 def create_frame_dynamic(data: bytes, seq: int, spec: VCNComputeFrameSpec) -> bytes:
@@ -425,36 +506,61 @@ def _build_ffmpeg_cmd(
             "-f", "rawvideo", "-pix_fmt", spec.format,
             "-s", f"{spec.width}x{spec.height}", "-r", str(spec.frame_rate),
             "-i", str(input_path)]
+
+    # Load GPU-specific optimized flags based on selected encoder
+    vendor = "unknown"
+    if "nvenc" in encoder:
+        vendor = "nvidia"
+    elif "amf" in encoder or "vaapi" in encoder:
+        vendor = "amd"
+
+    opt = load_math_optimizations(vendor, "")
+
     if sei_payload is not None:
-        bsf = f"h264_metadata=sei_user_data={SEI_UUID}+{sei_payload}"
-        cmd.extend(["-c:v", encoder, "-qp", str(QP_MIN), "-bsf:v", bsf])
+        if "hevc" in encoder or "h265" in encoder:
+            bsf = f"hevc_metadata=sei_user_data={SEI_UUID}+{sei_payload}"
+        else:
+            bsf = f"h264_metadata=sei_user_data={SEI_UUID}+{sei_payload}"
+        cmd.extend(["-c:v", encoder, "-bsf:v", bsf])
     else:
-        cmd.extend(["-c:v", encoder, "-qp", str(QP_MIN)])
+        cmd.extend(["-c:v", encoder])
+
+    # Append the custom optimizations or default QPs
+    if opt.encoder_opts:
+        cmd.extend(opt.encoder_opts)
+    else:
+        cmd.extend(["-qp", str(QP_MIN)])
+
     if "vaapi" in encoder:
         cmd.insert(1, "-vaapi_device")
         cmd.insert(2, "/dev/dri/renderD128")
         cmd.insert(3, "-vf")
         cmd.insert(4, "format=nv12,hwupload")
     elif "nvenc" in encoder:
-        cmd.extend(["-preset", "p1", "-tune", "zerolatency"])
+        if "-tune" not in opt.encoder_opts:
+            cmd.extend(["-preset", "p1", "-tune", "zerolatency"])
     elif "amf" in encoder:
-        cmd.extend(["-usage", "ultralowlatency"])
+        if "-usage" not in opt.encoder_opts:
+            cmd.extend(["-usage", "ultralowlatency"])
     elif encoder == "libx264":
-        cmd.extend(["-profile:v", ENCODER_PROFILE, "-preset", "ultrafast", "-tune", "zerolatency"])
+        if not opt.encoder_opts:
+            cmd.extend(["-profile:v", ENCODER_PROFILE, "-preset", "ultrafast", "-tune", "zerolatency"])
+
     cmd.extend(["-f", "matroska", str(output_path)])
     return cmd
+
 
 
 def pack_q16_16_to_yuv(value: int) -> Tuple[int, int, int]:
     """
     Pack a Q16_16 scalar into YUV pixel values.
-    
+
     Mapping strategy: Split 32-bit Q16_16 into three 8-bit components
     with error-diffusion dithering for precision preservation.
-    
+
     Args:
         value: Q16_16 scalar as integer (0x00010000 = 1.0)
-    
+
     Returns:
         (Y, U, V) tuple of pixel values (0-255)
     """
@@ -462,22 +568,22 @@ def pack_q16_16_to_yuv(value: int) -> Tuple[int, int, int]:
     y_val = (value >> 16) & 0xFF
     u_val = (value >> 8) & 0xFF
     v_val = value & 0xFF
-    
+
     # Clamp to valid YUV range
     y_val = max(16, min(235, y_val))  # Y: 16-235 (limited range)
     u_val = max(16, min(240, u_val))  # U: 16-240
     v_val = max(16, min(240, v_val))  # V: 16-240
-    
+
     return (y_val, u_val, v_val)
 
 
 def unpack_yuv_to_q16_16(y: int, u: int, v: int) -> int:
     """
     Unpack YUV pixel values back to Q16_16 scalar.
-    
+
     Args:
         y, u, v: YUV pixel values (0-255)
-    
+
     Returns:
         Q16_16 scalar as integer
     """
@@ -489,15 +595,15 @@ def unpack_yuv_to_q16_16(y: int, u: int, v: int) -> int:
 def create_yuv420_frame(data: bytes, seq: int) -> bytes:
     """
     Create a 1920×1080 YUV420 frame from computation data.
-    
+
     Frame layout:
     - Bytes 0-23: Signature header (RDMAVCN\0 + version + seq + length)
     - Bytes 24+: Computation data packed into YUV macroblocks
-    
+
     Args:
         data: Raw computation data bytes
         seq: Frame sequence number
-    
+
     Returns:
         Complete YUV420 frame bytes (3,110,400 bytes)
     """
@@ -585,18 +691,18 @@ def create_yuv420_frame(data: bytes, seq: int) -> bytes:
     length = len(data)
     header = SIGNATURE_HEADER + struct.pack("<IIII", version, seq, length, 0)
     frame[:SIGNATURE_SIZE] = header
-    
+
     return bytes(frame)
 
 
 def encode_frames(input_frames: List[bytes], output_path: Path) -> subprocess.CompletedProcess:
     """
     Encode raw YUV420 frames using H.264 encoder.
-    
+
     Args:
         input_frames: List of YUV420 frame bytes
         output_path: Output MKV file path
-    
+
     Returns:
         FFmpeg subprocess result
     """
@@ -605,7 +711,7 @@ def encode_frames(input_frames: List[bytes], output_path: Path) -> subprocess.Co
     with open(raw_path, "wb") as f:
         for frame in input_frames:
             f.write(frame)
-    
+
     # FFmpeg command for software encoding (libx264) for initial testing
     cmd = [
         "ffmpeg",
@@ -624,30 +730,30 @@ def encode_frames(input_frames: List[bytes], output_path: Path) -> subprocess.Co
         "-f", "matroska",
         str(output_path)
     ]
-    
+
     result = subprocess.run(cmd, capture_output=True, text=True)
-    
+
     # Clean up raw file
     raw_path.unlink()
-    
+
     return result
 
 
 def decode_frames(input_path: Path) -> List[bytes]:
     """
     Decode MKV file back to raw YUV420 frames using H.264 decoder.
-    
+
     Note: This is lossy - the encoding process modifies pixel values.
     For computation extraction, use extract_receipt() instead.
-    
+
     Args:
         input_path: Input MKV file path
-    
+
     Returns:
         List of decoded YUV420 frame bytes
     """
     raw_path = input_path.with_suffix(".decoded.yuv")
-    
+
     cmd = [
         "ffmpeg",
         "-i", str(input_path),
@@ -656,43 +762,43 @@ def decode_frames(input_path: Path) -> List[bytes]:
         "-pix_fmt", "yuv420p",
         str(raw_path)
     ]
-    
+
     result = subprocess.run(cmd, capture_output=True, text=True)
-    
+
     if result.returncode != 0:
         raise RuntimeError(f"FFmpeg decode failed: {result.stderr}")
-    
+
     # Read decoded frames
     with open(raw_path, "rb") as f:
         data = f.read()
-    
+
     # Split into frames
     frames = []
     for i in range(0, len(data), YUV420_FRAME_SIZE):
         frame = data[i:i + YUV420_FRAME_SIZE]
         if len(frame) == YUV420_FRAME_SIZE:
             frames.append(frame)
-    
+
     # Clean up
     raw_path.unlink()
-    
+
     return frames
 
 
 def extract_receipt(input_path: Path) -> dict:
     """
     Extract computation receipt from encoded MKV file.
-    
+
     Receipt includes:
     - CRC32 of encoded file (proves encoding occurred)
     - Frame size statistics
     - Encoding parameters used
     - Bitstream analysis metadata
     - Compression ratio (input vs output size)
-    
+
     Args:
         input_path: Input MKV file path
-    
+
     Returns:
         Receipt dictionary
     """
@@ -705,24 +811,24 @@ def extract_receipt(input_path: Path) -> dict:
         "-show_format",
         str(input_path)
     ]
-    
+
     result = subprocess.run(cmd, capture_output=True, text=True)
-    
+
     if result.returncode != 0:
         raise RuntimeError(f"FFprobe failed: {result.stderr}")
-    
+
     probe_info = json.loads(result.stdout)
-    
+
     # Calculate file CRC32
     with open(input_path, "rb") as f:
         file_data = f.read()
     file_crc32 = zlib.crc32(file_data) & 0xFFFFFFFF
-    
+
     # Extract compression metrics
     original_size = YUV420_FRAME_SIZE  # Single frame
     compressed_size = len(file_data)
     compression_ratio = original_size / compressed_size if compressed_size > 0 else 0
-    
+
     receipt = {
         "schema": "vcn_computation_receipt_v1",
         "input_file": str(input_path),
@@ -752,7 +858,7 @@ def extract_receipt(input_path: Path) -> dict:
             "space_saving": (1 - (compressed_size / original_size)) * 100 if original_size > 0 else 0
         }
     }
-    
+
     return receipt
 
 
@@ -1286,72 +1392,72 @@ def compute_pist_spectral(data: dict) -> dict:
 
 # ── main ────────────────────────────────────────────────────────────────────
     import sys
-    
+
     if len(sys.argv) < 2:
         print("Usage: vcn_compute_substrate.py <encode|decode|extract_receipt|encode_enhanced|decode_enhanced> <input> <output> [key.hex]")
         sys.exit(1)
-    
+
     command = sys.argv[1]
-    
+
     if command == "encode":
         input_path = Path(sys.argv[2])
         output_path = Path(sys.argv[3])
-        
+
         # Read input data
         with open(input_path, "rb") as f:
             data = f.read()
-        
+
         # Create frame
         frame = create_yuv420_frame(data, seq=0)
-        
+
         # Encode
         result = encode_frames([frame], output_path)
-        
+
         if result.returncode != 0:
             print(f"Encoding failed: {result.stderr}", file=sys.stderr)
             sys.exit(1)
-        
+
         print(f"Encoded to {output_path}")
-        
+
     elif command == "decode":
         input_path = Path(sys.argv[2])
         output_path = Path(sys.argv[3])
-        
+
         # Decode
         frames = decode_frames(input_path)
-        
+
         # Extract first frame's data
         if frames:
             frame = frames[0]
             # Extract signature header
             header = frame[:SIGNATURE_SIZE]
             signature, version, seq, length, _ = struct.unpack("<8sIIII", header)
-            
+
             if signature != SIGNATURE_HEADER:
                 print(f"Invalid signature: {signature}", file=sys.stderr)
                 sys.exit(1)
-            
+
             # Extract data payload
             data = frame[SIGNATURE_SIZE:SIGNATURE_SIZE + length]
-            
+
             with open(output_path, "wb") as f:
                 f.write(data)
-            
+
             print(f"Decoded to {output_path}")
         else:
             print("No frames decoded", file=sys.stderr)
             sys.exit(1)
-            
+
     elif command == "extract_receipt":
         input_path = Path(sys.argv[2])
         receipt = extract_receipt(input_path)
         output_path = Path(sys.argv[3])
-        
+
         with open(output_path, "w") as f:
             json.dump(receipt, f, indent=2)
-        
+
         print(f"Receipt written to {output_path}")
-        
+
     elif command == "encode_enhanced":
         # Usage: encode_enhanced strand.json output.mkv [key.hex]
         input_path = Path(sys.argv[2])

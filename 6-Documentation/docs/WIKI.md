@@ -488,8 +488,10 @@ The Lean 4 formalization lives in `0-Core-Formalism/lean/Semantics/`. As of May 
 
 | File | Description |
 |------|-------------|
-| `src/lib.rs` | Rust WASM entry point for Cloudflare Workers — 512 B payload, 8 ms CPU budget |
-| `wrangler.toml` | Worker configuration, route bindings, WASM build settings |
+| `src/lib.rs` | Rust WASM trinary VM (7 ops, 32 trits) — SET/ADD/SUB/SHIFT/MERGE/PROJECT/WEIGHT |
+| `src/index.js` | Worker entry point — POST only, JSON + binary protocols, `initSync` WASM load |
+| `wrangler.toml` | Worker configuration, account `47b5018a9ddab552d535c8e046a6bc7e` |
+| **Deployed** | `https://wasm-compute-edge.researchstack.workers.dev` — Q0_16 scalar compute floor |
 
 ### GitHub Actions (`.github/workflows/`)
 

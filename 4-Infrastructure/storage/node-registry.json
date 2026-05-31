@@ -1,11 +1,56 @@
 [
   {
-    "hostname": "100.80.39.40",
+    "hostname": "qfox-1",
+    "tailscale_ip": "100.88.57.96",
+    "ssh_user": "allaun",
+    "ssh_port": 22,
+    "garage_node_id": "3e08a71b73fa2b1099301844d1f199caab50f7a9209b9929d9bfb2bfeeb937f4@100.88.57.96:3901",
+    "garage_data_dir": "/var/lib/garage/data",
+    "added_at": "2026-05-31T08:00:00.000000+00:00"
+  },
+  {
+    "hostname": "cupfox",
+    "tailscale_ip": "100.110.163.82",
+    "ssh_user": "root",
+    "ssh_port": 22,
+    "garage_node_id": "75fac43bc53eb201315c09f3e590fff15f27454b7e9f974f64522204612821db@100.110.163.82:3901",
+    "garage_data_dir": "/var/lib/garage/data",
+    "added_at": "2026-05-31T07:03:13.628137+00:00"
+  },
+  {
+    "hostname": "nixos-laptop",
+    "tailscale_ip": "100.102.173.61",
+    "ssh_user": "allaun",
+    "ssh_port": 22,
+    "garage_node_id": "a7e6c283056a4d77b4a5bb820fd25dc336c5443a1ad17110dfadc2b150ebfb49@100.102.173.61:3901",
+    "garage_data_dir": "/var/lib/garage/data",
+    "added_at": "2026-05-31T08:15:00.000000+00:00"
+  },
+  {
+    "hostname": "racknerd",
     "tailscale_ip": "100.80.39.40",
     "ssh_user": "root",
     "ssh_port": 22,
     "garage_node_id": "1951197c0ce140a7724155d0d68db490682fa3b63f8cc98acdceb8c7b1d41766@100.80.39.40:3901",
     "garage_data_dir": "/var/lib/garage/data",
     "added_at": "2026-05-31T07:03:13.628137+00:00"
+  },
+  {
+    "hostname": "neon-64gb",
+    "tailscale_ip": "100.64.19.78",
+    "ssh_user": "root",
+    "ssh_port": 22,
+    "garage_node_id": "036bdd161f089d2302b95453078ab1738d571f90d904752da1a9506dacb4f452@100.64.19.78:3901",
+    "garage_data_dir": "/var/lib/garage/data",
+    "added_at": "2026-05-31T10:00:00.000000+00:00"
+  },
+  {
+    "hostname": "steamdeck",
+    "tailscale_ip": "100.85.244.73",
+    "ssh_user": "allaun",
+    "ssh_port": 22,
+    "garage_node_id": "3536017f8688fc3cae7b7408274809a8acefeff634004c43de99f615e53e0efb@100.85.244.73:3901",
+    "garage_data_dir": "/var/lib/garage/data",
+    "added_at": "2026-05-31T10:30:00.000000+00:00"
   }
 ]

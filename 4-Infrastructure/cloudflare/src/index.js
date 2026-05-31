@@ -1,4 +1,7 @@
-import { VmState } from "./wasm_compute.wasm";
+import wasmModule from "./wasm_compute_bg.wasm";
+import { initSync, VmState } from "./wasm_compute.js";
+
+initSync(wasmModule);
 
 export default {
   async fetch(request, env, ctx) {
@@ -26,7 +29,6 @@ export default {
           headers: { "content-type": "application/json" }
         });
       } else {
-        // Default to binary stream: 3 bytes per step (op, idx, val)
         const buffer = await request.arrayBuffer();
         const view = new DataView(buffer);
         const len = buffer.byteLength;
@@ -34,16 +36,14 @@ export default {
         for (let offset = 0; offset + 2 < len; offset += 3) {
           const op = view.getUint8(offset);
           const idx = view.getUint8(offset + 1);
-          const val = view.getInt8(offset + 2); // signed 8-bit integer
+          const val = view.getInt8(offset + 2);
           vm.step(op, idx, val);
         }
 
         const scalar = vm.derive_scalar();
-
-        // Return 2-byte binary scalar response
         const responseBuf = new ArrayBuffer(2);
         const responseView = new DataView(responseBuf);
-        responseView.setUint16(0, scalar, false); // big-endian
+        responseView.setUint16(0, scalar, false);
 
         return new Response(responseBuf, {
           headers: { "content-type": "application/octet-stream" }

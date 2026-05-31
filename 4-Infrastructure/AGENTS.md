@@ -80,15 +80,16 @@ Dynamo-style S3-compatible store written in Rust. Replaced rclone serve s3.
 
 ### Node topology (Tailscale mesh)
 
-| Node | Tailscale IP | Role | Disk | SSH Status |
-|------|-------------|------|------|----------|
-| qfox-1 (this machine) | 100.88.57.96 | primary, S3 endpoint, GPU compute | 1.8 TB NVMe | local |
-| 361395-1 (old cupfox) | 100.110.163.82 | Netcup VPS, 2 vCPU EPYC-Genoa | 125 GB | key OK (recovered) |
-| rs-vps (netcup) | — | Lean LSP, Python LSP, Ollama, Jellyfin, k3s (ARM64) | 2 TB | SSH via password (creds in 1Password) |
-| nixos-laptop | 100.102.173.61 | Authentik SSO, Uptime Kuma, storage node, AMD GPU compute | 459 GB NVMe | key OK |
-| microvm-racknerd | 100.80.39.40 | Caddy reverse proxy, Homer dashboard, chat placeholder, storage node (RackNerd VPS) | 9.1 GB | key OK |
-| nixos-steamdeck-1 | 100.85.244.73 | GPU compute, planned edge LLM (3B-7B), RDNA 2 | NixOS | just onboarded |
-| dracocomp | 100.100.140.27 | offline | — | unreachable (3+ days)
+| Node | Tailscale IP | k3s | Garage | Zone | Disk | SSH |
+|------|-------------|-----|--------|------|------|-----|
+| **qfox-1** (this machine) | 100.88.57.96 | ✅ worker | ✅ 780 GiB | local | 1.8 TB NVMe | local |
+| **cupfox** | 100.110.163.82 | ✅ control-plane | ✅ 69 GiB | fra | 125 GB | key OK (361395) |
+| **nixos-laptop** | 100.102.173.61 | ✅ worker | ✅ 347 GiB | ord | 459 GB NVMe | key OK |
+| **racknerd** | 100.80.39.40 | ✅ worker | ✅ 954 MiB | vps | 9.1 GB VPS | key OK |
+| **neon-64gb** | 100.64.19.78 | ✅ worker (ARM64) | ✅ 93 GiB | netcup-arm | 2 TB | root key OK |
+| **steamdeck** | 100.85.244.73 | ✅ worker | ✅ 373 GiB | gpu | 476 GB NVMe | key OK |
+| rs-vps (netcup) | — | ❌ | ❌ | — | 2 TB | SSH via password |
+| dracocomp | 100.100.140.27 | ❌ | ❌ | — | — | unreachable
 
 - RPC port: **3901** (Tailscale-only, not exposed to internet)
 - S3 API port: **3900** (qfox-1 only; other nodes bind loopback)
@@ -153,12 +154,12 @@ Daily timer: `restic-backup.timer` fires at 03:00 ±30 min, runs `backup.sh full
 
 ### Replication status
 
-Currently `replication_factor = 1` (single node, qfox-1 only).
-Bump to 3 after bootstrapping 3 nodes:
+`replication_factor = 3`, zone redundancy enforced, 6 nodes across 6 zones.
+~1.3 TiB total capacity, ~440 GiB effective (RF3).
+
+Add a new Garage node:
 ```bash
-bash 4-Infrastructure/storage/garage/garage-node-bootstrap.sh 100.110.163.82
-bash 4-Infrastructure/storage/garage/garage-node-bootstrap.sh 100.119.165.120
-bash 4-Infrastructure/storage/garage/garage-cluster-init.sh
+bash 4-Infrastructure/storage/garage/garage-node-bootstrap.sh <tailscale_ip>
 ```
 
 ### Git post-commit hook
@@ -311,6 +312,8 @@ python3 4-Infrastructure/storage/storage_agent.py --loop --interval 900
 - `4-Infrastructure/shim/qemu_framebuffer_packer.py` — QEMU graphics framebuffer packer mapping Q16_16 scalars to ARGB8888/RGB24 pixels for mmap-based zero-copy display DMA loopback
 - `4-Infrastructure/shim/rrc_ray_tagger.py` — RRC Ray Layer Tagger; classifies math payloads into RRC shapes and matches them to swappable compute slots and transports
 - `4-Infrastructure/cloudflare/src/lib.rs` — Cloudflare Workers edge WASM trinary VM core implementing the Q0_16 scalar compute floor
+- `4-Infrastructure/cloudflare/src/index.js` — Cloudflare Workers entry point, POST-only, JSON + binary protocol
+- `4-Infrastructure/cloudflare/wrangler.toml` — Wrangler config, deployed at `https://wasm-compute-edge.researchstack.workers.dev`
 - `4-Infrastructure/hardware/emergency_boot/emergency_boot_shim.py` — Python I/O shim
   for Geometry Emergency Boot Witness (6502 calculator-efficiency FPGA controller)
   Specification: `6-Documentation/docs/specs/GEOMETRY_EMERGENCY_BOOT_WITNESS_2026-04-08.md`

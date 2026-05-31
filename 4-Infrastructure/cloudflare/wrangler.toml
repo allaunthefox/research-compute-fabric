@@ -1,7 +1,7 @@
 name = "wasm-compute-edge"
 main = "src/index.js"
-compatibility_date = "2026-05-30"
+compatibility_date = "2026-05-31"
+account_id = "47b5018a9ddab552d535c8e046a6bc7e"
+workers_dev = true
 
-[[rules]]
-globs = ["**/*.wasm"]
-type = "CompiledWasm"
+

@@ -298,7 +298,7 @@ No promotion without domain-appropriate evidence. Compression claims require SI 
 2. Prove `receipt_invertible` for braid eigensolid compressor (second required theorem)
 3. Add RRC scale-band witness schema for equation records; rerun `4-Infrastructure/shim/rrc_equation_classifier.py`
 4. Add negative-control strength witnesses for HOLD rows before promotion
-5. Bootstrap Garage replication (nixos-laptop + 361395-1 → replication_factor=3); 361395-1 SSH recovered
+5. Garage replication_factor=3 with 6 nodes across 6 zones (qfox-1, cupfox, nixos-laptop, racknerd, neon-64gb, steamdeck) — ✅ done
 6. UART packet format design (start byte + 3-byte payload + checksum)
 7. Create `4-Infrastructure/surface/` FastAPI skeleton
 8. Flash Tang Nano 9K with generated bitstream; verify LED behavior *(blocked: requires physical Tang Nano 9K board + USB programmer attached to host)*
@@ -348,7 +348,7 @@ Three tools, non-overlapping roles:
 | Tool | Role |
 |------|------|
 | **restic** | Deduplicated, encrypted, content-addressed snapshots. Primary backend: Garage S3. |
-| **Garage v2.3.0** | Self-hosted S3-compatible object store over Tailscale mesh. 5 buckets. `replication_factor=1` (scale-out to 3 planned). |
+| **Garage v2.3.0** | Self-hosted S3-compatible object store over Tailscale mesh. 6 nodes across 6 zones, `replication_factor=3`, zone redundancy enforced. ~1.6 TiB total capacity, ~440 GiB effective. |
 | **rclone** | Raw sync between remotes (Garage↔gdrive). Cold copy of restic chunks to gdrive. |
 
 Data flow: `git commit → post-commit hook → restic snap → Garage:research-stack`; daily 03:00 timer → `rclone copy → gdrive:restic-mirror`.

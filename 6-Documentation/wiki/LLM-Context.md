@@ -74,14 +74,15 @@ Research-Stack/
 
 ### Tailscale Mesh
 
-| Node | IP | OS | Role | Reachable? |
-|------|-----|-----|------|------------|
-| qfox-1 | 100.88.57.96 | Arch Linux (CachyOS) | Primary, Garage S3, GPU compute, 1.8 TB NVMe | local (this machine) |
-| 361395-1 | 100.110.163.82 | Debian 13 | Netcup VPS, 2 vCPU EPYC-Genoa, 125 GB | SSH key auth OK (recovered) |
-| nixos-laptop | 100.119.165.120 | NixOS 25.11 | Authentik SSO, storage node, AMD GPU compute, 459 GB | Key auth OK |
-| microvm-racknerd | 100.101.247.127 | Debian 13 | Caddy reverse proxy, credential server, 1 vCPU | Root password OK |
-| steam-deck | TBD | SteamOS (Arch) | **Planned**: Edge LLM inference (3B-7B), RDNA 2 GPU compute | Control stick drift — repurposing |
-| dracocomp | 100.100.140.27 | — | Offline | Last seen 3+ days ago |
+| Node | IP | OS | k3s | Garage Zone | Role | Reachable? |
+|------|-----|-----|-----|-------------|------|------------|
+| qfox-1 | 100.88.57.96 | CachyOS | ✅ worker | local (780 GiB) | Primary, GPU compute, 1.8 TB NVMe | local |
+| cupfox | 100.110.163.82 | Debian 13 | ✅ control-plane | fra (69 GiB) | k3s server, Netcup VPS | key OK |
+| nixos-laptop | 100.102.173.61 | NixOS 26.05 | ✅ worker | ord (347 GiB) | GPU compute, 459 GB NVMe | key OK |
+| neon-64gb | 100.64.19.78 | Debian 13 | ✅ worker (ARM64) | netcup-arm (93 GiB) | Netcup ARM64 VPS, 2 TB | root key OK |
+| racknerd | 100.80.39.40 | Debian 13 | ✅ worker | vps (954 MiB) | RackNerd VPS, reverse proxy | key OK |
+| steamdeck | 100.85.244.73 | NixOS 25.11 | ✅ worker | gpu (373 GiB) | RDNA 2 GPU compute, LLM inference | key OK |
+| dracocomp | 100.100.140.27 | — | ❌ | — | Offline | unreachable |
 
 ### Distributed Storage Surface
 
@@ -98,16 +99,21 @@ qfox-1 NVMe (1.8 TB)          Google Drive (5 TB)
       └── snap-zone
 ```
 
-| Layer | Capacity | Used | Free | Protocol |
-|-------|----------|------|------|----------|
-| qfox-1 NVMe (Garage primary) | 1.8 TB | ~291 GB | ~1.6 TB | local NVMe |
-| nixos-laptop NVMe (future Garage node) | 459 GB | ~36 GB | ~423 GB | local NVMe |
+| Layer | Capacity | Zone | Protocol |
+|-------|----------|------|----------|
+| qfox-1 NVMe | 780 GiB (allocated) | local | Tailscale :3901 |
+| nixos-laptop NVMe | 347 GiB (allocated) | ord | Tailscale :3901 |
+| cupfox VPS | 69 GiB (allocated) | fra | Tailscale :3901 |
+| neon-64gb VPS | 93 GiB (allocated) | netcup-arm | Tailscale :3901 |
+| steamdeck NVMe | 373 GiB (allocated) | gpu | Tailscale :3901 |
+| racknerd VPS | 954 MiB (allocated) | vps | Tailscale :3901 |
+| **Total** | **~1.6 TiB** (6 zones, RF3) | — | ~440 GiB effective |
 | 361395-1 disk (future Garage node) | 125 GB | ~48 GB | ~77 GB | local SSD |
 | **Google Drive** | **5.0 TB** | **1.9 TB** | **3.1 TB** | **rclone FUSE mount** |
 | **Total addressable** | **~7.4 TB** | **~2.3 TB** | **~5.2 TB** | **Garage + rclone + Drive** |
 
 **Garage S3 Cluster**
-- **Status**: Single-node (`replication_factor = 1`) on qfox-1
+- **Status**: 6-node cluster (`replication_factor = 3`) across 6 zones — qfox-1 (local), cupfox (fra), nixos-laptop (ord), racknerd (vps), neon-64gb (netcup-arm), steamdeck (gpu)
 - **Primary endpoint**: `s3:http://100.88.57.96:3900`
 - **Buckets**: `research-stack`, `db-scratch`, `rds-overflow`, `snap-zone`, `gdrive-mirror`
 - **Restic snapshots**: 2 (last: 2026-05-18, 5.4 GiB)

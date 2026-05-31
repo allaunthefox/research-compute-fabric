@@ -1,0 +1,11 @@
+[
+  {
+    "hostname": "100.80.39.40",
+    "tailscale_ip": "100.80.39.40",
+    "ssh_user": "root",
+    "ssh_port": 22,
+    "garage_node_id": "1951197c0ce140a7724155d0d68db490682fa3b63f8cc98acdceb8c7b1d41766@100.80.39.40:3901",
+    "garage_data_dir": "/var/lib/garage/data",
+    "added_at": "2026-05-31T07:03:13.628137+00:00"
+  }
+]

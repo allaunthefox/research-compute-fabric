@@ -79,7 +79,7 @@ $G layout show 2>&1
 LAYOUT_VERSION=$($G layout show 2>&1 | grep "^Current cluster layout version" | awk '{print $NF}' || echo 1)
 NEXT_VERSION=$((LAYOUT_VERSION + 1))
 
-$G status 2>&1 | grep "NO ROLE ASSIGNED" | awk '{print $1}' | while read node_id; do
+$G status 2>&1 | (grep "NO ROLE ASSIGNED" || true) | awk '{print $1}' | while read node_id; do
     HOSTNAME=$($G status 2>&1 | grep "$node_id" | awk '{print $2}')
     # Assign zone: VPS nodes get zone=vps, local Tailscale nodes get zone=local
     if echo "$HOSTNAME $node_id" | grep -qi "microvm\|racknerd\|vps"; then
@@ -92,8 +92,9 @@ $G status 2>&1 | grep "NO ROLE ASSIGNED" | awk '{print $1}' | while read node_id
 done
 
 # ── 4. Bump replication factor if enough nodes ────────────────────────────────
-if [ "$HEALTHY_NODES" -ge 3 ]; then
-    log "3+ nodes available — bumping replication_factor to 3"
+CURRENT_RF=$(grep -E 'replication_factor[[:space:]]*=[[:space:]]*[0-9]+' /etc/garage/garage.toml | grep -o '[0-9]\+' || echo 1)
+if [ "$HEALTHY_NODES" -ge 3 ] && [ "${CURRENT_RF}" -lt 3 ]; then
+    log "3+ nodes available and replication_factor < 3 — bumping replication_factor to 3"
     sudo sed -i 's/replication_factor = 1/replication_factor = 3/' /etc/garage/garage.toml
     # Remove old layout so it can be recreated with rf=3
     sudo systemctl stop garage
@@ -102,7 +103,7 @@ if [ "$HEALTHY_NODES" -ge 3 ]; then
     sleep 3
     # Re-assign all roles
     log "Re-assigning all layout roles for rf=3..."
-    $G status 2>&1 | grep "NO ROLE ASSIGNED" | awk '{print $1}' | while read node_id; do
+    $G status 2>&1 | (grep "NO ROLE ASSIGNED" || true) | awk '{print $1}' | while read node_id; do
         $G layout assign "$node_id" --zone local --capacity 200G 2>&1 || true
     done
     # Assign primary separately

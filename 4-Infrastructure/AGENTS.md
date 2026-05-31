@@ -86,7 +86,7 @@ Dynamo-style S3-compatible store written in Rust. Replaced rclone serve s3.
 | 361395-1 (old cupfox) | 100.110.163.82 | Netcup VPS, 2 vCPU EPYC-Genoa | 125 GB | key OK (recovered) |
 | rs-vps (netcup) | — | Lean LSP, Python LSP, Ollama, Jellyfin, k3s (ARM64) | 2 TB | SSH via password (creds in 1Password) |
 | nixos-laptop | 100.102.173.61 | Authentik SSO, Uptime Kuma, storage node, AMD GPU compute | 459 GB NVMe | key OK |
-| microvm-racknerd | 100.101.247.127 | Caddy reverse proxy, Homer dashboard, chat placeholder, auth alias | 9.1 GB | root password OK |
+| microvm-racknerd | 100.80.39.40 | Caddy reverse proxy, Homer dashboard, chat placeholder, storage node (RackNerd VPS) | 9.1 GB | key OK |
 | nixos-steamdeck-1 | 100.85.244.73 | GPU compute, planned edge LLM (3B-7B), RDNA 2 | NixOS | just onboarded |
 | dracocomp | 100.100.140.27 | offline | — | unreachable (3+ days)
 

@@ -36,7 +36,7 @@ spec:
             - containerPort: 80
           env:
             - name: SIGNUPS_ALLOWED
-              value: "false"
+              value: "true"
             - name: DOMAIN
               value: "https://vault.researchstack.info"
           volumeMounts:
@@ -102,9 +102,9 @@ spec:
             - name: VAULTWARDEN_EMAIL
               value: "secrets@researchstack.info"
             - name: VAULTWARDEN_PASSWORD
-              value: "changeme-vaultwarden-password"
+              value: "RY03KhsFez73K5va2uUb"
             - name: API_KEY
-              value: "change-me-vaultwarden-api-key-min-32-chars!!"
+              value: "RY03KhsFez73K5va2uUb-vaultwarden-api-key"
             - name: ENVIRONMENT
               value: "production"
           volumeMounts:

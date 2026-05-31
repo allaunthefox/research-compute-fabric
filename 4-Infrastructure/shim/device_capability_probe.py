@@ -352,6 +352,122 @@ def _get_arch() -> str:
     return machine
 
 
+@dataclass
+class DeviceLimitations:
+    """Hard constraints for a device tier. Ray scheduling must respect these."""
+    max_payload_bytes: int = 0        # Max single work unit size
+    max_concurrent_tasks: int = 0     # Max parallel tasks
+    max_task_duration_ms: int = 0     # Max wall-clock per task
+    has_gpu: bool = False
+    has_h264_hw: bool = False         # Hardware H.264 encode/decode
+    has_audio: bool = False           # PipeWire/audio hardware
+    has_framebuffer: bool = False
+    has_network: bool = False
+    shared_memory: bool = False       # GPU shares system RAM (APU)
+    monthly_budget_minutes: int = 0   # For cloud tiers (GitHub Actions)
+    memory_mb: int = 0                # Available RAM
+    cpu_cores: int = 0
+    vram_mb: int = 0
+    notes: str = ""
+
+
+# Per-tier limitation profiles
+TIER_LIMITS = {
+    ComputeTier.GPU_CUDA: DeviceLimitations(
+        max_payload_bytes=1024*1024*1024,  # 1 GB (VRAM)
+        max_concurrent_tasks=16,
+        max_task_duration_ms=60000,
+        has_gpu=True, has_h264_hw=True,
+        notes="NVENC/NVDEC, 12GB VRAM, 300W TDP"
+    ),
+    ComputeTier.GPU_VAAPI: DeviceLimitations(
+        max_payload_bytes=512*1024*1024,   # 512 MB (VRAM)
+        max_concurrent_tasks=8,
+        max_task_duration_ms=60000,
+        has_gpu=True, has_h264_hw=True,
+        notes="VAAPI hardware encode/decode, dedicated VRAM"
+    ),
+    ComputeTier.GPU_APU: DeviceLimitations(
+        max_payload_bytes=256*1024*1024,   # 256 MB (shared RAM)
+        max_concurrent_tasks=4,
+        max_task_duration_ms=30000,
+        has_gpu=True, has_h264_hw=True, shared_memory=True,
+        notes="Shared DDR bandwidth, yuvj420p, 50% less bandwidth"
+    ),
+    ComputeTier.CPU_FFMPEG: DeviceLimitations(
+        max_payload_bytes=128*1024*1024,   # 128 MB
+        max_concurrent_tasks=2,
+        max_task_duration_ms=120000,
+        has_h264_hw=False,
+        notes="Software libx264, CPU-bound"
+    ),
+    ComputeTier.BATCH: DeviceLimitations(
+        max_payload_bytes=64*1024*1024,    # 64 MB
+        max_concurrent_tasks=1,
+        max_task_duration_ms=21600000,     # 6 hours
+        monthly_budget_minutes=2000,
+        notes="GitHub Actions, ubuntu-latest, 2000 min/month"
+    ),
+    ComputeTier.ETHERNET: DeviceLimitations(
+        max_payload_bytes=1400,            # MTU - headers
+        max_concurrent_tasks=1,
+        max_task_duration_ms=1000,         # 1 second per packet
+        has_network=True,
+        notes="virtio-net PistPacket, 1400B payload, host transforms"
+    ),
+    ComputeTier.FRAMEBUFFER: DeviceLimitations(
+        max_payload_bytes=1572864,         # 1.5 MB (1024x768x16bpp)
+        max_concurrent_tasks=1,
+        max_task_duration_ms=100,          # DMA is fast
+        has_framebuffer=True,
+        notes="/dev/fb0 DMA, no compute, just data transport"
+    ),
+    ComputeTier.WASM: DeviceLimitations(
+        max_payload_bytes=1024,            # 1 KB per request
+        max_concurrent_tasks=1,
+        max_task_duration_ms=10,           # 10ms CPU limit
+        notes="Cloudflare Workers, 100K req/day, pure integer only"
+    ),
+    ComputeTier.DSP: DeviceLimitations(
+        max_payload_bytes=4096*4,          # 4096 float32 samples
+        max_concurrent_tasks=1,
+        max_task_duration_ms=5000,
+        has_audio=True,
+        notes="PipeWire/FLAC, FFT spectral analysis, receipt-bearing"
+    ),
+    ComputeTier.ESP32: DeviceLimitations(
+        max_payload_bytes=2048,            # 2 KB SRAM
+        max_concurrent_tasks=1,
+        max_task_duration_ms=100,
+        notes="240MHz Xtensa, 520KB SRAM, Q0_16 scalar, FreeRTOS idle"
+    ),
+    ComputeTier.RELAY: DeviceLimitations(
+        max_payload_bytes=0,
+        max_concurrent_tasks=0,
+        max_task_duration_ms=0,
+        has_network=True,
+        notes="No compute, network forwarding only"
+    ),
+}
+
+
+def get_limitations(caps: DeviceCapabilities) -> DeviceLimitations:
+    """Get the hard limitations for a device based on its tier and hardware."""
+    base = TIER_LIMITS.get(caps.tier, TIER_LIMITS[ComputeTier.RELAY])
+
+    # Override with actual hardware specs
+    if caps.total_memory_mb > 0:
+        base.memory_mb = caps.total_memory_mb
+    for gpu in caps.gpus:
+        if gpu.vram_mb > 0:
+            base.vram_mb = max(base.vram_mb, gpu.vram_mb)
+    if caps.framebuffer:
+        base.max_payload_bytes = max(base.max_payload_bytes, caps.framebuffer.capacity_bytes)
+        base.has_framebuffer = True
+
+    return base
+
+
 # ── Main probe function ──────────────────────────────────────────────────────
 
 def probe_device(hostname: str = "") -> DeviceCapabilities:

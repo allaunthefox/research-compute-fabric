@@ -43,6 +43,8 @@ The stack is organized as **5 layers**, from physical connectivity up to applica
 │  TAG_CROSSING → VCNBraidBackend                               │
 │  TAG_PIST → VCNBraidBackend                                   │
 │  TAG_LUPINE → CUDABackend                                     │
+│  TAG_VAAPI → VAAPIBackend (AMD/Intel VA-API)                  │
+│  TAG_FLAC → FLACBackend (PipeWire/FLAC DSP)                   │
 ├─────────────────────────────────────────────────────────────┤
 │  Compute Surfaces (execution)                                 │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
@@ -75,15 +77,45 @@ Every device in the cluster is classified into a compute tier by `device_capabil
 | `GPU_VAAPI` | 9 | AMD/Intel discrete + VA-API | VA-API H.264 | `num_gpus=1` (VAAPI) |
 | `GPU_APU` | 8 | AMD integrated, shared memory | VAAPI (yuvj420p) | `resources={"APU": 1}` |
 | `CPU_FFMPEG` | 7 | No GPU, software encode | libx264/libx265 | `num_cpus=N` |
-| `BATCH` | 6 | Batch container/runner | libx264 | ephemeral |
+| `BATCH` | 6 | GitHub Actions runner, 1500 min/month (reserve 500 for CI) | libx264 | ephemeral, `batch_compute.yml` |
 | `ETHERNET` | 5 | virtio-net PistPacket DMA | TX/RX ring descriptors | `resources={"ethernet": 1}` |
 | `FRAMEBUFFER` | 4 | `/dev/fb0` DMA backplane only | ARGB8888 pixel words | `resources={"framebuffer": 1}` |
-| `WASM` | 3 | Edge compute (Cloudflare, Deno) | WASM runtime | N/A |
+| `WASM` | 3 | Cloudflare Workers, 512 B payload, 8 ms CPU | Rust WASM, `4-Infrastructure/cloudflare/` | N/A |
+| `DSP` | 2 | PipeWire/FLAC DSP, 2048-sample FFT | FLAC encode/decode | N/A |
 | `ESP32` | 2 | MCU, Q0_16 scalar in FreeRTOS idle hook | 520 KB SRAM | N/A |
 | `RELAY` | 1 | Network only, no compute | data forwarding | N/A |
 | `OFFLINE` | 0 | Unreachable | — | — |
 
 **Design principle:** No `Float` in compute paths. All computation uses fixed-point arithmetic — `Q0_16` (16-bit pure fraction, range [-1, 1]) as default, `Q16_16` (32-bit mixed) only when integer range or hardware register width demands it.
+
+### Device Limitations
+
+Each compute tier has hard resource constraints captured by the `DeviceLimitations` dataclass. The `device_function` headroom field reserves capacity so the host device remains responsive while contributing to the cluster.
+
+```python
+@dataclass
+class DeviceLimitations:
+    tier: ComputeTier
+    max_payload_bytes: int       # Per-frame hard limit
+    max_cpu_ms: int              # Wall-clock budget per dispatch
+    max_memory_bytes: int        # Working-set ceiling
+    headroom_fraction: float     # Fraction reserved for device function (0.0–1.0)
+    requires_gpu: bool           # True only for GPU_CUDA, GPU_VAAPI
+    supports_pipewire: bool      # True for DSP tier
+```
+
+| Tier | `max_payload` | `max_cpu_ms` | `max_memory` | `headroom` | Notes |
+|------|--------------|-------------|-------------|-----------|-------|
+| `GPU_CUDA` | 256 MB | 5000 | VRAM (12 GB) | 0.10 | NVENC + CUDA kernels |
+| `GPU_VAAPI` | 128 MB | 5000 | VRAM / shared | 0.10 | VA-API encode/decode |
+| `GPU_APU` | 64 MB | 3000 | shared | 0.15 | Higher headroom, shared memory |
+| `CPU_FFMPEG` | 32 MB | 10000 | system RAM | 0.20 | Software encode is slow |
+| `BATCH` | 16 MB | 60000 | ephemeral | 0.00 | GitHub Actions, no host device |
+| `ETHERNET` | 9000 B (jumbo) | 1 | ring descriptors | 0.05 | MTU-limited, near-zero CPU |
+| `FRAMEBUFFER` | 8.29 MB | 2 | mmap region | 0.05 | 1080p ARGB8888 frame |
+| `WASM` | 512 B | 8 | 128 MB | 0.00 | Cloudflare Workers hard limits |
+| `DSP` | 8192 B | 50 | PipeWire buffer | 0.20 | 2048-sample FFT, real-time priority |
+| `ESP32` | 2 B (Q0_16) | 1 | 520 KB SRAM | 0.30 | Idle-hook only, high headroom |
 
 ---
 
@@ -205,6 +237,8 @@ reply = ray.get(reply_ref)
 | `RayVCNBridge` | `@ray.remote` actor hosting a `FrameDispatcher` with GPU + Braid backends |
 | `SyncBraidWrapper` | Wraps a Ray `BraidBackend` actor to satisfy `FrameDispatcher`'s sync interface |
 | `SyncCUDAWrapper` | Wraps a Ray `CUDABackend` actor to satisfy `FrameDispatcher`'s sync interface |
+| `SyncVAAPIWrapper` | Wraps a Ray `VAAPIBackend` actor to satisfy `FrameDispatcher`'s sync interface |
+| `SyncFLACWrapper` | Wraps a Ray `FLACBackend` actor to satisfy `FrameDispatcher`'s sync interface |
 
 **Design principle:** Ray replaces Unix socket IPC + TCP transport + MKV encode/decode. `ObjectRef` replaces MKV bytes over TCP (zero-copy on same node). FAMM gate check happens *before* `ray.put()`.
 
@@ -223,7 +257,9 @@ ray.put(payload)  →  ObjectRef (zero-copy on same node)
 ray.get(dispatch_actor.dispatch_frame.remote(TAG, ref))
     │
     ├── TAG_STRAND / TAG_CROSSING / TAG_PIST → BraidBackend.compute()
-    └── TAG_LUPINE → CUDABackend.compute()
+    ├── TAG_LUPINE → CUDABackend.compute()
+    ├── TAG_VAAPI → VAAPIBackend.compute()
+    └── TAG_FLAC → FLACBackend.compute()
     │
     ▼
 ObjectRef(result)  →  ray.get()  →  bytes
@@ -285,6 +321,25 @@ class DeviceCapabilities:
 | VRAM | Dedicated (12 GB on RTX 4070 SUPER) | Shared (APU) or dedicated |
 | Throughput | ~500 fps @ 1080p | ~200 fps @ 1080p |
 | Use case | Primary compute, NVENC encode, CUDA kernels | Secondary encode, bandwidth-optimized tasks |
+
+### VA-API Backend (`VAAPIBackend`)
+
+The `VAAPIBackend` class in `vcn_lupine_bridge.py` handles `TAG_VAAPI` (0x05) frames on AMD and Intel GPUs via the VA-API hardware acceleration interface:
+
+- Dispatches through `FrameDispatcher` when the device probe detects a VA-API-capable render node (`/dev/dri/renderD*` with vendor `0x1002` or `0x8086`)
+- Supports hardware H.264 encode/decode, JPEG decode, and VPP (video post-processing)
+- Pixel format: `yuv420p` (discrete), `yuvj420p` (APU shared memory)
+- Replaces `CUDABackend` path when no NVIDIA GPU is present
+
+### FLAC DSP Backend (`FLACBackend`)
+
+The `FLACBackend` class in `vcn_lupine_bridge.py` handles `TAG_FLAC` (0x06) frames through a PipeWire/FLAC DSP pipeline:
+
+- Routes audio-domain compute through PipeWire's real-time graph
+- Performs 2048-sample FFT for spectral analysis and transformation
+- FLAC encode/decode for lossless audio data compression in the VCN pipeline
+- Runs at DSP(2) tier with real-time scheduling priority
+- Useful for acoustic sensor processing, waveform analysis, and audio-domain braiding operations
 
 ### Ethernet (virtio-net PistPacket DMA)
 
@@ -427,7 +482,20 @@ The Lean 4 formalization lives in `0-Core-Formalism/lean/Semantics/`. As of May 
 | `braid_vcn_encoder.py` | End-to-end VCN pipeline: braid → Delta+RLE → RS ECC → ChaCha20 → H.264 → MKV |
 | `vcn_compute_substrate.py` | Hardware encoder abstraction: packs Q16_16 into YUV420 frames, drives NVENC/VAAPI/libx264 |
 | `qemu_framebuffer_packer.py` | Framebuffer DMA backplane: zero-copy mmap on `/dev/fb0`, ARGB8888 Q16_16 packing |
-| `vcn_lupine_bridge.py` | Tag-based frame dispatcher with BraidBackend + CUDABackend |
+| `vcn_lupine_bridge.py` | Tag-based frame dispatcher with BraidBackend, CUDABackend, VAAPIBackend, FLACBackend |
+
+### Cloudflare Workers (`4-Infrastructure/cloudflare/`)
+
+| File | Description |
+|------|-------------|
+| `src/lib.rs` | Rust WASM entry point for Cloudflare Workers — 512 B payload, 8 ms CPU budget |
+| `wrangler.toml` | Worker configuration, route bindings, WASM build settings |
+
+### GitHub Actions (`.github/workflows/`)
+
+| File | Description |
+|------|-------------|
+| `batch_compute.yml` | Batch compute workflow — 1500 min/month budget (500 reserved for CI), ephemeral runners |
 
 ### Kubernetes / Ray (`4-Infrastructure/kube/`)
 

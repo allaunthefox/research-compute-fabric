@@ -55,24 +55,36 @@ body {
   background-color: #f0f4f8;
 }
 
-.header {
-  background: linear-gradient(120deg, #2d3436, #636e72);
+.page-header {
+  background-color: #2d3436;
+  background-image: linear-gradient(120deg, #2d3436, #636e72);
   color: #dfe6e9;
 }
 
-.project-name {
+.page-header .project-name {
   color: #ffffff;
 }
 
-.project-tagline {
+.page-header .project-tagline {
   color: #b2bec3;
 }
 
-.btn {
+.page-header .btn {
   background-color: #0984e3;
   color: #ffffff;
+  border-color: rgba(255,255,255,0.2);
 }
 
-.btn:hover {
+.page-header .btn:hover {
   background-color: #74b9ff;
+  border-color: rgba(255,255,255,0.3);
+}
+
+.main-content h1,
+.main-content h2,
+.main-content h3,
+.main-content h4,
+.main-content h5,
+.main-content h6 {
+  color: #2d3436;
 }

@@ -2,8 +2,15 @@
 """
 External Service Registry — MySQL-backed node discovery and credential store.
 
-Uses InfinityFree MySQL as an always-available, mesh-independent registry.
-Any node with internet can register itself and discover others.
+Backup/fallback registry. Primary discovery uses Tailscale mesh + internal infra.
+This MySQL backend is for:
+  - Edge nodes that can't reach the mesh (ESP32, Cloudflare Workers)
+  - Mesh-down fallback (Tailscale outage)
+  - Cross-mesh discovery (nodes on different tailnets)
+  - Low-impact config distribution
+
+Primary path: Tailscale mesh + internal PostgreSQL/SQLite
+Backup path: This MySQL registry (InfinityFree, always available)
 
 Schema:
   nodes       — registered devices with capabilities and tier

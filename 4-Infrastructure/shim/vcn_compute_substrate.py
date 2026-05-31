@@ -259,8 +259,8 @@ def load_math_optimizations(vendor: str, gpu_name: str) -> MathOptimizationLoad:
     # 1. NVIDIA Ada Lovelace / Ampere / Turing
     if vendor == "nvidia":
         # Target H.265 (HEVC) lossless mode via NVENC
-        opt.pixel_format = "yuv444p10le"  # 10-bit YUV444p (no subsampling, high precision)
-        opt.bit_depth = 10
+        opt.pixel_format = "yuv444p"  # Full-range YUV444p (no subsampling, high density)
+        opt.bit_depth = 8
         opt.packing_density = "yuv444_3x"
         opt.color_range = "pc"            # PC range (0-255) to avoid clamping loss
         opt.encoder_opts = [
@@ -269,6 +269,7 @@ def load_math_optimizations(vendor: str, gpu_name: str) -> MathOptimizationLoad:
             "-color_range", "pc",         # Prevent clamping loss
             "-colorspace", "bt709"
         ]
+
 
     # 2. AMD Radeon / Ryzen APU with VCN (Video Core Next)
     elif vendor == "amd":
@@ -755,25 +756,43 @@ def encode_frames(input_frames: List[bytes], output_path: Path) -> subprocess.Co
 
 def decode_frames(input_path: Path) -> List[bytes]:
     """
-    Decode MKV file back to raw YUV420 frames using H.264 decoder.
-
-    Note: This is lossy - the encoding process modifies pixel values.
-    For computation extraction, use extract_receipt() instead.
+    Decode MKV file back to raw frames using native pixel format and resolution.
 
     Args:
         input_path: Input MKV file path
 
     Returns:
-        List of decoded YUV420 frame bytes
+        List of decoded raw frame bytes
     """
+    # 1. Probe the video container to find format, width, and height
+    width, height, pix_fmt = 1920, 1080, "yuv420p"
+    try:
+        cmd_probe = [
+            "ffprobe", "-v", "error", "-select_streams", "v:0",
+            "-show_entries", "stream=width,height,pix_fmt",
+            "-of", "json", str(input_path)
+        ]
+        res = subprocess.run(cmd_probe, capture_output=True, text=True, timeout=10)
+        if res.returncode == 0:
+            meta = json.loads(res.stdout)
+            stream = meta.get("streams", [{}])[0]
+            width = stream.get("width", 1920)
+            height = stream.get("height", 1080)
+            pix_fmt = stream.get("pix_fmt", "yuv420p")
+    except Exception:
+        pass
+
+    frame_size = compute_frame_size(width, height, pix_fmt)
     raw_path = input_path.with_suffix(".decoded.yuv")
 
+    # 2. Decode natively using the parsed pixel format
     cmd = [
         "ffmpeg",
+        "-y",
         "-i", str(input_path),
         "-c:v", "rawvideo",  # Decode to raw, don't re-encode
         "-f", "rawvideo",
-        "-pix_fmt", "yuv420p",
+        "-pix_fmt", pix_fmt,
         str(raw_path)
     ]
 
@@ -786,17 +805,18 @@ def decode_frames(input_path: Path) -> List[bytes]:
     with open(raw_path, "rb") as f:
         data = f.read()
 
-    # Split into frames
+    # Split into frames according to probed frame size
     frames = []
-    for i in range(0, len(data), YUV420_FRAME_SIZE):
-        frame = data[i:i + YUV420_FRAME_SIZE]
-        if len(frame) == YUV420_FRAME_SIZE:
+    for i in range(0, len(data), frame_size):
+        frame = data[i:i + frame_size]
+        if len(frame) == frame_size:
             frames.append(frame)
 
     # Clean up
-    raw_path.unlink()
+    raw_path.unlink(missing_ok=True)
 
     return frames
+
 
 
 def extract_receipt(input_path: Path) -> dict:

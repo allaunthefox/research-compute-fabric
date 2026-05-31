@@ -34,6 +34,13 @@ spec:
           image: ghcr.io/ajnart/homarr:latest
           ports:
             - containerPort: 7575
+          env:
+            - name: AUTH_OIDC_CLIENT_ID
+              value: "sso-homarr"
+            - name: AUTH_OIDC_CLIENT_SECRET
+              value: "2e1170ceb4589ca7f67e78b8460ed573c55e26d8cba5a1921b861fff905557da"
+            - name: AUTH_OIDC_URI
+              value: "https://auth.researchstack.info/application/o/homarr/"
           volumeMounts:
             - name: config
               mountPath: /app/data

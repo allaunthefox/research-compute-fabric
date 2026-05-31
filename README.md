@@ -5,7 +5,7 @@
 
 If you just stumbled across this repository, you might see words like "Topological State Machine" and "Manifold Points" and assume this is dense, academic magic. **It isn't.**
 
-This project is actually built on a very simple, grounded idea: **Modern computing is incredibly wasteful.** 
+This project is actually built on a very simple, grounded idea: **Modern computing is incredibly wasteful.**
 
 Right now, running AI or compressing massive datasets requires giant, power-hungry GPUs because they rely on *Floating-Point Math* (heavy decimals like `3.14159...`). We prove that you don't need decimals. You can map complex data (like the grammar of the English language) into structural shapes, and navigate them using **only simple integers (whole numbers).**
 
@@ -13,7 +13,7 @@ Because we only use addition, subtraction, multiplication, and modulo, this syst
 
 ## 🛠️ How we know it works (Zero Guesswork)
 We do not guess that our integer math works. We prove it.
-The core of this project is written in **Lean 4**, a strict mathematical theorem prover. 
+The core of this project is written in **Lean 4**, a strict mathematical theorem prover.
 If our logic has a flaw, *the code physically will not compile.* We currently have **746 verified Lean modules** across a **3,313-job deterministic build** (0 errors) securing this engine.
 
 Python, Rust, and Verilog only exist in this repository to act as "dumb pipes" to feed data into our proven mathematical core.
@@ -22,7 +22,7 @@ Python, Rust, and Verilog only exist in this repository to act as "dumb pipes" t
 
 ## 📁 Repository Structure (By Goal)
 
-Everything is numbered so you know exactly what depends on what. 
+Everything is numbered so you know exactly what depends on what.
 
 | Folder | What it actually is (Plain English) |
 | :--- | :--- |
@@ -54,7 +54,7 @@ python3 5-Applications/scripts/redpajama_english_manifold.py
 ```
 
 ## ⚖️ The One Rule for Contributors
-**Lean is the source of truth.** 
+**Lean is the source of truth.**
 If you add logic, it goes in `0-Core-Formalism/lean/Semantics/` and must be mathematically proven. Python scripts may not contain complex math, branching logic, or cost functions. Python is just the delivery boy for Lean.
 
 ---
@@ -67,6 +67,9 @@ If you add logic, it goes in `0-Core-Formalism/lean/Semantics/` and must be math
 | **`4-Infrastructure/storage/`** | restic + Garage S3 (v2.3.0, Tailscale mesh) + rclone storage stack with automated observer agent |
 | **`.devcontainer/`** | NixOS hermetic devcontainer with OpenGL/X11, Lean, Python science stack, MCP servers (Notion + AWS) |
 | **`4-Infrastructure/infra/credential_server.py`** | Credential gateway with apiProvider service kind and cupfox routing |
+| **`4-Infrastructure/shim/vcn_compute_substrate.py`** | VCN H.265 video-as-compute substrate with auto-profiling (NVIDIA CABAC lossless vs. AMD UMA bandwidth optimization) |
+| **`4-Infrastructure/shim/qemu_framebuffer_packer.py`** | Zero-copy framebuffer (`/dev/fb0`) packer with ARGB8888 100% density mapping (1 pixel = 1 scalar) |
+| **`6-Documentation/docs/specs/virtio_net_compute_fabric_spec.md`** | Spec detailing Virtio-Net packet-as-computation (PIST) and QEMU graphics backplanes |
 
 ---
 *Research Stack — All Rights Reserved*

@@ -124,8 +124,24 @@
 | 17 | uart_tx | output | LVCMOS33 |
 | 18 | uart_rx | input | LVCMOS33 (pull-up) |
 
-## GPU — QFox
+## GPU Cores & Video-as-Compute
 
+In addition to deep learning inference (served via Ollama), physical GPU accelerators and integrated APUs are utilized as high-throughput fixed-point vector engines via hardware video encoders/decoders (AMD VCN, NVIDIA NVDEC/NVENC).
+
+### GPU Detection & Optimization Routing
+The system dynamically profiles host hardware configurations via [vcn_compute_substrate.py](file:///home/allaun/Research%20Stack/4-Infrastructure/shim/vcn_compute_substrate.py) to select optimal encoding/decoding strategies:
+
+| Hardware Type | Profile / Format | Key Optimization | Target / Use Case |
+| :--- | :--- | :--- | :--- |
+| **NVIDIA dGPU** (e.g. H100, RTX 4070) | H.265 / HEVC (`yuv444p`) | Lossless CABAC, High-Bandwidth Full Range | Dense vector structures, raw matrix mappings |
+| **AMD dGPU** (e.g. Radeon) | H.265 / HEVC (`yuv444p`) | Full-Range Lossless VCN Bypass | Dedicated PCIe lanes, unconstrained memory |
+| **AMD APU / iGPU** (e.g. Steam Deck) | H.265 / HEVC (`yuvj420p`) | UMA UMA-aware memory bandwidth throttling | Shared CPU/GPU DDR bus (saves 50% system memory bandwidth) |
+| **CPU / Fallback** | Software H.265 | Vector Processing (no hardware VCN) | Standard system CPU (low throughput) |
+
+*   **Lossless Range Correction:** Limited-range video profiles clamp and corrupt raw binary bytes. All profiles enforce full-range YUV (`yuvj420p`, `yuvj444p`, or `-color_range pc` in FFmpeg) to maintain bit-level losslessness.
+*   **Heterogeneous Frame Slicing:** Dynamic payload routing extracts video formatting metrics via `ffprobe` to slice and distribute frame segments safely across heterogeneous compute nodes.
+
+### Node Details
 **Card:** NVIDIA RTX 4070
 **Driver:** NVML 610.43
 **Ollama:** deepseek-coder-v2:16b (Q4_0, 8.9GB)
@@ -188,6 +204,8 @@
 | `reed_solomon_vcn.py` | RS encode/decode for VCN frames |
 | `chacha20_braid.py` | ChaCha20 encryption for braid data |
 | `polynomial_commitment.py` | KZG polynomial commitments |
+| `vcn_compute_substrate.py` | Video-as-compute coordinator with GPU profiling, heterogeneous format detection, and lossless range clamping avoidance |
+| `qemu_framebuffer_packer.py` | QEMU graphics framebuffer `/dev/fb0` zero-copy mmap packer (ARGB8888 100% density mapping: 1 pixel = 1 scalar) |
 
 ## Skills (111 enabled)
 
@@ -232,10 +250,16 @@ fpga, systemverilog, verilog-design, math-help, physics-intuition, hardware-coun
 
 ```bash
 # Lean full workspace
-cd 0-Core-Formalism/lean/Semantics && lake build
+cd 0-Core-Formalism/lean/Semantics && lake buildObj
 
-# Python tests
+# Python tests & pipeline validation
 cd 4-Infrastructure/shim && python3 test_braid_pipeline.py
+
+# Framebuffer packer verification
+python3 4-Infrastructure/shim/qemu_framebuffer_packer.py --verify
+
+# GPU auto-detection & profiling
+python3 4-Infrastructure/shim/vcn_compute_substrate.py --detect-gpu
 
 # FPGA synthesis
 cd 4-Infrastructure/hardware && bash build_research_stack.sh

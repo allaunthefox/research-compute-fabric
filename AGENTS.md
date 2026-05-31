@@ -42,6 +42,7 @@ This file is the first stop for coding agents working in this repository.
 - Infrastructure shims and probes: `4-Infrastructure/shim/`
 - Hardware bring-up: `4-Infrastructure/hardware/`
 - Documentation and wiki surfaces: `6-Documentation/`
+- Virtio-Net DMA Compute Spec: `6-Documentation/docs/specs/virtio_net_compute_fabric_spec.md`
 - Citation reference map: `CITATION.cff` (external sources are provenance and
   terminology references unless a Lean theorem or receipt explicitly promotes
   a bounded claim)

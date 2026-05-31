@@ -374,72 +374,72 @@ class DeviceLimitations:
 # Per-tier limitation profiles
 TIER_LIMITS = {
     ComputeTier.GPU_CUDA: DeviceLimitations(
-        max_payload_bytes=1024*1024*1024,  # 1 GB (VRAM)
-        max_concurrent_tasks=16,
-        max_task_duration_ms=60000,
+        max_payload_bytes=8*1024*1024*1024,  # 8 GB (leave 4GB for display/compositor)
+        max_concurrent_tasks=12,              # leave 4 cores for system
+        max_task_duration_ms=300000,          # 5 min (not 60s — real work takes time)
         has_gpu=True, has_h264_hw=True,
-        notes="NVENC/NVDEC, 12GB VRAM, 300W TDP"
+        notes="NVENC/NVDEC, ~8GB usable VRAM, keep 4GB for display"
     ),
     ComputeTier.GPU_VAAPI: DeviceLimitations(
-        max_payload_bytes=512*1024*1024,   # 512 MB (VRAM)
-        max_concurrent_tasks=8,
-        max_task_duration_ms=60000,
+        max_payload_bytes=256*1024*1024,   # 256 MB (keep headroom for display)
+        max_concurrent_tasks=4,             # leave half for desktop
+        max_task_duration_ms=120000,
         has_gpu=True, has_h264_hw=True,
-        notes="VAAPI hardware encode/decode, dedicated VRAM"
+        notes="VAAPI HW encode, keep VRAM headroom for display"
     ),
     ComputeTier.GPU_APU: DeviceLimitations(
-        max_payload_bytes=256*1024*1024,   # 256 MB (shared RAM)
-        max_concurrent_tasks=4,
-        max_task_duration_ms=30000,
+        max_payload_bytes=128*1024*1024,   # 128 MB (shared with OS + apps)
+        max_concurrent_tasks=2,             # shared DDR bandwidth
+        max_task_duration_ms=60000,
         has_gpu=True, has_h264_hw=True, shared_memory=True,
-        notes="Shared DDR bandwidth, yuvj420p, 50% less bandwidth"
+        notes="Shared DDR, OS needs bandwidth too, yuvj420p"
     ),
     ComputeTier.CPU_FFMPEG: DeviceLimitations(
-        max_payload_bytes=128*1024*1024,   # 128 MB
-        max_concurrent_tasks=2,
-        max_task_duration_ms=120000,
+        max_payload_bytes=64*1024*1024,    # 64 MB (leave RAM for OS)
+        max_concurrent_tasks=2,             # half the cores
+        max_task_duration_ms=300000,        # 5 min
         has_h264_hw=False,
-        notes="Software libx264, CPU-bound"
+        notes="Software libx264, leave cores for OS/k3s"
     ),
     ComputeTier.BATCH: DeviceLimitations(
-        max_payload_bytes=64*1024*1024,    # 64 MB
+        max_payload_bytes=32*1024*1024,    # 32 MB
         max_concurrent_tasks=1,
-        max_task_duration_ms=21600000,     # 6 hours
-        monthly_budget_minutes=2000,
-        notes="GitHub Actions, ubuntu-latest, 2000 min/month"
+        max_task_duration_ms=18000000,     # 5 hours (not 6 — runners need cleanup time)
+        monthly_budget_minutes=1500,        # leave 500 min for actual CI/CD
+        notes="GitHub Actions, 1500 min/month (reserve 500 for CI)"
     ),
     ComputeTier.ETHERNET: DeviceLimitations(
         max_payload_bytes=1400,            # MTU - headers
         max_concurrent_tasks=1,
-        max_task_duration_ms=1000,         # 1 second per packet
+        max_task_duration_ms=500,          # 500ms (leave headroom for other traffic)
         has_network=True,
-        notes="virtio-net PistPacket, 1400B payload, host transforms"
+        notes="virtio-net PistPacket, 1400B, leave bandwidth for SSH/mgmt"
     ),
     ComputeTier.FRAMEBUFFER: DeviceLimitations(
-        max_payload_bytes=1572864,         # 1.5 MB (1024x768x16bpp)
+        max_payload_bytes=786432,          # 768 KB (half of 1.5MB — keep display visible)
         max_concurrent_tasks=1,
-        max_task_duration_ms=100,          # DMA is fast
+        max_task_duration_ms=50,           # 50ms (leave display refresh time)
         has_framebuffer=True,
-        notes="/dev/fb0 DMA, no compute, just data transport"
+        notes="/dev/fb0 DMA, keep half for display, compute in top rows"
     ),
     ComputeTier.WASM: DeviceLimitations(
-        max_payload_bytes=1024,            # 1 KB per request
+        max_payload_bytes=512,             # 512 B (leave room for JSON overhead)
         max_concurrent_tasks=1,
-        max_task_duration_ms=10,           # 10ms CPU limit
-        notes="Cloudflare Workers, 100K req/day, pure integer only"
+        max_task_duration_ms=8,            # 8ms (leave 2ms for overhead)
+        notes="Cloudflare Workers, 512B payload, 8ms CPU, 100K req/day"
     ),
     ComputeTier.DSP: DeviceLimitations(
-        max_payload_bytes=4096*4,          # 4096 float32 samples
+        max_payload_bytes=2048*4,          # 2048 samples (half FFT — leave for overlap)
         max_concurrent_tasks=1,
-        max_task_duration_ms=5000,
+        max_task_duration_ms=3000,         # 3s (leave for audio pipeline)
         has_audio=True,
-        notes="PipeWire/FLAC, FFT spectral analysis, receipt-bearing"
+        notes="PipeWire/FLAC, 2048-sample FFT, leave overlap buffer"
     ),
     ComputeTier.ESP32: DeviceLimitations(
-        max_payload_bytes=2048,            # 2 KB SRAM
+        max_payload_bytes=512,             # 512 B (WiFi stack needs ~50KB, BLE ~30KB)
         max_concurrent_tasks=1,
-        max_task_duration_ms=100,
-        notes="240MHz Xtensa, 520KB SRAM, Q0_16 scalar, FreeRTOS idle"
+        max_task_duration_ms=50,           # 50ms (leave for WiFi keepalive)
+        notes="512B usable, WiFi/BLE stack needs most SRAM"
     ),
     ComputeTier.RELAY: DeviceLimitations(
         max_payload_bytes=0,

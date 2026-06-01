@@ -19,3 +19,6 @@
 [submodule "ai-math-discovery-systems/neural-conservation-law"]
 	path = ai-math-discovery-systems/neural-conservation-law
 	url = https://github.com/facebookresearch/neural-conservation-law.git
+[submodule "0-Core-Formalism/lean/Semantics/.lake/packages/sparkle"]
+	path = 0-Core-Formalism/lean/Semantics/.lake/packages/sparkle
+	url = https://github.com/Verilean/sparkle.git

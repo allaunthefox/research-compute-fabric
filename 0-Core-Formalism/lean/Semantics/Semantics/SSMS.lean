@@ -642,9 +642,11 @@ theorem aciPreservedByMlgruStep {N : Nat} (H : BettiSwooshH N)
   -- ε=1 yields A.hT=65536, B.hT=65534, |A-B|=2 > 1=ε.
   --
   -- TODO(lean-port): complete with a rounding-aware convexity lemma that
-  -- bounds the floor-division residual, or strengthen the hypothesis to
-  -- H.aciBound.toInt ≥ 2 to absorb the 2-ULP rounding envelope.
-  -- BLOCKED: Requires additional lemmas for Q16_16 floor-division rounding
+  -- bounds the floor-division residual. The hypothesis has been
+  -- strengthened to H.aciBound.toInt ≥ 2 to absorb the 2-ULP rounding
+  -- envelope, but the proof still needs a Q16_16 floor-division error
+  -- bound lemma.
+  -- BLOCKED: Requires Q16_16 floor-division rounding lemma
   admit  -- using admit instead of sorry
 
 

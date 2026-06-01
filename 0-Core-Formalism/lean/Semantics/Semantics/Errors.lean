@@ -1,11 +1,12 @@
-import Semantics.PhysicsScalar
+import Semantics.FixedPoint
 import Semantics.RegimeCore
 import Semantics.OrderedFieldTokens
+import Semantics.PhysicsScalarBridge
 
 namespace Semantics.Errors
 
 -- Explicitly use hardware-native scalar type throughout
-open Semantics.PhysicsScalar
+open Semantics.FixedPoint
 open Semantics.RegimeCore
 open Semantics.OrderedFieldTokens
 
@@ -72,17 +73,17 @@ structure ErrorResponse where
   deriving Repr, DecidableEq
 
 def classifyErrorAttention (field : ErrorField) : ErrorAttention :=
-  if PhysicsScalar.Q16_16.gt field.magnitude PhysicsScalar.Q16_16.three then
-    if PhysicsScalar.Q16_16.gt field.persistence PhysicsScalar.Q16_16.two then ErrorAttention.emergency else ErrorAttention.directAttention
-  else if PhysicsScalar.Q16_16.gt field.persistence PhysicsScalar.Q16_16.one && PhysicsScalar.Q16_16.gt field.coherence PhysicsScalar.Q16_16.half then
+  if Semantics.PhysicsScalarBridge.gt field.magnitude Semantics.PhysicsScalarBridge.three then
+    if Semantics.PhysicsScalarBridge.gt field.persistence Semantics.PhysicsScalarBridge.two then ErrorAttention.emergency else ErrorAttention.directAttention
+  else if Semantics.PhysicsScalarBridge.gt field.persistence Semantics.PhysicsScalarBridge.one && Semantics.PhysicsScalarBridge.gt field.coherence Semantics.PhysicsScalarBridge.half then
     ErrorAttention.scaffold
-  else if PhysicsScalar.Q16_16.gt field.magnitude PhysicsScalar.Q16_16.one then
+  else if Semantics.PhysicsScalarBridge.gt field.magnitude Semantics.PhysicsScalarBridge.one then
     ErrorAttention.monitor
   else
     ErrorAttention.ignore
 
 def classifyScaffoldingRole (field : ErrorField) : ErrorScaffoldingRole :=
-  if PhysicsScalar.Q16_16.gt field.persistence PhysicsScalar.Q16_16.one && PhysicsScalar.Q16_16.gt field.coherence PhysicsScalar.Q16_16.half then
+  if Semantics.PhysicsScalarBridge.gt field.persistence Semantics.PhysicsScalarBridge.one && Semantics.PhysicsScalarBridge.gt field.coherence Semantics.PhysicsScalarBridge.half then
     match field.kind with
     | ErrorKind.dimensionalDrift => ErrorScaffoldingRole.dimensionalScaffold
     | ErrorKind.boundaryLeak => ErrorScaffoldingRole.boundaryScaffold
@@ -93,19 +94,19 @@ def classifyScaffoldingRole (field : ErrorField) : ErrorScaffoldingRole :=
     ErrorScaffoldingRole.none
 
 def classifyUrgency (field : ErrorField) : ErrorUrgency :=
-  if PhysicsScalar.Q16_16.gt field.magnitude PhysicsScalar.Q16_16.three then
+  if Semantics.PhysicsScalarBridge.gt field.magnitude Semantics.PhysicsScalarBridge.three then
     ErrorUrgency.immediate
-  else if PhysicsScalar.Q16_16.gt field.magnitude PhysicsScalar.Q16_16.two || PhysicsScalar.Q16_16.gt field.criticalLoad PhysicsScalar.Q16_16.two then
+  else if Semantics.PhysicsScalarBridge.gt field.magnitude Semantics.PhysicsScalarBridge.two || Semantics.PhysicsScalarBridge.gt field.criticalLoad Semantics.PhysicsScalarBridge.two then
     ErrorUrgency.high
-  else if PhysicsScalar.Q16_16.gt field.magnitude PhysicsScalar.Q16_16.one then
+  else if Semantics.PhysicsScalarBridge.gt field.magnitude Semantics.PhysicsScalarBridge.one then
     ErrorUrgency.medium
   else
     ErrorUrgency.low
 
 def stableForScaffolding (field : ErrorField) : Bool :=
-  PhysicsScalar.Q16_16.gt field.persistence PhysicsScalar.Q16_16.one &&
-  PhysicsScalar.Q16_16.gt field.coherence PhysicsScalar.Q16_16.half &&
-  PhysicsScalar.Q16_16.le field.magnitude PhysicsScalar.Q16_16.three
+  Semantics.PhysicsScalarBridge.gt field.persistence Semantics.PhysicsScalarBridge.one &&
+  Semantics.PhysicsScalarBridge.gt field.coherence Semantics.PhysicsScalarBridge.half &&
+  Semantics.PhysicsScalarBridge.le field.magnitude Semantics.PhysicsScalarBridge.three
 
 def classifyErrorField (field : ErrorField) : ErrorClassification :=
   { attention := classifyErrorAttention field
@@ -127,31 +128,31 @@ def respondToError (field : ErrorField) : ErrorResponse :=
 def dimensionalScaffoldError (regionId : Semantics.RegimeCore.RegionId) : ErrorField :=
   { errorId := 1
   , kind := ErrorKind.dimensionalDrift
-  , magnitude := PhysicsScalar.Q16_16.one
-  , coherence := PhysicsScalar.Q16_16.three
-  , persistence := PhysicsScalar.Q16_16.two
+  , magnitude := Semantics.PhysicsScalarBridge.one
+  , coherence := Semantics.PhysicsScalarBridge.three
+  , persistence := Semantics.PhysicsScalarBridge.two
   , regionId := regionId
-  , fluidity := PhysicsScalar.Q16_16.half
-  , criticalLoad := PhysicsScalar.Q16_16.one }
+  , fluidity := Semantics.PhysicsScalarBridge.half
+  , criticalLoad := Semantics.PhysicsScalarBridge.one }
 
 def directAttentionError (regionId : Semantics.RegimeCore.RegionId) : ErrorField :=
   { errorId := 2
   , kind := ErrorKind.criticalOverflow
-  , magnitude := PhysicsScalar.Q16_16.four
-  , coherence := PhysicsScalar.Q16_16.quarter
-  , persistence := PhysicsScalar.Q16_16.one
+  , magnitude := Semantics.PhysicsScalarBridge.four
+  , coherence := Semantics.PhysicsScalarBridge.quarter
+  , persistence := Semantics.PhysicsScalarBridge.one
   , regionId := regionId
-  , fluidity := PhysicsScalar.Q16_16.three
-  , criticalLoad := PhysicsScalar.Q16_16.four }
+  , fluidity := Semantics.PhysicsScalarBridge.three
+  , criticalLoad := Semantics.PhysicsScalarBridge.four }
 
 def aliasError (regionId : Semantics.RegimeCore.RegionId) : ErrorField :=
   { errorId := 3
   , kind := ErrorKind.identityAlias
-  , magnitude := PhysicsScalar.Q16_16.four
-  , coherence := PhysicsScalar.Q16_16.zero
-  , persistence := PhysicsScalar.Q16_16.one
+  , magnitude := Semantics.PhysicsScalarBridge.four
+  , coherence := Semantics.PhysicsScalarBridge.zero
+  , persistence := Semantics.PhysicsScalarBridge.one
   , regionId := regionId
-  , fluidity := PhysicsScalar.Q16_16.zero
-  , criticalLoad := PhysicsScalar.Q16_16.zero }
+  , fluidity := Semantics.PhysicsScalarBridge.zero
+  , criticalLoad := Semantics.PhysicsScalarBridge.zero }
 
 end Semantics.Errors

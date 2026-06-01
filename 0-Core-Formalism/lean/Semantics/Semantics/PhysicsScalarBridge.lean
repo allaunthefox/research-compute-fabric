@@ -29,4 +29,20 @@ def mul (a b : PhysicsScalar.Q16_16) : PhysicsScalar.Q16_16 :=
 def sub (a b : PhysicsScalar.Q16_16) : PhysicsScalar.Q16_16 :=
   fromFixedPoint ((toFixedPoint a) - (toFixedPoint b))
 
+/-- Bridge comparison operations -/
+def gt (a : PhysicsScalar.Q16_16) (b : PhysicsScalar.Q16_16) : Bool :=
+  (toFixedPoint a).gt (toFixedPoint b)
+
+def le (a : PhysicsScalar.Q16_16) (b : PhysicsScalar.Q16_16) : Bool :=
+  (toFixedPoint a).le (toFixedPoint b)
+
+/-- Bridge constants for PhysicsScalar compatibility -/
+def zero : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.zero
+def one : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.one
+def two : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.two
+def three : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.three
+def four : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.four
+def half : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.half
+def quarter : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.quarter
+
 end Semantics.PhysicsScalarBridge

@@ -33,6 +33,9 @@ def sub (a b : PhysicsScalar.Q16_16) : PhysicsScalar.Q16_16 :=
 def gt (a : PhysicsScalar.Q16_16) (b : PhysicsScalar.Q16_16) : Bool :=
   (toFixedPoint a).gt (toFixedPoint b)
 
+def ge (a : PhysicsScalar.Q16_16) (b : PhysicsScalar.Q16_16) : Bool :=
+  (toFixedPoint a).ge (toFixedPoint b)
+
 def le (a : PhysicsScalar.Q16_16) (b : PhysicsScalar.Q16_16) : Bool :=
   (toFixedPoint a).le (toFixedPoint b)
 
@@ -44,5 +47,6 @@ def three : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.three
 def four : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.four
 def half : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.half
 def quarter : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.quarter
+def maxValue : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.maxValue
 
 end Semantics.PhysicsScalarBridge

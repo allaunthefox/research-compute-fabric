@@ -1,14 +1,15 @@
-import Semantics.PhysicsScalar
+import Semantics.FixedPoint
 import Semantics.ElectromagneticSpectrum
 import Semantics.RegimeCore
 import Semantics.BoundaryDynamics
 import Semantics.CausalGeometry
 import Semantics.ManifoldStructures
 import Semantics.DomainState
+import Semantics.PhysicsScalarBridge
 
 namespace Semantics.SubstrateProfile
 
-open Semantics.PhysicsScalar
+open Semantics.FixedPoint
 open Semantics.ElectromagneticSpectrum
 open Semantics.RegimeCore
 open Semantics.BoundaryDynamics
@@ -152,19 +153,19 @@ def supportsDimensions (profile : SubstrateProfile) (stateDim transportDim topol
 
 
 def supportsFluidity (profile : SubstrateProfile) (fluidity : PhysicsScalar.Q16_16) : Bool :=
-  PhysicsScalar.Q16_16.le fluidity profile.boundarySupport.maximumFluidity
+  Semantics.PhysicsScalarBridge.le fluidity profile.boundarySupport.maximumFluidity
 
 
 def supportsDelayMass (profile : SubstrateProfile) (delayMass : PhysicsScalar.Q16_16) : Bool :=
-  PhysicsScalar.Q16_16.le delayMass profile.causalSupport.maximumDelayMass
+  Semantics.PhysicsScalarBridge.le delayMass profile.causalSupport.maximumDelayMass
 
 
 def compatibleWithBoundary (profile : SubstrateProfile) (boundary : BoundaryLayer) (kind : BoundaryKind) : Bool :=
   supportsBoundaryKind profile kind &&
   supportsFluidity profile boundary.fluidity &&
-  PhysicsScalar.Q16_16.ge boundary.coherence profile.boundarySupport.minimumCoherence &&
+  Semantics.PhysicsScalarBridge.ge boundary.coherence profile.boundarySupport.minimumCoherence &&
   (profile.boundarySupport.supportsDiffuseBoundaries || kind != BoundaryKind.sheath) &&
-  (profile.boundarySupport.supportsTurbulentBoundaries || !PhysicsScalar.Q16_16.gt boundary.fluidity PhysicsScalar.Q16_16.half)
+  (profile.boundarySupport.supportsTurbulentBoundaries || !Semantics.PhysicsScalarBridge.gt boundary.fluidity Semantics.PhysicsScalarBridge.half)
 
 
 def compatibleWithSample (profile : SubstrateProfile) (sample : ElectromagneticSample) (ic : InteractionClass) : Bool :=
@@ -176,14 +177,14 @@ def compatibleWithSample (profile : SubstrateProfile) (sample : ElectromagneticS
   | .imaging => profile.spectralSupport.supportsPassiveSensing || profile.spectralSupport.supportsActiveProbe
   | .illumination => true
   | .heating => true
-  | .ionizingExposure => PhysicsScalar.Q16_16.gt profile.spectralSupport.ionizingTolerance PhysicsScalar.Q16_16.quarter
+  | .ionizingExposure => Semantics.PhysicsScalarBridge.gt profile.spectralSupport.ionizingTolerance Semantics.PhysicsScalarBridge.quarter
   | .plasmaCoupling => true
 
 
 def compatibleWithLink (profile : SubstrateProfile) (link : CausalLink) : Bool :=
   supportsOrientation profile link.orientation &&
   supportsDelayMass profile link.delay &&
-  (profile.causalSupport.supportsDelayedLinks || !PhysicsScalar.Q16_16.gt link.delay PhysicsScalar.Q16_16.zero) &&
+  (profile.causalSupport.supportsDelayedLinks || !Semantics.PhysicsScalarBridge.gt link.delay Semantics.PhysicsScalarBridge.zero) &&
   (profile.causalSupport.supportsFoldedLinks || link.orientation != CausalOrientation.folded) &&
   (profile.causalSupport.supportsCyclicTraversal || link.orientation != CausalOrientation.cyclic) &&
   (!profile.causalSupport.requiresGuardedTraversal || link.requiresGate)
@@ -229,7 +230,7 @@ def fpgaSpectralSupport : SpectralSupport :=
   , supportsActiveProbe := true
   , supportsPassiveSensing := true
   , supportsCommunication := true
-  , ionizingTolerance := PhysicsScalar.Q16_16.quarter }
+  , ionizingTolerance := Semantics.PhysicsScalarBridge.quarter }
 
 
 def fpgaBoundarySupport : BoundarySupport :=
@@ -242,8 +243,8 @@ def fpgaBoundarySupport : BoundarySupport :=
       , BoundaryKind.dimensionalSeam ]
   , supportsDiffuseBoundaries := true
   , supportsTurbulentBoundaries := false
-  , maximumFluidity := PhysicsScalar.Q16_16.three
-  , minimumCoherence := PhysicsScalar.Q16_16.quarter }
+  , maximumFluidity := Semantics.PhysicsScalarBridge.three
+  , minimumCoherence := Semantics.PhysicsScalarBridge.quarter }
 
 
 def fpgaCausalSupport : CausalSupport :=
@@ -252,7 +253,7 @@ def fpgaCausalSupport : CausalSupport :=
   , supportsFoldedLinks := true
   , supportsCyclicTraversal := false
   , requiresGuardedTraversal := true
-  , maximumDelayMass := PhysicsScalar.Q16_16.four }
+  , maximumDelayMass := Semantics.PhysicsScalarBridge.four }
 
 
 def fpgaSubstrateProfile : SubstrateProfile :=
@@ -296,7 +297,7 @@ def softwareResearchSubstrateProfile : SubstrateProfile :=
       , supportsActiveProbe := true
       , supportsPassiveSensing := true
       , supportsCommunication := true
-      , ionizingTolerance := PhysicsScalar.Q16_16.four }
+      , ionizingTolerance := Semantics.PhysicsScalarBridge.four }
   , boundarySupport :=
       { supportedKinds :=
           [ BoundaryKind.interface
@@ -307,8 +308,8 @@ def softwareResearchSubstrateProfile : SubstrateProfile :=
           , BoundaryKind.dimensionalSeam ]
       , supportsDiffuseBoundaries := true
       , supportsTurbulentBoundaries := true
-      , maximumFluidity := PhysicsScalar.Q16_16.four
-      , minimumCoherence := PhysicsScalar.Q16_16.zero }
+      , maximumFluidity := Semantics.PhysicsScalarBridge.four
+      , minimumCoherence := Semantics.PhysicsScalarBridge.zero }
   , causalSupport :=
       { supportedOrientations :=
           [ CausalOrientation.forward
@@ -320,6 +321,6 @@ def softwareResearchSubstrateProfile : SubstrateProfile :=
       , supportsFoldedLinks := true
       , supportsCyclicTraversal := true
       , requiresGuardedTraversal := false
-      , maximumDelayMass := PhysicsScalar.Q16_16.maxValue } }
+      , maximumDelayMass := Semantics.PhysicsScalarBridge.maxValue } }
 
 end Semantics.SubstrateProfile

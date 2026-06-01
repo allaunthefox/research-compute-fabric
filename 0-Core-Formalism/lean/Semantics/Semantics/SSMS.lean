@@ -645,7 +645,9 @@ theorem aciPreservedByMlgruStep {N : Nat} (H : BettiSwooshH N)
   -- bounds the floor-division residual, or strengthen the hypothesis to
   -- H.aciBound.toInt ≥ 2 to absorb the 2-ULP rounding envelope.
   -- BLOCKED: Requires additional lemmas for Q16_16 floor-division rounding
-  admit
+  admit  -- using admit instead of sorry
+
+
 
 
 -- ════════════════════════════════════════════════════════════

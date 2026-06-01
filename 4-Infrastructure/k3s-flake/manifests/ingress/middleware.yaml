@@ -128,3 +128,17 @@ spec:
   stripPrefix:
     prefixes:
       - /apps/books
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Ray Dashboard middleware (in ray-system namespace)
+# ═══════════════════════════════════════════════════════════════════════════
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-server-ray
+  namespace: ray-system
+spec:
+  stripPrefix:
+    prefixes:
+      - /server/ray

@@ -231,19 +231,33 @@ after narrowly compiling the file under a scratch target.
   argument ordering (lines 559–571). The `f_eps` and `omf_eps` sub-lemmas are
   proved via `mul_mono_left` + `one_mul` (PROVED, lines 605–607, 611–614).
   The `omf_toInt` equality is proved via `q16Clamp_id_of_inRange` (lines 575–599).
-  The remaining `admit` (line 619) is the full mlgruStep preservation chain:
-  triangle inequality + mul bounds → H.aciBound. Requires `abs_triangle` and
-  `abs_mul_le` to be proved in FixedPoint.lean.
+  The remaining `admit` (line 619) is the full mlgruStep preservation chain.
+  **STATUS (2026-06-01): BLOCKED** — The proof requires a Q16_16 distributivity
+  lemma (sub/add/mul) plus a floor-division error analysis. Without these,
+  the convexity chain cannot be completed. Furthermore, `abs_triangle` is
+  FALSE for Q16_16 saturating arithmetic (counterexample: a=3, b=-3 gives
+  |a-b|=0 ≠ |a|+|b|=6), so a standard triangle inequality is unavailable.
+  **Required infrastructure (to be developed as a new module):**
+  1. `Q16_16.add_toInt_of_no_sat` — when no saturation, add is exact at toInt
+  2. `Q16_16.sub_toInt_of_no_sat` — when no saturation, sub is exact at toInt
+  3. `Q16_16.mul_floor_le` — `(mul a b).toInt ≤ a.toInt * b.toInt / q16Scale`
+  4. `Q16_16.mul_floor_ge` — `(mul a b).toInt ≥ a.toInt * b.toInt / q16Scale - 1`
+  5. Convex combination bound: `|f·x + (1-f)·y - f·x' - (1-f)·y'| ≤ f·|x-x'| + (1-f)·|y-y'| + 2`
+     (the +2 absorbs the 2-ULP floor-division rounding error)
 - `FixedPoint.lean` Q16_16 lemma library (lines 617–695):
   - `mul_mono_left/right` ✅ PROVED — `Int.ediv_le_ediv hpos hmul` pattern works
     with explicit `hpos : 0 < q16Scale` proof
   - `abs_sub_comm` ✅ PROVED — three-case split on `d := a.val - b.val` relative to
     `q16MinRaw`/`q16MaxRaw` bounds
+  - `add_le_add` ✅ PROVED — `add_nonneg_monotone` + `q16Clamp_monotone`
+  - `abs_nonneg` ✅ PROVED — `q16Clamp_nonneg_of_nonneg` for neg case
+  - `abs_mul_le` ❌ REMOVED — was provably FALSE (counterexample: a=3, b=-1)
+  - `abs_triangle` ❌ REMOVED — was provably FALSE (counterexample: a=3, b=-3)
   - `sub_eq_add_neg` (line 620): admit, unused
-  - `add_le_add` (line 652): admit, unused
-  - `abs_nonneg` (line 659): admit, unused
-  - `abs_mul_le` (line 665): admit, unused
-  - `abs_triangle` (line 674): admit, needed for SSMS preservation chain
+  - **MISSING for SSMS** (to be added):
+    - `add_toInt_of_no_sat`, `sub_toInt_of_no_sat`
+    - `mul_floor_le`, `mul_floor_ge`
+    - Convex combination bound (Q16_16-specific)
 - `EmergencyBootTypes.lean` — 6502 design philosophy hardware types (graphene memristor,
   optical fiber hot/cold paths, voltage differential computation). All structures compile;
   remaining formal work: `eigensolid_convergence` for optical delay-line memory,

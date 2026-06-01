@@ -94,9 +94,10 @@ theorem ko_preserves_hyperbola_approx (s : HyperState) (Δu : Q16_16)
   --   (a - b).toInt = q16Clamp(a.toInt - b.toInt), not a.toInt - b.toInt
   --   (a * b).toInt = q16Clamp(a.toInt * b.toInt / q16Scale), not a.toInt * b.toInt
   -- The proof must unfold toInt, sub, mul to their definitions and use
-  -- q16Clamp_id_of_inRange to show clamping is identity for in-range values.
-  -- BLOCKED on: formal Q16_16 range analysis showing (s.u+Δu)² - s.c² stays in range.
-  sorry
+   -- q16Clamp_id_of_inRange to show clamping is identity for in-range values.
+   -- BLOCKED on: formal Q16_16 range analysis showing (s.u+Δu)² - s.c² stays in range.
+   -- TODO(lean-port): complete proof after Q16_16 clamping range analysis is formalized
+   sorry
 
 /-- The Ko rule: u > 0 and Δu > 0 ⇒ u' = u + Δu > 0.
     Computed with Q16_16 saturating add; both terms positive yields > 0. -/

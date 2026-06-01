@@ -787,8 +787,6 @@ theorem abs_nonneg (a : Q16_16) : (abs a).toInt ≥ 0 := by
     to -1 but a*|b| rounds to 0. Use abs_mul_bound or a direct convexity
     argument instead.
     TODO(lean-port): do not use this lemma — restructure SSMS to avoid it. -/
--- QUARANTINED: Theorem as stated is FALSE for Q16_16 with floor division. -/
-#send_theory_quarantine "FixedPoint.abs_mul_le"
 theorem abs_mul_le (a b : Q16_16) (ha : a.toInt ≥ 0) :
     (abs (mul a b)).toInt ≤ (mul a (abs b)).toInt := by
   admit
@@ -799,8 +797,6 @@ theorem abs_mul_le (a b : Q16_16) (ha : a.toInt ≥ 0) :
     |a|*|b|/65536 rounds to 0 for small values.
     TODO(lean-port): do not use this lemma — restructure SSMS to use
     abs_triangle_add (|x+y| ≤ |x|+|y|) instead. -/
--- QUARANTINED: Theorem as stated is FALSE for Q16_16 with floor division. -/
-#send_theory_quarantine "FixedPoint.abs_triangle"
 theorem abs_triangle (a b : Q16_16) :
     (abs (mul a b)).toInt ≤ (mul (abs a) (abs b)).toInt := by
   admit

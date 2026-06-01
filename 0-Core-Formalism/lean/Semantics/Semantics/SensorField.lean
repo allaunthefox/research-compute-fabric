@@ -1,5 +1,6 @@
 import Semantics.PhysicsScalar
 import Semantics.PhysicsEuclidean
+import Semantics.FixedPoint
 import Semantics.ElectromagneticSpectrum
 import Semantics.RegimeCore
 import Semantics.BoundaryDynamics
@@ -11,6 +12,7 @@ namespace Semantics.SensorField
 
 open Semantics.PhysicsScalar
 open Semantics.PhysicsEuclidean
+open Semantics.FixedPoint
 open Semantics.ElectromagneticSpectrum
 open Semantics.RegimeCore
 open Semantics.BoundaryDynamics
@@ -79,15 +81,15 @@ structure SensorErrorAssessment where
 structure SensorBandWindow where
   primaryBand : SpectrumBand
   acceptsAdjacentBands : Bool
-  minimumIntensity : Q16_16
-  maximumIntensity : Q16_16
+  minimumIntensity : FixedPoint.Q16_16
+  maximumIntensity : FixedPoint.Q16_16
   deriving Repr, DecidableEq
 
 structure SensorAperture where
-  directionalBias : Q16_16
-  fieldWidth : Q16_16
+  directionalBias : FixedPoint.Q16_16
+  fieldWidth : FixedPoint.Q16_16
   lineOfSightRequired : Bool
-  boundaryPenetration : Q16_16
+  boundaryPenetration : FixedPoint.Q16_16
   deriving Repr, DecidableEq
 
 structure SensorCarrierProfile where
@@ -98,11 +100,11 @@ structure SensorCarrierProfile where
 
 structure SensorSample where
   band : SpectrumBand
-  intensity : Q16_16
-  coherence : Q16_16
-  delayMass : Q16_16
+  intensity : FixedPoint.Q16_16
+  coherence : FixedPoint.Q16_16
+  delayMass : FixedPoint.Q16_16
   regionId : RegionId
-  boundaryFluidity : Q16_16
+  boundaryFluidity : FixedPoint.Q16_16
   detectionClass : DetectionClass
   errorField : Option ErrorField
   deriving Repr, DecidableEq
@@ -125,13 +127,13 @@ structure SensorChannel where
   sourceRegion : RegionId
   targetRegion : RegionId
   preferredOrientation : CausalOrientation
-  minimumCoherence : Q16_16
+  minimumCoherence : FixedPoint.Q16_16
   supportsBoundaryCrossing : Bool
   deriving Repr, DecidableEq
 
 structure SensorDetection where
   sample : SensorSample
-  confidence : Q16_16
+  confidence : FixedPoint.Q16_16
   admissible : Bool
   errorAssessment : Option SensorErrorAssessment
   deriving Repr, DecidableEq
@@ -153,8 +155,8 @@ def modalityBandCompatible (modality : SensorModality) (band : SpectrumBand) : B
   | _, _ => false
 
 
-def intensityWithinWindow (window : SensorBandWindow) (intensity : Q16_16) : Bool :=
-  Q16_16.ge intensity window.minimumIntensity && Q16_16.le intensity window.maximumIntensity
+def intensityWithinWindow (window : SensorBandWindow) (intensity : FixedPoint.Q16_16) : Bool :=
+  FixedPoint.Q16_16.ge intensity window.minimumIntensity && FixedPoint.Q16_16.le intensity window.maximumIntensity
 
 
 def bandAccepted (window : SensorBandWindow) (band : SpectrumBand) : Bool :=
@@ -173,7 +175,7 @@ def sampleCompatibleWithBoundary
   (boundary : BoundaryLayer) : Bool :=
   compatibleWithBoundary field.substrate boundary &&
   (field.aperture.lineOfSightRequired = false || boundary.kind != BoundaryKind.spectralCurtain) &&
-  (Q16_16.le boundary.fluidity field.aperture.boundaryPenetration || field.carrierProfile.propagationClass = PropagationClass.penetrative)
+  (FixedPoint.Q16_16.le boundary.fluidity field.aperture.boundaryPenetration || field.carrierProfile.propagationClass = PropagationClass.penetrative)
 
 
 def sampleCompatibleWithLink
@@ -185,7 +187,7 @@ def sampleCompatibleWithLink
 
 
 def deriveErrorField (field : SensorField) (sample : SensorSample) : Option ErrorField :=
-  if sample.regionId != field.homeRegion && Q16_16.gt sample.boundaryFluidity field.aperture.boundaryPenetration then
+  if sample.regionId != field.homeRegion && FixedPoint.Q16_16.gt sample.boundaryFluidity field.aperture.boundaryPenetration then
     some
       { errorId := field.sensorId
       , kind := ErrorKind.boundaryLeak
@@ -204,7 +206,7 @@ def deriveErrorField (field : SensorField) (sample : SensorSample) : Option Erro
       , persistence := sample.delayMass
       , regionId := sample.regionId
       , fluidity := sample.boundaryFluidity
-      , criticalLoad := Q16_16.zero }
+      , criticalLoad := FixedPoint.Q16_16.zero }
   else
     none
 
@@ -228,11 +230,11 @@ def assessSensorError (field : SensorField) (sample : SensorSample) : Option Sen
       some { errorField := errorField, classification := classification, disposition := classifyErrorDisposition { errorField := errorField, classification := classification, disposition := SensorErrorDisposition.clear } }
 
 def classifyDetectionClass (sample : SensorSample) : DetectionClass :=
-  if Q16_16.gt sample.intensity Q16_16.three && Q16_16.gt sample.coherence Q16_16.half then
+  if FixedPoint.Q16_16.gt sample.intensity FixedPoint.Q16_16.ofNat 3 && FixedPoint.Q16_16.gt sample.coherence FixedPoint.Q16_16.ofRatio 1 2 then
     DetectionClass.resonant
-  else if Q16_16.gt sample.intensity Q16_16.two then
+  else if FixedPoint.Q16_16.gt sample.intensity FixedPoint.Q16_16.two then
     DetectionClass.coherent
-  else if Q16_16.gt sample.intensity Q16_16.one then
+  else if FixedPoint.Q16_16.gt sample.intensity FixedPoint.Q16_16.one then
     DetectionClass.weak
   else
     DetectionClass.none
@@ -243,7 +245,7 @@ def classifySensorRegime
   (sample : SensorSample) : SensorRegime :=
   if !sampleCompatibleWithField field sample then
     SensorRegime.gated
-  else if Q16_16.gt sample.intensity field.window.maximumIntensity then
+  else if FixedPoint.Q16_16.gt sample.intensity field.window.maximumIntensity then
     SensorRegime.saturated
   else if sample.regionId != field.homeRegion && field.aperture.lineOfSightRequired then
     SensorRegime.tracking
@@ -259,12 +261,12 @@ def classifySensorRegime
 
 def detectionConfidence
   (field : SensorField)
-  (sample : SensorSample) : Q16_16 :=
-  let base := Q16_16.avg sample.intensity sample.coherence
+  (sample : SensorSample) : FixedPoint.Q16_16 :=
+  let base := FixedPoint.Q16_16.div (FixedPoint.Q16_16.add sample.intensity sample.coherence) FixedPoint.Q16_16.two
   if sampleCompatibleWithField field sample then
     base
   else
-    Q16_16.zero
+    FixedPoint.Q16_16.zero
 
 
 def detectSample
@@ -283,7 +285,7 @@ def channelSupportsDetection
   (channel : SensorChannel)
   (detection : SensorDetection) : Bool :=
   channel.targetRegion = detection.sample.regionId &&
-  Q16_16.ge detection.sample.coherence channel.minimumCoherence
+  FixedPoint.Q16_16.ge detection.sample.coherence channel.minimumCoherence
 
 
 def fieldAdmitsTransition
@@ -307,8 +309,8 @@ def wifiSensorField : SensorField :=
   , kind := SensorKind.passive
   , modality := SensorModality.microwave
   , regime := SensorRegime.listening
-  , window := { primaryBand := SpectrumBand.microwave, acceptsAdjacentBands := true, minimumIntensity := Q16_16.zero, maximumIntensity := Q16_16.four }
-  , aperture := { directionalBias := Q16_16.quarter, fieldWidth := Q16_16.three, lineOfSightRequired := false, boundaryPenetration := Q16_16.two }
+  , window := { primaryBand := SpectrumBand.microwave, acceptsAdjacentBands := true, minimumIntensity := FixedPoint.Q16_16.zero, maximumIntensity := FixedPoint.Q16_16.ofNat 4 }
+  , aperture := { directionalBias := FixedPoint.Q16_16.ofRatio 1 4, fieldWidth := FixedPoint.Q16_16.ofNat 3, lineOfSightRequired := false, boundaryPenetration := FixedPoint.Q16_16.two }
   , carrierProfile := { role := CarrierRole.communicationLink, interactionClass := InteractionClass.communication, propagationClass := PropagationClass.penetrative }
   , substrate := fpgaSubstrateProfile
   , homeRegion := 1 }
@@ -320,8 +322,8 @@ def opticalProbeField : SensorField :=
   , kind := SensorKind.active
   , modality := SensorModality.visible
   , regime := SensorRegime.probing
-  , window := { primaryBand := SpectrumBand.visible, acceptsAdjacentBands := false, minimumIntensity := Q16_16.quarter, maximumIntensity := Q16_16.four }
-  , aperture := { directionalBias := Q16_16.two, fieldWidth := Q16_16.one, lineOfSightRequired := true, boundaryPenetration := Q16_16.quarter }
+  , window := { primaryBand := SpectrumBand.visible, acceptsAdjacentBands := false, minimumIntensity := FixedPoint.Q16_16.ofRatio 1 4, maximumIntensity := FixedPoint.Q16_16.ofNat 4 }
+  , aperture := { directionalBias := FixedPoint.Q16_16.two, fieldWidth := FixedPoint.Q16_16.one, lineOfSightRequired := true, boundaryPenetration := FixedPoint.Q16_16.ofRatio 1 4 }
   , carrierProfile := { role := CarrierRole.activeProbe, interactionClass := InteractionClass.activeSensing, propagationClass := PropagationClass.lineOfSight }
   , substrate := fpgaSubstrateProfile
   , homeRegion := 1 }

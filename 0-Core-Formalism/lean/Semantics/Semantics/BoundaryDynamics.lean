@@ -1,6 +1,5 @@
 import Semantics.PhysicsScalarBridge
 import Semantics.RegimeCore
-import Semantics.ElectromagneticSpectrum
 import Semantics.ExoticSpacetime
 import Semantics.SpikingDynamics
 import Semantics.MagnetoPlasma
@@ -11,7 +10,6 @@ namespace Semantics.BoundaryDynamics
 
 open Semantics.PhysicsScalar
 open Semantics.RegimeCore
-open Semantics.ElectromagneticSpectrum
 open Semantics.ExoticSpacetime
 open Semantics.SpikingDynamics
 open Semantics.MagnetoPlasma

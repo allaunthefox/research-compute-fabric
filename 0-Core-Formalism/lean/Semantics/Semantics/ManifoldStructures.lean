@@ -1,6 +1,6 @@
+import Semantics.PhysicsScalarBridge
 import Semantics.FixedPoint
 import Semantics.RegimeCore
-import Semantics.ElectromagneticSpectrum
 import Semantics.ExoticSpacetime
 import Semantics.SpikingDynamics
 import Semantics.MagnetoPlasma
@@ -10,7 +10,6 @@ namespace Semantics.ManifoldStructures
 
 open Semantics.FixedPoint
 open Semantics.RegimeCore
-open Semantics.ElectromagneticSpectrum
 open Semantics.ExoticSpacetime
 open Semantics.SpikingDynamics
 open Semantics.MagnetoPlasma

@@ -71,4 +71,6 @@ def lt (a : PhysicsScalar.Q16_16) (b : PhysicsScalar.Q16_16) : Bool :=
 def eq (a : PhysicsScalar.Q16_16) (b : PhysicsScalar.Q16_16) : Bool :=
   a.toNat = b.toNat
 
+def fromNat (v : Nat) : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.fromNat v
+
 end Semantics.PhysicsScalarBridge

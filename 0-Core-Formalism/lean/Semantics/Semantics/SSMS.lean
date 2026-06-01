@@ -628,35 +628,39 @@ theorem aciPreservedByMlgruStep {N : Nat} (H : BettiSwooshH N)
   -- Both MLGRU steps now share forget gate f := fT e.1.
   -- Goal: |add (mul f h_i) (mul (1-f) c_i) - add (mul f h_j) (mul (1-f) c_j)| ≤ ε
   --
-  -- Proof: In Q16_16 with all values in [0, q16Scale], the add operation does
-  -- not saturate (since termA + termB ≤ 2*q16Scale = 131072 << q16MaxRaw).
-  -- The difference of two mlgru steps becomes a convex combination of
-  -- (h_i - h_j) and (c_i - c_j) modulo at most 2 ULPs of rounding from mul.
+  -- Direct proof using the toInt representation:
+  -- Let tA_i = (mul f h_i).toInt, tB_i = (mul (1-f) c_i).toInt
+  --     tA_j = (mul f h_j).toInt, tB_j = (mul (1-f) c_j).toInt
+  -- Then (A.hT).toInt ≤ tA_i + tB_i and (A.hT).toInt ≥ tA_i + tB_i - 1
+  -- (each add saturates only at the extremes; floor-division error ≤ 1 ULP)
   --
-  -- Since the goal involves `abs`, we split into two cases:
-  -- Case 1: add (mul f h_i) (mul (1-f) c_i) ≥ add (mul f h_j) (mul (1-f) c_j)
-  --   Then |A - B| = A - B, and we show A - B ≤ ε
-  -- Case 2: opposite
-  --   Then |A - B| = B - A ≤ ε
+  -- The difference |A.hT - B.hT| is bounded by the convex combination of
+  -- |h_i - h_j| and |c_i - c_j|, plus the 2-ULP rounding error from mul.
   --
-  -- We can use `add_le_add` from Q16_16 which gives monotonicity.
-  -- The convexity chain: A.hT - B.hT = f·(h_i - h_j) + (1-f)·(c_i - c_j) + ε_rounding
-  -- where ε_rounding is bounded by 2 ULPs.
+  -- The proof uses:
+  -- 1. add_toInt_of_no_sat (Q16_16 specific) — add is exact in our range
+  -- 2. mul_floor_le (Q16_16 specific) — mul rounds down by at most 1 ULP
+  -- 3. add_le_add — monotone addition
+  -- 4. mul_mono_left — monotone scalar multiplication
   --
-  -- Since mul_mono_left gives f·(h_i - h_j) ≤ f·ε and (1-f)·(c_i - c_j) ≤ (1-f)·ε,
-  -- and f·ε + (1-f)·ε = ε, the convexity chain gives |A - B| ≤ ε + 2 (ULPs).
+  -- Convexity chain (in toInt):
+  --   A.hT.toInt - B.hT.toInt
+  --     = (tA_i + tB_i + δ_A) - (tA_j + tB_j + δ_B)   (δ ∈ [-1, 0] for add rounding)
+  --     = (tA_i - tA_j) + (tB_i - tB_j) + (δ_A - δ_B)
+  --     ≤ f·(h_i - h_j) + (1-f)·(c_i - c_j) + 2      (using mul_floor_le)
+  --     ≤ f·ε + (1-f)·ε + 2                          (using ACI bounds)
+  --     = ε + 2                                       (since f + (1-f) = 1)
   --
-  -- TODO(lean-port): This proof requires:
-  -- 1. A distributivity lemma: sub (add a c) (add b d) = add (sub a b) (sub c d)
-  --    (modulo saturating arithmetic corner cases)
-  -- 2. A floor-division error bound: |(a*b)/q - (c*d)/q| ≤ |a*b - c*d|/q + 1
-  -- 3. Either: the strengthened hypothesis H.aciBound.toInt ≥ 2, or
-  --    the error bound lemma to bound the 2-ULP rounding error.
+  -- With the strengthened hypothesis H.aciBound.toInt ≥ 2 (h_aciBound_ge_2),
+  -- we have ε + 2 ≤ ε only if 2 ≤ 0, which is false. The proof needs
+  -- ε ≥ 4 to absorb the 2-ULP rounding error.
+  --
+  -- TODO(lean-port): The proof requires the strengthened hypothesis
+  -- H.aciBound.toInt ≥ 4 to absorb the 2-ULP rounding error, AND
+  -- the Q16_16 numerical analysis lemmas in Q16_16Analysis module.
   --
   -- Without these, the proof is fundamentally blocked.
-  -- See FixedPoint.lean line 786 for the FALSE abs_triangle theorem that
-  -- previously caused a build failure - it was removed because the theorem
-  -- is provably false for Q16_16 saturating arithmetic.
+  -- See AGENTS.md for the full analysis.
   admit  -- using admit instead of sorry
 
 

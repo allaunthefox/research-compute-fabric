@@ -8,14 +8,19 @@
   # Host Caddy remains as stable fallback on :80, forwards to Traefik.
   #
   # Architecture:
-  #   cupfox (Debian, control-plane) — historical, may be migrated
-  #   nixos (NixOS, server) — primary control plane with Traefik
+  #   cupfox (Debian, 100.110.163.82) — CONTROL PLANE (initial server)
+  #   nixos (NixOS, 100.102.173.61) — SERVER node joining cupfox, runs Traefik
   #   qfox-1 (CachyOS, agent) — foxtop compute, runs VCN/LUPINE daemons
   #   steamdeck (NixOS, agent) — GPU node
   #   racknerd (Debian, edge) — Caddy TLS termination
   #
+  # All nodes share the SAME k3s cluster. Pods scheduled on cupfox are visible
+  # to nixos-laptop and vice versa. Traefik on nixos-laptop routes to all
+  # services across all nodes.
+  #
   # Traffic flow:
   #   edge Caddy (racknerd:443) → host Caddy (nixos:80) → Traefik (nixos:30080) → Services
+  #   (Services may run on cupfox, nixos, qfox-1, steamdeck, etc.)
   #
   # Ray integration:
   #   Ray cluster runs in ray-system namespace (deployed separately via KubeRay)
@@ -42,10 +47,15 @@
     config.sops.secrets.k3s-token.path
   ];
 
-  # ── k3s as SERVER (not agent) to run Traefik ─────────────────────────────
+  # ── k3s as SERVER (not agent) joining CUPFOX control plane ────────────────
+  # Joins existing cluster on cupfox (100.110.163.82). All nodes share resources.
+  # The same K3S_TOKEN is used across all nodes for mutual authentication.
+  # Traefik runs on server nodes and ServiceLB exposes them via NodePort.
   services.k3s = {
     enable = true;
     role = "server";  # CHANGED from agent to server
+    serverAddr = serverAddr or "https://100.110.163.82:6443";  # cupfox control-plane
+    tokenFile = config.sops.secrets.k3s-token.path;
     # Traefik is ENABLED by default (no --disable=traefik)
     # ServiceLB is ENABLED by default (no --disable-servicelb)
     extraFlags = toString [

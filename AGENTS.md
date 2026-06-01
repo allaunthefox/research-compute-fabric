@@ -228,6 +228,47 @@ git ls-remote --heads github <branch>
   live alert API. Treat the push result and remote-head hash separately from
   dependency-alert remediation.
 
+## Q16_16 Unification Migration
+
+The codebase has 6 different Q16_16 type definitions causing fragmentation. A migration
+is in progress to unify all consumers to the canonical `Semantics.FixedPoint.Q16_16`.
+
+### Migration Status
+- ✅ `ManifoldStructures.lean` - Migrated (type-only usage)
+- ✅ `Errors.lean` - Migrated (function-using, bridge-based approach)
+- 📋 25 more PhysicsScalar consumers pending
+- 📋 17 ElectromagneticSpectrum consumers pending
+
+### Migration Approach
+For files using PhysicsScalar.Q16_16:
+
+1. **Type-only files** (simple): Replace imports and open statements
+   ```lean
+   -import Semantics.PhysicsScalar
+   +import Semantics.FixedPoint
+   
+   -open Semantics.PhysicsScalar
+   +open Semantics.FixedPoint
+   ```
+
+2. **Function-using files** (requires bridge): Use `Semantics.PhysicsScalarBridge`
+   ```lean
+   import Semantics.PhysicsScalarBridge
+   
+   -- Replace PhysicsScalar.Q16_16.gt with PhysicsScalarBridge.gt
+   -- Replace constants with PhysicsScalarBridge.one, .two, .three, etc.
+   ```
+
+### Available Bridge Functions
+- `toFixedPoint : PhysicsScalar.Q16_16 → FixedPoint.Q16_16`
+- `fromFixedPoint : FixedPoint.Q16_16 → PhysicsScalar.Q16_16`
+- `add`, `mul`, `sub` - bridged arithmetic
+- `gt`, `le` - bridged comparisons
+- `zero`, `one`, `two`, `three`, `four`, `half`, `quarter` - constants
+
+### Migration Guide
+See `LEAD_Q16_16_MIGRATION_GUIDE.md` for detailed microsteps.
+
 ## Glossary (before reading further)
 
 These terms appear throughout all AGENTS.md files and the codebase:

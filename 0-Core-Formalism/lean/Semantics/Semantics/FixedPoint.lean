@@ -719,10 +719,22 @@ theorem abs_sub_comm (a b : Q16_16) : abs (sub a b) = abs (sub b a) := by
     `neg q16MinRaw` overflows to `q16MaxRaw`, altering the clamping path.
     SSMS does not use this theorem — the `bound` proof has been restructured
     to avoid it. -/
-theorem sub_eq_add_neg (a b : Q16_16) : sub a b = add a (neg b) := by
-  -- TODO(lean-port): this is false at q16MinRaw. Either add precondition
-  -- `hb : b.toInt > q16MinRaw` or prove the specific form needed by SSMS.
-  admit
+theorem sub_eq_add_neg (a b : Q16_16) (hb : b.toInt > q16MinRaw) : sub a b = add a (neg b) := by
+  have h_neg_inRange_lo : q16MinRaw ≤ -b.toInt := by
+    have h := b.property.2
+    dsimp [toInt] at h ⊢
+    dsimp [q16MaxRaw, q16MinRaw] at h ⊢
+    omega
+  have h_neg_inRange_hi : -b.toInt ≤ q16MaxRaw := by
+    dsimp [toInt] at hb ⊢
+    dsimp [q16MinRaw] at hb
+    dsimp [q16MaxRaw]
+    omega
+  have h_neg_int : (neg b).toInt = -b.toInt := by
+    rw [neg, ofRawInt_toInt_eq_clamp]
+    apply q16Clamp_id_of_inRange _ h_neg_inRange_lo h_neg_inRange_hi
+  rw [sub, add, h_neg_int]
+  rfl
 
 /-- Multiplication by a non-negative scalar is monotone:
     if a ≤ b and c ≥ 0, then a*c ≤ b*c.

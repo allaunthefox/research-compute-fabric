@@ -219,11 +219,21 @@ module research_stack_top (
         .kernel_sum(ss_kernel_sum)
     );
 
+    // FIX: Address-decoded trigger enables to prevent aliasing
+    // Each module only fires when its specific address range is selected
+    wire highs_addr_match = (cpu_mem_addr[11:8] == 4'h4);  // $04xx range
+    wire frac_addr_match  = (cpu_mem_addr[11:8] == 4'h5);  // $05xx range
+    wire spatial_addr_match = (cpu_mem_addr[11:8] == 4'h6); // $06xx range
+
+    wire highs_trigger_gated  = map_highs_trigger & highs_addr_match;
+    wire frac_trigger_gated   = map_highs_trigger & frac_addr_match;
+    wire spatial_trigger_gated = map_highs_trigger & spatial_addr_match;
+
     // HiGHS Pivot Accelerator
     highs_pivot_accelerator highs (
         .clk(clk),
         .rst_n(rst_n),
-        .start(map_highs_trigger),
+        .start(highs_trigger_gated),
         .pivot_element(map_highs_pivot),
         .column_in(map_q16_a),
         .column_idx(map_q16_b[5:0]),
@@ -241,9 +251,9 @@ module research_stack_top (
     ) frac_bc (
         .clk(clk),
         .rst_n(rst_n),
-        .data_in(map_q16_a[7:0]),       // 8-bit data from memory map
-        .data_valid(map_highs_trigger),  // reuse highs_trigger as data strobe
-        .data_count(map_q16_b[15:0]),    // element count from memory map
+        .data_in(map_q16_a[7:0]),
+        .data_valid(frac_trigger_gated),
+        .data_count(map_q16_b[15:0]),
         .fd_q16(frac_fd_q16),
         .fd_valid(frac_fd_valid)
     );
@@ -270,7 +280,7 @@ module research_stack_top (
         .particle_x(map_q16_a[3:0]),
         .particle_y(map_q16_a[7:4]),
         .particle_z(map_q16_a[11:8]),
-        .particle_valid(map_highs_trigger),
+        .particle_valid(spatial_trigger_gated),
         .query_x(map_q16_b[3:0]),
         .query_y(map_q16_b[7:4]),
         .query_z(map_q16_b[11:8]),

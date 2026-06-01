@@ -7,6 +7,7 @@ Uses /dev/shm for fast WAL-mode SQLite.
 """
 
 import sqlite3
+import shutil
 import urllib.request
 import urllib.parse
 import json
@@ -19,7 +20,7 @@ TMP = "/dev/shm/physics_equations.db"
 
 if os.path.exists(TMP):
     os.remove(TMP)
-os.system(f"cp {SRC} {TMP}")
+shutil.copy2(SRC, TMP)
 
 conn = sqlite3.connect(TMP)
 conn.execute("PRAGMA journal_mode=WAL")
@@ -194,7 +195,7 @@ for row in cur.fetchall():
 conn.close()
 
 # Copy back
-os.system(f"cp {TMP} {SRC}")
+shutil.copy2(TMP, SRC)
 elapsed = time.time() - start_time
 print(f"\nDone — {total_ver} total verifications ({total_papers} new from Semantic Scholar) in {elapsed:.0f}s")
 print(f"Database: {SRC} ({os.path.getsize(SRC)} bytes)")

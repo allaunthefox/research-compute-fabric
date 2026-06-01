@@ -22,6 +22,7 @@ Usage:
   python3 topology.py run <script.py> — distribute script across topology
 """
 
+import base64
 import subprocess
 import sys
 import json
@@ -176,11 +177,14 @@ def ssh_exec(node: Node, cmd: str, timeout: int = 30) -> dict:
         }
 
 
+_ALLOWED_PYTHON_BINS = {"python3", "python", "/usr/bin/python3"}
+
 def ssh_exec_python(node: Node, script: str, timeout: int = 60) -> dict:
     """Execute a Python script on a remote node."""
-    # Escape the script for safe transmission over SSH
-    escaped = script.replace("'", "'\\''")
-    cmd = f"{node.python_bin} -c '{escaped}'"
+    if node.python_bin not in _ALLOWED_PYTHON_BINS:
+        raise ValueError(f"Disallowed python_bin: {node.python_bin}")
+    encoded = base64.b64encode(script.encode()).decode()
+    cmd = f"echo {encoded} | base64 -d | {node.python_bin}"
     return ssh_exec(node, cmd, timeout=timeout)
 
 

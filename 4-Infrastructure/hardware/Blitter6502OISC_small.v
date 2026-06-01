@@ -61,7 +61,8 @@ module Blitter6502OISC (
     //==========================================================================
     // CPU State
     //==========================================================================
-    reg [11:0] pc;
+    // FIX: Widen pc to 16-bit to match 16-bit address assembly throughout
+    reg [15:0] pc;
     reg [7:0]  a_reg;     // Accumulator (mirrors $0000)
     reg [7:0]  x_reg;     // X register (mirrors $0001)
     reg [7:0]  y_reg;     // Y register (mirrors $0002)
@@ -69,9 +70,10 @@ module Blitter6502OISC (
     reg        halted;
 
     // Instruction decode registers
-    reg [11:0] src_addr;
-    reg [11:0] dst_addr;
-    reg [11:0] next_addr;
+    // FIX: Widen address registers to 16-bit to match pc width
+    reg [15:0] src_addr;
+    reg [15:0] dst_addr;
+    reg [15:0] next_addr;
     reg [7:0]  src_val;
     reg [7:0]  dst_val;
     reg [7:0]  result;

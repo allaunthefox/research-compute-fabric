@@ -257,11 +257,15 @@ impl ThermodynamicGovernor {
             },
         };
 
-        let pstate_ptr = Box::into_raw(Box::new(pstate_config));
-        self.pstate_control.store(pstate_ptr, Ordering::SeqCst);
+        let new_ptr = Box::into_raw(Box::new(pstate_config));
+        // Swap atomically and free the old allocation to prevent memory leak.
+        let old_ptr = self.pstate_control.swap(new_ptr, Ordering::SeqCst);
+        if !old_ptr.is_null() {
+            unsafe { drop(Box::from_raw(old_ptr)); }
+        }
 
         // Apply hardware P-State changes
-        self.apply_hardware_pstate_changes(unsafe { &*pstate_ptr }).await?;
+        self.apply_hardware_pstate_changes(unsafe { &*new_ptr }).await?;
         Ok(())
     }
 
@@ -481,7 +485,11 @@ impl ThermodynamicGovernor {
         if active_ptr.is_null() {
             self.lut_strategy.ground_lut.clone()
         } else {
-            unsafe { Arc::from_raw(active_ptr) }
+            // SAFETY: active_ptr was obtained via Arc::as_ptr() and does not transfer
+            // ownership. We must NOT call Arc::from_raw (which steals the refcount).
+            // Instead, reconstruct a temporary Arc in ManuallyDrop and clone it.
+            let borrowed = unsafe { std::mem::ManuallyDrop::new(Arc::from_raw(active_ptr)) };
+            (*borrowed).clone()
         }
     }
 
@@ -489,6 +497,16 @@ impl ThermodynamicGovernor {
     pub fn record_performance(&self, counter: &str, value: u64) {
         let mut entry = self.performance_counters.entry(counter.to_string()).or_insert(0);
         *entry += value;
+    }
+}
+
+impl Drop for ThermodynamicGovernor {
+    fn drop(&mut self) {
+        // Free the PStateControl allocation created via Box::into_raw.
+        let pstate_ptr = self.pstate_control.load(Ordering::SeqCst);
+        if !pstate_ptr.is_null() {
+            unsafe { drop(Box::from_raw(pstate_ptr)); }
+        }
     }
 }
 

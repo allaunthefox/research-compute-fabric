@@ -54,7 +54,7 @@ def calculateQFactor (balance : EnergyBalance) : Q16_16 :=
   let numerator := balance.flashEnergy + balance.enthalpy + balance.recoveredEnergy - balance.demonWork
   let denominator := balance.workEnergy + balance.energyLoss
   if denominator > zero then
-    (numerator * ofNat 65536) / denominator
+    numerator / denominator
   else
     zero
 
@@ -62,7 +62,7 @@ def meetsTargetQ (state : QFactorState) : Bool :=
   state.qFactor >= state.targetQ
 
 def hasNetEnergyGain (state : QFactorState) : Bool :=
-  state.qFactor > ofNat 65536
+  state.qFactor > one
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- §2  Energy Balance Optimization
@@ -76,14 +76,14 @@ def energySurplus (balance : EnergyBalance) : Q16_16 :=
 def energyEfficiencyFromBalance (balance : EnergyBalance) : Q16_16 :=
   let totalEnergyCost := balance.workEnergy + balance.energyLoss
   if totalEnergyCost > zero then
-    (balance.workEnergy * ofNat 65536) / totalEnergyCost
+    balance.workEnergy / totalEnergyCost
   else
     zero
 
 def recoveryRatio (balance : EnergyBalance) : Q16_16 :=
   let totalInputEnergy := balance.flashEnergy + balance.enthalpy
   if totalInputEnergy > zero then
-    (balance.recoveredEnergy * ofNat 65536) / totalInputEnergy
+    balance.recoveredEnergy / totalInputEnergy
   else
     zero
 

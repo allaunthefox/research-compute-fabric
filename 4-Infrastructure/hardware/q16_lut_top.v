@@ -1,12 +1,13 @@
-// Wrapper for q16_lut_core that maps valid to result[31]
-// This reduces the pin count to fit the Tang Nano 9K
+// Wrapper for q16_lut_core with separate valid output pin
+// FIX: Valid bit no longer overwrites MSB of result; widened output bus
 module q16_lut_top (
     input  wire        clk,
     input  wire        rst,
     input  wire [2:0]  op_select,
     input  wire [15:0] a,
     input  wire [15:0] b,
-    output wire [31:0] result
+    output wire [31:0] result,
+    output wire        valid
 );
 
     wire [31:0] core_result;
@@ -22,7 +23,8 @@ module q16_lut_top (
         .valid     (core_valid)
     );
 
-    // Map valid into result[31] bit for external observation
-    assign result = {core_valid, core_result[30:0]};
+    // FIX: Full 32-bit result preserved; valid exposed as separate pin
+    assign result = core_result;
+    assign valid  = core_valid;
 
 endmodule

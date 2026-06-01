@@ -18,10 +18,10 @@ struct Cell {
     x : u32,
     y : u32,
     z : u32,
-    density : u32,          // particle count (integer, not float)
+    density : atomic<u32>,  // particle count (integer, not float) — atomic for race-free concurrent inserts
     fd : u32,               // free density field (Q16_16 fixed-point raw bits)
     voltage_mode : u32,     // 0=STORE, 1=COMPUTE, 2=APPROX, 3=MORPHIC
-    particle_count : u32,   // explicit particle count
+    particle_count : atomic<u32>, // explicit particle count — atomic for race-free concurrent inserts
     max_neighbor : u32,     // max neighbor density (Q16_16 raw bits)
 }
 
@@ -60,15 +60,14 @@ fn insertShader(@builtin(global_invocation_id) gid : vec3<u32>) {
     let cy = (ci / GRID_DIM) % GRID_DIM;
     let cz = ci / (GRID_DIM * GRID_DIM);
     // Set coordinates on first insert
-    if (grid[ci].particle_count == 0u) {
+    if (atomicLoad(&grid[ci].particle_count) == 0u) {
         grid[ci].x = cx;
         grid[ci].y = cy;
         grid[ci].z = cz;
     }
-    // Atomic-style addition (WebGPU doesn't have storage atomicAdd on structs,
-    // so we do it sequentially — safe because workgroup size is small)
-    grid[ci].particle_count += pe.count;
-    grid[ci].density += pe.count;
+    // FIX: atomicAdd prevents data race when multiple threads insert into the same cell
+    atomicAdd(&grid[ci].particle_count, pe.count);
+    atomicAdd(&grid[ci].density, pe.count);
 }
 
 // ============================================================
@@ -82,10 +81,10 @@ fn clearShader(@builtin(global_invocation_id) gid : vec3<u32>) {
     grid[idx].x = idx % GRID_DIM;
     grid[idx].y = (idx / GRID_DIM) % GRID_DIM;
     grid[idx].z = idx / (GRID_DIM * GRID_DIM);
-    grid[idx].density = 0u;
+    atomicStore(&grid[idx].density, 0u);
     grid[idx].fd = 0u;
     grid[idx].voltage_mode = 0u;
-    grid[idx].particle_count = 0u;
+    atomicStore(&grid[idx].particle_count, 0u);
     grid[idx].max_neighbor = 0u;
     filterMask[idx] = 0u;
     sortIndex[idx] = idx;
@@ -110,7 +109,7 @@ fn neighborShader(@builtin(global_invocation_id) gid : vec3<u32>) {
                 let ny = (cy + u32(dy + 16)) % GRID_DIM;
                 let nz = (cz + u32(dz + 16)) % GRID_DIM;
                 let ni = nx + ny * GRID_DIM + nz * GRID_DIM * GRID_DIM;
-                let d = grid[ni].density;
+                let d = atomicLoad(&grid[ni].density);
                 if (d > maxD) {
                     maxD = d;
                 }
@@ -128,7 +127,7 @@ fn neighborShader(@builtin(global_invocation_id) gid : vec3<u32>) {
 fn filterShader(@builtin(global_invocation_id) gid : vec3<u32>) {
     let idx = gid.x;
     if (idx >= GRID_SIZE) { return; }
-    filterMask[idx] = select(0u, 1u, grid[idx].density > params.threshold);
+    filterMask[idx] = select(0u, 1u, atomicLoad(&grid[idx].density) > params.threshold);
 }
 
 // ============================================================
@@ -163,8 +162,8 @@ fn sortShader(@builtin(local_invocation_id) lid : vec3<u32>,
 
     let a = sortIndex[elemIdx];
     let b = sortIndex[partner];
-    let da = grid[a].density;
-    let db = grid[b].density;
+    let da = atomicLoad(&grid[a].density);
+    let db = atomicLoad(&grid[b].density);
 
     if (ascending && da < db) || (!ascending && da > db) {
         sortIndex[elemIdx] = b;
@@ -178,7 +177,7 @@ fn sortShader(@builtin(local_invocation_id) lid : vec3<u32>,
 // ============================================================
 
 struct AggregateResult {
-    sum : u32,
+    sum : atomic<u32>,  // FIX: atomic to prevent race when multiple workgroups accumulate
     count : u32,
     min_val : u32,
     max_val : u32,
@@ -194,7 +193,7 @@ fn aggregateShader(@builtin(global_invocation_id) gid : vec3<u32>,
     let idx = gid.x;
     var val : u32 = 0u;
     if (idx < GRID_SIZE && filterMask[idx] != 0u) {
-        val = grid[idx].density;
+        val = atomicLoad(&grid[idx].density);
     }
     scratch[idx] = val;
 
@@ -211,8 +210,8 @@ fn aggregateShader(@builtin(global_invocation_id) gid : vec3<u32>,
 
     // First thread in each workgroup writes block sum
     if (lid.x == 0u) {
-        // Write to aggResult using atomic-free approach
-        aggResult.sum += scratch[idx];
+        // FIX: atomicAdd prevents race when multiple workgroups accumulate into aggResult.sum
+        atomicAdd(&aggResult.sum, scratch[idx]);
     }
 }
 

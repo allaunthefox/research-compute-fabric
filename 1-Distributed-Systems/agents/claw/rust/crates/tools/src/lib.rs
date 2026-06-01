@@ -5155,6 +5155,13 @@ fn detect_powershell_shell() -> std::io::Result<&'static str> {
 }
 
 fn command_exists(command: &str) -> bool {
+    // Validate command to prevent shell injection: only allow safe characters.
+    let is_safe = command
+        .chars()
+        .all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '.' || c == '/' || c == '-');
+    if !is_safe || command.is_empty() {
+        return false;
+    }
     std::process::Command::new("sh")
         .arg("-lc")
         .arg(format!("command -v {command} >/dev/null 2>&1"))

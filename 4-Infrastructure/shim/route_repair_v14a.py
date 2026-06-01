@@ -10,7 +10,7 @@ and generates 3D-ranked patch candidates. Focused on zero-bucket repair.
 # scoring decisions. Remaining Python logic (16D modifier, 4D projection,
 # chart-driven patch generators, proof-server I/O) is not yet ported.
 
-import json, os, re, sys
+import json, logging, os, re, sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -22,7 +22,7 @@ PROOF_SERVER_TOKEN = os.environ.get("PROOF_SERVER_TOKEN", "")
 if not PROOF_SERVER_TOKEN:
     tf = os.environ.get("PROOF_SERVER_TOKEN_FILE", os.path.expanduser("~/.config/ene/language-proof-server.token"))
     try: PROOF_SERVER_TOKEN = Path(tf).read_text().strip()
-    except: pass
+    except (ValueError, TypeError, KeyError) as e: logging.warning(f"Failed to read proof server token: {e}")
 
 FAILURE_THEOREMS = [
     ("rw_missing_dir_1","theorem t (a b : Nat) (h : a = b) : b + 0 = a + 0 := by\n  simp"),
@@ -507,7 +507,7 @@ def is_goal_invalid(code: str, info: dict) -> dict:
         try:
             if ip["pattern"](g, info):
                 return {"invalid": True, "reason": ip["reason"]}
-        except: pass
+        except (ValueError, TypeError, KeyError) as e: logging.warning(f"is_goal_invalid pattern check failed: {e}")
     return {"invalid": False}
 
 

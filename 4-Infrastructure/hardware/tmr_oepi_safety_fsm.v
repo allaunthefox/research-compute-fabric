@@ -98,19 +98,19 @@ module oepi_calculator (
                 default:               oepi_score <= 8'd64;
             endcase
             
-            // Adjust OEPI based on S3C metrics
-            if (s3c_emit) begin
-                // Emission increases risk
-                if (oepi_score < 8'd110) begin
-                    oepi_score <= oepi_score + 8'd10;
-                end
-            end
-            
-            // High J-score increases risk
-            if (s3c_j_score > 32'd5000) begin
-                if (oepi_score < 8'd115) begin
-                    oepi_score <= oepi_score + 8'd5;
-                end
+            // FIX: Combine s3c_emit and s3c_j_score into single conditional
+            // to prevent double-increment race when both fire in same cycle
+            begin
+                reg [7:0] oepi_delta;
+                oepi_delta = 8'd0;
+                if (s3c_emit)
+                    oepi_delta = oepi_delta + 8'd10;
+                if (s3c_j_score > 32'd5000)
+                    oepi_delta = oepi_delta + 8'd5;
+                if (oepi_delta > 8'd0 && oepi_score <= 8'd127 - oepi_delta)
+                    oepi_score <= oepi_score + oepi_delta;
+                else if (oepi_delta > 8'd0)
+                    oepi_score <= 8'd127;
             end
             
             // Safety violation detection

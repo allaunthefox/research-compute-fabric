@@ -623,13 +623,28 @@ theorem aciPreservedByMlgruStep {N : Nat} (H : BettiSwooshH N)
                   (mlgruStep (fT e.2) (cT e.2) (nodes e.2).hidden).hT).abs :=
     Semantics.FixedPoint.Q16_16.abs_sub_comm _ _
   rw [h_swap]
-  -- TODO(lean-port): complete the mlgruStep ACI preservation chain
-  -- |h'_i - h'_j| = |fT*(h_i-h_j) + (1-fT)*(c_i-c_j)|
-  --   ≤ |fT*(h_i-h_j)| + |(1-fT)*(c_i-c_j)|
-  --   ≤ fT*|h_i-h_j| + (1-fT)*|c_i-c_j|
-  --   ≤ fT*H.aciBound + (1-fT)*H.aciBound
-  --   = H.aciBound
-  admit
+  dsimp [mlgruStep]
+  rw [← hij]
+  -- Both MLGRU steps now share forget gate f := fT e.1.
+  -- Goal: |add (mul f h_i) (mul (1-f) c_i) - add (mul f h_j) (mul (1-f) c_j)| ≤ ε
+  --
+  -- In exact arithmetic the convexity chain is:
+  --   |f·(h_i-h_j) + (1-f)·(c_i-c_j)|
+  --   ≤ f·|h_i-h_j| + (1-f)·|c_i-c_j|   (triangle + scalar monotonicity)
+  --   ≤ f·ε + (1-f)·ε = ε                (convexity identity)
+  --
+  -- Q16_16.mul uses floor division (a.toInt * b.toInt) / 65536 which
+  -- introduces up to 1 ULP rounding per multiplication.  The two mul
+  -- operations in the MLGRU step can accumulate up to 2 ULPs of error,
+  -- making the exact ε bound unprovable without additional hypotheses.
+  --
+  -- Counterexample: f=32767, h_i=65536, h_j=65535, c_i=65536, c_j=65535,
+  -- ε=1 yields A.hT=65536, B.hT=65534, |A-B|=2 > 1=ε.
+  --
+  -- TODO(lean-port): complete with a rounding-aware convexity lemma that
+  -- bounds the floor-division residual, or strengthen the hypothesis to
+  -- H.aciBound.toInt ≥ 2 to absorb the 2-ULP rounding envelope.
+  sorry
 
 
 -- ════════════════════════════════════════════════════════════

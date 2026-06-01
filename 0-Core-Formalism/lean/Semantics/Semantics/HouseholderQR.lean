@@ -105,14 +105,10 @@ structure HouseholderReflection (n : Nat) where
 
    In Q16_16, we approximate ||x|| via normSq (no sqrt in compute path).
    The sign is determined by the sign of x_1. -/
-def householderVector (x : Q16Vec n) : Q16Vec n :=
+def householderVector (x : Q16Vec n) (hn : n > 0) : Q16Vec n :=
   let normSq := Q16Vec.normSq x
-  let x0 := Q16Vec.get x ⟨0, by sorry -- TODO(lean-port): n > 0 precondition
-  ⟩
-  -- v = x - alpha * e_1 where alpha = sign(x_0) * sqrt(normSq)
-  -- In Q16_16: approximate alpha = x_0 (first component)
-  -- This is the standard Householder formula
-  let e1 : Q16Vec n := Q16Vec.zero n |>.set ⟨0, by sorry⟩ Q16_16.one
+  let x0 := Q16Vec.get x ⟨0, hn⟩
+  let e1 : Q16Vec n := Q16Vec.zero n |>.set ⟨0, hn⟩ Q16_16.one
   let alpha := x0
   Q16Vec.sub x (Q16Vec.scale e1 alpha)
 
@@ -164,11 +160,11 @@ def qrFactorize (A : Q16Mat n m) : QRState n m :=
    3. Update R with new column
 
    This is the incremental update for streaming spike trains. -/
-def incrementalUpdate (qr : QRState n m) (newCol : Q16Vec n) : QRState n (m + 1) :=
+def incrementalUpdate (qr : QRState n m) (newCol : Q16Vec n) (hn : n > 0) : QRState n (m + 1) :=
   -- Apply existing reflections to new column
   let y := qr.reflections.foldl (fun acc refl => applyReflection refl acc) newCol
   -- Compute new reflection for y
-  let newRefl : HouseholderReflection n := ⟨householderVector y, Q16Vec.normSq (householderVector y)⟩
+  let newRefl : HouseholderReflection n := ⟨householderVector y hn, Q16Vec.normSq (householderVector y hn)⟩
   -- Add new column to R
   let newR : Q16Mat n (m + 1) := {
     cols := fun j =>

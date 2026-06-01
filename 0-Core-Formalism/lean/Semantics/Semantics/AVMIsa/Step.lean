@@ -90,9 +90,28 @@ def evalPrim (p : Prim) (s : State) : Outcome State :=
               | ⟨AvmTy.q0_16, AvmVal.q0 x⟩, ⟨AvmTy.q0_16, AvmVal.q0 y⟩ =>
                   Outcome.ok (push1 s2 ⟨AvmTy.q0_16, AvmVal.q0 (Semantics.Q0_16.sub y x)⟩)
               | _, _ => Outcome.err StepError.typeMismatch
-  | _ =>
-      -- Remaining primitives are not yet implemented in v1.
-      Outcome.err StepError.typeMismatch
+  | Prim.addSatQ16 =>
+      match pop1 s with
+      | Outcome.err e => Outcome.err e
+      | Outcome.ok (v1, s1) =>
+          match pop1 s1 with
+          | Outcome.err e => Outcome.err e
+          | Outcome.ok (v2, s2) =>
+              match v1, v2 with
+              | ⟨AvmTy.q16_16, AvmVal.q16 x⟩, ⟨AvmTy.q16_16, AvmVal.q16 y⟩ =>
+                  Outcome.ok (push1 s2 ⟨AvmTy.q16_16, AvmVal.q16 (Semantics.Q16_16.add y x)⟩)
+              | _, _ => Outcome.err StepError.typeMismatch
+  | Prim.subSatQ16 =>
+      match pop1 s with
+      | Outcome.err e => Outcome.err e
+      | Outcome.ok (v1, s1) =>
+          match pop1 s1 with
+          | Outcome.err e => Outcome.err e
+          | Outcome.ok (v2, s2) =>
+              match v1, v2 with
+              | ⟨AvmTy.q16_16, AvmVal.q16 x⟩, ⟨AvmTy.q16_16, AvmVal.q16 y⟩ =>
+                  Outcome.ok (push1 s2 ⟨AvmTy.q16_16, AvmVal.q16 (Semantics.Q16_16.sub y x)⟩)
+              | _, _ => Outcome.err StepError.typeMismatch
 
 /-- One-step execution.
 

@@ -207,73 +207,71 @@ def main():
     report_path = os.path.join(os.path.dirname(__file__), "../..",
                                "shared-data/pist_canary_report.json")
 
-    rfile = open(receipts_path, "w")
     rslts = []
+    with open(receipts_path, "w") as rfile:
 
-    for i, (name, code) in enumerate(theorems):
-        print(f"\n[{i+1}/{len(theorems)}] {name:30s} ... ", end="", flush=True)
-        t0 = time.time()
+        for i, (name, code) in enumerate(theorems):
+            print(f"\n[{i+1}/{len(theorems)}] {name:30s} ... ", end="", flush=True)
+            t0 = time.time()
 
-        try:
-            resp = prove(code, name, worker_url)
-            dt = time.time() - t0
-        except subprocess.TimeoutExpired:
-            resp = {"ok": False, "error": "timeout", "receipt": {"elapsed_ms": 60_000, "returncode": -1}}
-            dt = 60.0
+            try:
+                resp = prove(code, name, worker_url)
+                dt = time.time() - t0
+            except subprocess.TimeoutExpired:
+                resp = {"ok": False, "error": "timeout", "receipt": {"elapsed_ms": 60_000, "returncode": -1}}
+                dt = 60.0
 
-        ok = resp.get("ok", False)
-        receipt = resp.get("receipt", resp)
-        std = receipt.get("stdout", "")
-        err = receipt.get("stderr", "")
-        rc = receipt.get("returncode", -1)
-        elapsed = receipt.get("elapsed_ms", int(dt * 1000))
+            ok = resp.get("ok", False)
+            receipt = resp.get("receipt", resp)
+            std = receipt.get("stdout", "")
+            err = receipt.get("stderr", "")
+            rc = receipt.get("returncode", -1)
+            elapsed = receipt.get("elapsed_ms", int(dt * 1000))
 
-        if "error" in resp and "timeout" in str(resp.get("error")):
-            status = "timeout"
-        elif ok and rc == 0:
-            status = "verified"
-        elif "error" in resp:
-            status = "worker_error"
-        elif not ok and "Lean" in str(std) or "error" in str(std):
-            status = "elaboration_error"
-        else:
-            status = "failed"
+            if "error" in resp and "timeout" in str(resp.get("error")):
+                status = "timeout"
+            elif ok and rc == 0:
+                status = "verified"
+            elif "error" in resp:
+                status = "worker_error"
+            elif not ok and "Lean" in str(std) or "error" in str(std):
+                status = "elaboration_error"
+            else:
+                status = "failed"
 
-        # Verify the proof result actually makes sense
-        if status == "verified" and not std.strip() and not err.strip():
-            status = "verified_empty_output"
+            # Verify the proof result actually makes sense
+            if status == "verified" and not std.strip() and not err.strip():
+                status = "verified_empty_output"
 
-        print(f"{status:25s} {dt:5.1f}s rc={rc}", flush=True)
+            print(f"{status:25s} {dt:5.1f}s rc={rc}", flush=True)
 
-        structural = build_receipt(resp, name, code, status)
+            structural = build_receipt(resp, name, code, status)
 
-        # Run PIST
-        pist_result = pist_classify(structural)
-        proxy = pist_result.get("rrc_shape", {}).get("proxy", {}).get("label", "?")
-        exact = pist_result.get("rrc_shape", {}).get("exact", {}).get("label", "?")
-        zmp = pist_result.get("spectral", {}).get("zero_mode_proxy_count", "?")
-        mhash = pist_result.get("braid", {}).get("matrix_hash", "?")[:16]
-        chash = pist_result.get("canonical_hash", "?")[:16]
-        gap = pist_result.get("spectral", {}).get("symmetric_spectral_gap", 0)
-        rank = pist_result.get("spectral", {}).get("rank_estimate", 0)
-        lap0 = pist_result.get("spectral", {}).get("laplacian_zero_count", 0)
+            # Run PIST
+            pist_result = pist_classify(structural)
+            proxy = pist_result.get("rrc_shape", {}).get("proxy", {}).get("label", "?")
+            exact = pist_result.get("rrc_shape", {}).get("exact", {}).get("label", "?")
+            zmp = pist_result.get("spectral", {}).get("zero_mode_proxy_count", "?")
+            mhash = pist_result.get("braid", {}).get("matrix_hash", "?")[:16]
+            chash = pist_result.get("canonical_hash", "?")[:16]
+            gap = pist_result.get("spectral", {}).get("symmetric_spectral_gap", 0)
+            rank = pist_result.get("spectral", {}).get("rank_estimate", 0)
+            lap0 = pist_result.get("spectral", {}).get("laplacian_zero_count", 0)
 
-        print(f"         PIST→ proxy={proxy:30s} exact={exact:30s} ZMP={zmp} gap={gap:.3f}", flush=True)
+            print(f"         PIST→ proxy={proxy:30s} exact={exact:30s} ZMP={zmp} gap={gap:.3f}", flush=True)
 
-        row = {
-            "name": name, "status": status, "ok": ok, "returncode": rc,
-            "elapsed_ms": elapsed, "wall_s": round(dt, 2),
-            "proxy_shape": proxy, "exact_shape": exact,
-            "zmp": zmp, "spectral_gap": gap, "rank_estimate": rank,
-            "laplacian_zero_count": lap0,
-            "matrix_hash": mhash, "canonical_hash": chash,
-        }
-        rslts.append(row)
+            row = {
+                "name": name, "status": status, "ok": ok, "returncode": rc,
+                "elapsed_ms": elapsed, "wall_s": round(dt, 2),
+                "proxy_shape": proxy, "exact_shape": exact,
+                "zmp": zmp, "spectral_gap": gap, "rank_estimate": rank,
+                "laplacian_zero_count": lap0,
+                "matrix_hash": mhash, "canonical_hash": chash,
+            }
+            rslts.append(row)
 
-        # Write receipt JSONL
-        rfile.write(json.dumps(structural) + "\n")
-
-    rfile.close()
+            # Write receipt JSONL
+            rfile.write(json.dumps(structural) + "\n")
 
     # ── Analysis ──
     print("\n" + "=" * 60, flush=True)

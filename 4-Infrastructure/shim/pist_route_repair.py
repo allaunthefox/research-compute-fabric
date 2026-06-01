@@ -7,6 +7,7 @@ from the predicted tactic family, retries on the proof worker, and measures reco
 
 import hashlib
 import json
+import logging
 import math
 import os
 import re
@@ -27,7 +28,7 @@ if not PROOF_SERVER_TOKEN:
     tf = os.environ.get("PROOF_SERVER_TOKEN_FILE", os.path.expanduser("~/.config/ene/language-proof-server.token"))
     try:
         PROOF_SERVER_TOKEN = Path(tf).read_text().strip()
-    except: pass
+    except (ValueError, TypeError, KeyError) as e: logging.warning(f"Failed to read proof server token: {e}")
 
 TACTIC_TEMPLATES = {
     "rewrite": ["rw [%s]", "simp [%s]"],

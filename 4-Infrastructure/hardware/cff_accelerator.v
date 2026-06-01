@@ -219,7 +219,8 @@ module cff_accelerator (
                     // Zero-fill remaining up to byte 56
                     // Put length in bits at bytes 56-63
                     msg_block[447:0] <= msg_block[447:0]; // preserve
-                    msg_block[511:448] <= {56'd0, data_len[5:0]}; // length in bits = data_len * 8 (simplified)
+                    // FIX: Full 64-bit big-endian bit count (data_len * 8)
+                    msg_block[511:448] <= {53'd0, data_len, 3'b000}; // data_len * 8 as 64-bit
                     msg_idx   <= 6'd56;
                     msg_done  <= 1'b0;
                     state <= HASH;
@@ -255,6 +256,13 @@ module cff_accelerator (
                             hash_phase <= 3'd2;
                         end
 
+                        3'd1: begin
+                            // FIX: Separate expansion phase to avoid race with compress
+                            W[expand_idx] <= s1 + W[expand_idx-7] + s0 + W[expand_idx-16];
+                            expand_idx <= expand_idx + 6'd1;
+                            hash_phase <= 3'd2;
+                        end
+
                         3'd2: begin
                             // Compression round
                             h <= g;
@@ -270,9 +278,8 @@ module cff_accelerator (
                                 round <= round + 6'd1;
                             end else if (round < 6'd63) begin
                                 round <= round + 6'd1;
-                                // Need to expand W for next round
-                                W[expand_idx] <= s1 + W[expand_idx-7] + s0 + W[expand_idx-16];
-                                expand_idx <= expand_idx + 6'd1;
+                                // FIX: Expand in separate phase to prevent race condition
+                                hash_phase <= 3'd1;
                             end else begin
                                 // Final round done - finalize
                                 hash_phase <= 3'd3;

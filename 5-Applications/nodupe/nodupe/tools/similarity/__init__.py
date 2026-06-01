@@ -230,10 +230,15 @@ class BruteForceBackend(SimilarityBackend):
                 with open(json_path, 'r') as f:
                     index_data = json.load(f)
             else:
-                # Fallback to pickle for backwards compatibility - but validate
+                # Fallback to pickle for backwards compatibility - restricted unpickler
+                class _RestrictedUnpickler(pickle.Unpickler):
+                    _ALLOWED = {'builtins': {'dict', 'list', 'tuple', 'str', 'int', 'float', 'bool', 'set', 'frozenset'}}
+                    def find_class(self, module, name):
+                        if module in self._ALLOWED and name in self._ALLOWED[module]:
+                            return getattr(__import__(module), name)
+                        raise pickle.UnpicklingError(f"Blocked: {module}.{name}")
                 with open(path, 'rb') as f:
-                    # Only allow specific trusted content types
-                    index_data = pickle.load(f)
+                    index_data = _RestrictedUnpickler(f).load()
 
             if index_data.get('dimensions') != self.dimensions:
                 warnings.warn(

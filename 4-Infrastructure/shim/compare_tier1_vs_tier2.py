@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Compare Tier 1 vs Tier 2 on independent labels — with alignment check + full reporting."""
 import json
+import logging
 import os
 import sys
 from collections import Counter, defaultdict
@@ -157,7 +158,7 @@ def main():
                     k = f"{tk}_{m}"
                     if k in t1d.get("results", {}):
                         t1[k] = t1d["results"][k].get("accuracy", 0)
-    except: pass
+    except (ValueError, TypeError, KeyError) as e: logging.warning(f"Failed to read Tier 1 baselines: {e}")
 
     # Summary comparison table
     print(f"\n{'='*80}", flush=True)

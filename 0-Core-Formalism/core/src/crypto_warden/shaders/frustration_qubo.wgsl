@@ -25,8 +25,13 @@ var<storage, read> couplings_j: array<u32>;
 @group(0) @binding(4)
 var<storage, read> couplings_jij: array<f32>;
 
+// FIX: double-buffered spins — read from spins, write to spins_next.
+// Host swaps buffer pointers between dispatches to avoid read/write race.
 @group(0) @binding(5)
-var<storage, read_write> spins: array<i32>;
+var<storage, read> spins: array<i32>;
+
+@group(0) @binding(7)
+var<storage, read_write> spins_next: array<i32>;
 
 @group(0) @binding(6)
 var<storage, read_write> best_energy: array<atomic<u32>>;
@@ -39,6 +44,9 @@ fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
     if (idx >= n) {
         return;
     }
+
+    // FIX: copy current spin to write buffer so unchanged spins persist
+    spins_next[idx] = spins[idx];
     
     let max_iter = params.max_iterations;
     let temp_start = params.temp_start;
@@ -103,15 +111,18 @@ fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
         }
         
         if (accept) {
-            spins[i] = new_spin;
+            // FIX: write to spins_next (double-buffer) to avoid race with concurrent reads of spins
+            spins_next[i] = new_spin;
             local_energy += delta_e;
         }
         
-        // Atomic min to track best energy
+        // FIX: CAS loop for atomic min — load/compare/store was a TOCTOU race
         let energy_bits = bitcast<u32>(local_energy);
-        let current = atomicLoad(&best_energy[0]);
-        if (energy_bits < current) {
-            atomicStore(&best_energy[0], energy_bits);
+        loop {
+            let current = atomicLoad(&best_energy[0]);
+            if (energy_bits >= current) { break; }
+            let xchg = atomicCompareExchangeWeak(&best_energy[0], current, energy_bits);
+            if (xchg.exchanged) { break; }
         }
     }
 }

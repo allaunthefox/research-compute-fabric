@@ -231,8 +231,13 @@ module spatial_hash_bram (
                     // Capture previous read result
                     nbr_current_density <= cell_rd_data;
 
-                    // Store in neighbor BRAM
-                    nbr_wr_addr <= {nbr_dz, nbr_dy, nbr_dx};
+                    // FIX: Clamp address to 0-26 to prevent OOB write (RAM is 27 entries)
+                    // {nbr_dz, nbr_dy, nbr_dx} produces 0..26 when each is 0..2, but
+                    // the 6-bit concatenation could theoretically reach 63 if values corrupt
+                    begin
+                        wire [5:0] raw_nbr_addr = {nbr_dz, nbr_dy, nbr_dx};
+                        nbr_wr_addr <= (raw_nbr_addr > 5'd26) ? 5'd26 : raw_nbr_addr[4:0];
+                    end
                     nbr_wr_data <= cell_rd_data;
                     nbr_wr_en   <= 1'b1;
 

@@ -39,11 +39,16 @@ module q16_lut_core (
     // Intermediate computation (combinational)
     reg [31:0] compute_result;
 
+    // FIX: Use signed arithmetic for Q16.16 add/sub; multiply requires >> 16 shift
+    wire signed [31:0] a_signed = {{16{a_reg[15]}}, a_reg};
+    wire signed [31:0] b_signed = {{16{b_reg[15]}}, b_reg};
+    wire signed [63:0] mul_product = a_signed * b_signed;
+
     always @(*) begin
         case (op_reg)
-            3'b000: compute_result = {16'd0, a_reg} + {16'd0, b_reg};          // add
-            3'b001: compute_result = {16'd0, a_reg} - {16'd0, b_reg};          // sub
-            3'b010: compute_result = (a_reg * b_reg);                           // mul (simplified)
+            3'b000: compute_result = a_signed + b_signed;                       // add (signed)
+            3'b001: compute_result = a_signed - b_signed;                       // sub (signed)
+            3'b010: compute_result = mul_product[47:16];                        // mul: Q16.16 * Q16.16 >> 16
             3'b011: begin                                                        // div
                 if (b_reg != 16'd0)
                     compute_result = ({16'd0, a_reg} << 16) / {16'd0, b_reg};

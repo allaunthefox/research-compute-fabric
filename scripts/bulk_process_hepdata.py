@@ -14,6 +14,7 @@ Usage:
 
 import csv
 import json
+import logging
 import os
 import sys
 from pathlib import Path
@@ -33,12 +34,12 @@ def extract_numerical_data(filepath):
                     try:
                         v = float(p)
                         values.append(v)
-                    except:
-                        pass
+                    except (ValueError, TypeError, KeyError) as e:
+                        logging.warning(f"Failed to parse value: {e}")
                 if len(values) >= 2:
                     data_points.append(values)
-    except:
-        pass
+    except (ValueError, TypeError, KeyError) as e:
+        logging.warning(f"Failed to read file {filepath}: {e}")
     return data_points
 
 def process_record(record_dir):
@@ -81,7 +82,7 @@ def main():
     
     output = {
         "source": "HEPData bulk download",
-        "records": len(results),
+        "record_count": len(results),
         "total_data_points": total_points,
         "coverage": {
             "B_physics": sum(1 for r in results if any(x in r["record"] for x in ["ins14", "ins13", "ins15", "ins16", "ins17"])),

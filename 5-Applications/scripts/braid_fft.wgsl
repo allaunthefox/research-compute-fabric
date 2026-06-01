@@ -144,6 +144,12 @@ fn fft_stage(
     let group = i / butterfly_size;
     let pos_in_group = i % butterfly_size;
 
+    // FIX: barrier ensures prior dispatch writes are visible before reads
+    workgroupBarrier();
+
+    // Read phase — all threads read before any writes to prevent read/write race
+    var result_even : PhaseVec;
+    var result_odd : PhaseVec;
     if (pos_in_group < half) {
         let k = group * butterfly_size + pos_in_group;
         let j = pos_in_group;
@@ -153,9 +159,22 @@ fn fft_stage(
         let w = twiddle(j, butterfly_size);
         let t = cmul(w, odd_val);
 
-        scratch[k]        = cadd(even, t);
-        scratch[k + half] = csub(even, t);
+        result_even = cadd(even, t);
+        result_odd  = csub(even, t);
     }
+
+    // FIX: barrier ensures all reads complete before any thread writes
+    workgroupBarrier();
+
+    // Write phase — safe because all reads finished above
+    if (pos_in_group < half) {
+        let k = group * butterfly_size + pos_in_group;
+        scratch[k]        = result_even;
+        scratch[k + half] = result_odd;
+    }
+
+    // FIX: barrier ensures all writes complete before next stage reads
+    workgroupBarrier();
 }
 
 // ════════════════════════════════════════════════════════════
@@ -196,6 +215,12 @@ fn ifft_stage(
     let group = i / butterfly_size;
     let pos_in_group = i % butterfly_size;
 
+    // FIX: barrier ensures prior dispatch writes are visible before reads
+    workgroupBarrier();
+
+    // Read phase — all threads read before any writes to prevent read/write race
+    var result_even : PhaseVec;
+    var result_odd : PhaseVec;
     if (pos_in_group < half) {
         let k = group * butterfly_size + pos_in_group;
         let j = pos_in_group;
@@ -205,9 +230,22 @@ fn ifft_stage(
         let w = twiddle_inverse(j, butterfly_size);
         let t = cmul(w, odd_val);
 
-        scratch[k]        = cadd(even, t);
-        scratch[k + half] = csub(even, t);
+        result_even = cadd(even, t);
+        result_odd  = csub(even, t);
     }
+
+    // FIX: barrier ensures all reads complete before any thread writes
+    workgroupBarrier();
+
+    // Write phase — safe because all reads finished above
+    if (pos_in_group < half) {
+        let k = group * butterfly_size + pos_in_group;
+        scratch[k]        = result_even;
+        scratch[k + half] = result_odd;
+    }
+
+    // FIX: barrier ensures all writes complete before next stage reads
+    workgroupBarrier();
 }
 
 @compute @workgroup_size(64)

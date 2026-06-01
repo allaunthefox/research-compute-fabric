@@ -1,14 +1,59 @@
 use anyhow::{Context, Result};
 use chrono::Utc;
+use rand::Rng;
 use rusqlite::OptionalExtension;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap, HashSet, VecDeque};
 use std::net::SocketAddr;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use tracing::{info, warn};
+
+const MAX_PEERS: usize = 256;
+const MAX_REPLICATION_QUEUE: usize = 10_000;
+const MAX_SEEN_MESSAGES: usize = 100_000;
+const MAX_PAYLOAD_ENTRIES: usize = 100;
+const MAX_PAYLOAD_VALUE_BYTES: usize = 10_240;
+
+pub struct BoundedSet {
+    set: HashSet<String>,
+    order: VecDeque<String>,
+    max_size: usize,
+}
+
+impl BoundedSet {
+    fn new(max_size: usize) -> Self {
+        Self {
+            set: HashSet::new(),
+            order: VecDeque::new(),
+            max_size,
+        }
+    }
+
+    fn contains(&self, s: &str) -> bool {
+        self.set.contains(s)
+    }
+
+    fn insert(&mut self, s: String) -> bool {
+        if self.set.contains(&s) {
+            return false;
+        }
+        if self.set.len() >= self.max_size {
+            if let Some(old) = self.order.pop_front() {
+                self.set.remove(&old);
+            }
+        }
+        self.set.insert(s.clone());
+        self.order.push_back(s);
+        true
+    }
+
+    fn len(&self) -> usize {
+        self.set.len()
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NodeIdentity {
@@ -43,6 +88,7 @@ impl Default for NodeIdentity {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct GossipMessage {
     pub message_id: String,
     pub sender_node: String,
@@ -105,6 +151,10 @@ impl GossipMessage {
         let Some(ref sig) = self.signature else {
             return false;
         };
+        let sig_bytes = match hex::decode(sig) {
+            Ok(b) => b,
+            Err(_) => return false,
+        };
         use hmac::{Hmac, Mac};
         use sha2::Sha256;
         type HmacSha256 = Hmac<Sha256>;
@@ -113,8 +163,7 @@ impl GossipMessage {
             Err(_) => return false,
         };
         mac.update(&self.canonical_bytes());
-        let result = mac.finalize();
-        hex::encode(result.into_bytes()) == *sig
+        mac.verify_slice(&sig_bytes).is_ok()
     }
 }
 
@@ -400,7 +449,7 @@ pub struct EneNode {
     pub db_path: PathBuf,
     pub cluster_secret: String,
     pub peers: Arc<RwLock<HashMap<String, NodeIdentity>>>,
-    pub seen_message_ids: Arc<RwLock<HashSet<String>>>,
+    pub seen_message_ids: Arc<RwLock<BoundedSet>>,
     pub replication_queue: Arc<RwLock<Vec<String>>>,
     pub seed_nodes: Vec<String>,
     pub gossip_socket: Arc<tokio::net::UdpSocket>,
@@ -418,10 +467,10 @@ impl EneNode {
         let loaded_peers = db.load_peers().unwrap_or_default();
         let mut identity = NodeIdentity::default();
         identity.node_id = node_id.unwrap_or_else(|| {
-            format!(
-                "ene_{}",
-                &sha256_hex(&Utc::now().timestamp_millis().to_string())[..16]
-            )
+            let mut rng = rand::thread_rng();
+            let mut bytes = [0u8; 16];
+            rng.fill(&mut bytes);
+            format!("ene_{}", hex::encode(bytes))
         });
         identity.public_key = sha256_hex(&identity.node_id)[..32].to_string();
         db.save_peer(&identity)?;
@@ -444,7 +493,7 @@ impl EneNode {
             db_path: db_path.to_path_buf(),
             cluster_secret: secret,
             peers: Arc::new(RwLock::new(peers_map)),
-            seen_message_ids: Arc::new(RwLock::new(HashSet::new())),
+            seen_message_ids: Arc::new(RwLock::new(BoundedSet::new(MAX_SEEN_MESSAGES))),
             replication_queue: Arc::new(RwLock::new(Vec::new())),
             seed_nodes,
             gossip_socket: Arc::new(socket),
@@ -487,6 +536,25 @@ impl EneNode {
     pub async fn process_incoming_gossip(&self, data: &[u8], from: SocketAddr) -> Result<()> {
         let msg: GossipMessage = serde_json::from_slice(data)?;
 
+        if let serde_json::Value::Object(ref map) = msg.payload {
+            if map.len() > MAX_PAYLOAD_ENTRIES {
+                warn!("dropping gossip from {}: payload too large ({} entries)", from, map.len());
+                return Ok(());
+            }
+            for (k, v) in map {
+                if k.len() > MAX_PAYLOAD_VALUE_BYTES {
+                    warn!("dropping gossip from {}: payload key too large", from);
+                    return Ok(());
+                }
+                if let serde_json::Value::String(s) = v {
+                    if s.len() > MAX_PAYLOAD_VALUE_BYTES {
+                        warn!("dropping gossip from {}: payload value too large ({} bytes)", from, s.len());
+                        return Ok(());
+                    }
+                }
+            }
+        }
+
         if !msg.verify(&self.cluster_secret) {
             warn!("dropping unsigned/invalid gossip from {}", from);
             return Ok(());
@@ -527,7 +595,7 @@ impl EneNode {
 
         if let Some(nid) = node_id {
             let mut peers = self.peers.write().await;
-            if !peers.contains_key(nid) && nid != self.identity.node_id {
+            if !peers.contains_key(nid) && nid != self.identity.node_id && peers.len() < MAX_PEERS {
                 let peer = NodeIdentity {
                     node_id: nid.into(),
                     public_key: sha256_hex(nid)[..32].to_string(),
@@ -595,6 +663,10 @@ impl EneNode {
         if target == Some(&self.identity.node_id) {
             info!("received replication request from {}", msg.sender_node);
             let mut queue = self.replication_queue.write().await;
+            if queue.len() >= MAX_REPLICATION_QUEUE {
+                let drain_to = queue.len() / 4;
+                queue.drain(..drain_to);
+            }
             queue.push(msg.sender_node.clone());
         }
         Ok(())

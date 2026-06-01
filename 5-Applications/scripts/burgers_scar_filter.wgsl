@@ -223,8 +223,8 @@ struct SpectrumUniforms {
 @group(0) @binding(2) var<storage, read>      ky_spec: array<f32>;
 @group(0) @binding(3) var<storage, read>      u_spec: array<PhaseVec>;
 @group(0) @binding(4) var<storage, read>      v_spec: array<PhaseVec>;
-@group(0) @binding(5) var<storage, read_write> E_bins: array<f32>;  // atomic counter per bin
-@group(0) @binding(6) var<storage, read_write> bin_counts: array<u32>;
+@group(0) @binding(5) var<storage, read_write> E_bins: array<atomic<u32>>;  // FIX: f32 energy stored as u32 bits, CAS loop for atomic add
+@group(0) @binding(6) var<storage, read_write> bin_counts: array<atomic<u32>>;  // FIX: atomic<u32> for race-free counting
 
 // CHECK 2 of 4 — Arithmetic:
 //   E(k) = (|û(k)|² + |v̂(k)|²) / nx²
@@ -251,13 +251,18 @@ fn energy_spectrum(@builtin(global_invocation_id) gid: vec3<u32>) {
     // Radial bin
     let bin_idx = u32(k_abs / spec_params.bin_width);
     if (bin_idx < spec_params.n_bins) {
-        // Atomic add to bin
-        // (WGSL requires atomic for race-free accumulation)
-        // Use storage buffer with atomic<f32> — requires
-        // the "f32 atomic" feature or manual CAS loop.
-        // For simplicity, non-atomic (assumes single workgroup)
-        E_bins[bin_idx] = E_bins[bin_idx] + Ek;
-        bin_counts[bin_idx] = bin_counts[bin_idx] + 1u;
+        // FIX: atomicAdd for race-free bin counting across workgroups
+        atomicAdd(&bin_counts[bin_idx], 1u);
+
+        // FIX: CAS loop for atomic f32 add to E_bins (stored as u32 bits)
+        // WGSL lacks native atomic<f32>, so we use compare-exchange-weak
+        loop {
+            let old_bits = atomicLoad(&E_bins[bin_idx]);
+            let old_val = bitcast<f32>(old_bits);
+            let new_bits = bitcast<u32>(old_val + Ek);
+            let xchg = atomicCompareExchangeWeak(&E_bins[bin_idx], old_bits, new_bits);
+            if (xchg.exchanged) { break; }
+        }
     }
 }
 

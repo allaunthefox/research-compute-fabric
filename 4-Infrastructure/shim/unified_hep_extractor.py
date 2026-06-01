@@ -12,6 +12,7 @@ Usage:
 
 import argparse
 import json
+import logging
 import os
 from pathlib import Path
 from dataclasses import dataclass, asdict
@@ -73,7 +74,8 @@ class UnifiedExtractor:
         """Parse comma-separated values."""
         try:
             return [float(x.strip()) for x in str(row_data).split(',')]
-        except:
+        except (ValueError, TypeError, KeyError) as e:
+            logging.warning(f"Failed to parse row data: {e}")
             return []
 
     def extract_hepdata(self) -> int:

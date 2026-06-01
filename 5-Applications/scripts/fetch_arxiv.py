@@ -2,6 +2,7 @@
 """arXiv API parallel fetcher — fills verification table with peer-reviewed papers for each domain."""
 
 import sqlite3
+import shutil
 import xml.etree.ElementTree as ET
 import urllib.request
 import urllib.parse
@@ -17,7 +18,7 @@ if os.path.exists(TMP):
     os.remove(TMP)
 
 # Copy to tmpfs
-os.system(f"cp {SRC} {TMP}")
+shutil.copy2(SRC, TMP)
 
 conn = sqlite3.connect(TMP)
 conn.execute("PRAGMA journal_mode=WAL")
@@ -207,7 +208,7 @@ for row in cur.fetchall():
 conn.close()
 
 # Copy back to persistent storage
-os.system(f"cp {TMP} {SRC}")
+shutil.copy2(TMP, SRC)
 elapsed = time.time() - start
 print(f"\n✓ Done — {total_all} total verifications ({total_papers} new from arXiv) in {elapsed:.0f}s")
 print(f"  Database: {SRC}")

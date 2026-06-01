@@ -91,13 +91,13 @@ def crossStep (s : BraidState) : BraidState :=
   let newStrands : Fin 8 → BraidStrand := fun k =>
     match k.val with
     | 0 => cross2 ⟨0, by decide⟩ ⟨1, by decide⟩
-    | 1 => cross2 ⟨0, by decide⟩ ⟨1, by decide⟩
+    | 1 => cross2 ⟨1, by decide⟩ ⟨0, by decide⟩
     | 2 => cross2 ⟨2, by decide⟩ ⟨3, by decide⟩
-    | 3 => cross2 ⟨2, by decide⟩ ⟨3, by decide⟩
+    | 3 => cross2 ⟨3, by decide⟩ ⟨2, by decide⟩
     | 4 => cross2 ⟨4, by decide⟩ ⟨5, by decide⟩
-    | 5 => cross2 ⟨4, by decide⟩ ⟨5, by decide⟩
+    | 5 => cross2 ⟨5, by decide⟩ ⟨4, by decide⟩
     | 6 => cross2 ⟨6, by decide⟩ ⟨7, by decide⟩
-    | 7 => cross2 ⟨6, by decide⟩ ⟨7, by decide⟩
+    | 7 => cross2 ⟨7, by decide⟩ ⟨6, by decide⟩
     | _ => s.strands k  -- unreachable for Fin 8, kept for totality
   { strands    := newStrands
   , step_count := s.step_count + 1 }

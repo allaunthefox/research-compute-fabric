@@ -781,25 +781,10 @@ theorem abs_nonneg (a : Q16_16) : (abs a).toInt ≥ 0 := by
     exact q16Clamp_nonneg_of_nonneg h_nonneg
   · omega
 
-/-- For non-negative a, |a*b| ≤ a*|b|.
-    WARNING: This lemma is UNCONDITIONALLY FALSE (counterexample: a=3, b=-1
-    gives LHS=1, RHS=0). The error comes from floor division: a*b may round
-    to -1 but a*|b| rounds to 0. Use abs_mul_bound or a direct convexity
-    argument instead.
-    TODO(lean-port): do not use this lemma — restructure SSMS to avoid it. -/
-theorem abs_mul_le (a b : Q16_16) (ha : a.toInt ≥ 0) :
-    (abs (mul a b)).toInt ≤ (mul a (abs b)).toInt := by
-  admit
-
-/-- Triangle inequality for Q16_16: |a*b| ≤ |a| * |b|.
-    WARNING: This lemma is FALSE in general (counterexample: a=3, b=-3 gives
-    LHS=1, RHS=0). The floor division causes |a*b|/65536 to round up while
-    |a|*|b|/65536 rounds to 0 for small values.
-    TODO(lean-port): do not use this lemma — restructure SSMS to use
-    abs_triangle_add (|x+y| ≤ |x|+|y|) instead. -/
-theorem abs_triangle (a b : Q16_16) :
-    (abs (mul a b)).toInt ≤ (mul (abs a) (abs b)).toInt := by
-  admit
+-- REMOVED: Theorems abs_mul_le and abs_triangle are FALSE for Q16_16 with floor division
+-- abs_mul_le: counterexample a=3, b=-1 gives LHS=1, RHS=0
+-- abs_triangle: counterexample a=3, b=-3 gives LHS=1, RHS=0
+-- See TODO comments in original file for restructure guidance
 
 end Q16_16
 

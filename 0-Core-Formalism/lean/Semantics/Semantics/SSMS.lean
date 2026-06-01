@@ -628,18 +628,35 @@ theorem aciPreservedByMlgruStep {N : Nat} (H : BettiSwooshH N)
   -- Both MLGRU steps now share forget gate f := fT e.1.
   -- Goal: |add (mul f h_i) (mul (1-f) c_i) - add (mul f h_j) (mul (1-f) c_j)| ≤ ε
   --
-  -- Proof strategy: Show that add (mul f x) (mul (1-f) y) is monotone in x and y.
-  -- The ACI invariants give us bounds on (h_i - h_j) and (c_i - c_j).
-  -- Combined with mul_mono_left, we get bounds on the contribution of each term.
+  -- Proof: In Q16_16 with all values in [0, q16Scale], the add operation does
+  -- not saturate (since termA + termB ≤ 2*q16Scale = 131072 << q16MaxRaw).
+  -- The difference of two mlgru steps becomes a convex combination of
+  -- (h_i - h_j) and (c_i - c_j) modulo at most 2 ULPs of rounding from mul.
   --
-  -- TODO(lean-port): Complete the convexity chain proof.
-  -- The fundamental obstacle is that Q16_16.abs_triangle is FALSE for Q16_16
-  -- (counterexample: a=3, b=-3 gives |a|=3, |b|=3, but |a-b|=0 ≠ 6).
-  -- Without a triangle inequality, we cannot directly prove the convexity chain.
+  -- Since the goal involves `abs`, we split into two cases:
+  -- Case 1: add (mul f h_i) (mul (1-f) c_i) ≥ add (mul f h_j) (mul (1-f) c_j)
+  --   Then |A - B| = A - B, and we show A - B ≤ ε
+  -- Case 2: opposite
+  --   Then |A - B| = B - A ≤ ε
   --
-  -- Alternative approach: prove the bound elementwise using omega on the toInt
-  -- representation, leveraging the fact that all values stay in [0, q16Scale]
-  -- where no saturation occurs.
+  -- We can use `add_le_add` from Q16_16 which gives monotonicity.
+  -- The convexity chain: A.hT - B.hT = f·(h_i - h_j) + (1-f)·(c_i - c_j) + ε_rounding
+  -- where ε_rounding is bounded by 2 ULPs.
+  --
+  -- Since mul_mono_left gives f·(h_i - h_j) ≤ f·ε and (1-f)·(c_i - c_j) ≤ (1-f)·ε,
+  -- and f·ε + (1-f)·ε = ε, the convexity chain gives |A - B| ≤ ε + 2 (ULPs).
+  --
+  -- TODO(lean-port): This proof requires:
+  -- 1. A distributivity lemma: sub (add a c) (add b d) = add (sub a b) (sub c d)
+  --    (modulo saturating arithmetic corner cases)
+  -- 2. A floor-division error bound: |(a*b)/q - (c*d)/q| ≤ |a*b - c*d|/q + 1
+  -- 3. Either: the strengthened hypothesis H.aciBound.toInt ≥ 2, or
+  --    the error bound lemma to bound the 2-ULP rounding error.
+  --
+  -- Without these, the proof is fundamentally blocked.
+  -- See FixedPoint.lean line 786 for the FALSE abs_triangle theorem that
+  -- previously caused a build failure - it was removed because the theorem
+  -- is provably false for Q16_16 saturating arithmetic.
   admit  -- using admit instead of sorry
 
 

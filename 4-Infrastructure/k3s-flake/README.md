@@ -1,5 +1,10 @@
 # Unified Topology Flake — Research Stack
 
+> ⚠️ **Reality check**: This README describes the **aspirational architecture**. The
+> actually deployed cluster differs significantly. See the Reality Audit section
+> below for discrepancies and the `research-stack-infrastructure-bootstrap` skill
+> for the actual bootstrap procedure.
+
 A zero-fingerprint NixOS flake that describes the entire k3s cluster topology as
 code. Every node contains the seed to reconstruct itself: no IPs, no secrets,
 no external dependencies embedded in the flake.
@@ -328,3 +333,69 @@ Every deployment-specific value comes from:
 - `specialArgs` at build time
 - Sops-decrypted `.age` files at activation time
 - The user's configuration edits in `flake.nix`
+
+---
+
+## Reality Audit (June 2026)
+
+This flake describes the **desired** architecture. The currently deployed cluster
+differs in several ways. Track these when using this flake to rebuild.
+
+### Control Plane
+
+| Claim in README | Reality |
+|----------------|---------|
+| `nixos-laptop` is k3s server | **cupfox** (100.110.163.82, Debian) is control plane |
+| `nixos` runs Caddy + Traefik | `nixos` is a k3s agent (role=storage, joins cupfox) |
+| `serverAddr = "https://100.102.173.61:6443"` for all agents | `serverAddr = "https://100.110.163.82:6443"` (cupfox) |
+
+### Edge TLS
+
+| Claim in README | Reality |
+|----------------|---------|
+| Edge Caddy forwards to `nixos:80` → Caddy → Traefik :30080 | **nixos:80 is closed.** Edge Caddy forwards DIRECTLY to qfox-1 NodePorts per-service |
+| Edge config comes from `k3s-edge.nix` | Edge Caddyfile is **manually maintained** on racknerd, not from the NixOS flake |
+| `k3s-edge.nix` module drives the edge | The NixOS microvm on racknerd may have drifted from the flake |
+
+### Ingress
+
+| Claim in README | Reality |
+|----------------|---------|
+| Traefik runs on NodePort 30080 | **Traefik runs on NodePort 30109** (30080 was claimed by Authentik) |
+| `services` namespace auto-created | Created manually during fix |
+| All Ingress backends are in `services` namespace | Cross-namespace ExternalName services bridge to `media`, `monitoring`, `authentik` namespaces |
+| Authentik forward-auth works | Fixed — middleware now points to `authentik-server.authentik.svc.cluster.local` |
+
+### Deployed Services
+
+| Service | Status |
+|---------|--------|
+| Authentik, Jellyfin, Audiobookshelf, Homarr, *arr stack | ✅ Running in `media` namespace |
+| Uptime Kuma, Prometheus/Grafana | ✅ Running in `monitoring` namespace |
+| Ray cluster (CPU, GPU, ARM64) | ✅ Running in `ray-system` namespace |
+| Hermes (chat), Homer (landing) | ❌ Not deployed |
+| Actual Budget, Credential Server, Registry/Jobs/Blobs APIs | ❌ Not deployed |
+
+### Hostname Mappings
+
+| Flake hostName | Actual k3s hostname | Notes |
+|---------------|-------------------|-------|
+| `nixos-laptop` | `nixos` | Hostname mismatch — agents registered as `nixos` |
+| `microvm-racknerd` | `racknerd` | Hostname mismatch — machine is `racknerd-510bd9c` |
+| `qfox-1` | `qfox-1` | ✅ Matches |
+| `nixos-steamdeck-1` | `steamdeck` | Hostname mismatch |
+| `361395-1` | N/A | Dead node — replaced by neon-64gb |
+
+### For a Fresh Replication
+
+Use the `research-stack-infrastructure-bootstrap` skill for the actual procedure.
+The key differences from the flake's bootstrap docs:
+
+1. The control plane must be a **Debian** machine joined via `curl -sfL https://get.k3s.io`
+   (or any non-NixOS via `join-agent.sh`). The NixOS flake can join agents but
+   the server bootstrap is outside the flake's scope.
+2. Edge Caddy config must be manually maintained on the edge VPS,
+   OR the edge must be rebuilt from the flake (requires SSH).
+3. Traefik install via Helm is manual (k3s has `--disable traefik`).
+4. ExternalName services must be created in the `services` namespace for each
+   cross-namespace Ingress backend.

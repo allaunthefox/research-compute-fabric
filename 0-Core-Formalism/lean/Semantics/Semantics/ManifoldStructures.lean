@@ -1,4 +1,4 @@
-import Semantics.PhysicsScalar
+import Semantics.FixedPoint
 import Semantics.RegimeCore
 import Semantics.ElectromagneticSpectrum
 import Semantics.ExoticSpacetime
@@ -8,7 +8,7 @@ import Semantics.Errors
 
 namespace Semantics.ManifoldStructures
 
-open Semantics.PhysicsScalar
+open Semantics.FixedPoint
 open Semantics.RegimeCore
 open Semantics.ElectromagneticSpectrum
 open Semantics.ExoticSpacetime

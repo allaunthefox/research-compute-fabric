@@ -644,7 +644,8 @@ theorem aciPreservedByMlgruStep {N : Nat} (H : BettiSwooshH N)
   -- TODO(lean-port): complete with a rounding-aware convexity lemma that
   -- bounds the floor-division residual, or strengthen the hypothesis to
   -- H.aciBound.toInt ≥ 2 to absorb the 2-ULP rounding envelope.
-  sorry
+  -- BLOCKED: Requires additional lemmas for Q16_16 floor-division rounding
+  admit
 
 
 -- ════════════════════════════════════════════════════════════

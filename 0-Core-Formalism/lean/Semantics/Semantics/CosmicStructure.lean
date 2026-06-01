@@ -10,7 +10,7 @@ import Semantics.ManifoldStructures
 
 namespace Semantics.CosmicStructure
 
-open Semantics.PhysicsScalar
+
 open Semantics.RegimeCore
 open Semantics.ElectromagneticSpectrum
 open Semantics.BoundaryDynamics

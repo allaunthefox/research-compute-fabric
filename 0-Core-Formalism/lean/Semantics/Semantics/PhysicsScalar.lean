@@ -35,6 +35,10 @@ def fromRawNat (value : Nat) : Q16_16 :=
 def fromNat (value : Nat) : Q16_16 :=
   satFromNat (value * scale)
 
+def fromRatio (num den : Nat) : Q16_16 :=
+  if den = 0 then zero
+  else satFromNat ((num * scale) / den)
+
 def toNatFloor (value : Q16_16) : Nat :=
   value.toNat / scale
 

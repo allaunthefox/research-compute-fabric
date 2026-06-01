@@ -35,6 +35,8 @@ def maxValue : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.maxValue
 /-- Bridge PhysicsScalar-specific functions (just forward) -/
 def fromRawNat (v : Nat) : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.fromRawNat v
 def satFromNat (v : Nat) : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.satFromNat v
+def fromNat (v : Nat) : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.fromNat v
+def fromRatio (num den : Nat) : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.fromRatio num den
 def toNatFloor (v : PhysicsScalar.Q16_16) : Nat := PhysicsScalar.Q16_16.toNatFloor v
 def add (a b : PhysicsScalar.Q16_16) : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.add a b
 def addSaturating (a b : PhysicsScalar.Q16_16) : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.addSaturating a b
@@ -70,7 +72,5 @@ def lt (a : PhysicsScalar.Q16_16) (b : PhysicsScalar.Q16_16) : Bool :=
 
 def eq (a : PhysicsScalar.Q16_16) (b : PhysicsScalar.Q16_16) : Bool :=
   a.toNat = b.toNat
-
-def fromNat (v : Nat) : PhysicsScalar.Q16_16 := PhysicsScalar.Q16_16.fromNat v
 
 end Semantics.PhysicsScalarBridge

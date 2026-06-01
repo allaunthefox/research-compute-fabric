@@ -1,4 +1,4 @@
-import Semantics.PhysicsScalar
+import Semantics.PhysicsScalarBridge
 import Semantics.PhysicsEuclidean
 import Semantics.PhysicsLagrangian
 import Semantics.RegimeCore
@@ -108,49 +108,49 @@ structure ExoticTransitionResult (n : Nat) where
 
 
 def zeroDifferential : TemporalDifferential :=
-  { localStep := PhysicsScalar.Q16_16.zero
-  , externalStep := PhysicsScalar.Q16_16.zero
-  , drift := PhysicsScalar.Q16_16.zero
-  , dilation := PhysicsScalar.Q16_16.one
-  , coherence := PhysicsScalar.Q16_16.one }
+  { localStep := PhysicsScalarBridge.zero
+  , externalStep := PhysicsScalarBridge.zero
+  , drift := PhysicsScalarBridge.zero
+  , dilation := PhysicsScalarBridge.one
+  , coherence := PhysicsScalarBridge.one }
 
 
 def unitCone : CausalCone :=
-  { forwardWeight := PhysicsScalar.Q16_16.one
-  , backwardWeight := PhysicsScalar.Q16_16.zero
-  , lateralWeight := PhysicsScalar.Q16_16.zero
+  { forwardWeight := PhysicsScalarBridge.one
+  , backwardWeight := PhysicsScalarBridge.zero
+  , lateralWeight := PhysicsScalarBridge.zero
   , signature := .timelike }
 
 
 def classifySignature (cone : CausalCone) : SignatureClass :=
-  if PhysicsScalar.Q16_16.gt cone.forwardWeight cone.backwardWeight && PhysicsScalar.Q16_16.gt cone.forwardWeight cone.lateralWeight then
+  if PhysicsScalarBridge.gt cone.forwardWeight cone.backwardWeight && PhysicsScalarBridge.gt cone.forwardWeight cone.lateralWeight then
     .timelike
-  else if PhysicsScalar.Q16_16.eq cone.forwardWeight cone.backwardWeight && PhysicsScalar.Q16_16.gt cone.forwardWeight PhysicsScalar.Q16_16.zero then
+  else if PhysicsScalarBridge.eq cone.forwardWeight cone.backwardWeight && PhysicsScalarBridge.gt cone.forwardWeight PhysicsScalarBridge.zero then
     .nullLike
-  else if PhysicsScalar.Q16_16.gt cone.lateralWeight cone.forwardWeight then
+  else if PhysicsScalarBridge.gt cone.lateralWeight cone.forwardWeight then
     .spacelike
   else
     .mixed
 
 
 def temporalRatio (differential : TemporalDifferential) : PhysicsScalar.Q16_16 :=
-  PhysicsScalar.Q16_16.divQ16_16 differential.externalStep (PhysicsScalar.Q16_16.max differential.localStep PhysicsScalar.Q16_16.one)
+  PhysicsScalarBridge.divQ16_16 differential.externalStep (PhysicsScalarBridge.max differential.localStep PhysicsScalarBridge.one)
 
 
 def temporalGradient (differential : TemporalDifferential) : PhysicsScalar.Q16_16 :=
-  PhysicsScalar.Q16_16.absDiff differential.externalStep PhysicsScalar.Q16_16.zero -- simplified for now
+  PhysicsScalarBridge.absDiff differential.externalStep PhysicsScalarBridge.zero -- simplified for now
 
 
 def classifyTemporalRegime (differential : TemporalDifferential) (cone : CausalCone) : TemporalRegime :=
-  if PhysicsScalar.Q16_16.isZero differential.coherence then
+  if PhysicsScalarBridge.isZero differential.coherence then
     .unresolved
-  else if PhysicsScalar.Q16_16.eq cone.backwardWeight PhysicsScalar.Q16_16.zero && PhysicsScalar.Q16_16.ge differential.dilation PhysicsScalar.Q16_16.one then
+  else if PhysicsScalarBridge.eq cone.backwardWeight PhysicsScalarBridge.zero && PhysicsScalarBridge.ge differential.dilation PhysicsScalarBridge.one then
     .monotonic
-  else if PhysicsScalar.Q16_16.gt differential.dilation PhysicsScalar.Q16_16.one then
+  else if PhysicsScalarBridge.gt differential.dilation PhysicsScalarBridge.one then
     .dilated
-  else if PhysicsScalar.Q16_16.nonZero cone.backwardWeight then
+  else if PhysicsScalarBridge.nonZero cone.backwardWeight then
     .cyclic
-  else if PhysicsScalar.Q16_16.nonZero differential.drift then
+  else if PhysicsScalarBridge.nonZero differential.drift then
     .branched
   else
     .suspended
@@ -165,10 +165,10 @@ def permitsTimelikeTraversal (cone : CausalCone) : Bool :=
 def differentialCompatible
   (source target : ExoticRegionProfile)
   (request : TemporalDifferential) : Bool :=
-  let localOk := PhysicsScalar.Q16_16.ge request.localStep source.baseDifferential.localStep
-  let coherenceOk := PhysicsScalar.Q16_16.ge request.coherence (PhysicsScalar.Q16_16.min source.baseDifferential.coherence target.baseDifferential.coherence)
+  let localOk := PhysicsScalarBridge.ge request.localStep source.baseDifferential.localStep
+  let coherenceOk := PhysicsScalarBridge.ge request.coherence (PhysicsScalarBridge.min source.baseDifferential.coherence target.baseDifferential.coherence)
   let dilationOk :=
-    PhysicsScalar.Q16_16.betweenInclusive request.dilation PhysicsScalar.Q16_16.half PhysicsScalar.Q16_16.four
+    PhysicsScalarBridge.betweenInclusive request.dilation PhysicsScalarBridge.half PhysicsScalarBridge.four
   localOk && coherenceOk && dilationOk
 
 
@@ -185,8 +185,8 @@ def causalStatusFor
 
 def applyTemporalDifferential (state : PhysicsLagrangian n) (differential : TemporalDifferential) : PhysicsLagrangian n :=
   let scaledVelocity := PhysicsEuclidean.scale differential.dilation state.velocity
-  let shiftedMomentum := PhysicsEuclidean.scale (PhysicsScalar.Q16_16.max differential.coherence PhysicsScalar.Q16_16.half) state.momentum
-  let updatedAction := PhysicsScalar.Q16_16.add state.actionDensity (temporalGradient differential)
+  let shiftedMomentum := PhysicsEuclidean.scale (PhysicsScalarBridge.max differential.coherence PhysicsScalarBridge.half) state.momentum
+  let updatedAction := PhysicsScalarBridge.add state.actionDensity (temporalGradient differential)
   { state with
     velocity := scaledVelocity
     momentum := shiftedMomentum
@@ -250,15 +250,15 @@ def flatlandRegionProfile (regionId : RegionId) : ExoticRegionProfile :=
   , clockId := 1
   , temporalRegime := .monotonic
   , baseDifferential :=
-      { localStep := PhysicsScalar.Q16_16.one
-      , externalStep := PhysicsScalar.Q16_16.one
-      , drift := PhysicsScalar.Q16_16.zero
-      , dilation := PhysicsScalar.Q16_16.one
-      , coherence := PhysicsScalar.Q16_16.one }
+      { localStep := PhysicsScalarBridge.one
+      , externalStep := PhysicsScalarBridge.one
+      , drift := PhysicsScalarBridge.zero
+      , dilation := PhysicsScalarBridge.one
+      , coherence := PhysicsScalarBridge.one }
   , cone :=
-      { forwardWeight := PhysicsScalar.Q16_16.one
-      , backwardWeight := PhysicsScalar.Q16_16.zero
-      , lateralWeight := PhysicsScalar.Q16_16.half
+      { forwardWeight := PhysicsScalarBridge.one
+      , backwardWeight := PhysicsScalarBridge.zero
+      , lateralWeight := PhysicsScalarBridge.half
       , signature := .timelike }
   , permitsClosedTraversal := false
   , permitsDimFold := true }
@@ -269,15 +269,15 @@ def wormholeRegionProfile (regionId : RegionId) : ExoticRegionProfile :=
   , clockId := 2
   , temporalRegime := .dilated
   , baseDifferential :=
-      { localStep := PhysicsScalar.Q16_16.one
-      , externalStep := PhysicsScalar.Q16_16.two
-      , drift := PhysicsScalar.Q16_16.half
-      , dilation := PhysicsScalar.Q16_16.two
-      , coherence := PhysicsScalar.Q16_16.three }
+      { localStep := PhysicsScalarBridge.one
+      , externalStep := PhysicsScalarBridge.two
+      , drift := PhysicsScalarBridge.half
+      , dilation := PhysicsScalarBridge.two
+      , coherence := PhysicsScalarBridge.three }
   , cone :=
-      { forwardWeight := PhysicsScalar.Q16_16.three
-      , backwardWeight := PhysicsScalar.Q16_16.quarter
-      , lateralWeight := PhysicsScalar.Q16_16.one
+      { forwardWeight := PhysicsScalarBridge.three
+      , backwardWeight := PhysicsScalarBridge.quarter
+      , lateralWeight := PhysicsScalarBridge.one
       , signature := .mixed }
   , permitsClosedTraversal := true
   , permitsDimFold := true }
@@ -290,17 +290,17 @@ def defaultWormholeConnector (sourceRegionId targetRegionId : RegionId) : Wormho
   , mouthARegionId := sourceRegionId
   , mouthBRegionId := targetRegionId
   , entryDifferential :=
-      { localStep := PhysicsScalar.Q16_16.one
-      , externalStep := PhysicsScalar.Q16_16.two
-      , drift := PhysicsScalar.Q16_16.half
-      , dilation := PhysicsScalar.Q16_16.two
-      , coherence := PhysicsScalar.Q16_16.two }
+      { localStep := PhysicsScalarBridge.one
+      , externalStep := PhysicsScalarBridge.two
+      , drift := PhysicsScalarBridge.half
+      , dilation := PhysicsScalarBridge.two
+      , coherence := PhysicsScalarBridge.two }
   , exitDifferential :=
-      { localStep := PhysicsScalar.Q16_16.one
-      , externalStep := PhysicsScalar.Q16_16.one
-      , drift := PhysicsScalar.Q16_16.zero
-      , dilation := PhysicsScalar.Q16_16.one
-      , coherence := PhysicsScalar.Q16_16.one }
+      { localStep := PhysicsScalarBridge.one
+      , externalStep := PhysicsScalarBridge.one
+      , drift := PhysicsScalarBridge.zero
+      , dilation := PhysicsScalarBridge.one
+      , coherence := PhysicsScalarBridge.one }
   , requiresResolvedGate := true
   , active := true }
 

@@ -1,4 +1,4 @@
-import Semantics.PhysicsScalar
+import Semantics.PhysicsScalarBridge
 import Semantics.RegimeCore
 import Semantics.BoundaryDynamics
 import Semantics.CriticalityDynamics
@@ -134,7 +134,7 @@ structure PotentialTransitionResult where
 
 
 def addPulls (threads : List PotentialThread) : PhysicsScalar.Q16_16 :=
-  threads.foldl (fun acc thread => PhysicsScalar.Q16_16.addSaturating acc thread.pull) PhysicsScalar.Q16_16.zero
+  threads.foldl (fun acc thread => PhysicsScalarBridge.addSaturating acc thread.pull) PhysicsScalarBridge.zero
 
 
 def explicitAliasDetected (s : ManifoldPotential) (t : ManifoldPotential) (b : BoundaryLayer) : Bool :=
@@ -154,11 +154,11 @@ def scaffoldingRoleOf (errorField? : Option ErrorField) : ErrorScaffoldingRole :
 
 
 def classifyPotentialMorphology (gradient : PotentialGradient) (basin : PotentialBasin) : PotentialMorphology :=
-  if PhysicsScalar.Q16_16.gt basin.nestedDepth PhysicsScalar.Q16_16.zero then .nestedBasin
-  else if PhysicsScalar.Q16_16.gt basin.rimStrength basin.depth then .ridge
-  else if PhysicsScalar.Q16_16.gt gradient.tangential gradient.inward then .spiral
-  else if PhysicsScalar.Q16_16.gt gradient.vertical gradient.inward then .throat
-  else if PhysicsScalar.Q16_16.gt basin.depth PhysicsScalar.Q16_16.half then .basin
+  if PhysicsScalarBridge.gt basin.nestedDepth PhysicsScalarBridge.zero then .nestedBasin
+  else if PhysicsScalarBridge.gt basin.rimStrength basin.depth then .ridge
+  else if PhysicsScalarBridge.gt gradient.tangential gradient.inward then .spiral
+  else if PhysicsScalarBridge.gt gradient.vertical gradient.inward then .throat
+  else if PhysicsScalarBridge.gt basin.depth PhysicsScalarBridge.half then .basin
   else .flat
 
 
@@ -192,7 +192,7 @@ def potentialSignatureOf (potential : ManifoldPotential) (boundary : BoundaryLay
   , threadCount := threadCountOf potential.threads
   , totalPull := addPulls potential.threads
   , boundaryFluidity := boundary.fluidity
-  , criticalScore := PhysicsScalar.Q16_16.one 
+  , criticalScore := PhysicsScalarBridge.one
   , coherence := potential.gradient.coherence
   , aliasDetected := threadAliasDetected potential.threads
   , scaffoldingRole := potential.scaffoldingRole }
@@ -200,18 +200,18 @@ def potentialSignatureOf (potential : ManifoldPotential) (boundary : BoundaryLay
 
 def classifyPotentialRegime (signature : PotentialSignature) : PotentialRegime :=
   if signature.aliasDetected then .collapsed
-  else if PhysicsScalar.Q16_16.gt signature.criticalScore PhysicsScalar.Q16_16.three then .cascading
-  else if PhysicsScalar.Q16_16.gt signature.basinDepth PhysicsScalar.Q16_16.two then .trapping
-  else if PhysicsScalar.Q16_16.gt signature.totalPull PhysicsScalar.Q16_16.one then .guiding
-  else if PhysicsScalar.Q16_16.gt signature.rimStrength PhysicsScalar.Q16_16.two then .critical
+  else if PhysicsScalarBridge.gt signature.criticalScore PhysicsScalarBridge.three then .cascading
+  else if PhysicsScalarBridge.gt signature.basinDepth PhysicsScalarBridge.two then .trapping
+  else if PhysicsScalarBridge.gt signature.totalPull PhysicsScalarBridge.one then .guiding
+  else if PhysicsScalarBridge.gt signature.rimStrength PhysicsScalarBridge.two then .critical
   else .quiescent
 
 
 def classifyPotentialStability (signature : PotentialSignature) : PotentialStability :=
   if signature.aliasDetected then .pCollapseProne
-  else if PhysicsScalar.Q16_16.gt signature.criticalScore PhysicsScalar.Q16_16.three then .pCollapseProne
-  else if PhysicsScalar.Q16_16.gt signature.boundaryFluidity PhysicsScalar.Q16_16.two then .pUnstable
-  else if PhysicsScalar.Q16_16.gt signature.totalPull PhysicsScalar.Q16_16.two then .pMetastable
+  else if PhysicsScalarBridge.gt signature.criticalScore PhysicsScalarBridge.three then .pCollapseProne
+  else if PhysicsScalarBridge.gt signature.boundaryFluidity PhysicsScalarBridge.two then .pUnstable
+  else if PhysicsScalarBridge.gt signature.totalPull PhysicsScalarBridge.two then .pMetastable
   else .pStable
 
 
@@ -223,18 +223,18 @@ def potentialCompatibleWithBoundary (potential : ManifoldPotential) (boundary : 
 
 def mergeBasins (left right : PotentialBasin) : PotentialBasin :=
   { centerRegion := left.centerRegion
-  , radius := PhysicsScalar.Q16_16.max left.radius right.radius
-  , depth := PhysicsScalar.Q16_16.avg left.depth right.depth
-  , rimStrength := PhysicsScalar.Q16_16.avg left.rimStrength right.rimStrength
-  , nestedDepth := PhysicsScalar.Q16_16.max left.nestedDepth right.nestedDepth
+  , radius := PhysicsScalarBridge.max left.radius right.radius
+  , depth := PhysicsScalarBridge.avg left.depth right.depth
+  , rimStrength := PhysicsScalarBridge.avg left.rimStrength right.rimStrength
+  , nestedDepth := PhysicsScalarBridge.max left.nestedDepth right.nestedDepth
   , morphology := left.morphology }
 
 
 def mergeGradients (left right : PotentialGradient) : PotentialGradient :=
-  { inward := PhysicsScalar.Q16_16.avg left.inward right.inward
-  , tangential := PhysicsScalar.Q16_16.avg left.tangential right.tangential
-  , vertical := PhysicsScalar.Q16_16.avg left.vertical right.vertical
-  , coherence := PhysicsScalar.Q16_16.avg left.coherence right.coherence }
+  { inward := PhysicsScalarBridge.avg left.inward right.inward
+  , tangential := PhysicsScalarBridge.avg left.tangential right.tangential
+  , vertical := PhysicsScalarBridge.avg left.vertical right.vertical
+  , coherence := PhysicsScalarBridge.avg left.coherence right.coherence }
 
 
 def mergePotentials (request : PotentialTransitionRequest) : ManifoldPotential :=

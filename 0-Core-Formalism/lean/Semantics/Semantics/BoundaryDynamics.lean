@@ -1,4 +1,4 @@
-import Semantics.PhysicsScalar
+import Semantics.PhysicsScalarBridge
 import Semantics.RegimeCore
 import Semantics.ElectromagneticSpectrum
 import Semantics.ExoticSpacetime
@@ -22,9 +22,9 @@ def reconnectionPotentialOf
   (boundary : BoundaryLayer)
   (magnetoSignature : Option MagnetoPlasmaSignature) : PhysicsScalar.Q16_16 :=
   match magnetoSignature with
-  | none => PhysicsScalar.Q16_16.zero
+  | none => PhysicsScalarBridge.zero
   | some signature =>
-      PhysicsScalar.Q16_16.mean3 boundary.tension signature.reconnectionPotential signature.loopCoherence
+      PhysicsScalarBridge.mean3 boundary.tension signature.reconnectionPotential signature.loopCoherence
 
 
 def explicitAliasDetected (request : BoundaryTransitionRequest) : Bool :=
@@ -38,8 +38,8 @@ def explicitAliasDetected (request : BoundaryTransitionRequest) : Bool :=
 def boundarySignatureOf
   (request : BoundaryTransitionRequest) : BoundarySignature :=
   let b := request.boundary
-  let temporalGradient := if request.sourceTemporalRegime = request.targetTemporalRegime then PhysicsScalar.Q16_16.zero else PhysicsScalar.Q16_16.half
-  let sa := match request.spikeEvent with | some e => e.intensity | none => PhysicsScalar.Q16_16.zero
+  let temporalGradient := if request.sourceTemporalRegime = request.targetTemporalRegime then PhysicsScalarBridge.zero else PhysicsScalarBridge.half
+  let sa := match request.spikeEvent with | some e => e.intensity | none => PhysicsScalarBridge.zero
   let sr := match request.errorField with | some f => (classifyErrorField f).scaffoldingRole | none => ErrorScaffoldingRole.none
   { tension := b.tension
   , permeability := b.permeability
@@ -53,40 +53,40 @@ def boundarySignatureOf
 
 
 def classifyReconnectionMode (signature : BoundarySignature) : ManifoldReconnectionMode :=
-  if PhysicsScalar.Q16_16.ge signature.reconnectionPotential PhysicsScalar.Q16_16.one then .mCascading
-  else if PhysicsScalar.Q16_16.ge signature.reconnectionPotential (PhysicsScalar.Q16_16.add PhysicsScalar.Q16_16.half PhysicsScalar.Q16_16.quarter) then .mActive
-  else if PhysicsScalar.Q16_16.ge signature.reconnectionPotential PhysicsScalar.Q16_16.half then .mPartial
-  else if PhysicsScalar.Q16_16.nonZero signature.reconnectionPotential then .mLatent
+  if PhysicsScalarBridge.ge signature.reconnectionPotential PhysicsScalarBridge.one then .mCascading
+  else if PhysicsScalarBridge.ge signature.reconnectionPotential (PhysicsScalarBridge.add PhysicsScalarBridge.half PhysicsScalarBridge.quarter) then .mActive
+  else if PhysicsScalarBridge.ge signature.reconnectionPotential PhysicsScalarBridge.half then .mPartial
+  else if PhysicsScalarBridge.nonZero signature.reconnectionPotential then .mLatent
   else .mNone
 
 
 def classifyBoundaryStability (signature : BoundarySignature) : BoundaryStabilityClass :=
   if signature.aliasDetected then .sCollapseProne
-  else if PhysicsScalar.Q16_16.ge signature.tension PhysicsScalar.Q16_16.one && PhysicsScalar.Q16_16.ge signature.temporalGradient PhysicsScalar.Q16_16.half then .sCollapseProne
-  else if PhysicsScalar.Q16_16.ge signature.fluidity (PhysicsScalar.Q16_16.fromNat 2) then .sUnstable
-  else if PhysicsScalar.Q16_16.ge signature.coherence PhysicsScalar.Q16_16.half then .sStable
+  else if PhysicsScalarBridge.ge signature.tension PhysicsScalarBridge.one && PhysicsScalarBridge.ge signature.temporalGradient PhysicsScalarBridge.half then .sCollapseProne
+  else if PhysicsScalarBridge.ge signature.fluidity (PhysicsScalarBridge.fromNat 2) then .sUnstable
+  else if PhysicsScalarBridge.ge signature.coherence PhysicsScalarBridge.half then .sStable
   else .sMetastable
 
 
 def classifyBoundaryFluidity (signature : BoundarySignature) : BoundaryFluidityClass :=
-  if PhysicsScalar.Q16_16.ge signature.fluidity (PhysicsScalar.Q16_16.add PhysicsScalar.Q16_16.half PhysicsScalar.Q16_16.quarter) &&
-     PhysicsScalar.Q16_16.ge signature.reconnectionPotential PhysicsScalar.Q16_16.half then .fTurbulent
-  else if PhysicsScalar.Q16_16.ge signature.fluidity (PhysicsScalar.Q16_16.add PhysicsScalar.Q16_16.half PhysicsScalar.Q16_16.quarter) then .fDiffuse
-  else if PhysicsScalar.Q16_16.ge signature.fluidity PhysicsScalar.Q16_16.half then .fAdaptive
-  else if PhysicsScalar.Q16_16.nonZero signature.fluidity then .fViscous
+  if PhysicsScalarBridge.ge signature.fluidity (PhysicsScalarBridge.add PhysicsScalarBridge.half PhysicsScalarBridge.quarter) &&
+     PhysicsScalarBridge.ge signature.reconnectionPotential PhysicsScalarBridge.half then .fTurbulent
+  else if PhysicsScalarBridge.ge signature.fluidity (PhysicsScalarBridge.add PhysicsScalarBridge.half PhysicsScalarBridge.quarter) then .fDiffuse
+  else if PhysicsScalarBridge.ge signature.fluidity PhysicsScalarBridge.half then .fAdaptive
+  else if PhysicsScalarBridge.nonZero signature.fluidity then .fViscous
   else .fRigid
 
 
 def effectivePermeability (signature : BoundarySignature) : PhysicsScalar.Q16_16 :=
-  let baseBonus := PhysicsScalar.Q16_16.avg signature.fluidity signature.spikeAffinity
+  let baseBonus := PhysicsScalarBridge.avg signature.fluidity signature.spikeAffinity
   let scaffoldBonus :=
     match signature.scaffoldingRole with
-    | .boundaryScaffold => PhysicsScalar.Q16_16.half
-    | .dimensionalScaffold => PhysicsScalar.Q16_16.quarter
-    | .causalScaffold => PhysicsScalar.Q16_16.quarter
-    | .criticalScaffold => PhysicsScalar.Q16_16.quarter
-    | .none => PhysicsScalar.Q16_16.zero
-  PhysicsScalar.Q16_16.clamp (PhysicsScalar.Q16_16.add signature.permeability (PhysicsScalar.Q16_16.add baseBonus scaffoldBonus)) PhysicsScalar.Q16_16.zero PhysicsScalar.Q16_16.four
+    | .boundaryScaffold => PhysicsScalarBridge.half
+    | .dimensionalScaffold => PhysicsScalarBridge.quarter
+    | .causalScaffold => PhysicsScalarBridge.quarter
+    | .criticalScaffold => PhysicsScalarBridge.quarter
+    | .none => PhysicsScalarBridge.zero
+  PhysicsScalarBridge.clamp (PhysicsScalarBridge.add signature.permeability (PhysicsScalarBridge.add baseBonus scaffoldBonus)) PhysicsScalarBridge.zero PhysicsScalarBridge.four
 
 
 def classifyBoundaryRegime (signature : BoundarySignature) : BoundaryRegime :=
@@ -96,8 +96,8 @@ def classifyBoundaryRegime (signature : BoundarySignature) : BoundaryRegime :=
   | .mPartial | .mLatent => .rgGated
   | .mNone =>
       let ep := effectivePermeability signature
-      if PhysicsScalar.Q16_16.ge ep (PhysicsScalar.Q16_16.add PhysicsScalar.Q16_16.half PhysicsScalar.Q16_16.quarter) then .rgTransmissive
-      else if PhysicsScalar.Q16_16.isZero ep then .rgReflective
+      if PhysicsScalarBridge.ge ep (PhysicsScalarBridge.add PhysicsScalarBridge.half PhysicsScalarBridge.quarter) then .rgTransmissive
+      else if PhysicsScalarBridge.isZero ep then .rgReflective
       else .rgOpen
 
 
@@ -109,8 +109,8 @@ def classifyIntersectionFlow (signature : BoundarySignature) : IntersectionFlowK
   | .mLatent => .fkEntrain
   | .mNone =>
       let permeability := effectivePermeability signature
-      if PhysicsScalar.Q16_16.ge permeability PhysicsScalar.Q16_16.one then .fkPassThrough
-      else if PhysicsScalar.Q16_16.isZero permeability then .fkReflect
+      if PhysicsScalarBridge.ge permeability PhysicsScalarBridge.one then .fkPassThrough
+      else if PhysicsScalarBridge.isZero permeability then .fkReflect
       else .fkSplit
 
 

@@ -1,4 +1,4 @@
-import Semantics.PhysicsScalar
+import Semantics.PhysicsScalarBridge
 import Semantics.RegimeCore
 import Semantics.BoundaryDynamics
 import Semantics.SpikingDynamics
@@ -105,30 +105,30 @@ structure StabilizationResult where
 def potentialOf (site : CriticalSite) : CriticalPotential :=
   { load := site.load
   , threshold := site.threshold
-  , gradient := PhysicsScalar.Q16_16.absDiff site.load site.threshold
-  , dissipation := if site.sink then PhysicsScalar.Q16_16.one else PhysicsScalar.Q16_16.quarter
+  , gradient := PhysicsScalarBridge.absDiff site.load site.threshold
+  , dissipation := if site.sink then PhysicsScalarBridge.one else PhysicsScalarBridge.quarter
   , manifoldBias := site.manifoldWeight }
 
 
 def classifyPotentialRegime (potential : CriticalPotential) : PotentialRegime :=
-  if PhysicsScalar.Q16_16.le potential.load (PhysicsScalar.Q16_16.subSaturating potential.threshold PhysicsScalar.Q16_16.quarter) then
+  if PhysicsScalarBridge.le potential.load (PhysicsScalarBridge.subSaturating potential.threshold PhysicsScalarBridge.quarter) then
     PotentialRegime.subcritical
-  else if PhysicsScalar.Q16_16.lt potential.load potential.threshold then
+  else if PhysicsScalarBridge.lt potential.load potential.threshold then
     PotentialRegime.nearCritical
-  else if PhysicsScalar.Q16_16.eq potential.load potential.threshold then
+  else if PhysicsScalarBridge.eq potential.load potential.threshold then
     PotentialRegime.critical
-  else if PhysicsScalar.Q16_16.gt potential.load (PhysicsScalar.Q16_16.addSaturating potential.threshold PhysicsScalar.Q16_16.half) then
+  else if PhysicsScalarBridge.gt potential.load (PhysicsScalarBridge.addSaturating potential.threshold PhysicsScalarBridge.half) then
     PotentialRegime.supercritical
   else
     PotentialRegime.dissipative
 
 
 def siteUnstable (site : CriticalSite) : Bool :=
-  PhysicsScalar.Q16_16.ge site.load site.threshold
+  PhysicsScalarBridge.ge site.load site.threshold
 
 
 def edgeActive (edge : RedistributionEdge) : Bool :=
-  edge.gated && PhysicsScalar.Q16_16.nonZero edge.weight
+  edge.gated && PhysicsScalarBridge.nonZero edge.weight
 
 
 def siteEdges (network : CriticalNetwork) (siteId : CriticalSiteId) : List RedistributionEdge :=
@@ -141,7 +141,7 @@ def activeNeighborCount (network : CriticalNetwork) (siteId : CriticalSiteId) : 
 
 def redistributedLoadPerEdge (site : CriticalSite) (network : CriticalNetwork) : PhysicsScalar.Q16_16 :=
   let count := activeNeighborCount network site.siteId
-  if count = 0 then PhysicsScalar.Q16_16.zero else PhysicsScalar.Q16_16.divQ16_16 site.threshold (UInt32.ofNat count.toNat)
+  if count = 0 then PhysicsScalarBridge.zero else PhysicsScalarBridge.divQ16_16 site.threshold (UInt32.ofNat count.toNat)
 
 
 def toppledLoad (site : CriticalSite) : PhysicsScalar.Q16_16 :=
@@ -149,7 +149,7 @@ def toppledLoad (site : CriticalSite) : PhysicsScalar.Q16_16 :=
 
 
 def remainingAfterTopple (site : CriticalSite) : PhysicsScalar.Q16_16 :=
-  if site.sink then PhysicsScalar.Q16_16.zero else PhysicsScalar.Q16_16.subSaturating site.load (toppledLoad site)
+  if site.sink then PhysicsScalarBridge.zero else PhysicsScalarBridge.subSaturating site.load (toppledLoad site)
 
 
 def classifyAvalancheClass (toppleCount : ToppleCount) (span : UInt16) : ManifoldAvalancheClass :=
@@ -175,12 +175,12 @@ def applyToppleToSite (site : CriticalSite) : CriticalSite :=
 
 
 def receiveLoad (site : CriticalSite) (incoming : PhysicsScalar.Q16_16) : CriticalSite :=
-  { site with load := PhysicsScalar.Q16_16.addSaturating site.load incoming }
+  { site with load := PhysicsScalarBridge.addSaturating site.load incoming }
 
 
 def edgeContribution (source : CriticalSite) (network : CriticalNetwork) (edge : RedistributionEdge) : PhysicsScalar.Q16_16 :=
   let base := redistributedLoadPerEdge source network
-  let boundaryAdjusted := PhysicsScalar.Q16_16.mulQ16_16 base (PhysicsScalar.Q16_16.subSaturating PhysicsScalar.Q16_16.one edge.boundaryInfluence)
+  let boundaryAdjusted := PhysicsScalarBridge.mulQ16_16 base (PhysicsScalarBridge.subSaturating PhysicsScalarBridge.one edge.boundaryInfluence)
   boundaryAdjusted
 
 
@@ -212,12 +212,12 @@ def firstUnstableSite? (network : CriticalNetwork) : Option CriticalSite :=
 
 def temporalPotentialBias (site : CriticalSite) : PhysicsScalar.Q16_16 :=
   match site.temporalDifferential? with
-  | none => PhysicsScalar.Q16_16.zero
+  | none => PhysicsScalarBridge.zero
   | some differential => temporalGradient differential
 
 
 def manifoldPotentialOf (site : CriticalSite) : PhysicsScalar.Q16_16 :=
-  PhysicsScalar.Q16_16.addSaturating site.manifoldWeight (temporalPotentialBias site)
+  PhysicsScalarBridge.addSaturating site.manifoldWeight (temporalPotentialBias site)
 
 
 def stabilizeStep (network : CriticalNetwork) : StabilizationResult :=
@@ -226,7 +226,7 @@ def stabilizeStep (network : CriticalNetwork) : StabilizationResult :=
       { network := network
       , avalanches := []
       , status := StabilizationStatus.stable
-      , totalDischargedLoad := PhysicsScalar.Q16_16.zero }
+      , totalDischargedLoad := PhysicsScalarBridge.zero }
   | some unstableSite =>
       let step := toppleStepOf unstableSite network
       let nextNetwork := distributeFromSite network unstableSite
@@ -255,7 +255,7 @@ def stableByRepeatedTopple (fuel : Nat) (network : CriticalNetwork) : Stabilizat
       { network := network
       , avalanches := []
       , status := StabilizationStatus.unresolved
-      , totalDischargedLoad := PhysicsScalar.Q16_16.zero }
+      , totalDischargedLoad := PhysicsScalarBridge.zero }
   | fuel + 1 =>
       let stepResult := stabilizeStep network
       match stepResult.status with
@@ -265,12 +265,12 @@ def stableByRepeatedTopple (fuel : Nat) (network : CriticalNetwork) : Stabilizat
           { network := recursive.network
           , avalanches := stepResult.avalanches ++ recursive.avalanches
           , status := recursive.status
-          , totalDischargedLoad := PhysicsScalar.Q16_16.addSaturating stepResult.totalDischargedLoad recursive.totalDischargedLoad }
+          , totalDischargedLoad := PhysicsScalarBridge.addSaturating stepResult.totalDischargedLoad recursive.totalDischargedLoad }
 
 
 def abelianInvariantHoldsByLoadSum (before after : CriticalNetwork) : Bool :=
-  let sumLoads := fun (sites : List CriticalSite) => sites.foldl (fun acc site => PhysicsScalar.Q16_16.addSaturating acc site.load) PhysicsScalar.Q16_16.zero
-  PhysicsScalar.Q16_16.le (sumLoads after.sites) (sumLoads before.sites)
+  let sumLoads := fun (sites : List CriticalSite) => sites.foldl (fun acc site => PhysicsScalarBridge.addSaturating acc site.load) PhysicsScalarBridge.zero
+  PhysicsScalarBridge.le (sumLoads after.sites) (sumLoads before.sites)
 
 
 def sinkSites (network : CriticalNetwork) : List CriticalSite :=
@@ -282,22 +282,22 @@ def criticalFrontier (network : CriticalNetwork) : List CriticalSite :=
 
 
 def manifoldCriticalityScore (site : CriticalSite) : PhysicsScalar.Q16_16 :=
-  PhysicsScalar.Q16_16.addSaturating (manifoldPotentialOf site) (PhysicsScalar.Q16_16.absDiff site.load site.threshold)
+  PhysicsScalarBridge.addSaturating (manifoldPotentialOf site) (PhysicsScalarBridge.absDiff site.load site.threshold)
 
 
 def criticalityCompatibleWithSpike (site : CriticalSite) (state : MembraneState) : Bool :=
-  PhysicsScalar.Q16_16.ge site.load state.threshold || PhysicsScalar.Q16_16.ge (manifoldCriticalityScore site) state.potential
+  PhysicsScalarBridge.ge site.load state.threshold || PhysicsScalarBridge.ge (manifoldCriticalityScore site) state.potential
 
 
 def defaultCriticalSite (siteId : CriticalSiteId) (regionId : RegionId) : CriticalSite :=
   { siteId := siteId
   , label := "critical-site"
   , regionId := regionId
-  , load := PhysicsScalar.Q16_16.zero
-  , threshold := PhysicsScalar.Q16_16.one
+  , load := PhysicsScalarBridge.zero
+  , threshold := PhysicsScalarBridge.one
   , capacity := 4
   , sink := false
-  , manifoldWeight := PhysicsScalar.Q16_16.quarter
+  , manifoldWeight := PhysicsScalarBridge.quarter
   , temporalDifferential? := none
   , boundaryId? := none }
 
@@ -305,6 +305,6 @@ def defaultCriticalSite (siteId : CriticalSiteId) (regionId : RegionId) : Critic
 def defaultCriticalNetwork : CriticalNetwork :=
   { sites := []
   , edges := []
-  , defaultDissipation := PhysicsScalar.Q16_16.quarter }
+  , defaultDissipation := PhysicsScalarBridge.quarter }
 
 end Semantics.CriticalityDynamics

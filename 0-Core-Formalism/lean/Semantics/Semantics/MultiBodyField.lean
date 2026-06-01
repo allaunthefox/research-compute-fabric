@@ -1,4 +1,4 @@
-import Semantics.PhysicsScalar
+import Semantics.PhysicsScalarBridge
 import Semantics.RegimeCore
 import Semantics.BoundaryDynamics
 import Semantics.MagnetoPlasma
@@ -72,18 +72,18 @@ def interactionEffectiveMass (body : FieldBody) : PhysicsScalar.Q16_16 :=
   match body.magnetoSignature? with
   | none => body.mass
   | some signature =>
-      PhysicsScalar.Q16_16.addSaturating body.mass (PhysicsScalar.Q16_16.mulQ16_16 signature.reconnectionPotential signature.loopCoherence)
+      PhysicsScalarBridge.addSaturating body.mass (PhysicsScalarBridge.mulQ16_16 signature.reconnectionPotential signature.loopCoherence)
 
 
 def interactionEffectiveCharge (body : FieldBody) : PhysicsScalar.Q16_16 :=
   match body.spikeEvent? with
   | none => body.charge
   | some event =>
-      PhysicsScalar.Q16_16.addSaturating body.charge event.intensity
+      PhysicsScalarBridge.addSaturating body.charge event.intensity
 
 
 def bodyDistance (b1 b2 : FieldBody) : PhysicsScalar.Q16_16 :=
-  PhysicsScalar.Q16_16.absDiff b1.potential b2.potential
+  PhysicsScalarBridge.absDiff b1.potential b2.potential
 
 
 def interactionMagnitude (b1 b2 : FieldBody) (interactionClass : FieldInteractionClass) : PhysicsScalar.Q16_16 :=
@@ -94,12 +94,12 @@ def interactionMagnitude (b1 b2 : FieldBody) (interactionClass : FieldInteractio
   let r := bodyDistance b1 b2
   let baseForce :=
     match interactionClass with
-    | FieldInteractionClass.elastic => PhysicsScalar.Q16_16.mulQ16_16 m1 m2
-    | FieldInteractionClass.plasma => PhysicsScalar.Q16_16.mulQ16_16 q1 q2
-    | _ => PhysicsScalar.Q16_16.avg (PhysicsScalar.Q16_16.mulQ16_16 m1 m2) (PhysicsScalar.Q16_16.mulQ16_16 q1 q2)
+    | FieldInteractionClass.elastic => PhysicsScalarBridge.mulQ16_16 m1 m2
+    | FieldInteractionClass.plasma => PhysicsScalarBridge.mulQ16_16 q1 q2
+    | _ => PhysicsScalarBridge.avg (PhysicsScalarBridge.mulQ16_16 m1 m2) (PhysicsScalarBridge.mulQ16_16 q1 q2)
   
-  if PhysicsScalar.Q16_16.lt r PhysicsScalar.Q16_16.quarter then
-    PhysicsScalar.Q16_16.mulQ16_16 baseForce PhysicsScalar.Q16_16.four
+  if PhysicsScalarBridge.lt r PhysicsScalarBridge.quarter then
+    PhysicsScalarBridge.mulQ16_16 baseForce PhysicsScalarBridge.four
   else
     baseForce
 
@@ -108,25 +108,25 @@ def bodyInteraction (b1 b2 : FieldBody) (interactionClass : FieldInteractionClas
   let force := interactionMagnitude b1 b2 interactionClass
   let reconnection :=
     match b1.magnetoSignature?, b2.magnetoSignature? with
-    | some s1, some s2 => PhysicsScalar.Q16_16.ge s1.reconnectionPotential PhysicsScalar.Q16_16.half && PhysicsScalar.Q16_16.ge s2.reconnectionPotential PhysicsScalar.Q16_16.half
+    | some s1, some s2 => PhysicsScalarBridge.ge s1.reconnectionPotential PhysicsScalarBridge.half && PhysicsScalarBridge.ge s2.reconnectionPotential PhysicsScalarBridge.half
     | _, _ => false
   let aliasing := b1.regionId = b2.regionId && b1.bodyId != b2.bodyId
   { netForce := force
-  , potentialShift := PhysicsScalar.Q16_16.divQ16_16 force PhysicsScalar.Q16_16.two
+  , potentialShift := PhysicsScalarBridge.divQ16_16 force PhysicsScalarBridge.two
   , reconnectionDetected := reconnection
   , aliasingDetected := aliasing }
 
 
 def assemblyStability (assembly : MultiBodyAssembly n) : Bool :=
   match assembly.interactionClass with
-  | FieldInteractionClass.causal => PhysicsScalar.Q16_16.le assembly.globalPotential PhysicsScalar.Q16_16.three
-  | _ => PhysicsScalar.Q16_16.le assembly.globalPotential PhysicsScalar.Q16_16.four
+  | FieldInteractionClass.causal => PhysicsScalarBridge.le assembly.globalPotential PhysicsScalarBridge.three
+  | _ => PhysicsScalarBridge.le assembly.globalPotential PhysicsScalarBridge.four
 
 
 def interactionCoupling (assembly : MultiBodyAssembly n) : PhysicsScalar.Q16_16 :=
   match assembly.symmetry with
-  | FieldSymmetry.chaotic => PhysicsScalar.Q16_16.addSaturating assembly.globalPotential PhysicsScalar.Q16_16.one
-  | FieldSymmetry.isotropic => PhysicsScalar.Q16_16.divQ16_16 assembly.globalPotential PhysicsScalar.Q16_16.two
+  | FieldSymmetry.chaotic => PhysicsScalarBridge.addSaturating assembly.globalPotential PhysicsScalarBridge.one
+  | FieldSymmetry.isotropic => PhysicsScalarBridge.divQ16_16 assembly.globalPotential PhysicsScalarBridge.two
   | _ => assembly.globalPotential
 
 
@@ -134,10 +134,10 @@ def multiBodySignatureOf
   (assembly : MultiBodyAssembly n)
   (sample? : Option ElectromagneticSample) : MultiBodySignature :=
   let bodyCount := UInt16.ofNat assembly.bodies.size
-  let coherence := match sample? with | some s => s.bandProfile.intensity | none => PhysicsScalar.Q16_16.zero
+  let coherence := match sample? with | some s => s.bandProfile.intensity | none => PhysicsScalarBridge.zero
   { bodyCount := bodyCount
   , criticalPressure := assembly.globalPotential
   , spectralCoherence := coherence
-  , magnetoAlignment := PhysicsScalar.Q16_16.half }
+  , magnetoAlignment := PhysicsScalarBridge.half }
 
 end Semantics.MultiBodyField

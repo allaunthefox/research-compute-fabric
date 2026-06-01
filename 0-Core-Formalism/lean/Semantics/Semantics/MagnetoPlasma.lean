@@ -1,4 +1,4 @@
-import Semantics.PhysicsScalar
+import Semantics.PhysicsScalarBridge
 import Semantics.PhysicsEuclidean
 import Semantics.PhysicsLagrangian
 import Semantics.LocalDerivative
@@ -129,39 +129,39 @@ structure MagnetoInteractionResult (n : Nat) where
 
 def quantizeNonnegative (value : Float) : PhysicsScalar.Q16_16 :=
   if value <= 0.0 then
-    PhysicsScalar.Q16_16.zero
+    PhysicsScalarBridge.zero
   else
-    let scaled := Float.toUInt32 (value * Float.ofNat PhysicsScalar.Q16_16.scale)
-    PhysicsScalar.Q16_16.fromRawNat scaled.toNat
+    let scaled := Float.toUInt32 (value * Float.ofNat PhysicsScalarBridge.scale)
+    PhysicsScalarBridge.fromRawNat scaled.toNat
 
 
 def defaultMagnetoCore : MagnetoCore :=
   { coreId := 0
   , kind := .inert
-  , polarity := PhysicsScalar.Q16_16.half
-  , coherence := PhysicsScalar.Q16_16.half
-  , fieldBias := PhysicsScalar.Q16_16.half
-  , tension := PhysicsScalar.Q16_16.quarter
-  , saturation := PhysicsScalar.Q16_16.one }
+  , polarity := PhysicsScalarBridge.half
+  , coherence := PhysicsScalarBridge.half
+  , fieldBias := PhysicsScalarBridge.half
+  , tension := PhysicsScalarBridge.quarter
+  , saturation := PhysicsScalarBridge.one }
 
 
 def defaultMagnetoSpectralHook : MagnetoSpectralHook :=
   { admittedBands := [.radio, .microwave, .infrared]
   , preferredCarrierRoles := []
-  , minimumIntensity := PhysicsScalar.Q16_16.zero
-  , minimumCoherence := PhysicsScalar.Q16_16.quarter
+  , minimumIntensity := PhysicsScalarBridge.zero
+  , minimumCoherence := PhysicsScalarBridge.quarter
   , supportsPlasmaCoupling := true }
 
 
 def coreStrength (core : MagnetoCore) : PhysicsScalar.Q16_16 :=
-  PhysicsScalar.Q16_16.mean3 core.coherence core.fieldBias core.tension
+  PhysicsScalarBridge.mean3 core.coherence core.fieldBias core.tension
 
 
 def sampleSpectrallyCompatible
   (hook : MagnetoSpectralHook)
   (sample : ElectromagneticSample) : Bool :=
   let bandOk := sample.bandProfile.band ∈ hook.admittedBands
-  let intensityOk := PhysicsScalar.Q16_16.ge sample.bandProfile.intensity hook.minimumIntensity
+  let intensityOk := PhysicsScalarBridge.ge sample.bandProfile.intensity hook.minimumIntensity
   let plasmaOk :=
     if hook.supportsPlasmaCoupling then
       sample.interaction = .plasmaCoupling
@@ -174,33 +174,33 @@ def spectralAffinityOf
   (hook : MagnetoSpectralHook)
   (sample? : Option ElectromagneticSample) : PhysicsScalar.Q16_16 :=
   match sample? with
-  | none => PhysicsScalar.Q16_16.zero
+  | none => PhysicsScalarBridge.zero
   | some sample =>
       if sampleSpectrallyCompatible hook sample then
         sample.bandProfile.intensity
       else
-        PhysicsScalar.Q16_16.zero
+        PhysicsScalarBridge.zero
 
 
 def confinementFromCore (core : MagnetoCore) : ConfinementRegime :=
-  if PhysicsScalar.Q16_16.ge core.tension PhysicsScalar.Q16_16.one then
+  if PhysicsScalarBridge.ge core.tension PhysicsScalarBridge.one then
     .coreLocked
-  else if PhysicsScalar.Q16_16.ge core.tension (PhysicsScalar.Q16_16.add PhysicsScalar.Q16_16.half PhysicsScalar.Q16_16.quarter) then
+  else if PhysicsScalarBridge.ge core.tension (PhysicsScalarBridge.add PhysicsScalarBridge.half PhysicsScalarBridge.quarter) then
     .loopConfined
-  else if PhysicsScalar.Q16_16.ge core.tension PhysicsScalar.Q16_16.half then
+  else if PhysicsScalarBridge.ge core.tension PhysicsScalarBridge.half then
     .sheathConfined
-  else if PhysicsScalar.Q16_16.ge core.tension PhysicsScalar.Q16_16.quarter then
+  else if PhysicsScalarBridge.ge core.tension PhysicsScalarBridge.quarter then
     .weaklyConfined
   else
     .unconfined
 
 
 def reconnectionFromSignature (signature : MagnetoPlasmaSignature) : ReconnectionTendency :=
-  if PhysicsScalar.Q16_16.ge signature.reconnectionPotential PhysicsScalar.Q16_16.one then
+  if PhysicsScalarBridge.ge signature.reconnectionPotential PhysicsScalarBridge.one then
     .cascading
-  else if PhysicsScalar.Q16_16.ge signature.reconnectionPotential (PhysicsScalar.Q16_16.add PhysicsScalar.Q16_16.half PhysicsScalar.Q16_16.quarter) then
+  else if PhysicsScalarBridge.ge signature.reconnectionPotential (PhysicsScalarBridge.add PhysicsScalarBridge.half PhysicsScalarBridge.quarter) then
     .active
-  else if PhysicsScalar.Q16_16.ge signature.reconnectionPotential PhysicsScalar.Q16_16.half then
+  else if PhysicsScalarBridge.ge signature.reconnectionPotential PhysicsScalarBridge.half then
     .latent
   else
     .suppressed
@@ -209,17 +209,17 @@ def reconnectionFromSignature (signature : MagnetoPlasmaSignature) : Reconnectio
 def classifyMagnetoPlasmaRegime
   (signature : MagnetoPlasmaSignature)
   (core : MagnetoCore) : MagnetoPlasmaRegime :=
-  if PhysicsScalar.Q16_16.ge signature.reconnectionPotential PhysicsScalar.Q16_16.one && PhysicsScalar.Q16_16.ge signature.couplingDensity (PhysicsScalar.Q16_16.add PhysicsScalar.Q16_16.half PhysicsScalar.Q16_16.quarter) then
+  if PhysicsScalarBridge.ge signature.reconnectionPotential PhysicsScalarBridge.one && PhysicsScalarBridge.ge signature.couplingDensity (PhysicsScalarBridge.add PhysicsScalarBridge.half PhysicsScalarBridge.quarter) then
     .collapsed
-  else if PhysicsScalar.Q16_16.ge signature.coreInfluence PhysicsScalar.Q16_16.one && PhysicsScalar.Q16_16.ge core.coherence (PhysicsScalar.Q16_16.add PhysicsScalar.Q16_16.half PhysicsScalar.Q16_16.quarter) then
+  else if PhysicsScalarBridge.ge signature.coreInfluence PhysicsScalarBridge.one && PhysicsScalarBridge.ge core.coherence (PhysicsScalarBridge.add PhysicsScalarBridge.half PhysicsScalarBridge.quarter) then
     .coreDominant
-  else if PhysicsScalar.Q16_16.ge signature.reconnectionPotential (PhysicsScalar.Q16_16.add PhysicsScalar.Q16_16.half PhysicsScalar.Q16_16.quarter) then
+  else if PhysicsScalarBridge.ge signature.reconnectionPotential (PhysicsScalarBridge.add PhysicsScalarBridge.half PhysicsScalarBridge.quarter) then
     .reconnectionDominant
-  else if PhysicsScalar.Q16_16.ge signature.sheathStrength (PhysicsScalar.Q16_16.add PhysicsScalar.Q16_16.half PhysicsScalar.Q16_16.quarter) then
+  else if PhysicsScalarBridge.ge signature.sheathStrength (PhysicsScalarBridge.add PhysicsScalarBridge.half PhysicsScalarBridge.quarter) then
     .sheathDominant
-  else if PhysicsScalar.Q16_16.ge signature.loopCoherence (PhysicsScalar.Q16_16.add PhysicsScalar.Q16_16.half PhysicsScalar.Q16_16.quarter) then
+  else if PhysicsScalarBridge.ge signature.loopCoherence (PhysicsScalarBridge.add PhysicsScalarBridge.half PhysicsScalarBridge.quarter) then
     .loopDominant
-  else if PhysicsScalar.Q16_16.ge signature.alignment PhysicsScalar.Q16_16.half then
+  else if PhysicsScalarBridge.ge signature.alignment PhysicsScalarBridge.half then
     .aligned
   else
     .diffuse
@@ -232,14 +232,14 @@ def inferMagnetoPlasmaSignature
   (sample? : Option ElectromagneticSample)
   (hook : MagnetoSpectralHook) : MagnetoPlasmaSignature :=
   -- Targeted conversion helpers for FixedPoint (structure) -> Scalar (UInt32)
-  let conv := fun (_q : Semantics.Q16_16) => PhysicsScalar.Q16_16.zero
-  let alignment := PhysicsScalar.Q16_16.mean3 core.fieldBias PhysicsScalar.Q16_16.zero (conv hyper.anisotropy)
-  let confinement := PhysicsScalar.Q16_16.mean3 core.tension core.coherence (conv hyper.stressMagnitude)
-  let reconnectionPotential := PhysicsScalar.Q16_16.mean3 (conv hyper.spectralSpread) PhysicsScalar.Q16_16.zero (conv hyper.shearMagnitude)
-  let loopCoherence := PhysicsScalar.Q16_16.mean3 core.coherence PhysicsScalar.Q16_16.zero (conv hyper.transportMagnitude)
-  let sheathStrength := PhysicsScalar.Q16_16.mean3 core.tension (conv hyper.divergence) (conv hyper.compressibilityIndex)
-  let coreInfluence := PhysicsScalar.Q16_16.mean3 (coreStrength core) core.saturation core.fieldBias
-  let couplingDensity := PhysicsScalar.Q16_16.mean3 (conv hyper.couplingDensity) (conv hyper.stressMagnitude) PhysicsScalar.Q16_16.zero
+  let conv := fun (_q : Semantics.Q16_16) => PhysicsScalarBridge.zero
+  let alignment := PhysicsScalarBridge.mean3 core.fieldBias PhysicsScalarBridge.zero (conv hyper.anisotropy)
+  let confinement := PhysicsScalarBridge.mean3 core.tension core.coherence (conv hyper.stressMagnitude)
+  let reconnectionPotential := PhysicsScalarBridge.mean3 (conv hyper.spectralSpread) PhysicsScalarBridge.zero (conv hyper.shearMagnitude)
+  let loopCoherence := PhysicsScalarBridge.mean3 core.coherence PhysicsScalarBridge.zero (conv hyper.transportMagnitude)
+  let sheathStrength := PhysicsScalarBridge.mean3 core.tension (conv hyper.divergence) (conv hyper.compressibilityIndex)
+  let coreInfluence := PhysicsScalarBridge.mean3 (coreStrength core) core.saturation core.fieldBias
+  let couplingDensity := PhysicsScalarBridge.mean3 (conv hyper.couplingDensity) (conv hyper.stressMagnitude) PhysicsScalarBridge.zero
   let spectralAffinity := spectralAffinityOf hook sample?
   { alignment := alignment
   , confinement := confinement
@@ -270,14 +270,14 @@ def regionCompatible
 def bodyCouplingStrength
   (sourceSignature targetSignature : MagnetoPlasmaSignature)
   (link : MagnetoBodyLink) : PhysicsScalar.Q16_16 :=
-  let base := PhysicsScalar.Q16_16.mean3 sourceSignature.couplingDensity targetSignature.couplingDensity link.couplingStrength
-  let aligned := PhysicsScalar.Q16_16.mean3 sourceSignature.alignment targetSignature.alignment base
-  if PhysicsScalar.Q16_16.ge aligned link.gateOpenThreshold then aligned else PhysicsScalar.Q16_16.zero
+  let base := PhysicsScalarBridge.mean3 sourceSignature.couplingDensity targetSignature.couplingDensity link.couplingStrength
+  let aligned := PhysicsScalarBridge.mean3 sourceSignature.alignment targetSignature.alignment base
+  if PhysicsScalarBridge.ge aligned link.gateOpenThreshold then aligned else PhysicsScalarBridge.zero
 
 
 def applyMagnetoBias (state : PhysicsLagrangian n) (signature : MagnetoPlasmaSignature) : PhysicsLagrangian n :=
-  let velocity' := PhysicsEuclidean.scale (PhysicsScalar.Q16_16.max PhysicsScalar.Q16_16.quarter signature.alignment) state.velocity
-  let momentum' := PhysicsEuclidean.scale (PhysicsScalar.Q16_16.max PhysicsScalar.Q16_16.quarter signature.coreInfluence) state.momentum
+  let velocity' := PhysicsEuclidean.scale (PhysicsScalarBridge.max PhysicsScalarBridge.quarter signature.alignment) state.velocity
+  let momentum' := PhysicsEuclidean.scale (PhysicsScalarBridge.max PhysicsScalarBridge.quarter signature.coreInfluence) state.momentum
   { state with velocity := velocity', momentum := momentum' }
 
 
@@ -298,7 +298,7 @@ def interactBodies
   let regionOk := regionCompatible request.sourceRegimeClass request.targetRegimeClass
   let regimeOk := regimeSupportsLink sourceRegime targetRegime request.link
   let coupling := bodyCouplingStrength sourceSignature targetSignature request.link
-  let admitted := spectralOk && regionOk && regimeOk && PhysicsScalar.Q16_16.nonZero coupling
+  let admitted := spectralOk && regionOk && regimeOk && PhysicsScalarBridge.nonZero coupling
   let resolvedRegime :=
     if sourceRegime = .collapsed || targetRegime = .collapsed then .collapsed
     else if sourceRegime = .coreDominant || targetRegime = .coreDominant then .coreDominant
@@ -325,8 +325,8 @@ def defaultMagnetoLink : MagnetoBodyLink :=
   { sourceBodyId := 0
   , targetBodyId := 1
   , couplingClass := .weaklyCoupled
-  , couplingStrength := PhysicsScalar.Q16_16.half
-  , gateOpenThreshold := PhysicsScalar.Q16_16.quarter
+  , couplingStrength := PhysicsScalarBridge.half
+  , gateOpenThreshold := PhysicsScalarBridge.quarter
   , requiresSpectralAffinity := false }
 
 
@@ -355,15 +355,15 @@ def defaultMagnetoBody2D : MagnetoPlasmaBody 2 :=
 
 def magnetoCoreBody2D : MagnetoPlasmaBody 2 :=
   { bodyId := 1
-  , state := { PhysicsLagrangian.zero 2 with massScale := PhysicsScalar.Q16_16.two }
+  , state := { PhysicsLagrangian.zero 2 with massScale := PhysicsScalarBridge.two }
   , core :=
       { coreId := 1
       , kind := .toroidal
-      , polarity := PhysicsScalar.Q16_16.one
-      , coherence := PhysicsScalar.Q16_16.add PhysicsScalar.Q16_16.half PhysicsScalar.Q16_16.quarter
-      , fieldBias := PhysicsScalar.Q16_16.one
-      , tension := PhysicsScalar.Q16_16.add PhysicsScalar.Q16_16.half PhysicsScalar.Q16_16.quarter
-      , saturation := PhysicsScalar.Q16_16.one }
+      , polarity := PhysicsScalarBridge.one
+      , coherence := PhysicsScalarBridge.add PhysicsScalarBridge.half PhysicsScalarBridge.quarter
+      , fieldBias := PhysicsScalarBridge.one
+      , tension := PhysicsScalarBridge.add PhysicsScalarBridge.half PhysicsScalarBridge.quarter
+      , saturation := PhysicsScalarBridge.one }
   , localDerivative := Semantics.LocalDerivative.zeroDerivative 2
   , hyperFlowSignature := defaultHyperFlowSignature
   , regionId := 1

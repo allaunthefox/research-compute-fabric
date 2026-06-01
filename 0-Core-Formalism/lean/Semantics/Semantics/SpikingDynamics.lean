@@ -1,4 +1,4 @@
-import Semantics.PhysicsScalar
+import Semantics.PhysicsScalarBridge
 import Semantics.PhysicsEuclidean
 import Semantics.PhysicsLagrangian
 import Semantics.RegimeCore
@@ -142,12 +142,12 @@ structure SpikingTransitionResult (n : Nat) where
 
 
 def defaultMembraneState : MembraneState :=
-  { potential := PhysicsScalar.Q16_16.zero
-  , threshold := PhysicsScalar.Q16_16.one
-  , leak := PhysicsScalar.Q16_16.quarter
-  , refractoryLevel := PhysicsScalar.Q16_16.zero
-  , recovery := PhysicsScalar.Q16_16.half
-  , coherence := PhysicsScalar.Q16_16.one }
+  { potential := PhysicsScalarBridge.zero
+  , threshold := PhysicsScalarBridge.one
+  , leak := PhysicsScalarBridge.quarter
+  , refractoryLevel := PhysicsScalarBridge.zero
+  , recovery := PhysicsScalarBridge.half
+  , coherence := PhysicsScalarBridge.one }
 
 
 def defaultSpikingApiSurface : SpikingApiSurface :=
@@ -167,7 +167,7 @@ def eventCompatibleWithEm
       | none => hook.mode = .carrierDrive
       | some sample =>
           let bandOk := sample.bandProfile.band ∈ hook.admittedBands
-          let intensityOk := PhysicsScalar.Q16_16.ge sample.bandProfile.intensity hook.minimumIntensity
+          let intensityOk := PhysicsScalarBridge.ge sample.bandProfile.intensity hook.minimumIntensity
           bandOk && intensityOk
 
 
@@ -218,39 +218,39 @@ def apiAllowsTransition
 
 
 def integratePotential (membrane : MembraneState) (incomingCharge gain : PhysicsScalar.Q16_16) : MembraneState :=
-  let driven := PhysicsScalar.Q16_16.mul incomingCharge gain
-  { membrane with potential := PhysicsScalar.Q16_16.add membrane.potential driven }
+  let driven := PhysicsScalarBridge.mul incomingCharge gain
+  { membrane with potential := PhysicsScalarBridge.add membrane.potential driven }
 
 
 def applyLeak (membrane : MembraneState) : MembraneState :=
-  { membrane with potential := PhysicsScalar.Q16_16.sub membrane.potential membrane.leak }
+  { membrane with potential := PhysicsScalarBridge.sub membrane.potential membrane.leak }
 
 
 def applyRefractoryClamp (membrane : MembraneState) : MembraneState :=
-  let lowered := PhysicsScalar.Q16_16.sub membrane.refractoryLevel membrane.recovery
+  let lowered := PhysicsScalarBridge.sub membrane.refractoryLevel membrane.recovery
   { membrane with refractoryLevel := lowered }
 
 
 def membraneReadyToFire (membrane : MembraneState) : Bool :=
-  PhysicsScalar.Q16_16.ge membrane.potential membrane.threshold && PhysicsScalar.Q16_16.isZero membrane.refractoryLevel
+  PhysicsScalarBridge.ge membrane.potential membrane.threshold && PhysicsScalarBridge.isZero membrane.refractoryLevel
 
 
 def classifySpikingRegime (membrane : MembraneState) : SpikingRegime :=
   if membraneReadyToFire membrane then
     .firing
-  else if PhysicsScalar.Q16_16.nonZero membrane.refractoryLevel then
+  else if PhysicsScalarBridge.nonZero membrane.refractoryLevel then
     .refractory
-  else if PhysicsScalar.Q16_16.ge membrane.potential PhysicsScalar.Q16_16.half then
+  else if PhysicsScalarBridge.ge membrane.potential PhysicsScalarBridge.half then
     .integrating
-  else if PhysicsScalar.Q16_16.nonZero membrane.coherence then
+  else if PhysicsScalarBridge.nonZero membrane.coherence then
     .oscillatory
   else
     .quiescent
 
 
 def gatedIntensity (event : SpikeEvent) (gate : SynapticGate) : PhysicsScalar.Q16_16 :=
-  let driven := PhysicsScalar.Q16_16.mul event.intensity gate.gain
-  if PhysicsScalar.Q16_16.ge driven gate.openThreshold then driven else PhysicsScalar.Q16_16.zero
+  let driven := PhysicsScalarBridge.mul event.intensity gate.gain
+  if PhysicsScalarBridge.ge driven gate.openThreshold then driven else PhysicsScalarBridge.zero
 
 
 def nextEventFromNode (node : SpikingNode n) (request : SpikingTransitionRequest n) : SpikeEvent :=
@@ -262,7 +262,7 @@ def nextEventFromNode (node : SpikingNode n) (request : SpikingTransitionRequest
 def updateNodeAfterEmission (node : SpikingNode n) : SpikingNode n :=
   let membrane :=
     { node.membrane with
-      potential := PhysicsScalar.Q16_16.zero
+      potential := PhysicsScalarBridge.zero
       refractoryLevel := node.membrane.threshold }
   { node with membrane := membrane, regime := .refractory }
 
@@ -287,7 +287,7 @@ def processSpikeTransition
     , resolvedRegime := request.node.regime }
   else
     let gatedCharge := gatedIntensity request.event request.gate
-    let integrated := integratePotential request.node.membrane (PhysicsScalar.Q16_16.add request.incomingCharge gatedCharge) request.gate.gain
+    let integrated := integratePotential request.node.membrane (PhysicsScalarBridge.add request.incomingCharge gatedCharge) request.gate.gain
     let leaked := applyLeak integrated
     let recovered := applyRefractoryClamp leaked
     let updatedNode := { request.node with membrane := recovered, regime := classifySpikingRegime recovered }
@@ -308,20 +308,20 @@ def processSpikeTransition
 def wifiSpikeHook : ElectromagneticHook :=
   { mode := .carrierDrive
   , admittedBands := [.microwave]
-  , minimumIntensity := PhysicsScalar.Q16_16.eighth
-  , minimumCoherence := PhysicsScalar.Q16_16.quarter }
+  , minimumIntensity := PhysicsScalarBridge.eighth
+  , minimumCoherence := PhysicsScalarBridge.quarter }
 
 
 def opticalSpikeHook : ElectromagneticHook :=
   { mode := .activeCoupling
   , admittedBands := [.infrared]
-  , minimumIntensity := PhysicsScalar.Q16_16.quarter
-  , minimumCoherence := PhysicsScalar.Q16_16.quarter }
+  , minimumIntensity := PhysicsScalarBridge.quarter
+  , minimumCoherence := PhysicsScalarBridge.quarter }
 
 
 def defaultTemporalSpikeHook : TemporalHook :=
   { mode := .causallyGated
-  , minimumCoherence := PhysicsScalar.Q16_16.quarter
+  , minimumCoherence := PhysicsScalarBridge.quarter
   , admittedTemporalRegimes := [.monotonic, .dilated, .branched]
   , requiresTimelikeAdmissibility := false }
 

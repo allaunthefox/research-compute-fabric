@@ -30,42 +30,63 @@
         };
     in {
       nixosConfigurations = {
+        # ── NixOS storage node (NixOS 26.05, 459GB NVMe, ord zone) ─────────
+        # ACTUAL ROLE: k3s agent joining cupfox (100.110.163.82:6443)
+        # HISTORICAL NOTE: was originally standalone k3s server, migrated to
+        # agent when cupfox was promoted. The k3s-server.nix in this repo
+        # reflects the current agent setup.
         k3s-server = mkNode {
-          hostName = "nixos-laptop";
+          hostName = "nixos";
           domain = "researchstack.info";
+          serverAddr = "https://100.110.163.82:6443"; # cupfox control-plane
           extraModules = [ ./k3s-server.nix ];
         };
 
+        # ── Foxtop compute node ───────────────────────────────────────────
+        # ACTUAL: qfox-1 (CachyOS, joined via join-agent.sh, NOT NixOS)
+        # NixOS config kept for reference / future bare-metal install
         k3s-foxtop = mkNode {
           hostName = "qfox-1";
-          serverAddr = "https://100.102.173.61:6443";
+          serverAddr = "https://100.110.163.82:6443"; # cupfox, not nixos
           extraModules = [ ./roles/foxtop.nix ];
         };
 
-        k3s-mirror = mkNode {
-          hostName = "361395-1";
-          serverAddr = "https://100.102.173.61:6443";
-          extraModules = [ ./roles/mirror.nix ];
-        };
+        # ── Mirror node (DEAD) ────────────────────────────────────────────
+        # 361395-1 was a netcup VPS that is no longer in the cluster.
+        # neon-64gb (ARM64, 2TB) replaced it as netcup presence.
+        # Kept as reference; do not deploy.
+        # k3s-mirror = mkNode {
+        #   hostName = "361395-1";
+        #   serverAddr = "https://100.110.163.82:6443";
+        #   extraModules = [ ./roles/mirror.nix ];
+        # };
 
+        # ── Edge TLS node (racknerd, 9GB VPS, us-va) ──────────────────────
+        # Caddy TLS termination + Porkbun DNS-01 + subdomain redirects
+        # Forwards AL traffic to internal router at nixos:80
         k3s-edge = mkNode {
           hostName = "microvm-racknerd";
           domain = "researchstack.info";
-          serverAddr = "https://100.102.173.61:6443";
+          serverAddr = "https://100.110.163.82:6443"; # cupfox
           extraModules = [ ./k3s-edge.nix ];
         };
 
+        # ── GPU compute node (steamdeck, ROG Ally, 476GB NVMe, gpu zone) ──
+        # Runs CUDA/ML workloads. Has NVIDIA GPU via device plugin.
+        # NOTE: steamdeck NixOS version is 25.11, may need different nixpkgs
         k3s-core = mkNode {
           hostName = "nixos-steamdeck-1";
-          serverAddr = "https://100.102.173.61:6443";
+          serverAddr = "https://100.110.163.82:6443"; # cupfox
           extraModules = [ ./roles/core.nix ];
         };
 
-        k3s-judge = mkNode {
-          hostName = "";
-          serverAddr = "";
-          extraModules = [ ./roles/judge.nix ];
-        };
+        # ── Judge node (VOTEK/Adversarial review) ─────────────────────────
+        # TBD - not yet assigned hardware
+        # k3s-judge = mkNode {
+        #   hostName = "";
+        #   serverAddr = "";
+        #   extraModules = [ ./roles/judge.nix ];
+        # };
       };
 
       packages.${system} = {

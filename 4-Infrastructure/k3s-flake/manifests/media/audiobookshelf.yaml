@@ -28,7 +28,7 @@ spec:
         app: audiobookshelf
     spec:
       nodeSelector:
-        topology.researchstack.io/role: core
+        topology.researchstack.io/role: foxtop
       containers:
         - name: audiobookshelf
           image: ghcr.io/advplyr/audiobookshelf:latest
@@ -37,6 +37,23 @@ spec:
           env:
             - name: TZ
               value: "America/Chicago"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: ROUTER_BASE_PATH
+              value: "/audiobookshelf"
+            - name: OPENID_ENABLED
+              value: "true"
+            - name: OPENID_ISSUER_URL
+              value: "https://auth.researchstack.info"
+            - name: OPENID_CLIENT_ID
+              value: "sso-audiobookshelf"
+            - name: OPENID_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: audiobookshelf-oidc
+                  key: OPENID_CLIENT_SECRET
+            - name: OPENID_REDIRECT_URI
+              value: "https://audiobooks.researchstack.info/audiobookshelf/auth/openid/callback"
           volumeMounts:
             - name: config
               mountPath: /config

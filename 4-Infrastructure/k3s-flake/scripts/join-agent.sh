@@ -4,7 +4,7 @@
 set -euo pipefail
 
 ROLE="core"
-SERVER="https://100.102.173.61:6443"
+SERVER="https://100.110.163.82:6443" # cupfox control-plane (migrated from nixos)
 TOKEN=""
 NODE_IP=""
 LABELS=""

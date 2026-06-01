@@ -63,6 +63,31 @@ spec:
                   number: 5006
 
 # ═══════════════════════════════════════════════════════════════════════════
+# /apps/books/* → Audiobookshelf (SSO-gated)
+# ═══════════════════════════════════════════════════════════════════════════
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rs-apps-books
+  namespace: services
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.middlewares: services-authentik-forward-auth@kubernetescrd,services-strip-apps-books@kubernetescrd
+spec:
+  rules:
+    - host: researchstack.info
+      http:
+        paths:
+          - path: /apps/books
+            pathType: Prefix
+            backend:
+              service:
+                name: audiobookshelf
+                port:
+                  number: 80
+---
+# ═══════════════════════════════════════════════════════════════════════════
 # /server/status/* → Uptime Kuma (SSO-gated)
 # ═══════════════════════════════════════════════════════════════════════════
 ---

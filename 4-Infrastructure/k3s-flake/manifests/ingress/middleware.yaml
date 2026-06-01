@@ -118,3 +118,13 @@ spec:
   stripPrefix:
     prefixes:
       - /api/blobs
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-apps-books
+  namespace: services
+spec:
+  stripPrefix:
+    prefixes:
+      - /apps/books

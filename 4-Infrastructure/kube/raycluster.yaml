@@ -2,14 +2,15 @@ apiVersion: ray.io/v1
 kind: RayCluster
 metadata:
   name: raycluster
-  namespace: ray
+  namespace: ray-system
 spec:
   rayVersion: "2.41.0.dev0"
   headGroupSpec:
     serviceType: ClusterIP
     rayStartParams:
-      num-cpus: "2"
+      num-cpus: "0"
       dashboard-host: "0.0.0.0"
+      dashboard: "true"
     template:
       spec:
         tolerations:
@@ -52,9 +53,9 @@ spec:
         nodeSelector:
           kubernetes.io/hostname: qfox-1
   workerGroupSpecs:
-  - replicas: 1
+  - replicas: 2
     minReplicas: 0
-    maxReplicas: 4
+    maxReplicas: 6
     groupName: cpu-workers
     rayStartParams:
       num-cpus: "4"
@@ -93,7 +94,7 @@ spec:
   - replicas: 1
     minReplicas: 0
     maxReplicas: 1
-    groupName: gpu-worker
+    groupName: gpu-workers
     rayStartParams:
       num-gpus: "1"
     template:
@@ -128,3 +129,32 @@ spec:
             path: /dev/dri
         nodeSelector:
           kubernetes.io/hostname: qfox-1
+  - replicas: 1
+    minReplicas: 0
+    maxReplicas: 3
+    groupName: arm64-workers
+    rayStartParams:
+      num-cpus: "16"
+    template:
+      spec:
+        containers:
+        - name: ray-worker
+          image: localhost/rayproject/ray:arm64-aarch64
+          resources:
+            requests:
+              cpu: "8"
+              memory: "16Gi"
+            limits:
+              cpu: "16"
+              memory: "56Gi"
+          volumeMounts:
+          - name: dshm
+            mountPath: /dev/shm
+        volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 8Gi
+        nodeSelector:
+          kubernetes.io/arch: arm64
+          kubernetes.io/hostname: neon-64gb

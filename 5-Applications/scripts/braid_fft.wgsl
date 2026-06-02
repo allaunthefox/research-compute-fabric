@@ -4,6 +4,8 @@
 //
 // braid_fft.wgsl — WebGPU compute shader for FFT on braid phase vectors
 //
+// Depends on: braid_types.wgsl (shared include)
+//
 // Cooley-Tukey radix-2 FFT with bit-reversal permutation and Hann windowing.
 // Input:  array of PhaseVec (x, y as f32) in time domain
 // Output: frequency domain representation
@@ -12,11 +14,7 @@
 // ════════════════════════════════════════════════════════════
 // §1  Data Types
 // ════════════════════════════════════════════════════════════
-
-struct PhaseVec {
-    x: f32,
-    y: f32,
-}
+// PhaseVec provided by braid_types.wgsl
 
 struct FFTUniforms {
     n: u32,           // FFT size (must be power of 2)

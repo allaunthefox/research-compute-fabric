@@ -3,8 +3,8 @@ use chrono::Utc;
 use rand::Rng;
 use rusqlite::OptionalExtension;
 use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
-use std::collections::{HashMap, HashSet, VecDeque};
+use ene_common::{base64_decode, sha256_hex, BoundedSet};
+use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
@@ -16,44 +16,6 @@ const MAX_REPLICATION_QUEUE: usize = 10_000;
 const MAX_SEEN_MESSAGES: usize = 100_000;
 const MAX_PAYLOAD_ENTRIES: usize = 100;
 const MAX_PAYLOAD_VALUE_BYTES: usize = 10_240;
-
-pub struct BoundedSet {
-    set: HashSet<String>,
-    order: VecDeque<String>,
-    max_size: usize,
-}
-
-impl BoundedSet {
-    fn new(max_size: usize) -> Self {
-        Self {
-            set: HashSet::new(),
-            order: VecDeque::new(),
-            max_size,
-        }
-    }
-
-    fn contains(&self, s: &str) -> bool {
-        self.set.contains(s)
-    }
-
-    fn insert(&mut self, s: String) -> bool {
-        if self.set.contains(&s) {
-            return false;
-        }
-        if self.set.len() >= self.max_size {
-            if let Some(old) = self.order.pop_front() {
-                self.set.remove(&old);
-            }
-        }
-        self.set.insert(s.clone());
-        self.order.push_back(s);
-        true
-    }
-
-    fn len(&self) -> usize {
-        self.set.len()
-    }
-}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NodeIdentity {
@@ -199,12 +161,6 @@ pub struct ConsensusProposal {
     pub timestamp: i64,
     pub votes: HashMap<String, bool>,
     pub resolved: bool,
-}
-
-fn sha256_hex(data: &str) -> String {
-    let mut h = Sha256::new();
-    h.update(data.as_bytes());
-    hex::encode(h.finalize())
 }
 
 // ── database ───────────────────────────────────────────────────────────────
@@ -449,7 +405,7 @@ pub struct EneNode {
     pub db_path: PathBuf,
     pub cluster_secret: String,
     pub peers: Arc<RwLock<HashMap<String, NodeIdentity>>>,
-    pub seen_message_ids: Arc<RwLock<BoundedSet>>,
+    pub seen_message_ids: Arc<RwLock<BoundedSet<String>>>,
     pub replication_queue: Arc<RwLock<Vec<String>>>,
     pub seed_nodes: Vec<String>,
     pub gossip_socket: Arc<tokio::net::UdpSocket>,
@@ -640,7 +596,7 @@ impl EneNode {
                     .and_then(|v| v.as_str())
                     .unwrap_or("unknown")
                     .into(),
-                fragment: base64_decode(b64),
+                fragment: base64_decode(b64).unwrap_or_default(),
                 access_level: msg
                     .payload
                     .get("access_level")
@@ -782,13 +738,6 @@ impl EneNode {
     }
 }
 
-fn base64_decode(s: &str) -> Vec<u8> {
-    use base64::Engine;
-    base64::engine::general_purpose::STANDARD
-        .decode(s.as_bytes())
-        .unwrap_or_default()
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -883,10 +832,9 @@ mod tests {
 
     #[test]
     fn base64_decode_roundtrip() {
-        use base64::Engine;
         let data = b"hello world";
-        let encoded = base64::engine::general_purpose::STANDARD.encode(data);
-        let decoded = base64_decode(&encoded);
+        let encoded = ene_common::base64_encode(data);
+        let decoded = base64_decode(&encoded).unwrap();
         assert_eq!(decoded, data.as_slice());
     }
 }

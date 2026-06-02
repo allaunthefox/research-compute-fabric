@@ -12,6 +12,8 @@ import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 
+from shim.utils.datetime_utils import utc_now
+
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "4-Infrastructure" / "infra"))
 from lean_unified_shim import SwarmAPISystem
 
@@ -22,7 +24,7 @@ def cleanup_bad_math():
     """
     
     api = SwarmAPISystem()
-    timestamp = datetime.now(timezone.utc).isoformat()
+    timestamp = utc_now()
     
     if not api.conn:
         print("[✗] Database not connected")

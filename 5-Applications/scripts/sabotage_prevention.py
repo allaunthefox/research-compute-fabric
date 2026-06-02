@@ -27,8 +27,12 @@ from dataclasses import dataclass, field
 from enum import Enum
 from collections import defaultdict, deque
 
+from shim.utils.q16_utils import (
+    Q16_ONE, q16_from_int, q16_to_float, q16_from_float,
+    q16_from_ratio, q16_add, q16_sub, q16_mul, q16_div, q16_neg, q16_abs
+)
+
 # Q16_16 fixed-point utilities (from Lean FixedPoint module)
-Q16_ONE = 65536  # 1.0 in Q16_16
 Q16_SCALE = 65536.0
 
 def to_q16(value: float) -> int:
@@ -38,14 +42,6 @@ def to_q16(value: float) -> int:
 def from_q16(q16: int) -> float:
     """Convert Q16_16 fixed-point to float"""
     return q16 / Q16_SCALE
-
-def q16_add(a: int, b: int) -> int:
-    """Add two Q16_16 values"""
-    return a + b
-
-def q16_sub(a: int, b: int) -> int:
-    """Subtract two Q16_16 values"""
-    return a - b
 
 def q16_gt(a: int, b: int) -> bool:
     """Greater than comparison for Q16_16"""

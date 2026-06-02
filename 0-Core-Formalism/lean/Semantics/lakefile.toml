@@ -87,3 +87,7 @@ root = "GenerateSparklePhiS3C"
 [[lean_exe]]
 name = "tangnano9k_emitter"
 root = "TangNano9KEmitter"
+
+[[lean_exe]]
+name = "sabotage_prevention_cli"
+root = "SabotagePreventionCli"

@@ -15,6 +15,8 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 from datetime import datetime
 
+from shim.utils.datetime_utils import utc_now
+
 # ═══════════════════════════════════════════════════════════════════════════
 # §0  Configuration & Metadata
 # ═══════════════════════════════════════════════════════════════════════════
@@ -28,7 +30,7 @@ ATTRIBUTION = {
     "source": "Sovereign Informatic Manifold",
     "license": "Apache 2.0",
     "owner": "Lost Frog Research",
-    "timestamp": datetime.utcnow().isoformat()
+    "timestamp": utc_now()
 }
 
 # ═══════════════════════════════════════════════════════════════════════════

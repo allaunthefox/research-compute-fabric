@@ -8,12 +8,13 @@ bytes. Produces a replay receipt satisfying Next Fixture Gate requirement #6.
 
 from __future__ import annotations
 
-import hashlib
 import json
 import sys
 import time
 from pathlib import Path
 from typing import Any
+
+from shim.utils import sha256_bytes
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT_DIR = ROOT / "shared-data" / "data" / "stack_solidification" / "hutter_jxl_starfield"
@@ -23,9 +24,6 @@ REPLAY_RECEIPT_PATH = OUT_DIR / "hutter_jxl_starfield_enwik8_first_sweep_replay_
 PROTOCOL = "hutter_jxl_starfield_eigenprobe_first_sweep_v1"
 REPLAY_PROTOCOL = "hutter_jxl_starfield_eigenprobe_first_sweep_replay_v1"
 
-
-def sha256_bytes(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
 
 
 def extract_all_hints(receipt: dict[str, Any]) -> list[dict[str, Any]]:

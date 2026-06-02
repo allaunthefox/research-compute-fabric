@@ -13,13 +13,11 @@ import zlib
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
+from shim.utils.json_utils import canonical_json_bytes
+
 
 MAGIC = b"SVSC1\x00"
 HEADER_STRUCT = struct.Struct("<6s32sQQ")
-
-
-def canonical_json_bytes(obj: Any) -> bytes:
-    return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
 
 
 def smooth_bytes_delta(data: bytes) -> bytes:

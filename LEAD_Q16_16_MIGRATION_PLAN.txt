@@ -1,0 +1,24 @@
+Q16_16 Unification Migration Plan
+=================================
+
+PROBLEM:
+There are 6 different Q16_16 type definitions causing fragmentation:
+1. Semantics.FixedPoint.Q16_16 (canonical - Int subtype) - Used by ~421 files
+2. Semantics.PhysicsScalar.Q16_16 (UInt32) - Used by 27 files  
+3. Semantics.ElectromagneticSpectrum.Q16_16 (UInt32) - Used by 17 files
+4. external/OTOM/FixedPoint.Q16_16 (struct UInt32) - Standalone
+5. Semantics.RcloneIntegration.Q16_16 (struct Int) - 3 files
+6. Semantics.MetaManifoldProver.Q16_16 (Int) - 0 files
+
+APPROACH:
+Phase 1: Create compatibility bridge (DONE - PhysicsScalarBridge.lean created)
+Phase 2: Migrate PhysicsScalar consumers (27 files)
+Phase 3: Migrate ElectromagneticSpectrum consumers (17 files) 
+Phase 4: Eliminate duplicate definitions
+
+RISK:
+Semantic incompatibility - PhysicsScalar uses unsigned arithmetic, FixedPoint uses signed.
+The bridge conversion is lossy and behavior may differ.
+
+TIMELINE:
+Significant undertaking - each file 1-4 hours for careful proof verification.

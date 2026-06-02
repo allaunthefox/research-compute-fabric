@@ -781,6 +781,97 @@ theorem abs_nonneg (a : Q16_16) : (abs a).toInt ≥ 0 := by
     exact q16Clamp_nonneg_of_nonneg h_nonneg
   · omega
 
+/-- When addition does not saturate (the raw sum is in [q16MinRaw, q16MaxRaw]),
+    the saturating `add` coincides with raw addition. Follows immediately
+    from `q16Clamp_id_of_inRange` after rewriting via `ofRawInt_toInt_eq_clamp`. -/
+theorem add_toInt_of_no_sat (a b : Q16_16)
+    (hlo : q16MinRaw ≤ a.toInt + b.toInt) (hhi : a.toInt + b.toInt ≤ q16MaxRaw) :
+    (add a b).toInt = a.toInt + b.toInt := by
+  unfold add
+  rw [ofRawInt_toInt_eq_clamp]
+  exact q16Clamp_id_of_inRange _ hlo hhi
+
+/-- When subtraction does not saturate, the saturating `sub` coincides with
+    raw subtraction. -/
+theorem sub_toInt_of_no_sat (a b : Q16_16)
+    (hlo : q16MinRaw ≤ a.toInt - b.toInt) (hhi : a.toInt - b.toInt ≤ q16MaxRaw) :
+    (sub a b).toInt = a.toInt - b.toInt := by
+  unfold sub
+  rw [ofRawInt_toInt_eq_clamp]
+  exact q16Clamp_id_of_inRange _ hlo hhi
+
+/-- Q16.16 multiplication rounds down to the integer floor for non-negative
+    operands. The saturated result is at most `a*b/q16Scale`.
+
+    The non-negative hypothesis gives `a*b/q16Scale ≥ 0 ≥ q16MinRaw`, so
+    `q16Clamp` does not clamp the floor from below. Combined with the
+    trivial `q16Clamp x ≤ q16MaxRaw` upper saturation, we get
+    `q16Clamp (a*b/q16Scale) ≤ a*b/q16Scale`.
+
+    Mirrors the `unfold mul; rw [ofRawInt_toInt_eq_clamp]` pattern used in
+    `mul_mono_left`. -/
+theorem mul_floor_le (a b : Q16_16) (ha : 0 ≤ a.toInt) (hb : 0 ≤ b.toInt) :
+    (mul a b).toInt ≤ (a.toInt * b.toInt) / q16Scale := by
+  unfold mul
+  rw [ofRawInt_toInt_eq_clamp]
+  have h_nonneg : 0 ≤ a.toInt * b.toInt / q16Scale := by
+    apply Int.ediv_nonneg
+    · nlinarith
+    · norm_num [q16Scale]
+  have h_ge_lo : q16MinRaw ≤ a.toInt * b.toInt / q16Scale := by
+    dsimp [q16MinRaw]
+    omega
+  unfold q16Clamp
+  by_cases h_hi : a.toInt * b.toInt / q16Scale > q16MaxRaw
+  · dsimp [q16MaxRaw] at *
+    simp [h_hi]
+    omega
+  · by_cases h_lo : a.toInt * b.toInt / q16Scale < q16MinRaw
+    · dsimp [q16MinRaw] at *
+      omega
+    · simp [h_hi, h_lo]
+
+/-- For non-negative operands, when the integer floor of the product fits
+    within the Q16.16 range, multiplication is at least the floor.
+
+    The hypothesis `a*b/q16Scale ≤ q16MaxRaw` rules out upper saturation,
+    so `q16Clamp` does not clamp the floor from above. Together with
+    `a*b/q16Scale ≥ 0 ≥ q16MinRaw` (from non-negativity) we get
+    `q16Clamp (a*b/q16Scale) ≥ a*b/q16Scale`. -/
+theorem mul_floor_ge (a b : Q16_16) (ha : 0 ≤ a.toInt) (hb : 0 ≤ b.toInt)
+    (hhi : a.toInt * b.toInt / q16Scale ≤ q16MaxRaw) :
+    (mul a b).toInt ≥ (a.toInt * b.toInt) / q16Scale := by
+  unfold mul
+  rw [ofRawInt_toInt_eq_clamp]
+  have h_nonneg : 0 ≤ a.toInt * b.toInt / q16Scale := by
+    apply Int.ediv_nonneg
+    · nlinarith
+    · norm_num [q16Scale]
+  unfold q16Clamp
+  by_cases h_hi : a.toInt * b.toInt / q16Scale > q16MaxRaw
+  · dsimp [q16MaxRaw] at *
+    omega
+  · by_cases h_lo : a.toInt * b.toInt / q16Scale < q16MinRaw
+    · dsimp [q16MinRaw] at *
+      simp [h_hi, h_lo]
+      omega
+    · simp [h_hi, h_lo]
+
+/-- Combined error bound for Q16.16 multiplication on non-negative operands.
+    When the integer floor of the product fits in [q16MinRaw, q16MaxRaw],
+    multiplication is exact: `(mul a b).toInt = a*b/q16Scale`.
+
+    Combines `mul_floor_le` (upper bound) and `mul_floor_ge` (lower bound)
+    via `Int.le_antisymm`. The two-sided bound closes the saturation
+    envelope: no clamp from above (hhi) and no clamp from below
+    (automatic from non-negativity). -/
+theorem mul_floor_error (a b : Q16_16) (ha : 0 ≤ a.toInt) (hb : 0 ≤ b.toInt)
+    (hhi : a.toInt * b.toInt / q16Scale ≤ q16MaxRaw) :
+    (mul a b).toInt = (a.toInt * b.toInt) / q16Scale := by
+  apply Int.le_antisymm
+  · exact mul_floor_le a b ha hb
+  · exact mul_floor_ge a b ha hb hhi
+
 -- REMOVED: Theorems abs_mul_le and abs_triangle are FALSE for Q16_16 with floor division
 -- abs_mul_le: counterexample a=3, b=-1 gives LHS=1, RHS=0
 -- abs_triangle: counterexample a=3, b=-3 gives LHS=1, RHS=0

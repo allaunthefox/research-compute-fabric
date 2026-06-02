@@ -37,11 +37,14 @@ FLAG_REPLY   = 0x80
 MAX_PAYLOAD = 4 * 1024 * 1024  # 4 MB per frame
 
 
+_TAG_NAMES = {TAG_STRAND: "STRAND", TAG_CROSSING: "CROSSING", TAG_PIST: "PIST",
+              TAG_LUPINE: "LUPINE", TAG_VAAPI: "VAAPI", TAG_FLAC: "FLAC"}
+
+
 def tag_name(tag: int) -> str:
-    {TAG_STRAND: "STRAND", TAG_CROSSING: "CROSSING", TAG_PIST: "PIST", TAG_LUPINE: "LUPINE", TAG_VAAPI: "VAAPI", TAG_FLAC: "FLAC"}
     flag, base = tag & FLAG_REPLY, tag & 0x7F
     prefix = "REPLY_" if flag else ""
-    return prefix + names.get(base, f"UNKNOWN({base})")
+    return prefix + _TAG_NAMES.get(base, f"UNKNOWN({base})")
 
 
 # ── Unified frame header ───────────────────────────────────────────────────────
@@ -235,45 +238,22 @@ class LUPINEBackend(CUDABackend):
         self._session = None
 
     def call(self, opcode: int, args: dict) -> Any:
-        """Forward a CUDA API call to the LUPINE server."""
-        import subprocess, json, tempfile, os
+        """Forward a CUDA API call to the LUPINE server via HTTP POST."""
+        import urllib.request
 
         api_name = lupine_opcode_name(opcode)
-
-        if api_name == "cudaMalloc":
-            size = args.get("size", 0)
-            ptr_ref = os.path.join(tempfile.gettempdir(), f"lupine_ptr_{os.getpid()}")
-            code = f"""
-import ctypes, os
-libcuda = ctypes.CDLL("libcuda.so.1")
-ptr = ctypes.c_void_p()
-result = libcuda.cudaMalloc(ctypes.byref(ptr), {size})
-with open("{ptr_ref}", "w") as f:
-    f.write(str(ptr.value))
-exit(result)
-"""
-        else:
-            code = f"""
-import subprocess, json
-result = subprocess.run(
-    ["curl", "-s", "-X", "POST", "http://{self.server}/cuda",
-     "-d", json.dumps({{"opcode": {opcode}, "args": {json.dumps(args)}}}],
-    capture_output=True, text=True
-)
-print(result.stdout)
-"""
-
-        import subprocess
-        result = subprocess.run(
-            ["python3", "-c", code],
-            capture_output=True, text=True, timeout=30
+        payload = json.dumps({"opcode": opcode, "api": api_name, "args": args}).encode("utf-8")
+        req = urllib.request.Request(
+            f"http://{self.server}/cuda",
+            data=payload,
+            headers={"Content-Type": "application/json"},
+            method="POST",
         )
-        if result.returncode != 0:
-            raise RuntimeError(f"LUPINE call failed: {result.stderr}")
         try:
-            return json.loads(result.stdout.strip())
-        except json.JSONDecodeError:
-            return result.stdout.strip()
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except Exception as e:
+            raise RuntimeError(f"LUPINE call to {self.server} failed: {e}")
 
 
 # ── FLACBackend interface ──────────────────────────────────────────────────────

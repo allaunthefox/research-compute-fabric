@@ -1,5 +1,7 @@
 `timescale 1ns / 1ps
 
+`include "voltage_mode_selector.v"
+
 // Spatial Hash Density → Voltage Mode Selector
 // Maps particle density from spatial_hash_bram to voltage mode.
 //
@@ -21,17 +23,9 @@ module spatial_hash_selector (
 );
 
     // ── Density Thresholds ────────────────────────────────────────
-    // Stored as 16-bit values (upper 8 bits are integer part)
     localparam [15:0] THRESH_SPARSE   = 16'd10;   // < 10 → STORE
     localparam [15:0] THRESH_MODERATE = 16'd50;   // < 50 → COMPUTE
     localparam [15:0] THRESH_DENSE    = 16'd200;  // < 200 → APPROX
-    // >= 200 → MORPHIC
-
-    // ── Voltage Mode Encoding ─────────────────────────────────────
-    localparam MODE_STORE   = 2'b00;
-    localparam MODE_COMPUTE = 2'b01;
-    localparam MODE_APPROX  = 2'b10;
-    localparam MODE_MORPHIC = 2'b11;
 
     // ── Pipeline Stage 1: latch input ─────────────────────────────
     reg [15:0] density_pipe;
@@ -48,23 +42,26 @@ module spatial_hash_selector (
     end
 
     // ── Pipeline Stage 2: threshold comparison & output ───────────
+    wire [1:0] sel_mode;
+
+    voltage_mode_selector #(
+        .THRESHOLD1(THRESH_SPARSE),
+        .THRESHOLD2(THRESH_MODERATE),
+        .THRESHOLD3(THRESH_DENSE)
+    ) sel_inst (
+        .clk(clk),
+        .value({16'b0, density_pipe}),
+        .mode(sel_mode)
+    );
+
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            voltage_mode <= MODE_STORE;
+            voltage_mode <= 2'b00;
             mode_valid   <= 1'b0;
         end else begin
             mode_valid <= valid_pipe;
-
-            if (!valid_pipe) begin
-                // Hold previous mode when no new data
-            end else if (density_pipe < THRESH_SPARSE) begin
-                voltage_mode <= MODE_STORE;
-            end else if (density_pipe < THRESH_MODERATE) begin
-                voltage_mode <= MODE_COMPUTE;
-            end else if (density_pipe < THRESH_DENSE) begin
-                voltage_mode <= MODE_APPROX;
-            end else begin
-                voltage_mode <= MODE_MORPHIC;
+            if (valid_pipe) begin
+                voltage_mode <= sel_mode;
             end
         end
     end

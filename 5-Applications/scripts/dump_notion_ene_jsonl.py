@@ -14,6 +14,8 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Any, Optional
 
+from shim.utils.datetime_utils import utc_now
+
 # Load .env before any ENE imports so ENE_ENCRYPTION_KEY is available
 project_root = Path(__file__).parent.parent.parent
 try:
@@ -47,7 +49,7 @@ except ImportError as e:
 
 def generate_id(pkg: str, version: str = None) -> str:
     """Generate unique ID in ENE format."""
-    timestamp = version or datetime.utcnow().isoformat()
+    timestamp = version or utc_now()
     return f"ene:{pkg}:{timestamp}"
 
 def format_jsonl_entry(
@@ -64,7 +66,7 @@ def format_jsonl_entry(
     """Format entry in Research Stack JSON-L schema."""
 
     timestamp = time.time()
-    entry_id = generate_id(pkg, datetime.utcnow().isoformat())
+    entry_id = generate_id(pkg, utc_now())
 
     return {
         "t": timestamp,
@@ -73,7 +75,7 @@ def format_jsonl_entry(
         "op": "upsert",
         "data": {
             "pkg": pkg,
-            "version": datetime.utcnow().isoformat(),
+            "version": utc_now(),
             "tier": tier,
             "domain": domain,
             "archetype": archetype,
@@ -771,7 +773,7 @@ class TopologicalEngineDumper:
                 "source": entry.get("src"),
                 "operation": entry.get("op"),
                 "domain": domain,
-                "synced_at": datetime.utcnow().isoformat(),
+                "synced_at": utc_now(),
             }
             # Filter None values
             props = {k: v for k, v in props.items() if v is not None}

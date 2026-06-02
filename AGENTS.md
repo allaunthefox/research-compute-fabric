@@ -233,11 +233,20 @@ git ls-remote --heads github <branch>
 The codebase has 6 different Q16_16 type definitions causing fragmentation. A migration
 is in progress to unify all consumers to the canonical `Semantics.FixedPoint.Q16_16`.
 
-### Migration Status
+### Migration Status (Completed)
 - ✅ `ManifoldStructures.lean` - Migrated (type-only usage)
 - ✅ `Errors.lean` - Migrated (function-using, bridge-based approach)
-- 📋 25 more PhysicsScalar consumers pending
-- 📋 17 ElectromagneticSpectrum consumers pending
+- ✅ `SubstrateProfile.lean` - Migrated
+- ✅ `BoundaryDynamics.lean` - Migrated
+- ✅ `CausalGeometry.lean` - Migrated
+- ✅ `CosmicStructure.lean` - Migrated
+- ✅ `CriticalityDynamics.lean` - Migrated
+- ✅ `ExoticSpacetime.lean` - Migrated
+- ✅ `MagnetoPlasma.lean` - Migrated
+- ✅ `ManifoldPotential.lean` - Migrated
+- ✅ `MultiBodyField.lean` - Migrated
+- ✅ `SpikingDynamics.lean` - Migrated
+- ✅ `PhysicsScalarBridge.lean` - Created bridge with full function forwarding
 
 ### Migration Approach
 For files using PhysicsScalar.Q16_16:

@@ -27,6 +27,9 @@ from pathlib import Path
 from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional
 
+from shim.utils.datetime_utils import utc_now
+from shim.utils.hashing import sha256_text
+
 # Load .env before imports
 project_root = Path(__file__).parent.parent.parent
 try:
@@ -48,7 +51,7 @@ def env_default(name: str, default: str) -> str:
     return v if v is not None and v != "" else default
 
 
-DEFAULT_VAULT_PATH = project_root / "Obdisidan connector"
+DEFAULT_VAULT_PATH = project_root / "6-Documentation/wiki/obsidian-vault"
 LAKE_PATH = Path(os.getenv("OBSIDIAN_LAKE_PATH", str(project_root / "data" / "obsidian_lake.jsonl")))
 LAKE_PATH.parent.mkdir(parents=True, exist_ok=True)
 
@@ -62,8 +65,7 @@ def _vault_path(path: Optional[str] = None) -> Path:
     return Path(raw).expanduser().resolve()
 
 
-def _content_hash(content: str) -> str:
-    return hashlib.sha256(content.encode("utf-8")).hexdigest()
+
 
 
 def _note_pkg(path: str) -> str:
@@ -74,7 +76,7 @@ def _extract_note_metadata(content: str) -> Dict[str, Any]:
     """Extract lightweight Obsidian metadata without changing note content."""
     links = sorted(set(match.strip() for match in WIKI_LINK_RE.findall(content)))
     tags = sorted(set(match.strip() for match in TAG_RE.findall(content)))
-    return {"links": links, "tags": tags, "content_hash": _content_hash(content)}
+    return {"links": links, "tags": tags, "content_hash": sha256_text(content)}
 
 
 def _iter_local_notes(vault_path: Path) -> List[Path]:
@@ -450,7 +452,7 @@ def main():
     parser.add_argument(
         "--vault",
         default=None,
-        help="Local Obsidian vault path; defaults to OBSIDIAN_VAULT_PATH or ./Obdisidan connector",
+        help="Local Obsidian vault path; defaults to OBSIDIAN_VAULT_PATH or ./6-Documentation/wiki/obsidian-vault",
     )
     parser.add_argument("--lake", default=str(LAKE_PATH), help="Path to JSON-L lake file")
     parser.add_argument("--query", default="*", help="Obsidian search query (ingest mode)")

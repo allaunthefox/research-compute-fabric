@@ -1,0 +1,342 @@
+Decompressing 8447 already-cached file(s) (4 already decompressed)
+Current branch: HEAD
+Using cache (Azure) from origin: (some leanprover-community/mathlib4)
+No files to download
+Decompressed 8447 already-cached file(s)
+Completed successfully in 13732 ms!
+✖ [8467/8468] Building BinnedFormalizations (8.5s)
+trace: .> LEAN_PATH=/home/allaun/lean_binned/.lake/packages/Cli/.lake/build/lib/lean:/home/allaun/lean_binned/.lake/packages/batteries/.lake/build/lib/lean:/home/allaun/lean_binned/.lake/packages/Qq/.lake/build/lib/lean:/home/allaun/lean_binned/.lake/packages/aesop/.lake/build/lib/lean:/home/allaun/lean_binned/.lake/packages/proofwidgets/.lake/build/lib/lean:/home/allaun/lean_binned/.lake/packages/importGraph/.lake/build/lib/lean:/home/allaun/lean_binned/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/home/allaun/lean_binned/.lake/packages/plausible/.lake/build/lib/lean:/home/allaun/lean_binned/.lake/packages/mathlib/.lake/build/lib/lean:/home/allaun/lean_binned/.lake/build/lib/lean /home/allaun/.elan/toolchains/leanprover--lean4---v4.30.0-rc2/bin/lean /home/allaun/lean_binned/BinnedFormalizations.lean -o /home/allaun/lean_binned/.lake/build/lib/lean/BinnedFormalizations.olean -i /home/allaun/lean_binned/.lake/build/lib/lean/BinnedFormalizations.ilean -c /home/allaun/lean_binned/.lake/build/ir/BinnedFormalizations.c --setup /home/allaun/lean_binned/.lake/build/ir/BinnedFormalizations.setup.json --json
+error: BinnedFormalizations.lean:5:2: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  c ≥ 0
+  b - c ≥ 1
+where
+ b := ↑1 / ↑a
+ c := ↑z
+error: BinnedFormalizations.lean:8:48: unexpected token ':='; expected '}'
+error: BinnedFormalizations.lean:12:37: unexpected token 'where'; expected '_' or identifier
+error: BinnedFormalizations.lean:16:46: unexpected token ':='; expected ')', ',' or ':'
+error: BinnedFormalizations.lean:21:2: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  0 ≤ d ≤ 1
+  c ≥ 0
+  c + d ≤ 0
+where
+ c := ↑b
+ d := ↑a
+error: BinnedFormalizations.lean:25:2: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  0 ≤ b ≤ 12
+  a ≥ 0
+  a + b ≤ 11
+where
+ a := ↑is
+ b := ↑s
+error: BinnedFormalizations.lean:28:66: unexpected token '⇒'; expected term
+error: BinnedFormalizations.lean:32:92: expected token
+error: BinnedFormalizations.lean:32:90: Application type mismatch: The argument
+  we
+has type
+  ℕ
+but is expected to have type
+  Prop
+in the application
+  a ≤ b ∧ we
+error: BinnedFormalizations.lean:36:63: unexpected token ')'; expected ':=', 'where' or '|'
+error: BinnedFormalizations.lean:40:44: unexpected token ':='; expected ')', ',' or ':'
+error: BinnedFormalizations.lean:44:210: expected token
+error: BinnedFormalizations.lean:48:71: unexpected token 'with'; expected term
+error: BinnedFormalizations.lean:53:2: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  b ≥ 0
+  a ≥ 0
+  a - b ≥ 1
+where
+ a := ↑q
+ b := ↑Ep
+error: BinnedFormalizations.lean:56:42: expected token
+error: BinnedFormalizations.lean:60:50: Function expected at
+  M
+but this term has type
+  ℕ
+
+Note: Expected a function because this term is being applied to the argument
+  P
+error: BinnedFormalizations.lean:65:2: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  0 ≤ a ≤ 1
+where
+ a := ↑M
+error: BinnedFormalizations.lean:69:2: omega could not prove the goal:
+No usable constraints found. You may need to unfold definitions so `omega` can see linear arithmetic facts about `Nat` and `Int`, which may also involve multiplication, division, and modular remainder by constants.
+error: BinnedFormalizations.lean:73:2: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  b ≥ 0
+  a ≥ 0
+  a - b ≥ 1
+where
+ a := ↑nK
+ b := ↑S
+error: BinnedFormalizations.lean:76:42: failed to synthesize instance of type class
+  EmptyCollection ℕ
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+error: BinnedFormalizations.lean:77:2: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  b ≥ 0
+  a ≥ 0
+  a - b ≥ 1
+where
+ a := ↑∅
+ b := ↑j
+error: BinnedFormalizations.lean:80:84: expected token
+error: BinnedFormalizations.lean:84:29: unexpected token 'by'; expected '_' or identifier
+error: BinnedFormalizations.lean:88:61: Function expected at
+  T
+but this term has type
+  ℕ
+
+Note: Expected a function because this term is being applied to the argument
+  pi
+error: BinnedFormalizations.lean:92:42: failed to synthesize instance of type class
+  Neg ℕ
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+error: BinnedFormalizations.lean:93:2: omega could not prove the goal:
+No usable constraints found. You may need to unfold definitions so `omega` can see linear arithmetic facts about `Nat` and `Int`, which may also involve multiplication, division, and modular remainder by constants.
+error: BinnedFormalizations.lean:96:55: Application type mismatch: The argument
+  Eq
+has type
+  ℕ
+but is expected to have type
+  Prop
+in the application
+  q = 0 ∧ Eq
+error: BinnedFormalizations.lean:97:2: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  a ≥ 1
+where
+ a := ↑q
+error: BinnedFormalizations.lean:100:51: Function expected at
+  ci
+but this term has type
+  ℕ
+
+Note: Expected a function because this term is being applied to the argument
+  P
+error: BinnedFormalizations.lean:105:2: omega could not prove the goal:
+No usable constraints found. You may need to unfold definitions so `omega` can see linear arithmetic facts about `Nat` and `Int`, which may also involve multiplication, division, and modular remainder by constants.
+error: BinnedFormalizations.lean:109:2: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  a ≥ 1
+where
+ a := ↑TV
+error: BinnedFormalizations.lean:112:53: expected token
+error: BinnedFormalizations.lean:112:50: Function expected at
+  F
+but this term has type
+  ℕ
+
+Note: Expected a function because this term is being applied to the argument
+  u
+error: BinnedFormalizations.lean:116:58: Function expected at
+  1
+but this term has type
+  ?m.5
+
+Note: Expected a function because this term is being applied to the argument
+  and
+error: BinnedFormalizations.lean:116:77: unexpected token ':='; expected command
+error: BinnedFormalizations.lean:120:55: unexpected token ':='; expected ')', ',' or ':'
+error: BinnedFormalizations.lean:124:119: unexpected token 'where'; expected '_' or identifier
+error: BinnedFormalizations.lean:128:82: unexpected token 'where'; expected '_' or identifier
+error: BinnedFormalizations.lean:132:126: expected token
+error: BinnedFormalizations.lean:136:114: unexpected token ','; expected ':=', 'where' or '|'
+error: BinnedFormalizations.lean:140:164: unexpected token '('; expected ':=', 'where' or '|'
+error: BinnedFormalizations.lean:140:138: Function expected at
+  0
+but this term has type
+  ?m.5
+
+Note: Expected a function because this term is being applied to the argument
+  into
+error: BinnedFormalizations.lean:144:74: Function expected at
+  1
+but this term has type
+  ?m.11
+
+Note: Expected a function because this term is being applied to the argument
+  h
+error: BinnedFormalizations.lean:148:79: unexpected token 'λ'; expected '_' or identifier
+error: BinnedFormalizations.lean:152:139: unexpected identifier; expected ':=', 'where' or '|'
+error: BinnedFormalizations.lean:156:82: unexpected token '≤'; expected ':=', 'where' or '|'
+error: BinnedFormalizations.lean:160:119: unexpected token 'to'; expected '_' or identifier
+error: BinnedFormalizations.lean:164:76: unexpected token 'have'; expected '_' or identifier
+error: BinnedFormalizations.lean:168:222: unexpected token 'while'; expected '_' or identifier
+error: BinnedFormalizations.lean:172:168: expected token
+error: BinnedFormalizations.lean:176:146: Application type mismatch: The argument
+  V
+has type
+  ℕ
+but is expected to have type
+  Prop
+in the application
+  And V
+error: BinnedFormalizations.lean:176:170: Function expected at
+  locally
+but this term has type
+  ℕ
+
+Note: Expected a function because this term is being applied to the argument
+  finite
+error: BinnedFormalizations.lean:176:187: Function expected at
+  infinite
+but this term has type
+  ℕ
+
+Note: Expected a function because this term is being applied to the argument
+  graph
+error: BinnedFormalizations.lean:180:106: unexpected token ']'; expected term
+error: BinnedFormalizations.lean:184:120: Function expected at
+  OK
+but this term has type
+  ℕ
+
+Note: Expected a function because this term is being applied to the argument
+  (a - K N)
+error: BinnedFormalizations.lean:184:134: Function expected at
+  when
+but this term has type
+  ℕ
+
+Note: Expected a function because this term is being applied to the argument
+  s
+error: BinnedFormalizations.lean:184:134: failed to synthesize instance of type class
+  Membership ℕ ℕ
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+error: BinnedFormalizations.lean:184:165: Function expected at
+  aN
+but this term has type
+  ℕ
+
+Note: Expected a function because this term is being applied to the argument
+  Kd
+error: BinnedFormalizations.lean:188:140: unexpected token '≥'; expected ':=', 'where' or '|'
+error: BinnedFormalizations.lean:188:106: Function expected at
+  k
+but this term has type
+  ℕ
+
+Note: Expected a function because this term is being applied to the argument
+  (97)
+error: BinnedFormalizations.lean:188:125: Function expected at
+  lnq
+but this term has type
+  ℕ
+
+Note: Expected a function because this term is being applied to the argument
+  pk
+error: BinnedFormalizations.lean:192:60: unexpected token 'have'; expected '_' or identifier
+error: BinnedFormalizations.lean:196:155: unexpected token '⟩'; expected '|' or '|ₘ'
+error: BinnedFormalizations.lean:200:55: unexpected token 'for'; expected '_' or identifier
+error: BinnedFormalizations.lean:204:155: unexpected token ':'; expected ':=', 'where' or '|'
+error: BinnedFormalizations.lean:204:133: Function expected at
+  g
+but this term has type
+  ℕ
+
+Note: Expected a function because this term is being applied to the argument
+  independent
+error: BinnedFormalizations.lean:208:111: unexpected token ':'; expected ':=', 'where' or '|'
+error: BinnedFormalizations.lean:212:62: unexpected token 'where'; expected '_' or identifier
+error: BinnedFormalizations.lean:216:154: unexpected token '('; expected ':=', 'where' or '|'
+error: BinnedFormalizations.lean:220:103: unexpected token '('; expected ':=', 'where' or '|'
+error: BinnedFormalizations.lean:224:89: unexpected token 'where'; expected '_' or identifier
+error: BinnedFormalizations.lean:228:101: unexpected token '('; expected '=>'
+error: BinnedFormalizations.lean:232:127: unexpected token 'to'; expected '_' or identifier
+error: BinnedFormalizations.lean:236:87: unexpected token 'by'; expected '_' or identifier
+error: BinnedFormalizations.lean:240:107: expected token
+error: BinnedFormalizations.lean:240:100: Function expected at
+  Γo
+but this term has type
+  ℕ
+
+Note: Expected a function because this term is being applied to the argument
+  Z
+error: BinnedFormalizations.lean:244:76: unexpected token '='; expected ':=', 'where' or '|'
+error: BinnedFormalizations.lean:244:73: Function expected at
+  p
+but this term has type
+  ℕ
+
+Note: Expected a function because this term is being applied to the argument
+  n
+error: BinnedFormalizations.lean:248:106: unexpected token '*'; expected term
+error: BinnedFormalizations.lean:252:60: failed to synthesize instance of type class
+  Neg ℕ
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+error: BinnedFormalizations.lean:252:79: failed to synthesize instance of type class
+  Neg ℕ
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+error: BinnedFormalizations.lean:253:2: omega could not prove the goal:
+No usable constraints found. You may need to unfold definitions so `omega` can see linear arithmetic facts about `Nat` and `Int`, which may also involve multiplication, division, and modular remainder by constants.
+error: BinnedFormalizations.lean:256:89: Function expected at
+  Γ
+but this term has type
+  ℕ
+
+Note: Expected a function because this term is being applied to the argument
+  e2
+error: BinnedFormalizations.lean:256:83: Function expected at
+  1
+but this term has type
+  ?m.25
+
+Note: Expected a function because this term is being applied to the argument
+  Γ
+error: BinnedFormalizations.lean:256:105: Function expected at
+  1
+but this term has type
+  ?m.28
+
+Note: Expected a function because this term is being applied to the argument
+  Γ2
+error: BinnedFormalizations.lean:260:235: unexpected token '('; expected ':=', 'where' or '|'
+error: BinnedFormalizations.lean:264:58: unexpected token 'from'; expected '_' or identifier
+error: BinnedFormalizations.lean:268:38: unexpected token 'for'; expected '_' or identifier
+error: BinnedFormalizations.lean:272:92: Application type mismatch: The argument
+  x
+has type
+  ℕ
+but is expected to have type
+  Prop
+in the application
+  And x
+error: BinnedFormalizations.lean:272:88: failed to synthesize instance of type class
+  HSub ℕ Prop ?m.5
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+error: BinnedFormalizations.lean:273:2: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  c ≥ 0
+  b ≥ 0
+  b - c ≥ 0
+where
+ b := ↑a
+ c := ↑x
+error: BinnedFormalizations.lean:276:53: unexpected token 'λ'; expected '_' or identifier
+error: BinnedFormalizations.lean:280:213: expected token
+error: BinnedFormalizations.lean:284:52: unexpected identifier; expected ')', ',' or ':'
+error: BinnedFormalizations.lean:288:53: expected token
+error: BinnedFormalizations.lean:292:79: unexpected token ','; expected ':=', 'where' or '|'
+error: BinnedFormalizations.lean:296:98: unexpected token ')'; expected ':=', 'where' or '|'
+error: BinnedFormalizations.lean:300:43: unexpected token '*'; expected term
+error: BinnedFormalizations.lean:304:56: unexpected token 'for'; expected '_' or identifier
+error: BinnedFormalizations.lean:308:49: unexpected token ':='; expected term
+error: BinnedFormalizations.lean:312:43: maximum number of errors (100; from option `maxErrors`) reached, exiting
+error: Lean exited with code 1
+Some required targets logged failures:
+- BinnedFormalizations

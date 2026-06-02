@@ -1,4 +1,7 @@
 // ── Q16_16 Fixed-Point Arithmetic Verification Shader ───────────────────
+//
+// Depends on: q16_arithmetic.wgsl (shared include)
+//
 // Each workgroup verifies one theorem across N test vectors.
 // Theorems are indexed by workgroup_id; each invocation tests one vector.
 
@@ -30,6 +33,8 @@ struct TheoremResult {
 @group(0) @binding(2) var<storage, read_write> results: array<TheoremResult>;
 
 // ── Q16_16 Arithmetic (matches FixedPoint.lean) ─────────────────────────
+// Note: q16_mul, q16_div, q16_neg, q16_to_int come from q16_arithmetic.wgsl shared include.
+// q16_add and q16_sub are saturating variants defined locally.
 
 fn q16_add(a: u32, b: u32) -> u32 {
   let s: u32 = a + b;
@@ -55,30 +60,6 @@ fn q16_sub(a: u32, b: u32) -> u32 {
     return 0x80000000u;
   }
   return d;
-}
-
-fn q16_mul(a: u32, b: u32) -> u32 {
-  let prod: u64 = u64(a) * u64(b);
-  return u32(prod >> 16u);
-}
-
-fn q16_div(a: u32, b: u32) -> u32 {
-  if (b == 0u) {
-    return 0xFFFFFFFFu; // infinity
-  }
-  return u32((u64(a) << 16u) / u64(b));
-}
-
-fn q16_neg(a: u32) -> u32 {
-  // two's complement negation
-  return ~a + 1u;
-}
-
-fn q16_to_int(a: u32) -> i32 {
-  if (a >= 0x80000000u) {
-    return i32(a) - 0x100000000i;
-  }
-  return i32(a);
 }
 
 // ── Theorem Verification Kernels ─────────────────────────────────────────

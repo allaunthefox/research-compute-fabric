@@ -12,6 +12,10 @@ spec:
     authentik:
       existingSecret:
         secretName: authentik-env
+      # Bootstrap password for initial akadmin user
+      # Set via AUTHENTIK_BOOTSTRAP_PASSWORD in authentik-env secret
+      # Generated during bootstrap: openssl rand -base64 24
+      # Stored encrypted in: secrets/authentik-secrets.age
     postgresql:
       enabled: true
       global:

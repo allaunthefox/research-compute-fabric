@@ -19,6 +19,8 @@ from pathlib import Path
 from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional, Tuple
 
+from shim.utils.hashing import file_sha256
+
 
 def env_default(name: str, default: str) -> str:
     try:
@@ -60,12 +62,7 @@ TIER_MAPPING = {
 }
 
 
-def compute_sha256(filepath: Path) -> str:
-    sha256 = hashlib.sha256()
-    with open(filepath, "rb") as f:
-        for chunk in iter(lambda: f.read(8192), b""):
-            sha256.update(chunk)
-    return f"sha256:{sha256.hexdigest()}"
+
 
 
 def infer_domain(filepath: Path, content: str) -> str:
@@ -143,7 +140,7 @@ def compute_address_from_genome(genome: Dict[str, int]) -> int:
 
 
 def md_to_jsonl_entry(filepath: Path, node_id: str) -> Dict[str, Any]:
-    file_hash = compute_sha256(filepath)
+    file_hash = file_sha256(filepath)
     file_stat = filepath.stat()
     mtime_unix = file_stat.st_mtime
     file_size = file_stat.st_size

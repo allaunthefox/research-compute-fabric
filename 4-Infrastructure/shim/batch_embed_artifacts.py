@@ -4,17 +4,16 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import sys
 import time
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from urllib import request
 
 from rds_connect import connect_rds
+from shim.utils import sha256_text, utc_now
 
 BATCH_SIZE = 50
 TOKEN_REFRESH_SEC = 600
@@ -27,18 +26,6 @@ AWS_REGION = os.environ.get("AWS_REGION", "us-east-1")
 
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://100.85.244.73:11434").rstrip("/")
 EMBED_MODEL = os.environ.get("EMBED_MODEL", "nomic-embed-text")
-
-
-def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat()
-
-
-def sha256_text(text: str) -> str:
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
-
-
-def get_conn():
-    return connect_rds()
 
 
 def fetch_batch(cur, batch_size: int) -> list[tuple[Any, str, str]]:
@@ -128,7 +115,7 @@ def main() -> int:
 
     started_at = utc_now()
     started = time.time()
-    conn = get_conn()
+    conn = connect_rds()
     next_refresh = time.time() + TOKEN_REFRESH_SEC
     cur = conn.cursor()
     processed = 0
@@ -145,7 +132,7 @@ def main() -> int:
 
             if os.environ.get("RDS_IAM", "1") == "1" and time.time() > next_refresh:
                 conn.close()
-                conn = get_conn()
+                conn = connect_rds()
                 cur = conn.cursor()
                 next_refresh = time.time() + TOKEN_REFRESH_SEC
 

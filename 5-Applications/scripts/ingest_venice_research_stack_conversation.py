@@ -11,6 +11,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from shim.utils.hashing import sha256_text, sha256_bytes, sha256_path
+from shim.utils.json_utils import stable_json
+
 
 ROOT = Path("/home/allaun/Documents/Research Stack")
 SOURCE = Path("/home/allaun/Documents/ingest/research stack conversation venice.md")
@@ -55,20 +58,7 @@ EVIDENCE_PATTERNS = {
 }
 
 
-def sha256_bytes(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
 
-
-def sha256_path(path: Path) -> str:
-    return sha256_bytes(path.read_bytes())
-
-
-def sha256_text(text: str) -> str:
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
-
-
-def stable_json(obj: Any) -> str:
-    return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
 
 
 def slugify(value: str) -> str:

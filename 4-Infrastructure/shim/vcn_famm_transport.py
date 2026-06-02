@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import hashlib
 import struct
+import tempfile
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -40,8 +41,12 @@ except ImportError:
 from braid_vcn_encoder import (
     delta_rle_encode_vectorized,
     rs_encode,
-    encode_braid_strand,
-    decode_braid_frame,
+    decode_braid_frame_extended,
+)
+from vcn_compute_substrate import (
+    _build_frame_payload, create_frame_dynamic,
+    encode_frames_hardware, compute_frame_size,
+    VCNComputeFrameSpec, TAG_STRAND,
 )
 from fractal_dimension import fractal_dimension, fd_compress_hint
 
@@ -404,12 +409,31 @@ def famm_encode(
         )
 
     # ── Step 7: VCN encode ──
-    encoded = encode_braid_strand(
-        braid_data,
-        resolution='1080p',
-        compress=True,
-        frame_counter=frame_counter,
+    # braid_data is raw bytes — use the lower-level pipeline directly
+    # (encode_braid_strand expects a dict, not bytes)
+    payload = _build_frame_payload(TAG_STRAND, braid_data, key=None, compress=True)
+    w, h = 1920, 1080
+    spec = VCNComputeFrameSpec(
+        width=w, height=h,
+        bytes_per_frame=compute_frame_size(w, h, "yuv420p"),
+        encoder="libx264",
     )
+    frame = create_frame_dynamic(payload, seq=frame_counter, spec=spec)
+    with tempfile.NamedTemporaryFile(suffix=".mkv", delete=False) as tmp:
+        tmp_path = Path(tmp.name)
+    try:
+        import zlib as _zlib
+        frame_crc = f"{_zlib.crc32(frame):08x}"
+        timestamp_us = int(time.time_ns() / 1000)
+        result = encode_frames_hardware(
+            [frame], tmp_path, spec,
+            sei_receipts=[{"seq": frame_counter, "crc32_hex": frame_crc, "timestamp_us": timestamp_us}],
+        )
+        if result.returncode != 0:
+            raise RuntimeError(f"VCN encode failed: {result.stderr}")
+        encoded = tmp_path.read_bytes()
+    finally:
+        tmp_path.unlink(missing_ok=True)
 
     encode_time = (time.time() - t0) * 1000
 
@@ -471,11 +495,15 @@ def famm_decode(
     t0 = time.time()
 
     # ── Step 1: VCN decode ──
-    decoded, success, info = decode_braid_frame(
+    result = decode_braid_frame_extended(
         encoded_data,
+        key=None,
         expected_seq=expected_seq,
         expected_crc=expected_crc,
     )
+    decoded = result.get("data", b"") if isinstance(result.get("data"), bytes) else b""
+    success = result.get("crc_match") != "corrupt" and result.get("seq_match") != "drop"
+    info = result
 
     decode_time = (time.time() - t0) * 1000
 

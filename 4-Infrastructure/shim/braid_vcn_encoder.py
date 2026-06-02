@@ -40,6 +40,15 @@ from vcn_compute_substrate import (
     compute_frame_size, create_frame_dynamic, encode_frames_hardware,
     BRAID_STRAND_BYTES, BRAID_BRACKET_BYTES, sei_receipt_from_mkv, SEI_UUID,
     _q16_to_bytes, _u32_to_bytes, _bool_to_byte,
+    # Previously duplicated — now imported from canonical source:
+    delta_rle_encode, delta_rle_decode,
+    rs_encode, rs_decode,
+    chacha_encrypt, chacha_decrypt,
+    _serialize_bracket, _deserialize_bracket,
+    _serialize_strand, _deserialize_strand,
+    _build_frame_payload, decode_braid_frame,
+    TAG_STRAND, TAG_CROSSING, TAG_PIST,
+    RS_NSYM, CHACHA_KEY_SIZE, CHACHA_NONCE_SIZE,
 )
 
 # Third-party (lazy imports so py_compile works without them installed)
@@ -56,65 +65,11 @@ except ImportError:
     _CHA20_AVAILABLE = False
 
 
-# ── Configuration ────────────────────────────────────────────────────────────
-
-RS_NSYM = 32                # Reed-Solomon parity symbols (corrects 16 symbol errors)
-CHACHA_KEY_SIZE = 32        # 256-bit key
-CHACHA_NONCE_SIZE = 16      # 128-bit nonce (cryptography ChaCha20 requires 16)
-
-# Pipeline stage tags (1 byte each, used to identify frame contents)
-TAG_STRAND   = 0x01
-TAG_CROSSING = 0x02
-TAG_PIST     = 0x03
-
-
-# ── Delta + RLE compression ─────────────────────────────────────────────────
-
-def delta_rle_encode(data: bytes) -> bytes:
-    """Compress *data* using delta encoding followed by run-length encoding.
-
-    Layout:
-        [4 bytes: original length][1 byte: delta flag (0x01)]
-        [delta-encoded + RLE stream]
-
-    RLE scheme: if a byte repeats ≥3 times, emit [0xFE, byte, count].
-    0xFE in the literal stream is escaped as [0xFE, 0xFE].
-    """
-    if not data:
-        return struct.pack("<I", 0) + b"\x01"
-
-    # Delta encoding (byte-level deltas)
-    deltas = bytearray(len(data))
-    deltas[0] = data[0]
-    for i in range(1, len(data)):
-        deltas[i] = (data[i] - data[i - 1]) & 0xFF
-
-    # RLE pass
-    out = bytearray()
-    i = 0
-    while i < len(deltas):
-        if i + 2 < len(deltas) and deltas[i] == deltas[i + 1] == deltas[i + 2]:
-            # Run of identical bytes
-            run_byte = deltas[i]
-            run_len = 0
-            while i + run_len < len(deltas) and deltas[i + run_len] == run_byte and run_len < 255:
-                run_len += 1
-            out.append(0xFE)
-            out.append(run_byte)
-            out.append(run_len)
-            i += run_len
-        else:
-            b = deltas[i]
-            if b == 0xFE:
-                out.append(0xFE)
-                out.append(0xFE)
-            else:
-                out.append(b)
-            i += 1
-
-    header = struct.pack("<I", len(data)) + b"\x01"
-    return header + bytes(out)
-
+# ── Delta + RLE compression (vectorized variant) ────────────────────────────
+# delta_rle_encode, delta_rle_decode, rs_encode, rs_decode, chacha_encrypt,
+# chacha_decrypt, _serialize_bracket, _deserialize_bracket, _serialize_strand,
+# _deserialize_strand, _build_frame_payload, decode_braid_frame are all imported
+# from vcn_compute_substrate (canonical source).
 
 def delta_rle_encode_vectorized(data: bytes) -> bytes:
     """Vectorized delta+RLE using numpy copy-if pattern.
@@ -170,172 +125,7 @@ def delta_rle_encode_vectorized(data: bytes) -> bytes:
     return header + pos_bytes + bytes(out)
 
 
-def delta_rle_decode(stream: bytes) -> bytes:
-    """Decompress a delta-RLE stream back to original bytes."""
-    orig_len = struct.unpack("<I", stream[:4])[0]
-    if orig_len == 0:
-        return b""
-    _flag = stream[4]
-    payload = stream[5:]
-
-    # Undo RLE
-    expanded = bytearray()
-    i = 0
-    while i < len(payload):
-        if payload[i] == 0xFE:
-            if i + 1 < len(payload) and payload[i + 1] == 0xFE:
-                expanded.append(0xFE)
-                i += 2
-            elif i + 2 < len(payload):
-                run_byte = payload[i + 1]
-                run_len = payload[i + 2]
-                expanded.extend([run_byte] * run_len)
-                i += 3
-            else:
-                expanded.append(payload[i])
-                i += 1
-        else:
-            expanded.append(payload[i])
-            i += 1
-
-    # Undo delta encoding
-    out = bytearray(orig_len)
-    if orig_len > 0:
-        out[0] = expanded[0]
-        for j in range(1, orig_len):
-            out[j] = (expanded[j] + out[j - 1]) & 0xFF
-
-    return bytes(out)
-
-
-# ── Reed-Solomon error correction ───────────────────────────────────────────
-
-def rs_encode(data: bytes, nsym: int = RS_NSYM) -> bytes:
-    """Append Reed-Solomon parity symbols to *data*."""
-    if reedsolo is None:
-        raise ImportError("reedsolo is required for Reed-Solomon ECC. pip install reedsolo")
-    rs = reedsolo.RSCodec(nsym)
-    return rs.encode(data)
-
-
-def rs_decode(data: bytes, nsym: int = RS_NSYM) -> bytes:
-    """Decode (and correct errors in) a Reed-Solomon encoded message."""
-    if reedsolo is None:
-        raise ImportError("reedsolo is required for Reed-Solomon ECC. pip install reedsolo")
-    rs = reedsolo.RSCodec(nsym)
-    decoded = rs.decode(data)
-    # reedsolo returns (decoded_msg, decoded_msg_with_ecc, ...) — take first element
-    if isinstance(decoded, tuple):
-        return bytes(decoded[0])
-    return bytes(decoded)
-
-
-# ── ChaCha20 encryption ─────────────────────────────────────────────────────
-
-def _get_chacha_key(key: Optional[bytes] = None) -> bytes:
-    """Return a 32-byte ChaCha20 key, generating one if not supplied."""
-    if key is not None:
-        if len(key) != CHACHA_KEY_SIZE:
-            raise ValueError(f"Key must be {CHACHA_KEY_SIZE} bytes")
-        return key
-    return os.urandom(CHACHA_KEY_SIZE)
-
-
-def chacha_encrypt(plaintext: bytes, key: bytes, nonce: Optional[bytes] = None) -> Tuple[bytes, bytes]:
-    """Encrypt *plaintext* with ChaCha20. Returns (ciphertext, nonce)."""
-    if not _CHA20_AVAILABLE:
-        raise ImportError("cryptography is required for ChaCha20. pip install cryptography")
-    if nonce is None:
-        nonce = os.urandom(CHACHA_NONCE_SIZE)
-    encryptor = _Cipher(_alg.ChaCha20(key, nonce), mode=None).encryptor()
-    ct = encryptor.update(plaintext) + encryptor.finalize()
-    return ct, nonce
-
-
-def chacha_decrypt(ciphertext: bytes, key: bytes, nonce: bytes) -> bytes:
-    """Decrypt *ciphertext* with ChaCha20."""
-    if not _CHA20_AVAILABLE:
-        raise ImportError("cryptography is required for ChaCha20. pip install cryptography")
-    decryptor = _Cipher(_alg.ChaCha20(key, nonce), mode=None).decryptor()
-    return decryptor.update(ciphertext) + decryptor.finalize()
-
-
-# ── Braid serialization (matches vcn_compute_substrate layouts) ─────────────
-
-def _serialize_bracket(bracket: dict) -> bytes:
-    """Encode a BraidBracket dict to 21 bytes."""
-    data = b""
-    for key in ("lower", "upper", "gap", "kappa", "phi"):
-        data += _q16_to_bytes(bracket[key])
-    data += _bool_to_byte(bracket["admissible"])
-    return data
-
-
-def _deserialize_bracket(raw: bytes) -> dict:
-    """Decode 21 bytes into a BraidBracket dict."""
-    keys = ("lower", "upper", "gap", "kappa", "phi")
-    bracket = {}
-    for i, key in enumerate(keys):
-        bracket[key] = struct.unpack("<I", raw[i * 4:(i + 1) * 4])[0]
-    bracket["admissible"] = raw[20] != 0
-    return bracket
-
-
-def _serialize_strand(strand: dict) -> bytes:
-    """Encode a BraidStrand dict to 42 bytes."""
-    data = b""
-    data += _q16_to_bytes(strand["phaseAcc"]["x"])
-    data += _q16_to_bytes(strand["phaseAcc"]["y"])
-    data += _bool_to_byte(strand["parity"])
-    data += _u32_to_bytes(strand["slot"])
-    data += _q16_to_bytes(strand["residue"])
-    data += _q16_to_bytes(strand["jitter"])
-    data += _serialize_bracket(strand["bracket"])
-    assert len(data) == BRAID_STRAND_BYTES
-    return data
-
-
-def _deserialize_strand(raw: bytes) -> dict:
-    """Decode 42 bytes into a BraidStrand dict."""
-    return {
-        "phaseAcc": {
-            "x": struct.unpack("<I", raw[0:4])[0],
-            "y": struct.unpack("<I", raw[4:8])[0],
-        },
-        "parity": raw[8] != 0,
-        "slot": struct.unpack("<I", raw[9:13])[0],
-        "residue": struct.unpack("<I", raw[13:17])[0],
-        "jitter": struct.unpack("<I", raw[17:21])[0],
-        "bracket": _deserialize_bracket(raw[21:42]),
-    }
-
-
 # ── Full pipeline: encode ───────────────────────────────────────────────────
-
-def _build_frame_payload(tag: int, serialized: bytes,
-                         key: Optional[bytes],
-                         compress: bool = True) -> bytes:
-    """Apply Delta+RLE → RS → ChaCha20 → return frame-ready payload.
-
-    Layout: [1B tag][1B flags][nonce?][RS-encoded, encrypted blob]
-    """
-    flags = 0x00
-    if compress:
-        flags |= 0x01
-
-    blob = serialized
-    if compress:
-        blob = delta_rle_encode_vectorized(blob)
-
-    blob = rs_encode(blob)
-
-    nonce = b""
-    if key is not None:
-        blob, nonce = chacha_encrypt(blob, key)
-        flags |= 0x02  # encrypted flag
-
-    return struct.pack("<BB", tag, flags) + nonce + blob
-
 
 def encode_braid_strand(strand_dict: dict, resolution: str = "1080p",
                         key: Optional[bytes] = None,
@@ -473,40 +263,20 @@ def encode_pist_field(pist_dict: dict, resolution: str = "1080p",
 
 
 # ── Full pipeline: decode ────────────────────────────────────────────────────
+# decode_braid_frame is imported from vcn_compute_substrate (canonical source).
+# The extended version with seq/crc verification is below as decode_braid_frame_extended.
 
-def decode_braid_frame(frame_payload: bytes,
-                       key: Optional[bytes] = None,
-                       expected_seq: Optional[int] = None,
-                       expected_crc: Optional[str] = None,
-                       raw_frame: Optional[bytes] = None) -> dict:
-    """Decode a frame payload (after extracting from MKV / YUV420 frame).
+def decode_braid_frame_extended(frame_payload: bytes,
+                                key: Optional[bytes] = None,
+                                expected_seq: Optional[int] = None,
+                                expected_crc: Optional[str] = None,
+                                raw_frame: Optional[bytes] = None) -> dict:
+    """Extended decode with seq/CRC verification.
 
-    Reverses: ChaCha20 decrypt → RS decode → Delta+RLE decompress → deserialize.
-
-    Args:
-        frame_payload: raw payload bytes (after stripping VCN signature header).
-        key: ChaCha20 key (required if the frame was encrypted).
-        expected_seq: If provided, verify the frame seq matches this value.
-            Sets result["seq_match"] and result["seq_error"]: "ok" | "drop" | "corrupt".
-        expected_crc: If provided along with raw_frame, verify CRC32 matches.
-            Sets result["crc_match"] and result["crc_error"]: "ok" | "corrupt".
-        raw_frame: Full YUV420 frame bytes (with VCN signature header) required
-            for CRC computation when expected_crc is provided.
-
-    Returns:
-        {
-            "tag": int,
-            "tag_name": str,
-            "flags": int,
-            "decrypted": bool,
-            "data": dict | bytes,  # deserialized braid structure
-            "seq_match": str,       # "ok" | "drop" | "corrupt" | None
-            "crc_match": str,       # "ok" | "corrupt" | None
-            "seq_error": str | None,  # None | "mismatch" | "missing"
-            "crc_error": str | None,  # None | "mismatch"
-        }
+    Wraps the canonical decode_braid_frame from vcn_compute_substrate with
+    additional verification fields.
     """
-    # ── CRC verification ────────────────────────────────────────────────────
+    # CRC verification
     crc_match: Optional[str] = None
     crc_error: Optional[str] = None
     if expected_crc is not None and raw_frame is not None:
@@ -517,7 +287,7 @@ def decode_braid_frame(frame_payload: bytes,
             crc_match = "corrupt"
             crc_error = "mismatch"
 
-    # ── Seq verification ─────────────────────────────────────────────────────
+    # Seq verification
     seq_match: Optional[str] = None
     seq_error: Optional[str] = None
     if expected_seq is not None and raw_frame is not None:
@@ -532,53 +302,14 @@ def decode_braid_frame(frame_payload: bytes,
             seq_match = "corrupt"
             seq_error = "missing"
 
-    # ── Core decode ───────────────────────────────────────────────────────────
-    tag, flags = struct.unpack("<BB", frame_payload[:2])
-    encrypted = bool(flags & 0x02)
-    compressed = bool(flags & 0x01)
-    offset = 2
+    # Core decode (from vcn_compute_substrate)
+    result = decode_braid_frame(frame_payload, key)
 
-    nonce = b""
-    if encrypted:
-        nonce = frame_payload[offset:offset + CHACHA_NONCE_SIZE]
-        offset += CHACHA_NONCE_SIZE
-
-    blob = frame_payload[offset:]
-
-    if encrypted:
-        if key is None:
-            raise ValueError("Frame is encrypted but no key provided")
-        blob = chacha_decrypt(blob, key, nonce)
-
-    blob = rs_decode(blob)
-
-    if compressed:
-        blob = delta_rle_decode(blob)
-
-    tag_names = {TAG_STRAND: "strand", TAG_CROSSING: "crossing", TAG_PIST: "pist"}
-    result: dict = {
-        "tag": tag,
-        "tag_name": tag_names.get(tag, "unknown"),
-        "flags": flags,
-        "decrypted": encrypted,
-        "seq_match": seq_match,
-        "crc_match": crc_match,
-        "seq_error": seq_error,
-        "crc_error": crc_error,
-    }
-
-    if tag == TAG_STRAND:
-        result["data"] = _deserialize_strand(blob)
-    elif tag == TAG_CROSSING:
-        result["data"] = {
-            "bracket_a": _deserialize_bracket(blob[:BRAID_BRACKET_BYTES]),
-            "bracket_b": _deserialize_bracket(blob[BRAID_BRACKET_BYTES:]),
-        }
-    elif tag == TAG_PIST:
-        result["data"] = json.loads(blob.decode("utf-8"))
-    else:
-        result["data"] = blob
-
+    # Attach verification fields
+    result["seq_match"] = seq_match
+    result["crc_match"] = crc_match
+    result["seq_error"] = seq_error
+    result["crc_error"] = crc_error
     return result
 
 
@@ -684,7 +415,7 @@ def decode_braid_mkv(mkv_bytes: bytes,
         _, seq_num, _, payload_len, _ = struct.unpack("<8sIIII", raw[:SIGNATURE_SIZE])
         payload = raw[SIGNATURE_SIZE:SIGNATURE_SIZE + payload_len]
 
-        return decode_braid_frame(
+        return decode_braid_frame_extended(
             payload, key,
             expected_seq=resolved_seq,
             expected_crc=resolved_crc,

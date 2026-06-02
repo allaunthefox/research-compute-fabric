@@ -9,13 +9,13 @@ publish = false
 anyhow = { workspace = true }
 chrono = { workspace = true }
 clap = { workspace = true }
+ene-common = { path = "../ene-common" }
 hex = "0.4"
-base64 = "0.22"
 hmac = "0.12"
+sha2 = "0.10"
 rand = "0.8"
 serde = { workspace = true }
 serde_json = { workspace = true }
-sha2 = "0.10"
 tokio = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }

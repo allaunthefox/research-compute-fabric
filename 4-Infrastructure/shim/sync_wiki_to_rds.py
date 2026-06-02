@@ -4,33 +4,20 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 from rds_connect import connect_rds
+from shim.utils import sha256_text, utc_now
 
 STACK_ROOT = Path(os.environ.get("STACK_ROOT", "/home/allaun/Research Stack"))
 WIKI_ROOT = Path(os.environ.get("WIKI_ROOT", str(STACK_ROOT / "6-Documentation" / "wiki")))
 
 HOST = os.environ.get("RDS_HOST", "database-1-instance-1.cghu8yqogqwo.us-east-1.rds.amazonaws.com")
 DB = os.environ.get("RDS_DB", os.environ.get("RDS_DBNAME", "postgres"))
-
-
-def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat()
-
-
-def sha256_text(text: str) -> str:
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
-
-
-def get_conn():
-    return connect_rds()
 
 
 def title_from_slug(slug: str) -> str:
@@ -130,7 +117,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     files = iter_markdown_files(WIKI_ROOT)
-    conn = get_conn()
+    conn = connect_rds()
     try:
         indexed, skipped, failures = sync_files(conn, files, args.dry_run)
     finally:

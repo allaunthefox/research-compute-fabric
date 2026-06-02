@@ -1,4 +1,7 @@
 // ── Q0_2 Exhaustive Enumeration Verification Shader ───────────────
+//
+// Depends on: q16_arithmetic.wgsl (shared include)
+//
 // Each workgroup verifies one Q0_2 theorem across all 4 Q0_2 values
 // (16 pairs for binary operations).
 //
@@ -47,6 +50,8 @@ const Q0_2_VALUES: array<u32, 4> = array<u32, 4>(
 );
 
 // ── Q16_16 Arithmetic (matches FixedPoint.lean) ─────────────────────
+// Note: q16_mul, q16_to_int come from q16_arithmetic.wgsl shared include.
+// q16_add is a saturating variant defined locally.
 
 fn q16_add(a: u32, b: u32) -> u32 {
   let s: u32 = a + b;
@@ -57,18 +62,6 @@ fn q16_add(a: u32, b: u32) -> u32 {
     return 0x80000000u;
   }
   return s;
-}
-
-fn q16_mul(a: u32, b: u32) -> u32 {
-  let prod: u64 = u64(a) * u64(b);
-  return u32(prod >> 16u);
-}
-
-fn q16_to_int(a: u32) -> i32 {
-  if (a >= 0x80000000u) {
-    return i32(a) - 0x100000000i;
-  }
-  return i32(a);
 }
 
 // ── Q0_2 Verification Kernels ───────────────────────────────────────

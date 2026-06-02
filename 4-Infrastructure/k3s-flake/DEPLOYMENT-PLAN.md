@@ -13,6 +13,127 @@ Internet → edge Caddy (racknerd:443, TLS) → host Caddy (nixos:80, NodePort r
 - **cupfox** (100.110.163.82, Debian): k3s **server** (control plane) with Traefik **disabled**
 - **nixos-laptop** (100.102.173.61): k3s **agent** + host Caddy (NodePort routing)
 - **Traefik**: Currently **NOT running** (disabled on cupfox)
+- **neon-64gb** (100.100.75.113 Tailscale / 152.53.81.164 public): ARM64 server, hosts Hermes with GGUF model
+
+### Hermes Model Hosting (NEW)
+
+- **Model file**: `/home/allaun/Downloads/Gemma-4-E4B-Uncensored-HauhauCS-Aggressive-Q8_K_P.gguf` on neon-64gb
+- **HostPath mount**: Hermes pod mounts `/home/allaun/Downloads` to `/models/`
+- **Garage backup**: Model can be uploaded to Garage S3 at `http://100.88.57.96:3900` (qfox-1)
+- **Upload script**: `scripts/upload-hermes-model.sh` for uploading to Garage
+- **Fallback**: InitContainer downloads from Garage if host file missing
+
+**Garage S3 Configuration:**
+- Endpoint: `http://100.88.57.96:3900`
+- Bucket: `hermes-models`
+- Credentials: K8s Secret `garage-s3-credentials` (AWS-compatible)
+
+**Direct Download:**
+- HuggingFace: `https://huggingface.co/HauhauCS/Gemma-4-E4B-Uncensored-HauhauCS-Aggressive/resolve/main/Gemma-4-E4B-Uncensored-HauhauCS-Aggressive-Q8_K_P.gguf`
+
+---
+
+## Neon Node Deployment
+
+### Add neon-64gb to the Cluster
+
+The neon-64gb node (ARM64, 2TB NVMe) is configured in `flake.nix` as `k3s-neon` and joins the cupfox control plane.
+
+**Node details:**
+- Hostname: `neon-64gb`
+- Tailscale IP: `100.100.75.113`
+- Public IP: `152.53.81.164`
+- Role: Heavy compute for LLM inference
+- Labels: `kubernetes.io/arch=arm64`, `topology.researchstack.io/role=neon`
+
+**To deploy neon-64gb:**
+
+```bash
+# Copy flake files to neon-64gb
+rsync -av flake.nix flake.lock k3s-configuration.nix roles/neon.nix \
+  root@100.100.75.113:/etc/nixos/k3s-flake/
+
+# Rebuild
+ssh root@100.100.75.113 "cd /etc/nixos/k3s-flake && nixos-rebuild switch --flake .#k3s-neon"
+```
+
+**Verification:**
+```bash
+# Check node joined
+kubectl get nodes -o wide | grep neon-64gb
+
+# Check labels
+kubectl get node neon-64gb --show-labels
+
+# Verify k3s agent is healthy
+kubectl describe node neon-64gb | grep -i condition
+```
+
+### Model File Placement
+
+**Primary location:** `/home/allaun/Downloads/Gemma-4-E4B-Uncensored-HauhauCS-Aggressive-Q8_K_P.gguf` on neon-64gb
+
+**To place the model file:**
+```bash
+# On neon-64gb:
+# Ensure the Downloads directory exists
+mkdir -p /home/allaun/Downloads
+
+# Download directly from HuggingFace (if not already present)
+curl -L -o /home/allaun/Downloads/Gemma-4-E4B-Uncensored-HauhauCS-Aggressive-Q8_K_P.gguf \
+  "https://huggingface.co/HauhauCS/Gemma-4-E4B-Uncensored-HauhauCS-Aggressive/resolve/main/Gemma-4-E4B-Uncensored-HauhauCS-Aggressive-Q8_K_P.gguf"
+
+# Or copy from local machine
+scp /path/to/Gemma-4-E4B-Uncensored-HauhauCS-Aggressive-Q8_K_P.gguf \
+  root@100.100.75.113:/home/allaun/Downloads/
+
+# Set correct permissions
+chmod 644 /home/allaun/Downloads/Gemma-4-E4B-Uncensored-HauhauCS-Aggressive-Q8_K_P.gguf
+```
+
+### Garage Backup (Optional)
+
+Upload the model to Garage S3 for backup/persistence:
+
+```bash
+# On neon-64gb or any machine with Garage CLI:
+bash upload-hermes-model.sh /home/allaun/Downloads/Gemma-4-E4B-Uncensored-HauhauCS-Aggressive-Q8_K_P.gguf hermes-models
+```
+
+This uploads to Garage S3 at `http://100.88.57.96:3900` (qfox-1).
+
+### Deploy Hermes Pod
+
+The Hermes deployment is already configured to:
+1. Run on neon-64gb (via nodeSelector)
+2. Mount `/home/allaun/Downloads` as `/models` (hostPath)
+3. Download from Garage S3 if model missing (initContainer)
+4. Fall back to HuggingFace direct download if Garage unavailable
+
+**Apply Hermes manifests:**
+```bash
+# Already included in deploy-services.sh, but can be applied manually:
+kubectl apply -k /etc/nixos/k3s-flake/manifests/hermes/
+```
+
+**Verification:**
+```bash
+# Check pod is running on neon-64gb
+kubectl -n services get pods -o wide | grep hermes
+
+# Check logs
+kubectl -n services logs -l app=hermes -f
+
+# Test access via Traefik (after Ingress is deployed)
+curl -H "Host: researchstack.info" http://100.110.163.82:80/apps/chat/
+```
+
+**Troubleshooting:**
+- If pod stuck in Init:0/1, check initContainer logs: `kubectl -n services logs <hermes-pod> -c download-model`
+- If image pull errors, ensure the node can pull from Docker Hub
+- If model not found, verify file exists at `/home/allaun/Downloads/Gemma-4-E4B-Uncensored-HauhauCS-Aggressive-Q8_K_P.gguf` on neon-64gb
+
+---
 
 ### Target Architecture (Option A - No etcd cluster)
 

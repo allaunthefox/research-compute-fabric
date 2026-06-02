@@ -142,3 +142,16 @@ spec:
   stripPrefix:
     prefixes:
       - /server/ray
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# Grafana middleware (SSO-gated via /server/grafana)
+# ═══════════════════════════════════════════════════════════════════════════
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-server-grafana
+  namespace: services
+spec:
+  stripPrefix:
+    prefixes:
+      - /server/grafana

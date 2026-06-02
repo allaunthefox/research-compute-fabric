@@ -65,6 +65,7 @@ QP_MAX = 4
 TRANSFORM_SKIP = True
 DEBLOCKING = False
 SEI = False
+SAO = False
 # ── Resolution / Frame Rate Catalog ──────────────────────────────────────────
 
 def sei_receipt_from_mkv(mkv_path: Path, uuid_hex: str = SEI_UUID) -> List[dict]:
@@ -97,18 +98,19 @@ def sei_receipt_from_mkv(mkv_path: Path, uuid_hex: str = SEI_UUID) -> List[dict]
             break
         # SEI payload immediately follows the 16-byte UUID
         payload_hex = ""
-        j = idx + 16
-        while j < min(idx + 16 + 200, len(data)):
-            c = chr(data[j])
+        payload_start = idx + 16
+        payload_end = min(payload_start + 1024, len(data))
+        payload_hex = ""
+        for j in range(payload_start, payload_end):
+            c = chr(data[j]) if data[j] < 128 else ""
             if c in "0123456789abcdefABCDEF":
                 payload_hex += c
-                j += 1
-            elif payload_hex and len(payload_hex) >= 8:
-                break
             else:
-                j += 1
-                payload_hex = ""
-        if len(payload_hex) >= 8:
+                if len(payload_hex) >= 8:
+                    lookahead = data[j:j+4]
+                    if all(b < 0x30 or b > 0x66 for b in lookahead if b < 128):
+                        break
+        if len(payload_hex) >= 8 and len(payload_hex) % 2 == 0:
             try:
                 json_bytes = bytes.fromhex(payload_hex)
                 payload_str = json_bytes.decode("utf-8", errors="replace")
@@ -584,10 +586,10 @@ def pack_q16_16_to_yuv(value: int) -> Tuple[int, int, int]:
     u_val = (value >> 8) & 0xFF
     v_val = value & 0xFF
 
-    # Clamp to valid YUV range
-    y_val = max(16, min(235, y_val))  # Y: 16-235 (limited range)
-    u_val = max(16, min(240, u_val))  # U: 16-240
-    v_val = max(16, min(240, v_val))  # V: 16-240
+    # Clamp to full range (matches load_math_optimizations color_range = "pc")
+    y_val = max(0, min(255, y_val))   # Y: 0-255 (full range)
+    u_val = max(0, min(255, u_val))   # U: 0-255 (full range)
+    v_val = max(0, min(255, v_val))   # V: 0-255 (full range)
 
     return (y_val, u_val, v_val)
 
@@ -994,11 +996,62 @@ def delta_rle_encode(data: bytes) -> bytes:
 
 
 def delta_rle_decode(stream: bytes) -> bytes:
-    """Decompress a delta-RLE stream back to original bytes."""
+    """Decompress a delta-RLE stream back to original bytes.
+
+    Supports two flags:
+      0x01 — scalar path: [orig_len][0x01][rle_stream]
+      0x02 — vectorized path: [orig_len][0x02][pos_bytes_len][pos_bytes][rle_stream]
+    """
     orig_len = struct.unpack("<I", stream[:4])[0]
     if orig_len == 0:
         return b""
-    _flag = stream[4]
+    flag = stream[4]
+
+    if flag == 0x02:
+        # Vectorized path: reconstruct from nonzero positions + RLE-compressed values
+        pos_bytes_len = struct.unpack("<I", stream[5:9])[0]
+        pos_bytes = stream[9:9 + pos_bytes_len]
+        nz_positions = list(struct.unpack(f"<{pos_bytes_len // 4}I", pos_bytes))
+        payload = stream[9 + pos_bytes_len:]
+
+        # Undo RLE on the compressed nonzero values
+        expanded_nz = bytearray()
+        i = 0
+        while i < len(payload):
+            if payload[i] == 0xFE:
+                if i + 1 < len(payload) and payload[i + 1] == 0xFE:
+                    expanded_nz.append(0xFE)
+                    i += 2
+                elif i + 2 < len(payload):
+                    run_byte = payload[i + 1]
+                    run_len = payload[i + 2]
+                    expanded_nz.extend([run_byte] * run_len)
+                    i += 3
+                else:
+                    expanded_nz.append(payload[i])
+                    i += 1
+            else:
+                expanded_nz.append(payload[i])
+                i += 1
+
+        # Scatter nonzero values back to their original positions
+        full_deltas = bytearray(orig_len)
+        for idx, pos in enumerate(nz_positions):
+            if idx < len(expanded_nz) and pos < orig_len:
+                full_deltas[pos] = expanded_nz[idx]
+
+        # Undo delta encoding
+        out = bytearray(orig_len)
+        if orig_len > 0:
+            out[0] = full_deltas[0]
+            for j in range(1, orig_len):
+                out[j] = (full_deltas[j] + out[j - 1]) & 0xFF
+        return bytes(out)
+
+    if flag != 0x01:
+        raise ValueError(f"Unknown delta-RLE flag: {flag}")
+
+    # Scalar path (flag == 0x01)
     payload = stream[5:]
 
     # Undo RLE
@@ -1427,6 +1480,8 @@ def compute_pist_spectral(data: dict) -> dict:
 
 
 # ── main ────────────────────────────────────────────────────────────────────
+
+def main():
     import sys
 
     if len(sys.argv) < 2:

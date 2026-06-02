@@ -3,6 +3,8 @@ import json
 import sqlite3
 import datetime
 
+from shim.utils.datetime_utils import utc_now
+
 DB_PATH = "/home/allaun/Documents/Research Stack/data/substrate_index.db"
 NOTION_DUMP = "/home/allaun/Documents/Research Stack/notion_full_dump.json"
 
@@ -47,7 +49,7 @@ def ingest_notion():
             "tier": "RESEARCH",
             "description": title,
             "tags": json.dumps(tags),
-            "indexed_utc": datetime.datetime.utcnow().isoformat() + "Z",
+            "indexed_utc": utc_now() + "Z",
             "notion_id": page_id
         }
         

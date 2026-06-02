@@ -1,23 +1,23 @@
 [submodule "6-Documentation/docs/nlab"]
 	path = 6-Documentation/docs/nlab
 	url = https://github.com/ncatlab/nlab-content.git
-[submodule "ai-math-discovery-systems/AI-Feynman"]
-	path = ai-math-discovery-systems/AI-Feynman
+[submodule "2-Search-Space/AI-Feynman"]
+	path = 2-Search-Space/AI-Feynman
 	url = https://github.com/SJ001/AI-Feynman.git
-[submodule "ai-math-discovery-systems/AI-Newton"]
-	path = ai-math-discovery-systems/AI-Newton
+[submodule "2-Search-Space/AI-Newton"]
+	path = 2-Search-Space/AI-Newton
 	url = https://github.com/Science-Discovery/AI-Newton.git
-[submodule "ai-math-discovery-systems/Goedel-Prover-V2"]
-	path = ai-math-discovery-systems/Goedel-Prover-V2
+[submodule "2-Search-Space/Goedel-Prover-V2"]
+	path = 2-Search-Space/Goedel-Prover-V2
 	url = https://github.com/Goedel-LM/Goedel-Prover-V2.git
-[submodule "ai-math-discovery-systems/PINNs"]
-	path = ai-math-discovery-systems/PINNs
+[submodule "2-Search-Space/PINNs"]
+	path = 2-Search-Space/PINNs
 	url = https://github.com/maziarraissi/PINNs.git
-[submodule "ai-math-discovery-systems/alphageometry"]
-	path = ai-math-discovery-systems/alphageometry
+[submodule "2-Search-Space/alphageometry"]
+	path = 2-Search-Space/alphageometry
 	url = https://github.com/google-deepmind/alphageometry.git
-[submodule "ai-math-discovery-systems/neural-conservation-law"]
-	path = ai-math-discovery-systems/neural-conservation-law
+[submodule "2-Search-Space/neural-conservation-law"]
+	path = 2-Search-Space/neural-conservation-law
 	url = https://github.com/facebookresearch/neural-conservation-law.git
 [submodule "0-Core-Formalism/lean/Semantics/.lake/packages/sparkle"]
 	path = 0-Core-Formalism/lean/Semantics/.lake/packages/sparkle

@@ -1,5 +1,7 @@
 // Q16_16 Path Explorer Shader - Exhaustively explores all possible proof paths
 //
+// Depends on: q16_arithmetic.wgsl (shared include)
+//
 // This shader systematically tests all 6 helper lemmas across the entire Q16_16 space
 // to identify patterns, counterexamples, and proof paths. It outputs detailed
 // information about each case to help construct formal Lean proofs.
@@ -38,15 +40,6 @@ struct PathExplorationResult {
 @group(0) @binding(0) var<storage, read_write> results: PathExplorationResult;
 
 const Q16_SPACE: u32 = 65536u;
-const SIGN_BIT: u32 = 0x80000000u;
-const TWO_POW_32: u32 = 0x100000000u;
-const SCALE_FACTOR: u32 = 65536u;
-
-// Convert Q16_16 val to signed Int (2's complement)
-fn toInt(val: u32) -> i32 {
-    let is_negative = val >= SIGN_BIT;
-    return select(i32(val), i32(val) - i32(TWO_POW_32), is_negative);
-}
 
 // Check if value is an edge case
 fn is_edge_case(val: u32) -> bool {
@@ -87,7 +80,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
     let is_nonneg = val < SIGN_BIT;
     if (is_nonneg) {
         toInt_nonneg_total_local = 1u;
-        let toInt_val = toInt(val);
+        let toInt_val = q16_to_int(val);
         let expected = i32(val);
         if (toInt_val == expected) {
             toInt_nonneg_matches_local = 1u;
@@ -98,7 +91,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
     let is_neg = val >= SIGN_BIT;
     if (is_neg) {
         toInt_neg_total_local = 1u;
-        let toInt_val = toInt(val);
+        let toInt_val = q16_to_int(val);
         let expected = i32(val) - i32(TWO_POW_32);
         if (toInt_val == expected) {
             toInt_neg_matches_local = 1u;
@@ -107,7 +100,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
     
     // Explore shift lemma 1: left shift
     let shift_left = val << 16u;
-    let mul_result = val * SCALE_FACTOR;
+    let mul_result = val * Q16_SCALE;
     if (shift_left == mul_result) {
         shift_left_matches_local = 1u;
     }
@@ -115,13 +108,13 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
     
     // Explore shift lemma 2: right shift
     let shift_right = val >> 16u;
-    let div_result = val / SCALE_FACTOR;
+    let div_result = val / Q16_SCALE;
     if (shift_right == div_result) {
         shift_right_matches_local = 1u;
     }
     
     // Detect overflow
-    if (val > 0xFFFFFFFFu / SCALE_FACTOR) {
+    if (val > 0xFFFFFFFFu / Q16_SCALE) {
         overflow_count_local = 1u;
     }
     
@@ -140,8 +133,8 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
         let b = test_values[i];
         let a_val = val;
         let b_val = b;
-        let a_int = toInt(a_val);
-        let b_int = toInt(b_val);
+        let a_int = q16_to_int(a_val);
+        let b_int = q16_to_int(b_val);
         
         // Test val_ge_toInt_ge
         if (a_val >= b_val) {

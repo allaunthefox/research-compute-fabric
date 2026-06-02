@@ -9,14 +9,13 @@ stack can be stabilized without turning HOLD surfaces into claims.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import subprocess
 from dataclasses import dataclass
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from shim.utils import load_json, file_sha256, utc_now
 
 REPO = Path(__file__).resolve().parents[2]
 OUT_DIR = REPO / "shared-data" / "data" / "stack_solidification"
@@ -93,19 +92,6 @@ def run_cmd(command: list[str], cwd: Path, timeout: int = 300) -> CmdResult:
         stderr_tail=proc.stderr[-6000:],
     )
 
-
-def load_json(path: Path) -> Any:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def file_sha256(path: Path) -> str | None:
-    if not path.exists():
-        return None
-    h = hashlib.sha256()
-    with path.open("rb") as f:
-        for chunk in iter(lambda: f.read(1024 * 1024), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def json_gate() -> dict[str, Any]:
@@ -465,7 +451,7 @@ def main() -> int:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     receipt: dict[str, Any] = {
         "schema": "stack_solidification_receipt_v1",
-        "created_utc": datetime.now(timezone.utc).isoformat(),
+        "created_utc": utc_now(),
         "claim_boundary": "Stack status audit only. This does not promote HOLD surfaces or hardware acceleration claims.",
         "gates": {},
     }

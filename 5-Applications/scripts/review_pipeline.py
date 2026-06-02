@@ -25,6 +25,8 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
+from shim.utils.datetime_utils import utc_now
+
 REPO_ROOT = Path(__file__).parent.parent.parent
 OUT_DIR = REPO_ROOT / "out"
 LEAN_DIR = REPO_ROOT / "tools" / "lean" / "Semantics"
@@ -231,7 +233,7 @@ def main():
         stages.append(review_bbd)
 
     report = {
-        "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "timestamp": utc_now() + "Z",
         "stages": [],
     }
 
@@ -247,7 +249,7 @@ def main():
 
     # Write timestamped report
     OUT_DIR.mkdir(exist_ok=True)
-    ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    ts = datetime.fromisoformat(utc_now()).strftime("%Y%m%d_%H%M%S")
     out_path = OUT_DIR / f"review_pipeline_{ts}.json"
     out_path.write_text(json.dumps(report, indent=2))
     print(f"Report written: {out_path.relative_to(REPO_ROOT)}")

@@ -30,9 +30,9 @@
         "4-Infrastructure/infra/remote_lean_proof_mcp.py"
       ],
       "environment": {
-        "PROOF_SERVER_URL": "http://54.236.176.28:8787",
-        "PROOF_SERVER_URLS": "http://54.236.176.28:8787,http://100.110.163.82:8787,http://100.102.173.61:8787,http://100.85.244.73:8787",
-        "PROOF_SERVER_TOKEN_FILE": "/home/allaun/.config/ene/language-proof-server.token"
+        "PROOF_SERVER_URL": "{env:PROOF_SERVER_URL}",
+        "PROOF_SERVER_URLS": "{env:PROOF_SERVER_URLS}",
+        "PROOF_SERVER_TOKEN_FILE": "{env:PROOF_SERVER_TOKEN_FILE}"
       },
       "enabled": true
     },
@@ -43,12 +43,12 @@
         "4-Infrastructure/shim/pist_trace_classify_mcp.py"
       ],
       "environment": {
-        "RDS_HOST": "database-1-instance-1.cghu8yqogqwo.us-east-1.rds.amazonaws.com",
-        "RDS_PORT": "5432",
-        "RDS_USER": "postgres",
-        "RDS_DB": "postgres",
-        "RDS_IAM_AUTH": "true",
-        "AWS_REGION": "us-east-1"
+        "RDS_HOST": "{env:RDS_HOST}",
+        "RDS_PORT": "{env:RDS_PORT}",
+        "RDS_USER": "{env:RDS_USER}",
+        "RDS_DB": "{env:RDS_DB}",
+        "RDS_IAM_AUTH": "{env:RDS_IAM_AUTH}",
+        "AWS_REGION": "{env:AWS_REGION}"
       },
       "enabled": true
     }

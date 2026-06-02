@@ -1,5 +1,7 @@
 // Q16_16 LUT Generator Shader
 //
+// Depends on: q16_arithmetic.wgsl (shared include)
+//
 // This shader computes all combinations of Q16_16 operations and generates a lookup table.
 // For each pair (a, b) in Q16_16 space (65,536² = 4,294,967,296 combinations), it computes:
 //   - add(a, b)
@@ -27,48 +29,6 @@ struct LUTEntry {
 @group(0) @binding(0) var<storage, read_write> lut: array<LUTEntry>;
 
 const Q16_SPACE: u32 = 65536u;
-const SCALE_FACTOR: u32 = 65536u;
-const SIGN_BIT: u32 = 0x80000000u;
-const TWO_POW_32: u32 = 0x100000000u;
-
-// Q16_16 operations
-fn q16_add(a: u32, b: u32) -> u32 {
-    return a + b;
-}
-
-fn q16_sub(a: u32, b: u32) -> u32 {
-    return a - b;
-}
-
-fn q16_mul(a: u32, b: u32) -> u32 {
-    let prod = u64(a) * u64(b);
-    return u32(prod >> 16u);
-}
-
-fn q16_div(a: u32, b: u32) -> u32 {
-    if b == 0u {
-        return 0xFFFFFFFFu;  // Division by zero marker
-    }
-    let numerator = u64(a) << 16u;
-    return u32(numerator / u64(b));
-}
-
-fn q16_max(a: u32, b: u32) -> u32 {
-    return select(a, b, a > b);
-}
-
-fn q16_min(a: u32, b: u32) -> u32 {
-    return select(b, a, a > b);
-}
-
-fn q16_neg(a: u32) -> u32 {
-    return 0u - a;
-}
-
-fn q16_abs(a: u32) -> u32 {
-    let is_negative = (a & SIGN_BIT) != 0u;
-    return select(a, q16_neg(a), is_negative);
-}
 
 // Convert linear index to (a, b) pair
 fn linear_to_pair(idx: u32) -> vec2<u32> {

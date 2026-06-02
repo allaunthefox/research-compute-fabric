@@ -1,0 +1,96 @@
+version: "3.4"
+networks:
+  authentik:
+    driver: bridge
+volumes:
+  certs: {}
+  custom-templates: {}
+  database: {}
+  media: {}
+  redis: {}
+services:
+  postgresql:
+    image: docker.io/library/postgres:16-alpine
+    environment:
+      POSTGRES_DB: authentik
+      POSTGRES_USER: authentik
+      POSTGRES_PASSWORD: M471MCYTIJftshMz38HXRLPl6NoVIA4h
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d authentik -U authentik"]
+      interval: 30s
+      retries: 5
+      start_period: 20s
+      timeout: 5s
+    volumes:
+      - database:/var/lib/postgresql/data
+    networks:
+      - authentik
+    restart: unless-stopped
+
+  valkey:
+    image: docker.io/valkey/valkey:8-alpine
+    command: --save 60 1 --loglevel warning
+    healthcheck:
+      test: ["CMD-SHELL", "valkey-cli ping | grep PONG"]
+      interval: 30s
+      retries: 5
+      start_period: 20s
+      timeout: 3s
+    volumes:
+      - redis:/data
+    networks:
+      - authentik
+    restart: unless-stopped
+
+  server:
+    image: ghcr.io/goauthentik/server:2026.2.3
+    command: server
+    environment:
+      AUTHENTIK_HOST: https://researchstack.info
+      AUTHENTIK_ERROR_REPORTING__ENABLED: "false"
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: M471MCYTIJftshMz38HXRLPl6NoVIA4h
+      AUTHENTIK_REDIS__HOST: valkey
+      AUTHENTIK_SECRET_KEY: 0cWkqCHuYT7kKHsHBjncz4QQn0kurOwsvdYwOFOJmk60KuiBfhfwLIyl1FTkQgPa
+    volumes:
+      - media:/media
+      - custom-templates:/templates
+      - certs:/certs
+    ports:
+      - 0.0.0.0:9000:9000
+      - 0.0.0.0:9443:9443
+    networks:
+      - authentik
+    restart: unless-stopped
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+
+  worker:
+    image: ghcr.io/goauthentik/server:2026.2.3
+    command: worker
+    environment:
+      AUTHENTIK_HOST: https://researchstack.info
+      AUTHENTIK_ERROR_REPORTING__ENABLED: "false"
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: M471MCYTIJftshMz38HXRLPl6NoVIA4h
+      AUTHENTIK_REDIS__HOST: valkey
+      AUTHENTIK_SECRET_KEY: 0cWkqCHuYT7kKHsHBjncz4QQn0kurOwsvdYwOFOJmk60KuiBfhfwLIyl1FTkQgPa
+    volumes:
+      - media:/media
+      - custom-templates:/templates
+      - certs:/certs
+    networks:
+      - authentik
+    restart: unless-stopped
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy

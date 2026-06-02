@@ -11,6 +11,11 @@ resources:
   - hermes
   - actual-budget
   - vaultwarden
+  # Specialist Tools (orchestration)
+  - coder
+  - qwopus
+  - qwen2
+  - llava
   # Identity
   - authentik
   # Control-plane APIs

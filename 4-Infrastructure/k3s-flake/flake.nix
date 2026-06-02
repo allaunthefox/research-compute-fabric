@@ -80,6 +80,16 @@
           extraModules = [ ./roles/core.nix ];
         };
 
+        # ── Neon node (ARM64, 2TB NVMe, heavy compute) ─────────────────────
+        # ARM64 server for Hermes LLM inference
+        # Hosts GGUF models via hostPath, Garage for persistence/backup
+        # Tailscale: 100.100.75.113, Public: 152.53.81.164
+        k3s-neon = mkNode {
+          hostName = "neon-64gb";
+          serverAddr = "https://100.110.163.82:6443"; # cupfox control-plane
+          extraModules = [ ./roles/neon.nix ];
+        };
+
         # ── Judge node (VOTEK/Adversarial review) ─────────────────────────
         # TBD - not yet assigned hardware
         # k3s-judge = mkNode {

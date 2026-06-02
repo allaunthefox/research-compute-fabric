@@ -1,5 +1,5 @@
 # SOPS configuration for Research Stack
-# Uses age for encryption.
+# Uses age for encryption (DEFAULT for all secrets).
 # Post-quantum: standard age (X25519 + ChaCha20-Poly1305) is NOT post-quantum.
 # PQC adoption tracked in 4-Infrastructure/docs/pqc-posture.md
 #
@@ -7,32 +7,59 @@
 #   sops --encrypt --in-place <file>
 #   sops <file>                    # decrypt, edit, re-encrypt
 #   sops --decrypt <file>          # decrypt to stdout
+#
+# DEFAULT: All files matching the patterns below are encrypted with age.
+# If you create a new secret file, it will be encrypted automatically when
+# you run `sops --encrypt --in-place <file>`.
 
 keys:
   - &primary age1tp4vr565zkmvnyulatpyaj6z8zrz7q9mpaypz85yz8rty99crdasualxyr
 
 creation_rules:
+  # k3s-flake secrets (age-encrypted)
+  - path_regex: 4-Infrastructure/k3s-flake/secrets/.*
+    key_groups:
+      - age:
+          - *primary
+
+  # Infrastructure secrets
   - path_regex: 4-Infrastructure/infra/secrets/.*
     key_groups:
       - age:
           - *primary
 
+  # Deploy environment files
   - path_regex: 4-Infrastructure/deploy/.*/.*\.env$
     key_groups:
       - age:
           - *primary
 
+  # Storage/restic environment files
   - path_regex: 4-Infrastructure/storage/restic/.*\.env$
     key_groups:
       - age:
           - *primary
 
+  # API keys directory
   - path_regex: API KEYS/.*
     key_groups:
       - age:
           - *primary
 
+  # Any .env file (catch-all for environment secrets)
   - path_regex: \.env$
+    key_groups:
+      - age:
+          - *primary
+
+  # Any file with "secret" in the name (catch-all)
+  - path_regex: .*secret.*
+    key_groups:
+      - age:
+          - *primary
+
+  # Any .age file (explicit age-encrypted files)
+  - path_regex: .*\.age$
     key_groups:
       - age:
           - *primary

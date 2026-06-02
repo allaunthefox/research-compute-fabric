@@ -1,5 +1,7 @@
 `timescale 1ns / 1ps
 
+`include "voltage_mode_selector.v"
+
 // Fractal Dimension → Voltage Mode Selector
 // Maps computed fractal dimension (Q16_16) to a 2-bit voltage mode for the
 // voltage_mode_controller.
@@ -23,40 +25,30 @@ module fractal_fd_selector (
     output reg         mode_valid    // mode output is valid
 );
 
-    // Threshold constants in Q16_16
     localparam [31:0] THRESH_2_3 = 32'h0002_4CCD;  // 2.3
     localparam [31:0] THRESH_2_6 = 32'h0002_999A;  // 2.6
     localparam [31:0] THRESH_2_9 = 32'h0002_E666;  // 2.9
 
-    // Mode definitions (match voltage_mode_controller)
-    localparam MODE_STORE   = 2'b00;
-    localparam MODE_COMPUTE = 2'b01;
-    localparam MODE_APPROX  = 2'b10;
-    localparam MODE_MORPHIC = 2'b11;
+    wire [1:0] sel_mode;
 
-    // Combinational mode selection
-    reg [1:0] mode_next;
+    voltage_mode_selector #(
+        .THRESHOLD1(THRESH_2_3),
+        .THRESHOLD2(THRESH_2_6),
+        .THRESHOLD3(THRESH_2_9)
+    ) sel_inst (
+        .clk(clk),
+        .value(fd_q16),
+        .mode(sel_mode)
+    );
 
-    always @(*) begin
-        if (fd_q16 < THRESH_2_3)
-            mode_next = MODE_STORE;
-        else if (fd_q16 < THRESH_2_6)
-            mode_next = MODE_COMPUTE;
-        else if (fd_q16 < THRESH_2_9)
-            mode_next = MODE_APPROX;
-        else
-            mode_next = MODE_MORPHIC;
-    end
-
-    // Register output
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            voltage_mode <= MODE_STORE;
+            voltage_mode <= 2'b00;
             mode_valid   <= 1'b0;
         end else begin
             mode_valid <= 1'b0;
             if (fd_valid) begin
-                voltage_mode <= mode_next;
+                voltage_mode <= sel_mode;
                 mode_valid   <= 1'b1;
             end
         end

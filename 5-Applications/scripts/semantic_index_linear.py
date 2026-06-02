@@ -4,6 +4,8 @@ import json
 import re
 import datetime
 
+from shim.utils.datetime_utils import utc_now
+
 DB_PATH = "/home/allaun/Documents/Research Stack/data/substrate_index.db"
 
 def semantic_audit(pkg_id, description):
@@ -43,7 +45,7 @@ def semantic_audit(pkg_id, description):
         "quality_status": quality_status,
         "concept_anchor": json.dumps(anchor),
         "description": clean_desc,
-        "indexed_utc": datetime.datetime.utcnow().isoformat() + "Z"
+        "indexed_utc": utc_now() + "Z"
     }
 
 def run_indexing():

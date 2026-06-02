@@ -1,5 +1,7 @@
 // Q16_16 Min/Max Theorems Verification Shader
 //
+// Depends on: q16_arithmetic.wgsl (shared include)
+//
 // This shader verifies the min/max comparison theorems from FixedPoint.lean:
 //   1. max_first_whenGe: a.toInt >= b.toInt → max a b = a
 //   2. max_second_whenLt: a.toInt < b.toInt → max a b = b
@@ -18,26 +20,18 @@ struct MinMaxResult {
 @group(0) @binding(0) var<storage, read_write> results: array<MinMaxResult>;
 
 const Q16_SPACE: u32 = 65536u;
-const SIGN_BIT: u32 = 0x80000000u;
-const TWO_POW_32: u32 = 0x100000000u;
-
-// Convert Q16_16 val to signed Int (2's complement)
-fn toInt(val: u32) -> i32 {
-    let is_negative = val >= SIGN_BIT;
-    return select(i32(val), i32(val) - i32(TWO_POW_32), is_negative);
-}
 
 // Q16_16 max (as defined in FixedPoint.lean)
 fn q_max(a: u32, b: u32) -> u32 {
-    let a_int = toInt(a);
-    let b_int = toInt(b);
+    let a_int = q16_to_int(a);
+    let b_int = q16_to_int(b);
     return select(a, b, a_int >= b_int);
 }
 
 // Q16_16 min (as defined in FixedPoint.lean)
 fn q_min(a: u32, b: u32) -> u32 {
-    let a_int = toInt(a);
-    let b_int = toInt(b);
+    let a_int = q16_to_int(a);
+    let b_int = q16_to_int(b);
     return select(a, b, a_int <= b_int);
 }
 
@@ -50,8 +44,8 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
         return;
     }
 
-    let a_int = toInt(a);
-    let b_int = toInt(b);
+    let a_int = q16_to_int(a);
+    let b_int = q16_to_int(b);
     let max_ab = q_max(a, b);
     let min_ab = q_min(a, b);
 

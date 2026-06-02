@@ -1,5 +1,7 @@
 // Q16_16 Comparison Monotonicity Verification Shader
 //
+// Depends on: q16_arithmetic.wgsl (shared include)
+//
 // This shader verifies monotonicity lemmas for Q16_16 comparisons:
 //   1. val_ge_implies_toInt_ge: a.val >= b.val → a.toInt >= b.toInt
 //   2. val_le_implies_toInt_le: a.val <= b.val → a.toInt <= b.toInt
@@ -16,14 +18,6 @@ struct ComparisonResult {
 @group(0) @binding(0) var<storage, read_write> results: array<ComparisonResult>;
 
 const Q16_SPACE: u32 = 65536u;
-const SIGN_BIT: u32 = 0x80000000u;
-const TWO_POW_32: u32 = 0x100000000u;
-
-// Convert Q16_16 val to signed Int (2's complement)
-fn toInt(val: u32) -> i32 {
-    let is_negative = val >= SIGN_BIT;
-    return select(i32(val), i32(val) - i32(TWO_POW_32), is_negative);
-}
 
 @compute @workgroup_size(8, 8, 1)
 fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
@@ -37,8 +31,8 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
     // Lemma 1: val_ge_implies_toInt_ge
     // If a.val >= b.val, then a.toInt >= b.toInt
     let val_ge = a >= b;
-    let a_int = toInt(a);
-    let b_int = toInt(b);
+    let a_int = q16_to_int(a);
+    let b_int = q16_to_int(b);
     let toInt_ge = a_int >= b_int;
     
     // The implication: val_ge → toInt_ge

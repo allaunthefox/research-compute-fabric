@@ -17,7 +17,7 @@ python3 scripts/obsidian_sync_shim.py sync --backend auto
 ## Configuration
 
 ```bash
-OBSIDIAN_VAULT_PATH=/home/allaun/Research Stack/Obdisidan connector
+OBSIDIAN_VAULT_PATH=/home/allaun/Research Stack/6-Documentation/wiki/obsidian-vault
 OBSIDIAN_LAKE_PATH=/home/allaun/Research Stack/data/obsidian_lake.jsonl
 ```
 

@@ -3,6 +3,8 @@
 //
 // burgers_scar_filter.wgsl — Spectral scar filter for 2D Burgers RG solver.
 //
+// Depends on: braid_types.wgsl (shared include)
+//
 // CHECK 1 of 4 — Syntax/structure: follows braid_fft.wgsl patterns.
 //   - PhaseVec type reused from braid_fft.wgsl
 //   - @workgroup_size(64) for compatibility
@@ -21,11 +23,7 @@
 // ════════════════════════════════════════════════════════════
 // §1  Types and Uniforms
 // ════════════════════════════════════════════════════════════
-
-struct PhaseVec {
-    x: f32,
-    y: f32,
-}
+// PhaseVec provided by braid_types.wgsl
 
 struct ScarUniforms {
     nx: u32,             // grid dimension (power of 2)

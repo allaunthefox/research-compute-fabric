@@ -6,6 +6,8 @@
 
 `timescale 1ns / 1ps
 
+`include "s3c_core.v"
+
 // ═══════════════════════════════════════════════════════════════════════════
 // DSP Mode Enumeration
 // ═══════════════════════════════════════════════════════════════════════════
@@ -416,111 +418,6 @@ module dsp_s3c_integrated (
             end
         end
     end
-endmodule
-
-// ═══════════════════════════════════════════════════════════════════════════
-// S3C Shell Decomposition (reused)
-// ═══════════════════════════════════════════════════════════════════════════
-module s3c_shell_decomposition (
-    input  wire [15:0] n,
-    output reg  [15:0] k,
-    output reg  [15:0] a,
-    output reg  [15:0] b,
-    output reg  [31:0] mass,
-    output reg  [15:0] width
-);
-    reg [15:0] sqrt_result;
-    reg [15:0] sqrt_low;
-    reg [15:0] sqrt_high;
-    reg [15:0] sqrt_mid;
-    reg [31:0] sqrt_sq;
-    
-    integer i;
-    
-    always @(*) begin
-        sqrt_low = 0;
-        sqrt_high = 16'd256;
-        sqrt_result = 0;
-        
-        for (i = 0; i < 8; i = i + 1) begin
-            sqrt_mid = (sqrt_low + sqrt_high) >> 1;
-            sqrt_sq = sqrt_mid * sqrt_mid;
-            if (sqrt_sq < n) begin
-                sqrt_low = sqrt_mid + 1;
-            end else begin
-                sqrt_high = sqrt_mid;
-            end
-        end
-        sqrt_result = sqrt_low - 1;
-        if (sqrt_result > 255) sqrt_result = 255;
-    end
-    
-    reg [31:0] k_sq;
-    reg [31:0] k1_sq;
-    
-    always @(*) begin
-        k = sqrt_result;
-        k_sq = k * k;
-        a = n - k_sq[15:0];
-        k1_sq = (k + 1) * (k + 1);
-        b = k1_sq[15:0] - n;
-        mass = a * b;
-        width = a + b + 1;
-    end
-endmodule
-
-// ═══════════════════════════════════════════════════════════════════════════
-// S3C J-Score (reused)
-// ═══════════════════════════════════════════════════════════════════════════
-module s3c_j_score (
-    input  wire [15:0] handleK,
-    input  wire [15:0] handleA,
-    input  wire [15:0] handleB,
-    output wire [31:0] massResonance,
-    output wire [31:0] mirrorResonance,
-    output wire [31:0] spectralCoupling,
-    output wire [31:0] total
-);
-    wire [31:0] ab;
-    wire [15:0] a_minus_b;
-    wire [31:0] abs_a_minus_b;
-    
-    assign ab = handleA * handleB;
-    assign a_minus_b = (handleA >= handleB) ? (handleA - handleB) : (handleB - handleA);
-    assign abs_a_minus_b = {16'b0, a_minus_b};
-    
-    assign massResonance = ab;
-    assign mirrorResonance = abs_a_minus_b;
-    assign spectralCoupling = {16'b0, handleK};
-    assign total = massResonance + mirrorResonance + spectralCoupling;
-endmodule
-
-// ═══════════════════════════════════════════════════════════════════════════
-// S3C Three-Point Contact (reused)
-// ═══════════════════════════════════════════════════════════════════════════
-module s3c_three_point_contact (
-    input  wire [15:0] handleK,
-    input  wire [15:0] handleA,
-    input  wire [15:0] handleB,
-    output wire        kappaA,
-    output wire        kappaB,
-    output wire        kappaC
-);
-    assign kappaA = (handleA > 0);
-    assign kappaB = (handleK > 0);
-    assign kappaC = (handleB > 0);
-endmodule
-
-// ═══════════════════════════════════════════════════════════════════════════
-// S3C Emission Gate (reused)
-// ═══════════════════════════════════════════════════════════════════════════
-module s3c_emission_gate (
-    input  wire        kappaA,
-    input  wire        kappaC,
-    input  wire [31:0] jScore,
-    output wire        emit
-);
-    assign emit = kappaA && kappaC && (jScore > 0);
 endmodule
 
 // ═══════════════════════════════════════════════════════════════════════════

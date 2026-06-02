@@ -468,13 +468,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "ene-common"
+version = "0.1.0"
+dependencies = [
+ "base64",
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+]
+
+[[package]]
 name = "ene-node"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "base64",
  "chrono",
  "clap",
+ "ene-common",
  "hex",
  "hmac 0.12.1",
  "rand 0.8.6",

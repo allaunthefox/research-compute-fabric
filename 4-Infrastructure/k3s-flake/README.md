@@ -186,29 +186,48 @@ TLS via Porkbun DNS challenge (caddy-dns/porkbun plugin) at the edge.
 - Porkbun API key + secret for TLS
 - Tailscale auth key (optional — first `tailscale up` can be manual)
 
-### 2. Generate & Encrypt Secrets
+### 2. Generate & Encrypt Secrets (age encryption)
+
+All secrets are encrypted with **age** (X25519 + ChaCha20-Poly1305). The `.sops.yaml`
+configuration ensures any file matching `secrets/.*`, `*.age`, or `*secret*` is
+automatically encrypted with your age key.
 
 ```bash
-# Generate k3s token
+# Generate k3s token (age-encrypted)
 TOKEN=$(openssl rand -hex 32)
 echo "K3S_TOKEN=$TOKEN" | age -e -r "$(cat ~/.config/sops/age/keys.txt | age-key -y)" \
   -o 4-Infrastructure/k3s-flake/secrets/k3s-token.age
 
-# Generate authentik secrets
+# Generate authentik secrets (age-encrypted)
+# Includes bootstrap-password for initial akadmin admin user
 cat > /tmp/authentik.env << EOF
 secret-key=$(openssl rand -hex 32)
 postgresql-password=$(openssl rand -hex 16)
+bootstrap-password=$(openssl rand -base64 24)
 EOF
 age -e -r "$(cat ~/.config/sops/age/keys.txt | age-key -y)" \
   -o 4-Infrastructure/k3s-flake/secrets/authentik-secrets.age < /tmp/authentik.env
 rm /tmp/authentik.env
 
-# Encrypt porkbun credentials
+# Encrypt porkbun credentials (age-encrypted)
 echo "PORKBUN_API_KEY=your_key
 PORKBUN_SECRET_KEY=your_secret" | \
-age -e -r "$(cat ~/.config/sops/age/keys.txt | age-key -y)" \
+  age -e -r "$(cat ~/.config/sops/age/keys.txt | age-key -y)" \
   -o 4-Infrastructure/k3s-flake/secrets/porkbun-env.age
 ```
+
+**To view/edit encrypted secrets:**
+```bash
+# Decrypt to stdout
+sops -d 4-Infrastructure/k3s-flake/secrets/authentik-secrets.age
+
+# Edit in place (decrypts, opens editor, re-encrypts)
+sops 4-Infrastructure/k3s-flake/secrets/authentik-secrets.age
+```
+
+**Authentik bootstrap password:**
+The `bootstrap-password` field sets the initial `akadmin` user password.
+After first login, change it via the Authentik admin UI at `auth.researchstack.info`.
 
 ### 3. Configure `.sops.yaml`
 

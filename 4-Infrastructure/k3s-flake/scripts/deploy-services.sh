@@ -46,26 +46,43 @@ echo "[deploy] ensuring namespaces exist..."
 kubectl get namespace services >/dev/null 2>&1 || kubectl create namespace services
 kubectl get namespace media >/dev/null 2>&1 || kubectl create namespace media
 
-# ── Authentik secrets from sops ──────────────────────────────────────────
+# ── Authentik secrets from sops (age-encrypted) ─────────────────────────
+# The AUTHENTIK_SECRETS file is decrypted by sops-nix from secrets/authentik-secrets.age
+# It contains: secret-key, postgresql-password, and optionally bootstrap-password
+# All values are age-encrypted at rest in the repository.
 if [ -n "${AUTHENTIK_SECRETS:-}" ] && [ -f "$AUTHENTIK_SECRETS" ]; then
-  echo "[deploy] creating authentik-secrets from sops file..."
+  echo "[deploy] creating authentik-secrets from age-encrypted sops file..."
   kubectl delete secret --ignore-not-found -n services authentik-secrets
   kubectl create secret generic -n services authentik-secrets \
     --from-env-file="$AUTHENTIK_SECRETS"
 
   secret_key=$(sed -n 's/^secret-key=//p' "$AUTHENTIK_SECRETS")
   postgresql_password=$(sed -n 's/^postgresql-password=//p' "$AUTHENTIK_SECRETS")
+  bootstrap_password=$(sed -n 's/^bootstrap-password=//p' "$AUTHENTIK_SECRETS")
+  
   if kubectl get secret -n services authentik-env >/dev/null 2>&1; then
     echo "[deploy] preserving existing authentik-env runtime secret"
   elif [ -n "$secret_key" ] && [ -n "$postgresql_password" ]; then
-    echo "[deploy] creating authentik-env from sops file..."
-    kubectl create secret generic -n services authentik-env \
-      --from-literal=AUTHENTIK_SECRET_KEY="$secret_key" \
-      --from-literal=AUTHENTIK_POSTGRESQL__PASSWORD="$postgresql_password" \
-      --from-literal=AUTHENTIK_POSTGRESQL__HOST=authentik-postgresql \
-      --from-literal=AUTHENTIK_POSTGRESQL__PORT=5432 \
-      --from-literal=AUTHENTIK_POSTGRESQL__NAME=authentik \
+    echo "[deploy] creating authentik-env from age-decrypted sops file..."
+    
+    # Build the kubectl create command with optional bootstrap password
+    kubectl_cmd=(
+      kubectl create secret generic -n services authentik-env
+      --from-literal=AUTHENTIK_SECRET_KEY="$secret_key"
+      --from-literal=AUTHENTIK_POSTGRESQL__PASSWORD="$postgresql_password"
+      --from-literal=AUTHENTIK_POSTGRESQL__HOST=authentik-postgresql
+      --from-literal=AUTHENTIK_POSTGRESQL__PORT=5432
+      --from-literal=AUTHENTIK_POSTGRESQL__NAME=authentik
       --from-literal=AUTHENTIK_POSTGRESQL__USER=authentik
+    )
+    
+    # Add bootstrap password if present (for initial akadmin user)
+    if [ -n "$bootstrap_password" ]; then
+      echo "[deploy] including AUTHENTIK_BOOTSTRAP_PASSWORD for initial admin setup"
+      kubectl_cmd+=(--from-literal=AUTHENTIK_BOOTSTRAP_PASSWORD="$bootstrap_password")
+    fi
+    
+    "${kubectl_cmd[@]}"
   fi
 fi
 

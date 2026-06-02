@@ -19,6 +19,8 @@ from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass
 
+from shim.utils.hashing import file_sha256
+
 
 def env_default(name: str, default: str) -> str:
     try:
@@ -104,12 +106,7 @@ def should_skip(filepath: Path) -> Tuple[bool, str]:
     return False, ""
 
 
-def compute_sha256(filepath: Path) -> str:
-    sha256 = hashlib.sha256()
-    with open(filepath, "rb") as f:
-        for chunk in iter(lambda: f.read(8192), b""):
-            sha256.update(chunk)
-    return f"sha256:{sha256.hexdigest()}"
+
 
 
 def infer_domain(filepath: Path, content: str = "") -> str:
@@ -213,7 +210,7 @@ def text_to_jsonl_entry(filepath: Path, node_id: str) -> Optional[Dict[str, Any]
         return None
 
     content = read_text_safely(filepath)
-    file_hash = compute_sha256(filepath)
+    file_hash = file_sha256(filepath)
     file_stat = filepath.stat()
     mtime_unix = file_stat.st_mtime
     file_size = file_stat.st_size

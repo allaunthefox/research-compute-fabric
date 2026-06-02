@@ -18,6 +18,8 @@ from typing import List, Dict, Optional
 from datetime import datetime
 import hashlib
 
+from shim.utils.datetime_utils import utc_now
+
 # ═══════════════════════════════════════════════════════════════════════════
 # §0  Attribution Metadata (Apache 2.0 Compliance)
 # ═══════════════════════════════════════════════════════════════════════════
@@ -35,7 +37,7 @@ MATHLIB_ATTRIBUTION = {
     "repository": "https://github.com/leanprover-community/mathlib4",
     "license": MATHLIB_LICENSE,
     "contributors": "Lean Community, Mathlib Contributors",
-    "extracted_at": datetime.utcnow().isoformat(),
+    "extracted_at": utc_now(),
     "extraction_method": "lake build export"
 }
 
@@ -147,7 +149,7 @@ class MathlibDatabase:
                 "license": MATHLIB_LICENSE,
                 "attribution": MATHLIB_ATTRIBUTION,
                 "entry_count": len(self.entries),
-                "saved_at": datetime.utcnow().isoformat()
+                "saved_at": utc_now()
             },
             "entries": [entry.to_dict() for entry in self.entries]
         }

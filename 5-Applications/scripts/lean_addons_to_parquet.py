@@ -14,6 +14,8 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 from datetime import datetime
 
+from shim.utils.datetime_utils import utc_now
+
 # ═══════════════════════════════════════════════════════════════════════════
 # §0  Configuration
 # ═══════════════════════════════════════════════════════════════════════════
@@ -58,7 +60,7 @@ def ingest_all_addons():
                     "content": content,
                     "token_count": len(content.split()),
                     "hash": hashlib.sha256(content.encode()).hexdigest(),
-                    "extracted_at": datetime.utcnow().isoformat()
+                    "extracted_at": utc_now()
                 })
             except Exception as e:
                 print(f"[WARN] Failed to process {lean_file}: {e}")

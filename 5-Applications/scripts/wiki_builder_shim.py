@@ -39,6 +39,8 @@ from pathlib import Path
 from textwrap import dedent
 from typing import Any
 
+from shim.utils.hashing import sha256_text
+
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 TIDDLER_DIR = REPO_ROOT / "6-Documentation" / "tiddlywiki-local" / "wiki" / "tiddlers"
@@ -83,8 +85,7 @@ def slugify(text: str) -> str:
     return s[:60] if s else "untitled"
 
 
-def sha256_text(text: str) -> str:
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
 
 
 def concept_vector_14(title: str, body: str, tags: list[str]) -> list[float]:

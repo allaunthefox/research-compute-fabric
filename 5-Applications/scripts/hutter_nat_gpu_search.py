@@ -18,6 +18,9 @@ import time
 from pathlib import Path
 from typing import Any
 
+from shim.utils.json_utils import stable_json, load_json
+from shim.utils.hashing import sha256_text
+
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "out" / "hutter_nat_gpu_search.json"
@@ -49,25 +52,18 @@ LEAN_THEOREMS = [
 ]
 
 
-def canonical_json(value: Any) -> str:
-    return json.dumps(value, sort_keys=True, separators=(",", ":"))
+
 
 
 def content_hash(value: Any) -> str:
-    return hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
+    return sha256_text(stable_json(value))
 
 
 def node_id(prefix: str, value: Any) -> str:
     return f"{prefix}:{content_hash(value)[:16]}"
 
 
-def load_json(path: Path, default: Any) -> Any:
-    if not path.exists():
-        return default
-    try:
-        return json.loads(path.read_text())
-    except json.JSONDecodeError:
-        return default
+
 
 
 def save_json(path: Path, value: Any) -> None:

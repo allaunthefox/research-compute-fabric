@@ -20,6 +20,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from shim.utils.json_utils import stable_json as canonical_json
+
 
 PLUGIN_ID = "ene.tiddlywiki.bridge"
 PLUGIN_VERSION = "0.1.0"
@@ -76,8 +78,7 @@ def sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def canonical_json(data: Any) -> str:
-    return json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
 
 
 def slugify(title: str) -> str:

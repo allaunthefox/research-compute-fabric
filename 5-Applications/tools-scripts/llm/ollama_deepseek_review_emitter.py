@@ -26,6 +26,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from shim.utils.json_utils import canonical_json_bytes
+
 
 REPO = Path(__file__).resolve().parents[3]
 DEFAULT_OUTPUT_DIR = REPO / "shared-data" / "artifacts" / "deepseek_review"
@@ -45,15 +47,6 @@ class EmittedReview:
 
 def sha256_bytes(data: bytes) -> str:
     return "sha256:" + hashlib.sha256(data).hexdigest()
-
-
-def canonical_json_bytes(value: Any) -> bytes:
-    return json.dumps(
-        value,
-        ensure_ascii=False,
-        sort_keys=True,
-        separators=(",", ":"),
-    ).encode("utf-8")
 
 
 def repo_relative(path: Path, repo_root: Path = REPO) -> str:

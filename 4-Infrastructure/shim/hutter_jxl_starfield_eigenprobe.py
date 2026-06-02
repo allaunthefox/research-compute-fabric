@@ -10,7 +10,6 @@ over those groups. It does not make classifier, compression, or Hutter claims.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import math
 import random
@@ -21,6 +20,7 @@ from collections import deque
 from pathlib import Path
 from typing import Any
 
+from shim.utils import sha256_bytes, sha256_text, sha256_path, stable_json
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT_DIR = ROOT / "shared-data" / "data" / "stack_solidification" / "hutter_jxl_starfield"
@@ -38,29 +38,6 @@ PIST_FORMULA = (
 CLAIM_BOUNDARY = (
     "diagnostic_only_not_classifier_not_compression_claim_not_hutter_prize_claim"
 )
-
-
-def stable_json(value: Any) -> str:
-    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
-
-
-def sha256_bytes(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
-
-
-def sha256_text(text: str) -> str:
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
-
-
-def sha256_path(path: Path, chunk_size: int = 1024 * 1024) -> str:
-    h = hashlib.sha256()
-    with path.open("rb") as handle:
-        while True:
-            chunk = handle.read(chunk_size)
-            if not chunk:
-                break
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def choose_input(arg_path: str | None) -> Path:

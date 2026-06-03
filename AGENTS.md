@@ -4,16 +4,32 @@ This file is the first stop for coding agents working in this repository.
 
 ## Repository Extraction Notice (2026-06-02)
 
-The following components have been extracted to a separate repository `distributed-compute-fabric`:
-- Ray actors and orchestration infrastructure
-- Kubernetes/k3s configurations and manifests
-- VCN (Video Compute Node) compute substrate and shims
-- LyteNyte storage dashboard and cluster dashboard
-- Spatial hash GPU graph backend
-- Associated documentation
+The codebase has been split into three repositories:
 
-See `distributed-compute-fabric/` repository for Ray/Kubernetes/VCN/LyteNyte/Graph components.
-Shared utilities have been duplicated to maintain independence between repositories.
+### distributed-compute-fabric (generic compute infrastructure)
+- VCN/LUPINE hardware acceleration
+- Hardware abstractions (Virtio, SPIR-V, QEMU)
+- Spatial hash indexing (vectorless graph database)
+- LyteNyte visualization dashboards
+- Ray actors and hermes orchestrator
+- Kubernetes manifests and monitoring
+- Tailscale networking
+- gRPC inference proxy (optional)
+
+### research-compute-fabric (research-specific algorithms)
+- Braid eigensolid compression
+- PIST/RRC classification
+- Flexure/joint analysis
+- Lean formalization bridges
+- Research probes (Hutter Prize, Tang Nano, etc.)
+
+### Research Stack (this repo — formalization and documentation)
+- Lean/Semantics formalization
+- Hardware bring-up documentation
+- Citation references and provenance
+- Research artifacts and design docs
+
+See respective repositories for components. Shared utilities have been duplicated to maintain independence between repositories.
 
 ## Ground Rules
 

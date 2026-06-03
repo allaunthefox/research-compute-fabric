@@ -2,6 +2,19 @@
 
 This file is the first stop for coding agents working in this repository.
 
+## Repository Extraction Notice (2026-06-02)
+
+The following components have been extracted to a separate repository `distributed-compute-fabric`:
+- Ray actors and orchestration infrastructure
+- Kubernetes/k3s configurations and manifests
+- VCN (Video Compute Node) compute substrate and shims
+- LyteNyte storage dashboard and cluster dashboard
+- Spatial hash GPU graph backend
+- Associated documentation
+
+See `distributed-compute-fabric/` repository for Ray/Kubernetes/VCN/LyteNyte/Graph components.
+Shared utilities have been duplicated to maintain independence between repositories.
+
 ## Ground Rules
 
 - Use `/home/allaun/Research Stack` as the active host checkout and git root.

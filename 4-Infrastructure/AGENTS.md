@@ -2,6 +2,21 @@
 
 Scope: `4-Infrastructure/`
 
+## Repository Extraction Notice (2026-06-02)
+
+The following infrastructure components have been extracted to `distributed-compute-fabric` repository:
+- `kubernetes/` - Kubernetes manifests and configurations
+- `k3s-flake/` - K3s flake configurations
+- `kube/` - Additional Kubernetes configurations
+- `shim/ray-actors/` - Ray actor implementations
+- `shim/vcn_*.py` - VCN compute substrate shims
+- `shim/hermes/` - Hermes orchestration layer
+- `shim/vectorless_spatial_hash_backend*.py` - Spatial hash backends
+- `docs/vcn-lupine-setup.md` - VCN setup documentation
+- `docs/mesh-networking-over-ray-plan.md` - Ray networking documentation
+
+This AGENTS.md now covers only the remaining infrastructure components: hardware bring-up, storage stack, cloudflare edge, and non-VCN shims.
+
 ## Rules
 
 - Keep infrastructure scripts receipt-bearing: every probe should have a

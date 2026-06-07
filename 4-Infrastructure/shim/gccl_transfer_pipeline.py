@@ -4,7 +4,8 @@ gccl_transfer_pipeline.py — GCCL-Gated Parallel Transfer Pipeline with Resume.
 
 Integrates GCCL WaveProbe, MetaProbe, and Delta+RLE encoding concepts to transfer
 files securely and with complete receipt verification between hosts. Supports block-level
-resuming for interrupted transfers. Optimized with metadata-only fast manifest scanning.
+resuming for interrupted transfers. Optimized with metadata-only fast manifest scanning,
+size-based quick diffing, and mtime preservation.
 """
 
 import argparse
@@ -151,6 +152,7 @@ def transfer_single_file(
         "compressed_size": result.compressed_size,
         "ratio": result.compression_ratio,
         "sha256": sig["sha256"],
+        "mtime": sig["mtime"],
         "receipt": result.gccl_receipt.to_dict() if result.gccl_receipt else None,
         "is_delta": result.success and ref_data is not None,
         "is_resume": is_resume,
@@ -218,12 +220,12 @@ def run_sender(source_dir: Path, dest_dir: str, target_host: str, threads: int):
     except Exception as e:
         print(f"[*] Remote directory empty or manifest query failed (expected for fresh sync): {e}")
 
-    # 4. Filter files that already match perfectly (same size and mtime)
+    # 4. Filter files that already match perfectly (same size)
     transfer_queue = []
     for rel_path, sig in local_manifest.items():
         ref = remote_manifest.get(rel_path)
-        # Match based on size and mtime for speed (avoiding full-file hashing during diff check)
-        if ref and ref["size"] == sig["size"] and ref["mtime"] == sig["mtime"]:
+        # Match based on size alone for speed (assuming same name and size means same file)
+        if ref and ref["size"] == sig["size"]:
             continue
         transfer_queue.append((rel_path, ref))
 
@@ -269,6 +271,7 @@ def run_receiver_packet(dest_dir: Path, packet_data: str) -> Dict:
         offset = packet.get("offset", 0)
         original_size = packet["original_size"]
         original_sha = packet["sha256"]
+        mtime = packet.get("mtime")
         receipt = packet["receipt"]
 
         # 1. Run MetaProbe check
@@ -316,6 +319,10 @@ def run_receiver_packet(dest_dir: Path, packet_data: str) -> Dict:
         
         if h.hexdigest() != original_sha:
             return {"status": "corrupt", "reason": "SHA256 mismatch after write"}
+
+        # Preserve modification time
+        if mtime is not None:
+            os.utime(out_file, (time.time(), mtime))
 
         # Save the GCCL receipt next to the file
         receipt_file = out_file.with_suffix(out_file.suffix + ".gccl-receipt.json")

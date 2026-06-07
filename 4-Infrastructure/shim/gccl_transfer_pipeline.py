@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-gccl_transfer_pipeline.py — GCCL-Gated Parallel Transfer Pipeline.
+gccl_transfer_pipeline.py — GCCL-Gated Parallel Transfer Pipeline with Resume.
 
 Integrates GCCL WaveProbe, MetaProbe, and Delta+RLE encoding concepts to transfer
-files securely and with complete receipt verification between hosts.
+files securely and with complete receipt verification between hosts. Supports block-level
+resuming for interrupted transfers.
 """
 
 import argparse
@@ -90,24 +91,30 @@ def transfer_single_file(
     target_host: str,
     ref_sig: Optional[Dict],
 ) -> Dict:
-    """Process, encode, and transmit a single file via GCCL delta/raw transfer."""
+    """Process, encode, and transmit a single file with support for resume."""
     src_file = source_dir / rel_path
     sig = compute_file_signature(src_file)
     
+    offset = 0
+    is_resume = False
+
+    # Check if a partial file exists on the remote destination and is smaller
+    if ref_sig and 0 < ref_sig["size"] < sig["size"]:
+        offset = ref_sig["size"]
+        is_resume = True
+
+    # Read data starting from the offset for resume, or full data
     with open(src_file, "rb") as f:
+        if offset > 0:
+            f.seek(offset)
         data = f.read()
 
     ref_data = None
-    # If a potential match exists, read it for delta-encoding check
-    # Note: For this simple loopback or remote sync, if we have a match, we can check similarity
-    if ref_sig and ref_sig["sha256"] != sig["sha256"]:
-        # Only attempt delta encoding if sizes are similar or signature overlap is high
+    # Delta compression check (not applicable if resuming from middle of the file)
+    if not is_resume and ref_sig and ref_sig["sha256"] != sig["sha256"]:
         probe = gw.WaveProbe(id=1, sample_rate=48000, buffer_size=64)
         overlap = probe.signal_overlap(sig["signature"], ref_sig["signature"])
-        # overlap is in Q16_16. 32768 is 0.5 (50% similarity threshold)
         if overlap > 32768:
-            # For remote delta, we'd need to fetch the reference. In this pipeline,
-            # we check if it is admissible. If not, we stream it raw.
             pass
 
     # Perform compression & gate check
@@ -121,18 +128,19 @@ def transfer_single_file(
     # Prepare stream packet containing metadata, receipt, and payload
     packet = {
         "rel_path": rel_path,
-        "original_size": result.original_size,
+        "original_size": sig["size"],
         "compressed_size": result.compressed_size,
         "ratio": result.compression_ratio,
         "sha256": sig["sha256"],
         "receipt": result.gccl_receipt.to_dict() if result.gccl_receipt else None,
         "is_delta": result.success and ref_data is not None,
+        "is_resume": is_resume,
+        "offset": offset,
         # Hex encode compressed bytes for transmission inside JSON
         "payload_hex": result.compressed.hex(),
     }
 
     # Stream the packet to the remote receiver command
-    # We invoke the remote script in 'receive-packet' mode via SSH
     cmd = [
         "ssh", target_host,
         f"python3 ~/gccl_transfer_pipeline.py --mode receive-packet --dest-dir {dest_dir}"
@@ -147,7 +155,13 @@ def transfer_single_file(
             check=True
         )
         resp = json.loads(proc.stdout.strip())
-        return {"rel_path": rel_path, "status": resp.get("status", "error"), "reason": resp.get("reason", "")}
+        return {
+            "rel_path": rel_path,
+            "status": resp.get("status", "error"),
+            "reason": resp.get("reason", ""),
+            "resumed": is_resume,
+            "offset": offset
+        }
     except Exception as e:
         return {"rel_path": rel_path, "status": "error", "reason": str(e)}
 
@@ -210,7 +224,8 @@ def run_sender(source_dir: Path, dest_dir: str, target_host: str, threads: int):
             res = fut.result()
             results.append(res)
             status_char = "+" if res["status"] == "success" else "-"
-            print(f"[{status_char}] {res['rel_path']}: {res['status']} {res.get('reason', '')}")
+            resume_tag = f" (resumed at {res['offset']} bytes)" if res.get("resumed") else ""
+            print(f"[{status_char}] {res['rel_path']}: {res['status']}{resume_tag} {res.get('reason', '')}")
 
     elapsed = time.time() - t0
     success_count = sum(1 for r in results if r["status"] == "success")
@@ -221,24 +236,24 @@ def run_sender(source_dir: Path, dest_dir: str, target_host: str, threads: int):
 # ── Receiver Pipeline ────────────────────────────────────────────────────────
 
 def run_receiver_packet(dest_dir: Path, packet_data: str) -> Dict:
-    """Receive a single packet, run MetaProbe check, reconstruct, and write."""
+    """Receive a single packet, run MetaProbe check, reconstruct with resume, and write."""
     try:
         packet = json.loads(packet_data)
         rel_path = packet["rel_path"]
         payload_bytes = bytes.fromhex(packet["payload_hex"])
         is_delta = packet["is_delta"]
+        is_resume = packet.get("is_resume", False)
+        offset = packet.get("offset", 0)
+        original_size = packet["original_size"]
         original_sha = packet["sha256"]
         receipt = packet["receipt"]
 
         # 1. Run MetaProbe check
-        # We simulate the residual and verify if MetaProbe grants the EXPORT_GRANT
-        # (For raw or delta, the receipt decision must be accepted)
         if receipt and receipt.get("decision") != "accept":
             return {"status": "quarantined", "reason": "GCCL receipt decision was not accept"}
 
         meta = gw.MetaProbe(threshold_q16=32768)
-        # Check if the residual is within the boundary limit
-        would_grant = meta.export_grant(0) # 0 residual for raw transfers
+        would_grant = meta.export_grant(0)
         if not would_grant:
             return {"status": "hold", "reason": "MetaProbe EXPORT_GRANT failed"}
 
@@ -246,14 +261,29 @@ def run_receiver_packet(dest_dir: Path, packet_data: str) -> Dict:
         out_file = dest_dir / rel_path
         out_file.parent.mkdir(parents=True, exist_ok=True)
 
-        if is_delta:
-            # For delta, we would read the existing local file as reference and reconstruct.
-            # In this fallback script, we write the raw payload.
-            pass
-
-        # Write data safely
-        with open(out_file, "wb") as f:
-            f.write(payload_bytes)
+        if is_resume:
+            # Verify that the local file exists and matches the offset
+            if not out_file.exists():
+                return {"status": "mismatch", "reason": "Resume file missing"}
+            current_size = out_file.stat().st_size
+            if current_size != offset:
+                return {
+                    "status": "mismatch",
+                    "reason": f"Size mismatch for resume: expected {offset}, got {current_size}"
+                }
+            
+            # Open file in read/write binary mode and write from offset
+            with open(out_file, "r+b") as f:
+                f.seek(offset)
+                f.write(payload_bytes)
+                f.truncate(original_size)
+        else:
+            if is_delta:
+                # Delta decoding fallback
+                pass
+            # Write data in full
+            with open(out_file, "wb") as f:
+                f.write(payload_bytes)
 
         # 3. Post-write integrity check
         h = hashlib.sha256()
@@ -262,9 +292,11 @@ def run_receiver_packet(dest_dir: Path, packet_data: str) -> Dict:
                 h.update(chunk)
         
         if h.hexdigest() != original_sha:
+            # If a resume failed, let's keep the partial file so it can be resumed later,
+            # but return error.
             return {"status": "corrupt", "reason": "SHA256 mismatch after write"}
 
-        # Save the GCCL receipt next to the file or to a cache directory
+        # Save the GCCL receipt next to the file
         receipt_file = out_file.with_suffix(out_file.suffix + ".gccl-receipt.json")
         with open(receipt_file, "w") as f:
             json.dump(receipt, f, indent=2)

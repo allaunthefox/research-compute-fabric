@@ -101,7 +101,7 @@ Dynamo-style S3-compatible store written in Rust. Replaced rclone serve s3.
 | **cupfox** | 100.110.163.82 | ✅ control-plane | ✅ 69 GiB | fra | 125 GB | key OK (361395) |
 | **nixos-laptop** | 100.102.173.61 | ✅ worker | ✅ 347 GiB | ord | 459 GB NVMe | key OK |
 | **racknerd** | 100.80.39.40 | ✅ worker | ✅ 954 MiB | vps | 9.1 GB VPS | key OK |
-| **neon-64gb** | 100.64.19.78 | ✅ worker (ARM64) | ✅ 93 GiB | netcup-arm | 2 TB | root key OK |
+| **neon-64gb** | 100.92.88.64 | ❌ rebuilt (standalone k3s) | ❌ | netcup-arm | 2 TB | key OK (allaun) |
 | **steamdeck** | 100.85.244.73 | ✅ worker | ✅ 373 GiB | gpu | 476 GB NVMe | key OK |
 | rs-vps (netcup) | — | ❌ | ❌ | — | 2 TB | SSH via password |
 | dracocomp | 100.100.140.27 | ❌ | ❌ | — | — | unreachable
@@ -326,6 +326,7 @@ python3 4-Infrastructure/storage/storage_agent.py --loop --interval 900
 - `4-Infrastructure/shim/vcn_compute_substrate.py` — AMD VCN / NVIDIA NVENC H.264/H.265 hardware video encoder as compute device via MKV trick; dynamically detects GPU vendor (NVIDIA/AMD/Intel) to load math-optimized lossless parameters (YUV444p10le, full-range PC spacing, CABAC offload, VAAPI/NVENC/AMF wrappers); carries BraidStrand/BraidBracket payloads; vectorized packing
 - `4-Infrastructure/shim/qemu_framebuffer_packer.py` — QEMU graphics framebuffer packer mapping Q16_16 scalars to ARGB8888/RGB24 pixels for mmap-based zero-copy display DMA loopback
 - `4-Infrastructure/shim/rrc_ray_tagger.py` — RRC Ray Layer Tagger; classifies math payloads into RRC shapes and matches them to swappable compute slots and transports
+- `4-Infrastructure/shim/gccl_transfer_pipeline.py` — GCCL-gated parallel transfer pipeline wrapper; integrates WaveProbe sampling, MetaProbe validation, and Delta+RLE encoding for secure transport
 - `4-Infrastructure/cloudflare/src/lib.rs` — Cloudflare Workers edge WASM trinary VM core implementing the Q0_16 scalar compute floor
 - `4-Infrastructure/cloudflare/src/index.js` — Cloudflare Workers entry point, POST-only, JSON + binary protocol
 - `4-Infrastructure/cloudflare/wrangler.toml` — Wrangler config, deployed at `https://wasm-compute-edge.researchstack.workers.dev`

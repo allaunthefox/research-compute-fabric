@@ -4,7 +4,7 @@ gccl_transfer_pipeline.py — GCCL-Gated Parallel Transfer Pipeline with Resume.
 
 Integrates GCCL WaveProbe, MetaProbe, and Delta+RLE encoding concepts to transfer
 files securely and with complete receipt verification between hosts. Supports block-level
-resuming for interrupted transfers.
+resuming for interrupted transfers. Optimized with metadata-only fast manifest scanning.
 """
 
 import argparse
@@ -33,39 +33,54 @@ DEFAULT_TARGET_HOST = "100.92.88.64"  # neon-64gb IP
 
 # ── Manifest Generation ─────────────────────────────────────────────────────
 
-def compute_file_signature(path: Path) -> Dict:
-    """Compute size, hash, and WaveProbe sample of a file."""
+def compute_file_signature(path: Path, quick: bool = True) -> Dict:
+    """Compute size, modification time, and WaveProbe sample of a file.
+    
+    If quick=True, skips reading the entire file for SHA-256 computation.
+    """
     stat = path.stat()
     size = stat.st_size
+    mtime = int(stat.st_mtime)
     
-    # Read first 1MB for hashing and sampling
-    h = hashlib.sha256()
     content = b""
     try:
         with open(path, "rb") as f:
-            content = f.read(1024 * 1024)
-            h.update(content)
-            # Continue hashing remainder if larger
-            while chunk := f.read(64 * 1024):
-                h.update(chunk)
+            # Only read the first 1KB to generate the WaveProbe sample signature
+            content = f.read(1024)
     except Exception as e:
         return {"error": str(e)}
 
     # Generate WaveProbe signature using golden-angle sample points
-    data_ints = list(content[:1024])  # Sample from the first 1KB of content
+    data_ints = list(content)
     probe = gw.WaveProbe(id=1, sample_rate=48000, buffer_size=64)
     signature = probe.sample(data_ints)
+
+    sha256 = f"quick-{size}-{mtime}"
+    if not quick:
+        # Full file hash required during actual transmission
+        h = hashlib.sha256()
+        h.update(content)
+        try:
+            with open(path, "rb") as f:
+                # Seek past what we already read
+                f.seek(len(content))
+                while chunk := f.read(64 * 1024):
+                    h.update(chunk)
+            sha256 = h.hexdigest()
+        except Exception as e:
+            return {"error": str(e)}
 
     return {
         "rel_path": str(path.relative_to(path.anchor)), # Keep path relative
         "size": size,
-        "sha256": h.hexdigest(),
+        "mtime": mtime,
+        "sha256": sha256,
         "signature": signature,
     }
 
 
 def generate_directory_manifest(dir_path: Path) -> Dict[str, Dict]:
-    """Scan directory and build manifest of all files."""
+    """Scan directory and build manifest of all files using quick scans."""
     manifest = {}
     for root, _, files in os.walk(dir_path):
         for file in files:
@@ -73,7 +88,7 @@ def generate_directory_manifest(dir_path: Path) -> Dict[str, Dict]:
             # Skip hidden/system files
             if file.startswith(".") or ".gccl" in file:
                 continue
-            sig = compute_file_signature(path)
+            sig = compute_file_signature(path, quick=True)
             if "error" not in sig:
                 # Use relative path as key
                 rel = str(path.relative_to(dir_path))
@@ -93,8 +108,12 @@ def transfer_single_file(
 ) -> Dict:
     """Process, encode, and transmit a single file with support for resume."""
     src_file = source_dir / rel_path
-    sig = compute_file_signature(src_file)
     
+    # Compute full signature (with SHA-256) for the file we are actually transferring
+    sig = compute_file_signature(src_file, quick=False)
+    if "error" in sig:
+        return {"rel_path": rel_path, "status": "error", "reason": sig["error"]}
+
     offset = 0
     is_resume = False
 
@@ -181,13 +200,13 @@ def run_sender(source_dir: Path, dest_dir: str, target_host: str, threads: int):
         print(f"[-] Bootstrapping failed: {e}")
         sys.exit(1)
 
-    # 2. Build local manifest
-    print("[*] Scanning local source directory...")
+    # 2. Build local manifest (quick scan)
+    print("[*] Scanning local source directory (metadata-only)...")
     local_manifest = generate_directory_manifest(source_dir)
     print(f"[+] Found {len(local_manifest)} files to sync.")
 
-    # 3. Query remote manifest
-    print("[*] Querying remote destination manifest...")
+    # 3. Query remote manifest (quick scan on receiver)
+    print("[*] Querying remote destination manifest (metadata-only)...")
     cmd = [
         "ssh", target_host,
         f"python3 ~/gccl_transfer_pipeline.py --mode manifest --dest-dir {dest_dir}"
@@ -199,16 +218,20 @@ def run_sender(source_dir: Path, dest_dir: str, target_host: str, threads: int):
     except Exception as e:
         print(f"[*] Remote directory empty or manifest query failed (expected for fresh sync): {e}")
 
-    # 4. Filter files that already match perfectly (same hash)
+    # 4. Filter files that already match perfectly (same size and mtime)
     transfer_queue = []
     for rel_path, sig in local_manifest.items():
         ref = remote_manifest.get(rel_path)
-        if ref and ref["sha256"] == sig["sha256"]:
-            # Already identical, skip transfer
+        # Match based on size and mtime for speed (avoiding full-file hashing during diff check)
+        if ref and ref["size"] == sig["size"] and ref["mtime"] == sig["mtime"]:
             continue
         transfer_queue.append((rel_path, ref))
 
     print(f"[+] Need to transfer {len(transfer_queue)} files.")
+
+    if not transfer_queue:
+        print("[+] Sync complete! All files up to date.")
+        return
 
     # 5. Parallel transfer execution
     results = []
@@ -292,8 +315,6 @@ def run_receiver_packet(dest_dir: Path, packet_data: str) -> Dict:
                 h.update(chunk)
         
         if h.hexdigest() != original_sha:
-            # If a resume failed, let's keep the partial file so it can be resumed later,
-            # but return error.
             return {"status": "corrupt", "reason": "SHA256 mismatch after write"}
 
         # Save the GCCL receipt next to the file

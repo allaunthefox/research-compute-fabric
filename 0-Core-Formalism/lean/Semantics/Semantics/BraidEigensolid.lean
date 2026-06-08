@@ -39,6 +39,10 @@ open Semantics.BraidBracket
 open Semantics.BraidCross
 open Semantics.Q16_16
 
+/-- Golden centering constant: phi^-1 = sqrt(5)-1/2 approx 0.61803398.
+    Represented in Q16_16 as 40560 (since 40560/65536 = 0.618896). -/
+def goldenCentering : Q16_16 := Q16_16.ofRawInt 40560
+
 -- ============================================================
 -- §1. CORE TYPES
 -- ============================================================

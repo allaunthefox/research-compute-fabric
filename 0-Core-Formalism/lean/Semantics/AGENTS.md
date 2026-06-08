@@ -107,7 +107,7 @@ lake build
 ```
 
 Compiler surface baseline: **3313 jobs, 0 errors** (`lake build Compiler`, commit `859d8726`, reverified 2026-05-28).
-Full workspace: **3560 jobs, 0 errors** (`lake build`, reverified 2026-05-30).
+Full workspace: **3573 jobs, 0 errors** (`lake build`, reverified 2026-06-08).
 PistSimulation: **3309 jobs, 0 errors** (`lake build Semantics.PistSimulation`, commit `778b78d3`, reverified 2026-05-27).
 EmergencyBoot: **3302 jobs, 0 errors** (`lake build Semantics.Hardware.EmergencyBootTypes Semantics.Hardware.EmergencyBootState Semantics.Hardware.EmergencyBootShell`, reverified 2026-05-27).
 
@@ -255,8 +255,8 @@ after narrowly compiling the file under a scratch target.
   - `abs_triangle` ❌ REMOVED — was provably FALSE (counterexample: a=3, b=-3)
   - `sub_eq_add_neg` (line 620): admit, unused
   - **MISSING for SSMS** (to be added):
-    - `add_toInt_of_no_sat`, `sub_toInt_of_no_sat`
-    - `mul_floor_le`, `mul_floor_ge`
+    - `add_toInt_of_no_sat`, `sub_toInt_of_no_sat` (PROVED in FixedPoint.lean)
+    - `mul_floor_le`, `mul_floor_ge` (PROVED in FixedPoint.lean)
     - Convex combination bound (Q16_16-specific)
 - `EmergencyBootTypes.lean` — 6502 design philosophy hardware types (graphene memristor,
   optical fiber hot/cold paths, voltage differential computation). All structures compile;

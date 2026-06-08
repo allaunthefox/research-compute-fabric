@@ -1,0 +1,122 @@
+{
+  "best_chromosome": {
+    "w_raw": 49152,
+    "initial_psi": [
+      -73728,
+      -73728,
+      -73728,
+      -73728,
+      -73728,
+      -73728,
+      -73728,
+      -73728
+    ],
+    "initial_kappa": [
+      49152,
+      49152,
+      49152,
+      49152,
+      49152,
+      49152,
+      49152,
+      49152
+    ],
+    "slots": [
+      1,
+      30,
+      44,
+      7,
+      12,
+      3,
+      20,
+      65
+    ]
+  },
+  "best_fitness": 3616728,
+  "converged": true,
+  "steps_to_converge": 1,
+  "history": [
+    {
+      "generation": 1,
+      "best_fitness": 3572037
+    },
+    {
+      "generation": 10,
+      "best_fitness": 3577480
+    },
+    {
+      "generation": 20,
+      "best_fitness": 3582990
+    },
+    {
+      "generation": 30,
+      "best_fitness": 3607233
+    },
+    {
+      "generation": 40,
+      "best_fitness": 3610746
+    },
+    {
+      "generation": 50,
+      "best_fitness": 3611813
+    },
+    {
+      "generation": 60,
+      "best_fitness": 3615963
+    },
+    {
+      "generation": 70,
+      "best_fitness": 3616728
+    },
+    {
+      "generation": 80,
+      "best_fitness": 3616728
+    },
+    {
+      "generation": 90,
+      "best_fitness": 3616728
+    },
+    {
+      "generation": 100,
+      "best_fitness": 3616728
+    },
+    {
+      "generation": 110,
+      "best_fitness": 3616728
+    },
+    {
+      "generation": 120,
+      "best_fitness": 3616728
+    },
+    {
+      "generation": 130,
+      "best_fitness": 3616728
+    },
+    {
+      "generation": 140,
+      "best_fitness": 3616728
+    },
+    {
+      "generation": 150,
+      "best_fitness": 3616728
+    }
+  ],
+  "trace": [
+    {
+      "step": 1,
+      "total_residue": 0,
+      "max_psi": 73728
+    }
+  ],
+  "elapsed_seconds": 5.7291505336761475,
+  "sidon_set": [
+    1,
+    3,
+    7,
+    12,
+    20,
+    30,
+    44,
+    65
+  ]
+}

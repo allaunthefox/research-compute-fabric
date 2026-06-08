@@ -1,0 +1,53 @@
+{
+  "best_candidate": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "min_complexity_q16": 23789,
+  "results": [
+    {
+      "index": 0,
+      "candidate": [
+        1.0,
+        0.3,
+        0.1
+      ],
+      "complexity_q16": 35179,
+      "complexity_float": 0.5367889404296875
+    },
+    {
+      "index": 1,
+      "candidate": [
+        0.8,
+        0.5,
+        0.2
+      ],
+      "complexity_q16": 33399,
+      "complexity_float": 0.5096282958984375
+    },
+    {
+      "index": 2,
+      "candidate": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "complexity_q16": 23789,
+      "complexity_float": 0.3629913330078125
+    },
+    {
+      "index": 3,
+      "candidate": [
+        0.1,
+        0.3,
+        1.0
+      ],
+      "complexity_q16": 32872,
+      "complexity_float": 0.5015869140625
+    }
+  ],
+  "elapsed_seconds": 0.0048351287841796875,
+  "shots": 500,
+  "claim_boundary": "quandela-perceval-erdos-search-only"
+}

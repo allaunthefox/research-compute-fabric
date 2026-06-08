@@ -1,0 +1,8 @@
+{
+  "max_discrepancy": 500,
+  "critical_q": 2,
+  "critical_m": 500,
+  "scan_time_seconds": 0.07796573638916016,
+  "total_aps_checked": 5786,
+  "sequence_length": 1000
+}

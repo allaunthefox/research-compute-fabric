@@ -329,6 +329,10 @@ python3 4-Infrastructure/storage/storage_agent.py --loop --interval 900
 - `4-Infrastructure/shim/gccl_transfer_pipeline.py` — GCCL-gated parallel transfer pipeline wrapper; integrates WaveProbe sampling, MetaProbe validation, and Delta+RLE encoding for secure transport
 - `4-Infrastructure/shim/braid_mutation_optimizer.py` — Multi-core parallel genetic algorithm optimizer for State8 braid crossing structures; outputs optimization receipts
 - `4-Infrastructure/shim/burgers_2d_simplification.py` — 2D Burgers equation multi-core solver with Helmholtz solenoidal/dilatational energy decay analysis
+- `4-Infrastructure/shim/erdos_discrepancy_probe.py` — Multi-core homogeneous arithmetic progression discrepancy scanner
+- `4-Infrastructure/shim/entropic_collision_prober.py` — Entropic collision deficit and sumset prober for Sidon sets
+- `4-Infrastructure/shim/quandela_erdos_search.py` — Photonic quantum simulation optimizer using Perceval SDK to shave combinatorial complexity
+- `4-Infrastructure/shim/openai_unit_distance_verifier.py` — Euclidean unit-distance density verifier for planar configurations
 - `4-Infrastructure/cloudflare/src/lib.rs` — Cloudflare Workers edge WASM trinary VM core implementing the Q0_16 scalar compute floor
 - `4-Infrastructure/cloudflare/src/index.js` — Cloudflare Workers entry point, POST-only, JSON + binary protocol
 - `4-Infrastructure/cloudflare/wrangler.toml` — Wrangler config, deployed at `https://wasm-compute-edge.researchstack.workers.dev`

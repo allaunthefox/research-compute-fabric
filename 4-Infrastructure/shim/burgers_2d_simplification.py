@@ -97,6 +97,11 @@ def solve_burgers_2d(
     Kx, Ky = np.meshgrid(kx, ky)
     K_sq = Kx**2 + Ky**2
     
+    # Orszag 2/3 dealiasing mask to prevent aliasing blowup
+    Kx_max = np.max(np.abs(Kx))
+    Ky_max = np.max(np.abs(Ky))
+    dealias_mask = (np.abs(Kx) < (2.0 / 3.0) * Kx_max) & (np.abs(Ky) < (2.0 / 3.0) * Ky_max)
+    
     history = []
     
     t0 = time.time()
@@ -104,24 +109,32 @@ def solve_burgers_2d(
     for step in range(1, n_steps + 1):
         t = step * dt
         
-        # Spectral derivatives
+        # Spectral representation of current fields
         u_hat = np.fft.fft2(u)
         v_hat = np.fft.fft2(v)
         
+        # Compute derivatives in real space for nonlinear terms
         ux = np.real(np.fft.ifft2(1j * Kx * u_hat))
         uy = np.real(np.fft.ifft2(1j * Ky * u_hat))
         vx = np.real(np.fft.ifft2(1j * Kx * v_hat))
         vy = np.real(np.fft.ifft2(1j * Ky * v_hat))
         
-        lap_u = np.real(np.fft.ifft2(-K_sq * u_hat))
-        lap_v = np.real(np.fft.ifft2(-K_sq * v_hat))
+        # Nonlinear terms in real space
+        Nu = - (u * ux + v * uy)
+        Nv = - (u * vx + v * vy)
         
-        # Update using explicit Euler
-        u_new = u + dt * (- (u * ux + v * uy) + nu * lap_u)
-        v_new = v + dt * (- (u * vx + v * vy) + nu * lap_v)
+        # Transform nonlinear terms to Fourier space
+        Nu_hat = np.fft.fft2(Nu)
+        Nv_hat = np.fft.fft2(Nv)
         
-        u = u_new
-        v = v_new
+        # Semi-implicit Crank-Nicolson update in Fourier space
+        denom = 1.0 + 0.5 * nu * dt * K_sq
+        u_hat_new = ((u_hat * (1.0 - 0.5 * nu * dt * K_sq) + dt * Nu_hat) / denom) * dealias_mask
+        v_hat_new = ((v_hat * (1.0 - 0.5 * nu * dt * K_sq) + dt * Nv_hat) / denom) * dealias_mask
+        
+        # Transform back to real space
+        u = np.real(np.fft.ifft2(u_hat_new))
+        v = np.real(np.fft.ifft2(v_hat_new))
         
         if step % save_interval == 0 or step == 1 or step == n_steps:
             # Helmholtz decomposition

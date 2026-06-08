@@ -1,0 +1,101 @@
+{
+  "grid_size": [
+    128,
+    128
+  ],
+  "nu": 0.001,
+  "t_final": 1.0,
+  "dt": 0.0001,
+  "init_rot_ratio": 1.0,
+  "history": [
+    {
+      "step": 1,
+      "time": 0.0001,
+      "E_total": 0.49999980500003816,
+      "E_dilatational": 0.24999990250001886,
+      "E_solenoidal": 0.2499999025000193,
+      "ratio_solenoidal": 0.5000000000000004
+    },
+    {
+      "step": 1000,
+      "time": 0.1,
+      "E_total": 0.4998047069933783,
+      "E_dilatational": 0.25052599580438223,
+      "E_solenoidal": 0.24927871118899614,
+      "ratio_solenoidal": 0.49875222802233177
+    },
+    {
+      "step": 2000,
+      "time": 0.2,
+      "E_total": 0.4996074527691354,
+      "E_dilatational": 0.25229649928554543,
+      "E_solenoidal": 0.24731095348359,
+      "ratio_solenoidal": 0.49501053699827496
+    },
+    {
+      "step": 3000,
+      "time": 0.3,
+      "E_total": 0.49940587366661077,
+      "E_dilatational": 0.2553051927996124,
+      "E_solenoidal": 0.24410068086699843,
+      "ratio_solenoidal": 0.48878215843723366
+    },
+    {
+      "step": 4000,
+      "time": 0.4,
+      "E_total": 0.49919676192433415,
+      "E_dilatational": 0.25954376977242727,
+      "E_solenoidal": 0.23965299215190697,
+      "ratio_solenoidal": 0.4800772169035672
+    },
+    {
+      "step": 5000,
+      "time": 0.5,
+      "E_total": 0.498974963632854,
+      "E_dilatational": 0.26499938330766004,
+      "E_solenoidal": 0.23397558032519403,
+      "ratio_solenoidal": 0.46891246531029035
+    },
+    {
+      "step": 6000,
+      "time": 0.6,
+      "E_total": 0.4987300684756147,
+      "E_dilatational": 0.2716469320819121,
+      "E_solenoidal": 0.22708313639370264,
+      "ratio_solenoidal": 0.4553227301650168
+    },
+    {
+      "step": 7000,
+      "time": 0.7000000000000001,
+      "E_total": 0.49844550578803587,
+      "E_dilatational": 0.2794015046996524,
+      "E_solenoidal": 0.2190440010883835,
+      "ratio_solenoidal": 0.4394542603851504
+    },
+    {
+      "step": 8000,
+      "time": 0.8,
+      "E_total": 0.49862733922248037,
+      "E_dilatational": 0.2874884714749514,
+      "E_solenoidal": 0.21113886774752902,
+      "ratio_solenoidal": 0.4234402150446907
+    },
+    {
+      "step": 9000,
+      "time": 0.9,
+      "E_total": 0.5013874799183476,
+      "E_dilatational": 0.2928598486945445,
+      "E_solenoidal": 0.20852763122380322,
+      "ratio_solenoidal": 0.41590115345074535
+    },
+    {
+      "step": 10000,
+      "time": 1.0,
+      "E_total": 0.506997038731017,
+      "E_dilatational": 0.29367955465707896,
+      "E_solenoidal": 0.21331748407393808,
+      "ratio_solenoidal": 0.420747002009832
+    }
+  ],
+  "elapsed_seconds": 77.50663137435913
+}

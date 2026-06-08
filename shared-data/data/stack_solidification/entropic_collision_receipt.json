@@ -1,0 +1,21 @@
+{
+  "candidate_set": [
+    1,
+    3,
+    7,
+    12,
+    20,
+    30,
+    44,
+    65
+  ],
+  "set_size": 8,
+  "total_pairs": 36,
+  "unique_sums": 36,
+  "collisions_debt": 0,
+  "observed_entropy": 5.1699250014423095,
+  "max_possible_entropy": 5.169925001442312,
+  "entropy_deficit": 2.6645352591003757e-15,
+  "is_sidon": true,
+  "claim_boundary": "entropic-collision-debt-only"
+}

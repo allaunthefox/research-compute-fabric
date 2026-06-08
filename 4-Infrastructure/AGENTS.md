@@ -328,6 +328,7 @@ python3 4-Infrastructure/storage/storage_agent.py --loop --interval 900
 - `4-Infrastructure/shim/rrc_ray_tagger.py` — RRC Ray Layer Tagger; classifies math payloads into RRC shapes and matches them to swappable compute slots and transports
 - `4-Infrastructure/shim/gccl_transfer_pipeline.py` — GCCL-gated parallel transfer pipeline wrapper; integrates WaveProbe sampling, MetaProbe validation, and Delta+RLE encoding for secure transport
 - `4-Infrastructure/shim/braid_mutation_optimizer.py` — Multi-core parallel genetic algorithm optimizer for State8 braid crossing structures; outputs optimization receipts
+- `4-Infrastructure/shim/burgers_2d_simplification.py` — 2D Burgers equation multi-core solver with Helmholtz solenoidal/dilatational energy decay analysis
 - `4-Infrastructure/cloudflare/src/lib.rs` — Cloudflare Workers edge WASM trinary VM core implementing the Q0_16 scalar compute floor
 - `4-Infrastructure/cloudflare/src/index.js` — Cloudflare Workers entry point, POST-only, JSON + binary protocol
 - `4-Infrastructure/cloudflare/wrangler.toml` — Wrangler config, deployed at `https://wasm-compute-edge.researchstack.workers.dev`

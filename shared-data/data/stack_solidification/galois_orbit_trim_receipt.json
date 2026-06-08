@@ -1,0 +1,10 @@
+{
+  "generators_count": 14,
+  "points_count": 16384,
+  "observed_unit_distances": 118784,
+  "brute_time_seconds": 34.53968620300293,
+  "trim_time_seconds": 35.25675439834595,
+  "speedup_ratio": 0.9796615369854731,
+  "redundant_dimensions_trimmed": 8192,
+  "claim_boundary": "galois-orbit-trim-dimensional-shock-trim"
+}

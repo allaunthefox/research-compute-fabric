@@ -336,6 +336,7 @@ python3 4-Infrastructure/storage/storage_agent.py --loop --interval 900
 - `4-Infrastructure/shim/galois_orbit_trimmer.py` — Galois Orbit Trimming (DST) conjugation symmetry-based search trimmer
 - `4-Infrastructure/shim/braid_shock_16d.py` — 16D BraidShock simulation prototype with Dimensional Shock Trim (DST) and underverse bleed ledger tracking
 - `4-Infrastructure/shim/verify_all_shims.py` — Master verification pipeline running all 7 simulation shims sequentially on EPYC
+- `4-Infrastructure/shim/wolfram_verify.py` — Queries Wolfram Alpha API to verify algebraic/physical equations
 - `4-Infrastructure/cloudflare/src/lib.rs` — Cloudflare Workers edge WASM trinary VM core implementing the Q0_16 scalar compute floor
 - `4-Infrastructure/cloudflare/src/index.js` — Cloudflare Workers entry point, POST-only, JSON + binary protocol
 - `4-Infrastructure/cloudflare/wrangler.toml` — Wrangler config, deployed at `https://wasm-compute-edge.researchstack.workers.dev`

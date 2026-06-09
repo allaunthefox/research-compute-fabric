@@ -1,0 +1,361 @@
+{
+  "golden_ratio_conjugate": {
+    "query": "solve x^2 + x - 1 = 0",
+    "text_result": "x = 1/2 (-1 - sqrt(5))",
+    "raw_response": {
+      "queryresult": {
+        "success": true,
+        "error": false,
+        "numpods": 6,
+        "datatypes": "Solve",
+        "parsetiming": 0.276,
+        "parsetimedout": false,
+        "id": "C5Dt1/XUmLs=6:eJxTTMoPSmNkYGAoZgESHvk5KWlMIJ4+kHBOzEkuzUksSQ1ILCpOTXDOzytJzStJgAsjWMH5OWWpEI2sQMK1sDQxJ40ZZmpATmkxQjIgvzy1qBhkZUUmWBDC/A8EmUAWA0QlSF9QaU5qMCeQATY+pLIgNZgVxgMAie8vlg==",
+        "kernelId": "261",
+        "processId": 497287,
+        "version": "2.6",
+        "inputstring": "solve x^2 + x - 1 = 0",
+        "sbsallowed": false,
+        "parentId": "d2d445e7-1795-4e78-a9e6-eeb75c7e72cd",
+        "requestId": "d2d445e7-1795-4e78-a9e6-eeb75c7e72cd",
+        "pods": [
+          {
+            "title": "Input interpretation",
+            "scanner": "Identity",
+            "id": "Input",
+            "position": 1,
+            "error": false,
+            "numsubpods": 1,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "solve x^2 + x - 1 = 0"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          },
+          {
+            "title": "Results",
+            "scanner": "Solve",
+            "id": "Result",
+            "position": 10,
+            "error": false,
+            "numsubpods": 2,
+            "primary": true,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "x = 1/2 (-1 - sqrt(5))"
+              },
+              {
+                "title": "",
+                "plaintext": "x = 1/2 (sqrt(5) - 1)"
+              }
+            ],
+            "expressiontypes": [
+              {
+                "name": "Default"
+              },
+              {
+                "name": "Default"
+              }
+            ],
+            "states": [
+              {
+                "name": "Approximate forms",
+                "input": "Result__Approximate forms"
+              }
+            ]
+          },
+          {
+            "title": "Root plot",
+            "scanner": "Solve",
+            "id": "RootPlot",
+            "position": 200,
+            "error": false,
+            "numsubpods": 1,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": ""
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          },
+          {
+            "title": "Number line",
+            "scanner": "Solve",
+            "id": "NumberLine",
+            "position": 611,
+            "error": false,
+            "numsubpods": 1,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": ""
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          },
+          {
+            "title": "Sum of roots",
+            "scanner": "Solve",
+            "id": "SumOfRoots",
+            "position": 3000,
+            "error": false,
+            "numsubpods": 1,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "-1"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          },
+          {
+            "title": "Product of roots",
+            "scanner": "Solve",
+            "id": "ProductOfRoots",
+            "position": 3001,
+            "error": false,
+            "numsubpods": 1,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "-1"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          }
+        ],
+        "timing": 0.591,
+        "timedout": "",
+        "timedoutpods": ""
+      }
+    }
+  },
+  "gaussian_diffusion_integral": {
+    "query": "integrate exp(-x^2) from -infinity to infinity",
+    "text_result": "integral_(-\u221e)^\u221e exp(-x^2) dx = sqrt(\u03c0)\u22481.77245",
+    "raw_response": {
+      "queryresult": {
+        "success": true,
+        "error": false,
+        "numpods": 2,
+        "datatypes": "",
+        "parsetiming": 0.381,
+        "parsetimedout": false,
+        "id": "Y85PaZs83oA=6:eJxTTMoPSmNkYGAoZgESHvk5KWlMIB4nkPDMK0lNL0osSYUoYAYSrhUFEHlWIBGSmZtanPkfCBBiAfnlqUXFIPUVmSDBNGaY2T6ZxSUQCWwmFHOALUzLzMssqUThAACS7Cf/",
+        "kernelId": "219",
+        "processId": 453579,
+        "version": "2.6",
+        "inputstring": "integrate exp(-x^2) from -infinity to infinity",
+        "sbsallowed": false,
+        "parentId": "d2ab4df9-cf26-4a5c-81d5-c14fb8295a34",
+        "requestId": "d2ab4df9-cf26-4a5c-81d5-c14fb8295a34",
+        "pods": [
+          {
+            "title": "Definite integral",
+            "scanner": "Integral",
+            "id": "Input",
+            "position": 10,
+            "error": false,
+            "numsubpods": 1,
+            "primary": true,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "integral_(-\u221e)^\u221e exp(-x^2) dx = sqrt(\u03c0)\u22481.77245"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            },
+            "states": [
+              {
+                "name": "More digits",
+                "input": "Input__More digits"
+              }
+            ]
+          },
+          {
+            "title": "Indefinite integral",
+            "scanner": "Integral",
+            "id": "IndefiniteIntegral",
+            "position": 1810,
+            "error": false,
+            "numsubpods": 1,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "integral exp(-x^2) dx = 1/2 sqrt(\u03c0) erf(x) + constant",
+                "infos": {
+                  "text": "erf(x) is the error function",
+                  "links": [
+                    {
+                      "url": "http://reference.wolfram.com/language/ref/Erf.html",
+                      "text": "Documentation",
+                      "title": "Mathematica"
+                    },
+                    {
+                      "url": "http://functions.wolfram.com/GammaBetaErf/Erf",
+                      "text": "Properties",
+                      "title": "Wolfram Functions Site"
+                    },
+                    {
+                      "url": "http://mathworld.wolfram.com/Erf.html",
+                      "text": "Definition",
+                      "title": "MathWorld"
+                    }
+                  ]
+                }
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          }
+        ],
+        "timing": 0.718,
+        "timedout": "",
+        "timedoutpods": ""
+      }
+    }
+  },
+  "cramer_4x4_determinant": {
+    "query": "determinant {{a, b, c, d}, {e, f, g, h}, {i, j, k, l}, {m, n, o, p}}",
+    "text_result": "a f k p - a f l o - a g j p + a g l n + a h j o - a h k n - b e k p + b e l o + b g i p - b g l m - b h i o + b h k m + c e j p - c e l n - c f i p + c f l m + c h i n - c h j m - d e j o + d e k n + d f i o - d f k m - d g i n + d g j m",
+    "raw_response": {
+      "queryresult": {
+        "success": true,
+        "error": false,
+        "numpods": 4,
+        "datatypes": "Det",
+        "parsetiming": 0.926,
+        "parsetimedout": false,
+        "id": "ZLmvgNdn7F4=6:eJxtzE0OQDAUBOBKXMQBnKIWFhbiBC199VetaN0fI0ikmy9vXiaTta7RCWPMpyelM+pO+QmXptuNDFTLzZPgzgayQbzv7yoo6PQZqUb/S/6alLCFHVSRFkENezhEWiOc4AxNpLVACx1cD9y0MKc=",
+        "kernelId": "239",
+        "processId": 471175,
+        "version": "2.6",
+        "inputstring": "determinant {{a, b, c, d}, {e, f, g, h}, {i, j, k, l}, {m, n, o, p}}",
+        "sbsallowed": false,
+        "parentId": "e033534f-109d-4295-a6db-e7f429638ff5",
+        "requestId": "e033534f-109d-4295-a6db-e7f429638ff5",
+        "pods": [
+          {
+            "title": "Input interpretation",
+            "scanner": "Identity",
+            "id": "Input",
+            "position": 1,
+            "error": false,
+            "numsubpods": 1,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "left bracketing bar a | b | c | d\ne | f | g | h\ni | j | k | l\nm | n | o | p right bracketing bar"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            },
+            "infos": {
+              "text": "left bracketing bar m right bracketing bar is the determinant",
+              "links": {
+                "url": "http://mathworld.wolfram.com/Determinant.html",
+                "text": "Definition",
+                "title": "MathWorld"
+              }
+            }
+          },
+          {
+            "title": "Result",
+            "scanner": "Eigen",
+            "id": "Result",
+            "position": 10,
+            "error": false,
+            "numsubpods": 1,
+            "primary": true,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "a f k p - a f l o - a g j p + a g l n + a h j o - a h k n - b e k p + b e l o + b g i p - b g l m - b h i o + b h k m + c e j p - c e l n - c f i p + c f l m + c h i n - c h j m - d e j o + d e k n + d f i o - d f k m - d g i n + d g j m"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          },
+          {
+            "title": "Alternate forms",
+            "scanner": "Eigen",
+            "id": "AlternateForm",
+            "position": 450.6470588235294,
+            "error": false,
+            "numsubpods": 3,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "k (f (a p - d m) - a h n + e (d n - b p) + b h m) + l (a g n - b g m) + j (h (a o - c m) + g (d m - a p) + e (c p - d o)) + f l (c m - a o) + i (b g p - b h o + f (d o - c p) + n (c h - d g)) + e l (b o - c n)"
+              },
+              {
+                "title": "",
+                "plaintext": "a (g l n - f l o) + a k (f p - h n) + a j (h o - g p) + b (l (e o - g m) + k (h m - e p) + i (g p - h o)) + c (j (e p - h m) - e l n + f (l m - i p) + h i n) + d (k (e n - f m) + j (g m - e o) + f i o - g i n)"
+              },
+              {
+                "title": "",
+                "plaintext": "l (-a f o + b (e o - g m) + c f m) + k (a f p + b (h m - e p) - d f m) + n (l (a g - c e) + k (d e - a h) + c h i - d g i) + a j (h o - g p) + b i (g p - h o) + c (j (e p - h m) - f i p) + d (j (g m - e o) + f i o)"
+              }
+            ],
+            "expressiontypes": [
+              {
+                "name": "Default"
+              },
+              {
+                "name": "Default"
+              },
+              {
+                "name": "Default"
+              }
+            ],
+            "states": [
+              {
+                "name": "More",
+                "input": "AlternateForm__More"
+              }
+            ]
+          },
+          {
+            "title": "Definite integral over a hypercube of edge length 2 L",
+            "scanner": "InterestingMultiDimensionalDefiniteIntegrals",
+            "id": "DefiniteIntegralOverAHypercube",
+            "position": 2420,
+            "error": false,
+            "numsubpods": 1,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "integral_(-L)^L integral_(-L)^L integral_(-L)^L integral_(-L)^L integral_(-L)^L integral_(-L)^L integral_(-L)^L integral_(-L)^L integral_(-L)^L integral_(-L)^L integral_(-L)^L integral_(-L)^L integral_(-L)^L integral_(-L)^L integral_(-L)^L integral_(-L)^L (d g j m - c h j m - d f k m + b h k m + c f l m - b g l m - d g i n + c h i n + d e k n - a h k n - c e l n + a g l n + d f i o - b h i o - d e j o + a h j o + b e l o - a f l o - c f i p + b g i p + c e j p - a g j p - b e k p + a f k p) dp do dn dm dl dk dj di dh dg df de dd dc db da = 0"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          }
+        ],
+        "timing": 3.983,
+        "timedout": "",
+        "timedoutpods": ""
+      }
+    }
+  }
+}

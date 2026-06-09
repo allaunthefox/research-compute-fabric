@@ -7,6 +7,11 @@ import subprocess
 from pathlib import Path
 import time
 from typing import Optional
+import sys
+
+# Add path to projection engine
+sys.path.append("/home/allaun/Research Stack/5-Applications/cff/nuvmap")
+from projection_engine import NUVMAPProjectionEngine
 
 app = FastAPI(title="Sovereign Surface")
 
@@ -31,6 +36,63 @@ async def get_forest():
             for line in f:
                 equations.append(json.loads(line))
     return {"equations": equations}
+
+@app.get("/api/nuvmap")
+async def get_nuvmap():
+    receipt_path = Path("/home/allaun/Research Stack/shared-data/data/stack_solidification/braid_shock_receipt.json")
+    if not receipt_path.exists():
+        return {"error": f"Receipt not found at {receipt_path}"}
+    
+    with open(receipt_path, "r") as f:
+        receipt = json.load(f)
+        
+    u_q16 = receipt.get("u_final_q16", [])
+    q_q16 = receipt.get("q_final_q16", [])
+    r_q16 = receipt.get("r_final_q16", [])
+    
+    eigenmass_data = []
+    for i in range(len(u_q16)):
+        ui = u_q16[i] / 65536.0
+        qi = q_q16[i] / 65536.0
+        ri = r_q16[i] / 65536.0
+        
+        if ri > 0.05:
+            chiral_state = "chiral_scarred"
+        else:
+            chiral_state = "achiral_stable"
+            
+        eigenmass_data.append({
+            "equation_id": i,
+            "amvr": ui,
+            "avmr": qi,
+            "chiral_residual": ri,
+            "chiral_state": chiral_state
+        })
+        
+    engine = NUVMAPProjectionEngine(total_qubit_budget=2000)
+    surface = engine.project(eigenmass_data)
+    
+    cells_json = []
+    for c in surface.cells:
+        cells_json.append({
+            "u_i": c.u_i,
+            "v_i": c.v_i,
+            "k_i": c.k_i,
+            "E_i": c.E_i,
+            "R_i": c.R_i,
+            "chi_i": c.chi_i,
+            "S_i": c.S_i,
+            "L_i": c.L_i,
+            "q_i": c.q_i,
+            "admissible": c.admissible,
+            "equation_id": c.equation_id,
+            "fingerprint": c.fingerprint
+        })
+        
+    return {
+        "summary": engine.summary(),
+        "cells": cells_json
+    }
 
 def get_gpu_load():
     try:

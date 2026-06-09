@@ -151,6 +151,38 @@
             animation: pulse 2s infinite;
         }
 
+        .nav-link {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
+            margin-bottom: 0.25rem;
+        }
+        .nav-link:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .nav-link.active {
+            color: var(--accent);
+            background: var(--surface);
+            border-color: var(--border);
+        }
+        
+        .nuvmap-cell {
+            aspect-ratio: 1;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        .nuvmap-cell:hover {
+            transform: scale(1.15);
+            z-index: 10;
+        }
+
     </style>
 </head>
 <body>
@@ -183,27 +215,136 @@
             </div>
         </div>
 
-        <nav>
-            <!-- Navigation links would go here -->
+        <nav style="display: flex; flex-direction: column; gap: 0.25rem; margin-top: 1.5rem;">
+            <a href="#" id="tab-forest" class="nav-link active" onclick="switchTab('forest')">Equation Forest</a>
+            <a href="#" id="tab-nuvmap" class="nav-link" onclick="switchTab('nuvmap')">NUVMAP Projection</a>
         </nav>
     </aside>
 
     <main>
-        <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
-            <h2 style="font-size: 1.8rem;">Equation Forest</h2>
-            <div class="tag" style="background: var(--surface); color: var(--text);">15 ACTIVE KERNELS</div>
+        <!-- Section: Equation Forest -->
+        <div id="section-forest" class="tab-content">
+            <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="font-size: 1.8rem;">Equation Forest</h2>
+                <div class="tag" style="background: var(--surface); color: var(--text);">15 ACTIVE KERNELS</div>
+            </div>
+
+            <div id="equation-grid" class="grid">
+                <!-- Cards will be injected here -->
+            </div>
         </div>
 
-        <div id="equation-grid" class="grid">
-            <!-- Cards will be injected here -->
+        <!-- Section: NUVMAP Projection -->
+        <div id="section-nuvmap" class="tab-content" style="display: none;">
+            <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="font-size: 1.8rem;">NUVMAP Projection Surface</h2>
+                <div class="tag" id="nuvmap-util-tag" style="background: var(--surface); color: var(--accent);">AREA UTILIZATION: --</div>
+            </div>
+
+            <!-- Interactive Map Summary -->
+            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                <div style="display: flex; gap: 2rem; margin-bottom: 1.5rem; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; gap: 2rem;">
+                        <div>
+                            <div class="status-label" style="font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.25rem;">Total Qubits</div>
+                            <div id="nuvmap-total-qubits" style="font-size: 1.8rem; font-weight: 600; color: var(--accent);">--</div>
+                        </div>
+                        <div>
+                            <div class="status-label" style="font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.25rem;">Bekenstein Bound</div>
+                            <div id="nuvmap-bekenstein" style="font-size: 1.8rem; font-weight: 600; font-family: 'JetBrains Mono', monospace;">--</div>
+                        </div>
+                        <div>
+                            <div class="status-label" style="font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.25rem;">Admissible Cells</div>
+                            <div id="nuvmap-admissible" style="font-size: 1.8rem; font-weight: 600; color: #00ff00;">--</div>
+                        </div>
+                    </div>
+                    <div>
+                        <button onclick="loadNuvmap()" style="background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-family: inherit;">Refresh Surface</button>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem; font-size: 0.8rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="width: 12px; height: 12px; border-radius: 3px; background: #00ffcc; box-shadow: 0 0 8px #00ffcc;"></div>
+                        <span>Admissible (Active front)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="width: 12px; height: 12px; border-radius: 3px; background: #33ccff; box-shadow: 0 0 8px #33ccff;"></div>
+                        <span>Admissible (Decayed)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="width: 12px; height: 12px; border-radius: 3px; background: #ff3366; box-shadow: 0 0 8px #ff3366;"></div>
+                        <span>Chiral Scarred (Rejected)</span>
+                    </div>
+                </div>
+
+                <!-- 16x16 interactive grid representing the 256 cells -->
+                <div id="nuvmap-grid-visual" style="display: grid; grid-template-columns: repeat(16, 1fr); gap: 6px; aspect-ratio: 1; max-width: 500px; margin: 0 auto; background: rgba(0,0,0,0.4); padding: 12px; border-radius: 12px; border: 1px solid var(--border);">
+                    <!-- 256 cells dynamically loaded -->
+                </div>
+            </div>
+
+            <!-- Details Card -->
+            <div id="nuvmap-details-card" class="card" style="display: none; border-color: var(--accent); margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 1.2rem; font-weight: 600;">Cell Details: <span id="cell-coord" style="color: var(--accent);">[u_i, v_i]</span></h3>
+                    <span id="cell-admissibility-badge" class="tag">Admissible</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; font-size: 0.9rem;">
+                    <div>
+                        <div class="status-label" style="font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.25rem;">Eigenmass (E_i)</div>
+                        <div id="cell-eigenmass" class="status-value" style="font-size: 1.1rem; color: var(--accent);">--</div>
+                    </div>
+                    <div>
+                        <div class="status-label" style="font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.25rem;">Residual Risk (R_i)</div>
+                        <div id="cell-risk" class="status-value" style="font-size: 1.1rem;">--</div>
+                    </div>
+                    <div>
+                        <div class="status-label" style="font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.25rem;">Qubits (q_i)</div>
+                        <div id="cell-qubits" class="status-value" style="font-size: 1.1rem; color: #00ff00;">--</div>
+                    </div>
+                    <div>
+                        <div class="status-label" style="font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.25rem;">Chiral Residual (chi_i)</div>
+                        <div id="cell-chiral" class="status-value" style="font-size: 1.1rem;">--</div>
+                    </div>
+                    <div>
+                        <div class="status-label" style="font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.25rem;">Structural integrity (S_i)</div>
+                        <div id="cell-structural" class="status-value" style="font-size: 1.1rem;">--</div>
+                    </div>
+                    <div>
+                        <div class="status-label" style="font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.25rem;">Landauer threshold (L_i)</div>
+                        <div id="cell-landauer" class="status-value" style="font-size: 1.1rem;">--</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.85rem;">
+                    <div class="status-label" style="font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.25rem;">CFF cell fingerprint</div>
+                    <div id="cell-fingerprint" style="font-family: 'JetBrains Mono', monospace; word-break: break-all; color: var(--text-dim); font-size: 0.8rem;">--</div>
+                </div>
+            </div>
         </div>
     </main>
 
     <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            
+            if (tab === 'forest') {
+                document.getElementById('section-forest').style.display = 'block';
+                document.getElementById('tab-forest').classList.add('active');
+            } else if (tab === 'nuvmap') {
+                document.getElementById('section-nuvmap').style.display = 'block';
+                document.getElementById('tab-nuvmap').classList.add('active');
+                loadNuvmap();
+            }
+        }
+
         async function loadForest() {
             const resp = await fetch('/api/forest');
             const data = await resp.json();
             const grid = document.getElementById('equation-grid');
+            grid.innerHTML = '';
             
             data.equations.forEach(eq => {
                 const card = document.createElement('div');
@@ -218,6 +359,80 @@
                 `;
                 grid.appendChild(card);
             });
+        }
+
+        async function loadNuvmap() {
+            try {
+                const resp = await fetch('/api/nuvmap');
+                const data = await resp.json();
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                
+                // Update summary metrics
+                document.getElementById('nuvmap-total-qubits').innerText = data.summary.total_qubits;
+                document.getElementById('nuvmap-bekenstein').innerText = data.summary.bekenstein_bound;
+                document.getElementById('nuvmap-admissible').innerText = `${data.summary.num_admissible} / ${data.summary.num_cells}`;
+                document.getElementById('nuvmap-util-tag').innerText = `AREA UTILIZATION: ${data.summary.area_utilization}`;
+                
+                // Draw cells visual grid
+                const visualGrid = document.getElementById('nuvmap-grid-visual');
+                visualGrid.innerHTML = '';
+                
+                data.cells.forEach(cell => {
+                    const div = document.createElement('div');
+                    div.className = 'nuvmap-cell';
+                    
+                    // Style by state
+                    let bg = '#ff3366'; // Scarred (rejected)
+                    let shadow = 'none';
+                    if (cell.admissible) {
+                        if (cell.E_i > 0.05) {
+                            bg = '#00ffcc'; // Admissible active front
+                            shadow = '0 0 8px rgba(0, 255, 204, 0.4)';
+                        } else {
+                            bg = '#33ccff'; // Admissible decayed
+                            shadow = '0 0 6px rgba(51, 204, 255, 0.3)';
+                        }
+                    }
+                    
+                    div.style.background = bg;
+                    div.style.boxShadow = shadow;
+                    const q_ratio = cell.q_i / 50.0;
+                    div.style.opacity = Math.min(1.0, 0.4 + q_ratio);
+                    div.title = `Cell ${cell.u_i}: E=${cell.E_i.toFixed(4)}, q=${cell.q_i}`;
+                    
+                    div.onclick = () => selectCell(cell);
+                    visualGrid.appendChild(div);
+                });
+            } catch (err) {
+                console.error("Error loading NUVMAP:", err);
+            }
+        }
+
+        function selectCell(cell) {
+            document.getElementById('nuvmap-details-card').style.display = 'block';
+            document.getElementById('cell-coord').innerText = `[${cell.u_i}, ${cell.v_i}]`;
+            
+            const badge = document.getElementById('cell-admissibility-badge');
+            if (cell.admissible) {
+                badge.innerText = 'ADMISSIBLE';
+                badge.style.background = '#00ffcc';
+                badge.style.color = 'black';
+            } else {
+                badge.innerText = 'REJECTED';
+                badge.style.background = '#ff3366';
+                badge.style.color = 'white';
+            }
+            
+            document.getElementById('cell-eigenmass').innerText = cell.E_i.toFixed(6);
+            document.getElementById('cell-risk').innerText = cell.R_i.toFixed(6);
+            document.getElementById('cell-qubits').innerText = cell.q_i;
+            document.getElementById('cell-chiral').innerText = cell.chi_i.toFixed(6);
+            document.getElementById('cell-structural').innerText = cell.S_i.toFixed(2);
+            document.getElementById('cell-landauer').innerText = cell.L_i.toFixed(2);
+            document.getElementById('cell-fingerprint').innerText = cell.fingerprint;
         }
 
         function connectWS() {

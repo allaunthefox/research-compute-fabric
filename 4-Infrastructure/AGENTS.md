@@ -343,6 +343,8 @@ python3 4-Infrastructure/storage/storage_agent.py --loop --interval 900
 - `4-Infrastructure/hardware/emergency_boot/emergency_boot_shim.py` — Python I/O shim
   for Geometry Emergency Boot Witness (6502 calculator-efficiency FPGA controller)
   Specification: `6-Documentation/docs/specs/GEOMETRY_EMERGENCY_BOOT_WITNESS_2026-04-08.md`
+- `4-Infrastructure/surface/main.py` — Topological FastAPI surface server with WebSocket telemetry hooks and `/api/nuvmap` projection endpoint
+- `4-Infrastructure/surface/static/index.html` — Sovereign Surface UI displaying the dynamic NUVMAP projection grid and metrics dashboard
 
 ## Compute Dispatch (WGSL → any substrate)
 

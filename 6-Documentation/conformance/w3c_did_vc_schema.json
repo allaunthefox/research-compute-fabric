@@ -1,0 +1,70 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    {
+      "GCCLRepReceipt": {
+        "@id": "https://schema.researchstack.info/gccl-rep#GCCLRepReceipt",
+        "@context": {
+          "id": "@id",
+          "type": "@type",
+          "receiptType": {
+            "@id": "https://schema.researchstack.info/gccl-rep#receiptType",
+            "@type": "http://www.w3.org/2001/XMLSchema#string"
+          },
+          "receiptSha256": {
+            "@id": "https://schema.researchstack.info/gccl-rep#receiptSha256",
+            "@type": "http://www.w3.org/2001/XMLSchema#string"
+          },
+          "verifiedSteps": {
+            "@id": "https://schema.researchstack.info/gccl-rep#verifiedSteps",
+            "@type": "http://www.w3.org/2001/XMLSchema#integer"
+          },
+          "cramerWeightsQ16": {
+            "@id": "https://schema.researchstack.info/gccl-rep#cramerWeightsQ16",
+            "@container": "@list",
+            "@type": "http://www.w3.org/2001/XMLSchema#integer"
+          },
+          "underverseLedger": {
+            "@id": "https://schema.researchstack.info/gccl-rep#underverseLedger",
+            "@context": {
+              "totalBleedPaymentQ16": {
+                "@id": "https://schema.researchstack.info/gccl-rep#totalBleedPaymentQ16",
+                "@type": "http://www.w3.org/2001/XMLSchema#integer"
+              },
+              "discardedPressureQ16": {
+                "@id": "https://schema.researchstack.info/gccl-rep#discardedPressureQ16",
+                "@type": "http://www.w3.org/2001/XMLSchema#integer"
+              },
+              "entropyAccQ16": {
+                "@id": "https://schema.researchstack.info/gccl-rep#entropyAccQ16",
+                "@type": "http://www.w3.org/2001/XMLSchema#integer"
+              },
+              "finalSurvivingFrontNodes": {
+                "@id": "https://schema.researchstack.info/gccl-rep#finalSurvivingFrontNodes",
+                "@type": "http://www.w3.org/2001/XMLSchema#integer"
+              }
+            }
+          },
+          "formalCompliance": {
+            "@id": "https://schema.researchstack.info/gccl-rep#formalCompliance",
+            "@context": {
+              "lakeBuildStatus": {
+                "@id": "https://schema.researchstack.info/gccl-rep#lakeBuildStatus",
+                "@type": "http://www.w3.org/2001/XMLSchema#string"
+              },
+              "verifiedTheorems": {
+                "@id": "https://schema.researchstack.info/gccl-rep#verifiedTheorems",
+                "@container": "@list",
+                "@type": "http://www.w3.org/2001/XMLSchema#string"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "id": "https://schema.researchstack.info/gccl-rep/v1",
+  "type": "CredentialDefinition",
+  "name": "GCCL-Rep Verifiable Simulation Receipt Schema",
+  "description": "JSON-LD context schema for verifying BraidShock, Burgers, and formal Lean proof artifacts in the Research Stack."
+}

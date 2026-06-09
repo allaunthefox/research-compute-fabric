@@ -161,6 +161,12 @@ AVMIsa.Emit     — AVM canaries must pass; stamps avm.rrc_corpus278.bundle
 **Rule:** Nothing outside `AVMIsa.Emit` may emit a top-level receipt JSON.
 `RRC.Emit` is a classifier that feeds it. `RRC.Corpus278` supplies raw features.
 
+### Architecture: 0D Braid Isomorphism (Burgers PDEs)
+
+The Burgers equation formalism (`Semantics.BurgersPDE`) completely bypasses continuous functional analysis and finite-difference proofs by explicitly mapping the `BurgersState` to the `DualQuaternion` 8D Braid state. 
+- **CFL Stability** is unconditionally stable (exact group rotations have no timestep limits).
+- **Energy Dissipation** is structurally guaranteed by Q16_16 scalar multiplication (`ν_decay < 1`) acting upon the modulus.
+
 ### Goal A canary receipt (AVMIsa.Emit §1–6)
 
 Three passing canaries: `avm.canary.not`, `avm.canary.and`, `avm.canary.or`.

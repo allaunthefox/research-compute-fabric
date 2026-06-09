@@ -38,34 +38,53 @@ def generate_tree(
     branching_factor: int,
     height_per_level: float = 6.0,
 ) -> Tuple[List[GNode], List[Tuple[int, int]]]:
-    """Build a rooted tree in 3D."""
+    """Build a rooted tree in 3D using scaled integer matrices to avoid fractional accumulation."""
+    # Scale factor for integer math
+    Q_SCALE = 65536
+    
     nodes = [GNode(id=0, x=0.0, y=0.0, z=0.0, load_frac=1.0, depth=0)]
     edges = []
     node_id = 1
     current_level = [0]
+    
+    # Pre-calculate integer matrices for branch and azimuth
+    h_int = int(height_per_level * Q_SCALE)
 
     for lv in range(depth):
         angle_deg = branch_angles[min(lv, len(branch_angles)-1)]
-        angle_rad = math.radians(angle_deg)
         az_base = az_offsets[min(lv, len(az_offsets)-1)]
+        
+        # Integer scaled rotation components
+        cos_branch = int(math.cos(math.radians(angle_deg)) * Q_SCALE)
+        sin_branch = int(math.sin(math.radians(angle_deg)) * Q_SCALE)
+        
+        step_z_int = (h_int * cos_branch) >> 16
+        step_r_int = (h_int * sin_branch) >> 16
+        
         next_level = []
 
         for pid in current_level:
             parent = nodes[pid]
             child_frac = parent.load_frac / branching_factor
-            step_z = height_per_level * math.cos(angle_rad)
-            step_r = height_per_level * math.sin(angle_rad)
+            
+            p_x_int = int(parent.x * Q_SCALE)
+            p_y_int = int(parent.y * Q_SCALE)
+            p_z_int = int(parent.z * Q_SCALE)
 
             for k in range(branching_factor):
                 az_deg = az_base + k * (360.0 / branching_factor)
-                az_rad = math.radians(az_deg)
-                cx = parent.x + step_r * math.cos(az_rad)
-                cy = parent.y + step_r * math.sin(az_rad)
-                cz = parent.z - step_z
+                cos_az = int(math.cos(math.radians(az_deg)) * Q_SCALE)
+                sin_az = int(math.sin(math.radians(az_deg)) * Q_SCALE)
+                
+                cx_int = p_x_int + ((step_r_int * cos_az) >> 16)
+                cy_int = p_y_int + ((step_r_int * sin_az) >> 16)
+                cz_int = p_z_int - step_z_int
 
                 child = GNode(
                     id=node_id,
-                    x=cx, y=cy, z=cz,
+                    x=float(cx_int) / Q_SCALE, 
+                    y=float(cy_int) / Q_SCALE, 
+                    z=float(cz_int) / Q_SCALE,
                     load_frac=child_frac,
                     parent=pid,
                     depth=lv+1,

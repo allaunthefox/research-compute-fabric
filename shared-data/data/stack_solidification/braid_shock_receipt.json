@@ -8,6 +8,12 @@
     "entropy_acc_q16": 127388,
     "final_surviving_front_nodes": 23
   },
+  "cramer_4d_alignment_weights_q16": [
+    -7865,
+    25379471,
+    4016046,
+    288358
+  ],
   "surviving_path": [
     0,
     48,
@@ -1065,5 +1071,5 @@
     10,
     133
   ],
-  "receipt_sha256": "9e5a37c714145797edfebb7ff600b562517c8b52dacd6334b8181abcb6492578"
+  "receipt_sha256": "dfa6debcb08da444e32e68bfaffde92d7fbcf8196f3898edb39ffcf85479a43e"
 }

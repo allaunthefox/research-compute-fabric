@@ -104,6 +104,53 @@ class Q16Array:
             res[i] = Q16_16.sub(sum_neighbors, two_curr)
         return res
 
+class Cramer4D:
+    @staticmethod
+    def det3x3(m00, m01, m02, m10, m11, m12, m20, m21, m22) -> int:
+        term1 = Q16_16.sub(Q16_16.mul(m11, m22), Q16_16.mul(m12, m21))
+        term2 = Q16_16.sub(Q16_16.mul(m10, m22), Q16_16.mul(m12, m20))
+        term3 = Q16_16.sub(Q16_16.mul(m10, m21), Q16_16.mul(m11, m20))
+        
+        part1 = Q16_16.mul(m00, term1)
+        part2 = Q16_16.mul(m01, term2)
+        part3 = Q16_16.mul(m02, term3)
+        
+        res = Q16_16.sub(part1, part2)
+        res = Q16_16.add(res, part3)
+        return res
+
+    @staticmethod
+    def det4x4(m) -> int:
+        c00 = Cramer4D.det3x3(m[1][1], m[1][2], m[1][3], m[2][1], m[2][2], m[2][3], m[3][1], m[3][2], m[3][3])
+        c01 = Cramer4D.det3x3(m[1][0], m[1][2], m[1][3], m[2][0], m[2][2], m[2][3], m[3][0], m[3][2], m[3][3])
+        c02 = Cramer4D.det3x3(m[1][0], m[1][1], m[1][3], m[2][0], m[2][1], m[2][3], m[3][0], m[3][1], m[3][3])
+        c03 = Cramer4D.det3x3(m[1][0], m[1][1], m[1][2], m[2][0], m[2][1], m[2][2], m[3][0], m[3][1], m[3][2])
+        
+        part0 = Q16_16.mul(m[0][0], c00)
+        part1 = Q16_16.mul(m[0][1], c01)
+        part2 = Q16_16.mul(m[0][2], c02)
+        part3 = Q16_16.mul(m[0][3], c03)
+        
+        res = Q16_16.sub(part0, part1)
+        res = Q16_16.add(res, part2)
+        res = Q16_16.sub(res, part3)
+        return res
+
+    @staticmethod
+    def solve(a, b) -> list:
+        detA = Cramer4D.det4x4(a)
+        if detA == 0:
+            return [0, 0, 0, 0]
+            
+        x = [0, 0, 0, 0]
+        for col in range(4):
+            a_sub = [row[:] for row in a]
+            for row in range(4):
+                a_sub[row][col] = b[row]
+            detA_sub = Cramer4D.det4x4(a_sub)
+            x[col] = Q16_16.div(detA_sub, detA)
+        return x
+
 def run_simulation(grid_size: int, steps: int):
     # Primes to construct folded prime potential lattice
     primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
@@ -226,6 +273,21 @@ def run_simulation(grid_size: int, steps: int):
     # Extract surviving path
     surviving_indices = [i for i, ui in enumerate(u) if ui > 0]
     
+    # Solve exact Cramer 4D linear system on first 4 active nodes
+    cramer_weights = [0, 0, 0, 0]
+    if len(surviving_indices) >= 4:
+        a_matrix = []
+        b_vector = []
+        for idx in surviving_indices[:4]:
+            a_matrix.append([
+                u[idx],
+                q[idx],
+                r[idx],
+                Q16_16.from_float(1.0)
+            ])
+            b_vector.append(phi_p[idx])
+        cramer_weights = Cramer4D.solve(a_matrix, b_vector)
+    
     # Build metrics receipt
     receipt = {
         "schema": "braid_shock_16d_receipt_v1",
@@ -237,6 +299,7 @@ def run_simulation(grid_size: int, steps: int):
             "entropy_acc_q16": entropy_total,
             "final_surviving_front_nodes": len(surviving_indices)
         },
+        "cramer_4d_alignment_weights_q16": cramer_weights,
         "surviving_path": surviving_indices,
         "u_final_q16": u,
         "q_final_q16": q,

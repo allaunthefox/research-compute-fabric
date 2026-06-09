@@ -8,16 +8,16 @@
         "error": false,
         "numpods": 6,
         "datatypes": "Solve",
-        "parsetiming": 0.276,
+        "parsetiming": 0.266,
         "parsetimedout": false,
         "id": "C5Dt1/XUmLs=6:eJxTTMoPSmNkYGAoZgESHvk5KWlMIJ4+kHBOzEkuzUksSQ1ILCpOTXDOzytJzStJgAsjWMH5OWWpEI2sQMK1sDQxJ40ZZmpATmkxQjIgvzy1qBhkZUUmWBDC/A8EmUAWA0QlSF9QaU5qMCeQATY+pLIgNZgVxgMAie8vlg==",
-        "kernelId": "261",
-        "processId": 497287,
+        "kernelId": "223",
+        "processId": 393195,
         "version": "2.6",
         "inputstring": "solve x^2 + x - 1 = 0",
         "sbsallowed": false,
-        "parentId": "d2d445e7-1795-4e78-a9e6-eeb75c7e72cd",
-        "requestId": "d2d445e7-1795-4e78-a9e6-eeb75c7e72cd",
+        "parentId": "3e47c1a8-3745-45ad-aa98-66938c5f61f1",
+        "requestId": "3e47c1a8-3745-45ad-aa98-66938c5f61f1",
         "pods": [
           {
             "title": "Input interpretation",
@@ -138,7 +138,7 @@
             }
           }
         ],
-        "timing": 0.591,
+        "timing": 0.615,
         "timedout": "",
         "timedoutpods": ""
       }
@@ -153,16 +153,16 @@
         "error": false,
         "numpods": 2,
         "datatypes": "",
-        "parsetiming": 0.381,
+        "parsetiming": 0.4,
         "parsetimedout": false,
         "id": "Y85PaZs83oA=6:eJxTTMoPSmNkYGAoZgESHvk5KWlMIB4nkPDMK0lNL0osSYUoYAYSrhUFEHlWIBGSmZtanPkfCBBiAfnlqUXFIPUVmSDBNGaY2T6ZxSUQCWwmFHOALUzLzMssqUThAACS7Cf/",
-        "kernelId": "219",
-        "processId": 453579,
+        "kernelId": "212",
+        "processId": 381672,
         "version": "2.6",
         "inputstring": "integrate exp(-x^2) from -infinity to infinity",
         "sbsallowed": false,
-        "parentId": "d2ab4df9-cf26-4a5c-81d5-c14fb8295a34",
-        "requestId": "d2ab4df9-cf26-4a5c-81d5-c14fb8295a34",
+        "parentId": "8faf1f10-8189-4224-8f69-131dc58fd335",
+        "requestId": "8faf1f10-8189-4224-8f69-131dc58fd335",
         "pods": [
           {
             "title": "Definite integral",
@@ -226,7 +226,7 @@
             }
           }
         ],
-        "timing": 0.718,
+        "timing": 0.755,
         "timedout": "",
         "timedoutpods": ""
       }
@@ -241,16 +241,16 @@
         "error": false,
         "numpods": 4,
         "datatypes": "Det",
-        "parsetiming": 0.926,
+        "parsetiming": 0.924,
         "parsetimedout": false,
         "id": "ZLmvgNdn7F4=6:eJxtzE0OQDAUBOBKXMQBnKIWFhbiBC199VetaN0fI0ikmy9vXiaTta7RCWPMpyelM+pO+QmXptuNDFTLzZPgzgayQbzv7yoo6PQZqUb/S/6alLCFHVSRFkENezhEWiOc4AxNpLVACx1cD9y0MKc=",
-        "kernelId": "239",
-        "processId": 471175,
+        "kernelId": "213",
+        "processId": 445381,
         "version": "2.6",
         "inputstring": "determinant {{a, b, c, d}, {e, f, g, h}, {i, j, k, l}, {m, n, o, p}}",
         "sbsallowed": false,
-        "parentId": "e033534f-109d-4295-a6db-e7f429638ff5",
-        "requestId": "e033534f-109d-4295-a6db-e7f429638ff5",
+        "parentId": "ee358181-2279-4c25-a564-fa44f4a18bd5",
+        "requestId": "ee358181-2279-4c25-a564-fa44f4a18bd5",
         "pods": [
           {
             "title": "Input interpretation",
@@ -299,21 +299,21 @@
             "title": "Alternate forms",
             "scanner": "Eigen",
             "id": "AlternateForm",
-            "position": 450.6470588235294,
+            "position": 450.7647058823529,
             "error": false,
             "numsubpods": 3,
             "subpods": [
               {
                 "title": "",
-                "plaintext": "k (f (a p - d m) - a h n + e (d n - b p) + b h m) + l (a g n - b g m) + j (h (a o - c m) + g (d m - a p) + e (c p - d o)) + f l (c m - a o) + i (b g p - b h o + f (d o - c p) + n (c h - d g)) + e l (b o - c n)"
+                "plaintext": "a (k (f p - h n) - f l o - g j p + g l n + h j o) + i (b (g p - h o) + f (d o - c p) + c h n - d g n) + k (b (h m - e p) + d e n - d f m) + b (e l o - g l m) + e (j (c p - d o) - c l n) + c f l m - c h j m + d g j m"
               },
               {
                 "title": "",
-                "plaintext": "a (g l n - f l o) + a k (f p - h n) + a j (h o - g p) + b (l (e o - g m) + k (h m - e p) + i (g p - h o)) + c (j (e p - h m) - e l n + f (l m - i p) + h i n) + d (k (e n - f m) + j (g m - e o) + f i o - g i n)"
+                "plaintext": "l (g (a n - b m) + f (c m - a o)) + h (k (b m - a n) + a j o - c j m) + a f k p - a g j p + e (l (b o - c n) - b k p + c j p) + i (h (c n - b o) + b g p - c f p) + d (e (k n - j o) + i (f o - g n) - f k m + g j m)"
               },
               {
                 "title": "",
-                "plaintext": "l (-a f o + b (e o - g m) + c f m) + k (a f p + b (h m - e p) - d f m) + n (l (a g - c e) + k (d e - a h) + c h i - d g i) + a j (h o - g p) + b i (g p - h o) + c (j (e p - h m) - f i p) + d (j (g m - e o) + f i o)"
+                "plaintext": "l (a (g n - f o) + b e o - b g m + c (f m - e n)) + k (a (f p - h n) - b e p + b h m) + j (a (h o - g p) + c (e p - h m) + d (g m - e o)) + i (b (g p - h o) + c (h n - f p) + d (f o - g n)) + d k (e n - f m)"
               }
             ],
             "expressiontypes": [
@@ -352,7 +352,453 @@
             }
           }
         ],
-        "timing": 3.983,
+        "timing": 3.976,
+        "timedout": "",
+        "timedoutpods": ""
+      }
+    }
+  },
+  "nuvmap_stage1_eigenmass": {
+    "query": "limit (lambda * v * S * L) / (R + epsilon) as R -> 0",
+    "text_result": "lim_(R->0) (\u03bb v S L)/(R + \u03f5) = (L S v \u03bb)/\u03f5",
+    "raw_response": {
+      "queryresult": {
+        "success": true,
+        "error": false,
+        "numpods": 2,
+        "datatypes": "",
+        "parsetiming": 1.0230000000000001,
+        "parsetimedout": false,
+        "id": "bJk7DFVN6cU=6:eJxTTMoPSmNkYGAoZgESHvk5KWlMIB4rkPDJzM0sQXBDMnNTi9NYULjFbEBWjJWBsZNTMciUMjAZDCZ9EFoD8stTiyBckP6AnNJisJIguH4308z/QIBQE1SakwpRkwkkGAB2ACDk",
+        "kernelId": "190",
+        "processId": 353271,
+        "version": "2.6",
+        "inputstring": "limit (lambda * v * S * L) / (R + epsilon) as R -> 0",
+        "sbsallowed": false,
+        "parentId": "3a94f711-a615-45e1-9f12-68e003be18b2",
+        "requestId": "3a94f711-a615-45e1-9f12-68e003be18b2",
+        "pods": [
+          {
+            "title": "Limit",
+            "scanner": "Limit",
+            "id": "Limit",
+            "position": 10,
+            "error": false,
+            "numsubpods": 1,
+            "primary": true,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "lim_(R->0) (\u03bb v S L)/(R + \u03f5) = (L S v \u03bb)/\u03f5"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          },
+          {
+            "title": "Series expansion at R = 0",
+            "scanner": "Series",
+            "id": "SeriesExpansionAtX=x0",
+            "position": 1610,
+            "error": false,
+            "numsubpods": 1,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "(\u03bb L S v)/\u03f5 - (\u03bb L R S v)/\u03f5^2 + (\u03bb L R^2 S v)/\u03f5^3 - (\u03bb L R^3 S v)/\u03f5^4 + (\u03bb L R^4 S v)/\u03f5^5 - (\u03bb L R^5 S v)/\u03f5^6 + O(R^6)\n(Taylor series)"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            },
+            "states": [
+              {
+                "name": "More terms",
+                "input": "SeriesExpansionAtX=x0__More terms"
+              }
+            ]
+          }
+        ],
+        "timing": 1.236,
+        "timedout": "",
+        "timedoutpods": ""
+      }
+    }
+  },
+  "nuvmap_stage2_qubit_weight_derivative": {
+    "query": "d/dR ( (lambda * v * S * L) / (R + epsilon)^2 )",
+    "text_result": "integral-(2 L S v \u03bb)/(R + \u03f5)^3 dv = -(\u03bb L S v^2)/(R + \u03f5)^3 + constant",
+    "raw_response": {
+      "queryresult": {
+        "success": true,
+        "error": false,
+        "numpods": 7,
+        "datatypes": "D",
+        "parsetiming": 0.992,
+        "parsetimedout": false,
+        "id": "Y1s5nP7K+MI=6:eJxTTMoPSmNkYGAoZgESHvk5KWlMIJ42kHBOzEkuzUksSQ1ILCpOTXDOzytJzStJgAsjWC4QTaxAIiQzN7U4jQWFW8wGZMVYGRg7ORWD7CoDk8Fg0gehNSC/PLUIKxdkXEBOaTFYRxDcODfTTJB05n8ggEgBAH9eMGc=",
+        "kernelId": "220",
+        "processId": 389422,
+        "version": "2.6",
+        "inputstring": "d/dR ( (lambda * v * S * L) / (R + epsilon)^2 )",
+        "sbsallowed": false,
+        "parentId": "49dc76fb-24ec-45c0-8e5b-971490d3b091",
+        "requestId": "49dc76fb-24ec-45c0-8e5b-971490d3b091",
+        "pods": [
+          {
+            "title": "Derivative",
+            "scanner": "Derivative",
+            "id": "Input",
+            "position": 10,
+            "error": false,
+            "numsubpods": 1,
+            "primary": true,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "d/dR((\u03bb v S L)/(R + \u03f5)^2) = -(2 \u03bb L S v)/(R + \u03f5)^3"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          },
+          {
+            "title": "Expanded form",
+            "scanner": "Simplification",
+            "id": "ExpandedForm",
+            "position": 450.25,
+            "error": false,
+            "numsubpods": 1,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "-(2 \u03bb L S v)/(R^3 + 3 R^2 \u03f5 + 3 R \u03f5^2 + \u03f5^3)"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          },
+          {
+            "title": "Alternate forms",
+            "scanner": "Simplification",
+            "id": "AlternateForm",
+            "position": 450.6,
+            "error": false,
+            "numsubpods": 2,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "-(2 \u03bb L S v)/(R^3 + \u03f5 (3 R^2 + \u03f5 (3 R + \u03f5)))"
+              },
+              {
+                "title": "",
+                "plaintext": "-(2 \u03bb L S v)/(R (R (R + 3 \u03f5) + 3 \u03f5^2) + \u03f5^3)"
+              }
+            ],
+            "expressiontypes": [
+              {
+                "name": "Default"
+              },
+              {
+                "name": "Default"
+              }
+            ]
+          },
+          {
+            "title": "Roots",
+            "scanner": "Reduce",
+            "id": "LocusSolution",
+            "position": 1311,
+            "error": false,
+            "numsubpods": 4,
+            "primary": true,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "L = 0, R + \u03f5!=0"
+              },
+              {
+                "title": "",
+                "plaintext": "S = 0, R + \u03f5!=0"
+              },
+              {
+                "title": "",
+                "plaintext": "v = 0, R + \u03f5!=0"
+              },
+              {
+                "title": "",
+                "plaintext": "\u03bb = 0, R + \u03f5!=0"
+              }
+            ],
+            "expressiontypes": [
+              {
+                "name": "Default"
+              },
+              {
+                "name": "Default"
+              },
+              {
+                "name": "Default"
+              },
+              {
+                "name": "Default"
+              }
+            ]
+          },
+          {
+            "title": "Integer roots",
+            "scanner": "Reduce",
+            "id": "IntegerSolution",
+            "position": 1351,
+            "error": false,
+            "numsubpods": 5,
+            "primary": true,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "L = 0, R = n_1 + n_2 - n_3 + 1, \u03f5 = -n_2 + n_3 + n_4, n_1 element Z, n_2 element Z, n_3 element Z, n_4 element Z, n_1>=0, n_2>=0, n_3>=0, n_4>=0"
+              },
+              {
+                "title": "",
+                "plaintext": "L = 0, R = n_1 + n_2 - n_3, \u03f5 = -n_2 + n_3 + n_4 + 1, n_1 element Z, n_2 element Z, n_3 element Z, n_4 element Z, n_1>=0, n_2>=0, n_3>=0, n_4>=0"
+              },
+              {
+                "title": "",
+                "plaintext": "L = 0, R = n_1 - n_2 - n_3 - 1, \u03f5 = -n_1 + n_3 - n_4, n_1 element Z, n_2 element Z, n_3 element Z, n_4 element Z, n_1>=0, n_2>=0, n_3>=0, n_4>=0"
+              },
+              {
+                "title": "",
+                "plaintext": "L = 0, R = n_1 - n_2 - n_3, \u03f5 = -n_1 + n_3 - n_4 - 1, n_1 element Z, n_2 element Z, n_3 element Z, n_4 element Z, n_1>=0, n_2>=0, n_3>=0, n_4>=0"
+              },
+              {
+                "title": "",
+                "plaintext": "S = 0, R = n_1 + n_2 - n_3 + 1, \u03f5 = -n_2 + n_3 + n_4, n_1 element Z, n_2 element Z, n_3 element Z, n_4 element Z, n_1>=0, n_2>=0, n_3>=0, n_4>=0",
+                "infos": {
+                  "text": "Z is the set of integers",
+                  "links": [
+                    {
+                      "url": "http://reference.wolfram.com/language/ref/Integers.html",
+                      "text": "Documentation",
+                      "title": "Documentation"
+                    },
+                    {
+                      "url": "http://mathworld.wolfram.com/Z.html",
+                      "text": "Definition",
+                      "title": "MathWorld"
+                    }
+                  ]
+                }
+              }
+            ],
+            "expressiontypes": [
+              {
+                "name": "Default"
+              },
+              {
+                "name": "Default"
+              },
+              {
+                "name": "Default"
+              },
+              {
+                "name": "Default"
+              },
+              {
+                "name": "Default"
+              }
+            ],
+            "states": [
+              {
+                "name": "More roots",
+                "input": "IntegerSolution__More roots"
+              }
+            ]
+          },
+          {
+            "title": "Property as a function",
+            "scanner": "FunctionProperties",
+            "id": "PropertyAsAFunction",
+            "position": 1363,
+            "error": false,
+            "numsubpods": 1,
+            "subpods": [
+              {
+                "title": "Parity",
+                "plaintext": "odd"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          },
+          {
+            "title": "Indefinite integral",
+            "scanner": "Integral",
+            "id": "IndefiniteIntegral",
+            "position": 1810,
+            "error": false,
+            "numsubpods": 1,
+            "primary": true,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "integral-(2 L S v \u03bb)/(R + \u03f5)^3 dv = -(\u03bb L S v^2)/(R + \u03f5)^3 + constant"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          }
+        ],
+        "timing": 1.851,
+        "timedout": "",
+        "timedoutpods": ""
+      }
+    }
+  },
+  "nuvmap_stage3_bekenstein_bound": {
+    "query": "Plancks constant / (4 * pi * G)",
+    "text_result": "7.9\u00d710^-25 kg^2s/m (kilogram squared seconds per meter)",
+    "raw_response": {
+      "queryresult": {
+        "success": true,
+        "error": false,
+        "numpods": 4,
+        "datatypes": "Math",
+        "parsetiming": 0.392,
+        "parsetimedout": false,
+        "id": "JB05PrJIEwc=6:eJydjzsPwjAMhAuCH8LAChs76gATCq89bgnCwrFR44L66yFtxUNMBQ8n+WSd7xtlsjn2kiQJgyhLocOxX2/DKDv0LrTrJEoKlJcE6gwUwdlUWB2rfdl2TpcTrEtgRa2avJWwa9PHXQL2jBqmn5eN0/ipeC+8rXwmFKwh4PwcE4LGd+/KRm6u+LfyFznWBKH2DP4KMesCsSjgigqKwkBPFrzHeQBfu4S3",
+        "kernelId": "226",
+        "processId": 461737,
+        "version": "2.6",
+        "inputstring": "Plancks constant / (4 * pi * G)",
+        "sbsallowed": false,
+        "parentId": "c4d5dafe-2888-4489-89c7-89022e28870d",
+        "requestId": "c4d5dafe-2888-4489-89c7-89022e28870d",
+        "pods": [
+          {
+            "title": "Input interpretation",
+            "scanner": "Identity",
+            "id": "Input",
+            "position": 1,
+            "error": false,
+            "numsubpods": 1,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "(h (Planck constant))/(4 \u03c0 G (Newtonian gravitational constants))"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          },
+          {
+            "title": "Result",
+            "scanner": "Unit",
+            "id": "Result",
+            "position": 2,
+            "error": false,
+            "numsubpods": 1,
+            "primary": true,
+            "subpods": [
+              {
+                "title": "",
+                "primary": true,
+                "plaintext": "7.9\u00d710^-25 kg^2s/m (kilogram squared seconds per meter)"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          },
+          {
+            "title": "Interpretation",
+            "scanner": "Unit",
+            "id": "Interpretation",
+            "position": 2260,
+            "error": false,
+            "numsubpods": 1,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "(no standard named quantities)"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          },
+          {
+            "title": "Basic unit dimensions",
+            "scanner": "Unit",
+            "id": "BasicUnitDimensions",
+            "position": 2270,
+            "error": false,
+            "numsubpods": 1,
+            "subpods": [
+              {
+                "title": "",
+                "plaintext": "[mass]^2 [length]^(-1) [time]"
+              }
+            ],
+            "expressiontypes": {
+              "name": "Default"
+            }
+          }
+        ],
+        "assumptions": [
+          {
+            "type": "Unit",
+            "word": "G",
+            "template": "Assuming ${desc1} for \"${word}\". Use ${desc2} instead",
+            "count": 4,
+            "values": [
+              {
+                "name": "GravitationalConstant",
+                "desc": "Newtonian gravitational constant",
+                "input": "UnitClash_%2AG.%2AGravitationalConstant--"
+              },
+              {
+                "name": "Gibbs",
+                "desc": "gibbs",
+                "input": "UnitClash_%2AG.%2AGibbs--"
+              },
+              {
+                "name": "Gauss",
+                "desc": "gauss",
+                "input": "UnitClash_%2AG.%2AGauss--"
+              },
+              {
+                "name": "GravitationalConstantWGS84",
+                "desc": "Newtonian gravitational constant (WGS84)",
+                "input": "UnitClash_%2AG.%2AGravitationalConstantWGS84--"
+              }
+            ]
+          },
+          {
+            "type": "Unit",
+            "word": "Plancks constant",
+            "template": "Assuming ${desc1} for \"${word}\". Use ${desc2} instead",
+            "count": 2,
+            "values": [
+              {
+                "name": "PlanckConstant",
+                "desc": "Planck constant",
+                "input": "UnitClash_%2APlancks%20constant.%2APlanckConstant--"
+              },
+              {
+                "name": "ReducedPlanckConstant",
+                "desc": "reduced Planck constant",
+                "input": "UnitClash_%2APlancks%20constant.%2AReducedPlanckConstant--"
+              }
+            ]
+          }
+        ],
+        "timing": 0.662,
         "timedout": "",
         "timedoutpods": ""
       }

@@ -15,7 +15,10 @@ APPID = "HYJE3R3R63"
 QUERIES = {
     "golden_ratio_conjugate": "solve x^2 + x - 1 = 0",
     "gaussian_diffusion_integral": "integrate exp(-x^2) from -infinity to infinity",
-    "cramer_4x4_determinant": "determinant {{a, b, c, d}, {e, f, g, h}, {i, j, k, l}, {m, n, o, p}}"
+    "cramer_4x4_determinant": "determinant {{a, b, c, d}, {e, f, g, h}, {i, j, k, l}, {m, n, o, p}}",
+    "nuvmap_stage1_eigenmass": "limit (lambda * v * S * L) / (R + epsilon) as R -> 0",
+    "nuvmap_stage2_qubit_weight_derivative": "d/dR ( (lambda * v * S * L) / (R + epsilon)^2 )",
+    "nuvmap_stage3_bekenstein_bound": "Plancks constant / (4 * pi * G)"
 }
 
 def query_wolfram(query):

@@ -106,7 +106,7 @@ Build the full workspace with:
 lake build
 ```
 
-Compiler surface baseline: **3313 jobs, 0 errors** (`lake build Compiler`, commit `859d8726`, reverified 2026-05-28).
+Compiler surface baseline: **3314 jobs, 0 errors** (`lake build Compiler`, commit `202e6542`, reverified 2026-06-10).
 Full workspace: **3573 jobs, 0 errors** (`lake build`, reverified 2026-06-09).
 PistSimulation: **3309 jobs, 0 errors** (`lake build Semantics.PistSimulation`, commit `778b78d3`, reverified 2026-05-27).
 EmergencyBoot: **3302 jobs, 0 errors** (`lake build Semantics.Hardware.EmergencyBootTypes Semantics.Hardware.EmergencyBootState Semantics.Hardware.EmergencyBootShell`, reverified 2026-05-27).
@@ -131,6 +131,40 @@ New bridge module (`Semantics.BraidSpherionBridge`) wires the mountains-on-mount
 - **`strandFlow`** — iterates `spikeToStrandUpdate` over a spike train
 - **`braidCross_merge_correspondence`** — (PROVED) braidCross on (i,j) ↔ Mountain.merge for corresponding pair
 - **`receipt_correspondence`** — (3/4 PROVED) BraidReceipt = SpherionState receipt dimensions; 4th conjunct (`scar_absent = mmr.isStable`) blocked on lemma connecting eigensolid bracket admissibility to MMR stability
+
+### PhotonicPseudomodeBridge — pseudomode QED to BraidStorm bridge (NEW 2026-06-10)
+
+New bridge module (`Semantics.PhotonicPseudomodeBridge`) threads the Yuen & Demetriadou
+pseudomode QED formalism (PRL 133, 203604) through the BraidDiatCodec encoding:
+
+- **`Pseudomode`** — a single photonic pseudomode: complex frequency `z = freq + i·decay`,
+  QE coupling `ḡ`. In Q16_16 raw Int representation.
+- **`PseudomodeSpectrum`** — discrete set of pseudomodes from residue expansion (613 modes
+  for the Mie sphere example in the paper).
+- **`PseudomodeBridgeMatrix`** — 8×8 crossing matrix derived from pseudomode spectral
+  decomposition: `M[i][j] = coupling overlap between pseudomode i and strand j`.
+
+**Theorems (1 proved, 4 blocked):**
+- `photonicFreqToPseudomode` — each verified (f, Δh, Δc, ε) frequency-table entry
+  lifts to a Pseudomode with computed decay rate (PROVED)
+- `spectrumToBridgeMatrix` — PseudomodeSpectrum → 8×8 crossing matrix C
+  (BLOCKED: sign analysis on `PhaseVec.normApprox`)
+- `pseudomode_freq_to_sidon` — maps `Im(z)` pseudomode decay rate to Sidon slack σ
+  (BLOCKED: `Int.mod` bound proof)
+- `pseudomode_to_receipt_encoding` — pseudomode spectrum → BraidReceipt encoding
+  (STRUCTURAL SORRY)
+- `receipt_correspondence_4th_conjunct_pseudomode` — discharges the remaining
+  `BraidSpherionBridge.receipt_correspondence` 4th conjunct (eigensolid → MMR stability)
+  via pseudomode spectral stability (BLOCKED: eigensolid → MMR propagation)
+
+**Structural correspondence:**
+| Y&D (2024) | This bridge |
+|------------|-------------|
+| `∫ k dk ρ(k) u_ξ u_ξ' e^{-ickτ}` residue | `BraidDiatCodec.encode` braid frame |
+| `Θ(τ - Δt)` retarded time | Receipt write-timing `t` |
+| `e^{-c·Im(z)·Δt}` decay | Sidon slack σ (address headroom) |
+| `ḡ` QE-field coupling | Strand residue ε_seq (kappa) |
+| Mie spectrum (613 modes) | 8-strand braid crossing matrix C |
 
 ### BraidSpherionBridge admits resolved (2026-06-09):
 

@@ -63,3 +63,28 @@ references:
     collection-title: "Electronic Theses, Projects, and Dissertations"
     url: "https://scholarworks.lib.csusb.edu/etd/1957"
     notes: "Exploratory qualitative social-work project for rural crisis-response domain fixtures and route-token provenance; not evidence for quantitative safety or formal claims."
+  - type: article
+    title: "Exact Quantum Electrodynamics of Radiative Photonic Environments"
+    authors:
+      - family-names: "Yuen"
+        given-names: "Ben"
+      - family-names: "Demetriadou"
+        given-names: "Angela"
+    journal: "Physical Review Letters"
+    volume: 133
+    pages: 203604
+    year: 2024
+    month: 11
+    doi: "10.1103/PhysRevLett.133.203604"
+    url: "https://doi.org/10.1103/PhysRevLett.133.203604"
+    notes: >-
+      Pseudomode transformation of continuous Helmholtz eigenmodes into discrete
+      non-Hermitian pseudomodes via residue theorem over spectral poles.
+      Avoids reservoir approximations for non-Markovian QED dynamics.
+      The method is structurally analogous to the BraidStorm compressor
+      (continuous braid state -> discrete Sidon-labeled crossing matrix via
+      eigensolid convergence): both convert a continuum into a discrete,
+      causally-ordered representation with retarded-time regularization.
+      The Heaviside step Theta(tau - Delta t(r,r')) encoding finite propagation
+      delay maps to receipt write-timing t and zero-gap-timing-spacing-silence
+      encoding in the Research Stack compressor formalism.

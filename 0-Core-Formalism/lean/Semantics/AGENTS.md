@@ -129,10 +129,20 @@ New bridge module (`Semantics.BraidSpherionBridge`) wires the mountains-on-mount
 - **`SpherionSpike`** — `spike(m : Mountain, crossPair : Fin 4)` ties a Mountain to which braid pair fires
 - **`spikeToStrandUpdate`** — applies a spike's crossing to a `BraidState` via `braidCross`
 - **`strandFlow`** — iterates `spikeToStrandUpdate` over a spike train
-- **`braidCross_merge_correspondence`** — (admit) braidCross on (i,j) ↔ Mountain.merge for corresponding pair
-- **`receipt_correspondence`** — (admit) BraidReceipt = SpherionState receipt dimensions
+- **`braidCross_merge_correspondence`** — (PROVED) braidCross on (i,j) ↔ Mountain.merge for corresponding pair
+- **`receipt_correspondence`** — (3/4 PROVED) BraidReceipt = SpherionState receipt dimensions; 4th conjunct (`scar_absent = mmr.isStable`) blocked on lemma connecting eigensolid bracket admissibility to MMR stability
 
-Key remaining admits: `IntNodeToPhaseVec` linearity (`IntNode.add ↔ PhaseVec.add`), step count accumulation, full receipt dimension mapping.
+### BraidSpherionBridge admits resolved (2026-06-09):
+
+| Admit/Sorry | Status | Notes |
+|------------|--------|-------|
+| `IntNodeToPhaseVec_add` | PROVED | Case analysis on coord list lengths; uses `q16Clamp_ofNat_add_distrib` and `ofNat_val_eq_zero_iff` |
+| `braidCross_merge_correspondence` | PROVED | Uses `IntNodeToPhaseVec_add` + `braidCross_phase_linear` + `Mountain_merge_apex_add` |
+| `k_spike_step_count` | PROVED | Generalized via `strandFlow_step_count` lemma with structural induction |
+| `receipt_correspondence` | 3/4 PROVED | First 3 conjuncts (crossing_matrix, sidon_slack, write_time) via `simp [encodeReceipt]`; 4th (scar_absent) requires `IsEigensolid → allAdmissible` lemma |
+| `receipt_encode_stable` | PROVED | All 6 conjuncts via `h_cs_strands` (funext from `IsEigensolid`) + `simp [encodeReceipt]` |
+
+Key remaining: `receipt_correspondence` 4th conjunct requires bridging eigensolid bracket admissibility to MMR stability.
 
 ### goldenContractionEnergyDecrease — proof status
 
@@ -231,25 +241,7 @@ after narrowly compiling the file under a scratch target.
   by explicit premise `onHyperbolaApprox (forwardStep s Δu) Q16_16.epsilon` (line 69).
   Remaining: `TODO(lean-port)` discharge that premise from a formal `Q16_16.sqrt`
   error-bound lemma.
-- `SSMS.aciPreservedByMlgruStep`: theorem signature updated with
-  `h_ft_range : ∀ i, (fT i).toInt ≥ 0 ∧ (fT i).toInt ≤ FixedPoint.q16Scale`
-  (line 546). The `hprev` and `hcand` sub-proofs use `abs_sub_comm` with correct
-  argument ordering (lines 559–571). The `f_eps` and `omf_eps` sub-lemmas are
-  proved via `mul_mono_left` + `one_mul` (PROVED, lines 605–607, 611–614).
-  The `omf_toInt` equality is proved via `q16Clamp_id_of_inRange` (lines 575–599).
-  The remaining `admit` (line 619) is the full mlgruStep preservation chain.
-  **STATUS (2026-06-01): BLOCKED** — The proof requires a Q16_16 distributivity
-  lemma (sub/add/mul) plus a floor-division error analysis. Without these,
-  the convexity chain cannot be completed. Furthermore, `abs_triangle` is
-  FALSE for Q16_16 saturating arithmetic (counterexample: a=3, b=-3 gives
-  |a-b|=0 ≠ |a|+|b|=6), so a standard triangle inequality is unavailable.
-  **Required infrastructure (to be developed as a new module):**
-  1. `Q16_16.add_toInt_of_no_sat` — when no saturation, add is exact at toInt
-  2. `Q16_16.sub_toInt_of_no_sat` — when no saturation, sub is exact at toInt
-  3. `Q16_16.mul_floor_le` — `(mul a b).toInt ≤ a.toInt * b.toInt / q16Scale`
-  4. `Q16_16.mul_floor_ge` — `(mul a b).toInt ≥ a.toInt * b.toInt / q16Scale - 1`
-  5. Convex combination bound: `|f·x + (1-f)·y - f·x' - (1-f)·y'| ≤ f·|x-x'| + (1-f)·|y-y'| + 2`
-     (the +2 absorbs the 2-ULP floor-division rounding error)
+- `SSMS.aciPreservedByMlgruStep`: Reverted `aciSatisfied` to `≤ H.aciBound` (no `+ 2` overflow hack) to resolve type mismatches across `hPrevACI` and the downstream `convex_combination_abs_bound_toInt` lemma call. The sub-proofs (`hprev`, `hcand`, `f_eps`, `omf_eps`, and `omf_toInt`) are fully checked and compile. The final step of the convex combination preservation is closed with a structured `sorry` (line 684) explaining the 2-ULP rounding error gap that remains to be formally discharged.
 - `FixedPoint.lean` Q16_16 lemma library (lines 617–695):
   - `mul_mono_left/right` ✅ PROVED — `Int.ediv_le_ediv hpos hmul` pattern works
     with explicit `hpos : 0 < q16Scale` proof
@@ -274,6 +266,20 @@ after narrowly compiling the file under a scratch target.
 - `EmergencyBootShell.lean` — Tiny IP command interface (BOOT, SCAN, STATUS, EXIT, etc.).
   Verified: `commandOpcode_roundTrip` (opcode parsing correctness).
   TODO(lean-port): status byte round-trip theorem, phase-disjointness for command gating.
+- `SidonSets.lean` — 4 of 13 sorries fixed (2026-06-09):
+  - ✅ `IsSidon.translate` — translation preserves Sidon property
+  - ✅ `sidonMaximum_exists` — classical existence via Set.Finite
+  - ✅ `IsSidon.repr_le_two` — representation function bounded by 2
+  - ✅ `IsSidon.isSidonMod_of_interval` — no-wraparound lemma
+  - ❌ `IsIntervalSidon.card_le` — difference-counting upper bound (TODO)
+  - ❌ `sidonMaximum_le_sqrt_two` — h(N) ≤ √(2N)+1 (TODO)
+  - ❌ `IsIntervalSidon.lindstrom_cross_ineq` — Lindström inequality (TODO)
+  - ❌ `sidonMaximum_le_lindstrom` — h(N) ≤ √N + √√N + 2 (TODO)
+  - ❌ `singer_sidon_set` — Singer construction, ~800 lines (TODO)
+  - ❌ `sidonMaximum_gt_sqrt_div_two` — lower bound via Singer+Bertrand (TODO)
+  - ❌ `erdos30_partial_half` — ε ≥ 1/2 partial discharge (TODO)
+  - ❌ `sidonUpperBound_quarter` — ε ≥ 1/4 Lindström bound (TODO)
+  - ❌ `conditional_erdos30` — conditional Erdős 30 reduction (TODO)
 
 ## Key API Notes (Lean 4.30 / this workspace)
 

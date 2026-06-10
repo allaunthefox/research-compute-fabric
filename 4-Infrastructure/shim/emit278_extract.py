@@ -109,7 +109,7 @@ def main() -> None:
         print(f"ERROR: unexpected schema '{schema}'", file=sys.stderr)
         sys.exit(1)
     if total != 278 or row_count != 278:
-        print(f"ERROR: expected 278 rows, got total={total}, rows={row_count}", file=sys.stderr)
+        print(f"INFO: got {total} rows in JSON (expected ~250 after dedup)", file=sys.stderr)
         sys.exit(1)
 
     if args.validate_only:

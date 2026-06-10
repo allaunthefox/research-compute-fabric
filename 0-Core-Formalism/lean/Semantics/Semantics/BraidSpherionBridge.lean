@@ -119,12 +119,164 @@ lemma strandPair_distinct (sp : SpherionSpike) : True := by
    Both are linear accumulation in their respective spaces.
 -/
 
-/-- IntNodeToPhaseVec preserves addition. Verified by case analysis on the 9
-    possible length combinations of the two coordinate lists. In each case,
-    both sides reduce to the same concrete PhaseVec by direct computation. -/
+/-- Helper: for non-negative n,m, q16Clamp preserves the distributivity
+    q16Clamp((n+m)*q16Scale) = q16Clamp(q16Clamp(n*q16Scale) + q16Clamp(m*q16Scale)).
+    Proved by case analysis on the bound conditions. -/
+private lemma q16Clamp_ofNat_add_distrib (n m : Nat) :
+    Semantics.FixedPoint.q16Clamp (((n : Int) + (m : Int)) * Semantics.FixedPoint.q16Scale) =
+    Semantics.FixedPoint.q16Clamp
+      (Semantics.FixedPoint.q16Clamp ((n : Int) * Semantics.FixedPoint.q16Scale) +
+       Semantics.FixedPoint.q16Clamp ((m : Int) * Semantics.FixedPoint.q16Scale)) := by
+  unfold Semantics.FixedPoint.q16Clamp
+  unfold Semantics.FixedPoint.q16MinRaw Semantics.FixedPoint.q16MaxRaw
+  unfold Semantics.FixedPoint.q16Scale
+  split_ifs <;> omega
+
+/-- Helper: n=0 iff (Q16_16.ofNat n).val = 0.
+    For n>0, ofNat n produces a positive value (either n*scale or q16MaxRaw). -/
+private lemma ofNat_val_eq_zero_iff (n : Nat) :
+    (Semantics.FixedPoint.Q16_16.ofNat n).val = 0 ↔ n = 0 := by
+  constructor
+  · intro h hn
+    have : (Semantics.FixedPoint.Q16_16.ofNat n).val > 0 := by
+      unfold Semantics.FixedPoint.Q16_16.ofNat Semantics.FixedPoint.Q16_16.ofRawInt
+      split <;> omega
+    omega
+  · intro h; subst h; simp
+
+/-- Decompose PhaseVec.add for the common case where one or both operands
+    are of the form {x := ofNat n, y := 0}. 
+    Handles the zero short-circuit cases via ofNat_val_eq_zero_iff. -/
+private lemma PhaseVec_add_ofNat_x (a b : Nat) :
+    Semantics.BraidBracket.PhaseVec.add
+      { x := Semantics.FixedPoint.Q16_16.ofNat a, y := Semantics.FixedPoint.Q16_16.zero }
+      { x := Semantics.FixedPoint.Q16_16.ofNat b, y := Semantics.FixedPoint.Q16_16.zero } =
+    { x := Semantics.FixedPoint.Q16_16.ofNat (a + b), y := Semantics.FixedPoint.Q16_16.zero } := by
+  unfold Semantics.BraidBracket.PhaseVec.add
+  simp [Semantics.FixedPoint.Q16_16.zero.val, Semantics.FixedPoint.Q16_16.ofNat, Q16_16.zero]
+  -- Check first condition: is (ofNat a).val = 0?
+  by_cases ha : (Semantics.FixedPoint.Q16_16.ofNat a).val = 0
+  · simp [ha]
+    -- a = 0, so (a + b) = b
+    have ha0 : a = 0 := (ofNat_val_eq_zero_iff a).mp ha
+    subst ha0; simp
+  · -- first condition false; check second
+    by_cases hb : (Semantics.FixedPoint.Q16_16.ofNat b).val = 0
+    · simp [ha, hb]
+      have hb0 : b = 0 := (ofNat_val_eq_zero_iff b).mp hb
+      subst hb0; simp
+    · simp [ha, hb]
+      apply Semantics.FixedPoint.Q16_16.ext
+      simp [q16Clamp_ofNat_add_distrib a b, Semantics.FixedPoint.Q16_16.ofNat,
+            Semantics.FixedPoint.Q16_16.add]
+
+/-- Decompose PhaseVec.add for (ofNat a, zero) + (ofNat b, ofNat c). -/
+private lemma PhaseVec_add_ofNat_x_mixed (a b c : Nat) :
+    Semantics.BraidBracket.PhaseVec.add
+      (let a' := Semantics.FixedPoint.Q16_16.ofNat a
+       { x := a', y := Semantics.FixedPoint.Q16_16.zero })
+      { x := Semantics.FixedPoint.Q16_16.ofNat b, y := Semantics.FixedPoint.Q16_16.ofNat c } =
+    { x := Semantics.FixedPoint.Q16_16.ofNat (a + b), y := Semantics.FixedPoint.Q16_16.ofNat c } := by
+  unfold Semantics.BraidBracket.PhaseVec.add
+  simp [Semantics.FixedPoint.Q16_16.zero.val, Semantics.FixedPoint.Q16_16.ofNat, Q16_16.zero]
+  by_cases ha : (Semantics.FixedPoint.Q16_16.ofNat a).val = 0
+  · simp [ha]
+    have ha0 : a = 0 := (ofNat_val_eq_zero_iff a).mp ha
+    subst ha0; simp
+  · simp [ha]
+    by_cases hb0 : (Semantics.FixedPoint.Q16_16.ofNat b).val = 0 ∧
+                   (Semantics.FixedPoint.Q16_16.ofNat c).val = 0
+    · rcases hb0 with ⟨hb, hc⟩
+      simp [hb, hc]
+      have hb0' : b = 0 := (ofNat_val_eq_zero_iff b).mp hb
+      have hc0' : c = 0 := (ofNat_val_eq_zero_iff c).mp hc
+      subst hb0'; subst hc0'; simp
+    · simp [hb0]
+      ext <;> simp [Semantics.FixedPoint.Q16_16.add, Semantics.FixedPoint.Q16_16.ofNat]
+      · apply Semantics.FixedPoint.Q16_16.ext
+        simp [q16Clamp_ofNat_add_distrib a b, Semantics.FixedPoint.Q16_16.ofNat,
+              Semantics.FixedPoint.Q16_16.add]
+      · apply Semantics.FixedPoint.Q16_16.ext
+        simp [q16Clamp_ofNat_add_distrib 0 c, Semantics.FixedPoint.Q16_16.ofNat,
+              Semantics.FixedPoint.Q16_16.add]
+
+/-- IntNodeToPhaseVec preserves addition. Uses case analysis on coordinate list
+    lengths (0, 1, 2+) combined with PhaseVec.add zero-short-circuit lemmas. -/
 lemma IntNodeToPhaseVec_add (a b : Semantics.BraidField.IntNode) :
     IntNodeToPhaseVec (a.add b) = Semantics.BraidBracket.PhaseVec.add (IntNodeToPhaseVec a) (IntNodeToPhaseVec b) := by
-  sorry -- TODO(lean-port): PhaseVec.add conditional branches changed, simp can't close cases
+  rcases a with ⟨ca⟩
+  rcases b with ⟨cb⟩
+  open Semantics.BraidBracket Semantics.BraidField in
+  match ca, cb with
+  | [], [] => rfl
+  | [], _ =>
+    simp [IntNodeToPhaseVec, PhaseVec.add, IntNode.add, List.zipWith, List.replicate]
+  | _, [] =>
+    simp [IntNodeToPhaseVec, PhaseVec.add, IntNode.add, List.zipWith, List.replicate]
+  | [a1], [b1] =>
+    simp [IntNodeToPhaseVec, IntNode.add, List.zipWith, List.replicate]
+    exact PhaseVec_add_ofNat_x a1.toNat b1.toNat
+  | [a1], b1::b2::_ =>
+    simp [IntNodeToPhaseVec, IntNode.add, List.zipWith, List.replicate]
+    exact PhaseVec_add_ofNat_x_mixed a1.toNat b1.toNat b2.toNat
+  | a1::a2::_, [b1] =>
+    simp [IntNodeToPhaseVec, IntNode.add, List.zipWith, List.replicate]
+    -- Symmetric to above: first operand has two coords, second has one
+    -- We can use a specialized lemma or swap and use PhaseVec_add_ofNat_x_mixed
+    -- PhaseVec.add is commutative for non-negative values
+    -- Let's compute directly
+    have h := PhaseVec_add_ofNat_x_mixed b1.toNat a1.toNat a2.toNat
+    -- h is: PhaseVec.add {x := ofNat b1, y := 0} {x := ofNat a1, y := ofNat a2} = {x := ofNat (b1+a1), y := ofNat a2}
+    -- We need: PhaseVec.add {x := ofNat a1, y := ofNat a2} {x := ofNat b1, y := 0} = {x := ofNat (a1+b1), y := ofNat a2}
+    -- This is equivalent by commutativity of PhaseVec.add on non-negative values.
+    -- Use a direct proof via the lemma pattern:
+    unfold PhaseVec.add
+    simp [Semantics.FixedPoint.Q16_16.zero.val, Semantics.FixedPoint.Q16_16.ofNat, Q16_16.zero,
+          Nat.add_comm]
+    by_cases ha1 : (Semantics.FixedPoint.Q16_16.ofNat a1.toNat).val = 0
+    · simp [ha1]; have ha1' : a1.toNat = 0 := (ofNat_val_eq_zero_iff a1.toNat).mp ha1
+      subst ha1'; simp
+    · by_cases ha2 : (Semantics.FixedPoint.Q16_16.ofNat a2.toNat).val = 0
+      · simp [ha1, ha2]; have ha2' : a2.toNat = 0 := (ofNat_val_eq_zero_iff a2.toNat).mp ha2
+        subst ha2'; simp
+      · simp [ha1, ha2]
+        by_cases hb : (Semantics.FixedPoint.Q16_16.ofNat b1.toNat).val = 0
+        · simp [hb]; have hb' : b1.toNat = 0 := (ofNat_val_eq_zero_iff b1.toNat).mp hb
+          subst hb'; simp
+        · simp [hb]
+          ext <;> simp [Semantics.FixedPoint.Q16_16.add, Semantics.FixedPoint.Q16_16.ofNat]
+          · apply Semantics.FixedPoint.Q16_16.ext
+            simp [q16Clamp_ofNat_add_distrib a1.toNat b1.toNat, Semantics.FixedPoint.Q16_16.ofNat,
+                  Semantics.FixedPoint.Q16_16.add, Nat.add_comm]
+          · apply Semantics.FixedPoint.Q16_16.ext
+            simp [q16Clamp_ofNat_add_distrib a2.toNat 0, Semantics.FixedPoint.Q16_16.ofNat,
+                  Semantics.FixedPoint.Q16_16.add]
+  | a1::a2::_, b1::b2::_ =>
+    simp [IntNodeToPhaseVec, IntNode.add, List.zipWith, List.replicate]
+    unfold PhaseVec.add
+    simp [Semantics.FixedPoint.Q16_16.zero.val, Semantics.FixedPoint.Q16_16.ofNat, Q16_16.zero]
+    by_cases ha1 : (Semantics.FixedPoint.Q16_16.ofNat a1.toNat).val = 0
+    · simp [ha1]; have ha1' : a1.toNat = 0 := (ofNat_val_eq_zero_iff a1.toNat).mp ha1
+      subst ha1'; simp
+    · by_cases ha2 : (Semantics.FixedPoint.Q16_16.ofNat a2.toNat).val = 0
+      · simp [ha1, ha2]; have ha2' : a2.toNat = 0 := (ofNat_val_eq_zero_iff a2.toNat).mp ha2
+        subst ha2'; simp
+      · simp [ha1, ha2]
+        by_cases hb1 : (Semantics.FixedPoint.Q16_16.ofNat b1.toNat).val = 0
+        · simp [hb1]; have hb1' : b1.toNat = 0 := (ofNat_val_eq_zero_iff b1.toNat).mp hb1
+          subst hb1'; simp
+        · by_cases hb2 : (Semantics.FixedPoint.Q16_16.ofNat b2.toNat).val = 0
+          · simp [ha1, ha2, hb1, hb2]
+            have hb2' : b2.toNat = 0 := (ofNat_val_eq_zero_iff b2.toNat).mp hb2
+            subst hb2'; simp
+          · simp [ha1, ha2, hb1, hb2]
+            ext <;> simp [Semantics.FixedPoint.Q16_16.add, Semantics.FixedPoint.Q16_16.ofNat]
+            · apply Semantics.FixedPoint.Q16_16.ext
+              simp [q16Clamp_ofNat_add_distrib a1.toNat b1.toNat, Semantics.FixedPoint.Q16_16.ofNat,
+                    Semantics.FixedPoint.Q16_16.add]
+            · apply Semantics.FixedPoint.Q16_16.ext
+              simp [q16Clamp_ofNat_add_distrib a2.toNat b2.toNat, Semantics.FixedPoint.Q16_16.ofNat,
+                    Semantics.FixedPoint.Q16_16.add]
 
 /-- braidCross phase accumulation is linear sum. -/
 lemma braidCross_phase_linear (si sj : Semantics.BraidStrand.BraidStrand) :
@@ -151,7 +303,16 @@ theorem braidCross_merge_correspondence
     let cr := Semantics.BraidCross.braidCross si sj
     let m_merged := Semantics.BraidField.Mountain.merge m1 m2
     cr.fst.phaseAcc = IntNodeToPhaseVec m_merged.apex := by
-  sorry -- TODO(lean-port): rewrite chain broke after PhaseVec.add change
+  intro cr m_merged
+  calc
+    cr.fst.phaseAcc = Semantics.BraidBracket.PhaseVec.add si.phaseAcc sj.phaseAcc :=
+      braidCross_phase_linear si sj
+    _ = Semantics.BraidBracket.PhaseVec.add (IntNodeToPhaseVec m1.apex) (IntNodeToPhaseVec m2.apex) := by
+      rw [h_apex1, h_apex2]
+    _ = IntNodeToPhaseVec (m1.apex.add m2.apex) := by
+      symm; exact IntNodeToPhaseVec_add m1.apex m2.apex
+    _ = IntNodeToPhaseVec m_merged.apex := by
+      rw [Mountain_merge_apex_add m1 m2]
 
 -- ============================================================
 -- §6. FLOW CORRESPONDENCE
@@ -163,14 +324,20 @@ theorem spike_step_correspondence (sp : SpherionSpike) (s : Semantics.BraidEigen
     (spikeToStrandUpdate sp s).step_count = s.step_count + 1 := by
   simp [spikeToStrandUpdate]
 
+/-- Generalized version: after flowing s through spikes, step_count = s.step_count + spikes.length. -/
+lemma strandFlow_step_count (s : Semantics.BraidEigensolid.BraidState) (spikes : List SpherionSpike) :
+    (strandFlow s spikes).step_count = s.step_count + spikes.length := by
+  induction spikes generalizing s with
+  | nil =>
+    simp [strandFlow]
+  | cons sp rest ih =>
+    simp [strandFlow, spikeToStrandUpdate, ih, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
+
 /-- After k spikes, step_count = k. Proved by structural induction on spikes. -/
 theorem k_spike_step_count (spikes : List SpherionSpike) :
     (strandFlow (initStrandState spikes) spikes).step_count = spikes.length := by
-  induction spikes with
-  | nil =>
-    simp [strandFlow, initStrandState]
-  | cons sp rest ih =>
-    sorry -- TODO(lean-port): rewrite chain broke after dependency change
+  rw [strandFlow_step_count, initStrandState]
+  simp
 
 -- ============================================================
 -- §7. RECEIPT CORRESPONDENCE
@@ -210,7 +377,22 @@ theorem receipt_correspondence
     receipt.sidon_slack = 128 - (s_braid.strands ⟨7, by decide⟩).slot ∧
     receipt.write_time = 0 ∧
     receipt.scar_absent = s_spher.mmr.isStable := by
-  sorry -- TODO(lean-port): scar_absent type mismatch after encodeReceipt change
+  intro receipt
+  have h_conj1 : receipt.crossing_matrix = (s_braid.strands ⟨0, by decide⟩).bracket := by
+    simp [receipt, Semantics.BraidEigensolid.encodeReceipt]
+  have h_conj2 : receipt.sidon_slack = 128 - (s_braid.strands ⟨7, by decide⟩).slot := by
+    simp [receipt, Semantics.BraidEigensolid.encodeReceipt]
+  have h_conj3 : receipt.write_time = 0 := by
+    simp [receipt, Semantics.BraidEigensolid.encodeReceipt]
+  have h_conj4 : receipt.scar_absent = s_spher.mmr.isStable := by
+    sorry -- TODO(lean-port): scar_absent ↔ isStable requires a lemma bridging
+          -- eigensolid bracket admissibility to MMR stability.  The eigensolid
+          -- condition (stable under crossStep) implies all brackets are admissible
+          -- (proved manually for fromPhaseVec), and isIRFixedPoint implies
+          -- mmr.isStable.  The full proof needs a lemma:
+          --   IsEigensolid s → (∀ i, (s.strands i).bracket.admissible)
+          -- which is blocked on PhaseVec.normApprox sign analysis.
+  exact And.intro h_conj1 (And.intro h_conj2 (And.intro h_conj3 h_conj4))
 
 /-- At the eigensolid, crossStep leaves strand data stable: only step_count increments.
 
@@ -226,32 +408,30 @@ theorem receipt_encode_stable
     (Semantics.BraidEigensolid.encodeReceipt cs).sidon_slack = (Semantics.BraidEigensolid.encodeReceipt s).sidon_slack ∧
     (Semantics.BraidEigensolid.encodeReceipt cs).step_count = (Semantics.BraidEigensolid.encodeReceipt s).step_count + 1 ∧
     (Semantics.BraidEigensolid.encodeReceipt cs).residuals = (Semantics.BraidEigensolid.encodeReceipt s).residuals ∧
-    (Semantics.BraidEigensolid.encodeReceipt cs).write_time = 0 ∧
+    (    Semantics.BraidEigensolid.encodeReceipt cs).write_time = 0 ∧
     (Semantics.BraidEigensolid.encodeReceipt cs).scar_absent = (Semantics.BraidEigensolid.encodeReceipt s).scar_absent := by
   let cs := Semantics.BraidEigensolid.crossStep s
   have h_cs_strands : cs.strands = s.strands := funext (fun i => h_eig i)
   have h_cs_step : cs.step_count = s.step_count + 1 := by
-    sorry -- TODO(lean-port): crossStep definition changed
+    unfold cs Semantics.BraidEigensolid.crossStep; simp
   have h_cs_bracket (i : Fin 8) : (cs.strands i).bracket = (s.strands i).bracket := by
     rw [h_cs_strands]
   have h_cs_slot (i : Fin 8) : (cs.strands i).slot = (s.strands i).slot := by
     rw [h_cs_strands]
   have h_cs_residue (i : Fin 8) : (cs.strands i).residue = (s.strands i).residue := by
     rw [h_cs_strands]
-  have h_cs_all_adm : (∀ i, (cs.strands i).bracket.admissible) = ∀ i, (s.strands i).bracket.admissible := by
-    sorry -- TODO(lean-port): forall_congr application broke after encodeReceipt change
   have conj1 : (BraidEigensolid.encodeReceipt cs).crossing_matrix = (BraidEigensolid.encodeReceipt s).crossing_matrix := by
     simp [BraidEigensolid.encodeReceipt, h_cs_bracket]
   have conj2 : (BraidEigensolid.encodeReceipt cs).sidon_slack = (BraidEigensolid.encodeReceipt s).sidon_slack := by
-    sorry -- TODO(lean-port): type mismatch on sidon_slack after encodeReceipt change
+    simp [BraidEigensolid.encodeReceipt, h_cs_strands]
   have conj3 : (BraidEigensolid.encodeReceipt cs).step_count = (BraidEigensolid.encodeReceipt s).step_count + 1 := by
     simp [BraidEigensolid.encodeReceipt, h_cs_step]
   have conj4 : (BraidEigensolid.encodeReceipt cs).residuals = (BraidEigensolid.encodeReceipt s).residuals := by
-    sorry -- TODO(lean-port): funext application broke after encodeReceipt change
+    simp [BraidEigensolid.encodeReceipt, h_cs_strands]
   have conj5 : (BraidEigensolid.encodeReceipt cs).write_time = 0 := by
     simp [BraidEigensolid.encodeReceipt]
   have conj6 : (BraidEigensolid.encodeReceipt cs).scar_absent = (BraidEigensolid.encodeReceipt s).scar_absent := by
-    sorry -- TODO(lean-port): scar_absent proof broke after encodeReceipt change
+    simp [BraidEigensolid.encodeReceipt, h_cs_strands]
   exact And.intro conj1 (And.intro conj2 (And.intro conj3 (And.intro conj4 (And.intro conj5 conj6))))
 
 end Semantics.BraidSpherionBridge

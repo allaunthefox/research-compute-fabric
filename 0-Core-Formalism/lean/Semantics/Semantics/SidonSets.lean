@@ -115,8 +115,44 @@ def translate (A : Finset ℤ) (t : ℤ) : Finset ℤ :=
 
 /-- Translation preserves the Sidon property. -/
 theorem IsSidon.translate {A : Finset ℤ} (hA : IsSidon A) (t : ℤ) :
-    IsSidon (translate A t) :=
-  sorry -- TODO(lean-port): Port from Erdos30/Sidon.lean (~15 lines)
+    IsSidon (translate A t) := by
+  intro a b c d ha hb hc hd hsum
+  rcases Finset.mem_map.1 ha with ⟨a', ha', ha_eq⟩
+  rcases Finset.mem_map.1 hb with ⟨b', hb', hb_eq⟩
+  rcases Finset.mem_map.1 hc with ⟨c', hc', hc_eq⟩
+  rcases Finset.mem_map.1 hd with ⟨d', hd', hd_eq⟩
+  have ha_val : a' + t = a := by simpa using ha_eq
+  have hb_val : b' + t = b := by simpa using hb_eq
+  have hc_val : c' + t = c := by simpa using hc_eq
+  have hd_val : d' + t = d := by simpa using hd_eq
+  have hsum' : a' + b' = c' + d' := by
+    calc
+      a' + b' = (a' + t) + (b' + t) - (t + t) := by ring
+      _ = a + b - (t + t) := by simp [ha_val, hb_val]
+      _ = c + d - (t + t) := by rw [hsum]
+      _ = (c' + t) + (d' + t) - (t + t) := by simp [hc_val, hd_val]
+      _ = c' + d' := by ring
+  rcases hA ha' hb' hc' hd' hsum' with (⟨hac, hbd⟩ | ⟨had, hbc⟩)
+  · left
+    constructor
+    · calc
+        a = a' + t := ha_val.symm
+        _ = c' + t := by rw [hac]
+        _ = c := hc_val
+    · calc
+        b = b' + t := hb_val.symm
+        _ = d' + t := by rw [hbd]
+        _ = d := hd_val
+  · right
+    constructor
+    · calc
+        a = a' + t := ha_val.symm
+        _ = d' + t := by rw [had]
+        _ = d := hd_val
+    · calc
+        b = b' + t := hb_val.symm
+        _ = c' + t := by rw [hbc]
+        _ = c := hc_val
 
 /-! ## Extremal Function h(N) -/
 
@@ -127,8 +163,42 @@ def IsSidonMaximum (N h : ℕ) : Prop :=
     ∀ {A : Finset ℤ}, IsIntervalSidon (N : ℤ) A → A.card ≤ h
 
 /-- Helper: the maximum Sidon cardinality exists for every N. -/
-private theorem sidonMaximum_exists (N : ℕ) : ∃ h, IsSidonMaximum N h :=
-  sorry -- TODO(lean-port): Port from Erdos30/FormalStatement.lean (exists_isSidonMaximum)
+private theorem sidonMaximum_exists (N : ℕ) : ∃ h, IsSidonMaximum N h := by
+  let Z := Finset.Icc 1 (N : ℤ)
+  let cards : Set ℕ := {k | ∃ (A : Finset ℤ), A ⊆ Z ∧ IsSidon A ∧ A.card = k}
+  have h_nonempty : cards.Nonempty := by
+    refine ⟨0, ∅, Finset.empty_subset Z, ?_, Finset.card_empty⟩
+    intro a b c d ha hb hc hd hsum
+    simp at ha
+  have h_fin : Set.Finite cards := by
+    have h_fin_img : Set.Finite ((Z.powerset.image Finset.card : Finset ℕ) : Set ℕ) :=
+      Finset.finite_toSet _
+    apply Set.Finite.subset h_fin_img
+    intro k hk
+    rcases hk with ⟨A, hA_sub, hA_sidon, hcard⟩
+    refine Finset.mem_image.mpr ⟨A, ?_, hcard⟩
+    exact Finset.mem_powerset.mpr hA_sub
+  have h_finset_nonempty : h_fin.toFinset.Nonempty := by
+    rcases h_nonempty with ⟨k, hk⟩
+    refine ⟨k, h_fin.mem_toFinset.mpr hk⟩
+  let m := h_fin.toFinset.max' h_finset_nonempty
+  have hm_cards : m ∈ cards :=
+    h_fin.mem_toFinset.mp (Finset.max'_mem _ h_finset_nonempty)
+  rcases hm_cards with ⟨A, hA_sub, hA_sidon, hcard⟩
+  refine ⟨m, ?_⟩
+  constructor
+  · refine ⟨A, ?_, hcard⟩
+    refine { subset := λ x hx => ?_, sidon := hA_sidon }
+    have hx_mem_icc : x ∈ Z := hA_sub hx
+    rcases Finset.mem_Icc.1 hx_mem_icc with ⟨hx1, hx2⟩
+    exact ⟨hx1, hx2⟩
+  · intro B hB
+    have hB_sub : B ⊆ Z := by
+      intro x hx; rcases hB.subset x hx with ⟨hx1, hx2⟩
+      exact Finset.mem_Icc.mpr ⟨hx1, hx2⟩
+    have hB_card : B.card ∈ cards := ⟨B, hB_sub, hB.sidon, rfl⟩
+    have hB_fin : B.card ∈ h_fin.toFinset := h_fin.mem_toFinset.mpr hB_card
+    exact Finset.le_max' h_fin.toFinset (B.card) hB_fin
 
 /-- The extremal Sidon function h(N) = max{|A| : A ⊆ {1,...,N} is Sidon}. -/
 noncomputable def sidonMaximum (N : ℕ) : ℕ :=
@@ -310,8 +380,48 @@ theorem conditional_erdos30
     at most 2 ordered pairs (a,b) ∈ A×A satisfy a + b = n.
     Uses Finset.product instead of the ×ˢ notation. -/
 theorem IsSidon.repr_le_two {A : Finset ℤ} (hA : IsSidon A) (n : ℤ) :
-    ((A.product A).filter (fun ab : ℤ × ℤ => ab.1 + ab.2 = n)).card ≤ 2 :=
-  sorry -- TODO(lean-port): Port from Erdos30/RepresentationFunction.lean
+    ((A.product A).filter (fun ab : ℤ × ℤ => ab.1 + ab.2 = n)).card ≤ 2 := by
+  set S := (A.product A).filter (λ ab : ℤ × ℤ => ab.1 + ab.2 = n) with hS
+  by_cases h_empty : S.Nonempty
+  · rcases h_empty with ⟨⟨a, b⟩, hab⟩
+    have ha_mem_filter : (a, b) ∈ (A.product A).filter (λ ab : ℤ × ℤ => ab.1 + ab.2 = n) := by
+      simpa [hS] using hab
+    have ha_mem_product : (a, b) ∈ A.product A :=
+      (Finset.mem_filter.1 ha_mem_filter).1
+    have ha_all : a ∈ A ∧ b ∈ A := Finset.mem_product.1 ha_mem_product
+    have ha : a ∈ A := ha_all.1
+    have hb : b ∈ A := ha_all.2
+    have hsum : a + b = n := by
+      simpa using (Finset.mem_filter.1 ha_mem_filter).2
+    have h_sub : S ⊆ {(a, b), (b, a)} := by
+      intro ⟨x, y⟩ hxy
+      have hx_mem_filter : (x, y) ∈ (A.product A).filter (λ ab : ℤ × ℤ => ab.1 + ab.2 = n) := by
+        simpa [hS] using hxy
+      have hx_mem_product : (x, y) ∈ A.product A :=
+        (Finset.mem_filter.1 hx_mem_filter).1
+      have hx_all : x ∈ A ∧ y ∈ A := Finset.mem_product.1 hx_mem_product
+      have hx : x ∈ A := hx_all.1
+      have hy : y ∈ A := hx_all.2
+      have hsum_xy : x + y = n := by
+        simpa using (Finset.mem_filter.1 hx_mem_filter).2
+      have hab_eq : a + b = x + y := by
+        calc
+          a + b = n := hsum
+          _ = x + y := hsum_xy.symm
+      rcases hA ha hb hx hy hab_eq with (⟨hac, hbd⟩ | ⟨had, hbc⟩)
+      · simp [hac, hbd]
+      · simp [had, hbc]
+    have h_card_sub : S.card ≤ ({(a, b), (b, a)} : Finset (ℤ × ℤ)).card :=
+      Finset.card_le_card h_sub
+    have h_card_two : ({(a, b), (b, a)} : Finset (ℤ × ℤ)).card ≤ 2 := by
+      by_cases h_eq : (a, b) = (b, a)
+      · simp [h_eq]
+      · simp [h_eq]
+    omega
+  · have h_card_zero : S.card = 0 := by
+      apply Finset.card_eq_zero.mpr
+      ext x; simp; intro hx; exact h_empty ⟨x, hx⟩
+    omega
 
 /-! ## No-Wraparound Lemma -/
 
@@ -322,8 +432,41 @@ theorem IsSidon.repr_le_two {A : Finset ℤ} (hA : IsSidon A) (n : ℤ) :
 theorem IsSidon.isSidonMod_of_interval {A : Finset ℤ} {N M : ℤ}
     (hA : IsSidon A)
     (hbound : ∀ x ∈ A, 1 ≤ x ∧ x ≤ N)
-    (hM : 2 * N - 1 ≤ M) : IsSidonMod M A :=
-  sorry -- TODO(lean-port): Port from Erdos30/Interval.lean (~50 lines)
+    (hM : 2 * N - 1 ≤ M) : IsSidonMod M A := by
+  intro a b c d ha hb hc hd hdiv
+  have ha_bound := hbound a ha
+  have hb_bound := hbound b hb
+  have hc_bound := hbound c hc
+  have hd_bound := hbound d hd
+  have hN_pos : 1 ≤ N := le_trans ha_bound.1 ha_bound.2
+  have hM_nonneg : 0 ≤ M := by omega
+  have hdiff_bound : |(a + b) - (c + d)| ≤ 2 * N - 2 := by
+    apply abs_le.mpr
+    constructor <;> omega
+  have hlt : |(a + b) - (c + d)| < M := by
+    have : 2 * N - 2 < 2 * N - 1 := by omega
+    omega
+  rcases hdiv with ⟨k, hk⟩
+  by_cases hk0 : k = 0
+  · rw [hk0, mul_zero] at hk
+    have hsum_eq : a + b = c + d := by omega
+    exact hA ha hb hc hd hsum_eq
+  · have hk_abs_ge_one : 1 ≤ |k| := by
+      have hk_ne_zero : k ≠ 0 := hk0
+      have hk_abs_pos : 0 < |k| := abs_pos.mpr hk_ne_zero
+      omega
+    have hM_eq_abs : |M| = M := abs_of_nonneg hM_nonneg
+    have hdiff_bound_M : M ≤ |(a + b) - (c + d)| := by
+      calc
+        M = |M| := hM_eq_abs.symm
+        _ ≤ |M| * |k| := by
+          calc
+            |M| = |M| * 1 := by simp
+            _ ≤ |M| * |k| :=
+              mul_le_mul_of_nonneg_left hk_abs_ge_one (abs_nonneg _)
+        _ = |M * k| := by rw [abs_mul]
+        _ = |(a + b) - (c + d)| := by rw [hk]
+    linarith
 
 /-! ## Singer ↔ Golden Angle Connection -/
 

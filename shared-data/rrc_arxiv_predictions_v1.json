@@ -1,0 +1,2038 @@
+{
+  "predictions": [
+    {
+      "equation_id": "rrc_eq_86ccde7bfd669b77",
+      "arxiv_paper_id": "1111.2092",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1111_2092"
+    },
+    {
+      "equation_id": "rrc_eq_cabf5eab335f2d23",
+      "arxiv_paper_id": "0808.1508",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0808_1508"
+    },
+    {
+      "equation_id": "rrc_eq_5d39c74f1cbc3aab",
+      "arxiv_paper_id": "2110.13570",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2110_13570"
+    },
+    {
+      "equation_id": "rrc_eq_aaddd26cf129e0ff",
+      "arxiv_paper_id": "1112.1330",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1112_1330"
+    },
+    {
+      "equation_id": "rrc_eq_931cb5c74aaade03",
+      "arxiv_paper_id": "1103.3904",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1103_3904"
+    },
+    {
+      "equation_id": "rrc_eq_bf9f2062b96a9d25",
+      "arxiv_paper_id": "0710.0672",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0710_0672"
+    },
+    {
+      "equation_id": "rrc_eq_9817626505a4fedf",
+      "arxiv_paper_id": "2507.22968",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2507_22968"
+    },
+    {
+      "equation_id": "rrc_eq_01ab6e9c32652d06",
+      "arxiv_paper_id": "1912.03193",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1912_03193"
+    },
+    {
+      "equation_id": "rrc_eq_01f85e831660c26e",
+      "arxiv_paper_id": "1310.2396",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1310_2396"
+    },
+    {
+      "equation_id": "rrc_eq_f46446cfb0f8d5b1",
+      "arxiv_paper_id": "2011.08982",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2011_08982"
+    },
+    {
+      "equation_id": "rrc_eq_f5bb28753a2271dd",
+      "arxiv_paper_id": "0712.0932",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0712_0932"
+    },
+    {
+      "equation_id": "rrc_eq_72b416376f1bf5b0",
+      "arxiv_paper_id": "0704.0293",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0293"
+    },
+    {
+      "equation_id": "rrc_eq_85435dde0bcc5cfd",
+      "arxiv_paper_id": "1706.01120",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1706_01120"
+    },
+    {
+      "equation_id": "rrc_eq_2efd637f1e4bd389",
+      "arxiv_paper_id": "0704.0409",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0409"
+    },
+    {
+      "equation_id": "rrc_eq_0abce0721f473201",
+      "arxiv_paper_id": "1510.05289",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1510_05289"
+    },
+    {
+      "equation_id": "rrc_eq_ae70c43fd815392e",
+      "arxiv_paper_id": "1101.4207",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1101_4207"
+    },
+    {
+      "equation_id": "rrc_eq_df9f885395884594",
+      "arxiv_paper_id": "1701.00142",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1701_00142"
+    },
+    {
+      "equation_id": "rrc_eq_5193efd26258bc51",
+      "arxiv_paper_id": "2504.16869",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2504_16869"
+    },
+    {
+      "equation_id": "rrc_eq_64f81fa3c4725d4e",
+      "arxiv_paper_id": "2203.08045",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2203_08045"
+    },
+    {
+      "equation_id": "rrc_eq_e43c6929cd3bc3bf",
+      "arxiv_paper_id": "0704.0181",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0181"
+    },
+    {
+      "equation_id": "rrc_eq_6d33c14a88eb0a12",
+      "arxiv_paper_id": "0704.0181",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0181"
+    },
+    {
+      "equation_id": "rrc_eq_1f912c8afa928326",
+      "arxiv_paper_id": "1502.00379",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1502_00379"
+    },
+    {
+      "equation_id": "rrc_eq_535b43060096e699",
+      "arxiv_paper_id": "1911.03851",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1911_03851"
+    },
+    {
+      "equation_id": "rrc_eq_9a468347631152ce",
+      "arxiv_paper_id": "0707.0859",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0707_0859"
+    },
+    {
+      "equation_id": "rrc_eq_c8d2e5596d91ebbd",
+      "arxiv_paper_id": "1707.08289",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1707_08289"
+    },
+    {
+      "equation_id": "rrc_eq_7995b3bdb3f05ce3",
+      "arxiv_paper_id": "0704.0028",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0028"
+    },
+    {
+      "equation_id": "rrc_eq_a4adf8b5cc0e5c73",
+      "arxiv_paper_id": "0710.3170",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0710_3170"
+    },
+    {
+      "equation_id": "rrc_eq_f010fb33997b8f51",
+      "arxiv_paper_id": "2509.25397",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2509_25397"
+    },
+    {
+      "equation_id": "rrc_eq_8500000bbf612a0e",
+      "arxiv_paper_id": "1501.05033",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1501_05033"
+    },
+    {
+      "equation_id": "rrc_eq_8b812bf47cc024b4",
+      "arxiv_paper_id": "0709.1174",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0709_1174"
+    },
+    {
+      "equation_id": "rrc_eq_0606dcb042ba0e6f",
+      "arxiv_paper_id": "2503.02291",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2503_02291"
+    },
+    {
+      "equation_id": "rrc_eq_185011f4d6cf6a2b",
+      "arxiv_paper_id": "0704.1220",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_1220"
+    },
+    {
+      "equation_id": "rrc_eq_891a81dfc968f58e",
+      "arxiv_paper_id": "1402.6770",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1402_6770"
+    },
+    {
+      "equation_id": "rrc_eq_45606d1f25dd6aa5",
+      "arxiv_paper_id": "0705.4036",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0705_4036"
+    },
+    {
+      "equation_id": "rrc_eq_39d59d35fd9672a0",
+      "arxiv_paper_id": "0706.3044",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0706_3044"
+    },
+    {
+      "equation_id": "rrc_eq_3db7a0150185b5a1",
+      "arxiv_paper_id": "0704.2771",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_2771"
+    },
+    {
+      "equation_id": "rrc_eq_982c784b74af6c5c",
+      "arxiv_paper_id": "0909.2552",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0909_2552"
+    },
+    {
+      "equation_id": "rrc_eq_d93085afc737effa",
+      "arxiv_paper_id": "0704.1356",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_1356"
+    },
+    {
+      "equation_id": "rrc_eq_e4b70a718fcfb1ab",
+      "arxiv_paper_id": "1108.4993",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1108_4993"
+    },
+    {
+      "equation_id": "rrc_eq_aafdb23c6c8cb77a",
+      "arxiv_paper_id": "0705.3841",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0705_3841"
+    },
+    {
+      "equation_id": "rrc_eq_6abda80c652b80c8",
+      "arxiv_paper_id": "0806.2820",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0806_2820"
+    },
+    {
+      "equation_id": "rrc_eq_251255e3132f5533",
+      "arxiv_paper_id": "0704.2119",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_2119"
+    },
+    {
+      "equation_id": "rrc_eq_12d5519ce1a35889",
+      "arxiv_paper_id": "1004.2938",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1004_2938"
+    },
+    {
+      "equation_id": "rrc_eq_98b0599e8c46c1bf",
+      "arxiv_paper_id": "1011.5524",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1011_5524"
+    },
+    {
+      "equation_id": "rrc_eq_2f44e729b9d25d34",
+      "arxiv_paper_id": "0903.4243",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0903_4243"
+    },
+    {
+      "equation_id": "rrc_eq_795413454087e025",
+      "arxiv_paper_id": "0704.2467",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_2467"
+    },
+    {
+      "equation_id": "rrc_eq_a109587e866701dc",
+      "arxiv_paper_id": "0709.4204",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0709_4204"
+    },
+    {
+      "equation_id": "rrc_eq_310ec3a93d82b04e",
+      "arxiv_paper_id": "2105.07025",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2105_07025"
+    },
+    {
+      "equation_id": "rrc_eq_10c072664568b78d",
+      "arxiv_paper_id": "0706.0150",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0706_0150"
+    },
+    {
+      "equation_id": "rrc_eq_a91f2f772995a9b9",
+      "arxiv_paper_id": "1411.3589",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1411_3589"
+    },
+    {
+      "equation_id": "rrc_eq_1f12deb00ad16d8f",
+      "arxiv_paper_id": "2111.09736",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2111_09736"
+    },
+    {
+      "equation_id": "rrc_eq_03c5ca134c799e06",
+      "arxiv_paper_id": "0704.1149",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_1149"
+    },
+    {
+      "equation_id": "rrc_eq_56bc9e8becb7bcba",
+      "arxiv_paper_id": "0704.0981",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0981"
+    },
+    {
+      "equation_id": "rrc_eq_e672df600fa82b76",
+      "arxiv_paper_id": "1410_1050",
+      "title": "Coupling on weighted branching trees",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1410_1050"
+    },
+    {
+      "equation_id": "rrc_eq_bd8bcf9cb663c096",
+      "arxiv_paper_id": "0905.0262",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0905_0262"
+    },
+    {
+      "equation_id": "rrc_eq_2ee9bc98d2a7c773",
+      "arxiv_paper_id": "2110.00663",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2110_00663"
+    },
+    {
+      "equation_id": "rrc_eq_9064d88b17992de3",
+      "arxiv_paper_id": "0705.0626",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0705_0626"
+    },
+    {
+      "equation_id": "rrc_eq_cf576a1cfbd9da63",
+      "arxiv_paper_id": "0704.0465",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0465"
+    },
+    {
+      "equation_id": "rrc_eq_cd4dfc767616524d",
+      "arxiv_paper_id": "0704.1029",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_1029"
+    },
+    {
+      "equation_id": "rrc_eq_ecf3ddf7af735ee6",
+      "arxiv_paper_id": "0704.0842",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0842"
+    },
+    {
+      "equation_id": "rrc_eq_c8b7f0fe52ef32fe",
+      "arxiv_paper_id": "0704.0842",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0842"
+    },
+    {
+      "equation_id": "rrc_eq_71dd02d32f3e59b0",
+      "arxiv_paper_id": "1305.3876",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1305_3876"
+    },
+    {
+      "equation_id": "rrc_eq_d07532a1db76d958",
+      "arxiv_paper_id": "0704.0082",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0082"
+    },
+    {
+      "equation_id": "rrc_eq_7533d46cedd4a4c5",
+      "arxiv_paper_id": "0704.0761",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0761"
+    },
+    {
+      "equation_id": "rrc_eq_1f5af7e9fb2b518f",
+      "arxiv_paper_id": "0707.3285",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0707_3285"
+    },
+    {
+      "equation_id": "rrc_eq_685a03c6c1db609e",
+      "arxiv_paper_id": "0704.1804",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_1804"
+    },
+    {
+      "equation_id": "rrc_eq_4cab00eaeac59782",
+      "arxiv_paper_id": "0704.2439",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_2439"
+    },
+    {
+      "equation_id": "rrc_eq_4c87c96f612f6100",
+      "arxiv_paper_id": "0704.2565",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_2565"
+    },
+    {
+      "equation_id": "rrc_eq_25d3e2f91df8c0a0",
+      "arxiv_paper_id": "0708.3335",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0708_3335"
+    },
+    {
+      "equation_id": "rrc_eq_3ad1c4d008fc910b",
+      "arxiv_paper_id": "0903.2918",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0903_2918"
+    },
+    {
+      "equation_id": "rrc_eq_10dfe03d2d21bf90",
+      "arxiv_paper_id": "1005.0449",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1005_0449"
+    },
+    {
+      "equation_id": "rrc_eq_b8bfc827c0fd3d28",
+      "arxiv_paper_id": "0704.0889",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0889"
+    },
+    {
+      "equation_id": "rrc_eq_20b0dce68b1ff729",
+      "arxiv_paper_id": "0901.1037",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0901_1037"
+    },
+    {
+      "equation_id": "rrc_eq_e58f768224fb1bbe",
+      "arxiv_paper_id": "0904.3223",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0904_3223"
+    },
+    {
+      "equation_id": "rrc_eq_9166088a2f79f059",
+      "arxiv_paper_id": "0805.0430",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0805_0430"
+    },
+    {
+      "equation_id": "rrc_eq_f6ecffdb3a584bc6",
+      "arxiv_paper_id": "0704.0305",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0305"
+    },
+    {
+      "equation_id": "rrc_eq_3fbf8213151eae2f",
+      "arxiv_paper_id": "1011.5014",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1011_5014"
+    },
+    {
+      "equation_id": "rrc_eq_7731084327989290",
+      "arxiv_paper_id": "1007.2977",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1007_2977"
+    },
+    {
+      "equation_id": "rrc_eq_613c8a56dee0f83a",
+      "arxiv_paper_id": "1902.09731",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1902_09731"
+    },
+    {
+      "equation_id": "rrc_eq_dd3140340d9c9a33",
+      "arxiv_paper_id": "0706.2859",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0706_2859"
+    },
+    {
+      "equation_id": "rrc_eq_1fe1cbc05827ec00",
+      "arxiv_paper_id": "0904.3765",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0904_3765"
+    },
+    {
+      "equation_id": "rrc_eq_78fb56a55b615659",
+      "arxiv_paper_id": "0704.0179",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0179"
+    },
+    {
+      "equation_id": "rrc_eq_45b2907bd442578f",
+      "arxiv_paper_id": "0704.0179",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0179"
+    },
+    {
+      "equation_id": "rrc_eq_ec7566b5d400a6fb",
+      "arxiv_paper_id": "0704.0820",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0820"
+    },
+    {
+      "equation_id": "rrc_eq_cc8b5f7c4742473c",
+      "arxiv_paper_id": "0704.0046",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0046"
+    },
+    {
+      "equation_id": "rrc_eq_ca946ab1632d585c",
+      "arxiv_paper_id": "0704.0136",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0136"
+    },
+    {
+      "equation_id": "rrc_eq_b975f510c14227e3",
+      "arxiv_paper_id": "0704.1178",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_1178"
+    },
+    {
+      "equation_id": "rrc_eq_9d1897c1a7967172",
+      "arxiv_paper_id": "0706.4389",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0706_4389"
+    },
+    {
+      "equation_id": "rrc_eq_7956fd7c6e98638a",
+      "arxiv_paper_id": "0808.2703",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0808_2703"
+    },
+    {
+      "equation_id": "rrc_eq_21c2954626a5661d",
+      "arxiv_paper_id": "2206.03555",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2206_03555"
+    },
+    {
+      "equation_id": "rrc_eq_8018bcedc9b84a9d",
+      "arxiv_paper_id": "0901.4306",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0901_4306"
+    },
+    {
+      "equation_id": "rrc_eq_0d19ee61a2cd8497",
+      "arxiv_paper_id": "0804.0924",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0804_0924"
+    },
+    {
+      "equation_id": "rrc_eq_e2f1f1f142418961",
+      "arxiv_paper_id": "1110.5454",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1110_5454"
+    },
+    {
+      "equation_id": "rrc_eq_7076f5bdea119531",
+      "arxiv_paper_id": "0712.0185",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0712_0185"
+    },
+    {
+      "equation_id": "rrc_eq_f112b5836bdbd47d",
+      "arxiv_paper_id": "0704.0611",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0611"
+    },
+    {
+      "equation_id": "rrc_eq_59c14acaba40cdc9",
+      "arxiv_paper_id": "0901.1337",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0901_1337"
+    },
+    {
+      "equation_id": "rrc_eq_f9a9276cb08dd3bb",
+      "arxiv_paper_id": "0709.4119",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0709_4119"
+    },
+    {
+      "equation_id": "rrc_eq_bf1b905e94089ddc",
+      "arxiv_paper_id": "0807.1582",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0807_1582"
+    },
+    {
+      "equation_id": "rrc_eq_217148f607dfe5ff",
+      "arxiv_paper_id": "0707.4576",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0707_4576"
+    },
+    {
+      "equation_id": "rrc_eq_7cdf1c3e052e1f33",
+      "arxiv_paper_id": "0705.1942",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0705_1942"
+    },
+    {
+      "equation_id": "rrc_eq_20f6a9ed1c2675da",
+      "arxiv_paper_id": "0704.0019",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0019"
+    },
+    {
+      "equation_id": "rrc_eq_68ac9a041d842bcf",
+      "arxiv_paper_id": "0705.3528",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0705_3528"
+    },
+    {
+      "equation_id": "rrc_eq_e9cff20a11527ba0",
+      "arxiv_paper_id": "1207.0647",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1207_0647"
+    },
+    {
+      "equation_id": "rrc_eq_77bd06f725c27b4d",
+      "arxiv_paper_id": "1712.04507",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1712_04507"
+    },
+    {
+      "equation_id": "rrc_eq_9f67a9105f9e0e3c",
+      "arxiv_paper_id": "0704.0201",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0201"
+    },
+    {
+      "equation_id": "rrc_eq_d726df3a6c9943ff",
+      "arxiv_paper_id": "0811.4100",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0811_4100"
+    },
+    {
+      "equation_id": "rrc_eq_feea4fcff27bd600",
+      "arxiv_paper_id": "1102.0236",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1102_0236"
+    },
+    {
+      "equation_id": "rrc_eq_c3f6aa5efce88262",
+      "arxiv_paper_id": "1610.03041",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1610_03041"
+    },
+    {
+      "equation_id": "rrc_eq_4430cc5b9ebb8311",
+      "arxiv_paper_id": "0806.4228",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0806_4228"
+    },
+    {
+      "equation_id": "rrc_eq_a4348738394b0597",
+      "arxiv_paper_id": "0704.0604",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0604"
+    },
+    {
+      "equation_id": "rrc_eq_3f87b53694e706e9",
+      "arxiv_paper_id": "0704.0604",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0604"
+    },
+    {
+      "equation_id": "rrc_eq_c5a00dead68e12a0",
+      "arxiv_paper_id": "0704.0604",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0604"
+    },
+    {
+      "equation_id": "rrc_eq_bb071a3f64f90363",
+      "arxiv_paper_id": "0704.0421",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0421"
+    },
+    {
+      "equation_id": "rrc_eq_5a01598605abcd3f",
+      "arxiv_paper_id": "2104.04404",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2104_04404"
+    },
+    {
+      "equation_id": "rrc_eq_5d1fa53e2bceba76",
+      "arxiv_paper_id": "0706_1254",
+      "title": "Fractional Laplacian in Bounded Domains",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0706_1254"
+    },
+    {
+      "equation_id": "rrc_eq_1523798f49d3e916",
+      "arxiv_paper_id": "1004.3286",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1004_3286"
+    },
+    {
+      "equation_id": "rrc_eq_a5dae5efe3dc9a94",
+      "arxiv_paper_id": "1206.2374",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1206_2374"
+    },
+    {
+      "equation_id": "rrc_eq_7a38c905340961db",
+      "arxiv_paper_id": "1409.4882",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1409_4882"
+    },
+    {
+      "equation_id": "rrc_eq_bb62cba4864b0def",
+      "arxiv_paper_id": "0704.0061",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0061"
+    },
+    {
+      "equation_id": "rrc_eq_685a969028ff5c50",
+      "arxiv_paper_id": "0704.1144",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_1144"
+    },
+    {
+      "equation_id": "rrc_eq_a59af904a8ad739f",
+      "arxiv_paper_id": "1012.1409",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1012_1409"
+    },
+    {
+      "equation_id": "rrc_eq_e5f58db6423d2f9c",
+      "arxiv_paper_id": "1012.1409",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1012_1409"
+    },
+    {
+      "equation_id": "rrc_eq_fc46c7ee6a40460d",
+      "arxiv_paper_id": "1012.1409",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1012_1409"
+    },
+    {
+      "equation_id": "rrc_eq_ef9d2a2f3c8de320",
+      "arxiv_paper_id": "1012.1409",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1012_1409"
+    },
+    {
+      "equation_id": "rrc_eq_4b0eb5baf8d88582",
+      "arxiv_paper_id": "2402.06713",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2402_06713"
+    },
+    {
+      "equation_id": "rrc_eq_decad728fbd76456",
+      "arxiv_paper_id": "1801.03570",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1801_03570"
+    },
+    {
+      "equation_id": "rrc_eq_9c2c0d5c61628eb5",
+      "arxiv_paper_id": "1801.03570",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1801_03570"
+    },
+    {
+      "equation_id": "rrc_eq_8acff8093805680f",
+      "arxiv_paper_id": "1801.03570",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1801_03570"
+    },
+    {
+      "equation_id": "rrc_eq_82aaddc592cb524f",
+      "arxiv_paper_id": "1004.0977",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1004_0977"
+    },
+    {
+      "equation_id": "rrc_eq_6a952cb84d6e1fbf",
+      "arxiv_paper_id": "1203.6223",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1203_6223"
+    },
+    {
+      "equation_id": "rrc_eq_c56ffe8dd188e331",
+      "arxiv_paper_id": "1203.6223",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1203_6223"
+    },
+    {
+      "equation_id": "rrc_eq_3305fd3254a89e5b",
+      "arxiv_paper_id": "1203.6223",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1203_6223"
+    },
+    {
+      "equation_id": "rrc_eq_81ad5c64ecea2574",
+      "arxiv_paper_id": "1203.6223",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1203_6223"
+    },
+    {
+      "equation_id": "rrc_eq_2f24d8cc16590af0",
+      "arxiv_paper_id": "0710.0544",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0710_0544"
+    },
+    {
+      "equation_id": "rrc_eq_5ece89b86c865faf",
+      "arxiv_paper_id": "1506.07314",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1506_07314"
+    },
+    {
+      "equation_id": "rrc_eq_bfd316d8427b2f6c",
+      "arxiv_paper_id": "0709.3678",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0709_3678"
+    },
+    {
+      "equation_id": "rrc_eq_12d678b6dc94f9d6",
+      "arxiv_paper_id": "1812.02344",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1812_02344"
+    },
+    {
+      "equation_id": "rrc_eq_0252524b379eac41",
+      "arxiv_paper_id": "0704.0153",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0153"
+    },
+    {
+      "equation_id": "rrc_eq_c57a3f3edc39ddd3",
+      "arxiv_paper_id": "0705.1414",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0705_1414"
+    },
+    {
+      "equation_id": "rrc_eq_3654d8cd243cde2b",
+      "arxiv_paper_id": "1011_3864",
+      "title": "Landauer vs. Boltzmann and Full Dispersion vs. Debye Model Evaluation of",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1011_3864"
+    },
+    {
+      "equation_id": "rrc_eq_fe98a523c9c0b821",
+      "arxiv_paper_id": "2005.06614",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2005_06614"
+    },
+    {
+      "equation_id": "rrc_eq_bedb0334896533f3",
+      "arxiv_paper_id": "2006.06267",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2006_06267"
+    },
+    {
+      "equation_id": "rrc_eq_cbefaa1738883221",
+      "arxiv_paper_id": "2401.07679",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2401_07679"
+    },
+    {
+      "equation_id": "rrc_eq_434ad4a173c4cb24",
+      "arxiv_paper_id": "astro-ph/0605306",
+      "title": "Masses of Astrometrically-Discovered and Imaged Binaries: G 78-28AB and",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_astro-ph_0605306"
+    },
+    {
+      "equation_id": "rrc_eq_0ddb4aae4fd1d8d5",
+      "arxiv_paper_id": "0707.1132",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0707_1132"
+    },
+    {
+      "equation_id": "rrc_eq_aef93abc672b8e29",
+      "arxiv_paper_id": "2201_05971",
+      "title": "Revising de Broglie-Bohm trajectories' momentum distribution",
+      "categories": "",
+      "proxy_pred": "CognitiveLoadField",
+      "exact_pred": "CognitiveLoadField",
+      "source_paper_id": "arxiv_2201_05971"
+    },
+    {
+      "equation_id": "rrc_eq_def9542a5004dc68",
+      "arxiv_paper_id": "0704.0037",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_0704_0037"
+    },
+    {
+      "equation_id": "rrc_eq_57188e85cab23a67",
+      "arxiv_paper_id": "1704.03594",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1704_03594"
+    },
+    {
+      "equation_id": "rrc_eq_4b6cfeff599d0583",
+      "arxiv_paper_id": "1512.05122",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_1512_05122"
+    },
+    {
+      "equation_id": "rrc_eq_b639be44c38e19f1",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_d24270e4be19de76",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_b20eddced9a6b7da",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_9c22fd7b336c5904",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_2f9d4e3b2060b799",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_56d979e780ead00b",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_e22543ef62f2494e",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_603b460ebf696fbb",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_17cb89b04d825252",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_7106bb20125b3d6f",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_b650dd7bdbcd9bcb",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_b97583b24c3b2936",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_d521b2282dde0c38",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_282beac067cdee85",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_07b0a4a6f75d86b4",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_295fb47f2cd6ddfb",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_1d0a752af1946515",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_3a60fca57229c15b",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_e25b46d22b7ca0f1",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_14fd73dcf1af02b8",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_e6a6d86ede20e5ad",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_a5fbdc2a7f09759e",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_b2fc5edc90c4c538",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_05370b4783a8bd6a",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_d356d2da175a4185",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_d9785ef71690f60b",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_74c2bb3396094843",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_5281edbc9d70f191",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_3fc5864a199b7aa9",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_04ac9264dcd7c6c1",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_4795802d1dfe8dc9",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_3823a73f30463f6e",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_774c019464fd328c",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_c221ccc2bc9ccc45",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_16a8e172297c28a7",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_50659e00428d753c",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_d618a97b4f87abe9",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_ce049f9298cfb095",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_ea1df518da53e850",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_a91ed081e55a7adc",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_3c97cd0a63059c60",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_114c66f1878ac7b8",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_1975033c8fbea2a4",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_66f6066b3fb74fcb",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_75b10c1207c769bb",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_07bd7750aa9c1698",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_c704bc7e7c531303",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_9781272a1dff3d7d",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_1b1de15c4bbf2d2e",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_f26b20a02d1cf105",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_87b4887fb400c8c8",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_d767dc5b5996f6dc",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_4d8a407792ae463c",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_68bc5f8d951cef23",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_181e73a390899053",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_b720db642290ed9d",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_3e9910b639adf295",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_8beb9cc11e59ff37",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_9d485a8333644b3b",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_6dcfafa9019b29a2",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_810420419a4025f0",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_3ed73c5849372e40",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_84f94841b9e9578b",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_e0ac7e1847f830a3",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_068487b9141c4fb6",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_8ffeff0c4877aa25",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_2c1d4c645f0025fb",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_05407e13b79c062b",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_d4e90c1cd69ef948",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_131b32c8ed70796c",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_e6b902735f906c33",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_c5417aae2492b416",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_c3dde450e7ce933a",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_d75b1352c39fe13e",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_80edc83f7fb3d80e",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    },
+    {
+      "equation_id": "rrc_eq_bcd458bef84fe2a2",
+      "arxiv_paper_id": "2604.21919",
+      "title": "",
+      "categories": "",
+      "proxy_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "exact_pred": "HoldForUnlawfulOrUnderspecifiedShape",
+      "source_paper_id": "arxiv_2604_21919"
+    }
+  ],
+  "schema": "rrc_arxiv_predictions_278_v1",
+  "claim_boundary": "arxiv-keyed-by-rrc-equation-id; stream-encoding + category + math-term + keyword; 2026-06-09",
+  "source_paper_count": 3066190,
+  "rrc_equation_count_with_link": 225,
+  "match_summary": {
+    "arxiv_paper_ids_in_classifier": 137,
+    "rrc_equations_with_arxiv_link": 225,
+    "rrc_equations_total": 250
+  }
+}

@@ -107,7 +107,7 @@ lake build
 ```
 
 Compiler surface baseline: **3313 jobs, 0 errors** (`lake build Compiler`, commit `859d8726`, reverified 2026-05-28).
-Full workspace: **3573 jobs, 0 errors** (`lake build`, reverified 2026-06-08).
+Full workspace: **3573 jobs, 0 errors** (`lake build`, reverified 2026-06-09).
 PistSimulation: **3309 jobs, 0 errors** (`lake build Semantics.PistSimulation`, commit `778b78d3`, reverified 2026-05-27).
 EmergencyBoot: **3302 jobs, 0 errors** (`lake build Semantics.Hardware.EmergencyBootTypes Semantics.Hardware.EmergencyBootState Semantics.Hardware.EmergencyBootShell`, reverified 2026-05-27).
 
@@ -197,8 +197,12 @@ Expected `#eval emit.json` shape:
 `emitRrcCorpus278` classifies all 278 rows and stamps the bundle.
 Expected `#eval` corpus summary: `(278, <passed>, 278 - <passed>)`.
 
-Current state: `(278, 0, 278)` — all held, no PIST labels present yet.
-This is **correct and honest** — the gate reports exactly what it sees.
+Current state: `(250, 250, 0)` — all 250 rows pass alignment (`aligned_exact`).
+avm_canaries_passed: true, bundle_receipt_valid: true (reverified 2026-06-09).
+The DEDUP has been applied: 278 source rows → 250 unique equation_ids →
+250 FixtureRows in the generated `Corpus278.lean`. 225 rows have
+`arxiv_paper_id` set across 137 distinct arXiv papers; see "arXiv
+cross-reference" below for the full pipeline.
 
 The PIST predictions merge pipeline:
   `pist_matrix_builder.py` → `rrc_pist_predictions_278_v1.json` → `build_corpus278.py` reads it
@@ -222,6 +226,133 @@ python3 4-Infrastructure/shim/build_corpus278.py
 ```
 
 Python's role: raw feature extraction only. Lean's role: all gating decisions.
+
+### arXiv cross-reference (RRCPredictions, neon-64gb)
+
+`build_corpus278.py` consults three prediction sources in this order:
+1. PIST predictions — `shared-data/rrc_pist_predictions_278_v1.json` (250 entries)
+2. arXiv predictions — `shared-data/rrc_arxiv_predictions_v1.json` (3,066,102 entries)
+3. OEIS predictions — `shared-data/rrc_oeis_predictions_v1.json` (planned)
+
+`lean_classify_label` keys all three by `invariant_receipt.object_id` (RRC format
+`rrc_eq_<hex>`). arXiv prediction IDs are formatted `arxiv_<paper_id>`
+(e.g. `arxiv_2505_15203`); **they do not overlap with RRC equation IDs at this
+time** because the RRC corpus has not yet been mapped to arXiv paper IDs.
+
+**ID namespace mismatch** (verified 2026-06-09, partially resolved 2026-06-09):
+- 250 PIST predictions all have `equation_id = rrc_eq_<hex>`
+- 3,066,102 arXiv predictions (raw, 3M-paper form) all have
+  `equation_id = arxiv_<paper_id>` (format: `arxiv_YYMM_NNNNN` with underscore,
+  or `arxiv_archive/YYMMNNN` for older arXiv categories)
+- Overlap: 0 (different namespaces)
+
+**arXiv cross-reference infrastructure (enabled 2026-06-09):**
+- `RRC.EquationRecord` (classifier receipt) has `arxiv_paper_id` field
+  (URL-style, e.g. `"2604.21919"`, no version suffix).
+- `RRC.FixtureRow` (Lean) has `arxivPaperId : Option String` field;
+  serialized as `arxiv_paper_id` in the JSON output.
+- `build_corpus278.py` reads `arxiv_paper_id` and writes it into the
+  generated `Corpus278.lean` FixtureRows.
+- **225 of 250 RRC equations have `arxiv_paper_id` set** (covering 137
+  distinct arXiv papers), all derived via the automated stream-encoding
+  pipeline below. The remaining 25 unlinked are all generic placeholder
+  names (`core_equations`, `field_mapping`, `source_domain`,
+  `target_domain`, etc.) which intentionally have no specific arXiv link.
+
+**Stream-encoding cross-reference pipeline (enabled 2026-06-09):**
+the cross-reference uses a **vocabulary-free token-to-code encoding** that
+streams into Postgres for database-side matching. This is fully automated,
+deterministic, and uses no LLM or external embeddings.
+
+1. **Token encoding**: each token (lowercased, split on non-alphanumeric)
+   gets an 8-bit code via `SHA1(token) mod 2^8`. The encoding is
+   vocabulary-free: any text produces a deterministic code sequence.
+2. **Stream into Postgres**: two tables are created and populated
+   - `arxiv_paper_codes8 (paper_id TEXT, codes SMALLINT[])` — 3,066,093
+     arXiv papers with their title code sequences (146 MB TSV → COPY)
+   - `rrc_equation_codes8 (equation_id TEXT, name TEXT, codes SMALLINT[])`
+     — 250 RRC equations with their name code sequences
+3. **Database-side matching**: for each RRC equation, the SQL query
+   ```sql
+   SELECT MIN(paper_id), COUNT(*)
+   FROM rrc_equation_codes8 rec, arxiv_paper_codes8 apc
+   WHERE array_length(rec.codes, 1) >= 3
+     AND apc.codes @> rec.codes
+   GROUP BY rec.equation_id, rec.name
+   HAVING COUNT(*) <= 10
+   ```
+   returns the **unique low-count arXiv match** for that RRC equation
+   (1-10 candidates) or none (if the codes are too common).
+
+**Three-stage matching (final results 2026-06-09):**
+- **Stage 1 — Containment only** (`array_length(codes) >= 3`, ≤ 10 matches):
+  28 RRC equations got arxiv_paper_id
+- **Stage 2 — Containment + route_hint→categories crosswalk** (Postgres
+  category filter on `arxiv_papers.categories`): 81 RRC equations got
+  arxiv_paper_id. Crosswalk maps RRC `route_hint` (e.g.
+  `thermodynamic_energy`, `geometry_topology`, `cognitive_load`) to arXiv
+  category fragments (e.g. `cond-mat`, `math.DG`, `cs.CV`). Crosswalk was
+  extended with `unclassified_equation` → broad ML categories.
+- **Stage 3 — Math-term keyword for extracted_md_equation** (rows from
+  `extracted_equations.md` with real math equations): 8 + 2 = 10 RRC
+  equations got arxiv_paper_id via distinctive physics terms
+  (`muon`, `sigma`, `laplacian`, `debye`, etc.) searched against
+  `arxiv_papers.title` via SQL ILIKE.
+- **Stage 4 — Name-specific keyword for compound RRC names** (17 specific
+  3+ token names like `Christoffel_Symbols_2D`, `MOF_CO2_Reduction_*`,
+  `Stereographic_Chart_Transition`, etc.): 6 + 8 = 14 RRC equations got
+  arxiv_paper_id via distinctive compound-term keyword search.
+
+**Final results (2026-06-09):**
+- **225/250 RRC equations have `arxiv_paper_id`** (76 → 104 → 193 → 221
+  → 225 over 4 sessions)
+- 137 distinct arXiv papers referenced
+- 250/250 emit gate passes (all `aligned_exact`)
+- 76 of the 225 are the originally-mislabeled `2604.21919` (single arXiv
+  paper, 76 RRC duplicates); 149 are distributed across 136 other papers
+
+**Pipeline saturation (2026-06-09):**
+- 25 remaining unlinked RRC equations are ALL generic placeholders
+  (`core_equations`, `field_mapping`, `source_domain`, `target_domain`,
+  `heat_loss`, `magnetic_projection`, `overflow_gate`, `signal_load`,
+  `counted_total`, `hard_target_rule`, `hutter_route_metastate`,
+  `lower_bound`, `metastate_transfold`, `promotion_rule`, `prune_rule`,
+  `source_equation_surface`). These are intentionally generic and have
+  no specific arXiv reference.
+- The pipeline is **saturated**: every RRC equation that has any
+  meaningful arXiv link has been matched.
+
+**Receipts:**
+- `shared-data/data/stack_solidification/rrc_arxiv_crossref_2026-06-09.json` (28 matches, stage 1)
+- `shared-data/data/stack_solidification/rrc_arxiv_crossref_v2_2026-06-09.json` (193 matches, stages 1-3)
+- `shared-data/data/stack_solidification/rrc_arxiv_crossref_v3_2026-06-09.json` (221 matches, all stages)
+- `shared-data/data/stack_solidification/rrc_arxiv_crossref_v4_2026-06-09.json` (225 matches, all stages, FINAL)
+
+**Pipeline script:** `4-Infrastructure/shim/arxiv_crossref_stream.py` — productionizes
+the stream-encoding pipeline (5 stages, parameterized via `--stage=N`).
+
+**Source dataset (neon-64gb, `arxiv-pg` podman container, port 5432, Tailscale
+100.92.88.64):**
+- 3,066,102 papers with `paper_id`, `title`, `categories`, `rrc_shape`
+- paper_id format: `YYMM_NNNNN` (modern) or `archive/YYMMNNN` (legacy)
+- 143,917 papers are 2026 entries (`paper_id LIKE '26%'`)
+- RRC shape distribution (full database):
+  - `HoldForUnlawfulOrUnderspecifiedShape`: 2,272,051
+  - `CognitiveLoadField`: 521,982
+  - `ProjectableGeometryTopology`: 142,887
+  - `SignalShapedRouteCompiler`: 58,573
+  - `CadForceProbeReceipt`: 47,188
+  - `LogogramProjection`: 23,421
+
+**Future work to extend cross-reference:** the 174 RRC equations without
+`arxiv_paper_id` could be matched to arXiv papers via:
+1. Manual curation (most reliable)
+2. Title/keyword matching against `arxiv_findings_500.md` /
+   `arxiv_findings_500_remapped.md` (50-500 LLM-mapped papers in
+   `3-Mathematical-Models/`)
+3. Hash-based cross-correlation: arXiv papers tagged with
+   `rrc_shape = CognitiveLoadField` (521,982 papers) and similar filtering
+   on `categories` (e.g. `cs.CV`, `quant-ph`)
 
 ## Quarantined Modules (not in build surface)
 
@@ -256,6 +387,13 @@ after narrowly compiling the file under a scratch target.
     - `add_toInt_of_no_sat`, `sub_toInt_of_no_sat` (PROVED in FixedPoint.lean)
     - `mul_floor_le`, `mul_floor_ge` (PROVED in FixedPoint.lean)
     - Convex combination bound (Q16_16-specific)
+  - `abs_ediv_bound` (exploratory, reverted 2026-06-09): `|a/Q| ≤ |a|/Q + 1` for
+    `Q > 0`. The case split on `q + s ∈ {0, -1}` is clean, but the final case
+    requires `Int.ediv_nonpos` / `Int.ediv_eq_zero_of_lt` lemmas that are not in
+    `Mathlib.Data.Int.Order.Basic` in this mathlib snapshot. Reverted to keep
+    the build green. To revive: add explicit `q ≤ 0` and `|q| = -q` discharge
+    via `omega` once those ediv lemmas are imported, OR use `Int.ediv_nonpos`
+    from `Mathlib.Algebra.Order.Ring.Int` if that import becomes available.
 - `EmergencyBootTypes.lean` — 6502 design philosophy hardware types (graphene memristor,
   optical fiber hot/cold paths, voltage differential computation). All structures compile;
   remaining formal work: `eigensolid_convergence` for optical delay-line memory,

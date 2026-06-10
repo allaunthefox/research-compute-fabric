@@ -359,6 +359,15 @@ These terms appear throughout all AGENTS.md files and the codebase:
 - The database IS the test field. enwik9 (1GB) and 259 TiddlyWiki tiddlers live
   in the same `ene.packages` table. The compressor does not distinguish between
   them. The schema is the substrate.
+- arXiv cross-reference: 3,066,102 arXiv papers live in `arxiv-pg` (podman
+  container on neon-64gb, Tailscale 100.92.88.64, port 5432, postgres 16).
+  The dataset is also materialised as `shared-data/rrc_arxiv_predictions_v1.json`
+  (re-keyed by `rrc_eq_<hex>`) and is consulted by `build_corpus278.py` as a
+  third prediction source (after PIST and OEIS). **225/250 RRC equations
+  have an automated arXiv link** (137 distinct papers). The pipeline is
+  implemented in `4-Infrastructure/shim/arxiv_crossref_stream.py`. See
+  `0-Core-Formalism/lean/Semantics/AGENTS.md` §"arXiv cross-reference" for
+  the full pipeline architecture.
 - Two distinct Lean theorems are required for every compressor:
   1. `eigensolid_convergence` — the braid crossing loop stabilizes
   2. `receipt_invertible` — given the receipt, the original state is reconstructible

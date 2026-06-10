@@ -1,0 +1,1585 @@
+{
+  "matches": [
+    {
+      "rrc_eq_id": "rrc_eq_86ccde7bfd669b77",
+      "rrc_name": "bandwidth_adjusted_threshold",
+      "arxiv_paper_id": "1111.2092",
+      "arxiv_match_count": 10,
+      "arxiv_match_route_hint": "cognitive_load",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_cabf5eab335f2d23",
+      "rrc_name": "bandwidth_overflow",
+      "arxiv_paper_id": "0808.1508",
+      "arxiv_match_count": 265,
+      "arxiv_match_route_hint": "cognitive_load",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_5d39c74f1cbc3aab",
+      "rrc_name": "effective_cognitive_load",
+      "arxiv_paper_id": "2110.13570",
+      "arxiv_match_count": 10,
+      "arxiv_match_route_hint": "cognitive_load",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_aaddd26cf129e0ff",
+      "rrc_name": "emotional_gate",
+      "arxiv_paper_id": "1112.1330",
+      "arxiv_match_count": 229,
+      "arxiv_match_route_hint": "cognitive_load",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_931cb5c74aaade03",
+      "rrc_name": "emotional_load",
+      "arxiv_paper_id": "1103.3904",
+      "arxiv_match_count": 117,
+      "arxiv_match_route_hint": "cognitive_load",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_bf9f2062b96a9d25",
+      "rrc_name": "emotional_offload",
+      "arxiv_paper_id": "0710.0672",
+      "arxiv_match_count": 162,
+      "arxiv_match_route_hint": "cognitive_load",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_9817626505a4fedf",
+      "rrc_name": "historical_emotional_barrier",
+      "arxiv_paper_id": "2507.22968",
+      "arxiv_match_count": 5,
+      "arxiv_match_route_hint": "cognitive_load",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_01ab6e9c32652d06",
+      "rrc_name": "historical_emotional_temperature",
+      "arxiv_paper_id": "1912.03193",
+      "arxiv_match_count": 11,
+      "arxiv_match_route_hint": "cognitive_load",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_01f85e831660c26e",
+      "rrc_name": "historical_offload_efficiency",
+      "arxiv_paper_id": "1310.2396",
+      "arxiv_match_count": 7,
+      "arxiv_match_route_hint": "cognitive_load",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_f46446cfb0f8d5b1",
+      "rrc_name": "raw_cognitive_load",
+      "arxiv_paper_id": "2011.08982",
+      "arxiv_match_count": 2,
+      "arxiv_match_route_hint": "cognitive_load",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_f5bb28753a2271dd",
+      "rrc_name": "residual_stress",
+      "arxiv_paper_id": "0712.0932",
+      "arxiv_match_count": 1453,
+      "arxiv_match_route_hint": "cognitive_load",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_85435dde0bcc5cfd",
+      "rrc_name": "total_protective_load",
+      "arxiv_paper_id": "1706.01120",
+      "arxiv_match_count": 19,
+      "arxiv_match_route_hint": "cognitive_load",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_0abce0721f473201",
+      "rrc_name": "trauma_adjusted_emotional_temperature",
+      "arxiv_paper_id": "1510.05289",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_ae70c43fd815392e",
+      "rrc_name": "trauma_adjusted_offload_efficiency",
+      "arxiv_paper_id": "1101.4207",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_df9f885395884594",
+      "rrc_name": "trauma_adjusted_threshold",
+      "arxiv_paper_id": "1701.00142",
+      "arxiv_match_count": 27,
+      "arxiv_match_route_hint": "cognitive_load",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_5193efd26258bc51",
+      "rrc_name": "UQGET_Hubble_Tension",
+      "arxiv_paper_id": "2504.16869",
+      "arxiv_match_count": 1,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_64f81fa3c4725d4e",
+      "rrc_name": "UQGET_Structure_Tension",
+      "arxiv_paper_id": "2203.08045",
+      "arxiv_match_count": 1,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_1f912c8afa928326",
+      "rrc_name": "LASSO_MOGAT_Attention_Coefficient",
+      "arxiv_paper_id": "1502.00379",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_535b43060096e699",
+      "rrc_name": "Multiphasic_Allometry_LogLog_Scaling",
+      "arxiv_paper_id": "1911.03851",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_9a468347631152ce",
+      "rrc_name": "Multiphasic_Allometry_Quadratic",
+      "arxiv_paper_id": "0707.0859",
+      "arxiv_match_count": 22,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_c8d2e5596d91ebbd",
+      "rrc_name": "Multiphasic_Allometry_Instantaneous_Slope",
+      "arxiv_paper_id": "1707.08289",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_f010fb33997b8f51",
+      "rrc_name": "Affine_Mapping_Periodic_Theorem",
+      "arxiv_paper_id": "2509.25397",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_8500000bbf612a0e",
+      "rrc_name": "Palette_DSP_Slave",
+      "arxiv_paper_id": "1501.05033",
+      "arxiv_match_count": 7,
+      "arxiv_match_route_hint": "control_signal",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_0606dcb042ba0e6f",
+      "rrc_name": "MOF_CO2_Reduction_Formic_Acid",
+      "arxiv_paper_id": "2503.02291",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_891a81dfc968f58e",
+      "rrc_name": "MOF_CO2_Reduction_8e_Methane",
+      "arxiv_paper_id": "1402.6770",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_45606d1f25dd6aa5",
+      "rrc_name": "COUCH_Equation",
+      "arxiv_paper_id": "0705.4036",
+      "arxiv_match_count": 30,
+      "arxiv_match_route_hint": "chaotic_couch",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_39d59d35fd9672a0",
+      "rrc_name": "Rotational_Alignment",
+      "arxiv_paper_id": "0706.3044",
+      "arxiv_match_count": 61,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_3db7a0150185b5a1",
+      "rrc_name": "Spatial_Proximity",
+      "arxiv_paper_id": "0704.2771",
+      "arxiv_match_count": 87,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_982c784b74af6c5c",
+      "rrc_name": "Interaction_Force",
+      "arxiv_paper_id": "0909.2552",
+      "arxiv_match_count": 21,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_d93085afc737effa",
+      "rrc_name": "Energy_Function",
+      "arxiv_paper_id": "0704.1356",
+      "arxiv_match_count": 2874,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_e4b70a718fcfb1ab",
+      "rrc_name": "Frame_Evolution_Discrete",
+      "arxiv_paper_id": "1108.4993",
+      "arxiv_match_count": 4,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_aafdb23c6c8cb77a",
+      "rrc_name": "Frame_Evolution_Continuous",
+      "arxiv_paper_id": "0705.3841",
+      "arxiv_match_count": 60,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_6abda80c652b80c8",
+      "rrc_name": "Energy_Monotonicity_Theorem",
+      "arxiv_paper_id": "0806.2820",
+      "arxiv_match_count": 30,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_251255e3132f5533",
+      "rrc_name": "Temporal_Weight",
+      "arxiv_paper_id": "0704.2119",
+      "arxiv_match_count": 483,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_12d5519ce1a35889",
+      "rrc_name": "Complete_Weight_5Factor",
+      "arxiv_paper_id": "1004.2938",
+      "arxiv_match_count": 4,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_98b0599e8c46c1bf",
+      "rrc_name": "Temporal_Force",
+      "arxiv_paper_id": "1011.5524",
+      "arxiv_match_count": 50,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_2f44e729b9d25d34",
+      "rrc_name": "Temporal_Evolution",
+      "arxiv_paper_id": "0903.4243",
+      "arxiv_match_count": 60,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_795413454087e025",
+      "rrc_name": "Temporal_Stability",
+      "arxiv_paper_id": "0704.2467",
+      "arxiv_match_count": 47,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_a109587e866701dc",
+      "rrc_name": "Temporal_Entropy",
+      "arxiv_paper_id": "0709.4204",
+      "arxiv_match_count": 137,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_310ec3a93d82b04e",
+      "rrc_name": "Mu_Seed_Cardinality",
+      "arxiv_paper_id": "2105.07025",
+      "arxiv_match_count": 4,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_10c072664568b78d",
+      "rrc_name": "Fractal_Occupancy",
+      "arxiv_paper_id": "0706.0150",
+      "arxiv_match_count": 375,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_1f12deb00ad16d8f",
+      "rrc_name": "Reachable_State_Space",
+      "arxiv_paper_id": "2111.09736",
+      "arxiv_match_count": 2,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_56bc9e8becb7bcba",
+      "rrc_name": "Throat_Condition",
+      "arxiv_paper_id": "0704.0981",
+      "arxiv_match_count": 640,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_bd8bcf9cb663c096",
+      "rrc_name": "Holonomy_Accumulation",
+      "arxiv_paper_id": "0905.0262",
+      "arxiv_match_count": 21,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_2ee9bc98d2a7c773",
+      "rrc_name": "Non_Euclidean_Distance",
+      "arxiv_paper_id": "2110.00663",
+      "arxiv_match_count": 1,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_9064d88b17992de3",
+      "rrc_name": "Trixal_Axes",
+      "arxiv_paper_id": "0705.0626",
+      "arxiv_match_count": 140,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_cf576a1cfbd9da63",
+      "rrc_name": "Shannon_Entropy",
+      "arxiv_paper_id": "0704.0465",
+      "arxiv_match_count": 1477,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_cd4dfc767616524d",
+      "rrc_name": "Kolmogorov_Estimate",
+      "arxiv_paper_id": "0704.1029",
+      "arxiv_match_count": 1437,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_ecf3ddf7af735ee6",
+      "rrc_name": "Thermodynamic_Entropy",
+      "arxiv_paper_id": "0704.0842",
+      "arxiv_match_count": 1088,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_c8b7f0fe52ef32fe",
+      "rrc_name": "Entropy_Gradient",
+      "arxiv_paper_id": "0704.0842",
+      "arxiv_match_count": 1088,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_71dd02d32f3e59b0",
+      "rrc_name": "Mutual_Information_Extracted",
+      "arxiv_paper_id": "1305.3876",
+      "arxiv_match_count": 14,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_d07532a1db76d958",
+      "rrc_name": "Carnot_Efficiency",
+      "arxiv_paper_id": "0704.0082",
+      "arxiv_match_count": 1262,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_7533d46cedd4a4c5",
+      "rrc_name": "Work_Extraction",
+      "arxiv_paper_id": "0704.0761",
+      "arxiv_match_count": 857,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_1f5af7e9fb2b518f",
+      "rrc_name": "Irreversibility_Metric",
+      "arxiv_paper_id": "0707.3285",
+      "arxiv_match_count": 346,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_685a03c6c1db609e",
+      "rrc_name": "Thermodynamic_Length",
+      "arxiv_paper_id": "0704.1804",
+      "arxiv_match_count": 843,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_4cab00eaeac59782",
+      "rrc_name": "Thermodynamic_Depth",
+      "arxiv_paper_id": "0704.2439",
+      "arxiv_match_count": 817,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_4c87c96f612f6100",
+      "rrc_name": "Stamp_Code",
+      "arxiv_paper_id": "0704.2565",
+      "arxiv_match_count": 691,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_25d3e2f91df8c0a0",
+      "rrc_name": "Arrhenius_Temperature_Factor",
+      "arxiv_paper_id": "0708.3335",
+      "arxiv_match_count": 38,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_3ad1c4d008fc910b",
+      "rrc_name": "Blacks_Equation_EM",
+      "arxiv_paper_id": "0903.2918",
+      "arxiv_match_count": 20,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_10dfe03d2d21bf90",
+      "rrc_name": "Coffin_Manson_Fatigue",
+      "arxiv_paper_id": "1005.0449",
+      "arxiv_match_count": 40,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_b8bfc827c0fd3d28",
+      "rrc_name": "Landauer_Limit",
+      "arxiv_paper_id": "0704.0889",
+      "arxiv_match_count": 872,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_20b0dce68b1ff729",
+      "rrc_name": "Entropy_Generation_Rate",
+      "arxiv_paper_id": "0901.1037",
+      "arxiv_match_count": 52,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_e58f768224fb1bbe",
+      "rrc_name": "BitFlip_Gradient_5D",
+      "arxiv_paper_id": "0904.3223",
+      "arxiv_match_count": 76,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_9166088a2f79f059",
+      "rrc_name": "SEU_BitFlip_Rate",
+      "arxiv_paper_id": "0805.0430",
+      "arxiv_match_count": 60,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_f6ecffdb3a584bc6",
+      "rrc_name": "Stress_Decay",
+      "arxiv_paper_id": "0704.0305",
+      "arxiv_match_count": 698,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_3fbf8213151eae2f",
+      "rrc_name": "Remaining_Useful_Life",
+      "arxiv_paper_id": "1011.5014",
+      "arxiv_match_count": 14,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_7731084327989290",
+      "rrc_name": "Homeostatic_Stress_Injection",
+      "arxiv_paper_id": "1007.2977",
+      "arxiv_match_count": 15,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_613c8a56dee0f83a",
+      "rrc_name": "Exact_Int_to_FP_Cast",
+      "arxiv_paper_id": "1902.09731",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_dd3140340d9c9a33",
+      "rrc_name": "Safe_Narrowing_Proof",
+      "arxiv_paper_id": "0706.2859",
+      "arxiv_match_count": 199,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_1fe1cbc05827ec00",
+      "rrc_name": "RISCV_Instruction_Latency",
+      "arxiv_paper_id": "0904.3765",
+      "arxiv_match_count": 35,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_78fb56a55b615659",
+      "rrc_name": "Photon_Energy",
+      "arxiv_paper_id": "0704.0179",
+      "arxiv_match_count": 2453,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_ec7566b5d400a6fb",
+      "rrc_name": "Subband_Spacing",
+      "arxiv_paper_id": "0704.0820",
+      "arxiv_match_count": 620,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_cc8b5f7c4742473c",
+      "rrc_name": "Cascade_Gain",
+      "arxiv_paper_id": "0704.0046",
+      "arxiv_match_count": 12443,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_ca946ab1632d585c",
+      "rrc_name": "Temperature_Tuning",
+      "arxiv_paper_id": "0704.0136",
+      "arxiv_match_count": 3678,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_b975f510c14227e3",
+      "rrc_name": "Injection_Efficiency",
+      "arxiv_paper_id": "0704.1178",
+      "arxiv_match_count": 1570,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_9d1897c1a7967172",
+      "rrc_name": "Atmospheric_Windows",
+      "arxiv_paper_id": "0706.4389",
+      "arxiv_match_count": 172,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_45b2907bd442578f",
+      "rrc_name": "Tuning_Range",
+      "arxiv_paper_id": "0704.0179",
+      "arxiv_match_count": 3122,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_7956fd7c6e98638a",
+      "rrc_name": "Mutual_Information_Signal",
+      "arxiv_paper_id": "0808.2703",
+      "arxiv_match_count": 64,
+      "arxiv_match_route_hint": "compression_route",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_8018bcedc9b84a9d",
+      "rrc_name": "Surprise_Metric",
+      "arxiv_paper_id": "0901.4306",
+      "arxiv_match_count": 74,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_0d19ee61a2cd8497",
+      "rrc_name": "Structure_Yield",
+      "arxiv_paper_id": "0804.0924",
+      "arxiv_match_count": 1629,
+      "arxiv_match_route_hint": "compression_route",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_7076f5bdea119531",
+      "rrc_name": "DAG_Force_Equilibrium",
+      "arxiv_paper_id": "0712.0185",
+      "arxiv_match_count": 18,
+      "arxiv_match_route_hint": "cad_force",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_f112b5836bdbd47d",
+      "rrc_name": "Constitutive_Law",
+      "arxiv_paper_id": "0704.0611",
+      "arxiv_match_count": 1179,
+      "arxiv_match_route_hint": "cad_force",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_f9a9276cb08dd3bb",
+      "rrc_name": "Cosine_Similarity",
+      "arxiv_paper_id": "0709.4119",
+      "arxiv_match_count": 69,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_bf1b905e94089ddc",
+      "rrc_name": "Gradient_Alignment",
+      "arxiv_paper_id": "0807.1582",
+      "arxiv_match_count": 20,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_217148f607dfe5ff",
+      "rrc_name": "Phase_Accumulation",
+      "arxiv_paper_id": "0707.4576",
+      "arxiv_match_count": 48,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_20f6a9ed1c2675da",
+      "rrc_name": "Line_Element",
+      "arxiv_paper_id": "0704.0019",
+      "arxiv_match_count": 1672,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_e9cff20a11527ba0",
+      "rrc_name": "Geodesic_Step_Symplectic_Euler",
+      "arxiv_paper_id": "1207.0647",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_9f67a9105f9e0e3c",
+      "rrc_name": "Chirality_Algebra",
+      "arxiv_paper_id": "0704.0201",
+      "arxiv_match_count": 1138,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_d726df3a6c9943ff",
+      "rrc_name": "BLINK_GATE_Ternary_Clock",
+      "arxiv_paper_id": "0811.4100",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_feea4fcff27bd600",
+      "rrc_name": "Geodesic_Step_Verlet",
+      "arxiv_paper_id": "1102.0236",
+      "arxiv_match_count": 3,
+      "arxiv_match_route_hint": "geometry_topology",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_c3f6aa5efce88262",
+      "rrc_name": "Waveprobe_Risk_Function",
+      "arxiv_paper_id": "1610.03041",
+      "arxiv_match_count": 9,
+      "arxiv_match_route_hint": "control_signal",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_4430cc5b9ebb8311",
+      "rrc_name": "Waveprobe_Heat_Evolution",
+      "arxiv_paper_id": "0806.4228",
+      "arxiv_match_count": 64,
+      "arxiv_match_route_hint": "thermodynamic_energy",
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_a4348738394b0597",
+      "rrc_name": "extracted_md_equation_0",
+      "arxiv_paper_id": "0704.0604",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": [
+        "muon"
+      ]
+    },
+    {
+      "rrc_eq_id": "rrc_eq_bb071a3f64f90363",
+      "rrc_name": "extracted_md_equation_1",
+      "arxiv_paper_id": "0704.0421",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": [
+        "sigma"
+      ]
+    },
+    {
+      "rrc_eq_id": "rrc_eq_5a01598605abcd3f",
+      "rrc_name": "extracted_md_equation_2",
+      "arxiv_paper_id": "2104.04404",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": [
+        "muon",
+        "sigma",
+        "experiment"
+      ]
+    },
+    {
+      "rrc_eq_id": "rrc_eq_3f87b53694e706e9",
+      "rrc_name": "extracted_md_equation_3",
+      "arxiv_paper_id": "0704.0604",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": [
+        "muon"
+      ]
+    },
+    {
+      "rrc_eq_id": "rrc_eq_c5a00dead68e12a0",
+      "rrc_name": "extracted_md_equation_4",
+      "arxiv_paper_id": "0704.0604",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": [
+        "muon"
+      ]
+    },
+    {
+      "rrc_eq_id": "rrc_eq_a5dae5efe3dc9a94",
+      "rrc_name": "extracted_md_equation_7",
+      "arxiv_paper_id": "1206.2374",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": [
+        "unified",
+        "observed"
+      ]
+    },
+    {
+      "rrc_eq_id": "rrc_eq_a59af904a8ad739f",
+      "rrc_name": "extracted_md_equation_11",
+      "arxiv_paper_id": "1012.1409",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_4b0eb5baf8d88582",
+      "rrc_name": "extracted_md_equation_12",
+      "arxiv_paper_id": "2402.06713",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_decad728fbd76456",
+      "rrc_name": "extracted_md_equation_13",
+      "arxiv_paper_id": "1801.03570",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_6a952cb84d6e1fbf",
+      "rrc_name": "extracted_md_equation_15",
+      "arxiv_paper_id": "1203.6223",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_9c2c0d5c61628eb5",
+      "rrc_name": "extracted_md_equation_16",
+      "arxiv_paper_id": "1801.03570",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_5ece89b86c865faf",
+      "rrc_name": "extracted_md_equation_18",
+      "arxiv_paper_id": "1506.07314",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_12d678b6dc94f9d6",
+      "rrc_name": "extracted_md_equation_20",
+      "arxiv_paper_id": "1812.02344",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_8acff8093805680f",
+      "rrc_name": "extracted_md_equation_22",
+      "arxiv_paper_id": "1801.03570",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_c56ffe8dd188e331",
+      "rrc_name": "extracted_md_equation_23",
+      "arxiv_paper_id": "1203.6223",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_3305fd3254a89e5b",
+      "rrc_name": "extracted_md_equation_24",
+      "arxiv_paper_id": "1203.6223",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_e5f58db6423d2f9c",
+      "rrc_name": "extracted_md_equation_27",
+      "arxiv_paper_id": "1012.1409",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_fe98a523c9c0b821",
+      "rrc_name": "extracted_md_equation_28",
+      "arxiv_paper_id": "2005.06614",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_cbefaa1738883221",
+      "rrc_name": "extracted_md_equation_30",
+      "arxiv_paper_id": "2401.07679",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_434ad4a173c4cb24",
+      "rrc_name": "extracted_md_equation_31",
+      "arxiv_paper_id": "astro-ph/0605306",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_fc46c7ee6a40460d",
+      "rrc_name": "extracted_md_equation_32",
+      "arxiv_paper_id": "1012.1409",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_81ad5c64ecea2574",
+      "rrc_name": "extracted_md_equation_34",
+      "arxiv_paper_id": "1203.6223",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_ef9d2a2f3c8de320",
+      "rrc_name": "extracted_md_equation_37",
+      "arxiv_paper_id": "1012.1409",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_57188e85cab23a67",
+      "rrc_name": "extracted_md_equation_38",
+      "arxiv_paper_id": "1704.03594",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": [
+        "context",
+        "residual"
+      ]
+    },
+    {
+      "rrc_eq_id": "rrc_eq_4b6cfeff599d0583",
+      "rrc_name": "extracted_md_equation_39",
+      "arxiv_paper_id": "1512.05122",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": [
+        "sigma",
+        "uniform"
+      ]
+    },
+    {
+      "rrc_eq_id": "rrc_eq_b639be44c38e19f1",
+      "rrc_name": "eq_21f33f411006",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_d24270e4be19de76",
+      "rrc_name": "eq_14d74623112c",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_b20eddced9a6b7da",
+      "rrc_name": "eq_fcd40dc2de7c",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_9c22fd7b336c5904",
+      "rrc_name": "eq_416bbe45bfd1",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_2f9d4e3b2060b799",
+      "rrc_name": "eq_290815ff34ff",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_56d979e780ead00b",
+      "rrc_name": "eq_5ea587928ed3",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_e22543ef62f2494e",
+      "rrc_name": "eq_e1646b712978",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_603b460ebf696fbb",
+      "rrc_name": "eq_ed91aac060fd",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_17cb89b04d825252",
+      "rrc_name": "eq_9b66cadab83a",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_7106bb20125b3d6f",
+      "rrc_name": "eq_6fd0d43c1e15",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_b650dd7bdbcd9bcb",
+      "rrc_name": "eq_8605b7c5ccdb",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_b97583b24c3b2936",
+      "rrc_name": "eq_dbd7ee74be20",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_d521b2282dde0c38",
+      "rrc_name": "eq_9138cc21d6e4",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_282beac067cdee85",
+      "rrc_name": "eq_5be87eaf6cff",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_07b0a4a6f75d86b4",
+      "rrc_name": "eq_927277d74e65",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_295fb47f2cd6ddfb",
+      "rrc_name": "eq_353043888999",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_1d0a752af1946515",
+      "rrc_name": "eq_532f38944289",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_3a60fca57229c15b",
+      "rrc_name": "eq_fdfae5689dd4",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_e25b46d22b7ca0f1",
+      "rrc_name": "eq_9138aeb94292",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_14fd73dcf1af02b8",
+      "rrc_name": "eq_0cd087779e75",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_e6a6d86ede20e5ad",
+      "rrc_name": "eq_5593e036fe6f",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_a5fbdc2a7f09759e",
+      "rrc_name": "eq_ea9b6d38a8a0",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_b2fc5edc90c4c538",
+      "rrc_name": "eq_e0537400fa96",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_05370b4783a8bd6a",
+      "rrc_name": "eq_23fc8ebaf9c8",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_d356d2da175a4185",
+      "rrc_name": "eq_8b4895ac1c7e",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_d9785ef71690f60b",
+      "rrc_name": "eq_25d49db81014",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_74c2bb3396094843",
+      "rrc_name": "eq_5034975bc936",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_5281edbc9d70f191",
+      "rrc_name": "eq_ab6c35762bc8",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_3fc5864a199b7aa9",
+      "rrc_name": "eq_60b71803ce04",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_04ac9264dcd7c6c1",
+      "rrc_name": "eq_7d5beabf91af",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_4795802d1dfe8dc9",
+      "rrc_name": "eq_8daf48607920",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_3823a73f30463f6e",
+      "rrc_name": "eq_3b521e5a6156",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_774c019464fd328c",
+      "rrc_name": "eq_7cf504583516",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_c221ccc2bc9ccc45",
+      "rrc_name": "eq_b5bc1ffd9091",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_16a8e172297c28a7",
+      "rrc_name": "eq_51e4f2d85951",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_50659e00428d753c",
+      "rrc_name": "eq_51dad4a7954a",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_d618a97b4f87abe9",
+      "rrc_name": "eq_10109834ac3a",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_ce049f9298cfb095",
+      "rrc_name": "eq_6c7adf4f4e98",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_ea1df518da53e850",
+      "rrc_name": "eq_dde05d0258ec",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_a91ed081e55a7adc",
+      "rrc_name": "eq_36e95d88ecbd",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_3c97cd0a63059c60",
+      "rrc_name": "eq_25b43848714b",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_114c66f1878ac7b8",
+      "rrc_name": "eq_139255306999",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_1975033c8fbea2a4",
+      "rrc_name": "eq_2a06ffe17253",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_66f6066b3fb74fcb",
+      "rrc_name": "eq_e598d78992b5",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_75b10c1207c769bb",
+      "rrc_name": "eq_14f71a50573b",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_07bd7750aa9c1698",
+      "rrc_name": "eq_44bf0ed184c8",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_c704bc7e7c531303",
+      "rrc_name": "eq_4c772de7743a",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_9781272a1dff3d7d",
+      "rrc_name": "eq_3fe8c2f5d04f",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_1b1de15c4bbf2d2e",
+      "rrc_name": "eq_1abc29f7b624",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_f26b20a02d1cf105",
+      "rrc_name": "eq_f4bc63354f27",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_87b4887fb400c8c8",
+      "rrc_name": "eq_2a47fee92e98",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_d767dc5b5996f6dc",
+      "rrc_name": "eq_4a18868e412a",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_4d8a407792ae463c",
+      "rrc_name": "eq_d14e04ca5ba0",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_68bc5f8d951cef23",
+      "rrc_name": "eq_405936ddfb9b",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_181e73a390899053",
+      "rrc_name": "eq_6a72df8385b3",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_b720db642290ed9d",
+      "rrc_name": "eq_52e8897befaf",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_3e9910b639adf295",
+      "rrc_name": "eq_f05cdb2173e0",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_8beb9cc11e59ff37",
+      "rrc_name": "eq_f93b08fedbc0",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_9d485a8333644b3b",
+      "rrc_name": "eq_d0869069ce0f",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_6dcfafa9019b29a2",
+      "rrc_name": "eq_e2dad9249b00",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_810420419a4025f0",
+      "rrc_name": "eq_2b301ef1b6ca",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_3ed73c5849372e40",
+      "rrc_name": "eq_f4aab7b26b55",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_84f94841b9e9578b",
+      "rrc_name": "eq_1a6dee6dca2f",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_e0ac7e1847f830a3",
+      "rrc_name": "eq_0698ebc502ab",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_068487b9141c4fb6",
+      "rrc_name": "eq_2edfb68a37ab",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_8ffeff0c4877aa25",
+      "rrc_name": "eq_7957e0f2cb86",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_2c1d4c645f0025fb",
+      "rrc_name": "eq_10a508b9d741",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_05407e13b79c062b",
+      "rrc_name": "eq_fb10b15989ea",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_d4e90c1cd69ef948",
+      "rrc_name": "eq_984644a6b0db",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_131b32c8ed70796c",
+      "rrc_name": "eq_837e24a6c715",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_e6b902735f906c33",
+      "rrc_name": "eq_e54ad45a68cb",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_c5417aae2492b416",
+      "rrc_name": "eq_21f71c6c28c7",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_c3dde450e7ce933a",
+      "rrc_name": "eq_717ace3c9565",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_d75b1352c39fe13e",
+      "rrc_name": "eq_ccca83f09f70",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_80edc83f7fb3d80e",
+      "rrc_name": "eq_bc5bda52965a",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    },
+    {
+      "rrc_eq_id": "rrc_eq_bcd458bef84fe2a2",
+      "rrc_name": "eq_d4a2926485bb",
+      "arxiv_paper_id": "2604.21919",
+      "arxiv_match_count": null,
+      "arxiv_match_route_hint": null,
+      "arxiv_match_terms": null
+    }
+  ],
+  "summary": {
+    "total_r_rc_equations": 250,
+    "linked": 193,
+    "unlinked": 57,
+    "distinct_arxiv_papers": 106,
+    "previous_version_linked": 28
+  },
+  "methods": {
+    "stream_encoding": "sha1(token) mod 2^8 = 8-bit code; @> containment in Postgres",
+    "category_crosswalk": "route_hint -> arXiv categories, applied to 2/3-token names",
+    "math_term_keyword": "distinctive physics terms (muon, sigma, ...) for extracted_md_equation"
+  },
+  "encoding_storage": {
+    "arxiv_paper_codes8": "3,066,093 arXiv paper title code sequences (146 MB TSV)",
+    "rrc_equation_codes8": "250 RRC equation name code sequences"
+  }
+}

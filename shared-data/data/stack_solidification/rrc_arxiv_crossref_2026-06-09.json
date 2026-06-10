@@ -1,0 +1,198 @@
+[
+  {
+    "rrc_eq_id": "rrc_eq_613c8a56dee0f83a",
+    "rrc_name": "Exact_Int_to_FP_Cast",
+    "rrc_len": 5,
+    "arxiv_paper_id": "1902.09731",
+    "matches": 1
+  },
+  {
+    "rrc_eq_id": "rrc_eq_0606dcb042ba0e6f",
+    "rrc_name": "MOF_CO2_Reduction_Formic_Acid",
+    "rrc_len": 5,
+    "arxiv_paper_id": "2503.02291",
+    "matches": 2
+  },
+  {
+    "rrc_eq_id": "rrc_eq_891a81dfc968f58e",
+    "rrc_name": "MOF_CO2_Reduction_8e_Methane",
+    "rrc_len": 5,
+    "arxiv_paper_id": "1402.6770",
+    "matches": 3
+  },
+  {
+    "rrc_eq_id": "rrc_eq_cbefaa1738883221",
+    "rrc_name": "extracted_md_equation_30",
+    "rrc_len": 4,
+    "arxiv_paper_id": "2401.07679",
+    "matches": 1
+  },
+  {
+    "rrc_eq_id": "rrc_eq_5ece89b86c865faf",
+    "rrc_name": "extracted_md_equation_18",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1506.07314",
+    "matches": 1
+  },
+  {
+    "rrc_eq_id": "rrc_eq_f010fb33997b8f51",
+    "rrc_name": "Affine_Mapping_Periodic_Theorem",
+    "rrc_len": 4,
+    "arxiv_paper_id": "2509.25397",
+    "matches": 1
+  },
+  {
+    "rrc_eq_id": "rrc_eq_9c2c0d5c61628eb5",
+    "rrc_name": "extracted_md_equation_16",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1801.03570",
+    "matches": 1
+  },
+  {
+    "rrc_eq_id": "rrc_eq_8acff8093805680f",
+    "rrc_name": "extracted_md_equation_22",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1801.03570",
+    "matches": 1
+  },
+  {
+    "rrc_eq_id": "rrc_eq_e5f58db6423d2f9c",
+    "rrc_name": "extracted_md_equation_27",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1012.1409",
+    "matches": 1
+  },
+  {
+    "rrc_eq_id": "rrc_eq_3305fd3254a89e5b",
+    "rrc_name": "extracted_md_equation_24",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1203.6223",
+    "matches": 1
+  },
+  {
+    "rrc_eq_id": "rrc_eq_434ad4a173c4cb24",
+    "rrc_name": "extracted_md_equation_31",
+    "rrc_len": 4,
+    "arxiv_paper_id": "astro-ph/0605306",
+    "matches": 1
+  },
+  {
+    "rrc_eq_id": "rrc_eq_decad728fbd76456",
+    "rrc_name": "extracted_md_equation_13",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1801.03570",
+    "matches": 1
+  },
+  {
+    "rrc_eq_id": "rrc_eq_12d678b6dc94f9d6",
+    "rrc_name": "extracted_md_equation_20",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1812.02344",
+    "matches": 1
+  },
+  {
+    "rrc_eq_id": "rrc_eq_0abce0721f473201",
+    "rrc_name": "trauma_adjusted_emotional_temperature",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1510.05289",
+    "matches": 1
+  },
+  {
+    "rrc_eq_id": "rrc_eq_4b0eb5baf8d88582",
+    "rrc_name": "extracted_md_equation_12",
+    "rrc_len": 4,
+    "arxiv_paper_id": "2402.06713",
+    "matches": 1
+  },
+  {
+    "rrc_eq_id": "rrc_eq_fc46c7ee6a40460d",
+    "rrc_name": "extracted_md_equation_32",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1012.1409",
+    "matches": 2
+  },
+  {
+    "rrc_eq_id": "rrc_eq_81ad5c64ecea2574",
+    "rrc_name": "extracted_md_equation_34",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1203.6223",
+    "matches": 2
+  },
+  {
+    "rrc_eq_id": "rrc_eq_ef9d2a2f3c8de320",
+    "rrc_name": "extracted_md_equation_37",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1012.1409",
+    "matches": 2
+  },
+  {
+    "rrc_eq_id": "rrc_eq_6a952cb84d6e1fbf",
+    "rrc_name": "extracted_md_equation_15",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1203.6223",
+    "matches": 2
+  },
+  {
+    "rrc_eq_id": "rrc_eq_a59af904a8ad739f",
+    "rrc_name": "extracted_md_equation_11",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1012.1409",
+    "matches": 3
+  },
+  {
+    "rrc_eq_id": "rrc_eq_fe98a523c9c0b821",
+    "rrc_name": "extracted_md_equation_28",
+    "rrc_len": 4,
+    "arxiv_paper_id": "2005.06614",
+    "matches": 3
+  },
+  {
+    "rrc_eq_id": "rrc_eq_c56ffe8dd188e331",
+    "rrc_name": "extracted_md_equation_23",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1203.6223",
+    "matches": 3
+  },
+  {
+    "rrc_eq_id": "rrc_eq_ae70c43fd815392e",
+    "rrc_name": "trauma_adjusted_offload_efficiency",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1101.4207",
+    "matches": 3
+  },
+  {
+    "rrc_eq_id": "rrc_eq_c8d2e5596d91ebbd",
+    "rrc_name": "Multiphasic_Allometry_Instantaneous_Slope",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1707.08289",
+    "matches": 3
+  },
+  {
+    "rrc_eq_id": "rrc_eq_d726df3a6c9943ff",
+    "rrc_name": "BLINK_GATE_Ternary_Clock",
+    "rrc_len": 4,
+    "arxiv_paper_id": "0811.4100",
+    "matches": 3
+  },
+  {
+    "rrc_eq_id": "rrc_eq_535b43060096e699",
+    "rrc_name": "Multiphasic_Allometry_LogLog_Scaling",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1911.03851",
+    "matches": 4
+  },
+  {
+    "rrc_eq_id": "rrc_eq_e9cff20a11527ba0",
+    "rrc_name": "Geodesic_Step_Symplectic_Euler",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1207.0647",
+    "matches": 6
+  },
+  {
+    "rrc_eq_id": "rrc_eq_1f912c8afa928326",
+    "rrc_name": "LASSO_MOGAT_Attention_Coefficient",
+    "rrc_len": 4,
+    "arxiv_paper_id": "1502.00379",
+    "matches": 7
+  }
+]

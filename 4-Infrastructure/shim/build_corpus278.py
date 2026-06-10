@@ -5,10 +5,11 @@
 # ///
 """
 Build Semantics/RRC/Corpus278.lean from rrc_equation_classifier_receipt.json,
-merged with matrix predictions from rrc_pist_predictions_278_v1.json.
+merged with matrix predictions from rrc_pist_predictions_278_v1.json and
+arXiv predictions from rrc_arxiv_predictions_278_v1.json.
 
 Python's role:
-  - read raw fields from classifier receipt
+  - read raw fields from classifier receipt (incl. arxiv_paper_id)
   - merge PIST predictions (proxy/exact labels, matrix_hash guard) by
     invariant_receipt.object_id
   - emit deterministic Lean source
@@ -84,9 +85,36 @@ def lean_str_list(xs: list[str]) -> str:
 
 
 def lean_classify_label(eq_id: str, fn: str) -> str:
-    """Generate Lean expression to look up matrix and run classify*."""
+    """Generate Lean expression for PIST label.
+    
+    Checks prediction sources in order:
+    1. PIST predictions (rrc_pist_predictions_278_v1.json)
+    2. arXiv predictions (rrc_arxiv_predictions_v1.json)
+    3. OEIS predictions (rrc_oeis_predictions_v1.json)
+    4. Fallback to matrix-hash lookup via classifyProxy/classifyExact
+    """
+    for source, label_key in [(PIST_BY_ID, "pist"), (ARXIV_BY_ID, "arxiv"), (OEIS_BY_ID, "oeis")]:
+        label = source.get(eq_id, {}).get(fn.replace("classify", "").lower() + "_pred")
+        if label:
+            return f"some {lean_str(label)}"
     return f"Option.bind (findMatrix {lean_str(eq_id)}) Semantics.PIST.Classify.{fn}"
 
+
+def load_predictions(path: Path) -> dict[str, dict]:
+    """Load predictions JSON into equation_id lookup dict."""
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text())
+        return {p.get("equation_id", ""): p for p in data.get("predictions", []) if p.get("equation_id")}
+    except (json.JSONDecodeError, IOError):
+        return {}
+
+
+ROOT = Path("/home/allaun/Research Stack")
+PIST_BY_ID = load_predictions(ROOT / "shared-data/rrc_pist_predictions_278_v1.json")
+ARXIV_BY_ID = load_predictions(ROOT / "shared-data/rrc_arxiv_predictions_v1.json")
+OEIS_BY_ID = load_predictions(ROOT / "shared-data/rrc_oeis_predictions_v1.json")
 
 # ── main ──────────────────────────────────────────────────────────────────────
 def main() -> None:
@@ -155,6 +183,12 @@ def main() -> None:
         t_key        = template_key(rrc_kind, status_str)
         t_params     = f"route={er.get('route_hint_non_authoritative','unclassified_equation') or 'unclassified_equation'};shape={shape_str}"
 
+        # arXiv paper id (e.g. "2604.21919") when classifier receipt has
+        # arxiv_paper_id set; otherwise None. The arXiv cross-reference pipeline
+        # keys predictions by equation_id, so any arXiv label lookup still flows
+        # through lean_classify_label (PIST first, then arXiv, then OEIS).
+        arxiv_pid = (er.get("arxiv_paper_id") or "").strip() or None
+
         row = (
             f"  {{ equationId          := {lean_str(eq_id)}\n"
             f"    name                := {lean_str(name)}\n"
@@ -164,6 +198,7 @@ def main() -> None:
             f"    weakAxesCnt         := {weak_cnt}\n"
             f"    pistProxyLabel      := {lean_classify_label(eq_id, 'classifyProxy')}\n"
             f"    pistExactLabel      := {lean_classify_label(eq_id, 'classifyExact')}\n"
+            f"    arxivPaperId        := {lean_opt(arxiv_pid)}\n"
             f"    operatorTokens      := {lean_str_list(op_tokens)}\n"
             f"    invariantsDeclared  := {lean_str(inv_declared)}\n"
             f"    boundaryConds       := {lean_str(bound_conds)}\n"
@@ -181,8 +216,8 @@ def main() -> None:
     OUT_LEAN.write_text("\n".join(lines))
     print(f"Wrote {OUT_LEAN}", file=sys.stderr)
     print(f"Total rows:          {len(row_strs)}", file=sys.stderr)
-    print(f"Labels source:       Semantics.PIST.Classify.classifyProxy / classifyExact"
-          f" (v2 stubs → all none)", file=sys.stderr)
+    total_preds = len(PIST_BY_ID) + len(ARXIV_BY_ID) + len(OEIS_BY_ID)
+    print(f"Labels source:       PIST({len(PIST_BY_ID)}) + arXiv({len(ARXIV_BY_ID)}) + OEIS({len(OEIS_BY_ID)}) = {total_preds}", file=sys.stderr)
 
 if __name__ == "__main__":
     main()

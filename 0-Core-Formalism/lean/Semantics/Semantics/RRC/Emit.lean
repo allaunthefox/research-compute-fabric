@@ -94,6 +94,8 @@ structure FixtureRow where
   weakAxesCnt       : Nat
   pistProxyLabel    : Option String   -- None when PIST has no prediction
   pistExactLabel    : Option String
+  arxivPaperId      : Option String   -- arXiv paper id (e.g. "2604.21919") or None
+                                        -- when this RRC equation has no arXiv link
   -- Generator fields
   operatorTokens    : List String     -- domain/operator token list
   invariantsDeclared : String         -- declared invariant family or "unknown"
@@ -179,6 +181,7 @@ structure RrcRow where
   boundaryConds       : String
   templateKey         : String
   templateParams      : String
+  arxivPaperId        : Option String  -- arXiv link from classifier receipt, or None
   deriving Repr
 
 def compileRow (row : FixtureRow) : RrcRow :=
@@ -200,7 +203,8 @@ def compileRow (row : FixtureRow) : RrcRow :=
     invariantsDeclared := row.invariantsDeclared
     boundaryConds      := row.boundaryConds
     templateKey        := row.templateKey
-    templateParams     := row.templateParams }
+    templateParams     := row.templateParams
+    arxivPaperId       := row.arxivPaperId }
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- §6  Fixture corpus — 6 canonical rows, one per RRCShape
@@ -224,6 +228,7 @@ def fixtureClf : FixtureRow :=
     weakAxesCnt         := 7
     pistProxyLabel      := some "LogogramProjection"
     pistExactLabel      := some "LogogramProjection"
+    arxivPaperId        := none
     operatorTokens      := ["cognitive_load", "exponential_decay", "threshold_reweighting"]
     invariantsDeclared  := "unknown"
     boundaryConds       := "unknown"
@@ -240,6 +245,7 @@ def fixtureSsrc : FixtureRow :=
     weakAxesCnt         := 6
     pistProxyLabel      := some "LogogramProjection"
     pistExactLabel      := some "LogogramProjection"
+    arxivPaperId        := none
     operatorTokens      := ["compression_route", "signal_shaped"]
     invariantsDeclared  := "LAYER_A_COMPRESSION"
     boundaryConds       := "geometric_bind"
@@ -256,6 +262,7 @@ def fixtureLp : FixtureRow :=
     weakAxesCnt         := 9
     pistProxyLabel      := some "LogogramProjection"
     pistExactLabel      := some "LogogramProjection"
+    arxivPaperId        := none
     operatorTokens      := ["logogram_projection"]
     invariantsDeclared  := "unknown"
     boundaryConds       := "unknown"
@@ -272,6 +279,7 @@ def fixturePgt : FixtureRow :=
     weakAxesCnt         := 8
     pistProxyLabel      := none
     pistExactLabel      := none
+    arxivPaperId        := none
     operatorTokens      := ["geometry_topology", "hubble_tension"]
     invariantsDeclared  := "LAYER_C_TOPOLOGY"
     boundaryConds       := "unknown"
@@ -288,6 +296,7 @@ def fixtureCad : FixtureRow :=
     weakAxesCnt         := 8
     pistProxyLabel      := none
     pistExactLabel      := none
+    arxivPaperId        := none
     operatorTokens      := ["cad_force", "dag_equilibrium"]
     invariantsDeclared  := "unknown"
     boundaryConds       := "physical_bind"
@@ -304,6 +313,7 @@ def fixtureHold : FixtureRow :=
     weakAxesCnt         := 9
     pistProxyLabel      := none
     pistExactLabel      := none
+    arxivPaperId        := none
     operatorTokens      := ["unclassified_equation"]
     invariantsDeclared  := "unknown"
     boundaryConds       := "unknown"
@@ -362,7 +372,8 @@ private def jRrcRow (r : RrcRow) : String :=
   s!"\"invariants_declared\":{jStr r.invariantsDeclared}," ++
   s!"\"boundary_conds\":{jStr r.boundaryConds}," ++
   s!"\"template_key\":{jStr r.templateKey}," ++
-  s!"\"template_params\":{jStr r.templateParams}}"
+  s!"\"template_params\":{jStr r.templateParams}," ++
+  s!"\"arxiv_paper_id\":{jOpt r.arxivPaperId}}"
 
 private def jRowList (rs : List RrcRow) : String :=
   "[" ++ String.intercalate "," (rs.map jRrcRow) ++ "]"

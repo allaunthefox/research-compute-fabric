@@ -16,6 +16,12 @@ Provides combinatorial optimization routines for braid crossing configurations:
    to collision-free time/frequency slots using a Sidon set (all pairwise
    sums are distinct).
 
+Cost coefficients calibrated via SLOS photonic emulator 2026-06-18:
+  - base = 8 * Q16_ONE (admissible), 16 * Q16_ONE (inadmissible)
+  - gap_reward_scale = _q16(0.01)
+  - overlap_penalty = 2 * Q16_ONE
+See qaoa_adapter.auto_calibrate() for re-calibration.
+
 All arithmetic is integer/Q16_16 where applicable.  No float in compute paths.
 """
 
@@ -349,26 +355,28 @@ def bracket_cost(bracket: dict) -> int:
     """Compute the individual (diagonal) cost for a single bracket (Q16_16 int).
 
     Negative cost → prefer selecting this bracket (admissible is good).
+
+    Coefficients calibrated via SLOS photonic emulator 2026-06-18:
+    base_admissible=8, base_inadmissible=16, gap_reward_scale=0.01.
     """
-    base = Q16_ONE if bracket.get("admissible", False) else 2 * Q16_ONE
-    # Gap magnitude bonus: larger gaps reduce cost
-    # abs(gap) * 0.1 in Q16_16 = abs(gap) * _q16(0.1) // Q16_SCALE
+    base = 8 * Q16_ONE if bracket.get("admissible", False) else 16 * Q16_ONE
     gap = _q16_signed(bracket.get("gap", 0))
-    return -base + abs(gap) * _q16(0.1) // Q16_SCALE
+    return -base + abs(gap) * _q16(0.01) // Q16_SCALE
 
 
 def crossing_penalty(b1: dict, b2: dict) -> int:
     """Compute the off-diagonal interaction cost between two brackets (Q16_16 int).
 
     Positive penalty → discourage selecting both when they conflict.
+
+    Calibrated via SLOS photonic emulator 2026-06-18: gap_reward_scale=0.01.
     """
     penalty = 0
     if _brackets_overlap(b1, b2):
         penalty += 2 * Q16_ONE
-    # Gap similarity: reward diversity
     g1 = _q16_signed(b1.get("gap", 0))
     g2 = _q16_signed(b2.get("gap", 0))
-    penalty -= abs(g1 - g2) * _q16(0.1) // Q16_SCALE
+    penalty -= abs(g1 - g2) * _q16(0.01) // Q16_SCALE
     return penalty
 
 
@@ -416,11 +424,12 @@ def _build_qubo_matrix(bracket_pairs: List[Tuple[dict, dict]]) -> List[List[int]
 
     for i in range(n):
         a_i, b_i = bracket_pairs[i]
-        # Linear bias: admissible pairs get negative cost (prefer them)
+        # Linear bias: admissible pairs get negative cost (prefer them).
+        # SLOS-calibrated: base = 8*Q16_ONE (admissible), 16*Q16_ONE (not).
         if a_i.get("admissible", False) and b_i.get("admissible", False):
-            Q[i][i] = -Q16_ONE
+            Q[i][i] = -8 * Q16_ONE
         else:
-            Q[i][i] = Q16_ONE
+            Q[i][i] = 8 * Q16_ONE
 
         # Quadratic interaction
         for j in range(i + 1, n):
@@ -431,10 +440,11 @@ def _build_qubo_matrix(bracket_pairs: List[Tuple[dict, dict]]) -> List[List[int]
             if _brackets_overlap(a_i, a_j) or _brackets_overlap(b_i, b_j):
                 cost += 2 * Q16_ONE
 
-            # Gap similarity reward: diverse gaps are better
+            # Gap similarity reward: diverse gaps are better.
+            # SLOS-calibrated: gap_reward_scale=0.01
             gap_i = _q16_signed(a_i.get("gap", 0))
             gap_j = _q16_signed(a_j.get("gap", 0))
-            cost -= abs(gap_i - gap_j) * _q16(0.1) // Q16_SCALE
+            cost -= abs(gap_i - gap_j) * _q16(0.01) // Q16_SCALE
 
             Q[i][j] = cost
             Q[j][i] = cost

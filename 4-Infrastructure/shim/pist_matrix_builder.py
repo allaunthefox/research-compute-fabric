@@ -5,7 +5,7 @@ Builds token→strand adjacency matrices.  This is a feature-extraction shim
 only — it produces no classifier output and no Lean spectral analysis.
 proxy_pred/exact_pred are left null for the Lean surface.
 
-Output schema: rrc_pist_predictions_278_v1  (claim_boundary: matrix-only)
+Output schema: rrc_pist_predictions_250_v1  (claim_boundary: matrix-only)
 """
 
 import hashlib
@@ -23,7 +23,7 @@ RECEIPT_JSON = os.path.join(
 )
 OUTPUT_FILE = os.path.join(
     os.path.dirname(__file__), "../..",
-    "shared-data/rrc_pist_predictions_278_v1.json",
+    "shared-data/rrc_pist_predictions_250_v1.json",
 )
 
 
@@ -200,7 +200,7 @@ def main() -> int:
         print(f"All matrix hashes unique: {n_unique}/{n_total}", flush=True)
 
     artifact = {
-        "schema": "rrc_pist_predictions_278_v1",
+        "schema": "rrc_pist_predictions_250_v1",
         "claim_boundary": "matrix-only;no-classifier;no-lean-spectral",
         "matrix_schema": "token_strand_adjacency_8x8_v1",
         "global_vocab_hash": gvh,

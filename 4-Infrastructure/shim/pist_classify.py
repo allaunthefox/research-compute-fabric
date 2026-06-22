@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# INFRA:DEAD rds -- AWS RDS is gone. Any file referencing rds_connect.py or this hostname is stale and must be ported.
 """Classify a proof receipt via PIST and insert into RDS.
 
 Usage:

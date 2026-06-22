@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# INFRA:DEAD rds -- AWS RDS is gone. Any file referencing rds_connect.py or this hostname is stale and must be ported.
 """Route-Repair Loop v1 — use the flexure joint library to suggest tactic repairs for failed proofs.
 
 Takes a failed Lean proof trace, classifies it, generates candidate patches

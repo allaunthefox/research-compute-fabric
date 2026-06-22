@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# INFRA:DEAD rds -- AWS RDS is gone. Any file referencing rds_connect.py or this hostname is stale and must be ported.
 """Joint-based classifier using ene.flexures motifs.
 
 Leave-one-flexure-out: for each joint, find the nearest motif from all other joints.

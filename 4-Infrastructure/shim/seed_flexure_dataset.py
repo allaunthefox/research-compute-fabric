@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# INFRA:DEAD rds -- AWS RDS is gone. Any file referencing rds_connect.py or this hostname is stale and must be ported.
 """Seed flexure dataset from the existing RRC equation projection table.
 
 Reads docs/rrc_equation_classification.md, generates plausible flexure paths

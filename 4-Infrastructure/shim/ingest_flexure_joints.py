@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# INFRA:DEAD rds -- AWS RDS is gone. Any file referencing rds_connect.py or this hostname is stale and must be ported.
 """Ingest Tier 2B trace flexure joints into ene.flexures.
 
 For each theorem trace, extracts per-step transitions as flexure joints,

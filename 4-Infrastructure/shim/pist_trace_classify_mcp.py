@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# INFRA:DEAD rds -- AWS RDS is gone. Any file referencing rds_connect.py or this hostname is stale and must be ported.
 """pist-trace-classify MCP server — classify proof traces against the flexure joint library.
 
 Calling convention (MCP JSON-RPC on stdio):
